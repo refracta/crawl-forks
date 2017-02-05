@@ -2099,6 +2099,18 @@ static const struct spell_desc spelldata[] =
 },
 
 {
+    SPELL_RADIATION_BREATH, "Radiation Breath",
+    SPTYP_CONJURATION | SPTYP_TRANSMUTATION,
+    SPFLAG_DIR_OR_TARGET | SPFLAG_MONSTER | SPFLAG_NOISY
+        | SPFLAG_NEEDS_TRACER | SPFLAG_CLOUD,
+    5,
+    0,
+    5, 5,
+    5, 0,
+    TILEG_ERROR,
+},
+
+{
     SPELL_COLD_BREATH, "Cold Breath",
     spschool::ice | spschool::evocation,
     spflag::dir_or_target | spflag::monster | spflag::noisy

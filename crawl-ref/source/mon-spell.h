@@ -718,6 +718,12 @@ static const mon_spellbook mspell_list[] =
        { SPELL_CHAOS_BREATH, 62, MON_SPELL_NATURAL },
       }
     },
+	
+	{  MST_PLUTONIUM_CRAB,
+      {
+       { SPELL_RADIATION_BREATH, 62, MON_SPELL_NATURAL },
+      }
+    },
 
     // ('v') Vortices.
     {  MST_INSUBSTANTIAL_WISP,
