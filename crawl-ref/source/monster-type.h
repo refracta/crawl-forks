@@ -1052,6 +1052,7 @@ enum monster_type                      // menv[].type
     MONS_CHAOS_VORTEX,
     MONS_ENTROPIC_SPHERE,
     MONS_ORB_OF_CHAOS,    // a projectile, not a real mon
+    MONS_PLUTONIUM_CRAB,
     MONS_TEST_STATUE,
 #endif
 
