@@ -4009,6 +4009,7 @@ static string _flavour_base_desc(attack_flavour flavour)
         { AF_KITE,              "" },
         { AF_SWOOP,             "" },
         { AF_PLAIN,             "" },
+		{ AF_CONTAM,            "cause magical contamination"},
     };
 
     const string* desc = map_find(base_descs, flavour);
