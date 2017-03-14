@@ -17,7 +17,7 @@ bind_port = 8080
 # )
 
 logging_config = {
-#    "filename": "webtiles.log",
+    "filename": "./webserver/run/webtiles.log",
     "level": logging.INFO,
     "format": "%(asctime)s %(levelname)s: %(message)s"
 }
@@ -31,7 +31,7 @@ template_path = "./webserver/templates/"
 server_socket_path = None # Uses global temp dir
 
 # Server name, so far only used in the ttyrec metadata
-server_id = ""
+server_id = "GnollCrawl.tk"
 
 # Disable caching of game data files
 game_data_no_cache = True
@@ -43,47 +43,106 @@ watch_socket_dirs = False
 # %n in paths and urls is replaced by the current username
 # morgue_url is for a publicly available URL to access morgue_path
 games = OrderedDict([
-    ("dcss-web-trunk", dict(
-        name = "DCSS trunk",
+    ("dcss-gnollcrawl", dict(
+        name = "GnollCrawl",
         crawl_binary = "./crawl",
-        rcfile_path = "./rcs/",
-        macro_path = "./rcs/",
-        morgue_path = "./rcs/%n",
-        inprogress_path = "./rcs/running",
-        ttyrec_path = "./rcs/ttyrecs/%n",
-        socket_path = "./rcs",
+        rcfile_path = "/home/crawl/rcs/gnollcrawl/%n",
+        macro_path = "/home/crawl/rcs/gnollcrawl/%n",
+        morgue_path = "/home/crawl/rcs/gnollcrawl/%n/morgues",
+        inprogress_path = "/home/crawl/inprogress/gnollcrawl/%n/running",
+        ttyrec_path = "/home/crawl/rcs/gnollcrawl/%n/ttyrecs",
+        socket_path = "/home/crawl/rcs/gnollcrawl/%n",
         client_path = "./webserver/game_data/",
-        morgue_url = None,
+        morgue_url = "gnollcrawl.tk/gnollcrawl/%n/morgues/",
         send_json_options = True)),
-    ("sprint-web-trunk", dict(
-        name = "Sprint trunk",
-        crawl_binary = "./crawl",
-        rcfile_path = "./rcs/",
-        macro_path = "./rcs/",
-        morgue_path = "./rcs/%n",
-        inprogress_path = "./rcs/running",
-        ttyrec_path = "./rcs/ttyrecs/%n",
-        socket_path = "./rcs",
-        client_path = "./webserver/game_data/",
-        morgue_url = None,
-        send_json_options = True,
-        options = ["-sprint"])),
-    ("tut-web-trunk", dict(
-        name = "Tutorial trunk",
-        crawl_binary = "./crawl",
-        rcfile_path = "./rcs/",
-        macro_path = "./rcs/",
-        morgue_path = "./rcs/%n",
-        inprogress_path = "./rcs/running",
-        ttyrec_path = "./rcs/ttyrecs/%n",
-        socket_path = "./rcs",
-        client_path = "./webserver/game_data/",
-        morgue_url = None,
-        send_json_options = True,
-        options = ["-tutorial"])),
+    ("dcss-yiufcrawl", dict(
+        name = "YiufCrawl",
+        crawl_binary = "/home/crawl/games/yiufcrawl/crawl-ref/source/yiufcrawl",
+        rcfile_path = "/home/crawl/rcs/yiufcrawl/%n",
+        macro_path = "/home/crawl/rcs/yiufcrawl/%n",
+        morgue_path = "/home/crawl/rcs/yiufcrawl/%n/morgues",
+        inprogress_path = "/home/crawl/inprogress/yiufcrawl/%n/running",
+        ttyrec_path = "/home/crawl/rcs/yiufcrawl/%n/ttyrecs",
+        socket_path = "/home/crawl/rcs/yiufcrawl/%n",
+        client_path = "/home/crawl/games/yiufcrawl/crawl-ref/source/webserver/game_data/",
+        morgue_url = "gnollcrawl.tk/yiufcrawl/%n/morgues/",
+        send_json_options = True)),
+    ("dcss-hellcrawl", dict(
+        name = "HellCrawl",
+        crawl_binary = "/home/crawl/games/hellcrawl/crawl-ref/source/crawl",
+        rcfile_path = "/home/crawl/rcs/hellcrawl/%n",
+        macro_path = "/home/crawl/rcs/hellcrawl/%n",
+        morgue_path = "/home/crawl/rcs/hellcrawl/%n/morgues",
+        inprogress_path = "/home/crawl/inprogress/hellcrawl/%n/running",
+        ttyrec_path = "/home/crawl/rcs/hellcrawl/%n/ttyrecs",
+        socket_path = "/home/crawl/rcs/hellcrawl/%n",
+        client_path = "/home/crawl/games/hellcrawl/crawl-ref/source/webserver/game_data/",
+        morgue_url = "gnollcrawl.tk/hellcrawl/%n/morgues/",
+        send_json_options = True)),
+    ("dcssca", dict(
+        name = "Circus Animals",
+        crawl_binary = "/home/crawl/games/dcssca/crawl-ref/source/crawl",
+        rcfile_path = "/home/crawl/rcs/dcssca/%n",
+        macro_path = "/home/crawl/rcs/dcssca/%n",
+        morgue_path = "/home/crawl/rcs/dcssca/%n/morgues",
+        inprogress_path = "/home/crawl/inprogress/dcssca/%n/running",
+        ttyrec_path = "/home/crawl/rcs/dcssca/%n/ttyrecs",
+        socket_path = "/home/crawl/rcs/dcssca/%n",
+        client_path = "/home/crawl/games/dcssca/crawl-ref/source/webserver/game_data/",
+        morgue_url = "gnollcrawl.tk/dcssca/%n/morgues/",
+        send_json_options = True)),
+    ("dcss-oofcrawl", dict(
+        name = "OOFCrawl",
+        crawl_binary = "/home/crawl/games/oofcrawl/crawl-ref/source/crawl",
+        rcfile_path = "/home/crawl/rcs/oofcrawl/%n",
+        macro_path = "/home/crawl/rcs/oofcrawl/%n",
+        morgue_path = "/home/crawl/rcs/oofcrawl/%n/morgues",
+        inprogress_path = "/home/crawl/inprogress/oofcrawl/%n/running",
+        ttyrec_path = "/home/crawl/rcs/oofcrawl/%n/ttyrecs",
+        socket_path = "/home/crawl/rcs/oofcrawl/%n",
+        client_path = "/home/crawl/games/oofcrawl/crawl-ref/source/webserver/game_data/",
+        morgue_url = "gnollcrawl.tk/oofcrawl/%n/morgues/",
+        send_json_options = True)),
+    ("dcss-lichcrawl", dict(
+        name = "LichCrawl",
+        crawl_binary = "/home/crawl/games/lichcrawl/crawl-ref/source/crawl",
+        rcfile_path = "/home/crawl/rcs/lichcrawl/%n",
+        macro_path = "/home/crawl/rcs/lichcrawl/%n",
+        morgue_path = "/home/crawl/rcs/lichcrawl/%n/morgues",
+        inprogress_path = "/home/crawl/inprogress/lichcrawl/%n/running",
+        ttyrec_path = "/home/crawl/rcs/lichcrawl/%n/ttyrecs",
+        socket_path = "/home/crawl/rcs/lichcrawl/%n",
+        client_path = "/home/crawl/games/lichcrawl/crawl-ref/source/webserver/game_data/",
+        morgue_url = "gnollcrawl.tk/lichcrawl/%n/morgues/",
+        send_json_options = True)),
+#    ("dcss-crawllight", dict(
+#        name = "CrawlLight",
+#        crawl_binary = "/home/crawl/games/crawllight/crawl-ref/source/crawl",
+#        rcfile_path = "/home/crawl/rcs/crawllight/%n",
+#        macro_path = "/home/crawl/rcs/crawllight/%n",
+#        morgue_path = "/home/crawl/rcs/crawllight/%n/morgues",
+#        inprogress_path = "/home/crawl/inprogress/crawllight/%n/running",
+#        ttyrec_path = "/home/crawl/rcs/crawllight/%n/ttyrecs",
+#        socket_path = "/home/crawl/rcs/crawllight/%n",
+#        client_path = "/home/crawl/games/hellcrawl/crawl-ref/source/webserver/game_data/",
+#        morgue_url = "gnollcrawl.tk/crawllight/%n/morgues/",
+#        send_json_options = True)),
+#    ("tut-web-trunk", dict(
+#        name = "Tutorial trunk",
+#        crawl_binary = "./crawl",
+#        rcfile_path = "./rcs/",
+#        macro_path = "./rcs/",
+#        morgue_path = "./rcs/%n",
+#        inprogress_path = "./rcs/running",
+#        ttyrec_path = "./rcs/ttyrecs/%n",
+#        socket_path = "./rcs",
+#        client_path = "./webserver/game_data/",
+#        morgue_url = None,
+#        send_json_options = True,
+#        options = ["-tutorial"])),
 ])
 
-dgl_status_file = "./rcs/status"
+dgl_status_file = "/home/crawl/status/status"
 
 # Set to None not to read milestones
 milestone_file = "./milestones"

@@ -4,7 +4,7 @@ Play now:
 {% if games[id]["rcfile_path"] not in rcs %}
 {% if "separator" in games[id] %}
 {% raw games[id]["separator"] %}
-{% else %}<br>{% end %}
+{% else %}<br><br>{% end %}
 <a href="#play-{{ id }}">{{ games[id]["name"] }}</a>
 {% set rcs.add(games[id]["rcfile_path"]) %}
 <a href="javascript:"
