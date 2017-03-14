@@ -860,7 +860,18 @@ monster* place_monster(mgen_data mg, bool force_pos, bool dont_place)
     if (mg.cls == MONS_NO_MONSTER || mg.cls == MONS_PROGRAM_BUG)
         return 0;
 
+    // GNOLLCRAWL: Enable bands only half the time in optional branches
     bool create_band = false;
+    if (you.where_are_you == BRANCH_DUNGEON || you.where_are_you == BRANCH_DEPTHS
+        || you.where_are_you == BRANCH_ZOT || random_choose(true, false))
+    {
+        create_band = false;
+    }
+    else
+    {
+        create_band = mg.permit_bands();
+    }
+    
     // If we drew an OOD monster and there hasn't been much time spent
     // on level, disable band generation. This applies only to
     // randomly picked monsters -- chose_ood_monster will never be set
