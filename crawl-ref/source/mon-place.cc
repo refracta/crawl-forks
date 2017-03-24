@@ -887,10 +887,25 @@ monster* place_monster(mgen_data mg, bool force_pos, bool dont_place)
     if (mg.cls == MONS_PROGRAM_BUG)
         return 0;
     
-    // OOFCrawl
+    // beautiful OOFCrawl code
     if (mg.cls != MONS_PLANT && mg.cls != MONS_TOADSTOOL
         && mg.cls != MONS_FUNGUS && mg.cls != MONS_BUSH
-        && mg.cls != MONS_ORB_OF_DESTRUCTION)
+        && mg.cls != MONS_ORB_OF_DESTRUCTION
+        && mg.cls != MONS_PLAYER_ILLUSION
+        && mg.cls != MONS_PLAYER_GHOST
+        && mg.cls != MONS_BALL_LIGHTNING
+        && mg.cls != MONS_FULMINANT_PRISM
+        && mg.cls != MONS_BATTLESPHERE
+        && mg.cls != MONS_PILLAR_OF_SALT
+        && mg.cls != MONS_BLOCK_OF_ICE
+        && mg.cls != MONS_SENSED
+        && mg.cls != MONS_SENSED_TRIVIAL
+        && mg.cls != MONS_SENSED_EASY
+        && mg.cls != MONS_SENSED_TOUGH
+        && mg.cls != MONS_SENSED_NASTY
+        && mg.cls != MONS_SENSED_FRIENDLY
+        && mg.cls != MONS_PLAYER
+        && mg.cls != MONS_PLAYER_SHADOW)
         mg.cls = MONS_ORB_OF_FIRE;
 
     // (3) Decide on banding (good lord!)
