@@ -215,7 +215,7 @@ int book_rarity(book_type which_book)
         return 15;
 
     case BOOK_ANNIHILATIONS:
-    case BOOK_GRAND_GRIMOIRE:
+    case BOOK_GRAND_GRIMOIRE:  // the Legion special
     case BOOK_NECRONOMICON:  // Kikubaaqudgha special
     case BOOK_MANUAL:
         return 20;

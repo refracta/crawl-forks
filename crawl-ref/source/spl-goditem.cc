@@ -126,38 +126,27 @@ static int _pacification_heal_div(mon_holy_type holiness)
 }
 
 /**
- * The sides for the roll against monster avg hp to determine if the
- * monster can be pacified.
+ * What's the highest MHP version of the given monster that the player can
+ * potentially pacify, with the given 'healing' roll?
  *
- * The formula is sides = int * ((invo + 1) * power) / holiness)
- * where
- *   power = 30 + invo
- *   int = 3 for animals, 1 for smarter intelligence
- *   holiness = holiness modifier determined in _heal_div
- *
- * @param mc        The type of monster in question.
- * @param pow       The power of the pacification.
- * @return          The dice sides to roll against max hp
+ * @param mon       The monster in question.
+ * @param healing   The player's 'healing' roll.
+ * @return          How much HP the player can pacify in the best case.
  */
-static int _pacification_sides(const monster_type mc, int pow)
+static int _pacifiable_hp(const monster &mon, int healing)
 {
-    const int heal_mult = (mons_class_intel(mc) < I_HUMAN) ? 3  // animals
+    const int heal_mult = (mons_intel(mon) < I_HUMAN) ? 3  // animals
                                                       : 1; // other
-    const int heal_div = _pacification_heal_div(mons_class_holiness(mc));
+    const int heal_div = _pacification_heal_div(mon.holiness());
     // ignoring monster holiness & int
-    const int base_sides = you.skill(SK_INVOCATIONS, pow) + pow;
-    const int sides = heal_mult * base_sides / heal_div;
+    const int base_hp = you.skill(SK_INVOCATIONS, healing) + healing;
+    const int hp = heal_mult * base_hp / heal_div;
 
-    return sides;
-}
+    dprf("pacifying %s? factor: %d, Inv: %d, healed: %d, pacify hp pre-roll %d",
+         mon.name(DESC_PLAIN).c_str(), heal_mult, you.skill(SK_INVOCATIONS),
+         healing, hp);
 
-/**
- * Pan lords and player ghosts are beyond Elyvilon's light
- */
-static int _pacification_hp(monster_type mc)
-{
-    return mons_is_pghost(mc) || mc == MONS_PANDEMONIUM_LORD ? 1000
-        : mons_avg_hp(mc);
+    return hp;
 }
 
 /**
@@ -165,7 +154,7 @@ static int _pacification_hp(monster_type mc)
  *
  * @param mon           The monster to be pacified, potentially.
  * @param healed        The amount of healing the pacification attempt uses.
- * @param pow           The healing power.
+ * @param max_healed    The most healing the player could have rolled.
  * @param fail          Whether the healing invocation has failed (and will
  *                      return SPRET_FAILED after targeting checks finish).
  * @return              Whether the pacification effect was aborted
@@ -173,7 +162,7 @@ static int _pacification_hp(monster_type mc)
  *                      returns SPRET_SUCCESS otherwise, regardless of whether
  *                      the target was actually pacified.
  */
-static spret_type _try_to_pacify(monster &mon, int healed, int pow,
+static spret_type _try_to_pacify(monster &mon, int healed, int max_healed,
                                  bool fail)
 {
     const string illegal_reason = unpacifiable_reason(mon);
@@ -185,20 +174,20 @@ static spret_type _try_to_pacify(monster &mon, int healed, int pow,
 
     fail_check();
 
-    const int mon_hp = _pacification_hp(mon.type);
+    const int mon_hp = mon.max_hit_points;
 
-    if (_pacification_sides(mon.type, pow) < mon_hp)
+    if (_pacifiable_hp(mon, max_healed) < mon_hp)
     {
-        // monster avg hp too high to ever be pacified with your invo skill.
-        mprf("%s would be completely unfazed by your meager offer of peace.",
+        // monster mhp too high to ever be pacified with your invo skill.
+        dprf("mon hp %d", mon_hp);
+        mprf("%s is completely unfazed by your meager offer of peace.",
              mon.name(DESC_THE).c_str());
-        return SPRET_ABORT;
+        return SPRET_SUCCESS;
     }
 
-    // Take the min of two rolls of 1d(_pacification_sides)
-    const int pacified_roll = biased_random2(_pacification_sides(mon.type, pow) - 1,2);
-    dprf("pacified roll: %d, monclass avmhp: %d", pacified_roll, mon_hp);
-    if (pacified_roll * 23 / 20 < mon_hp)
+    const int pacified_hp = random2(_pacifiable_hp(mon, healed));
+    dprf("pacified hp: %d, mon hp %d", pacified_hp, mon_hp);
+    if (pacified_hp * 23 / 20 < mon_hp)
     {
         // not even close.
         mprf("The light of Elyvilon fails to reach %s.",
@@ -206,7 +195,7 @@ static spret_type _try_to_pacify(monster &mon, int healed, int pow,
         return SPRET_SUCCESS;
     }
 
-    if (pacified_roll < mon_hp)
+    if (pacified_hp < mon_hp)
     {
         // closer! ...but not quite.
         mprf("The light of Elyvilon almost touches upon %s.",
@@ -267,47 +256,19 @@ bool heal_monster(monster& patient, int amount)
     return true;
 }
 
-/**
- * Compute the success chance of pacification out of scale
- *
- * biased_random2(sides-1,2) is equivalent to picking two integers in
- * [0,sides), re-rolling if they come up the same, and taking a min if they
- * come up distinct. The formula below computes the probability of rolling two
- * numbers that are both large enough, minus the probability they are the same.
- */
-static int _pacify_chance(const monster_info& mi, const int pow, int scale)
+
+static vector<string> _desc_mindless(const monster_info& mi)
 {
-    const int sides = _pacification_sides(mi.type, pow);
-    const int target = _pacification_hp(mi.type);
-
-    if (sides <= target)
-        return 0;
-
-    return (scale * ((sides - target) * (sides - target) - sides))
-         / (sides * sides);
-}
-
-static vector<string> _desc_pacify_chance(const monster_info& mi, const int pow)
-{
-    vector<string> descs;
-
     if (mi.intel() <= I_BRAINLESS)
-        descs.push_back("mindless");
-    else if (_pacification_sides(mi.type, pow) <= _pacification_hp(mi.type))
-        descs.push_back("uninterested");
+        return { "mindless" };
     else
-    {
-        const int success = _pacify_chance(mi, pow, 100);
-        descs.push_back(make_stringf("chance to pacify: %d%%", success));
-    }
-    return descs;
+        return {};
 }
 
-spret_type cast_healing(int pow, bool fail)
+spret_type cast_healing(int pow, int max_pow, bool fail)
 {
-    // This arithmetic is to make the healing amount match Greater Healing
-    const int base = div_rand_round(pow, 3);
-    const int healed = base + roll_dice(2, base) - 2;
+    const int healed = pow + roll_dice(2, pow) - 2;
+    const int max_healed = (3 * max_pow) - 2;
     ASSERT(healed >= 1);
 
     dist spd;
@@ -318,7 +279,7 @@ spret_type cast_healing(int pow, bool fail)
     args.needs_path = false;
     args.self = CONFIRM_CANCEL;
     args.target_prefix = "Heal";
-    args.get_desc_func = bind(_desc_pacify_chance, placeholders::_1, pow);
+    args.get_desc_func = _desc_mindless;
     direction(spd, args);
 
     if (!spd.isValid)
@@ -339,7 +300,7 @@ spret_type cast_healing(int pow, bool fail)
     }
 
     if (_mons_hostile(mons))
-        return _try_to_pacify(*mons, healed, pow, fail);
+        return _try_to_pacify(*mons, healed, max_healed, fail);
 
     fail_check();
 

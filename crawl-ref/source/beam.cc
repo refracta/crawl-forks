@@ -3224,6 +3224,12 @@ bool bolt::misses_player()
         mprf("The %s misses you.", name.c_str());
         count_action(CACT_DODGE, DODGE_EVASION);
     }
+	// Ashenzari's omniscience
+	if (you.duration[DUR_OMNISCIENCE])
+    {
+        mprf("The %s unnaturally misses you.", name.c_str());
+        count_action(CACT_DODGE, DODGE_EVASION);
+    }
     else if (defl && !_test_beam_hit(real_tohit, dodge, pierce, defl, r))
     {
         // active voice to imply stronger effect
@@ -3291,8 +3297,8 @@ void bolt::affect_player_enchantment(bool resistible)
         return;
     }
 
-    // Never affects the player.
-    if (flavour == BEAM_INFESTATION || flavour == BEAM_VILE_CLUTCH)
+    // Never affects the player.(also the Legion's unleash)
+    if (flavour == BEAM_INFESTATION || flavour == BEAM_VILE_CLUTCH || name == "summoning energy")
         return;
 
     // You didn't resist it.
@@ -4954,6 +4960,10 @@ bool bolt::ignores_monster(const monster* mon) const
     {
         return true;
     }
+	
+	// For Legion : explosion from unleash ability only affect your minions.
+	if (name == "summoning energy" && !mon->friendly())
+		return true;
 
     // Missiles go past bushes and briar patches, unless aimed directly at them
     if (bush_immune(*mon))
@@ -5331,6 +5341,13 @@ mon_resist_type bolt::apply_enchantment_to_monster(monster* mon)
                 obvious_effect = true;
             msg_generated = true; // to avoid duplicate "nothing happens"
         }
+		if (name == "summoning energy")
+		{	
+            const int amount = damage.roll();
+            if (heal_monster(*mon, amount))
+                obvious_effect = true;
+            msg_generated = true; // to avoid duplicate "nothing happens"
+		}
         else if (mon->heal(3 + damage.roll()))
         {
             if (mon->hit_points == mon->max_hit_points)
@@ -6109,7 +6126,7 @@ bool bolt::nasty_to(const monster* mon) const
     // Positive effects.
     if (nice_to(monster_info(mon)))
         return false;
-
+	
     switch (flavour)
     {
         case BEAM_DIGGING:

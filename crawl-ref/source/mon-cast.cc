@@ -4237,7 +4237,7 @@ static int _monster_abjure_target(monster* target, int pow, bool actual)
     if (!actual)
         return pow > 40 || pow >= duration;
 
-    // TSO and Trog's abjuration protection.
+    // TSO and Trog, and the Legion's abjuration protection.
     bool shielded = false;
     if (have_passive(passive_t::abjuration_protection_hd))
     {
@@ -4255,6 +4255,15 @@ static int _monster_abjure_target(monster* target, int pow, bool actual)
         if (pow < duration)
         {
             simple_god_message(" shields your ally from puny magic!");
+            shielded = true;
+        }
+    }
+	if (have_passive(passive_t::abjuration_protection_legion))
+    {
+        pow = pow / ((3 + you.skill(SK_SUMMONINGS)) / 3);
+        if (pow < duration)
+        {
+            simple_god_message(" resists abjuration!");
             shielded = true;
         }
     }
@@ -7980,7 +7989,7 @@ static bool _ms_waste_of_time(monster* mon, mon_spell_slot slot)
         if (friendly && !_animate_dead_okay(monspell))
             return true;
 
-        if (mon->is_summoned() || mons_enslaved_soul(*mon))
+        if (mon->is_summoned())
             return true;
 
         return !twisted_resurrection(mon, 500, SAME_ATTITUDE(mon), mon->foe,

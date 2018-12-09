@@ -216,10 +216,7 @@ bool actor::res_corr(bool calc_unid, bool items) const
 
 bool actor::cloud_immune(bool calc_unid, bool items) const
 {
-    const item_def *body_armour = slot_item(EQ_BODY_ARMOUR);
-    return items && (wearing_ego(EQ_CLOAK, SPARM_CLOUD_IMMUNE, calc_unid)
-                     || (body_armour
-                        && is_unrandom_artefact(*body_armour, UNRAND_RCLOUDS)));
+    return items && (wearing_ego(EQ_CLOAK, SPARM_CLOUD_IMMUNE, calc_unid));
 }
 
 bool actor::holy_wrath_susceptible() const
@@ -562,9 +559,7 @@ void actor::stop_constricting_all(bool intentional, bool quiet)
 
 static bool _invalid_constricting_map_entry(const actor *constrictee)
 {
-    return !constrictee
-        || !constrictee->alive()
-        || !constrictee->is_constricted();
+    return !constrictee || !constrictee->is_constricted();
 }
 
 /**
@@ -628,8 +623,8 @@ bool actor::has_invalid_constrictor(bool move) const
     if (!is_constricted())
         return false;
 
-    const actor* const attacker = actor_by_mid(constricted_by, true);
-    if (!attacker || !attacker->alive())
+    const actor* const attacker = actor_by_mid(constricted_by);
+    if (!attacker)
         return true;
 
     // When the player is at the origin, they don't have the normal
@@ -671,7 +666,7 @@ void actor::clear_invalid_constrictions(bool move)
     vector<mid_t> need_cleared;
     for (const auto &entry : *constricting)
     {
-        const actor * const constrictee = actor_by_mid(entry.first, true);
+        const actor * const constrictee = actor_by_mid(entry.first);
         if (_invalid_constricting_map_entry(constrictee)
             || constrictee->has_invalid_constrictor())
         {
@@ -872,7 +867,7 @@ void actor::handle_constriction()
     {
         actor* const defender = actor_by_mid(i.first);
         const int duration = i.second;
-        if (defender && defender->alive())
+        if (defender)
             constriction_damage_defender(*defender, duration);
     }
 

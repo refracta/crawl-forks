@@ -131,10 +131,6 @@ Evoke Ratskin ability
 
 Summons up to two dungeon rats to serve their master for a brief time.
 %%%%
-Evoke Thunderclouds ability
-
-Create a mighty thunderclouds around the user.
-%%%%
 End Transformation ability
 
 Reverts you to your normal form.
@@ -363,9 +359,8 @@ Heals a creature other than yourself by a moderate amount, depending on
 Invocations skill. Using this ability on hostile monsters will try to turn them
 neutral. This works best on animals, and is less effective on humanoids and
 other intelligent creatures. Undead and demons are harder still to pacify.
-Ghosts of dead adventurers and demon lords are too wrathful to be pacified,
-mindless creatures are too unintelligent to be pacified, and no monster can be
-pacified while it is asleep.
+Mindless creatures cannot be pacified, and no monster can be pacified while it
+is asleep.
 
 Whether the pacification succeeds or not, the invested food, piety and magic
 points are lost. If it does succeed, the monster is healed and you gain half
@@ -560,6 +555,12 @@ take place gradually as you gain experience.
 End Transfer Knowledge ability
 
 Aborts an ongoing skill transfer.
+%%%%
+Omniscience ability
+
+Invokes omniscient vision to foresee a short future, allowing you to dodge everything
+and never miss everything. Unavoidable effects(such as explosion, torment...)
+will still affect you.
 %%%%
 # Dithmenos
 Shadow Step ability
@@ -867,3 +868,29 @@ Hop ability
 Hops toward a chosen destination, landing somewhere nearby. After using this
 ability, you will be unable to hop again until you have spent some time not
 moving. (Other actions, such as casting spells and attacking, are fine.)
+
+%%%%
+Positioning ability
+
+Order your minion to hold position instantly. Order again allow to move again.
+%%%%
+Beckoning Ally ability
+
+Order your minion to hurl back.
+%%%%
+Overload ability
+
+Order your all minions to overload their summoning energy, losing duration to 1/3
+but receive powerful reinforcement. If you are good at summoning, reinforcement
+will more powerful.
+%%%%
+Unleash ability
+
+Unleash the magical binding of minion to unsummon instantly, healing near minions
+with extra summoning energy. This healing only affects minions, without invoker.
+The amount of healing is up to unleashed minion's hit dice.
+%%%%
+Receive Grand Grimore ability
+
+Grants you the Grand Grimore, a spellbook containing how the mighty among summoners can
+bend to their will the terrible things from betwixt the planes.

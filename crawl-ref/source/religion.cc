@@ -263,6 +263,8 @@ const vector<god_power> god_powers[NUM_GODS] =
       { 5, ABIL_ASHENZARI_TRANSFER_KNOWLEDGE,
            "Ashenzari helps you to reconsider your skills.",
            "Ashenzari no longer helps you to reconsider your skills." },
+	  { 6, ABIL_ASHENZARI_OMNISCIENCE,
+           "invoke omniscient vision to foresee a short future" },
     },
 
     // Dithmenos
@@ -341,6 +343,20 @@ const vector<god_power> god_powers[NUM_GODS] =
       { 5, ABIL_WU_JIAN_HEAVENLY_STORM, "summon a storm of heavenly clouds to empower your attacks",
            "summon a storm of heavenly clouds" },
     },
+	
+	// Legion from beyond
+	{ { 0, "The Legion will resist abjuration." },
+	  { 1, ABIL_LEGION_POSITIONING, "order minions to hold position" },
+	  { 1, ABIL_LEGION_BECKONING_ALLY, "order minions to hurl back" },
+	  { 3, "The Legion will inspired by killing, based on summoning skill.",
+		   "The Leigon no longer inspired by killing." },
+	  { 4, ABIL_LEGION_OVERLOAD, "order minions to overload" },
+	  { 5, ABIL_LEGION_UNLEASH, "unleash minion's summoning energy, to heal other minion" },
+	  { 6, "The Legion will stand against arimes of hell, with protection from unholy torment and damnation.",
+		   "The Legion will no longer protect from unholy torment and damnation." },
+	  { 7, ABIL_LEGION_GIFT_GRANDGRIMORE, "The Legion will grant you the Grand Grimore... once.",
+		   "The Legion is no longer ready to grant knowledge of most powerful minions." },
+	},
 };
 
 vector<god_power> get_god_powers(god_type god)
@@ -1581,6 +1597,65 @@ static bool _handle_veh_gift(bool forced)
     return success;
 }
 
+static bool _gift_legion_gift(bool forced)
+{
+    bool success = false;
+    book_type gift = NUM_BOOKS;
+    // Break early if giving a gift now means it would be lost.
+    if (!feat_has_solid_floor(grd(you.pos())))
+        return false;
+
+    // The Legion gives the lesser Summoning books in a quick
+    // succession.
+    if (you_worship(GOD_LEGION_FROM_BEYOND))
+    {
+        if (you.piety >= piety_breakpoint(0)
+            && you.num_total_gifts[you.religion] == 0)
+        {
+            gift = BOOK_CALLINGS;
+        }
+        else if (you.piety >= piety_breakpoint(3)
+                 && you.num_total_gifts[you.religion] == 1)
+        {
+            gift = BOOK_SUMMONINGS;
+        }
+    }
+
+    if (gift != NUM_BOOKS)
+    {
+        int thing_created = items(true, OBJ_BOOKS, gift, 1, 0,
+                                  you.religion);
+        // Replace the Legion gift by a custom-random book.
+        if (you_worship(GOD_LEGION_FROM_BEYOND))
+        {
+            make_book_legion_gift(mitm[thing_created],
+                                gift == BOOK_CALLINGS);
+        }
+        if (thing_created == NON_ITEM)
+            return false;
+
+        move_item_to_grid(&thing_created, you.pos(), true);
+
+        if (thing_created != NON_ITEM)
+            success = true;
+    }
+
+    if (success)
+    {
+        simple_god_message(" grants you a gift!");
+        // included in default force_more_message
+
+        you.num_current_gifts[you.religion]++;
+        you.num_total_gifts[you.religion]++;
+        // Timeouts are meaningless for the Legion.
+        if (!you_worship(GOD_LEGION_FROM_BEYOND))
+            _inc_gift_timeout(40 + random2avg(19, 2));
+        take_note(Note(NOTE_GOD_GIFT, you.religion));
+    }
+
+    return success;
+}
+
 void mons_make_god_gift(monster& mon, god_type god)
 {
     const god_type acting_god =
@@ -2035,6 +2110,10 @@ bool do_god_gift(bool forced)
         case GOD_VEHUMET:
             success = _handle_veh_gift(forced);
             break;
+			
+		case GOD_LEGION_FROM_BEYOND:
+            success = _gift_legion_gift(forced);
+            break;
         }                       // switch (you.religion)
     }                           // End of gift giving.
 
@@ -2101,6 +2180,7 @@ string god_name(god_type which_god, bool long_name)
     case GOD_USKAYAW:       return "Uskayaw";
     case GOD_HEPLIAKLQANA:  return "Hepliaklqana";
     case GOD_WU_JIAN:     return "Wu Jian";
+	case GOD_LEGION_FROM_BEYOND:     return "Legion from beyond";
     case GOD_JIYVA: // This is handled at the beginning of the function
     case GOD_ECUMENICAL:    return "an unknown god";
     case NUM_GODS:          return "Buggy";
@@ -2656,6 +2736,7 @@ int initial_wrath_penance_for(god_type god)
         case GOD_JIYVA:
         case GOD_SHINING_ONE:
         case GOD_SIF_MUNA:
+		case GOD_LEGION_FROM_BEYOND:
         case GOD_YREDELEMNUL:
             return 30;
         case GOD_CHEIBRIADOS:
@@ -2865,6 +2946,7 @@ void excommunication(bool voluntary, god_type new_god)
             ashenzari_end_transfer(false, true);
         you.duration[DUR_SCRYING] = 0;
         you.xray_vision = false;
+		you.duration[DUR_OMNISCIENCE] = 0;
         you.exp_docked[old_god] = exp_needed(min<int>(you.max_level, 27) + 1)
                                   - exp_needed(min<int>(you.max_level, 27));
         you.exp_docked_total[old_god] = you.exp_docked[old_god];
@@ -2953,6 +3035,10 @@ void excommunication(bool voluntary, god_type new_god)
         _set_penance(old_god, 25);
         break;
 
+	case GOD_LEGION_FROM_BEYOND:
+        simple_god_message(" starts to lose control, releasing unbridled force!", old_god);
+        break;
+		
     default:
         break;
     }
@@ -3869,6 +3955,8 @@ bool god_likes_spell(spell_type spell, god_type god)
         return vehumet_supports_spell(spell);
     case GOD_KIKUBAAQUDGHA:
         return spell_typematch(spell, SPTYP_NECROMANCY);
+	case GOD_LEGION_FROM_BEYOND:
+        return spell_typematch(spell, SPTYP_SUMMONING);
     default: // quash unhandled constants warnings
         return false;
     }
@@ -4060,6 +4148,7 @@ void handle_god_time(int /*time_delta*/)
         case GOD_CHEIBRIADOS:
         case GOD_SIF_MUNA:
         case GOD_SHINING_ONE:
+		case GOD_LEGION_FROM_BEYOND:
         case GOD_NEMELEX_XOBEH:
             if (one_chance_in(35))
                 lose_piety(1);
@@ -4152,6 +4241,7 @@ int god_colour(god_type god) // mv - added
         return BROWN;
 
     case GOD_PAKELLAS:
+	case GOD_LEGION_FROM_BEYOND:
         return LIGHTGREEN;
 
     case GOD_NO_GOD:
@@ -4247,6 +4337,9 @@ colour_t god_message_altar_colour(god_type god)
 
     case GOD_HEPLIAKLQANA:
         return random_choose(LIGHTGREEN, LIGHTBLUE);
+		
+	case GOD_LEGION_FROM_BEYOND:
+		return LIGHTGREEN;
 
     default:
         return YELLOW;

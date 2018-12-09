@@ -563,6 +563,10 @@ static const duration_def duration_data[] =
       {{ "", []() {
           you.redraw_evasion = true;
       }}}},
+	{ DUR_OMNISCIENCE, LIGHTBLUE, "OmniV",
+      "omniscient vision", "",
+      "Your omniscient vision lets you avoid everything, never missing everything.", D_NO_FLAGS,
+      {{ "Your omniscient vision fades away." }}},
     // The following are visible in wizmode only, or are handled
     // specially in the status lights and/or the % or @ screens.
 

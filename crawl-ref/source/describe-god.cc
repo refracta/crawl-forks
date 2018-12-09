@@ -235,6 +235,10 @@ static const char *divine_title[][8] =
     // Wu Jian -- animal/chinese martial arts monk theme
     {"Wooden Rat",          "Young Dog",             "Young Crane",              "Young Tiger",
         "Young Dragon",     "Red Sash",               "Golden Sash",              "Sifu"},
+
+	// Legion from beyond -- pack leader/rome legion theme
+    {"Abandoned",          "Pactmaker",             "Pack-bringer",              "Leader",
+       "Decurion",     "Centurion",               "Legate",              "Imperator"},
 };
 COMPILE_CHECK(ARRAYSZ(divine_title) == NUM_GODS);
 
@@ -909,6 +913,11 @@ static formatted_string _describe_god_powers(god_type which_god)
         // hack: don't mention the necronomicon alone unless it
         // wasn't already mentioned by the other description
         if (power.abil == ABIL_KIKU_GIFT_NECRONOMICON
+            && you.species != SP_FELID)
+        {
+            continue;
+        }
+		if (power.abil == ABIL_LEGION_GIFT_GRANDGRIMORE
             && you.species != SP_FELID)
         {
             continue;

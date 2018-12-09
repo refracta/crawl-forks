@@ -510,6 +510,63 @@ static bool _blessing_healing(monster* mon)
     return false;
 }
 
+static bool _blessing_inspiring(monster* mon)
+{
+	switch (random2(8))
+    {
+    case 0:
+    case 1:
+	case 2:
+		{
+			simple_god_message(" inspire your minion to heal injuries!");
+		
+			// 10% of mhp healed at 0 skill, 40% at 27 skill.
+			const int healing = mon->max_hit_points
+                         * (9 + you.skill(SK_SUMMONINGS)) / 90;
+
+			if (mon->heal(healing))
+			{
+			if (mon->hit_points == mon->max_hit_points)
+            simple_monster_message(*mon, " is fully restored!");
+			else
+            simple_monster_message(*mon, " is healed somewhat.");
+			}
+		}
+		break;
+		
+    case 3:
+	case 4:
+		{
+			simple_god_message(" inspire your minion to become regenerate!");
+			const int duration = (you.skill(SK_SUMMONINGS) / 3) + 15;
+					mon->add_ench(mon_enchant(ENCH_REGENERATION, 0, &you,
+									duration * BASELINE_DELAY));
+		}
+		break;
+
+    case 5:
+	case 6:
+		{
+			simple_god_message(" inspire your minion to resistant from hostile enchantments!");
+			const int duration = (you.skill(SK_SUMMONINGS) / 3) + 15;
+					mon->add_ench(mon_enchant(ENCH_RAISED_MR, 0, &you,
+									duration * BASELINE_DELAY));
+		}
+		break;
+		
+	case 7:
+		{
+			simple_god_message(" inspire your minion to becom unusually resistant!");
+			const int duration = (you.skill(SK_SUMMONINGS) / 3) + 15;
+					mon->add_ench(mon_enchant(ENCH_RESISTANCE, 0, &you,
+									duration * BASELINE_DELAY));
+		}
+		break;
+    }
+
+    return false;
+}
+
 static bool _increase_ench_duration(monster* mon,
                                     mon_enchant ench,
                                     const int increase)
@@ -553,6 +610,27 @@ static bool _tso_blessing_friendliness(monster* mon)
     const int base_increase = 700;
     return _increase_ench_duration(mon, mon->get_ench(ENCH_CHARM),
                                    base_increase + random2(base_increase));
+}
+
+static bool _legion_blessing_extend_stay(monster* mon)
+{
+    if (!mon->has_ench(ENCH_ABJ))
+        return false;
+
+    mon_enchant abj = mon->get_ench(ENCH_ABJ);
+	return _increase_ench_duration(mon, abj, min(abj.duration,
+                                                     9 + random2(you.skill(SK_SUMMONINGS))));
+}
+
+static bool _legion_blessing_friendliness(monster* mon)
+{
+    if (!mon->has_ench(ENCH_CHARM))
+        return false;
+
+    // [ds] Just increase charm duration, no permanent friendliness.
+    const int base_increase = 18;
+    return _increase_ench_duration(mon, mon->get_ench(ENCH_CHARM),
+                                   base_increase + random2(you.skill(SK_SUMMONINGS)));
 }
 
 static void _beogh_reinf_callback(const mgen_data &mg, monster *&mon, int placed)
@@ -655,6 +733,46 @@ static string _bless_with_healing(monster* follower)
     }
     else
         dprf("Couldn't heal monster.");
+
+    return blessing;
+}
+
+/**
+ * Attempt to bless a follower with curing and/or inspiring.
+ *
+ * @param[in] follower      The follower to buff.
+ * @return                  The type of inspiring that occurred; may be empty.
+ */
+static string _legion_bless_buff(monster* follower)
+{
+    string blessing = "";
+
+    // Maybe try to cure status conditions.
+    bool balms = false;
+    if (coinflip())
+    {
+        balms = _blessing_balms(follower);
+        if (balms)
+            blessing = "divine balms";
+        else
+            dprf("Couldn't apply balms.");
+    }
+
+    // Heal or Buff the follower.
+    bool inspiring = _blessing_inspiring(follower);
+
+	// Maybe Heal or Buff the follower again.
+    if ((!inspiring || coinflip()) && _blessing_inspiring(follower))
+        inspiring = true;
+
+    if (inspiring)
+    {
+        if (balms)
+            blessing += " and ";
+        blessing += "inspiring";
+    }
+    else
+        dprf("Couldn't inspire monster.");
 
     return blessing;
 }
@@ -816,6 +934,74 @@ static bool _tso_bless_follower(monster* follower, bool force)
     return true;
 }
 
+/**
+ * Attempt to increase the duration of a follower, for legion.
+ *
+ * Their summon duration, if summoned, or charm duration, if charmed.
+ *
+ * @param[in] follower    The follower to bless.
+ * @return                The type of blessing that was given; may be empty.
+ */
+static string _legion_bless_duration(monster* follower)
+{
+    // Extend a monster's stay if it's abjurable, or extend charm
+    // duration. If neither is possible, deliberately fall through.
+    const bool more_time = _legion_blessing_extend_stay(follower);
+    const bool friendliness = _legion_blessing_friendliness(follower);
+
+    if (!more_time && !friendliness)
+    {
+        dprf("Couldn't increase monster's friendliness or summon time.");
+        return "";
+    }
+
+    string blessing = "";
+    if (friendliness)
+    {
+        blessing += "friendliness";
+        if (more_time)
+            blessing += " and ";
+    }
+
+    if (more_time)
+        blessing += "more time in this world";
+
+    return blessing;
+}
+
+/**
+ * Have The Legion attempt to bless the specified follower.
+ *
+ * Blessings can increase duration, or heal & cure.
+ *
+ * @param[in] follower      The follower to try to bless.
+ * @param[in] force         Whether to check follower validity.
+ * @return Whether a blessing occurred.
+ */
+static bool _legion_bless_follower(monster* follower, bool force)
+{
+
+    if (!follower || (!force && !is_follower(*follower)))
+        return false;
+
+    string blessing = "";
+	switch (random2(3))
+	{
+    case 0:
+	{
+        blessing = _legion_bless_buff(follower);
+	}
+	break;
+	
+    case 1:
+	case 2:
+	{
+        blessing = _legion_bless_duration(follower);
+	}
+	break;
+	}
+}
+
 static bool _is_friendly_follower(const monster& mon)
 {
     return mon.friendly() && is_follower(mon);
@@ -855,6 +1041,7 @@ bool bless_follower(monster* follower,
     {
         case GOD_BEOGH: return _beogh_bless_follower(follower, force);
         case GOD_SHINING_ONE:   return _tso_bless_follower(follower, force);
+		case GOD_LEGION_FROM_BEYOND:   return _legion_bless_follower(follower, force);
         default: return false; // XXX: print something here?
     }
 }

@@ -63,7 +63,7 @@ syn match desGod contained /ashenzari\|beogh\|cheibriados\|dithmenos\|elyvilon/
 syn match desGod contained /fedhas\|gozag\|hepliaklqana\|jiyva\|kikubaaqudgha/
 syn match desGod contained /lugonu\|makhleb\|nemelex_xobeh\|okawaru\|pakellas/
 syn match desGod contained /qazlal\|ru\|sif_muna\|trog\|uskayaw\|vehumet/
-syn match desGod contained /xom\|yredelemnul\|zin\|the_shining_one\|wu_jian/
+syn match desGod contained /xom\|yredelemnul\|zin\|the_shining_one\|wu_jian\|the_legion_from_beyond/
 
 syn keyword desDeclarator ORIENT: DEPTH: PLACE: MONS: FLAGS: default-depth:
 syn keyword desDeclarator TAGS: CHANCE: WEIGHT: ITEM: KFEAT: KMONS: KITEM:

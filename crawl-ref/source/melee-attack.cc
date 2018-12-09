@@ -2993,9 +2993,6 @@ void melee_attack::mons_apply_attack_flavour()
             }
             else
             {
-                // Halving the MR of magic immune targets has no effect
-                if (defender->as_monster()->res_magic() == MAG_IMMUNE)
-                    break;
                 if (!defender->as_monster()->has_ench(ENCH_LOWERED_MR))
                     visible_effect = true;
                 mon_enchant lowered_mr(ENCH_LOWERED_MR, 1, attacker,
@@ -3546,6 +3543,11 @@ int melee_attack::apply_damage_modifiers(int damage, int damage_max)
 
     if (as_mon->has_ench(ENCH_WEAK))
         damage = damage * 2 / 3;
+	
+	// For the legion, overloaded monsters get bonus damage based on summoning.
+	// bonus 10% of original damage at 0 skill, 40% at 27 skill.
+	if (as_mon->has_ench(ENCH_OVERLOAD))
+		damage = damage + (damage * (9 + you.skill(SK_SUMMONINGS)) / 90);
 
     // If the defender is asleep, the attacker gets a stab.
     if (defender && (defender->asleep()

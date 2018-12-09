@@ -250,6 +250,11 @@ int attack::calc_to_hit(bool random)
         return AUTOMATIC_HIT;
     }
 
+	if (attacker->is_player() && you.duration[DUR_OMNISCIENCE])
+    {
+        return AUTOMATIC_HIT;
+    }
+
     // If no defender, we're calculating to-hit for debug-display
     // purposes, so don't drop down to defender code below
     if (defender == nullptr)
@@ -998,10 +1003,14 @@ string attack_strength_punctuation(int dmg)
  */
 string attack::evasion_margin_adverb()
 {
-    return (ev_margin <= -20) ? " completely" :
-           (ev_margin <= -12) ? "" :
-           (ev_margin <= -6)  ? " closely"
-                              : " barely";
+    if (you.duration[DUR_OMNISCIENCE])
+        return " unnaturally";
+
+    else
+        return (ev_margin <= -20) ? " completely" :
+               (ev_margin <= -12) ? "" :
+               (ev_margin <= -6)  ? " closely"
+                                  : " barely";
 }
 
 void attack::stab_message()
@@ -1318,6 +1327,9 @@ int attack::test_hit(int to_land, int ev, bool randomise_ev)
         ev = random2avg(2*ev, 2);
     if (to_land >= AUTOMATIC_HIT)
         return true;
+	// Ashenzari's omniscience
+	if (defender->is_player() && you.duration[DUR_OMNISCIENCE])
+        margin = (margin * 0) - 20;
     else if (x_chance_in_y(MIN_HIT_MISS_PERCENTAGE, 100))
         margin = (random2(2) ? 1 : -1) * AUTOMATIC_HIT;
     else

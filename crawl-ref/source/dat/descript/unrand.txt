@@ -131,9 +131,8 @@ called Boris. He got lost in the Dungeon while seeking the Orb.
 %%%%
 scythe "Finisher"
 
-A long and exceedingly sharp scythe, capable of eviscerating in a single blow.
-Its extraordinary speed is the work of a mad wizard, who spent years refining
-it before discarding it in a fit of rage.
+A long and exceedingly sharp scythe. Its extraordinary speed is the work of a
+mad wizard, who spent years refining it before discarding it in a fit of rage.
 
 The blade looses a low keen as it cuts through the air.
 %%%%
@@ -485,8 +484,7 @@ devices. That, and a pony.
 %%%%
 robe of Clouds
 
-A robe of a material as nebulous and insubstantial as the clouds. The pleats
-and folds can be swirled into a furious storm.
+A robe of a material as flimsy and insubstantial as the clouds.
 %%%%
 hat of Pondering
 

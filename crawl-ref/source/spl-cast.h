@@ -47,6 +47,7 @@ enum spflag_type
                                                  // good gods
     SPFLAG_HOLY               = 0x40000000,      // considered holy (can't be
                                                  // used by Yred enslaved souls)
+	SPFLAG_NON_LEGION         = 0x80000000,      // make ally but not summoning spell
 };
 
 enum spret_type

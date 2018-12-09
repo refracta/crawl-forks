@@ -399,6 +399,8 @@ static void _equip_use_warning(const item_def& item)
         mpr("You really shouldn't be using a hasty item like this.");
     else if (is_channeling_item(item) && you_worship(GOD_PAKELLAS))
         mpr("You really shouldn't be trying to channel magic like this.");
+	else if (is_non_legion_item(item) && you_worship(GOD_LEGION_FROM_BEYOND))
+        mpr("You really shouldn't be using a non legion summoning like this");
 }
 
 static void _wield_cursed(item_def& item, bool known_cursed, bool unmeld)

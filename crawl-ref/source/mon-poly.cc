@@ -629,7 +629,6 @@ void seen_monster(monster* mons)
     set_auto_exclude(mons);
     set_unique_annotation(mons);
 
-    // id equipment (do this every time we see them, it may have changed)
     view_monster_equipment(mons);
 
     item_def* weapon = mons->weapon();
@@ -658,9 +657,6 @@ void seen_monster(monster* mons)
         }
         take_note(Note(NOTE_SEEN_MONSTER, mons->type, 0, name));
     }
-
-    // attempt any god conversions on first sight
-    do_conversions(mons);
 
     if (!(mons->flags & MF_TSO_SEEN))
     {

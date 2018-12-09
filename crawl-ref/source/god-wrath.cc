@@ -89,6 +89,7 @@ static const char *_god_wrath_adjectives[] =
     "fury",             // Uskayaw
     "memory",           // Hepliaklqana (unused)
     "rancor",           // Wu Jian
+	"unbridled force",	// Legion from beyond
 };
 COMPILE_CHECK(ARRAYSZ(_god_wrath_adjectives) == NUM_GODS);
 
@@ -1659,6 +1660,76 @@ static bool _wu_jian_retribution()
     return true;
 }
 
+static bool _legion_random_summoner(const int count, const int tier)
+{
+    monster_type mon_type = MONS_IRONBRAND_CONVOKER;
+    if (tier >= 2 && count == 0 && coinflip())
+        mon_type = MONS_GREATER_MUMMY;
+    else if (tier >= 1 && count < 3 && coinflip())
+        mon_type = MONS_HALAZID_WARLOCK;
+
+    return create_monster(_wrath_mon_data(mon_type, GOD_LEGION_FROM_BEYOND), false);
+}
+
+/**
+ * Call down the the Legion's unbridled force upon the player!
+ *
+ * Summoning theme.
+ *
+ * @return Whether to take further divine wrath actions afterward.
+ */
+static bool _legion_retribution()
+{
+    // summoning theme
+    const god_type god = GOD_LEGION_FROM_BEYOND;
+
+    switch (random2(2))
+    {
+		case 0:
+		{
+			int count = 0;
+			int how_many = 3 + random2avg(div_rand_round(you.experience_level, 3),
+										2);
+			const int tier = div_rand_round(you.experience_level, 9);
+			while (how_many-- > 0)
+			{
+				if (_legion_random_summoner(count, tier))
+					count++;
+			}
+			simple_god_message(count ? " calls another leaders of the Legion!"
+									: " fails to call another leaders of the Legion.",
+							god);
+			break;
+		}
+		case 1:
+		{
+			int count = 0;
+			int how_many = 2 + random2avg(div_rand_round(you.experience_level, 4),
+										4);
+			for (int i = 0; i < how_many; ++i)
+			{
+				if (create_monster(
+						mgen_data(
+							RANDOM_MOBILE_MONSTER, BEH_HOSTILE, you.pos(), MHITYOU,
+								MG_NONE, god)
+								.set_place(level_id(BRANCH_DUNGEON,
+													min(27,
+														you.experience_level + 5)))
+								.set_summoned(nullptr, 4, MON_SUMM_WRATH)
+								.set_non_actor_summoner(_god_wrath_name(god))))
+				{
+					count++;
+				}
+			}
+			simple_god_message(count ? " are poured on you!"
+									: " were temporarily suspended just this moment.",
+							god);
+			break;
+		}
+	}
+    return true;
+}
+
 static bool _uskayaw_retribution()
 {
     const god_type god = GOD_USKAYAW;
@@ -1745,6 +1816,7 @@ bool divine_retribution(god_type god, bool no_bonus, bool force)
     case GOD_QAZLAL:        do_more = _qazlal_retribution(); break;
     case GOD_USKAYAW:       do_more = _uskayaw_retribution(); break;
     case GOD_WU_JIAN:       do_more = _wu_jian_retribution(); break;
+	case GOD_LEGION_FROM_BEYOND:	do_more = _legion_retribution(); break;
 
     case GOD_ASHENZARI:
     case GOD_ELYVILON:

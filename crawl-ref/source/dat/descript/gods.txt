@@ -93,6 +93,15 @@ Kikubaaqudgha offers great assistance to the aspiring necromancer: spellbooks
 filled with dark magic, protection against necromantic backlash, and an endless
 supply of bodies taken from Kikubaaqudgha's vast mausoleum.
 %%%%
+Legion from beyond
+
+The Legion from beyond are a collection of unbridled forces that consist of
+innumerable beasts, spirits, demons, and monsters, exist at the boundary
+betwixt other planes. The minions of the Legion have no free will, and are
+faithful to only one purpose - instinct to follow the will of the leader.
+The Legion has been waiting for the leader to unleash them for a long time,
+and will faithfully answer the call of the pact that will lead them.
+%%%%
 Lugonu
 
 Banished to the chaotic realm of the Abyss, Lugonu the Unformed seeks followers
@@ -225,7 +234,8 @@ soon be granted the ability to scry through walls. Ashenzari will passively
 grant followers increased skills depending on how cursed they are by equipment
 associated with those skills, and will reveal the invisible and grant clarity
 of mind. The truly devout will gain the ability to transfer a portion of their
-knowledge from one skill to another.
+knowledge from one skill to another. When you became the omniscient who can
+invokes ashenzari's foresight, will foresee a short future.
 %%%%
 Beogh powers
 
@@ -335,6 +345,16 @@ effects of necromantic miscasts, and may even shield them from unholy torment.
 Especially fervent followers may invoke torment themselves by sacrificing a
 cadaver, and Kikubaaqudgha will eventually allow followers to either receive
 the Necronomicon, or to have their weapon imbued with pain.
+%%%%
+Legion from beyond powers
+
+The Legion from beyond will assist your summoning to call minions of the legion,
+with gifts of spellbooks and resistance from abjuration. In combat, minions
+are inspired from killing to recover their injuries or receive temporary reinforcement.
+Also you can manage postion of minions, or begin overload their summoning energy,
+and unleash them with healing blast. In the end, the Legion will grants
+the Grand Grimore to help you summon the most powerful minions of the Legion,
+and they will stand against armies of hell with protection from unholy torment and damnation.
 %%%%
 Lugonu powers
 
@@ -572,6 +592,14 @@ into the Abyss. Lugonu also reaches out and sends the chaotic inhabitants of
 the Abyss against victims, with veteran adventurers facing the greatest horrors
 of the Abyss. Lugonu does not forgive easily, and will not allow ex-worshippers
 to rejoin the fold while Lugonu's wrath still lasts.
+%%%%
+Legion from beyond wrath
+
+When the leader of the Legion abandon them, the Legion's minions such as beast,
+spirt, demon and holies, dragon, and all kinds of minions will be out of control
+and start breaching into dungeon. The unbridled force of the Legion will interrupt
+their old leader to unstablize summoning spells horribly, and other leader of the
+Legion with powerful summoning spell will arrive to pinish you.
 %%%%
 Makhleb wrath
 

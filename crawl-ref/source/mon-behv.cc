@@ -280,8 +280,8 @@ void handle_behaviour(monster* mon)
     //     mon->mindex(), mon->behaviour, mon->foe, mon->pos().x,
     //     mon->pos().y, mon->target.x, mon->target.y);
 
-    // Check for permanent confusion, early out.
-    if (mons_class_flag(mon->type, M_CONFUSED))
+    // Check for confusion -- early out.
+    if (mon->has_ench(ENCH_CONFUSION))
     {
         set_random_target(mon);
         return;

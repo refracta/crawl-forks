@@ -425,6 +425,15 @@ static const vector<god_passive> god_passives[] =
         { 1, passive_t::wu_jian_whirlwind, "lightly attack and pin monsters in place by moving around them." },
         { 2, passive_t::wu_jian_wall_jump, "perform airborne attacks by moving against a solid obstacle." },
     },
+	
+	// Legion from beyond
+    {
+        { 0, passive_t::abjuration_protection_legion,
+              "GOD NOW resist abjuration"},
+		{ 3, passive_t::bless_followers_legion, "GOD NOW inspired by killing, based on summoning skill" },
+        { 6, passive_t::legion_shield,
+              "GOD NOW will stand against arimes of hell, with protection from unholy torment and damnation" },
+    },
 };
 COMPILE_CHECK(ARRAYSZ(god_passives) == NUM_GODS);
 
@@ -1240,7 +1249,7 @@ bool does_ru_wanna_redirect(monster* mon)
 {
     return have_passive(passive_t::aura_of_power)
             && !mon->friendly()
-            && you.see_cell_no_trans(mon->pos())
+            && you.see_cell(mon->pos())
             && !mons_is_firewood(*mon)
             && !mon->submerged()
             && !mons_is_projectile(mon->type);

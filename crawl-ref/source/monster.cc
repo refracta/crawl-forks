@@ -32,6 +32,7 @@
 #include "god-abil.h"
 #include "god-conduct.h"
 #include "god-item.h"
+#include "god-passive.h"
 #include "item-name.h"
 #include "item-prop.h"
 #include "item-status-flag-type.h"
@@ -804,76 +805,81 @@ bool monster::likes_wand(const item_def &item) const
     return wand_charge_value(item.sub_type) + get_hit_dice() * 6 <= 72;
 }
 
-void monster::equip_weapon_message(item_def &item)
+void monster::equip_weapon(item_def &item, bool msg)
 {
-    const string str = " wields " +
-                       item.name(DESC_A, false, false, true, false,
-                                 ISFLAG_CURSED) + ".";
-    simple_monster_message(*this, str.c_str());
+    if (msg)
+    {
+        const string str = " wields " +
+                           item.name(DESC_A, false, false, true, false,
+                                     ISFLAG_CURSED) + ".";
+        msg = simple_monster_message(*this, str.c_str());
+    }
 
     const int brand = get_weapon_brand(item);
-
-    bool message_given = true;
-    switch (brand)
+    if (msg)
     {
-    case SPWPN_FLAMING:
-        mpr("It bursts into flame!");
-        break;
-    case SPWPN_FREEZING:
-        mpr(is_range_weapon(item) ? "It is covered in frost."
-                                  : "It glows with a cold blue light!");
-        break;
-    case SPWPN_HOLY_WRATH:
-        mpr("It softly glows with a divine radiance!");
-        break;
-    case SPWPN_ELECTROCUTION:
-        mprf(MSGCH_SOUND, "You hear the crackle of electricity.");
-        break;
-    case SPWPN_VENOM:
-        mpr("It begins to drip with poison!");
-        break;
-    case SPWPN_DRAINING:
-        mpr("You sense an unholy aura.");
-        break;
-    case SPWPN_DISTORTION:
-        mpr("Its appearance distorts for a moment.");
-        break;
-    case SPWPN_CHAOS:
-        mpr("It is briefly surrounded by a scintillating aura of "
-            "random colours.");
-        break;
-    case SPWPN_PENETRATION:
-    {
-        bool plural = true;
-        string hand = hand_name(true, &plural);
-        mprf("%s %s briefly %s through it before %s manages to get a "
-             "firm grip on it.",
-             pronoun(PRONOUN_POSSESSIVE).c_str(),
-             hand.c_str(),
-             // Not conj_verb: the monster isn't the subject.
-             conjugate_verb("pass", plural).c_str(),
-             pronoun(PRONOUN_SUBJECTIVE).c_str());
-    }
-        break;
-    case SPWPN_REAPING:
-        mpr("It is briefly surrounded by shifting shadows.");
-        break;
-    case SPWPN_ACID:
-        mprf("It begins to drip corrosive slime!");
-        break;
+        bool message_given = true;
+        switch (brand)
+        {
+        case SPWPN_FLAMING:
+            mpr("It bursts into flame!");
+            break;
+        case SPWPN_FREEZING:
+            mpr(is_range_weapon(item) ? "It is covered in frost."
+                                      : "It glows with a cold blue light!");
+            break;
+        case SPWPN_HOLY_WRATH:
+            mpr("It softly glows with a divine radiance!");
+            break;
+        case SPWPN_ELECTROCUTION:
+            mprf(MSGCH_SOUND, "You hear the crackle of electricity.");
+            break;
+        case SPWPN_VENOM:
+            mpr("It begins to drip with poison!");
+            break;
+        case SPWPN_DRAINING:
+            mpr("You sense an unholy aura.");
+            break;
+        case SPWPN_DISTORTION:
+            mpr("Its appearance distorts for a moment.");
+            break;
+        case SPWPN_CHAOS:
+            mpr("It is briefly surrounded by a scintillating aura of "
+                "random colours.");
+            break;
+        case SPWPN_PENETRATION:
+        {
+            bool plural = true;
+            string hand = hand_name(true, &plural);
+            mprf("%s %s briefly %s through it before %s manages to get a "
+                 "firm grip on it.",
+                 pronoun(PRONOUN_POSSESSIVE).c_str(),
+                 hand.c_str(),
+                 // Not conj_verb: the monster isn't the subject.
+                 conjugate_verb("pass", plural).c_str(),
+                 pronoun(PRONOUN_SUBJECTIVE).c_str());
+        }
+            break;
+        case SPWPN_REAPING:
+            mpr("It is briefly surrounded by shifting shadows.");
+            break;
+        case SPWPN_ACID:
+            mprf("It begins to drip corrosive slime!");
+            break;
 
-    default:
-        // A ranged weapon without special message is known to be unbranded.
-        if (brand != SPWPN_NORMAL || !is_range_weapon(item))
-            message_given = false;
-    }
+        default:
+            // A ranged weapon without special message is known to be unbranded.
+            if (brand != SPWPN_NORMAL || !is_range_weapon(item))
+                message_given = false;
+        }
 
-    if (message_given)
-    {
-        if (is_artefact(item) && !is_unrandom_artefact(item))
-            artefact_learn_prop(item, ARTP_BRAND);
-        else
-            set_ident_flags(item, ISFLAG_KNOW_TYPE);
+        if (message_given)
+        {
+            if (is_artefact(item) && !is_unrandom_artefact(item))
+                artefact_learn_prop(item, ARTP_BRAND);
+            else
+                set_ident_flags(item, ISFLAG_KNOW_TYPE);
+        }
     }
 }
 
@@ -900,37 +906,43 @@ int monster::armour_bonus(const item_def &item, bool calc_unid) const
     return armour_ac + armour_plus;
 }
 
-void monster::equip_armour_message(item_def &item)
+void monster::equip_armour(item_def &item, bool msg)
 {
-    const string str = " wears " +
-                       item.name(DESC_A) + ".";
-    simple_monster_message(*this, str.c_str());
+    if (msg)
+    {
+        const string str = " wears " +
+                           item.name(DESC_A) + ".";
+        simple_monster_message(*this, str.c_str());
+    }
 }
 
-void monster::equip_jewellery_message(item_def &item)
+void monster::equip_jewellery(item_def &item, bool msg)
 {
     ASSERT(item.base_type == OBJ_JEWELLERY);
 
-    const string str = " puts on " +
-                       item.name(DESC_A) + ".";
-    simple_monster_message(*this, str.c_str());
+    if (msg)
+    {
+        const string str = " puts on " +
+                           item.name(DESC_A) + ".";
+        simple_monster_message(*this, str.c_str());
+    }
 }
 
-void monster::equip_message(item_def &item)
+void monster::equip(item_def &item, bool msg)
 {
     switch (item.base_type)
     {
     case OBJ_WEAPONS:
     case OBJ_STAVES:
-        equip_weapon_message(item);
+        equip_weapon(item, msg);
         break;
 
     case OBJ_ARMOUR:
-        equip_armour_message(item);
+        equip_armour(item, msg);
         break;
 
     case OBJ_JEWELLERY:
-        equip_jewellery_message(item);
+        equip_jewellery(item, msg);
     break;
 
     default:
@@ -1156,8 +1168,7 @@ bool monster::pickup(item_def &item, mon_inv_type slot, bool msg)
             merge_item_stacks(item, dest);
             inc_mitm_item_quantity(inv[slot], item.quantity);
             destroy_item(item.index());
-            if (msg)
-                equip_message(item);
+            equip(item, msg);
             lose_pickup_energy();
             return true;
         }
@@ -1181,10 +1192,8 @@ bool monster::pickup(item_def &item, mon_inv_type slot, bool msg)
     item.set_holding_monster(*this);
 
     if (msg)
-    {
         pickup_message(item);
-        equip_message(item);
-    }
+    equip(item, msg);
     lose_pickup_energy();
     return true;
 }
@@ -1236,8 +1245,8 @@ bool monster::drop_item(mon_inv_type eslot, bool msg)
         if (!move_item_to_grid(&item_index, pos(), swimming()))
         {
             // Re-equip item if we somehow failed to drop it.
-            if (was_unequipped && msg)
-                equip_message(pitem);
+            if (was_unequipped)
+                equip(pitem, msg);
 
             return false;
         }
@@ -2143,8 +2152,8 @@ void monster::swap_weapons(maybe_bool maybe_msg)
 
     swap(inv[MSLOT_WEAPON], inv[MSLOT_ALT_WEAPON]);
 
-    if (alt && msg)
-        equip_message(*alt);
+    if (alt)
+        equip(*alt, msg);
 
     // Monsters can swap weapons really fast. :-)
     if ((weap || alt) && speed_increment >= 2)
@@ -3014,7 +3023,7 @@ bool monster::cannot_act() const
 
 bool monster::cannot_move() const
 {
-    return cannot_act() || has_ench(ENCH_WHIRLWIND_PINNED);
+    return cannot_act() || has_ench(ENCH_WHIRLWIND_PINNED) || has_ench(ENCH_HOLD_POSITION);
 }
 
 bool monster::asleep() const
@@ -3706,7 +3715,8 @@ bool monster::is_insubstantial() const
 /// Is this monster completely immune to Damnation-flavoured damage?
 bool monster::res_damnation() const
 {
-    return get_mons_resist(*this, MR_RES_DAMNATION);
+    return friendly() && have_passive(passive_t::legion_shield)
+           || get_mons_resist(*this, MR_RES_DAMNATION) > 0;
 }
 
 int monster::res_fire() const
@@ -5724,6 +5734,10 @@ int monster::action_energy(energy_use_type et) const
     if (floundering())
         move_cost += 6;
 
+	// For the legion, overloaded minion will move faster based on summoning skill.
+	if (has_ench(ENCH_OVERLOAD))
+        move_cost -= (you.skill(SK_SUMMONINGS) / 9);
+	
     // Never reduce the cost to zero
     return max(move_cost, 1);
 }
@@ -6429,8 +6443,7 @@ item_def* monster::take_item(int steal_what, mon_inv_type mslot,
     inv[mslot] = index;
     new_item.set_holding_monster(*this);
 
-    if (mslot != MSLOT_ALT_WEAPON || mons_wields_two_weapons(*this))
-        equip_message(new_item);
+    equip(new_item, true);
 
     // Item is gone from player's inventory.
     dec_inv_item_quantity(steal_what, new_item.quantity);
@@ -6628,7 +6641,7 @@ bool monster::is_jumpy() const
 }
 
 // HD for spellcasting purposes.
-// Currently only used for Aura of Brilliance and Hep ancestors.
+// Currently only used for Aura of Brilliance and Hep ancestors, or the Legion.
 int monster::spell_hd(spell_type spell) const
 {
     int hd = get_hit_dice();
@@ -6638,6 +6651,8 @@ int monster::spell_hd(spell_type spell) const
         hd *= 2;
     if (has_ench(ENCH_EMPOWERED_SPELLS))
         hd += 5;
+	if (has_ench(ENCH_OVERLOAD))
+        hd += hd * (9 + you.skill(SK_SUMMONINGS) / 90);
     return hd;
 }
 

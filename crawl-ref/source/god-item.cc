@@ -361,6 +361,52 @@ bool is_channeling_item(const item_def& item, bool calc_unid)
               && item.sub_type == MISC_CRYSTAL_BALL_OF_ENERGY;
 }
 
+bool is_non_legion_item(const item_def& item, bool calc_unid)
+{
+    bool retval = false;
+
+    if (item.base_type == OBJ_WEAPONS
+        && (calc_unid || item_brand_known(item))
+        && get_weapon_brand(item) == SPWPN_REAPING)
+    {
+        return true;
+    }
+	
+	if (is_unrandom_artefact(item, UNRAND_ASMODEUS)
+		|| is_unrandom_artefact(item, UNRAND_RATSKIN_CLOAK)
+		|| is_unrandom_artefact(item, UNRAND_DEMON_AXE)
+		|| is_unrandom_artefact(item, UNRAND_CURSES))
+        return true;
+
+    if (!calc_unid && !item_type_known(item))
+        return false;
+
+    switch (item.base_type)
+    {
+	case OBJ_WANDS:
+        retval = (item.sub_type == WAND_ENSLAVEMENT);
+        break;
+    case OBJ_BOOKS:
+        retval = _is_book_type(item, is_non_legion_spell);
+        break;
+	case OBJ_SCROLLS:
+		retval = (item.sub_type == SCR_SUMMONING);
+		break;
+	case OBJ_MISCELLANY:
+        retval = (item.sub_type == MISC_BOX_OF_BEASTS
+				  || item.sub_type == MISC_HORN_OF_GERYON
+				  || item.sub_type == MISC_LAMP_OF_FIRE
+				  || item.sub_type == MISC_PHIAL_OF_FLOODS
+				  || item.sub_type == MISC_SACK_OF_SPIDERS
+				  || item.sub_type == MISC_PHANTOM_MIRROR);
+        break;
+    default:
+        break;
+    }
+
+    return retval;
+}
+
 bool is_corpse_violating_spell(spell_type spell)
 {
     unsigned int flags = get_spell_flags(spell);
@@ -406,6 +452,13 @@ bool is_hasty_spell(spell_type spell)
     return bool(flags & SPFLAG_HASTY);
 }
 
+bool is_non_legion_spell(spell_type spell)
+{
+    unsigned int flags = get_spell_flags(spell);
+
+    return bool(flags & SPFLAG_NON_LEGION);
+}
+
 /**
  * What conducts can one violate using this item?
  * This should only be based on the player's knowledge.
@@ -449,6 +502,9 @@ vector<conduct_type> item_conducts(const item_def &item)
 
     if (is_potentially_evil_item(item, false))
         conducts.push_back(DID_EVIL);
+	
+	if (is_non_legion_item(item, false))
+        conducts.push_back(DID_NON_LEGION);
 
     return conducts;
 }

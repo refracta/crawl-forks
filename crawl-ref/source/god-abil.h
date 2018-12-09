@@ -195,3 +195,7 @@ bool wu_jian_can_wall_jump_in_principle(const coord_def& target);
 bool wu_jian_can_wall_jump(const coord_def& target, string &error_ret);
 bool wu_jian_do_wall_jump(coord_def targ, bool ability);
 spret_type wu_jian_wall_jump_ability();
+
+bool legion_gift_grand_grimore();
+
+void ashenzari_omniscience();

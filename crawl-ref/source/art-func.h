@@ -214,28 +214,6 @@ static bool _DISPATER_evoke(item_def *item, bool* did_work, bool* unevokable)
 
 ////////////////////////////////////////////////////
 
-static void _FINISHER_melee_effects(item_def* weapon, actor* attacker,
-                                  actor* defender, bool mondied, int dam)
-{
-    // Can't kill a monster that's already dead.
-    // Can't kill a monster if we don't do damage.
-    // Don't insta-kill the player
-    if (mondied || dam == 0 || defender->is_player())
-        return;
-
-    // Chance to insta-kill based on HD. From 1/4 for small HD popcorn down to
-    // 1/10 for an Orb of Fire (compare to the 3/20 chance for banish or
-    // instant teleport on distortion).
-    if (x_chance_in_y(50 - defender->get_hit_dice(), 200))
-    {
-        monster* mons = defender->as_monster();
-        mons->flags |= MF_EXPLODE_KILL;
-        mons->hurt(attacker, INSTANT_DEATH);
-    }
-}
-
-////////////////////////////////////////////////////
-
 // XXX: Staff giving a boost to poison spells is hardcoded in
 // player_spec_poison()
 
@@ -554,6 +532,18 @@ static void _ZONGULDROK_melee_effects(item_def* weapon, actor* attacker,
 
 ///////////////////////////////////////////////////
 
+static void _STORM_BOW_world_reacts(item_def *item)
+{
+    if (!one_chance_in(300))
+        return;
+
+    for (radius_iterator ri(you.pos(), 2, C_SQUARE, LOS_SOLID); ri; ++ri)
+        if (!cell_is_solid(*ri) && !cloud_at(*ri) && one_chance_in(5))
+            place_cloud(CLOUD_RAIN, *ri, random2(20), &you, 3);
+}
+
+///////////////////////////////////////////////////
+
 static void _GONG_melee_effects(item_def* item, actor* wearer,
                                 actor* attacker, bool dummy, int dam)
 {
@@ -566,6 +556,26 @@ static void _GONG_melee_effects(item_def* item, actor* wearer,
     mprf(MSGCH_SOUND, "%s", msg.c_str());
 
     noisy(40, wearer->pos());
+}
+
+///////////////////////////////////////////////////
+
+static void _RCLOUDS_world_reacts(item_def *item)
+{
+    cloud_type cloud;
+    if (one_chance_in(4))
+        cloud = CLOUD_RAIN;
+    else
+        cloud = CLOUD_MIST;
+
+    for (radius_iterator ri(you.pos(), 2, C_SQUARE, LOS_SOLID); ri; ++ri)
+        if (!cell_is_solid(*ri) && !cloud_at(*ri) && one_chance_in(20))
+            place_cloud(cloud, *ri, random2(10), &you, 1);
+}
+
+static void _RCLOUDS_equip(item_def *item, bool *show_msgs, bool unmeld)
+{
+    _equip_mpr(show_msgs, "A thin mist springs up around you!");
 }
 
 ///////////////////////////////////////////////////

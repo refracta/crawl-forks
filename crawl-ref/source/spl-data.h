@@ -624,7 +624,8 @@ static const struct spell_desc spelldata[] =
 {
     SPELL_ANIMATE_DEAD, "Animate Dead",
     SPTYP_NECROMANCY,
-    SPFLAG_AREA | SPFLAG_NEUTRAL | SPFLAG_CORPSE_VIOLATING | SPFLAG_UTILITY,
+    SPFLAG_AREA | SPFLAG_NEUTRAL | SPFLAG_CORPSE_VIOLATING | SPFLAG_NON_LEGION
+		| SPFLAG_UTILITY,
     4,
     0,
     -1, -1,
@@ -659,7 +660,7 @@ static const struct spell_desc spelldata[] =
 {
     SPELL_ANIMATE_SKELETON, "Animate Skeleton",
     SPTYP_NECROMANCY,
-    SPFLAG_CORPSE_VIOLATING | SPFLAG_UTILITY,
+    SPFLAG_CORPSE_VIOLATING | SPFLAG_UTILITY | SPFLAG_NON_LEGION,
     1,
     0,
     -1, -1,
@@ -923,7 +924,7 @@ static const struct spell_desc spelldata[] =
     SPELL_TUKIMAS_DANCE, "Tukima's Dance",
     SPTYP_HEXES,
     SPFLAG_DIR_OR_TARGET | SPFLAG_NEEDS_TRACER | SPFLAG_MR_CHECK
-        | SPFLAG_NOT_SELF,
+        | SPFLAG_NOT_SELF | SPFLAG_NON_LEGION,
     3,
     100,
     LOS_RADIUS, LOS_RADIUS,
@@ -1241,7 +1242,7 @@ static const struct spell_desc spelldata[] =
 {
     SPELL_DEATH_CHANNEL, "Death Channel",
     SPTYP_NECROMANCY,
-    SPFLAG_HELPFUL | SPFLAG_UTILITY,
+    SPFLAG_NON_LEGION | SPFLAG_HELPFUL | SPFLAG_UTILITY,
     6,
     200,
     -1, -1,
@@ -1364,7 +1365,7 @@ static const struct spell_desc spelldata[] =
 {
     SPELL_STICKS_TO_SNAKES, "Sticks to Snakes",
     SPTYP_TRANSMUTATION,
-    SPFLAG_NO_GHOST,
+    SPFLAG_NO_GHOST | SPFLAG_NON_LEGION,
     2,
     100,
     -1, -1,
@@ -1592,7 +1593,7 @@ static const struct spell_desc spelldata[] =
 {
     SPELL_SIMULACRUM, "Simulacrum",
     SPTYP_ICE | SPTYP_NECROMANCY,
-    SPFLAG_CORPSE_VIOLATING,
+    SPFLAG_CORPSE_VIOLATING | SPFLAG_NON_LEGION,
     6,
     200,
     -1, -1,
@@ -2582,7 +2583,7 @@ static const struct spell_desc spelldata[] =
 {
     SPELL_BATTLESPHERE, "Iskenderun's Battlesphere",
     SPTYP_CONJURATION | SPTYP_CHARMS,
-    SPFLAG_UTILITY,
+    SPFLAG_NON_LEGION |SPFLAG_UTILITY,
     5,
     100,
     -1, -1,
@@ -2879,7 +2880,7 @@ static const struct spell_desc spelldata[] =
 {
     SPELL_SPECTRAL_WEAPON, "Spectral Weapon",
     SPTYP_HEXES | SPTYP_CHARMS,
-    SPFLAG_SELFENCH | SPFLAG_UTILITY | SPFLAG_NO_GHOST,
+    SPFLAG_NON_LEGION | SPFLAG_SELFENCH | SPFLAG_UTILITY | SPFLAG_NO_GHOST,
     3,
     100,
     -1, -1,
@@ -3815,7 +3816,7 @@ static const struct spell_desc spelldata[] =
 {
     SPELL_INFESTATION, "Infestation",
     SPTYP_NECROMANCY,
-    SPFLAG_TARGET | SPFLAG_UNCLEAN,
+    SPFLAG_NON_LEGION | SPFLAG_TARGET | SPFLAG_UNCLEAN,
     8,
     200,
     LOS_RADIUS, LOS_RADIUS,

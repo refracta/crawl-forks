@@ -103,6 +103,8 @@ bool handle_seen_interrupt(monster* mons, vector<string>* msgs_buf)
     if (!mons_is_safe(mons))
         return interrupt_activity(AI_SEE_MONSTER, aid, msgs_buf);
 
+    seen_monster(mons);
+
     return false;
 }
 
@@ -494,13 +496,6 @@ void update_monsters_in_view()
             mi->seen_context = SC_NONE;
         }
     }
-
-    // Summoners may have lost their summons upon seeing us and converting
-    // leaving invalid monsters in this vector.
-    monsters.erase(
-        std::remove_if(monsters.begin(), monsters.end(),
-            [](const monster * m) { return !m->alive(); }),
-        monsters.end());
 
     if (!msgs.empty())
     {

@@ -131,10 +131,6 @@ static inline bool _mons_natural_regen_roll(monster* mons)
 // Do natural regeneration for monster.
 static void _monster_regenerate(monster* mons)
 {
-    // Early bailout so that regen-based triggers don't get spammed
-    if (mons->hit_points == mons->max_hit_points)
-        return;
-
     if (crawl_state.disables[DIS_MON_REGEN])
         return;
 
@@ -156,12 +152,6 @@ static void _monster_regenerate(monster* mons)
         || _mons_natural_regen_roll(mons))
     {
         mons->heal(1);
-    }
-
-    if (mons_is_hepliaklqana_ancestor(mons->type))
-    {
-        if (mons->hit_points == mons->max_hit_points && you.can_see(*mons))
-            interrupt_activity(AI_ANCESTOR_HP);
     }
 }
 
@@ -283,9 +273,9 @@ static void _swim_or_move_energy(monster& mon)
                      && mon.ground_level()) ? EUT_SWIM : EUT_MOVE);
 }
 
-static bool _unfriendly_or_impaired(const monster& mon)
+static bool _unfriendly_or_insane(const monster& mon)
 {
-    return !mon.wont_attack() || mon.has_ench(ENCH_INSANE) || mon.confused();
+    return !mon.wont_attack() || mon.has_ench(ENCH_INSANE);
 }
 
 // Check up to eight grids in the given direction for whether there's a
@@ -310,7 +300,7 @@ static bool _ranged_allied_monster_in_dir(monster* mon, coord_def p)
         {
             // Hostile monsters of normal intelligence only move aside for
             // monsters of the same type.
-            if (_unfriendly_or_impaired(*mon)
+            if (_unfriendly_or_insane(*mon)
                 && mons_genus(mon->type) != mons_genus(ally->type))
             {
                 return false;
@@ -345,7 +335,7 @@ static bool _allied_monster_at(monster* mon, coord_def a, coord_def b,
 
         // Hostile monsters of normal intelligence only move aside for
         // monsters of the same genus.
-        if (_unfriendly_or_impaired(*mon)
+        if (_unfriendly_or_insane(*mon)
             && mons_genus(mon->type) != mons_genus(ally->type))
         {
             continue;
@@ -628,7 +618,7 @@ static void _handle_movement(monster* mons)
                 && (_allied_monster_at(mons, coord_def(-mmov.x, -1),
                                        coord_def(-mmov.x, 0),
                                        coord_def(-mmov.x, 1))
-                    || !mons->wont_attack()
+                    || _unfriendly_or_insane(*mons)
                        && _ranged_allied_monster_in_dir(mons,
                                                         coord_def(-mmov.x, 0))))
             {
@@ -645,7 +635,7 @@ static void _handle_movement(monster* mons)
                 && (_allied_monster_at(mons, coord_def(-1, -mmov.y),
                                        coord_def(0, -mmov.y),
                                        coord_def(1, -mmov.y))
-                    || !mons->wont_attack()
+                    || _unfriendly_or_insane(*mons)
                        && _ranged_allied_monster_in_dir(mons,
                                                         coord_def(0, -mmov.y))))
             {
@@ -663,7 +653,7 @@ static void _handle_movement(monster* mons)
                     && (_allied_monster_at(mons, coord_def(-mmov.x, -1),
                                            coord_def(-mmov.x, 0),
                                            coord_def(-mmov.x, 1))
-                        ||  !mons->wont_attack()
+                        ||  _unfriendly_or_insane(*mons)
                            && _ranged_allied_monster_in_dir(mons,
                                                 coord_def(-mmov.x, -mmov.y))))
                 {
@@ -674,7 +664,7 @@ static void _handle_movement(monster* mons)
                      && (_allied_monster_at(mons, coord_def(-1, -mmov.y),
                                             coord_def(0, -mmov.y),
                                             coord_def(1, -mmov.y))
-                         || !mons->wont_attack()
+                         || _unfriendly_or_insane(*mons)
                             && _ranged_allied_monster_in_dir(mons,
                                                 coord_def(-mmov.x, -mmov.y))))
             {
@@ -915,19 +905,24 @@ static bool _handle_reaching(monster* mons)
     const reach_type range = mons->reach_range();
     actor *foe = mons->get_foe();
 
-    if (mons->caught()
-        || mons_is_confused(*mons)
-        || !foe
-        || range <= REACH_NONE
-        || is_sanctuary(mons->pos())
-        || is_sanctuary(foe->pos())
-        || mons->submerged()
-        || (mons_aligned(mons, foe) && !mons->has_ench(ENCH_INSANE))
-        || (mons_is_fleeing(*mons)
-        || mons->pacified()))
-    {
+    if (mons->caught())
         return false;
-    }
+
+    if (!foe || range <= REACH_NONE)
+        return false;
+
+    if (is_sanctuary(mons->pos()) || is_sanctuary(foe->pos()))
+        return false;
+
+    if (mons->submerged())
+        return false;
+
+    if (mons_aligned(mons, foe) && !mons->has_ench(ENCH_INSANE))
+        return false;
+
+    // Don't stop to jab at things while fleeing or leaving the level
+    if ((mons_is_fleeing(*mons) || mons->pacified()))
+        return false;
 
     const coord_def foepos(foe->pos());
     const coord_def delta(foepos - mons->pos());
@@ -1185,8 +1180,7 @@ bool handle_throw(monster* mons, bolt & beem, bool teleport, bool check_only)
     // Yes, there is a logic to this ordering {dlb}:
     if (mons->incapacitated()
         || mons->submerged()
-        || mons->caught()
-        || mons_is_confused(*mons))
+        || mons->caught())
     {
         return false;
     }
@@ -1541,7 +1535,7 @@ void handle_monster_move(monster* mons)
         return;
 
     const bool disabled = crawl_state.disables[DIS_MON_ACT]
-                          && _unfriendly_or_impaired(*mons);
+                          && _unfriendly_or_insane(*mons);
 
     int old_energy      = mons->speed_increment;
     int non_move_energy = min(entry->energy_usage.move,
@@ -1771,12 +1765,32 @@ void handle_monster_move(monster* mons)
         // Calculates mmov based on monster target.
         _handle_movement(mons);
 
-        // Confused monsters sometimes stumble about instead of moving with
-        // purpose.
-        if (mons_is_confused(*mons) && !one_chance_in(3))
+        if (mons_is_confused(*mons))
         {
-            set_random_target(mons);
             _confused_move_dir(mons);
+
+            // OK, mmov determined.
+            const coord_def newcell = mmov + mons->pos();
+            monster* enemy = monster_at(newcell);
+            if (enemy
+                && newcell != mons->pos()
+                && !is_sanctuary(mons->pos()))
+            {
+                if (fight_melee(mons, enemy))
+                {
+                    mmov.reset();
+                    DEBUG_ENERGY_USE("fight_melee()");
+                    return;
+                }
+                else
+                {
+                    // FIXME: None of these work!
+                    // Instead run away!
+                    if (mons->add_ench(mon_enchant(ENCH_FEAR)))
+                        behaviour_event(mons, ME_SCARE, 0, newcell);
+                    return;
+                }
+            }
         }
     }
     if (!mons->asleep() && !mons->submerged())
@@ -1876,7 +1890,7 @@ void handle_monster_move(monster* mons)
         {
             ASSERT(!crawl_state.game_is_arena());
 
-            if (_unfriendly_or_impaired(*mons)
+            if (_unfriendly_or_insane(*mons)
                 && !mons->has_ench(ENCH_CHARM)
                 && !mons->has_ench(ENCH_HEXED))
             {
@@ -2829,11 +2843,6 @@ bool mon_can_move_to_pos(const monster* mons, const coord_def& delta,
     if (feat_is_endless(target_grid))
         return false;
 
-    // A confused monster will happily go wherever it can, regardless of
-    // consequences.
-    if (mons->confused() && mons->can_pass_through(targ))
-        return true;
-
     if (mons_avoids_cloud(mons, targ))
         return false;
 
@@ -2984,7 +2993,7 @@ bool mon_can_move_to_pos(const monster* mons, const coord_def& delta,
 
     // Friendlies shouldn't try to move onto the player's
     // location, if they are aiming for some other target.
-    if (!_unfriendly_or_impaired(*mons)
+    if (!_unfriendly_or_insane(*mons)
         && mons->foe != MHITYOU
         && (mons->foe != MHITNOT || mons->is_patrolling())
         && targ == you.pos())
@@ -3397,6 +3406,21 @@ static bool _monster_move(monster* mons)
         }
     }
 
+    if (mons->confused())
+    {
+        if (!mmov.origin() || one_chance_in(15))
+        {
+            const coord_def newpos = mons->pos() + mmov;
+            if (in_bounds(newpos)
+                && (habitat == HT_LAND
+                    || monster_habitable_grid(mons, grd(newpos))))
+            {
+                return _do_move_monster(*mons, mmov);
+            }
+        }
+        return false;
+    }
+
     // If a water (or lava) monster is currently flopping around on land, it
     // cannot really control where it wants to move, though there's a 50%
     // chance of flopping into an adjacent water (or lava) grid.
@@ -3620,8 +3644,7 @@ static bool _monster_move(monster* mons)
         if (monster* targ = monster_at(mons->pos() + mmov))
         {
             if (mons_aligned(mons, targ)
-                && !(mons->has_ench(ENCH_INSANE)
-                     || mons->confused()))
+                && !mons->has_ench(ENCH_INSANE))
             {
                 bool takes_time = !(mons->type == MONS_WANDERING_MUSHROOM
                                     && targ->type == MONS_TOADSTOOL
@@ -3669,7 +3692,6 @@ static bool _monster_move(monster* mons)
         make_mons_stop_fleeing(mons);
     }
 
-    // This handles the chance for the monster to hit itself.
     if (mmov.x || mmov.y || (mons->confused() && one_chance_in(6)))
         return _do_move_monster(*mons, mmov);
 

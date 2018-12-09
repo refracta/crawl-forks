@@ -16,12 +16,14 @@
 
 #include "abyss.h"
 #include "acquire.h"
+#include "act-iter.h"
 #include "areas.h"
 #include "art-enum.h"
 #include "branch.h"
 #include "butcher.h"
 #include "chardump.h"
 #include "cleansing-flame-source-type.h"
+#include "colour.h"
 #include "cloud.h"
 #include "coordit.h"
 #include "database.h"
@@ -51,7 +53,9 @@
 #include "maps.h"
 #include "menu.h"
 #include "message.h"
+#include "mon-death.h"
 #include "mon-place.h"
+#include "monster-type.h"
 #include "mutation.h"
 #include "notes.h"
 #include "options.h"
@@ -191,6 +195,9 @@ skill_type invo_skill(god_type god)
         case GOD_PAKELLAS:
             return SK_EVOCATIONS;
 #endif
+		case GOD_LEGION_FROM_BEYOND:
+			return SK_SUMMONINGS;
+			
         case GOD_ASHENZARI:
         case GOD_JIYVA:
         case GOD_GOZAG:
@@ -356,9 +363,6 @@ static const ability_def Ability_List[] =
       2, 0, 250, 0, {fail_basis::evo, 50, 2}, abflag::none },
     { ABIL_EVOKE_RATSKIN, "Evoke Ratskin",
       3, 0, 200, 0, {fail_basis::evo, 50, 2}, abflag::none },
-    { ABIL_EVOKE_THUNDER, "Evoke Thunderclouds",
-      5, 0, 200, 0, {fail_basis::evo, 60, 2}, abflag::none },
-
 
     { ABIL_END_TRANSFORMATION, "End Transformation",
       0, 0, 0, 0, {}, abflag::starve_ok },
@@ -534,6 +538,8 @@ static const ability_def Ability_List[] =
       0, 0, 0, 10, {fail_basis::invo}, abflag::none },
     { ABIL_ASHENZARI_END_TRANSFER, "End Transfer Knowledge",
       0, 0, 0, 0, {fail_basis::invo}, abflag::starve_ok },
+    { ABIL_ASHENZARI_OMNISCIENCE, "Omniscience",
+      0, 0, 0, 15, {fail_basis::invo}, abflag::none },
 
     // Dithmenos
     { ABIL_DITHMENOS_SHADOW_STEP, "Shadow Step",
@@ -649,6 +655,18 @@ static const ability_def Ability_List[] =
     { ABIL_WU_JIAN_WHIRLWIND, "Whirlwind", 0, 0, 0, 0, {}, abflag::berserk_ok },
     { ABIL_WU_JIAN_WALLJUMP, "Wall Jump",
         0, 0, 0, 0, {}, abflag::starve_ok | abflag::berserk_ok },
+		
+	// Legion from beyond
+	{ ABIL_LEGION_POSITIONING, "Positioning",
+      0, 0, 0, 0, {fail_basis::invo}, abflag::instant | abflag::starve_ok },
+	{ ABIL_LEGION_BECKONING_ALLY, "Beckoning Ally",
+      0, 0, 0, 0, {fail_basis::invo}, abflag::starve_ok },
+	{ ABIL_LEGION_OVERLOAD, "Overload",
+      2, 0, 0, 1, {fail_basis::invo, 40, 5, 20}, abflag::exhaustion },
+	{ ABIL_LEGION_UNLEASH, "Unleash",
+      6, 0, 0, generic_cost::fixed(3), {fail_basis::invo, 80, 4, 25}, abflag::none },
+	{ ABIL_LEGION_GIFT_GRANDGRIMORE, "Receive Grand Grimore", 0, 0, 0, 0,
+      {fail_basis::invo}, abflag::none },
 
     { ABIL_STOP_RECALL, "Stop Recall", 0, 0, 0, 0, {fail_basis::invo}, abflag::starve_ok },
     { ABIL_RENOUNCE_RELIGION, "Renounce Religion",
@@ -2111,16 +2129,6 @@ static spret_type _do_ability(const ability_def& abil, bool fail)
 
         break;
 
-    case ABIL_EVOKE_THUNDER: // robe of Clouds
-        fail_check();
-        mpr("The folds of your robe billow into a mighty storm.");
-
-        for (radius_iterator ri(you.pos(), 2, C_SQUARE); ri; ++ri)
-            if (!cell_is_solid(*ri))
-                place_cloud(CLOUD_STORM, *ri, 8 + random2avg(8,2), &you);
-
-        break;
-
     case ABIL_CANCEL_PPROJ:
         fail_check();
         you.duration[DUR_PORTAL_PROJECTILE] = 0;
@@ -2433,7 +2441,7 @@ static spret_type _do_ability(const ability_def& abil, bool fail)
         case 1: zapping(ZAP_PAIN, power, beam); break;
         case 2: zapping(ZAP_STONE_ARROW, power, beam); break;
         case 3: zapping(ZAP_SHOCK, power, beam); break;
-        case 4: zapping(ZAP_BREATHE_ACID, power / 7, beam); break;
+        case 4: zapping(ZAP_BREATHE_ACID, power / 2, beam); break;
         }
         break;
     }
@@ -2569,8 +2577,11 @@ static spret_type _do_ability(const ability_def& abil, bool fail)
 
     case ABIL_ELYVILON_HEAL_OTHER:
     {
-        int pow = 30 + you.skill(SK_INVOCATIONS, 1);
-        return cast_healing(pow, fail);
+        int pow = 10 + you.skill_rdiv(SK_INVOCATIONS, 1, 3);
+        pow = min(50, pow);
+        int max_pow = 10 + (int) ceil(you.skill(SK_INVOCATIONS, 1) / 3.0);
+        max_pow = min(50, max_pow);
+        return cast_healing(pow, max_pow, fail);
     }
 
     case ABIL_ELYVILON_DIVINE_VIGOUR:
@@ -2835,6 +2846,11 @@ static spret_type _do_ability(const ability_def& abil, bool fail)
             return SPRET_ABORT;
         }
         break;
+    
+    case ABIL_ASHENZARI_OMNISCIENCE:
+        fail_check();
+		ashenzari_omniscience();
+        break;
 
     case ABIL_DITHMENOS_SHADOW_STEP:
         if (_abort_if_stationary())
@@ -3056,6 +3072,225 @@ static spret_type _do_ability(const ability_def& abil, bool fail)
     case ABIL_WU_JIAN_WALLJUMP:
         fail_check();
         return wu_jian_wall_jump_ability();
+
+	case ABIL_LEGION_POSITIONING:
+	{
+        god_acting gdact;
+        beam.range = LOS_MAX_RANGE;
+        direction_chooser_args args;
+        args.restricts = DIR_TARGET;
+        args.mode = TARG_FRIEND;
+        args.needs_path = false;
+
+        if (!spell_direction(spd, beam, &args))
+            return SPRET_ABORT;
+		
+		if (beam.target == you.pos())
+        {
+            mpr("You can only order to ally minions.");
+            return SPRET_ABORT;
+        }
+		
+		monster* mons = monster_at(beam.target);
+		if ((mons->attitude == ATT_HOSTILE))
+        {
+            mpr("You can only order to ally minions.");
+            return SPRET_ABORT;
+        }
+		
+        if (mons == nullptr || !you.can_see(*mons))
+        {
+            mpr("You see nothing there receive your order!");
+            return SPRET_ABORT;
+        }
+		
+		if (mons->has_ench(ENCH_PETRIFIED)
+			|| mons->has_ench(ENCH_CONFUSION)
+			|| mons->has_ench(ENCH_PARALYSIS))
+		{
+			mpr("That minion can't receive your orders!");
+			return SPRET_ABORT;
+		}
+		
+		if (mons->type == MONS_KRAKEN || mons->type == MONS_KRAKEN_TENTACLE || mons->type == MONS_KRAKEN_TENTACLE_SEGMENT
+		|| mons->type == MONS_TENTACLED_STARSPAWN || mons->type == MONS_STARSPAWN_TENTACLE || mons->type == MONS_STARSPAWN_TENTACLE_SEGMENT
+		|| mons->type == MONS_ELDRITCH_TENTACLE || mons->type == MONS_ELDRITCH_TENTACLE_SEGMENT
+		|| mons->type == MONS_SNAPLASHER_VINE || mons->type == MONS_SNAPLASHER_VINE_SEGMENT)
+		{
+            mpr("You cannot hold position tentacle-like being!");
+            return SPRET_ABORT;
+        }
+		
+		if (mons->has_ench(ENCH_HOLD_POSITION))
+		{
+            mpr("You ordered minion to move again.");
+            mons->del_ench(ENCH_HOLD_POSITION);
+			return SPRET_ABORT;
+        }
+		
+        fail_check();
+		
+		mpr("You ordered minion to hold position!");
+		mons->add_ench(mon_enchant(ENCH_HOLD_POSITION, 0, &you, INFINITE_DURATION));
+	
+	}
+	break;
+	
+	case ABIL_LEGION_BECKONING_ALLY:
+    {	
+		beam.range = you.current_vision;
+        const int pow = 120;
+		
+		direction_chooser_args args;
+        args.mode = TARG_FRIEND;
+        
+        if (!spell_direction(spd, beam, &args))
+            return SPRET_ABORT;
+
+        if (beam.target == you.pos())
+        {
+            mpr("You cannot beckoning yourself!");
+            return SPRET_ABORT;
+        }
+		
+		monster* mons = monster_at(beam.target);
+		if ((mons->attitude == ATT_HOSTILE))
+        {
+            mpr("You can only beckoning ally minions.");
+            return SPRET_ABORT;
+        }
+		
+		if (mons->type == MONS_KRAKEN || mons->type == MONS_KRAKEN_TENTACLE || mons->type == MONS_KRAKEN_TENTACLE_SEGMENT
+		|| mons->type == MONS_TENTACLED_STARSPAWN || mons->type == MONS_STARSPAWN_TENTACLE || mons->type == MONS_STARSPAWN_TENTACLE_SEGMENT
+		|| mons->type == MONS_ELDRITCH_TENTACLE || mons->type == MONS_ELDRITCH_TENTACLE_SEGMENT
+		|| mons->type == MONS_SNAPLASHER_VINE || mons->type == MONS_SNAPLASHER_VINE_SEGMENT)
+		{
+            mpr("You cannot beckoning tentacle-like being!");
+            return SPRET_ABORT;
+        }
+
+        fail_check();
+		mpr("You beckoning minion's summoning energy to hurl up.");
+        return zapping(ZAP_BECKONING, pow, beam, true, nullptr, fail);
+    }
+    break;
+	
+	case ABIL_LEGION_OVERLOAD:
+	{
+		fail_check();
+		vector<pair<coord_def, int> > allycheck;
+		
+		if (you.duration[DUR_EXHAUSTED])
+        {
+            mpr("The legion are too exhausted to overload your minions.");
+            return SPRET_ABORT;
+        }
+		
+		for (monster_iterator mi; mi; ++mi)
+		{	
+			if (mi->friendly() && mi->is_summoned() && !mi->has_ench(ENCH_CHARM)
+				&& you.see_cell_no_trans(mi->pos()))
+			{	
+				simple_god_message(" begin to overload minions' summoning energy!");
+				mi->add_ench(mon_enchant(ENCH_OVERLOAD, 0, &you, INFINITE_DURATION));
+				mon_enchant abj = mi->get_ench(ENCH_ABJ);
+				mi->lose_ench_duration(abj, abj.duration / 3);
+				allycheck.emplace_back(mi->pos(), mi->get_hit_dice());
+				you.increase_duration(DUR_EXHAUSTED, 18 + random2(8));
+			}
+		}
+		
+		if (!allycheck.size())
+		{
+			mpr("You have no nearby minions to overload.");
+			return SPRET_ABORT;
+		}
+		break;
+	}
+		
+	case ABIL_LEGION_UNLEASH:
+    {
+		god_acting gdact;
+        beam.range = LOS_MAX_RANGE;
+        direction_chooser_args args;
+        args.restricts = DIR_TARGET;
+        args.mode = TARG_FRIEND;
+        args.needs_path = false;
+
+        if (!spell_direction(spd, beam, &args))
+            return SPRET_ABORT;
+		
+		if (beam.target == you.pos())
+        {
+            mpr("You cannot unleash yourself!");
+            return SPRET_ABORT;
+        }
+		
+		monster* mons = monster_at(beam.target);
+		if ((mons->attitude == ATT_HOSTILE))
+        {
+            mpr("You can only unleash ally minions.");
+            return SPRET_ABORT;
+        }
+		
+        if (mons == nullptr || !you.can_see(*mons))
+        {
+            mpr("You see nothing to unleash!");
+            return SPRET_ABORT;
+        }
+		
+		if (mons->type == MONS_KRAKEN || mons->type == MONS_KRAKEN_TENTACLE || mons->type == MONS_KRAKEN_TENTACLE_SEGMENT
+		|| mons->type == MONS_TENTACLED_STARSPAWN || mons->type == MONS_STARSPAWN_TENTACLE || mons->type == MONS_STARSPAWN_TENTACLE_SEGMENT
+		|| mons->type == MONS_ELDRITCH_TENTACLE || mons->type == MONS_ELDRITCH_TENTACLE_SEGMENT
+		|| mons->type == MONS_SNAPLASHER_VINE || mons->type == MONS_SNAPLASHER_VINE_SEGMENT)
+		{
+            mpr("You cannot unleash tentacle-like being!");
+            return SPRET_ABORT;
+        }
+		
+		if ((mons->has_ench(ENCH_CHARM)))
+        {
+            mpr("You cannot unleash charmed minion!");
+            return SPRET_ABORT;
+        }
+        fail_check();
+		
+		vector<pair<coord_def, int> > explode;
+		explode.emplace_back(mons->pos(), mons->get_hit_dice());
+		// Dismiss the summons
+		for (unsigned int i = 0; i < explode.size(); ++i)
+		{
+			monster_die(*monster_at(explode[i].first), KILL_DISMISSED, NON_MONSTER,
+						true);
+		}
+		// Now do the explosions		
+		mpr("You release the summoning energy from your minion!");
+		for (unsigned int i = 0; i < explode.size(); ++i)
+		{	
+			bolt explosion;
+			explosion.source = explode[i].first;
+			explosion.target = explode[i].first;
+			explosion.name = "summoning energy";
+			explosion.is_explosion = true;
+			explosion.auto_hit = true;
+			explosion.damage = calc_dice(3, 1 + ((explode[i].second) * 3));
+			explosion.flavour = BEAM_HEALING;
+			explosion.colour  = LIGHTGREEN;
+			explosion.ex_size = 2;
+			explosion.draw_delay = 1;
+			explosion.explode_delay = 20;
+			explosion.explode(true, false);
+		}
+		break;
+	}
+
+	case ABIL_LEGION_GIFT_GRANDGRIMORE:
+    {
+        fail_check();
+        if (!legion_gift_grand_grimore())
+            return SPRET_ABORT;
+        break;
+    }
 
     case ABIL_RENOUNCE_RELIGION:
         fail_check();
@@ -3421,12 +3656,6 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
         && !you.get_mutation_level(MUT_NO_LOVE))
     {
         _add_talent(talents, ABIL_EVOKE_RATSKIN, check_confused);
-    }
-
-    if (player_equip_unrand(UNRAND_RCLOUDS)
-        && !you.get_mutation_level(MUT_NO_ARTIFICE))
-    {
-        _add_talent(talents, ABIL_EVOKE_THUNDER, check_confused);
     }
 
     if (you.evokable_berserk() && !you.get_mutation_level(MUT_NO_ARTIFICE))

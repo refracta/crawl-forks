@@ -5088,10 +5088,6 @@ static mutation_type _random_valid_sacrifice(const vector<mutation_type> &muts)
             continue;
         }
 
-        // No potion heal doesn't affect mummies since they can't quaff potions
-        if (mut == MUT_NO_POTION_HEAL && you.species == SP_MUMMY)
-            continue;
-
         // The Grunt Algorithm
         // (choose a random element from a set of unknown size without building
         // an explicit list, by giving each one a chance to be chosen equal to
@@ -7325,4 +7321,48 @@ spret_type wu_jian_wall_jump_ability()
     apply_barbs_damage();
     remove_ice_armour_movement();
     return SPRET_SUCCESS;
+}
+
+bool legion_gift_grand_grimore()
+{
+    ASSERT(can_do_capstone_ability(you.religion));
+
+    if (!yesno("Do you wish to receive a Grand Grimore?", true, 'n'))
+    {
+        canned_msg(MSG_OK);
+        return false;
+    }
+    int thing_created = items(true, OBJ_BOOKS, BOOK_GRAND_GRIMOIRE, 1, 0,
+                              you.religion);
+    if (thing_created == NON_ITEM
+        || !move_item_to_grid(&thing_created, you.pos()))
+    {
+        return false;
+    }
+    set_ident_type(mitm[thing_created], true);
+    simple_god_message(" grants you a gift!");
+    flash_view(UA_PLAYER, LIGHTGREEN);
+#ifndef USE_TILE_LOCAL
+    // Allow extra time for the flash to linger.
+    scaled_delay(1000);
+#endif
+    more();
+    you.one_time_ability_used.set(you.religion);
+    take_note(Note(NOTE_GOD_GIFT, you.religion));
+    return true;
+}
+
+void ashenzari_omniscience()
+{
+	if (you.duration[DUR_OMNISCIENCE])
+		mpr("You extend your omniscient vision!");
+	else
+		simple_god_message(" grants you the omniscient vision, foresee a short future! You can see upcoming attacks...");
+		flash_view(UA_PLAYER, RED);
+#ifndef USE_TILE_LOCAL
+		// Allow extra time for the flash to linger.
+		scaled_delay(1000);
+#endif
+		more();
+		you.increase_duration(DUR_OMNISCIENCE, 30 + (random2avg(you.piety, 2)));
 }

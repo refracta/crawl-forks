@@ -141,6 +141,11 @@ An ornate altar of the Wu Jian Council
 An red and gold altar to the Wu Jian Council. Sharp slivers of steel drift
 through the quiet air surrounding it.
 %%%%
+A gateway of the Legion from beyond
+
+A tear of plane, to contact with the legion from beyond. You can sense
+unbridled force waiting for you from the beyond.
+%%%%
 ########################################################################
 ### Terrain
 ########################################################################
