@@ -30,6 +30,8 @@ serpent_of_hell-geh MONS_SERPENT_OF_HELL_GEHENNA
 serpent_of_hell-coc MONS_SERPENT_OF_HELL_COCYTUS
 serpent_of_hell-dis MONS_SERPENT_OF_HELL_DIS
 serpent_of_hell-tar MONS_SERPENT_OF_HELL_TARTARUS
+urug_warmaster MONS_URUG_WARMASTER
+urug_chosen MONS_URUG_CHOSEN
 %sdir mon/holy
 seraph MONS_SERAPH
 %sdir mon/sprint
@@ -1007,10 +1009,16 @@ ghoul MONS_GHOUL
 
 %sdir mon/unique
 blork_the_orc MONS_BLORK_THE_ORC
+blork_the_whiner MONS_BLORK_THE_WHINER
+blork_the_repentant MONS_BLORK_THE_REPENTANT
+blork_the_great_orc MONS_BLORK_THE_GREAT_ORC
 %rim 0
 urug MONS_URUG
 nergalle MONS_NERGALLE
+nergalle_souleater MONS_NERGALLE_SOULEATER
+nergalle_lich MONS_NERGALLE_LICH
 saint_roka MONS_SAINT_ROKA
+baptized_roka MONS_BAPTIZED_ROKA
 %sdir mon/humanoids/orcs
 orc MONS_ORC
 orc_wizard MONS_ORC_WIZARD
@@ -1020,6 +1028,8 @@ orc_knight MONS_ORC_KNIGHT
 orc_warlord MONS_ORC_WARLORD
 orc_sorcerer MONS_ORC_SORCERER
 orc_high_priest MONS_ORC_HIGH_PRIEST
+orc_warmage MONS_ORC_WARMAGE
+orc_hierophant MONS_ORC_HIEROPHANT
 %rim 1
 %sdir mon/vault
 deformed_orc MONS_DEFORMED_ORC

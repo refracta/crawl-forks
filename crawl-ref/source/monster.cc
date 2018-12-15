@@ -5796,7 +5796,8 @@ bool monster::can_drink() const
     // These monsters cannot drink.
     if (is_skeletal() || is_insubstantial()
         || mons_species() == MONS_LICH || mons_genus(type) == MONS_MUMMY
-        || mons_species() == MONS_WIGHT || type == MONS_GASTRONOK)
+        || mons_species() == MONS_WIGHT || type == MONS_GASTRONOK
+		|| type == MONS_NERGALLE_LICH)
     {
         return false;
     }

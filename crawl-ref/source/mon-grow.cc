@@ -32,7 +32,17 @@ static const monster_level_up mon_grow[] =
     monster_level_up(MONS_ORC_WARRIOR, MONS_ORC_KNIGHT),
     monster_level_up(MONS_ORC_KNIGHT, MONS_ORC_WARLORD),
     monster_level_up(MONS_ORC_PRIEST, MONS_ORC_HIGH_PRIEST),
+	monster_level_up(MONS_ORC_HIGH_PRIEST, MONS_ORC_HIEROPHANT),
     monster_level_up(MONS_ORC_WIZARD, MONS_ORC_SORCERER),
+	monster_level_up(MONS_ORC_SORCERER, MONS_ORC_WARMAGE),
+	monster_level_up(MONS_BLORK_THE_ORC, MONS_BLORK_THE_WHINER),
+	monster_level_up(MONS_BLORK_THE_WHINER, MONS_BLORK_THE_REPENTANT),
+	monster_level_up(MONS_BLORK_THE_REPENTANT, MONS_BLORK_THE_GREAT_ORC),
+	monster_level_up(MONS_URUG, MONS_URUG_WARMASTER),
+	monster_level_up(MONS_URUG_WARMASTER, MONS_URUG_CHOSEN),
+	monster_level_up(MONS_NERGALLE, MONS_NERGALLE_SOULEATER),
+	monster_level_up(MONS_NERGALLE_SOULEATER, MONS_NERGALLE_LICH),
+	monster_level_up(MONS_SAINT_ROKA, MONS_BAPTIZED_ROKA),
 };
 
 mons_experience_levels::mons_experience_levels()

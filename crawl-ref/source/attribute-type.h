@@ -94,5 +94,6 @@ enum attribute_type
     ATTR_SERPENTS_LASH,        // Remaining instant movement actions.
     ATTR_HEAVENLY_STORM,       // Strength of Heavenly Storm slaying.
     ATTR_WALL_JUMP_READY,      // Ready to perform a wall jump.
+	ATTR_NERGALLE_RESPWAN,	   // Special attribute for 'Beoghed' Nergalle the Orcish Lich.
     NUM_ATTRIBUTES
 };

@@ -2165,7 +2165,11 @@ static bool _battle_cry(const monster& chief, bool check_only = false)
         const int dur = random_range(12, 20) * speed_to_duration(mi->speed);
 
         mi->add_ench(mon_enchant(ENCH_MIGHT, 1, &chief, dur));
-
+		
+		if (chief.type == MONS_BAPTIZED_ROKA)
+		mi->add_ench(mon_enchant(ENCH_RESISTANCE, 1, &chief, dur));
+			continue;
+		
         affected++;
         if (you.can_see(**mi))
             seen_affected.push_back(*mi);

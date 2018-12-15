@@ -1524,16 +1524,6 @@ bool beogh_can_gift_items_to(const monster* mons, bool quiet)
         return false;
     }
 
-    if (_given_gift(mons))
-    {
-        if (!quiet)
-        {
-            mprf("%s has already been given a gift.",
-                 mons->name(DESC_THE, false).c_str());
-        }
-        return false;
-    }
-
     return true;
 }
 
@@ -7364,5 +7354,5 @@ void ashenzari_omniscience()
 		scaled_delay(1000);
 #endif
 		more();
-		you.increase_duration(DUR_OMNISCIENCE, 30 + (random2avg(you.piety, 2)));
+		you.increase_duration(DUR_OMNISCIENCE, 10 + (you.piety / 10));
 }

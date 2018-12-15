@@ -866,8 +866,9 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
 {
     coord_def fpos;
 
-    // Some sanity checks.
-    if (mons_is_unique(mg.cls) && you.unique_creatures[mg.cls]
+    // Some sanity checks, except Nergalle the Orcish Lich(For respawn).
+	monster* nergalle;
+    if (!nergalle->type == MONS_NERGALLE_LICH && mons_is_unique(mg.cls) && you.unique_creatures[mg.cls]
             && !crawl_state.game_is_arena()
         || mons_class_flag(mg.cls, M_CANT_SPAWN))
     {

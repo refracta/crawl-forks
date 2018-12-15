@@ -201,6 +201,18 @@ void init_mon_name_cache()
         if (Mon_Name_Cache.count(name))
         {
             if (mon == MONS_PLAYER_SHADOW
+				|| mon == MONS_BLORK_THE_ORC
+				|| mon == MONS_BLORK_THE_ORC
+				|| mon == MONS_BLORK_THE_ORC
+				|| mon == MONS_BLORK_THE_ORC
+				|| mon == MONS_URUG
+				|| mon == MONS_URUG_WARMASTER
+				|| mon == MONS_URUG_CHOSEN
+				|| mon == MONS_NERGALLE
+				|| mon == MONS_NERGALLE_SOULEATER
+				|| mon == MONS_NERGALLE_LICH
+				|| mon == MONS_SAINT_ROKA
+				|| mon == MONS_BAPTIZED_ROKA
                 || mon == MONS_BAI_SUZHEN_DRAGON
                 || mon != MONS_SERPENT_OF_HELL
                    && mons_species(mon) == MONS_SERPENT_OF_HELL)
@@ -1760,8 +1772,33 @@ void name_zombie(monster& mon, monster_type mc, const string &mon_name)
 
     // Special case for Blork the orc: shorten his name to "Blork" to
     // avoid mentions of "Blork the orc the orc zombie".
-    if (mc == MONS_BLORK_THE_ORC)
+    if (mc == MONS_BLORK_THE_ORC) 
         mon.mname = "Blork";
+	// Other beogh-special named.
+	else if (mc == MONS_BLORK_THE_WHINER)
+	{
+        mon.mname = "Blork";
+	}
+		else if (mc == MONS_BLORK_THE_REPENTANT)
+	{
+        mon.mname = "Blork";
+	}
+		else if (mc == MONS_BLORK_THE_GREAT_ORC)
+	{
+        mon.mname = "Blork";
+	}
+	else if (mc == MONS_URUG_WARMASTER || MONS_URUG_CHOSEN)
+	{
+        mon.mname = "Urug";
+	}
+	else if (mc == MONS_NERGALLE_SOULEATER)
+	{
+        mon.mname = "Nergalle";
+	}
+	else if (mc == MONS_BAPTIZED_ROKA)
+	{
+		mon.mname = "Roka";
+	}
     // Also for the Lernaean hydra: treat Lernaean as an adjective to
     // avoid mentions of "the Lernaean hydra the X-headed hydra zombie".
     else if (mc == MONS_LERNAEAN_HYDRA)

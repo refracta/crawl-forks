@@ -431,6 +431,9 @@ bool mcache_monster::get_weapon_offset(tileidx_t mon_tile,
         *ofs_y = 1;
         break;
     case TILEP_MONS_BLORK_THE_ORC:
+	case TILEP_MONS_BLORK_THE_WHINER:
+	case TILEP_MONS_BLORK_THE_REPENTANT:
+	case TILEP_MONS_BLORK_THE_GREAT_ORC:
     case TILEP_MONS_BOGGART:
     case TILEP_MONS_JORGRUN:
     case TILEP_MONS_DIMME:
@@ -586,6 +589,7 @@ bool mcache_monster::get_weapon_offset(tileidx_t mon_tile,
     case TILEP_MONS_URUG:
     case TILEP_MONS_ORC_PRIEST:
     case TILEP_MONS_ORC_HIGH_PRIEST:
+	case TILEP_MONS_ORC_HIEROPHANT:
     case TILEP_MONS_SPRIGGAN:
     case TILEP_MONS_SPRIGGAN_DEFENDER:
         *ofs_x = -1;
@@ -594,7 +598,10 @@ bool mcache_monster::get_weapon_offset(tileidx_t mon_tile,
     case TILEP_MONS_ORC_KNIGHT:
     case TILEP_MONS_ORC_WIZARD:
     case TILEP_MONS_ORC_SORCERER:
+	case TILEP_MONS_ORC_WARMAGE:
     case TILEP_MONS_NERGALLE:
+	case TILEP_MONS_NERGALLE_SOULEATER:
+	case TILEP_MONS_NERGALLE_LICH:
     case TILEP_MONS_ETTIN:
     case TILEP_MONS_FROST_GIANT:
     case TILEP_MONS_FIRE_GIANT:
@@ -604,12 +611,18 @@ bool mcache_monster::get_weapon_offset(tileidx_t mon_tile,
         *ofs_y = 1;
         break;
     case TILEP_MONS_SAINT_ROKA:
+	case TILEP_MONS_BAPTIZED_ROKA:
         *ofs_x = -3;
         *ofs_y = 1;
         break;
     case TILEP_MONS_SERAPH:
         *ofs_x = -1;
         *ofs_y = -10;
+        break;
+	case TILEP_MONS_URUG_WARMASTER:
+	case TILEP_MONS_URUG_CHOSEN:
+        *ofs_x = -2;
+        *ofs_y = -16;
         break;
     // Shift downwards and to the right.
     case TILEP_MONS_OGRE:
@@ -799,6 +812,9 @@ bool mcache_monster::get_shield_offset(tileidx_t mon_tile,
     case TILEP_MONS_ORC:
     case TILEP_MONS_URUG:
     case TILEP_MONS_BLORK_THE_ORC:
+	case TILEP_MONS_BLORK_THE_WHINER:
+	case TILEP_MONS_BLORK_THE_REPENTANT:
+	case TILEP_MONS_BLORK_THE_GREAT_ORC:
     case TILEP_MONS_ORC_PRIEST:
     case TILEP_MONS_ORC_WARRIOR:
     case TILEP_MONS_ORC_KNIGHT:
@@ -810,6 +826,7 @@ bool mcache_monster::get_shield_offset(tileidx_t mon_tile,
         break;
 
     case TILEP_MONS_SAINT_ROKA:
+	case TILEP_MONS_BAPTIZED_ROKA:
     case TILEP_MONS_MINOTAUR:
         *ofs_x = 2;
         *ofs_y = 0;
@@ -1169,6 +1186,11 @@ bool mcache_monster::get_shield_offset(tileidx_t mon_tile,
     case TILEP_MONS_SERAPH:
         *ofs_x = -2;
         *ofs_y = -7;
+        break;
+	case TILEP_MONS_URUG_WARMASTER:
+	case TILEP_MONS_URUG_CHOSEN:
+	    *ofs_x = 2;
+        *ofs_y = -20;
         break;
     case TILEP_MONS_LAMIA:
         *ofs_x = -2;

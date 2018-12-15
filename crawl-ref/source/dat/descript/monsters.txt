@@ -63,6 +63,26 @@ Blork the orc
 A particularly fat and ugly orc. He's scavenged a pair of rainbow-coloured
 suspenders from somewhere. They're not helping.
 %%%%
+Blork the great orc
+
+The great orc chosen by Beogh. No matter how your journey ends, the name that Blork,
+saved by the Messiah and reborn as the great orc, will be recorded to legend.
+The rainbow-colored cape blessed by Beogh is shining with the power of regeneration.
+%%%%
+Blork the repentant
+
+A particularly solid and confident orc. He learned a lot from you, and overcome
+his inferiority and arrogance from his journey. Following you with a calm expression.
+Now he will be able to perform his own magical talents completely.
+%%%%
+Blork the whiner
+
+Still particularly fat and ugly orc. He was scavenged a pair of rainbow-coloured
+suspenders, and now wearing additional armour made from scrap metal. He has been
+with you for quite some time, but still uncooperative. Blork has incredibly
+brilliant magical talents about self combat-supporting spells, but his uncooperative
+attitude will often cause intentional mistakes with grumbling.
+%%%%
 Boris
 
 An ancient and powerful lich. Like all true liches, Boris is immortal, and will
@@ -357,6 +377,19 @@ Nergalle
 A withered sorceress, exceptionally cruel even by orc standards. The living
 fear her; the dead obey her every command. She has a soft spot for the latter.
 %%%%
+Nergalle the Orcish Lich
+
+An orcish lich who devoured countless souls, followed your countless slaughter.
+Her name will spread as a warning to enemies of the Messiah that even death cannot
+be salvation. The fragments of the devoured souls are floating around this grim lich.
+Like all true liches, Nergalle is immortal, even if she dies, will return when Beogh
+sends reinforcements. 
+%%%%
+Nergalle the Souleater
+
+A Grotesque sorceress, surrounded by foggy negative energy. She followed you and
+devoured many souls, and as a result lying between the living and the dead.
+%%%%
 Nessos
 
 A centaur warrior, skilled at warfare and deceit. He slew a mighty hydra, and
@@ -405,6 +438,13 @@ Roxanne
 
 A strikingly realistic sapphire statue of a famous earth mage who disappeared
 after a catastrophic spell failure. She is clutching a book.
+%%%%
+Roka the Baptized Twice
+
+A legendary warlord. Was an arrogant ork who once rejected the true Messiah,
+but was restored to be faithful by receiving a second baptism from you.
+Now he was reborn as the fist of Beogh, who is more faithful than anyone else.
+His battlecry with faithful prey will call upon the Beogh's resistance.
 %%%%
 Rupert
 
@@ -459,10 +499,23 @@ remaining eye is not very good, and she has mistaken you for one.
     end
 }}
 %%%%
+Urug, the Eye of Beogh
+
+The most bravest and courageous marksorc. According to the Boogh's will, only Urug was
+empowered to lead a war riding on the blessed warg. Beoge admired her courage
+and gave her a sacred eye that would not miss anything.
+%%%%
 Vashnia
 
 An elite marksnaga who leads a skilled team of sharpshooters. She is
 particularly skilled in translocation magic.
+%%%%
+Warmaster Urug
+
+The most bravest and courageous marksorc. According to the Boogh's will, only Urug
+was empowered to lead a war riding on the blessed warg. She has sworn to slay
+every enemies that blocks you for the name of the Beogh, with her deadly fast shooting
+skills.
 %%%%
 Xtahua
 
@@ -1799,6 +1852,11 @@ An ugly subterranean creature combining the worst features of humans, pigs and
 several other unpleasant creatures. It tends to run in packs or mobs, and
 delights in outbursts of insane violence.
 %%%%
+orc hierophant
+
+A legendary priest of the orc god Beogh. Only a high priest who follows the
+true Messiah can be reborn as a hierophant, to aid the Messiah's army. 
+%%%%
 orc high priest
 
 An exalted servant of the orc god Beogh and a master of many black rites, to
@@ -1828,6 +1886,12 @@ orc warrior
 
 An experienced, armoured and well-armed orc soldier, able to command a small
 mob of its fellows.
+%%%%
+orc warmage
+
+A legendary wizard that has reached an impossible level as the orc.
+Only a sorcerer who follows the true Messiah can be reborn as a warmage,
+to devastate the Messiah's enemies.
 %%%%
 orc wizard
 

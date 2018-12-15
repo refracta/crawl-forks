@@ -123,6 +123,8 @@ static int _orc_weapon_gift_type(monster_type mon_type)
         case MONS_ORC_WARRIOR:
         case MONS_ORC_KNIGHT:
         case MONS_ORC_WARLORD:
+		case MONS_ORC_HIEROPHANT:
+        case MONS_ORC_WARMAGE:
             return random_choose_weighted(2, WPN_WAR_AXE, // orcs love axes
                                           1, WPN_LONG_SWORD,
                                           1, WPN_FLAIL,
@@ -167,6 +169,8 @@ void gift_ammo_to_orc(monster* orc, bool initial_gift)
 
     if (!launcher)
         ammo.sub_type = MI_TOMAHAWK;
+	if (orc->type == MONS_URUG || MONS_URUG_WARMASTER || MONS_URUG_CHOSEN)
+		ammo.sub_type = MI_JAVELIN;
     else
         ammo.sub_type = fires_ammo_type(*launcher);
 
@@ -636,11 +640,11 @@ static bool _legion_blessing_friendliness(monster* mon)
 static void _beogh_reinf_callback(const mgen_data &mg, monster *&mon, int placed)
 {
     ASSERT(mg.god == GOD_BEOGH);
-
+	
     // Beogh tries a second time to place reinforcements.
     if (!mon)
         mon = create_monster(mg);
-
+	
     if (!mon)
         return;
 
@@ -686,6 +690,15 @@ static void _beogh_blessing_reinforcements()
                         .set_summoned(&you, 0, 0, GOD_BEOGH),
                         _beogh_reinf_callback);
     }
+	
+	// Respawn lich nergalle.
+	if (you.attribute[ATTR_NERGALLE_RESPWAN] = 1)
+	{
+		delayed_monster(mgen_data(MONS_NERGALLE_LICH, BEH_FRIENDLY, you.pos(),
+                                   MHITYOU)
+                        .set_summoned(&you, 0, 0, GOD_BEOGH),
+                        _beogh_reinf_callback);
+	}
 }
 
 static bool _beogh_blessing_priesthood(monster* mon)
