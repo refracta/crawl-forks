@@ -619,6 +619,7 @@ static const duration_def duration_data[] =
       {{ "",  wu_jian_heaven_tick }}},
     { DUR_GRASPING_ROOTS, 0, "", "grasped by roots", "grasping roots",
       "You are constricted by grasping roots.", D_NO_FLAGS},
+    { DUR_NERGALLE_DELAY, 0, "", "", "nergalle the orcish lich delay", "", D_NO_FLAGS, {{""}}},
 
 #if TAG_MAJOR_VERSION == 34
     // And removed ones

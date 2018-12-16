@@ -662,7 +662,7 @@ static void _beogh_reinf_callback(const mgen_data &mg, monster *&mon, int placed
 // If you don't currently have any followers, send a small band to help
 // you out.
 static void _beogh_blessing_reinforcements()
-{
+{	
     // Possible reinforcement.
     const monster_type followers[] =
     {
@@ -690,15 +690,6 @@ static void _beogh_blessing_reinforcements()
                         .set_summoned(&you, 0, 0, GOD_BEOGH),
                         _beogh_reinf_callback);
     }
-	
-	// Respawn lich nergalle.
-	if (you.attribute[ATTR_NERGALLE_RESPWAN] = 1)
-	{	
-		mgen_data mg(MONS_NERGALLE_LICH, BEH_FRIENDLY, you.pos());
-		mg.set_summoned(&you, 0, 0, GOD_BEOGH);
-		mpr("Nergalle laughs : I'm back from death, my Messiah!");
-		you.attribute[ATTR_NERGALLE_RESPWAN] = 0;
-	}
 }
 
 static bool _beogh_blessing_priesthood(monster* mon)
@@ -837,6 +828,16 @@ static bool _beogh_bless_follower(monster* follower, bool force)
         // If no follower was found, attempt to send
         // reinforcements.
         _beogh_blessing_reinforcements();
+		
+		// Respawn Nergalle the Orcish Lich.
+		if (you.duration[DUR_NERGALLE_DELAY])
+		{	
+			mgen_data mg(MONS_NERGALLE_LICH, BEH_FRIENDLY, you.pos());
+			mg.set_summoned(&you, 0, 0, GOD_BEOGH);
+			you.duration[DUR_NERGALLE_DELAY] = 0;
+			mpr("Nergalle whispers : I'm back from death, my Messiah.");
+			create_monster(mg);
+		}
 
         // Possibly send more reinforcements.
         if (coinflip())

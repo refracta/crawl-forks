@@ -2803,7 +2803,7 @@ item_def* monster_die(monster& mons, killer_type killer,
 			remove_companion(&mons);
 			mprf("Nergalle's bones disappeared...but she will return soon.");
 			// ready to respawn when beogh grants reinforcement.
-			you.attribute[ATTR_NERGALLE_RESPWAN] = 1;
+			you.duration[DUR_NERGALLE_DELAY] = INFINITE_DURATION;
 		}
 		
         remove_companion(&mons);

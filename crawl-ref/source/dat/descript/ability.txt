@@ -453,8 +453,7 @@ Stops recalling your followers.
 %%%%
 Give Item to Named Follower ability
 
-Gives a weapon or piece of armour to a named orcish follower. An orc can only
-ever receive one of these gifts.
+Gives a weapon or piece of armour to a named orcish follower.
 %%%%
 Resurrection ability
 
