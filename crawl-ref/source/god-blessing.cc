@@ -693,11 +693,11 @@ static void _beogh_blessing_reinforcements()
 	
 	// Respawn lich nergalle.
 	if (you.attribute[ATTR_NERGALLE_RESPWAN] = 1)
-	{
-		delayed_monster(mgen_data(MONS_NERGALLE_LICH, BEH_FRIENDLY, you.pos(),
-                                   MHITYOU)
-                        .set_summoned(&you, 0, 0, GOD_BEOGH),
-                        _beogh_reinf_callback);
+	{	
+		mgen_data mg(MONS_NERGALLE_LICH, BEH_FRIENDLY, you.pos());
+		mg.set_summoned(&you, 0, 0, GOD_BEOGH);
+		mpr("Nergalle laughs : I'm back from death, my Messiah!");
+		you.attribute[ATTR_NERGALLE_RESPWAN] = 0;
 	}
 }
 

@@ -2801,10 +2801,7 @@ item_def* monster_die(monster& mons, killer_type killer,
 		if (mons.type == MONS_NERGALLE_LICH)
 		{	
 			remove_companion(&mons);
-			if (!you.can_see(mons))
-			{
-				mprf("Nergalle's bones disappeared...but she will return soon.");
-			}
+			mprf("Nergalle's bones disappeared...but she will return soon.");
 			// ready to respawn when beogh grants reinforcement.
 			you.attribute[ATTR_NERGALLE_RESPWAN] = 1;
 		}
