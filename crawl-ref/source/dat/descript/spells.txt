@@ -1048,6 +1048,13 @@ Quicksilver Bolt spell
 
 <Breathe Dispelling Energy ability>
 %%%%
+Quicksilver Aura spell
+
+This spell enchants the caster's dominant hand with an aura of dispelling quicksilver.
+When you hit monsters with your bare hands, or weapons, this aura will generate intense
+dispelling energy to remove all enchantments from the monster and cause irresistible
+feedback damage.
+%%%%
 Random Bolt spell
 
 Fires, at random, a bolt of venom, negative energy, fire, cold, dispelling
@@ -1057,6 +1064,14 @@ Recall spell
 
 Recalls any friendly creatures on the same level to a position adjacent to the
 caster, over a short duration.
+%%%%
+Red Mage's Barrier spell
+
+A long time ago, it was a protection spell of warrior-mage called 'Red Mage'.
+This spell draws from your magical essence to create a temporary protective
+barrier. Incoming damage will be absorbed by the shield, decreasing the
+caster's available magic in the process. This spell is similar to the protection
+from guardian spirit, but absorbs damage much more efficiently.
 %%%%
 Regeneration spell
 

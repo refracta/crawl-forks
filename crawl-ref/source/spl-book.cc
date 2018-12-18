@@ -181,6 +181,7 @@ int book_rarity(book_type which_book)
 
     case BOOK_CLOUDS:
     case BOOK_POWER:
+	case BOOK_RED_MAGE:
         return 6;
 
     case BOOK_ENCHANTMENTS:

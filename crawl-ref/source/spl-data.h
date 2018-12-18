@@ -3969,6 +3969,28 @@ static const struct spell_desc spelldata[] =
 },
 
 {
+    SPELL_RED_BARRIER, "Red Mage's Barrier",
+    SPTYP_CHARMS,
+    SPFLAG_UTILITY,
+    5,
+    100,
+    -1, -1,
+    1, 0,
+    TILEG_RED_BARRIER,
+},
+
+{
+    SPELL_QUICKSILVER_AURA, "Quicksilver Aura",
+    SPTYP_HEXES | SPTYP_CHARMS,
+    SPFLAG_HELPFUL,
+    6,
+    200,
+    -1, -1,
+    1, 0,
+    TILEG_QUICKSILVER_AURA,
+},
+
+{
     SPELL_NO_SPELL, "nonexistent spell",
     SPTYP_NONE,
     SPFLAG_TESTING,

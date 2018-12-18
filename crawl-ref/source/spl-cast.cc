@@ -1855,6 +1855,12 @@ static spret_type _do_cast(spell_type spell, int powc, const dist& spd,
 
     case SPELL_SONG_OF_SLAYING:
         return cast_song_of_slaying(powc, fail);
+		
+	case SPELL_RED_BARRIER:
+        return cast_red_barrier(powc, fail);
+		
+	case SPELL_QUICKSILVER_AURA:
+        return cast_quicksilver_aura(powc, fail);
 
     case SPELL_PORTAL_PROJECTILE:
         return cast_portal_projectile(powc, fail);

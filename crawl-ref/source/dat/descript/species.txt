@@ -63,6 +63,12 @@ Halfling
 Small but hardy, Halflings excel with slings. They have an increased resistance
 to mutagenic effects.
 %%%%
+High Elf
+
+High Elves are adept with blades and with many schools of magic, and have high
+attributes. For unknown reasons, they did not show up in the dungeons for a while,
+but recently they started to explore dungeons again.
+%%%%
 Hill Orc
 
 Orcs are skilled in close combat, and often dabble in offensive magic. Hated by

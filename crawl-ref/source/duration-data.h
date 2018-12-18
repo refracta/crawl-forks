@@ -563,10 +563,22 @@ static const duration_def duration_data[] =
       {{ "", []() {
           you.redraw_evasion = true;
       }}}},
-	{ DUR_OMNISCIENCE, LIGHTBLUE, "OmniV",
+	{ DUR_OMNISCIENCE, WHITE, "OmniV",
       "omniscient vision", "",
       "Your omniscient vision lets you avoid everything, never missing everything.", D_NO_FLAGS,
       {{ "Your omniscient vision fades away." }}},
+	{ DUR_RED_BARRIER,
+      BLUE, "Barrier",
+      "magical barrier", "",
+      "Your magic is absorbing damage.", D_DISPELLABLE | D_EXPIRES,
+      {{ "Your magic is no longer absorbing damage." },
+        { "Your magical barrier blinks softly." }}, 6},
+	{ DUR_QUICKSILVER_AURA,
+      BLUE, "QSilver",
+      "quicksilver aura", "",
+      "Your quicksilver aura is ready to dispell enchantments.", D_DISPELLABLE | D_EXPIRES,
+      {{ "Your quicksilver aura fades away." },
+        { "Your quicksilver aura blinks softly." }}, 6},
     // The following are visible in wizmode only, or are handled
     // specially in the status lights and/or the % or @ screens.
 

@@ -238,6 +238,11 @@ book of power
 A book of powerful magic spells, crackling and shuddering with barely-contained
 energies.
 %%%%
+book of red mage
+
+A book of old warrior-mage, who called 'red mage'. Containing charm-based spells
+enhancing your combat.
+%%%%
 book of spatial translocations
 
 A basic spellbook on the magical field of Translocations.

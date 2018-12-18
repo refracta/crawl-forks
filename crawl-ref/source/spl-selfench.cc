@@ -255,6 +255,30 @@ spret_type cast_shroud_of_golubria(int pow, bool fail)
     return SPRET_SUCCESS;
 }
 
+spret_type cast_red_barrier(int pow, bool fail)
+{
+    fail_check();
+	if (you.duration[DUR_SHROUD_OF_GOLUBRIA])
+        mpr("You renew your barrier.");
+	else
+		mpr("You draw your magic to channel barrier.");
+    you.increase_duration(DUR_RED_BARRIER, 12 + random2(pow) / 2, 10);
+    return SPRET_SUCCESS;
+}
+
+spret_type cast_quicksilver_aura(int pow, bool fail)
+{
+    fail_check();
+    if (!you.duration[DUR_QUICKSILVER_AURA])
+        mpr("You wrapping your attacks with aura of dispelling quicksilver.");
+    else
+        mpr("You extend your aura's duration.");
+
+    you.increase_duration(DUR_QUICKSILVER_AURA, 30 + random2(pow) / 2, 10);
+
+    return SPRET_SUCCESS;
+}
+
 spret_type cast_transform(int pow, transformation which_trans, bool fail)
 {
     if (!transform(pow, which_trans, false, true)

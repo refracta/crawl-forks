@@ -40,6 +40,7 @@
 #include "religion.h"
 #include "shout.h"
 #include "spl-damage.h"
+#include "spl-goditem.h"
 #include "spl-summoning.h"
 #include "state.h"
 #include "stepdown.h"
@@ -422,6 +423,22 @@ bool melee_attack::handle_phase_hit()
         }
     }
 
+    if (attacker->is_player() && you.duration[DUR_QUICKSILVER_AURA])
+    {	
+		monster* mon = defender->as_monster();
+		if (monster_is_debuffable(*mon))
+		{				
+			debuff_monster(*mon);
+			special_damage = 8 + random2(13);
+			special_damage_flavour = BEAM_MMISSILE;
+			special_damage_message = make_stringf("Quicksilver aura emits dispelling energy to %s!",
+                                mon->name(DESC_THE).c_str());
+			
+			const int dmg = special_damage;
+			damage_done = dmg;
+		}
+    }	
+	
     // This does more than just calculate the damage, it also sets up
     // messages, etc. It also wakes nearby creatures on a failed stab,
     // meaning it could have made the attacked creature vanish. That

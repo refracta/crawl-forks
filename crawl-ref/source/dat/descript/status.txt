@@ -698,9 +698,23 @@ Hevn status
 Heavenly clouds are boosting your damage and precision. Performing martial
 attacks against multiple enemies prevents the storm from settling.
 %%%%
+Omniscience status
+
+omniscient vision, guiding you to dodge everything and never miss everything.
+Unavoidable effects(such as explosion, torment...) will still affect you.
+%%%%
 SlowM status
 
 Your movement is slowed on this liquid ground.
+%%%%
+Barrier status
+
+Your magic is absorbing damage by forming a powerful barrier.
+%%%%
+QSilver status
+
+Your weapon is wrapped by dispelling quicksilver. It will be remove enemy's
+enchantments with irresistible feedback damage.
 %%%%
 Alive status
 

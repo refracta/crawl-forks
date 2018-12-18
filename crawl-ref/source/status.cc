@@ -462,6 +462,12 @@ bool fill_status_info(int status, status_info& inf)
                              "accuracy.";
         }
         break;
+		
+    case DUR_OMNISCIENCE:
+        inf.light_text
+            = make_stringf("OmniV (%u)",
+                           you.duration[DUR_OMNISCIENCE] / 10);
+        break;
 
     case DUR_SONG_OF_SLAYING:
         inf.light_text
@@ -686,6 +692,13 @@ bool fill_status_info(int status, status_info& inf)
     }
 
     case DUR_INFUSION:
+    {
+        if (!enough_mp(1, true, false))
+            inf.light_colour = DARKGREY;
+        break;
+    }
+	
+	case DUR_RED_BARRIER:
     {
         if (!enough_mp(1, true, false))
             inf.light_colour = DARKGREY;

@@ -75,6 +75,7 @@ static const vector<spell_type> spellbook_templates[] =
 {   // Book of Enchantments
     SPELL_CAUSE_FEAR,
     SPELL_VIOLENT_UNRAVELLING,
+	SPELL_QUICKSILVER_AURA,
     SPELL_SILENCE,
     SPELL_DEFLECT_MISSILES,
     SPELL_DISCORD,
@@ -232,6 +233,7 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_SONG_OF_SLAYING,
     SPELL_SPECTRAL_WEAPON,
     SPELL_REGENERATION,
+	SPELL_RED_BARRIER,
 },
 #endif
 
@@ -342,6 +344,14 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_SUMMON_ICE_BEAST,
     SPELL_SUMMON_MANA_VIPER,
     SPELL_SUMMON_HYDRA,
+},
+
+{   // Book of Red Mage
+    SPELL_SONG_OF_SLAYING,
+	SPELL_RED_BARRIER,
+	SPELL_QUICKSILVER_AURA,
+    SPELL_DEFLECT_MISSILES,
+	SPELL_RING_OF_FLAMES,
 },
 
 {   // Book of Annihilations

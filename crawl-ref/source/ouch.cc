@@ -880,7 +880,21 @@ void ouch(int dam, kill_method_type death_type, mid_t source, const char *aux,
     }
 
     if (dam != INSTANT_DEATH)
-    {
+    {	
+		if (you.duration[DUR_RED_BARRIER] && you.magic_points > 0)
+        {
+            if (dam > you.magic_points)
+            {
+                dam = dam - you.magic_points;
+                dec_mp(you.magic_points);
+            }
+            else
+            {
+                dec_mp(dam);
+                dam = 0;
+                return;
+            }
+        }		
         if (you.spirit_shield() && death_type != KILLED_BY_POISON
             && !(aux && strstr(aux, "flay_damage")))
         {
