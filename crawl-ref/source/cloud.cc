@@ -859,7 +859,7 @@ bool actor_cloud_immune(const actor &act, cloud_type type)
         case CLOUD_FOREST_FIRE:
             if (!act.is_player())
                 return act.res_fire() >= 3;
-            return you.duration[DUR_FIRE_SHIELD]
+            return you.duration[DUR_FROST_SHIELD]
                 || you.has_mutation(MUT_FLAME_CLOUD_IMMUNITY)
                 || player_equip_unrand(UNRAND_FIRESTARTER);
         case CLOUD_HOLY:
@@ -868,6 +868,7 @@ bool actor_cloud_immune(const actor &act, cloud_type type)
             if (!act.is_player())
                 return act.res_cold() >= 3;
             return you.has_mutation(MUT_FREEZING_CLOUD_IMMUNITY)
+				|| you.duration[DUR_FROST_SHIELD]
                 || player_equip_unrand(UNRAND_FROSTBITE);
         case CLOUD_MEPHITIC:
             return act.res_poison() > 0 || act.is_unbreathing();

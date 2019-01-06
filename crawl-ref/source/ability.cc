@@ -496,6 +496,8 @@ static const ability_def Ability_List[] =
       0, 0, 0, 0, {fail_basis::invo}, abflag::none },
     { ABIL_BEOGH_RESURRECTION, "Resurrection",
       0, 0, 0, 15, {fail_basis::invo}, abflag::none },
+	{ ABIL_BEOGH_CALL_CHOSEN, "Receive Chosen of Beogh", 0, 0, 0, 0,
+      {fail_basis::invo}, abflag::none },
 
     // Jiyva
     { ABIL_JIYVA_CALL_JELLY, "Request Jelly",
@@ -2687,7 +2689,15 @@ static spret_type _do_ability(const ability_def& abil, bool fail)
         if (!beogh_resurrect())
             return SPRET_ABORT;
         break;
-
+	
+	case ABIL_BEOGH_CALL_CHOSEN:
+	{
+		fail_check();
+		if (!beogh_call_chosen())
+			return SPRET_ABORT;
+		break;
+	}	
+		
     case ABIL_BEOGH_RECALL_ORCISH_FOLLOWERS:
         fail_check();
         start_recall(RECALL_BEOGH);
@@ -3296,8 +3306,8 @@ static spret_type _do_ability(const ability_def& abil, bool fail)
         if (!legion_gift_grand_grimore())
             return SPRET_ABORT;
         break;
-    }
-
+    }	
+	
     case ABIL_RENOUNCE_RELIGION:
         fail_check();
         if (yesno("Really renounce your faith, foregoing its fabulous benefits?",

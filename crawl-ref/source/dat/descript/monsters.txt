@@ -93,6 +93,18 @@ Cerebov
 A violent and wrathful demon, Cerebov appears as a giant humanoid covered in
 shining golden armour and wielding a huge twisted sword.
 %%%%
+Chosen warrior of Beogh
+
+The legendary warrior, chosen by the Beogh. Handle weapons with incredible speed.
+%%%%
+Chosen mage of Beogh
+
+The legendary mage, chosen by the Beogh. Cast deadly spells like a barrage.
+%%%%
+Chosen priest of Beogh
+
+The legendary priest, chosen by the Beogh. Powerful healer and master of smite.
+%%%%
 Chuck
 
 Chuck the stone giant loves rocks, the bigger the better! Over the years, he

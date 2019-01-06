@@ -303,14 +303,14 @@ static const struct spell_desc spelldata[] =
 },
 
 {
-    SPELL_RING_OF_FLAMES, "Ring of Flames",
-    SPTYP_CHARMS | SPTYP_FIRE,
+    SPELL_RING_OF_FROST, "Ring of Frost",
+    SPTYP_CHARMS | SPTYP_ICE,
     SPFLAG_AREA,
     7,
     200,
     -1, -1,
     6, 0,
-    TILEG_RING_OF_FLAMES,
+    TILEG_RING_OF_FROST,
 },
 
 {
@@ -3988,6 +3988,28 @@ static const struct spell_desc spelldata[] =
     -1, -1,
     1, 0,
     TILEG_QUICKSILVER_AURA,
+},
+
+{
+    SPELL_NAPALM_CHARGE, "Napalm Charge",
+    SPTYP_HEXES | SPTYP_FIRE,
+    SPFLAG_UTILITY,
+    7,
+    200,
+    -1, -1,
+    3, 0,
+    TILEG_NAPALM_CHARGE,
+},
+
+{
+    SPELL_COLD_SNAP, "Cold Snap",
+    SPTYP_CONJURATION | SPTYP_ICE,
+    SPFLAG_DIR_OR_TARGET | SPFLAG_NEEDS_TRACER,
+    5,
+    200,
+    5, 5,
+    5, 0,
+    TILEG_ICEBLAST,
 },
 
 {

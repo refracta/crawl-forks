@@ -279,6 +279,17 @@ spret_type cast_quicksilver_aura(int pow, bool fail)
     return SPRET_SUCCESS;
 }
 
+spret_type cast_napalm_charge(int pow, bool fail)
+{
+    fail_check();
+	if (you.duration[DUR_NAPALM_CHARGE])
+        mpr("You recharge your deadly napalm.");
+	else
+		mpr("Your fire magic is charged by deadly napalm!");
+    you.increase_duration(DUR_NAPALM_CHARGE, 10 + pow/4 + random2avg(pow/2, 2), 100);
+    return SPRET_SUCCESS;
+}
+
 spret_type cast_transform(int pow, transformation which_trans, bool fail)
 {
     if (!transform(pow, which_trans, false, true)

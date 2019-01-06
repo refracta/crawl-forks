@@ -220,6 +220,8 @@ const vector<god_power> god_powers[NUM_GODS] =
       { 5, "walk on water" },
       { 5, ABIL_BEOGH_GIFT_ITEM, "give items to your followers" },
       { 6, ABIL_BEOGH_RESURRECTION, "revive fallen orcs" },
+	  { 7, ABIL_BEOGH_CALL_CHOSEN, "Beogh will grant you an unique chosen of beogh... once.",
+								   "Beogh is no longer grant you an unique chosen of beogh." },
     },
 
     // Jiyva

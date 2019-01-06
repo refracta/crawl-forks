@@ -3060,7 +3060,7 @@ void melee_attack::mons_apply_attack_flavour()
 
 void melee_attack::do_passive_freeze()
 {
-    if (you.has_mutation(MUT_PASSIVE_FREEZE)
+    if (you.has_mutation(MUT_PASSIVE_FREEZE) || you.duration[DUR_ICY_ARMOUR]
         && attacker->alive()
         && adjacent(you.pos(), attacker->as_monster()->pos()))
     {
@@ -3088,7 +3088,14 @@ void melee_attack::do_passive_freeze()
         {
             mon->expose_to_element(BEAM_COLD, orig_hurted);
             print_wounds(*mon);
-        }
+					
+			if (you.duration[DUR_ICY_ARMOUR])
+			{
+				mon->add_ench(mon_enchant(ENCH_FROZEN,
+					0, &you, 3 + random2(4) * BASELINE_DELAY));
+		
+			}
+		}	
     }
 }
 

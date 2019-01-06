@@ -1019,6 +1019,9 @@ nergalle_souleater MONS_NERGALLE_SOULEATER
 nergalle_lich MONS_NERGALLE_LICH
 saint_roka MONS_SAINT_ROKA
 baptized_roka MONS_BAPTIZED_ROKA
+chosen_warrior MONS_CHOSEN_WARRIOR
+chosen_mage MONS_CHOSEN_MAGE
+chosen_priest MONS_CHOSEN_PRIEST
 %sdir mon/humanoids/orcs
 orc MONS_ORC
 orc_wizard MONS_ORC_WIZARD

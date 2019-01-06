@@ -460,8 +460,8 @@ void player_reacts_to_monsters()
     if (!you_are_delayed())
         update_can_train();
 
-    if (you.duration[DUR_FIRE_SHIELD] > 0)
-        manage_fire_shield(you.time_taken);
+    if (you.duration[DUR_FROST_SHIELD] > 0)
+        manage_frost_shield(you.time_taken);
 
     check_monster_detect();
 

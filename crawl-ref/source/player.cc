@@ -1370,9 +1370,9 @@ int player_res_fire(bool calc_unid, bool temp, bool items)
         if (you.duration[DUR_RESISTANCE])
             rf++;
 
-        if (you.duration[DUR_FIRE_SHIELD])
-            rf += 2;
-
+		if (you.duration[DUR_FROST_SHIELD])
+            rf -= 1;
+		
         if (you.duration[DUR_QAZLAL_FIRE_RES])
             rf++;
 
@@ -1421,8 +1421,8 @@ int player_res_cold(bool calc_unid, bool temp, bool items)
         if (you.duration[DUR_RESISTANCE])
             rc++;
 
-        if (you.duration[DUR_FIRE_SHIELD])
-            rc -= 2;
+        if (you.duration[DUR_FROST_SHIELD])
+            rc += 2;
 
         if (you.duration[DUR_QAZLAL_COLD_RES])
             rc++;
@@ -1731,9 +1731,6 @@ int player_spec_fire()
     // rings of fire:
     sf += you.wearing(EQ_RINGS, RING_FIRE);
 
-    if (you.duration[DUR_FIRE_SHIELD])
-        sf++;
-
     return sf;
 }
 
@@ -1746,6 +1743,9 @@ int player_spec_cold()
 
     // rings of ice:
     sc += you.wearing(EQ_RINGS, RING_ICE);
+	
+	if (you.duration[DUR_FROST_SHIELD])
+        sc++;
 
     return sc;
 }

@@ -63,7 +63,7 @@ static int _upgrade_weapon_type(int old_type, bool has_shield, bool highlevel)
                                                  WPN_BATTLEAXE;
 
         case WPN_SPEAR:       return WPN_TRIDENT;
-        case WPN_TRIDENT:     return has_shield ? WPN_TRIDENT : WPN_HALBERD;
+        case WPN_TRIDENT:     return has_shield ? WPN_DEMON_TRIDENT : WPN_HALBERD;
         case WPN_HALBERD:     return WPN_GLAIVE;
         case WPN_GLAIVE:      return highlevel ? WPN_BARDICHE : WPN_GLAIVE;
 
@@ -91,7 +91,8 @@ static bool _upgrade_orc_weapon(monster* mon, item_def& wpn)
 
     // lower chance of upgrading to very good weapon types
     bool highlevel_ok = mon->type == MONS_ORC_KNIGHT && one_chance_in(6)
-                        || mon->type == MONS_ORC_WARLORD && one_chance_in(3);
+                        || mon->type == MONS_ORC_WARLORD && one_chance_in(3)
+						|| mon->type == MONS_CHOSEN_WARRIOR && one_chance_in(3);
 
     wpn.sub_type = _upgrade_weapon_type(wpn.sub_type,
                                         mon->inv[MSLOT_SHIELD] != NON_ITEM,
@@ -119,7 +120,8 @@ static int _orc_weapon_gift_type(monster_type mon_type)
         case MONS_ORC_SORCERER:
             return random_choose_weighted(2, WPN_HAND_AXE, // orcs love axes
                                           1, WPN_SHORT_SWORD,
-                                          1, WPN_MACE);
+                                          1, WPN_MACE,
+										  1, WPN_SPEAR);
         case MONS_ORC_WARRIOR:
         case MONS_ORC_KNIGHT:
         case MONS_ORC_WARLORD:
@@ -128,7 +130,14 @@ static int _orc_weapon_gift_type(monster_type mon_type)
             return random_choose_weighted(2, WPN_WAR_AXE, // orcs love axes
                                           1, WPN_LONG_SWORD,
                                           1, WPN_FLAIL,
-                                          1, WPN_SPEAR);
+                                          1, WPN_TRIDENT);
+        case MONS_CHOSEN_WARRIOR:
+        case MONS_CHOSEN_MAGE:
+		case MONS_CHOSEN_PRIEST:
+            return random_choose_weighted(2, WPN_BROAD_AXE, // orcs love axes
+                                          1, WPN_DOUBLE_SWORD,
+                                          1, WPN_MORNINGSTAR,
+                                          1, WPN_DEMON_TRIDENT);
             // give a lower tier of polearms; reaching is good on followers
         default:
             return WPN_CLUB; // shouldn't ever come up?
@@ -838,7 +847,7 @@ static bool _beogh_bless_follower(monster* follower, bool force)
 			mpr("Nergalle whispers : I'm back from death, my Messiah.");
 			create_monster(mg);
 		}
-
+		
         // Possibly send more reinforcements.
         if (coinflip())
             _beogh_blessing_reinforcements();

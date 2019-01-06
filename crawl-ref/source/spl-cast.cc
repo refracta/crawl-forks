@@ -1194,6 +1194,9 @@ static unique_ptr<targeter> _spell_targeter(spell_type spell, int pow,
         return make_unique<targeter_smite>(&you, range, 1, 1, false,
                                            [](const coord_def& p) -> bool {
                                               return you.pos() != p; });
+	case SPELL_COLD_SNAP:
+        return make_unique<targeter_beam>(&you, range, ZAP_COLD_SNAP, pow,
+                                          1, 1);
     case SPELL_PASSWALL:
         return make_unique<targeter_passwall>(range);
     case SPELL_DIG:
@@ -1800,9 +1803,6 @@ static spret_type _do_cast(spell_type spell, int powc, const dist& spd,
     case SPELL_DISCORD:
         return mass_enchantment(ENCH_INSANE, powc, fail);
 
-    case SPELL_ENGLACIATION:
-        return cast_englaciation(powc, fail);
-
     case SPELL_AURA_OF_ABJURATION:
         return cast_aura_of_abjuration(powc, fail);
 
@@ -1875,8 +1875,11 @@ static spret_type _do_cast(spell_type spell, int powc, const dist& spd,
     case SPELL_DEATHS_DOOR:
         return cast_deaths_door(powc, fail);
 
-    case SPELL_RING_OF_FLAMES:
-        return cast_ring_of_flames(powc, fail);
+    case SPELL_RING_OF_FROST:
+        return cast_ring_of_frost(powc, fail);
+	
+	case SPELL_NAPALM_CHARGE:
+        return cast_napalm_charge(powc, fail);
 
     // Escape spells.
     case SPELL_BLINK:

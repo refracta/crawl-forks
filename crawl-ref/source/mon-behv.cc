@@ -196,13 +196,29 @@ static void _decide_monster_firing_position(monster* mon, actor* owner)
             _set_firing_pos(mon, mon->target);
         }
         // Hold position if we've reached our ideal range
-        else if (mon->type == MONS_SPELLFORGED_SERVITOR
+        if (mon->type == MONS_SPELLFORGED_SERVITOR
                  && (mon->pos() - target->pos()).rdist()
                  <= mon->props["ideal_range"].get_int()
                  && !one_chance_in(8))
         {
             mon->firing_pos = mon->pos();
         }
+		// Also 'beoghed' mage-orcs
+		if (you_worship(GOD_BEOGH) && mon->friendly())
+		{
+			if (mon->type == MONS_ORC_WIZARD || MONS_ORC_PRIEST
+								|| MONS_ORC_SORCERER || MONS_ORC_HIGH_PRIEST
+								|| MONS_ORC_WARMAGE || MONS_ORC_HIEROPHANT
+								|| MONS_NERGALLE || MONS_NERGALLE_SOULEATER
+								|| MONS_NERGALLE_LICH || MONS_CHOSEN_MAGE
+								|| MONS_CHOSEN_PRIEST
+							&& (mon->pos() - target->pos()).rdist()
+							<= mon->props["ideal_range"].get_int()
+							&& !one_chance_in(8))
+			{
+					mon->firing_pos = mon->pos();
+			}
+		}
     }
 }
 

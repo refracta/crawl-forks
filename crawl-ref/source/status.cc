@@ -326,16 +326,16 @@ bool fill_status_info(int status, status_info& inf)
         break;
     }
 
-    case DUR_FIRE_SHIELD:
+    case DUR_FROST_SHIELD:
     {
         // Might be better to handle this with an extra virtual status.
-        const bool exp = dur_expiring(DUR_FIRE_SHIELD);
+        const bool exp = dur_expiring(DUR_FROST_SHIELD);
         if (exp)
             inf.long_text += "Expiring: ";
-        inf.long_text += "You are surrounded by a ring of flames.\n";
+        inf.long_text += "You are surrounded by a ring of frost.\n";
         if (exp)
             inf.long_text += "Expiring: ";
-        inf.long_text += "You are immune to clouds of flame.";
+        inf.long_text += "You are immune to frezzing clouds.";
         break;
     }
 

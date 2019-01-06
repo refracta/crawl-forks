@@ -35,6 +35,7 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_OZOCUBUS_ARMOUR,
     SPELL_THROW_ICICLE,
     SPELL_SUMMON_ICE_BEAST,
+	SPELL_COLD_SNAP,
 },
 
 {   // Book of Summonings
@@ -50,7 +51,7 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_IGNITE_POISON,
     SPELL_FIREBALL,
     SPELL_BOLT_OF_FIRE,
-    SPELL_RING_OF_FLAMES,
+	SPELL_NAPALM_CHARGE,
     SPELL_IGNITION,
 },
 
@@ -153,7 +154,7 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_MEPHITIC_CLOUD,
     SPELL_CONJURE_FLAME,
     SPELL_FREEZING_CLOUD,
-    SPELL_RING_OF_FLAMES,
+    SPELL_RING_OF_FROST,
 },
 
 {   // Book of Necromancy
@@ -348,10 +349,11 @@ static const vector<spell_type> spellbook_templates[] =
 
 {   // Book of Red Mage
     SPELL_SONG_OF_SLAYING,
+	SPELL_OZOCUBUS_ARMOUR,
 	SPELL_RED_BARRIER,
 	SPELL_QUICKSILVER_AURA,
     SPELL_DEFLECT_MISSILES,
-	SPELL_RING_OF_FLAMES,
+	SPELL_RING_OF_FROST,
 },
 
 {   // Book of Annihilations

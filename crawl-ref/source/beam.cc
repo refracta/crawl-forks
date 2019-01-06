@@ -4354,6 +4354,29 @@ void bolt::monster_post_hit(monster* mon, int dmg)
         napalm_monster(mon, agent(), levels);
     }
 
+	if (you.duration[DUR_NAPALM_CHARGE])
+	{
+		if (flavour = BEAM_FIRE)
+		{
+			const int levels = 4 + (random2(dmg) * 3);
+			napalm_monster(mon, agent(), levels);
+		}
+	}
+	
+	// Cold snap deals more damage to frozen target
+	if (origin_spell == SPELL_COLD_SNAP
+		&& mon->has_ench(ENCH_FROZEN))
+	{	
+		dmg += dmg / 2;
+		
+		mprf("The cold snap freezes encasig ice of %s!",
+                         mon->name(DESC_THE).c_str());
+						 				 
+		mon->del_ench(ENCH_FROZEN);
+		mon->del_ench(ENCH_WHIRLWIND_PINNED);
+		mon->add_ench(mon_enchant(ENCH_WHIRLWIND_PINNED, 2, agent(), 5 * BASELINE_DELAY));
+	}
+	
     // Acid splash from yellow draconians / acid dragons
     if (origin_spell == SPELL_ACID_SPLASH)
     {
@@ -5740,6 +5763,10 @@ const map<spell_type, explosion_sfx> spell_explosions = {
     { SPELL_GHOSTLY_SACRIFICE, {
         "The ghostly flame explodes!",
         "the shriek of haunting fire",
+    } },
+	{ SPELL_COLD_SNAP, {
+        "The cold snap explodes!",
+        "an explosion",
     } },
 };
 

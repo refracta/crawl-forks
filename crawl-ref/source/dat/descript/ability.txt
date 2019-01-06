@@ -460,6 +460,11 @@ Resurrection ability
 Bring an orc corpse back to life. The orc will be an ally, even if it was not
 already one before it died.
 %%%%
+Call Chosen ability
+
+Call an unique Chosen of Beogh. Beogh will send one of three Chosen, warrior,
+mage, or priest. You can call Chosen only once.
+%%%%
 # Fedhas
 Fungal Bloom ability
 

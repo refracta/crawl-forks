@@ -55,13 +55,15 @@ enum book_type
     BOOK_DREAMS,
     BOOK_ALCHEMY,
     BOOK_BEASTS,
-	BOOK_RED_MAGE,
 
     BOOK_ANNIHILATIONS,
     BOOK_GRAND_GRIMOIRE,
     BOOK_NECRONOMICON,
+	
+	// Added by addedcrawl : There is no way to add new spellbook in upper line!
+	BOOK_RED_MAGE,
 
-    MAX_FIXED_BOOK = BOOK_NECRONOMICON,
+    MAX_FIXED_BOOK = BOOK_RED_MAGE,
 
     BOOK_RANDART_LEVEL,
     BOOK_RANDART_THEME,

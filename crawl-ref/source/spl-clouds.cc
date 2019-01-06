@@ -247,31 +247,28 @@ void big_cloud(cloud_type cl_type, const actor *agent,
                      cl_type, agent, spread_rate, -1);
 }
 
-spret_type cast_ring_of_flames(int power, bool fail)
+spret_type cast_ring_of_frost(int power, bool fail)
 {
     fail_check();
-    you.increase_duration(DUR_FIRE_SHIELD,
+    you.increase_duration(DUR_FROST_SHIELD,
                           6 + (power / 10) + (random2(power) / 5), 50,
-                          "The air around you leaps into flame!");
-    manage_fire_shield(1);
+                          "The air around you freezes with frost!");
+    manage_frost_shield(1);
     return SPRET_SUCCESS;
 }
 
-void manage_fire_shield(int delay)
+void manage_frost_shield(int delay)
 {
-    ASSERT(you.duration[DUR_FIRE_SHIELD]);
+    ASSERT(you.duration[DUR_FROST_SHIELD]);
 
-    // Melt ice armour entirely.
-    maybe_melt_player_enchantments(BEAM_FIRE, 100);
-
-    // Remove fire clouds on top of you
-    if (cloud_at(you.pos()) && cloud_at(you.pos())->type == CLOUD_FIRE)
+    // Remove frezzing clouds on top of you
+    if (cloud_at(you.pos()) && cloud_at(you.pos())->type == CLOUD_COLD)
         delete_cloud(you.pos());
 
-    // Place fire clouds all around you
+    // Place frezzing clouds all around you
     for (adjacent_iterator ai(you.pos()); ai; ++ai)
         if (!cell_is_solid(*ai) && !cloud_at(*ai))
-            place_cloud(CLOUD_FIRE, *ai, 1 + random2(6), &you);
+            place_cloud(CLOUD_COLD, *ai, 1 + random2(6), &you);
 }
 
 spret_type cast_corpse_rot(bool fail)

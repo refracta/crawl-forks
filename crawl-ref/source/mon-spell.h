@@ -1830,7 +1830,7 @@ static const mon_spellbook mspell_list[] =
       {
        { SPELL_BATTLECRY, 100, MON_SPELL_NATURAL | MON_SPELL_NOISY
                                | MON_SPELL_NO_SILENT },
-       { SPELL_PORTAL_PROJECTILE, 22, MON_SPELL_PRIEST | MON_SPELL_NO_SILENT },
+       { SPELL_PORTAL_PROJECTILE, 22, MON_SPELL_PRIEST },
       }
     },
 	
@@ -1859,6 +1859,23 @@ static const mon_spellbook mspell_list[] =
        { SPELL_BATTLECRY, 100, MON_SPELL_PRIEST | MON_SPELL_NOISY
                                | MON_SPELL_NO_SILENT },
        { SPELL_SMITING, 64, MON_SPELL_PRIEST },
+      }
+    },
+	
+	{  MST_CHOSEN_MAGE,
+      {
+	   { SPELL_AURA_OF_BRILLIANCE, 12, MON_SPELL_PRIEST },
+       { SPELL_RANDOM_BOLT, 100, MON_SPELL_WIZARD },
+	   { SPELL_IRON_SHOT, 64, MON_SPELL_WIZARD },
+	   { SPELL_BATTLESPHERE, 12, MON_SPELL_WIZARD },
+      }
+    },
+	
+	{  MST_CHOSEN_PRIEST,
+      {
+       { SPELL_SMITING, 30, MON_SPELL_PRIEST },
+       { SPELL_HEAL_OTHER, 64, MON_SPELL_PRIEST },
+       { SPELL_MAJOR_HEALING, 20, MON_SPELL_PRIEST | MON_SPELL_EMERGENCY },
       }
     },
 

@@ -7347,6 +7347,7 @@ void ashenzari_omniscience()
 	if (you.duration[DUR_OMNISCIENCE])
 		mpr("You extend your omniscient vision!");
 	else
+	{
 		simple_god_message(" grants you the omniscient vision, foresee a short future! You can see upcoming attacks...");
 		flash_view(UA_PLAYER, RED);
 #ifndef USE_TILE_LOCAL
@@ -7355,4 +7356,71 @@ void ashenzari_omniscience()
 #endif
 		more();
 		you.increase_duration(DUR_OMNISCIENCE, 10 + (you.piety / 10));
+	}
+}
+
+bool beogh_call_chosen()
+{
+    ASSERT(can_do_capstone_ability(you.religion));
+
+    if (!yesno("Do you wish to receive an unique Chosen of Beogh?", true, 'n'))
+    {
+        canned_msg(MSG_OK);
+        return false;
+    }
+
+	switch (random2(3))
+    {
+    case 0:
+		{
+		    simple_god_message(" says : Drown the unbelievers in a sea of blood, my warrior!");	
+			mgen_data mg(MONS_CHOSEN_WARRIOR, BEH_FRIENDLY, you.pos());
+			mg.set_summoned(&you, 0, 0, GOD_BEOGH);
+			create_monster(mg);
+			
+			flash_view(UA_PLAYER, RED);
+#ifndef USE_TILE_LOCAL
+    // Allow extra time for the flash to linger.
+	scaled_delay(1000);
+#endif
+			more();
+			you.one_time_ability_used.set(you.religion);
+			return true;
+		}
+		break;
+    case 1:
+		{
+		    simple_god_message(" says : Drown the unbelievers in a sea of blood, my warrior!");	
+			mgen_data mg(MONS_CHOSEN_WARRIOR, BEH_FRIENDLY, you.pos());
+			mg.set_summoned(&you, 0, 0, GOD_BEOGH);
+			create_monster(mg);
+			
+			flash_view(UA_PLAYER, RED);
+#ifndef USE_TILE_LOCAL
+    // Allow extra time for the flash to linger.
+	scaled_delay(1000);
+#endif
+			more();
+			you.one_time_ability_used.set(you.religion);
+			return true;
+		}
+		break;
+	case 2:
+		{	
+		    simple_god_message(" says : Drown the unbelievers in a sea of blood, my warrior!");	
+			mgen_data mg(MONS_CHOSEN_WARRIOR, BEH_FRIENDLY, you.pos());
+			mg.set_summoned(&you, 0, 0, GOD_BEOGH);
+			create_monster(mg);
+			
+			flash_view(UA_PLAYER, RED);
+#ifndef USE_TILE_LOCAL
+    // Allow extra time for the flash to linger.
+	scaled_delay(1000);
+#endif
+			more();
+			you.one_time_ability_used.set(you.religion);
+			return true;
+		}
+		break;
+	}
 }

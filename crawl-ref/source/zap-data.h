@@ -1357,4 +1357,23 @@ _mon_hex_zap(ZAP_DRAIN_MAGIC, BEAM_DRAIN_MAGIC),
     false,
     0 // No additional effect noise.
 },
+
+{
+    ZAP_COLD_SNAP,
+    "cold snap",
+    200,
+    new calcdice_calculator<3, 4, 1, 12>,
+    new tohit_calculator<40>,
+    new dicedef_calculator<3, 4, 1, 12>,
+    new tohit_calculator<40>,
+    WHITE,
+    false,
+    BEAM_COLD,
+    DCHAR_FIRED_ZAP,
+    false,
+    false,
+    true,
+    3
+},
+
 };

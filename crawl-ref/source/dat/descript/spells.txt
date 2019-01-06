@@ -288,6 +288,12 @@ Cold Breath spell
 
 Exhales a focused blast of icy-cold air. It may knock back airborne targets.
 %%%%
+Cold Snap spell
+
+Blow up the condensed cold around the target. Although relatively weak in itself,
+but if the target is frozen, the damage is amplified and will pinned target for a while,
+remove frozen.
+%%%%
 Confuse spell
 
 Induces a state of bewilderment and confusion in a creature's mind.
@@ -908,6 +914,14 @@ harpy, manticore or lindwurm, and at high power may summon a sphinx, or an
 entire pack of harpies. With high power the individual creatures will also gain
 increased strength.
 %%%%
+Napalm Charge spell
+
+Charges caster's fire magic with deadly napalm. When enemies affected
+by fire you created in any way, they will covered by liquid flame.
+This spell can charge only caster's spells or other fiery effects,
+and cloud derived from it can not be charged. The duration of liquid flame is
+up to the damage from the source.
+%%%%
 Necromutation spell
 
 Transforms the caster into a lich — a powerful skeletal figure. The caster
@@ -946,17 +960,18 @@ impact. Its damage partially bypasses armour.
 %%%%
 Ozocubu's Armour spell
 
-Envelops the caster's body in a protective layer of thick ice, granting a
-substantial bonus to armour as long as they remain in their current location.
-The ice will crack and fall away if the caster moves to a new position. The
-spell will not function for casters already wearing heavy armour (any body
-armour with an encumbrance rating of 5 or more).
+Envelops the caster's body in a protective layer of thick ice, freezing melee
+attackers and granting a substantial bonus to armour as long as they remain
+in their current location. The ice will crack and fall away if the caster
+moves to a new position, but ring of frost can prevent cracking. The spell
+will not function for casters already wearing heavy armour (any body armour
+with an encumbrance rating of 5 or more).
 %%%%
 Ozocubu's Refrigeration spell
 
-Drains heat from the caster and their surroundings, causing harm to all
+Drains heat from the caster and their surroundings, causing frozen to all
 creatures not resistant to cold and bypassing any armour the targets may have.
-It prevents the caster from using potions for a brief duration.
+Even if targets have resistance to cold, can't avoid freezing.
 %%%%
 Pain spell
 
@@ -1092,7 +1107,7 @@ Calls a surge of power from the earth, striking an enemy within the caster's
 sight. The spell cascades through nearby constructs, growing in strength with
 each one standing near the target.
 %%%%
-Ring of Flames spell
+Ring of Frost spell
 
 Surrounds the caster with a mobile ring of searing flame, and keeps other fire
 clouds away from the caster. This spell attunes the caster to the forces of

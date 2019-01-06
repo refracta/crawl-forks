@@ -444,27 +444,6 @@ static int _los_spell_damage_player(const actor* agent, bolt &beam,
     hurted = check_your_resists(hurted, beam.flavour, beam.name, 0,
             // Drain life doesn't apply drain effects.
             actual && beam.origin_spell != SPELL_DRAIN_LIFE);
-    if (actual && hurted > 0)
-    {
-        if (beam.origin_spell == SPELL_OZOCUBUS_REFRIGERATION)
-            mpr("You feel very cold.");
-
-        if (agent && !agent->is_player())
-        {
-            ouch(hurted, KILLED_BY_BEAM, agent->mid,
-                 make_stringf("by %s", beam.name.c_str()).c_str(), true,
-                 agent->as_monster()->name(DESC_A).c_str());
-            you.expose_to_element(beam.flavour, 5);
-        }
-        // -harm from player casting Ozo's Refridge.
-        else if (beam.origin_spell == SPELL_OZOCUBUS_REFRIGERATION)
-        {
-            ouch(hurted, KILLED_BY_FREEZING);
-            you.expose_to_element(beam.flavour, 5);
-            you.increase_duration(DUR_NO_POTIONS, 7 + random2(9), 15);
-        }
-    }
-
     return hurted;
 }
 
@@ -497,11 +476,16 @@ static int _los_spell_damage_monster(const actor* agent, monster &target,
         else if (hurted)
             target.hurt(agent, hurted, beam.flavour);
 
-        // Cold-blooded creatures can be slowed.
+        // Target will be frozen, and cold-blooded creatures can be slowed.
         if (beam.origin_spell == SPELL_OZOCUBUS_REFRIGERATION
             && target.alive())
         {
             target.expose_to_element(beam.flavour, 5);
+			if (!target.has_ench(ENCH_FROZEN))
+			{
+				target.add_ench(mon_enchant(ENCH_FROZEN,
+                 0, agent, 3 + random2(4) * BASELINE_DELAY));
+			}
         }
     }
 
@@ -544,7 +528,7 @@ static spret_type _cast_los_attack_spell(spell_type spell, int pow,
             mons_invis_msg = "The ambient heat is drained!";
             verb = "frozen";
             vulnerable = [](const actor *caster, const actor *act) {
-                return act->is_player() || act->res_cold() < 3;
+                return !act->is_player() || act->res_cold() < 3;
             };
             break;
 

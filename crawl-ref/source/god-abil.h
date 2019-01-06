@@ -199,3 +199,5 @@ spret_type wu_jian_wall_jump_ability();
 bool legion_gift_grand_grimore();
 
 void ashenzari_omniscience();
+
+bool beogh_call_chosen();
