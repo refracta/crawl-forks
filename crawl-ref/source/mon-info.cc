@@ -1414,7 +1414,7 @@ vector<string> monster_info::attributes() const
     if (is(MB_CONFUSED))
         v.emplace_back("confused");
     if (is(MB_PINNED))
-        v.emplace_back("pinned by a whirlwind");
+        v.emplace_back("pinned");
     if (is(MB_INVISIBLE))
         v.emplace_back("slightly transparent");
     if (is(MB_CHARMED))

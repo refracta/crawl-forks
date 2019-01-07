@@ -484,7 +484,7 @@ static int _los_spell_damage_monster(const actor* agent, monster &target,
 			if (!target.has_ench(ENCH_FROZEN))
 			{
 				target.add_ench(mon_enchant(ENCH_FROZEN,
-                 0, agent, 3 + random2(4) * BASELINE_DELAY));
+                 0, agent, 6 + random2(8) * BASELINE_DELAY));
 			}
         }
     }

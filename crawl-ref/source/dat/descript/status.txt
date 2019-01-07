@@ -801,3 +801,8 @@ Water status
 
 Your control over your magic has been sapped.
 %%%%
+Icy Armour status
+
+You are protected by a layer of icy armour, freezing melee
+attackers and granting a substantial bonus to armour.
+%%%%

@@ -3092,7 +3092,7 @@ void melee_attack::do_passive_freeze()
 			if (you.duration[DUR_ICY_ARMOUR])
 			{
 				mon->add_ench(mon_enchant(ENCH_FROZEN,
-					0, &you, 3 + random2(4) * BASELINE_DELAY));
+					0, &you, 5 + random2(4) * BASELINE_DELAY));
 		
 			}
 		}	

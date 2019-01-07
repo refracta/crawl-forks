@@ -468,6 +468,12 @@ bool fill_status_info(int status, status_info& inf)
             = make_stringf("OmniV (%u)",
                            you.duration[DUR_OMNISCIENCE] / 10);
         break;
+	
+	case DUR_ICY_ARMOUR:
+        inf.light_text
+            = make_stringf("+AC (%u)",
+                           (500 + you.props[ICY_ARMOUR_KEY].get_int() * 8) / 100);
+        break;
 
     case DUR_SONG_OF_SLAYING:
         inf.light_text

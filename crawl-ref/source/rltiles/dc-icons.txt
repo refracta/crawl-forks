@@ -61,6 +61,7 @@ vile_clutch VILE_CLUTCH
 possessable POSSESSABLE
 hold_position HOLD_POSITION
 overload OVERLOAD
+frozen FROZEN
 
 something_under SOMETHING_UNDER
 new_stair NEW_STAIR

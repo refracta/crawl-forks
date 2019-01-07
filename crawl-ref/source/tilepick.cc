@@ -1921,6 +1921,8 @@ tileidx_t tileidx_monster(const monster_info& mons)
         ch |= TILE_FLAG_HOLD_POSITION;
 	if (mons.is(MB_OVERLOAD))
         ch |= TILE_FLAG_OVERLOAD;
+	if (mons.is(MB_FROZEN))
+        ch |= TILE_FLAG_FROZEN;
 
     if (mons.attitude == ATT_FRIENDLY)
         ch |= TILE_FLAG_PET;
