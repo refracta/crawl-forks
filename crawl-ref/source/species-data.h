@@ -569,17 +569,19 @@ static const map<species_type, species_def> species_data =
     "Og",
     "Ogre", "Ogreish", nullptr,
     SPF_NONE,
-    0, 3, 0, 4,
+    0, 3, 0, 6,
     MONS_OGRE,
     HT_LAND, US_ALIVE, SIZE_LARGE,
     11, 9, 4, // 24
     { STAT_STR }, 3,
-    { { MUT_TOUGH_SKIN, 1, 1 }, },
+    { { MUT_TOUGH_SKIN, 1, 1 }, { MUT_SUBDUED_MAGIC, 1, 1 },
+	  { MUT_TOUGH_SKIN, 1, 4 }, { MUT_TOUGH_SKIN, 1, 7 },
+	  { MUT_ROBUST, 1, 14 } },
     {},
     {},
     { JOB_HUNTER, JOB_BERSERKER, JOB_ARCANE_MARKSMAN, JOB_WIZARD,
-      JOB_FIRE_ELEMENTALIST },
-    { SK_MACES_FLAILS, SK_POLEARMS, SK_STAVES, SK_AXES },
+      JOB_SKALD },
+    { SK_MACES_FLAILS, SK_THROWING },
 } },
 
 { SP_OCTOPODE, {
