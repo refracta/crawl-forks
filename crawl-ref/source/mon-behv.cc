@@ -204,7 +204,7 @@ static void _decide_monster_firing_position(monster* mon, actor* owner)
             mon->firing_pos = mon->pos();
         }
 		// Also 'beoghed' mage-orcs
-		if (you_worship(GOD_BEOGH) && mon->friendly())
+		if (you_worship(GOD_BEOGH) && mon->friendly() && !mons_class_flag(mon->type, M_FIGHTER))
 		{
 			if (mon->type == MONS_ORC_WIZARD || MONS_ORC_PRIEST
 								|| MONS_ORC_SORCERER || MONS_ORC_HIGH_PRIEST
