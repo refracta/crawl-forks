@@ -908,7 +908,7 @@ monster* place_monster(mgen_data mg, bool force_pos, bool dont_place)
         && mg.cls != MONS_PLAYER_SHADOW
         && mg.cls != MONS_BUTTERFLY
         && mg.cls != MONS_FIRE_VORTEX)
-        mg.cls = MONS_ORB_OF_FIRE;
+        mg.cls = MONS_BOGGART;
 
     // (3) Decide on banding (good lord!)
     int band_size = 1;
