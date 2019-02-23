@@ -432,7 +432,7 @@ NORETURN static void _launch_game()
                     << " " << get_job_name(you.char_class) << ".</yellow>"
                     << endl;
         if (game_start) {
-            adjust_level(26, true);
+            //adjust_level(26, true); This line is for oofcrawl
             mpr("Here is some equipment and experience to get you started. Good luck!");
         }
     }
