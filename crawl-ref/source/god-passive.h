@@ -38,8 +38,8 @@ enum class passive_t
     /// You detect the presence of items.
     detect_items,
 
-    /// You are better at searching for traps.
-    search_traps,
+    /// You avoid explore-based traps.
+    avoid_traps,
 
     /// You have innate see invisible.
     sinv,
@@ -257,6 +257,7 @@ enum class passive_t
     wu_jian_whirlwind,
     wu_jian_wall_jump,
 	
+	// for the Legion form beyond, added by addedcrawl!
 	/// Protect allies from abjuration by decreasing the power to /10.
     abjuration_protection_legion,
 	

@@ -35,7 +35,6 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_OZOCUBUS_ARMOUR,
     SPELL_THROW_ICICLE,
     SPELL_SUMMON_ICE_BEAST,
-	SPELL_COLD_SNAP,
 },
 
 {   // Book of Summonings
@@ -51,8 +50,9 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_IGNITE_POISON,
     SPELL_FIREBALL,
     SPELL_BOLT_OF_FIRE,
-	SPELL_NAPALM_CHARGE,
+    SPELL_RING_OF_FROST,
     SPELL_IGNITION,
+	SPELL_NAPALM_CHARGE,
 },
 
 {   // Book of Ice
@@ -224,7 +224,7 @@ static const vector<spell_type> spellbook_templates[] =
 
 #if TAG_MAJOR_VERSION == 34
 {   // Book of Control
-    SPELL_ENGLACIATION,
+    SPELL_SLOW,
 },
 
 {   // Book of Battle
@@ -325,6 +325,7 @@ static const vector<spell_type> spellbook_templates[] =
 {   // Book of Dreams
     SPELL_HIBERNATION,
     SPELL_BORGNJORS_VILE_CLUTCH,
+	SPELL_RED_BARRIER,
     SPELL_SILENCE,
     SPELL_DARKNESS,
     SPELL_SHADOW_CREATURES,
@@ -344,15 +345,6 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_SUMMON_ICE_BEAST,
     SPELL_SUMMON_MANA_VIPER,
     SPELL_SUMMON_HYDRA,
-},
-
-{   // Book of Red Mage
-    SPELL_SONG_OF_SLAYING,
-	SPELL_OZOCUBUS_ARMOUR,
-	SPELL_RED_BARRIER,
-	SPELL_QUICKSILVER_AURA,
-    SPELL_DEFLECT_MISSILES,
-	SPELL_RING_OF_FROST,
 },
 
 {   // Book of Annihilations

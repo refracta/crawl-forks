@@ -22,6 +22,7 @@
 #include "item-name.h"
 #include "item-prop.h"
 #include "items.h"
+#include "libutil.h"
 #include "potion-type.h"
 #include "religion.h"
 #include "skills.h"
@@ -361,6 +362,58 @@ bool is_channeling_item(const item_def& item, bool calc_unid)
               && item.sub_type == MISC_CRYSTAL_BALL_OF_ENERGY;
 }
 
+bool is_corpse_violating_spell(spell_type spell)
+{
+    spell_flags flags = get_spell_flags(spell);
+
+    return testbits(flags, spflag::corpse_violating);
+}
+
+/**
+ * Do the good gods hate use of this spell?
+ *
+ * @param spell     The spell in question; e.g. SPELL_CORPSE_ROT.
+ * @return          Whether the Good Gods hate this spell.
+ */
+bool is_evil_spell(spell_type spell)
+{
+    const spschools_type disciplines = get_spell_disciplines(spell);
+    spell_flags flags = get_spell_flags(spell);
+
+    if (flags & spflag::unholy)
+        return true;
+    return bool(disciplines & spschool::necromancy)
+           && !bool(flags & spflag::not_evil);
+}
+
+bool is_unclean_spell(spell_type spell)
+{
+    spell_flags flags = get_spell_flags(spell);
+
+    return bool(flags & spflag::unclean);
+}
+
+bool is_chaotic_spell(spell_type spell)
+{
+    spell_flags flags = get_spell_flags(spell);
+
+    return bool(flags & spflag::chaotic);
+}
+
+bool is_hasty_spell(spell_type spell)
+{
+    spell_flags flags = get_spell_flags(spell);
+
+    return bool(flags & spflag::hasty);
+}
+
+bool is_non_legion_spell(spell_type spell)
+{
+    spell_flags flags = get_spell_flags(spell);
+
+    return testbits(flags, spflag::non_legion);
+}
+
 bool is_non_legion_item(const item_def& item, bool calc_unid)
 {
     bool retval = false;
@@ -405,58 +458,6 @@ bool is_non_legion_item(const item_def& item, bool calc_unid)
     }
 
     return retval;
-}
-
-bool is_corpse_violating_spell(spell_type spell)
-{
-    unsigned int flags = get_spell_flags(spell);
-
-    return flags & SPFLAG_CORPSE_VIOLATING;
-}
-
-/**
- * Do the good gods hate use of this spell?
- *
- * @param spell     The spell in question; e.g. SPELL_CORPSE_ROT.
- * @return          Whether the Good Gods hate this spell.
- */
-bool is_evil_spell(spell_type spell)
-{
-    const spschools_type disciplines = get_spell_disciplines(spell);
-    unsigned int flags = get_spell_flags(spell);
-
-    if (flags & SPFLAG_UNHOLY)
-        return true;
-    return bool(disciplines & SPTYP_NECROMANCY)
-           && !bool(flags & SPFLAG_NOT_EVIL);
-}
-
-bool is_unclean_spell(spell_type spell)
-{
-    unsigned int flags = get_spell_flags(spell);
-
-    return bool(flags & SPFLAG_UNCLEAN);
-}
-
-bool is_chaotic_spell(spell_type spell)
-{
-    unsigned int flags = get_spell_flags(spell);
-
-    return bool(flags & SPFLAG_CHAOTIC);
-}
-
-bool is_hasty_spell(spell_type spell)
-{
-    unsigned int flags = get_spell_flags(spell);
-
-    return bool(flags & SPFLAG_HASTY);
-}
-
-bool is_non_legion_spell(spell_type spell)
-{
-    unsigned int flags = get_spell_flags(spell);
-
-    return bool(flags & SPFLAG_NON_LEGION);
 }
 
 /**

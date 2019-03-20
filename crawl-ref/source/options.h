@@ -170,7 +170,9 @@ public:
                                 // should be accessible by different people.
     vector<string> additional_macro_files;
 
-    uint32_t    seed;   // Non-random games.
+    uint64_t    seed;           // Non-random games.
+    uint64_t    seed_from_rc;
+    bool        pregen_dungeon; // Is the dungeon generated at the beginning?
 
 #ifdef DGL_SIMPLE_MESSAGING
     bool        messaging;      // Check for messages.
@@ -407,6 +409,7 @@ public:
                                     // pickup
     bool        ability_menu;       // 'a'bility starts with a full-screen menu
     bool        easy_floor_use;     // , selects the floor item if there's 1
+    bool        bad_item_prompt;    // Confirm before using a bad consumable
 
     int         assign_item_slot;   // How free slots are assigned
     maybe_bool  show_god_gift;      // Show {god gift} in item names
@@ -452,6 +455,10 @@ public:
 
     bool        rest_wait_both; // Stop resting only when both HP and MP are
                                 // fully restored.
+
+    bool        rest_wait_ancestor;// Stop resting only if the ancestor's HP
+                                   // is fully restored.
+
     int         rest_wait_percent; // Stop resting after restoring this
                                    // fraction of HP or MP
 

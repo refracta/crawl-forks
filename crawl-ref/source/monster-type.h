@@ -865,7 +865,7 @@ enum monster_type                      // menv[].type
     MONS_ANCESTOR_KNIGHT,
     MONS_ANCESTOR_BATTLEMAGE,
     MONS_ANCESTOR_HEXER,
-	MONS_BLORK_THE_WHINER,		// Beogh
+	MONS_BLORK_THE_WHINER,		// addedcrawl: Beogh
 	MONS_BLORK_THE_REPENTANT,
 	MONS_BLORK_THE_GREAT_ORC,
 	MONS_URUG_WARMASTER,
@@ -873,6 +873,9 @@ enum monster_type                      // menv[].type
 	MONS_NERGALLE_SOULEATER,
 	MONS_NERGALLE_LICH,
 	MONS_BAPTIZED_ROKA,
+	MONS_CHOSEN_WARRIOR,
+	MONS_CHOSEN_MAGE,
+	MONS_CHOSEN_PRIEST,
 #endif
     MONS_TEST_SPAWNER,
 #if TAG_MAJOR_VERSION > 34
@@ -1057,7 +1060,7 @@ enum monster_type                      // menv[].type
     MONS_FROG,
     MONS_BARACHI,
     MONS_BULTUNGIN,             // remove this someday
-	MONS_BLORK_THE_WHINER,
+	MONS_BLORK_THE_WHINER,		// added by addedcrawl
 	MONS_BLORK_THE_REPENTANT,
 	MONS_BLORK_THE_GREAT_ORC,
 	MONS_URUG_WARMASTER,

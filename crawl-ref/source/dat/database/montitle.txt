@@ -35,10 +35,6 @@ Bai Suzhen title
 
 Bai Suzhen, Madame White Snake
 %%%%
-Baptized Roka title
-
-Roka the Twice Baptized
-%%%%
 Boris title
 
 Boris, Master of Life and Death
@@ -46,18 +42,6 @@ Boris, Master of Life and Death
 Cerebov title
 
 Cerebov, Demon Lord of Fire and Steel
-%%%%
-Chosen Warrior of Beogh title
-
-Chosen Warrior of Beogh
-%%%%
-Chosen Mage of Beogh title
-
-Chosen Mage of Beogh
-%%%%
-Chosen Priest of Beogh title
-
-Chosen Priest of Beogh
 %%%%
 Chuck title
 
@@ -231,14 +215,6 @@ Nergalle title
 
 Nergalle the Soulbinder
 %%%%
-Nergalle Lich title
-
-Nergalle the Orcish Lich
-%%%%
-Nergalle Souleater title
-
-Nergalle the Souleater
-%%%%
 Nessos title
 
 Nessos the Markscentaur
@@ -306,14 +282,6 @@ Tiamat, Avatar of the Dragonlord
 Urug title
 
 Urug the Orcish Ballista
-%%%%
-Urug Chosen title
-
-Urug, the Eye of Beogh
-%%%%
-Urug Warmaster title
-
-Urug the Orcish Warmaster
 %%%%
 Vashnia title
 

@@ -38,6 +38,7 @@
 #include "pronoun-type.h"
 #include "religion.h"
 #include "spl-miscast.h"
+#include "spl-util.h"
 #include "state.h"
 #include "stepdown.h"
 #include "stringutil.h"
@@ -62,7 +63,7 @@ attack::attack(actor *attk, actor *defn, actor *blame)
       attacker_to_hit_penalty(0), attack_verb("bug"), verb_degree(),
       no_damage_message(), special_damage_message(), aux_attack(), aux_verb(),
       attacker_armour_tohit_penalty(0), attacker_shield_tohit_penalty(0),
-      defender_shield(nullptr), miscast_level(-1), miscast_type(SPTYP_NONE),
+      defender_shield(nullptr), miscast_level(-1), miscast_type(spschool::none),
       miscast_target(nullptr), fake_chaos_attack(false), simu(false),
       aux_source(""), kill_type(KILLED_BY_MONSTER)
 {
@@ -246,11 +247,6 @@ int attack::calc_to_hit(bool random)
     if (using_weapon()
         && (is_unrandom_artefact(*weapon, UNRAND_WOE)
             || is_unrandom_artefact(*weapon, UNRAND_SNIPER)))
-    {
-        return AUTOMATIC_HIT;
-    }
-
-	if (attacker->is_player() && you.duration[DUR_OMNISCIENCE])
     {
         return AUTOMATIC_HIT;
     }
@@ -477,14 +473,18 @@ bool attack::distortion_affects_defender()
     switch (choice)
     {
     case SMALL_DMG:
+        special_damage += 1 + random2avg(7, 2);
+        // No need to call attack_strength_punctuation here,
+        // since special damage < 7, so it will always return "."
         special_damage_message = make_stringf("Space bends around %s.",
                                               defender_name(false).c_str());
-        special_damage += 1 + random2avg(7, 2);
         break;
     case BIG_DMG:
-        special_damage_message = make_stringf("Space warps horribly around %s!",
-                                              defender_name(false).c_str());
         special_damage += 3 + random2avg(24, 2);
+        special_damage_message =
+            make_stringf("Space warps horribly around %s%s",
+                         defender_name(false).c_str(),
+                         attack_strength_punctuation(special_damage).c_str());
         break;
     case BLINK:
         if (defender_visible)
@@ -556,9 +556,10 @@ void attack::pain_affects_defender()
         if (special_damage && defender_visible)
         {
             special_damage_message =
-                make_stringf("%s %s in agony.",
+                make_stringf("%s %s in agony%s",
                              defender->name(DESC_THE).c_str(),
-                             defender->conj_verb("writhe").c_str());
+                             defender->conj_verb("writhe").c_str(),
+                           attack_strength_punctuation(special_damage).c_str());
         }
     }
 }
@@ -638,7 +639,7 @@ static const vector<chaos_effect> chaos_effects = {
             mon->add_ench(one_chance_in(3) ? ENCH_GLOWING_SHAPESHIFTER
                                            : ENCH_SHAPESHIFTER);
             // Immediately polymorph monster, just to make the effect obvious.
-            monster_polymorph(mon, RANDOM_MONSTER);
+            mon->polymorph();
 
             // Xom loves it if this happens!
             const int friend_factor = mon->friendly() ? 1 : 2;
@@ -663,7 +664,7 @@ static const vector<chaos_effect> chaos_effects = {
                                                            level1_chance, 1,
                                                            level2_chance, 2,
                                                            level3_chance, 3);
-            attack.miscast_type   = SPTYP_RANDOM;
+            attack.miscast_type   = spschool::random;
             attack.miscast_target = attack.defender;
 
             return false;
@@ -863,7 +864,7 @@ void attack::do_miscast()
 
     ASSERT(miscast_target != nullptr);
     ASSERT_RANGE(miscast_level, 0, 4);
-    ASSERT(count_bits(miscast_type) == 1);
+    ASSERT(count_bits(static_cast<uint64_t>(miscast_type)) == 1);
 
     if (!miscast_target->alive())
         return;
@@ -906,9 +907,9 @@ void attack::do_miscast()
         }
     }
 
-    MiscastEffect(miscast_target, attacker, MELEE_MISCAST,
-                  (spschool_flag_type) miscast_type, miscast_level, cause,
-                  NH_NEVER, 0, hand_str, false);
+    MiscastEffect(miscast_target, attacker, {miscast_source::melee},
+                  (spschool) miscast_type, miscast_level, cause,
+                  nothing_happens::NEVER, 0, hand_str, false);
 
     // Don't do miscast twice for one attack.
     miscast_level = -1;
@@ -933,10 +934,11 @@ void attack::drain_defender()
         {
             special_damage_message =
                 make_stringf(
-                    "%s %s %s!",
+                    "%s %s %s%s",
                     atk_name(DESC_THE).c_str(),
                     attacker->conj_verb("drain").c_str(),
-                    defender_name(true).c_str());
+                    defender_name(true).c_str(),
+                    attack_strength_punctuation(special_damage).c_str());
         }
     }
 }
@@ -1003,14 +1005,10 @@ string attack_strength_punctuation(int dmg)
  */
 string attack::evasion_margin_adverb()
 {
-    if (you.duration[DUR_OMNISCIENCE])
-        return " unnaturally";
-
-    else
-        return (ev_margin <= -20) ? " completely" :
-               (ev_margin <= -12) ? "" :
-               (ev_margin <= -6)  ? " closely"
-                                  : " barely";
+    return (ev_margin <= -20) ? " completely" :
+           (ev_margin <= -12) ? "" :
+           (ev_margin <= -6)  ? " closely"
+                              : " barely";
 }
 
 void attack::stab_message()
@@ -1327,9 +1325,6 @@ int attack::test_hit(int to_land, int ev, bool randomise_ev)
         ev = random2avg(2*ev, 2);
     if (to_land >= AUTOMATIC_HIT)
         return true;
-	// Ashenzari's omniscience
-	if (defender->is_player() && you.duration[DUR_OMNISCIENCE])
-        margin = (margin * 0) - 20;
     else if (x_chance_in_y(MIN_HIT_MISS_PERCENTAGE, 100))
         margin = (random2(2) ? 1 : -1) * AUTOMATIC_HIT;
     else
@@ -1520,12 +1515,15 @@ bool attack::apply_damage_brand(const char *what)
             break;
         else if (one_chance_in(3))
         {
-            special_damage_message =
-                defender->is_player()?
-                   "You are electrocuted!"
-                :  make_stringf("Lightning courses through %s!",
-                                defender->name(DESC_THE).c_str());
             special_damage = 8 + random2(13);
+            const string punctuation =
+                    attack_strength_punctuation(special_damage);
+            special_damage_message =
+                defender->is_player()
+                ? make_stringf("You are electrocuted%s", punctuation.c_str())
+                : make_stringf("Lightning courses through %s%s",
+                               defender->name(DESC_THE).c_str(),
+                               punctuation.c_str());
             special_damage_flavour = BEAM_ELECTRICITY;
             defender->expose_to_element(BEAM_ELECTRICITY, 2);
         }
@@ -1549,11 +1547,11 @@ bool attack::apply_damage_brand(const char *what)
     {
         if (!weapon
             || damage_done < 1
-            || defender->is_summoned()
-            || !(defender->holiness() & MH_NATURAL)
+            || !actor_is_susceptible_to_vampirism(*defender)
             || attacker->stat_hp() == attacker->stat_maxhp()
             || attacker->is_player() && you.duration[DUR_DEATHS_DOOR]
-            || x_chance_in_y(2, 5) && !is_unrandom_artefact(*weapon, UNRAND_LEECH))
+            || x_chance_in_y(2, 5)
+               && !is_unrandom_artefact(*weapon, UNRAND_LEECH))
         {
             break;
         }
@@ -1667,7 +1665,7 @@ bool attack::apply_damage_brand(const char *what)
             && miscast_level == -1 && one_chance_in(20))
         {
             miscast_level  = 0;
-            miscast_type   = SPTYP_RANDOM;
+            miscast_type   = spschool::random;
             miscast_target = random_choose(attacker, defender);
         }
 

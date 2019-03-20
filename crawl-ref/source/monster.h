@@ -6,6 +6,7 @@
 #include "beh-type.h"
 #include "enchant-type.h"
 #include "mon-ench.h"
+#include "mon-poly.h"
 #include "montravel-target-type.h"
 #include "potion-type.h"
 #include "seen-context-type.h"
@@ -356,7 +357,8 @@ public:
     bool is_stationary() const override;
     bool malmutate(const string &/*reason*/) override;
     void corrupt();
-    bool polymorph(int pow) override;
+    bool polymorph(int pow, bool allow_immobile = true) override;
+    bool polymorph(poly_power_type power = PPT_SAME);
     void banish(actor *agent, const string &who = "", const int power = 0,
                 bool force = false) override;
     void expose_to_element(beam_type element, int strength = 0,
@@ -534,7 +536,7 @@ public:
     int action_energy(energy_use_type et) const;
 
     bool do_shaft() override;
-    bool has_spell_of_type(spschool_flag_type discipline) const;
+    bool has_spell_of_type(spschool discipline) const;
 
     void bind_melee_flags();
     void bind_spell_flags();
@@ -584,10 +586,10 @@ private:
     bool pickup_misc(item_def &item, bool msg, bool force);
     bool pickup_missile(item_def &item, bool msg, bool force);
 
-    void equip(item_def &item, bool msg);
-    void equip_weapon(item_def &item, bool msg);
-    void equip_armour(item_def &item, bool msg);
-    void equip_jewellery(item_def &item, bool msg);
+    void equip_message(item_def &item);
+    void equip_weapon_message(item_def &item);
+    void equip_armour_message(item_def &item);
+    void equip_jewellery_message(item_def &item);
     void unequip_weapon(item_def &item, bool msg);
     void unequip_armour(item_def &item, bool msg);
     void unequip_jewellery(item_def &item, bool msg);

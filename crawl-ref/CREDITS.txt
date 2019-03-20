@@ -31,18 +31,20 @@
 
 * The administrators of public crawl servers, both present:
     John Boyle (crawl.berotato.org)
-    Jan Anders Bremer (crawl.lantea.net)
     Rax E. Dillon (crawl.akrasiac.org)
     Wongi Hong (webzook.net / kr.dobrazupa.org)
     Alex Jurkiewicz (crawl.project357.org)
-    Aleksi Miikkael Luukkonen (crawl.lantea.net)
     Neil Moore (crawl.s-z.org)
     Marc H. Thoben (crawl.develz.org)
-    dplusplus (http://lazy-life.ddo.jp/)
+    dplusplus (lazy-life.ddo.jp)
+    floraline (crawl.kelbi.org)
   and past:
-    sd1989 (kr.dobrazupa.org)
+    Jan Anders Bremer (crawl.lantea.net)
+    Aleksi Miikkael Luukkonen (crawl.lantea.net)
     joosa (rl.heh.fi)
+    sd1989 (kr.dobrazupa.org)
     phunktion (crawl.somatika.net)
+    ZiBuDo (crawl.jorgrun.rocks)
 
 * The members of various usability testing teams from the department of
   Information Processing Science in Oulu University:
@@ -90,6 +92,7 @@
     Bill Beher
     Alexander Beisig
     biasface
+    bjobae
     Stu Black
     blackcustard
     Peter 'xFleury' Blain
@@ -100,17 +103,20 @@
     Peter Borgmann
     Matthew Boeh
     Mike Boutin
+    John Boyle
     Daniel Mark Brownrigg
     Andre Bubel
     Trent W. Buck
     Joe Buzzelli
     Policarpo Caballero
     Ian Caltabiano
+    David Candido
     Edgar Carballo
     Cedor
     Cerol
     Rahul Chandra
     Thom Chiovoloni
+    Anthony Chuah
     Henry Cipolla
     Nicholas Connelly
     Tom Conrad
@@ -132,6 +138,7 @@
     elliott
     Micha Elsner
     Carl-Oscar Erneholm
+    Erich Erstu
     Christopher Evenstar
     Floodkiller
     floraline
@@ -139,6 +146,8 @@
     Kyle Fox
     freepotion
     Chris Galardi
+    GenericPseudonym
+    Ge0ff
     Benoît Giannangeli
     Ben Goetter
     Aaron Golden
@@ -191,20 +200,23 @@
     Sami Liedes
     Dom 'Bodrick' Light
     Mark Lodato
+    Matthew Ludivico
     Rob Lund
     Lynn
     Michael Lynn
     Peter McLarnan
     Lain I. W. Madreisz
+    Johannes Maier
     Markus Maier
     MainiacJoe
     Arien Malec
     Paul Maloney
     Pablo Mansanet
     Wille Mäntylä
+    Jean Martel
     James 'Eronarn' Meickle
     Jacob Meigs
-    Johannes Maier
+    mgdelmonte
     mikee
     Andrew Minton
     Yer Mivvaggah
@@ -230,6 +242,7 @@
     Yuuma Oohara
     Julian Ospald
     Malwyn P
+    palyth
     panicbit
     William Parker
     Pedro
@@ -243,6 +256,7 @@
     pubby
     Edward Randtke
     Derek Ray
+    RealzHS
     Terence Reeves
     Tobias Rehbein
     Remsleep
@@ -260,12 +274,14 @@
     Roman Sêk
     Brennan Shacklett
     ShadyAmish
+    Umer Shaikh
     Evan Shaw
     Aditya Shevade
     Alexandra Shields
     Robert Shimmin
     Sigurd
     Edgar Simo
+    Skrybe
     Alex Smith
     Keanan Smith
     Richard Soderberg
@@ -273,6 +289,7 @@
     Solf
     Michael Spang
     David Speare
+    Martin Staffa
     John Stahara
     Jan 'heftig' Steffens
     Stenella

@@ -181,8 +181,10 @@ bool dist::isMe() const
 
 void dist::confusion_fuzz(int range)
 {
-    target   = you.pos() + coord_def(random_range(-range, range),
-                                     random_range(-range, range));
+    target   = you.pos();
+    target.x += random_range(-range, range);
+    target.y += random_range(-range, range);
+
     choseRay = false;
 }
 
@@ -2045,6 +2047,7 @@ bool direction_chooser::choose_direction()
 
     clear_messages();
     msgwin_set_temporary(true);
+    unwind_bool save_more(crawl_state.show_more_prompt, false);
     show_initial_prompt();
     need_text_redraw = false;
 
@@ -2765,7 +2768,7 @@ void describe_floor()
         return;
 
     mprf(channel, "%s%s here.", prefix, feat.c_str());
-    if (grid == DNGN_ENTER_LABYRINTH)
+    if (grid == DNGN_ENTER_GAUNTLET)
         mprf(MSGCH_EXAMINE, "Beware, the minotaur awaits!");
 }
 
@@ -2851,7 +2854,7 @@ string feature_description_at(const coord_def& where, bool covering,
         return thing_do_grammar(dtype, add_stop, false, marker_desc);
     }
 
-    if (grid == DNGN_OPEN_DOOR || feat_is_closed_door(grid))
+    if (feat_is_door(grid))
     {
         const string door_desc_prefix =
             env.markers.property_at(where, MAT_ANY,
@@ -2884,10 +2887,18 @@ string feature_description_at(const coord_def& where, bool covering,
         {
             if (grid == DNGN_OPEN_DOOR)
                 desc += "open ";
+            else if (grid == DNGN_CLOSED_CLEAR_DOOR)
+                desc += "closed translucent ";
+            else if (grid == DNGN_OPEN_CLEAR_DOOR)
+                desc += "open translucent ";
             else if (grid == DNGN_RUNED_DOOR)
                 desc += "runed ";
+            else if (grid == DNGN_RUNED_CLEAR_DOOR)
+                desc += "runed translucent ";
             else if (grid == DNGN_SEALED_DOOR)
                 desc += "sealed ";
+            else if (grid == DNGN_SEALED_CLEAR_DOOR)
+                desc += "sealed translucent ";
             else
                 desc += "closed ";
         }
@@ -2990,6 +3001,8 @@ static string _describe_monster_weapon(const monster_info& mi, bool ident)
 
     if (mi.type == MONS_PANDEMONIUM_LORD)
         desc += " armed with ";
+    else if (mi.type == MONS_DANCING_WEAPON)
+        desc += " ";
     else
         desc += " wielding ";
     desc += name1;
@@ -3286,7 +3299,7 @@ string get_monster_equipment_desc(const monster_info& mi,
 
     string weap = "";
 
-    if (mi.type != MONS_DANCING_WEAPON && mi.type != MONS_SPECTRAL_WEAPON)
+    if (mi.type != MONS_SPECTRAL_WEAPON)
         weap = _describe_monster_weapon(mi, level == DESC_IDENTIFIED);
 
     // Print the rest of the equipment only for full descriptions.

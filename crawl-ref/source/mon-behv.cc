@@ -195,15 +195,7 @@ static void _decide_monster_firing_position(monster* mon, actor* owner)
         {
             _set_firing_pos(mon, mon->target);
         }
-        // Hold position if we've reached our ideal range
-        if (mon->type == MONS_SPELLFORGED_SERVITOR
-                 && (mon->pos() - target->pos()).rdist()
-                 <= mon->props["ideal_range"].get_int()
-                 && !one_chance_in(8))
-        {
-            mon->firing_pos = mon->pos();
-        }
-		// Also 'beoghed' mage-orcs
+		// addedcrawl : 'beoghed' mage-orcs will act like spellforged servitor
 		if (you_worship(GOD_BEOGH) && mon->friendly() && !mons_class_flag(mon->type, M_FIGHTER))
 		{
 			if (mon->type == MONS_ORC_WIZARD || MONS_ORC_PRIEST
@@ -214,11 +206,19 @@ static void _decide_monster_firing_position(monster* mon, actor* owner)
 								|| MONS_CHOSEN_PRIEST
 							&& (mon->pos() - target->pos()).rdist()
 							<= mon->props["ideal_range"].get_int()
-							&& !one_chance_in(8))
+							&& !one_chance_in(4))
 			{
 					mon->firing_pos = mon->pos();
 			}
 		}
+        // Hold position if we've reached our ideal range
+        else if (mon->type == MONS_SPELLFORGED_SERVITOR
+                 && (mon->pos() - target->pos()).rdist()
+                 <= mon->props["ideal_range"].get_int()
+                 && !one_chance_in(8))
+        {
+            mon->firing_pos = mon->pos();
+        }
     }
 }
 
@@ -296,8 +296,8 @@ void handle_behaviour(monster* mon)
     //     mon->mindex(), mon->behaviour, mon->foe, mon->pos().x,
     //     mon->pos().y, mon->target.x, mon->target.y);
 
-    // Check for confusion -- early out.
-    if (mon->has_ench(ENCH_CONFUSION))
+    // Check for permanent confusion, early out.
+    if (mons_class_flag(mon->type, M_CONFUSED))
     {
         set_random_target(mon);
         return;
@@ -869,10 +869,12 @@ void handle_behaviour(monster* mon)
                     mon->props["idle_deadline"] = you.elapsed_time + 200;
                 }
 
+                coord_def target_rnd;
+                target_rnd.x = random_range(-2, 2);
+                target_rnd.y = random_range(-2, 2);
                 mon->target = clamp_in_bounds(
                                     mon->props["idle_point"].get_coord()
-                                    + coord_def(random_range(-2, 2),
-                                                random_range(-2, 2)));
+                                    + target_rnd);
 
                 if (you.elapsed_time >= mon->props["idle_deadline"].get_int())
                     stop_retreat = true;

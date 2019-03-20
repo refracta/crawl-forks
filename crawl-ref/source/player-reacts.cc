@@ -219,6 +219,9 @@ static void _decrement_petrification(int delay)
 
         mprf(MSGCH_DURATION, "You turn to %s and can move again.",
              flesh_equiv.c_str());
+
+        if (you.props.exists(PETRIFIED_BY_KEY))
+            you.props.erase(PETRIFIED_BY_KEY);
     }
 
     if (you.duration[DUR_PETRIFYING])
@@ -254,8 +257,8 @@ static void _decrement_paralysis(int delay)
             you.redraw_evasion = true;
             you.duration[DUR_PARALYSIS_IMMUNITY] = roll_dice(1, 3)
             * BASELINE_DELAY;
-            if (you.props.exists("paralysed_by"))
-                you.props.erase("paralysed_by");
+            if (you.props.exists(PARALYSED_BY_KEY))
+                you.props.erase(PARALYSED_BY_KEY);
         }
     }
 }
@@ -958,8 +961,6 @@ static void _regenerate_hp_and_mp(int delay)
 
 void player_reacts()
 {
-    search_around();
-
     //XXX: does this _need_ to be calculated up here?
     const int stealth = player_stealth();
 
@@ -993,7 +994,7 @@ void player_reacts()
         const int teleportitis_level = player_teleport();
         // this is instantaneous
         if (teleportitis_level > 0 && one_chance_in(100 / teleportitis_level))
-            you_teleport_now(false, true);
+            you_teleport_now(false, true, "You feel strangely unstable.");
         else if (player_in_branch(BRANCH_ABYSS) && one_chance_in(80)
                  && (!map_masked(you.pos(), MMT_VAULT) || one_chance_in(3)))
         {

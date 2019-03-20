@@ -45,6 +45,6 @@ enum conduct_type
     DID_SACRIFICE_LOVE,                   // Ru
     DID_CHANNEL,                          // Pakellas
     DID_HURT_FOE,                         // Uskayaw
-	DID_NON_LEGION,						  // Legion from beyond
+	DID_NON_LEGION,						  // addedcrawl : the Legion from beyond
     NUM_CONDUCTS
 };

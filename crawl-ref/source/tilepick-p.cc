@@ -69,22 +69,18 @@ tileidx_t tilep_equ_weapon(const item_def &item)
         case MISC_HORN_OF_GERYON:             return TILEP_HAND1_HORN;
         case MISC_BOX_OF_BEASTS:              return TILEP_HAND1_BOX;
 
+#if TAG_MAJOR_VERSION == 34
         case MISC_DECK_OF_ESCAPE:
         case MISC_DECK_OF_DESTRUCTION:
-#if TAG_MAJOR_VERSION == 34
         case MISC_DECK_OF_DUNGEONS:
-#endif
         case MISC_DECK_OF_SUMMONING:
-#if TAG_MAJOR_VERSION == 34
         case MISC_DECK_OF_WONDERS:
-#endif
         case MISC_DECK_OF_PUNISHMENT:
-#if TAG_MAJOR_VERSION == 34
         case MISC_DECK_OF_WAR:
         case MISC_DECK_OF_CHANGES:
         case MISC_DECK_OF_DEFENCE:
+            return 0;
 #endif
-            return TILEP_HAND1_DECK;
         }
     }
 
@@ -563,11 +559,11 @@ tileidx_t tilep_species_to_base_tile(int sp, int level)
     {
     case SP_HUMAN:
         return TILEP_BASE_HUMAN;
-	case SP_HIGH_ELF:
-		return TILEP_BASE_ELF;
 #if TAG_MAJOR_VERSION == 34
     case SP_SLUDGE_ELF:
 #endif
+	case SP_HIGH_ELF:
+		return TILEP_BASE_ELF;
     case SP_DEEP_ELF:
         return TILEP_BASE_DEEP_ELF;
     case SP_HALFLING:
@@ -665,14 +661,14 @@ void tilep_race_default(int sp, int level, dolls_data *doll)
 
     switch (sp)
     {
-		case SP_HIGH_ELF:
-            hair = TILEP_HAIR_ELF_YELLOW;
-            break;
 #if TAG_MAJOR_VERSION == 34
         case SP_SLUDGE_ELF:
             hair = TILEP_HAIR_ELF_YELLOW;
             break;
 #endif
+        case SP_HIGH_ELF:
+            hair = TILEP_HAIR_ELF_YELLOW;
+            break;
         case SP_DEEP_ELF:
             hair = TILEP_HAIR_ELF_WHITE;
             break;

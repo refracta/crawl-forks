@@ -2,9 +2,9 @@
 Singing Sword
 
 An enchanted blade which loves nothing more than to sing to its owner, whether
-they want it to or not. In combat involving dangerous or numerous foes, the
-sword may sing so intensely that it radiates damaging sonic waves as you
-strike.
+they want it to or not. The sword may sing so intensely that it radiates
+damaging sonic waves as you strike, especially in combat involving dangerous or
+numerous foes.
 %%%%
 Sulking Sword
 
@@ -131,8 +131,9 @@ called Boris. He got lost in the Dungeon while seeking the Orb.
 %%%%
 scythe "Finisher"
 
-A long and exceedingly sharp scythe. Its extraordinary speed is the work of a
-mad wizard, who spent years refining it before discarding it in a fit of rage.
+A long and exceedingly sharp scythe, capable of eviscerating in a single blow.
+Its extraordinary speed is the work of a mad wizard, who spent years refining
+it before discarding it in a fit of rage.
 
 The blade looses a low keen as it cuts through the air.
 %%%%
@@ -350,7 +351,8 @@ The {{
     if you.can_smell() then
         return "smelly "
     end
-}}skin of some strange animal, native to cold and distant lands.
+}}skin of some strange animal, native to cold and distant lands. It radiates
+the chill of its native habitat, slowing creatures from warmer climes.
 %%%%
 salamander hide armour
 
@@ -484,7 +486,8 @@ devices. That, and a pony.
 %%%%
 robe of Clouds
 
-A robe of a material as flimsy and insubstantial as the clouds.
+A robe of a material as nebulous and insubstantial as the clouds. The pleats
+and folds can be swirled into a furious storm.
 %%%%
 hat of Pondering
 
@@ -677,4 +680,10 @@ Maxwell's thermic engine
 A strange sword, one blade blistering hot and the other icy cold. When it hits
 its target the thermal gradient increases. What causes this effect is unknown
 but it is rumored that otherworldly forces are involved.
+%%%%
+demon trident "Rift"
+
+A small wrinkle in the very fabric of reality, magically bound to a shaft by
+some mad acolyte of Lugonu. It possesses an unusually large reach that
+teleports its attack directly to its victim.
 %%%%

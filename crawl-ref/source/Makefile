@@ -62,6 +62,8 @@
 #    WEBDIR        -- place to hold the Webtiles client data. Can be either
 #                     relative to prefix or absolute.
 #
+#    NOSSE         -- build without SSE support, e.g. on a non-x86 processor.
+#                     Defining this may affect seed stability.
 #    ANDROID       -- perform an Android build (see docs/develop/android.txt)
 #    TOUCH_UI      -- enable UI behaviour more compatible with touch-screens
 #
@@ -108,7 +110,16 @@ include Makefile.obj
 # Which C++ standard to support
 STDFLAG = -std=c++11
 
+ifdef ANDROID
+NOSSE := Yes
+endif
+
 CFOTHERS := -pipe $(EXTERNAL_FLAGS)
+ifndef NOSSE
+# force SSE2 dependency, so as to avoid both x87 indeterminacies, and 
+# to prevent lua from using non-standard rounding methods.
+CFOTHERS += -mfpmath=sse -msse2
+endif
 CFWARN := 
 CFWARN_L := -Wall -Wformat-security -Wundef
 
@@ -322,6 +333,9 @@ endif
 ifdef WEBTILES
 TILES_ANY = YesPlease
 OBJECTS += $(TILES_OBJECTS) $(WEBTILES_OBJECTS)
+ifdef NO_PKGCONFIG
+BUILD_LIBPNG = YesPlease # used by build-rltiles sub-make
+endif
 endif
 
 ifdef ANDROID
@@ -489,21 +503,6 @@ WINDRES := $(CROSSHOST)-windres
 
 endif
 
-# Define this to automatically generate code optimized for your machine
-# (GCC only as of now).
-#
-# NOTE: Don't use this with a release build, since the generated code
-# won't work for all machines.
-ifdef HURRY
-NO_AUTO_OPT = YesPlease
-endif
-
-ifdef AUTO_OPT
-ifndef NO_AUTO_OPT
-CFOPTIMIZE += -march=native
-endif
-endif
-
 ifdef USE_ICC
 # If you have a Core 2 processor, this _really_ makes things fly:
 #CFOPTIMIZE := -O2 -parallel -xT
@@ -523,6 +522,21 @@ else
   else
     CFOPTIMIZE := -O2
   endif
+endif
+
+# Define this to automatically generate code optimized for your machine
+# (GCC only as of now).
+#
+# NOTE: Don't use this with a release build, since the generated code
+# won't work for all machines.
+ifdef HURRY
+NO_AUTO_OPT = YesPlease
+endif
+
+ifdef AUTO_OPT
+ifndef NO_AUTO_OPT
+CFOPTIMIZE += -march=native
+endif
 endif
 
 ifdef LTO
@@ -1137,10 +1151,12 @@ RLTILES_CFLAGS := $(ALL_CFLAGS) -Wno-tautological-compare
 DOC_BASE        := ../docs
 DOC_TEMPLATES   := $(DOC_BASE)/template
 GENERATED_DOCS  := $(DOC_BASE)/aptitudes.txt $(DOC_BASE)/aptitudes-wide.txt $(DOC_BASE)/FAQ.html $(DOC_BASE)/crawl_manual.txt
-GENERATED_HEADERS := art-enum.h config.h mon-mst.h #the rest are private
+# Headers that need to exist before attempting to compile cc files
+GENERATED_HEADERS := art-enum.h config.h mon-mst.h species-type.h
+# All other generated files will be created later
 GENERATED_FILES := $(GENERATED_HEADERS) art-data.h mi-enum.h \
                    $(RLTILES)/dc-unrand.txt build.h compflag.h dat/dlua/tags.lua \
-                   cmd-name.h
+                   cmd-name.h species-data.h aptitudes.h species-groups.h
 
 LANGUAGES = $(filter-out en, $(notdir $(wildcard dat/descript/??)))
 SRC_PKG_BASE  := stone_soup
@@ -1611,6 +1627,23 @@ dat/dlua/tags.lua: tag-version.h util/gen-luatags.pl
 mi-enum.h: mon-info.h util/gen-mi-enum
 	$(QUIET_GEN)util/gen-mi-enum
 
+# species-gen.py creates multiple files at once. Ensure Make doesn't run it once
+# per target file. https://stackoverflow.com/q/2973445
+species-data.h: dat/species/*.yaml util/species-gen.py util/species-gen/*.txt
+	$(QUIET_GEN)util/species-gen.py dat/species/ util/species-gen/ species-data.h aptitudes.h species-groups.h species-type.h
+
+# no-op
+aptitudes.h: species-data.h
+	$(QUIET_GEN)
+
+# no-op
+species-groups.h: aptitudes.h
+	$(QUIET_GEN)
+
+# no-op
+species-type.h: species-groups.h
+	$(QUIET_GEN)
+
 $(RLTILES)/dc-unrand.txt: art-data.h
 
 artefact.o: art-data.h art-enum.h
@@ -1631,7 +1664,12 @@ ifdef ANDROID
         # prove that tiles were generated properly
 	grep tile_info rltiles/*.cc| head
 else
+# ensure we don't use contrib libpng when cross-compiling - it won't work.
+ifdef CROSSHOST
 	+$(MAKE) -C $(RLTILES) all ARCH=$(ARCH) TILES=$(TILES)$(WEBTILES)
+else
+	+$(MAKE) -C $(RLTILES) all ARCH=$(ARCH) NO_PKGCONFIG=$(NO_PKGCONFIG) TILES=$(TILES)$(WEBTILES)
+endif
 endif
 
 $(TILEDEFSRCS) $(TILEDEFHDRS) $(ORIGTILEFILES): build-rltiles

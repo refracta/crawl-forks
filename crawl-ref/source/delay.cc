@@ -30,6 +30,7 @@
 #include "food.h"
 #include "fprop.h"
 #include "god-abil.h"
+#include "god-companions.h"
 #include "god-conduct.h"
 #include "god-passive.h"
 #include "god-prayer.h"
@@ -69,6 +70,7 @@
 #include "state.h"
 #include "stringutil.h"
 #include "teleport.h"
+#include "terrain.h"
 #include "transform.h"
 #include "traps.h"
 #include "travel.h"
@@ -811,10 +813,11 @@ void PasswallDelay::finish()
         break;
 
     case DNGN_CLOSED_DOOR:      // open the door
+    case DNGN_CLOSED_CLEAR_DOOR:
     case DNGN_RUNED_DOOR:
+    case DNGN_RUNED_CLEAR_DOOR:
         // Once opened, former runed doors become normal doors.
-        // Is that ok?  Keeping it for simplicity for now...
-        grd(dest) = DNGN_OPEN_DOOR;
+        dgn_open_door(dest);
         break;
     }
 
@@ -847,7 +850,6 @@ void PasswallDelay::finish()
     // triggered by changing location would be better (per Pleasingfungus),
     // but player_reacts is very sensitive to order and can't be easily
     // refactored in this way.
-    search_around();
     you.update_beholders();
     you.update_fearmongers();
 }
@@ -1030,10 +1032,12 @@ static bool _should_stop_activity(Delay* delay,
     if ((ai == AI_SEE_MONSTER || ai == AI_MIMIC) && player_stair_delay())
         return false;
 
-    if (ai == AI_FULL_HP || ai == AI_FULL_MP)
+    if (ai == AI_FULL_HP || ai == AI_FULL_MP || ai == AI_ANCESTOR_HP)
     {
-        if (Options.rest_wait_both && curr->is_resting()
-            && !you.is_sufficiently_rested())
+        if ((Options.rest_wait_both && curr->is_resting()
+             && !you.is_sufficiently_rested())
+            || (Options.rest_wait_ancestor && curr->is_resting()
+                && !ancestor_full_hp()))
         {
             return false;
         }
@@ -1125,8 +1129,10 @@ static inline bool _monster_warning(activity_interrupt_type ai,
         return false;
     else
     {
+        // XXX: This needs to be here to ensure correct messaging for
+        // autoexplore, even though the correct place to process it is
+        // seen_monster
         view_monster_equipment(mon);
-        do_conversions(mon);
 
         string text = getMiscString(mon->name(DESC_DBNAME) + " title");
         if (text.empty())
@@ -1323,6 +1329,14 @@ bool interrupt_activity(activity_interrupt_type ai,
         you.running.notified_mp_full = true;
         mpr("Magic restored.");
     }
+    else if (ai == AI_ANCESTOR_HP
+             && !you.running.notified_ancestor_hp_full)
+    {
+        // This interrupt only triggers when the ancestor is in LOS,
+        // so this message does not leak information.
+        you.running.notified_ancestor_hp_full = true;
+        mpr("Ancestor HP restored.");
+    }
 
     if (_should_stop_activity(delay.get(), ai, at))
     {
@@ -1363,10 +1377,10 @@ bool interrupt_activity(activity_interrupt_type ai,
     return false;
 }
 
-// Must match the order of activity_interrupt_type in enum.h!
+// Must match the order of activity_interrupt_type.h!
 static const char *activity_interrupt_names[] =
 {
-    "force", "keypress", "full_hp", "full_mp", "hungry", "message",
+    "force", "keypress", "full_hp", "full_mp", "ancestor_hp", "hungry", "message",
     "hp_loss", "stat", "monster", "monster_attack", "teleport", "hit_monster",
     "sense_monster", "mimic"
 };

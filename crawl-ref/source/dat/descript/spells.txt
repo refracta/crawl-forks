@@ -288,12 +288,6 @@ Cold Breath spell
 
 Exhales a focused blast of icy-cold air. It may knock back airborne targets.
 %%%%
-Cold Snap spell
-
-Blow up the condensed cold around the target. Although relatively weak in itself,
-but if the target is frozen, the damage is amplified and will pinned target for a while,
-remove frozen.
-%%%%
 Confuse spell
 
 Induces a state of bewilderment and confusion in a creature's mind.
@@ -653,7 +647,7 @@ pulled adjacent to the caster or collide with anything blocking the way.
 %%%%
 Haste spell
 
-Speeds the actions of a targeted creature.
+Speeds the actions of the caster.
 %%%%
 Haunt spell
 
@@ -969,7 +963,7 @@ with an encumbrance rating of 5 or more).
 %%%%
 Ozocubu's Refrigeration spell
 
-Drains heat from the caster and their surroundings, causing frozen to all
+-Drains heat from the caster and their surroundings, causing frozen to all
 creatures not resistant to cold and bypassing any armour the targets may have.
 Even if targets have resistance to cold, can't avoid freezing.
 %%%%
@@ -1065,10 +1059,10 @@ Quicksilver Bolt spell
 %%%%
 Quicksilver Aura spell
 
-This spell enchants the caster's dominant hand with an aura of dispelling quicksilver.
-When you hit monsters with your bare hands, or weapons, this aura will generate intense
-dispelling energy to remove all enchantments from the monster and cause irresistible
-feedback damage.
+This spell enchants the caster's dominant hand with an aura of dispelling
+quicksilver. When you hit monsters with your bare hands, or weapons, this
+aura will generate dispelling energy to remove all enchantments from the
+monster and cause irresistible feedback damage.
 %%%%
 Random Bolt spell
 
@@ -1109,10 +1103,10 @@ each one standing near the target.
 %%%%
 Ring of Frost spell
 
-Surrounds the caster with a mobile ring of searing flame, and keeps other fire
-clouds away from the caster. This spell attunes the caster to the forces of
-fire, increasing the power of their fire magic and giving protection from fire.
-However, it also makes them much more susceptible to cold.
+Surrounds the caster with a mobile ring of freezing cloud, and keeps other
+freezing clouds away from the caster. This spell attunes the caster to the
+forces of frost, increasing the power of their ice magic and giving protection
+from cold. However, it also makes them much more susceptible to fire.
 %%%%
 Ring of Thunder spell
 
@@ -1529,6 +1523,14 @@ Throw Icicle spell
 
 Fires a shard of ice. Due to its strong impact and cutting edges, a
 significant portion of its damage bypasses cold resistance.
+%%%%
+Throw Klown Pie spell
+
+Throws a harmful yet strangely delicious pie that can inflict its victim with a
+number of debilitating temporary effects. These include inducing vertigo,
+silence, fire vulnerability, stat drain, or an aversion to drinking potions.
+The dreaded moon pie can even turn you into a bat, a hog, or an insubstantial
+wisp!
 %%%%
 Thunderbolt spell
 

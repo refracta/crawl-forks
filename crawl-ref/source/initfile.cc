@@ -14,6 +14,7 @@
 #include "initfile.h"
 
 #include <algorithm>
+#include <cinttypes>
 #include <cctype>
 #include <cstdio>
 #include <cstdlib>
@@ -203,12 +204,14 @@ const vector<GameOption*> game_options::build_options_list()
         new BoolGameOption(SIMPLE_NAME(use_modifier_prefix_keys), true),
         new BoolGameOption(SIMPLE_NAME(ability_menu), true),
         new BoolGameOption(SIMPLE_NAME(easy_floor_use), true),
+        new BoolGameOption(SIMPLE_NAME(bad_item_prompt), true),
         new BoolGameOption(SIMPLE_NAME(dos_use_background_intensity), true),
         new BoolGameOption(SIMPLE_NAME(explore_greedy), true),
         new BoolGameOption(SIMPLE_NAME(explore_auto_rest), false),
         new BoolGameOption(SIMPLE_NAME(travel_key_stop), true),
         new BoolGameOption(SIMPLE_NAME(dump_on_save), true),
         new BoolGameOption(SIMPLE_NAME(rest_wait_both), false),
+        new BoolGameOption(SIMPLE_NAME(rest_wait_ancestor), false),
         new BoolGameOption(SIMPLE_NAME(cloud_status), !is_tiles()),
         new BoolGameOption(SIMPLE_NAME(wall_jump_prompt), false),
         new BoolGameOption(SIMPLE_NAME(wall_jump_move), false),
@@ -291,6 +294,10 @@ const vector<GameOption*> game_options::build_options_list()
         new ColourThresholdOption(stat_colour, {"stat_colour", "stat_color"},
                                   "3:red", _first_less),
         new StringGameOption(SIMPLE_NAME(sound_file_path), ""),
+#ifndef DGAMELAUNCH
+        new BoolGameOption(SIMPLE_NAME(pregen_dungeon), false),
+#endif
+
 #ifdef DGL_SIMPLE_MESSAGING
         new BoolGameOption(SIMPLE_NAME(messaging), false),
 #endif
@@ -642,6 +649,8 @@ string gametype_to_str(game_type type)
     {
     case GAME_TYPE_NORMAL:
         return "normal";
+    case GAME_TYPE_CUSTOM_SEED:
+        return "seeded";
     case GAME_TYPE_TUTORIAL:
         return "tutorial";
     case GAME_TYPE_ARENA:
@@ -836,7 +845,7 @@ void game_options::set_default_activity_interrupts()
         "interrupt_travel = interrupt_butcher, hungry, hit_monster, "
                             "sense_monster",
         "interrupt_run = interrupt_travel, message",
-        "interrupt_rest = interrupt_run, full_hp, full_mp",
+        "interrupt_rest = interrupt_run, full_hp, full_mp, ancestor_hp",
 
         // Stair ascents/descents cannot be interrupted except by
         // teleportation. Attempts to interrupt the delay will just
@@ -1758,7 +1767,8 @@ void read_options(const string &s, bool runscript, bool clear_aliases)
 }
 
 game_options::game_options()
-    : seed(0), no_save(false), language(lang_t::EN), lang_name(nullptr)
+    : seed(0), seed_from_rc(0),
+    no_save(false), language(lang_t::EN), lang_name(nullptr)
 {
     reset_options();
 }
@@ -3400,6 +3410,25 @@ void game_options::read_option_line(const string &str, bool runscript)
         else
             constants.insert(field);
     }
+#ifndef DGAMELAUNCH
+    else if (key == "game_seed")
+    {
+        // special handling because of the large type.
+        uint64_t tmp_seed = 0;
+        if (sscanf(field.c_str(), "%" SCNu64, &tmp_seed))
+        {
+            // seed_from_rc is only ever set here, or by the CLO. The CLO gets
+            // first crack, so don't overwrite it here.
+            // Options.seed can be updated in-game from the custom seed menu,
+            // so also don't overwrite it when the CLO has set it, or the
+            // player has set it in-game.
+            if (!Options.seed_from_rc)
+                Options.seed_from_rc = tmp_seed;
+            if (!Options.seed)
+                Options.seed = tmp_seed;
+        }
+    }
+#endif
 
     // Catch-all else, copies option into map
     else if (runscript)
@@ -3784,6 +3813,7 @@ enum commandline_option_type
     CLO_HELP,
     CLO_VERSION,
     CLO_SEED,
+    CLO_PREGEN,
     CLO_SAVE_VERSION,
     CLO_SPRINT,
     CLO_EXTRA_OPT_FIRST,
@@ -3815,7 +3845,7 @@ static const char *cmd_ops[] =
     "scores", "name", "species", "background", "dir", "rc", "rcdir", "tscores",
     "vscores", "scorefile", "morgue", "macro", "mapstat", "dump-disconnect",
     "objstat", "iters", "force-map", "arena", "dump-maps", "test", "script",
-    "builddb", "help", "version", "seed", "save-version", "sprint",
+    "builddb", "help", "version", "seed", "pregen", "save-version", "sprint",
     "extra-opt-first", "extra-opt-last", "sprint-map", "edit-save",
     "print-charset", "tutorial", "wizard", "explore", "no-save", "gdb",
     "no-gdb", "nogdb", "throttle", "no-throttle", "playable-json",
@@ -4875,11 +4905,20 @@ bool parse_args(int argc, char **argv, bool rc_only)
 
         case CLO_SEED:
             if (!next_is_param)
-                return false;
+            {
+                // show seed choice menu
+                Options.game.type = GAME_TYPE_CUSTOM_SEED;
+                break;
+            }
 
-            if (!sscanf(next_arg, "%x", &Options.seed))
+            if (!sscanf(next_arg, "%" SCNu64, &Options.seed_from_rc))
                 return false;
+            Options.seed = Options.seed_from_rc;
             nextUsed = true;
+            break;
+
+        case CLO_PREGEN:
+            Options.pregen_dungeon = true;
             break;
 
         case CLO_SPRINT:

@@ -11,7 +11,9 @@ struct job_def
     const char* abbrev; ///< Two-letter abbreviation
     const char* name; ///< Long name
     int s, i, d; ///< Starting Str, Dex, and Int
-    vector<species_type> recommended_species; ///< Which species are good at it
+    /// Which species are good at it
+    /// No recommended species = job is disabled
+    vector<species_type> recommended_species;
     /// Guaranteed starting equipment. Uses vault spec syntax, with the plus:,
     /// charges:, q:, and ego: tags supported.
     vector<string> equipment;
@@ -157,8 +159,8 @@ static const map<job_type, job_def> job_data =
 { JOB_GLADIATOR, {
     "Gl", "Gladiator",
     6, 0, 6,
-    { SP_DEEP_DWARF, SP_HILL_ORC, SP_MERFOLK, SP_MINOTAUR, SP_GARGOYLE,
-      SP_CENTAUR, },
+    { SP_DEEP_DWARF, SP_HIGH_ELF, SP_HILL_ORC, SP_MERFOLK, SP_MINOTAUR,
+	  SP_GARGOYLE, SP_CENTAUR, },
     { "leather armour", "helmet", "throwing net q:3" },
     WCHOICE_GOOD,
     { { SK_FIGHTING, 2 }, { SK_THROWING, 2 }, { SK_DODGING, 3 },
@@ -180,8 +182,7 @@ static const map<job_type, job_def> job_data =
     "IE", "Ice Elementalist",
     0, 7, 5,
     { SP_HIGH_ELF, SP_DEEP_ELF, SP_MERFOLK, SP_NAGA, SP_BASE_DRACONIAN,
-	  SP_DEMIGOD,
-      SP_GARGOYLE, },
+	  SP_DEMIGOD, SP_GARGOYLE, },
     { "robe", "book of Frost" },
     WCHOICE_NONE,
     { { SK_CONJURATIONS, 1 }, { SK_ICE_MAGIC, 3 }, { SK_SPELLCASTING, 2 },
@@ -267,8 +268,8 @@ static const map<job_type, job_def> job_data =
 { JOB_WARPER, {
     "Wr", "Warper",
     3, 5, 4,
-    { SP_HIGH_ELF, SP_FELID, SP_HALFLING, SP_DEEP_DWARF, SP_SPRIGGAN,
-	  SP_CENTAUR, SP_BASE_DRACONIAN, },
+    { SP_HIGH_ELF, SP_FELID, SP_HALFLING, SP_DEEP_DWARF, SP_SPRIGGAN, SP_CENTAUR,
+      SP_BASE_DRACONIAN, },
     { "leather armour", "book of Spatial Translocations", "scroll of blinking",
       "tomahawk ego:dispersal q:5" },
     WCHOICE_PLAIN,
@@ -280,8 +281,8 @@ static const map<job_type, job_def> job_data =
 { JOB_WIZARD, {
     "Wz", "Wizard",
     -1, 10, 3,
-    { SP_HIGH_ELF, SP_DEEP_ELF, SP_NAGA, SP_BASE_DRACONIAN, SP_OCTOPODE,
-	  SP_HUMAN, SP_MUMMY, },
+    { SP_HIGH_ELF, SP_DEEP_ELF, SP_NAGA, SP_BASE_DRACONIAN, SP_OCTOPODE, SP_HUMAN,
+      SP_MUMMY, },
     { "robe", "hat", "book of Minor Magic" },
     WCHOICE_NONE,
     { { SK_DODGING, 2 }, { SK_STEALTH, 2 }, { SK_SPELLCASTING, 3 },

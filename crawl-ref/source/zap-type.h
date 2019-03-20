@@ -89,6 +89,6 @@ enum zap_type
     ZAP_REFRIGERATE,
     ZAP_DRAIN_LIFE,
     ZAP_SONIC_WAVE,
-	ZAP_COLD_SNAP,
+    ZAP_THROW_PIE,
     NUM_ZAPS
 };

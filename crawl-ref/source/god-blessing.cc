@@ -120,8 +120,7 @@ static int _orc_weapon_gift_type(monster_type mon_type)
         case MONS_ORC_SORCERER:
             return random_choose_weighted(2, WPN_HAND_AXE, // orcs love axes
                                           1, WPN_SHORT_SWORD,
-                                          1, WPN_MACE,
-										  1, WPN_SPEAR);
+                                          1, WPN_MACE);
         case MONS_ORC_WARRIOR:
         case MONS_ORC_KNIGHT:
         case MONS_ORC_WARLORD:
@@ -131,7 +130,7 @@ static int _orc_weapon_gift_type(monster_type mon_type)
                                           1, WPN_LONG_SWORD,
                                           1, WPN_FLAIL,
                                           1, WPN_TRIDENT);
-        case MONS_CHOSEN_WARRIOR:
+		case MONS_CHOSEN_WARRIOR:
         case MONS_CHOSEN_MAGE:
 		case MONS_CHOSEN_PRIEST:
             return random_choose_weighted(2, WPN_BROAD_AXE, // orcs love axes
@@ -523,63 +522,6 @@ static bool _blessing_healing(monster* mon)
     return false;
 }
 
-static bool _blessing_inspiring(monster* mon)
-{
-	switch (random2(8))
-    {
-    case 0:
-    case 1:
-	case 2:
-		{
-			simple_god_message(" inspire your minion to heal injuries!");
-		
-			// 10% of mhp healed at 0 skill, 40% at 27 skill.
-			const int healing = mon->max_hit_points
-                         * (9 + you.skill(SK_SUMMONINGS)) / 90;
-
-			if (mon->heal(healing))
-			{
-			if (mon->hit_points == mon->max_hit_points)
-            simple_monster_message(*mon, " is fully restored!");
-			else
-            simple_monster_message(*mon, " is healed somewhat.");
-			}
-		}
-		break;
-		
-    case 3:
-	case 4:
-		{
-			simple_god_message(" inspire your minion to become regenerate!");
-			const int duration = (you.skill(SK_SUMMONINGS) / 3) + 15;
-					mon->add_ench(mon_enchant(ENCH_REGENERATION, 0, &you,
-									duration * BASELINE_DELAY));
-		}
-		break;
-
-    case 5:
-	case 6:
-		{
-			simple_god_message(" inspire your minion to resistant from hostile enchantments!");
-			const int duration = (you.skill(SK_SUMMONINGS) / 3) + 15;
-					mon->add_ench(mon_enchant(ENCH_RAISED_MR, 0, &you,
-									duration * BASELINE_DELAY));
-		}
-		break;
-		
-	case 7:
-		{
-			simple_god_message(" inspire your minion to becom unusually resistant!");
-			const int duration = (you.skill(SK_SUMMONINGS) / 3) + 15;
-					mon->add_ench(mon_enchant(ENCH_RESISTANCE, 0, &you,
-									duration * BASELINE_DELAY));
-		}
-		break;
-    }
-
-    return false;
-}
-
 static bool _increase_ench_duration(monster* mon,
                                     mon_enchant ench,
                                     const int increase)
@@ -625,35 +567,14 @@ static bool _tso_blessing_friendliness(monster* mon)
                                    base_increase + random2(base_increase));
 }
 
-static bool _legion_blessing_extend_stay(monster* mon)
-{
-    if (!mon->has_ench(ENCH_ABJ))
-        return false;
-
-    mon_enchant abj = mon->get_ench(ENCH_ABJ);
-	return _increase_ench_duration(mon, abj, min(abj.duration,
-                                                     9 + random2(you.skill(SK_SUMMONINGS))));
-}
-
-static bool _legion_blessing_friendliness(monster* mon)
-{
-    if (!mon->has_ench(ENCH_CHARM))
-        return false;
-
-    // [ds] Just increase charm duration, no permanent friendliness.
-    const int base_increase = 18;
-    return _increase_ench_duration(mon, mon->get_ench(ENCH_CHARM),
-                                   base_increase + random2(you.skill(SK_SUMMONINGS)));
-}
-
 static void _beogh_reinf_callback(const mgen_data &mg, monster *&mon, int placed)
 {
     ASSERT(mg.god == GOD_BEOGH);
-	
+
     // Beogh tries a second time to place reinforcements.
     if (!mon)
         mon = create_monster(mg);
-	
+
     if (!mon)
         return;
 
@@ -671,7 +592,7 @@ static void _beogh_reinf_callback(const mgen_data &mg, monster *&mon, int placed
 // If you don't currently have any followers, send a small band to help
 // you out.
 static void _beogh_blessing_reinforcements()
-{	
+{
     // Possible reinforcement.
     const monster_type followers[] =
     {
@@ -750,46 +671,6 @@ static string _bless_with_healing(monster* follower)
     return blessing;
 }
 
-/**
- * Attempt to bless a follower with curing and/or inspiring.
- *
- * @param[in] follower      The follower to buff.
- * @return                  The type of inspiring that occurred; may be empty.
- */
-static string _legion_bless_buff(monster* follower)
-{
-    string blessing = "";
-
-    // Maybe try to cure status conditions.
-    bool balms = false;
-    if (coinflip())
-    {
-        balms = _blessing_balms(follower);
-        if (balms)
-            blessing = "divine balms";
-        else
-            dprf("Couldn't apply balms.");
-    }
-
-    // Heal or Buff the follower.
-    bool inspiring = _blessing_inspiring(follower);
-
-	// Maybe Heal or Buff the follower again.
-    if ((!inspiring || coinflip()) && _blessing_inspiring(follower))
-        inspiring = true;
-
-    if (inspiring)
-    {
-        if (balms)
-            blessing += " and ";
-        blessing += "inspiring";
-    }
-    else
-        dprf("Couldn't inspire monster.");
-
-    return blessing;
-}
-
 
 /**
  * Print a message for a god blessing a follower.
@@ -837,7 +718,11 @@ static bool _beogh_bless_follower(monster* follower, bool force)
         // If no follower was found, attempt to send
         // reinforcements.
         _beogh_blessing_reinforcements();
-		
+
+        // Possibly send more reinforcements.
+        if (coinflip())
+            _beogh_blessing_reinforcements();
+
 		// Respawn Nergalle the Orcish Lich.
 		if (you.duration[DUR_NERGALLE_DELAY])
 		{	
@@ -848,10 +733,6 @@ static bool _beogh_bless_follower(monster* follower, bool force)
 			create_monster(mg);
 		}
 		
-        // Possibly send more reinforcements.
-        if (coinflip())
-            _beogh_blessing_reinforcements();
-
         delayed_monster_done("Beogh blesses you with reinforcements.");
 
         // Return true, even though the reinforcements might
@@ -955,6 +836,125 @@ static bool _tso_bless_follower(monster* follower, bool force)
 
     _display_god_blessing(follower, GOD_SHINING_ONE, blessing);
     return true;
+}
+
+// For the Legion from beyond, added by addedcrawl!
+static bool _blessing_inspiring(monster* mon)
+{
+	switch (random2(8))
+    {
+    case 0:
+    case 1:
+	case 2:
+		{
+			simple_god_message(" inspire your minion to heal injuries!");
+		
+			// 10% of mhp healed at 0 skill, 40% at 27 skill.
+			const int healing = mon->max_hit_points
+                         * (9 + you.skill(SK_SUMMONINGS)) / 90;
+
+			if (mon->heal(healing))
+			{
+			if (mon->hit_points == mon->max_hit_points)
+            simple_monster_message(*mon, " is fully restored!");
+			else
+            simple_monster_message(*mon, " is healed somewhat.");
+			}
+		}
+		break;
+		
+    case 3:
+	case 4:
+		{
+			simple_god_message(" inspire your minion to become regenerate!");
+			const int duration = (you.skill(SK_SUMMONINGS) / 3) + 15;
+					mon->add_ench(mon_enchant(ENCH_REGENERATION, 0, &you,
+									duration * BASELINE_DELAY));
+		}
+		break;
+
+    case 5:
+	case 6:
+		{
+			simple_god_message(" inspire your minion to resistant from hostile enchantments!");
+			const int duration = (you.skill(SK_SUMMONINGS) / 3) + 15;
+					mon->add_ench(mon_enchant(ENCH_RAISED_MR, 0, &you,
+									duration * BASELINE_DELAY));
+		}
+		break;
+		
+	case 7:
+		{
+			simple_god_message(" inspire your minion to becom unusually resistant!");
+			const int duration = (you.skill(SK_SUMMONINGS) / 3) + 15;
+					mon->add_ench(mon_enchant(ENCH_RESISTANCE, 0, &you,
+									duration * BASELINE_DELAY));
+		}
+		break;
+    }
+
+    return false;
+}
+
+static bool _legion_blessing_extend_stay(monster* mon)
+{
+    if (!mon->has_ench(ENCH_ABJ))
+        return false;
+
+    mon_enchant abj = mon->get_ench(ENCH_ABJ);
+	return _increase_ench_duration(mon, abj, min(abj.duration,
+                                                     9 + random2(you.skill(SK_SUMMONINGS))));
+}
+
+static bool _legion_blessing_friendliness(monster* mon)
+{
+    if (!mon->has_ench(ENCH_CHARM))
+        return false;
+
+    // [ds] Just increase charm duration, no permanent friendliness.
+    const int base_increase = 18;
+    return _increase_ench_duration(mon, mon->get_ench(ENCH_CHARM),
+                                   base_increase + random2(you.skill(SK_SUMMONINGS)));
+}
+
+/**
+ * Attempt to bless a follower with curing and/or inspiring.
+ *
+ * @param[in] follower      The follower to buff.
+ * @return                  The type of inspiring that occurred; may be empty.
+ */
+static string _legion_bless_buff(monster* follower)
+{
+    string blessing = "";
+
+    // Maybe try to cure status conditions.
+    bool balms = false;
+    if (coinflip())
+    {
+        balms = _blessing_balms(follower);
+        if (balms)
+            blessing = "divine balms";
+        else
+            dprf("Couldn't apply balms.");
+    }
+
+    // Heal or Buff the follower.
+    bool inspiring = _blessing_inspiring(follower);
+
+	// Maybe Heal or Buff the follower again.
+    if ((!inspiring || coinflip()) && _blessing_inspiring(follower))
+        inspiring = true;
+
+    if (inspiring)
+    {
+        if (balms)
+            blessing += " and ";
+        blessing += "inspiring";
+    }
+    else
+        dprf("Couldn't inspire monster.");
+
+    return blessing;
 }
 
 /**

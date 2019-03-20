@@ -82,7 +82,6 @@ ozocubus_armour OZOCUBUS_ARMOUR
 ozocubus_refrigeration OZOCUBUS_REFRIGERATION
 throw_frost THROW_FROST
 ring_of_frost RING_OF_FROST
-cold_snap COLD_SNAP
 
 %sdir gui/spells/necromancy
 agony AGONY

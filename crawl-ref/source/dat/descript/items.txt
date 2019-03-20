@@ -238,11 +238,6 @@ book of power
 A book of powerful magic spells, crackling and shuddering with barely-contained
 energies.
 %%%%
-book of red mage
-
-A book of old warrior-mage, who called 'red mage'. Containing charm-based spells
-enhancing your combat.
-%%%%
 book of spatial translocations
 
 A basic spellbook on the magical field of Translocations.
@@ -714,8 +709,10 @@ A potion which confers invisibility on one who consumes it.
 potion of lignification
 
 A potion which transforms the imbiber into an animated tree with branches
-capable of holding weapons. Such a tree is very resilient, although it is
-rooted in place while the transformation lasts, and cannot teleport.
+capable of holding weapons. Such a tree has minimal evasion but increased
+health and natural armour, and is resistant to poison and immune to negative
+energy. However, it is rooted in place while the transformation lasts, and
+cannot teleport.
 %%%%
 potion of magic
 

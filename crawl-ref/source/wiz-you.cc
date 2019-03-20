@@ -163,7 +163,7 @@ void wizard_cast_spec_spell()
         }
     }
 
-    if (your_spells(static_cast<spell_type>(spell), 0, false) == SPRET_ABORT)
+    if (your_spells(static_cast<spell_type>(spell), 0, false) == spret::abort)
         crawl_state.cancel_cmd_repeat();
 }
 
@@ -193,6 +193,8 @@ void wizard_memorise_spec_spell()
         }
     }
 
+    if (get_spell_flags(static_cast<spell_type>(spell)) & spflag::monster)
+        mpr("Spell is monster-only - unpredictable behavior may result.");
     if (!learn_spell(static_cast<spell_type>(spell), true))
         crawl_state.cancel_cmd_repeat();
 }

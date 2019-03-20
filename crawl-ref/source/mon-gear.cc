@@ -627,6 +627,7 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
         { MONS_VAULT_WARDEN,            ORC_WARLORD_WSPEC },
         { MONS_ORC_WARLORD,             ORC_WARLORD_WSPEC },
         { MONS_SAINT_ROKA,              ORC_WARLORD_WSPEC },
+		{ MONS_CHOSEN_WARRIOR,			ORC_WARLORD_WSPEC },
         { MONS_DRACONIAN_KNIGHT,        ORC_WARLORD_WSPEC },
         { MONS_ORC_KNIGHT,              ORC_KNIGHT_WSPEC },
         { MONS_TENGU_WARRIOR,           ORC_KNIGHT_WSPEC },
@@ -909,6 +910,22 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
               { WPN_DEMON_BLADE,        4 },
               { WPN_DOUBLE_SWORD,       1 }, },
         } },
+        { MONS_KILLER_KLOWN, {
+            { { WPN_CLUB,             10 }, },
+            { 1, 8, 12 },
+            { { SPWPN_NORMAL,         20 },
+              { SPWPN_FLAMING,        20 },
+              { SPWPN_FREEZING,       10 },
+              { SPWPN_VORPAL  ,       10 },
+              { SPWPN_ELECTROCUTION,  10 },
+              { SPWPN_VENOM,          10 },
+              { SPWPN_VAMPIRISM,       5 },
+              { SPWPN_ANTIMAGIC,       5 },
+              { SPWPN_PAIN,            4 },
+              { SPWPN_HOLY_WRATH,      3 },
+              { SPWPN_DISTORTION,      2 },
+              { SPWPN_CHAOS,           1 }, },
+        } },
     };
 
     static const weapon_list ORC_KNIGHT_BOWS =
@@ -933,6 +950,7 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
         { MONS_VAULT_WARDEN,            { ORC_KNIGHT_BOWS } },
         { MONS_ORC_WARLORD,             { ORC_KNIGHT_BOWS } },
         { MONS_SAINT_ROKA,              { ORC_KNIGHT_BOWS } },
+		{ MONS_CHOSEN_WARRIOR,			{ ORC_KNIGHT_BOWS } },
         { MONS_ORC_KNIGHT,              { ORC_KNIGHT_BOWS } },
         { MONS_TENGU_WARRIOR,
             { { { WPN_LONGBOW,                  1 },
@@ -1824,6 +1842,7 @@ int make_mons_armour(monster_type type, int level)
 
     case MONS_ORC_WARLORD:
     case MONS_SAINT_ROKA:
+	case MONS_CHOSEN_WARRIOR:
         // Being at the top has its privileges. :)
         if (one_chance_in(3))
             level = ISPEC_GOOD_ITEM;

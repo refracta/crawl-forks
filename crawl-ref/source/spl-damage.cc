@@ -13,6 +13,7 @@
 
 #include "act-iter.h"
 #include "areas.h"
+#include "attack.h"
 #include "beam.h"
 #include "butcher.h"
 #include "cloud.h"
@@ -39,6 +40,7 @@
 #include "mutation.h"
 #include "ouch.h"
 #include "prompt.h"
+#include "religion.h"
 #include "shout.h"
 #include "spl-summoning.h"
 #include "spl-util.h"
@@ -65,19 +67,19 @@ void setup_fire_storm(const actor *source, int pow, bolt &beam)
     beam.origin_spell = SPELL_FIRE_STORM;
 }
 
-spret_type cast_fire_storm(int pow, bolt &beam, bool fail)
+spret cast_fire_storm(int pow, bolt &beam, bool fail)
 {
     if (grid_distance(beam.target, beam.source) > beam.range)
     {
         mpr("That is beyond the maximum range.");
-        return SPRET_ABORT;
+        return spret::abort;
     }
 
     if (cell_is_solid(beam.target))
     {
         const char *feat = feat_type_name(grd(beam.target));
         mprf("You can't place the storm on %s.", article_a(feat).c_str());
-        return SPRET_ABORT;
+        return spret::abort;
     }
 
     setup_fire_storm(&you, pow, beam);
@@ -88,7 +90,7 @@ spret_type cast_fire_storm(int pow, bolt &beam, bool fail)
 
     tempbeam.explode(false);
     if (tempbeam.beam_cancelled)
-        return SPRET_ABORT;
+        return spret::abort;
 
     fail_check();
 
@@ -97,7 +99,7 @@ spret_type cast_fire_storm(int pow, bolt &beam, bool fail)
     beam.explode(false);
 
     viewwindow();
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
 // No setup/cast split here as monster damnation is completely different.
@@ -141,7 +143,7 @@ bool cast_smitey_damnation(int pow, bolt &beam)
 }
 
 // XXX no friendly check
-spret_type cast_chain_spell(spell_type spell_cast, int pow,
+spret cast_chain_spell(spell_type spell_cast, int pow,
                             const actor *caster, bool fail)
 {
     fail_check();
@@ -336,7 +338,7 @@ spret_type cast_chain_spell(spell_type spell_cast, int pow,
         beam.fire();
     }
 
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
 /*
@@ -357,6 +359,12 @@ static void _player_hurt_monster(monster &mon, int damage, beam_type flavour,
 {
     if (is_sanctuary(you.pos()) || is_sanctuary(mon.pos()))
         remove_sanctuary(true);
+
+    if (god_conducts && you.deity() == GOD_FEDHAS && fedhas_neutralises(mon))
+    {
+        simple_god_message(" protects your plant from harm.", GOD_FEDHAS);
+        return;
+    }
 
     god_conduct_trigger conducts[3];
     if (god_conducts)
@@ -444,6 +452,27 @@ static int _los_spell_damage_player(const actor* agent, bolt &beam,
     hurted = check_your_resists(hurted, beam.flavour, beam.name, 0,
             // Drain life doesn't apply drain effects.
             actual && beam.origin_spell != SPELL_DRAIN_LIFE);
+    if (actual && hurted > 0)
+    {
+        if (beam.origin_spell == SPELL_OZOCUBUS_REFRIGERATION)
+            mpr("You feel very cold.");
+
+        if (agent && !agent->is_player())
+        {
+            ouch(hurted, KILLED_BY_BEAM, agent->mid,
+                 make_stringf("by %s", beam.name.c_str()).c_str(), true,
+                 agent->as_monster()->name(DESC_A).c_str());
+            you.expose_to_element(beam.flavour, 5);
+        }
+        // -harm from player casting Ozo's Refridge.
+        else if (beam.origin_spell == SPELL_OZOCUBUS_REFRIGERATION)
+        {
+            ouch(hurted, KILLED_BY_FREEZING);
+            you.expose_to_element(beam.flavour, 5);
+            you.increase_duration(DUR_NO_POTIONS, 7 + random2(9), 15);
+        }
+    }
+
     return hurted;
 }
 
@@ -476,16 +505,11 @@ static int _los_spell_damage_monster(const actor* agent, monster &target,
         else if (hurted)
             target.hurt(agent, hurted, beam.flavour);
 
-        // Target will be frozen, and cold-blooded creatures can be slowed.
+        // Cold-blooded creatures can be slowed.
         if (beam.origin_spell == SPELL_OZOCUBUS_REFRIGERATION
             && target.alive())
         {
             target.expose_to_element(beam.flavour, 5);
-			if (!target.has_ench(ENCH_FROZEN))
-			{
-				target.add_ench(mon_enchant(ENCH_FROZEN,
-                 0, agent, 6 + random2(8) * BASELINE_DELAY));
-			}
         }
     }
 
@@ -497,7 +521,7 @@ static int _los_spell_damage_monster(const actor* agent, monster &target,
 }
 
 
-static spret_type _cast_los_attack_spell(spell_type spell, int pow,
+static spret _cast_los_attack_spell(spell_type spell, int pow,
                                          const actor* agent, actor* defender,
                                          bool actual, bool fail,
                                          int* damage_done)
@@ -506,7 +530,7 @@ static spret_type _cast_los_attack_spell(spell_type spell, int pow,
 
     const zap_type zap = spell_to_zap(spell);
     if (zap == NUM_ZAPS)
-        return SPRET_ABORT;
+        return spret::abort;
 
     bolt beam;
     zappy(zap, pow, mons, beam);
@@ -515,7 +539,7 @@ static spret_type _cast_los_attack_spell(spell_type spell, int pow,
 
     const char *player_msg = nullptr, *global_msg = nullptr,
                *mons_vis_msg = nullptr, *mons_invis_msg = nullptr,
-               *verb = nullptr;
+               *verb = nullptr, *prompt_verb = nullptr;
     bool (*vulnerable)(const actor *, const actor *) = nullptr;
 
     switch (spell)
@@ -527,8 +551,11 @@ static spret_type _cast_los_attack_spell(spell_type spell, int pow,
                            " environment!";
             mons_invis_msg = "The ambient heat is drained!";
             verb = "frozen";
+            prompt_verb = "refrigerate";
             vulnerable = [](const actor *caster, const actor *act) {
-                return !act->is_player() || act->res_cold() < 3;
+                return act->is_player() || act->res_cold() < 3
+                       && !(caster->deity() == GOD_FEDHAS
+                            && fedhas_protects(*act->as_monster()));
             };
             break;
 
@@ -539,6 +566,7 @@ static spret_type _cast_los_attack_spell(spell_type spell, int pow,
             mons_vis_msg = " draws from the surrounding life force!";
             mons_invis_msg = "The surrounding life force dissipates!";
             verb = "drained of life";
+            prompt_verb = "drain life";
             vulnerable = &_drain_lifeable;
             break;
 
@@ -548,12 +576,16 @@ static spret_type _cast_los_attack_spell(spell_type spell, int pow,
             mons_vis_msg = " sends a blast of sound all around you!";
             mons_invis_msg = "Sound blasts the surrounding area!";
             verb = "blasted";
+            // prompt_verb = "sing" The singing sword prompts in melee-attack
             vulnerable = [](const actor *caster, const actor *act) {
-                return !act->is_player();
+                return act != caster
+                       && !(caster->deity() == GOD_FEDHAS
+                            && fedhas_protects(*act->as_monster()));
             };
             break;
 
-        default: return SPRET_ABORT;
+        default:
+            return spret::abort;
     }
 
     auto vul_hitfunc = [vulnerable](const actor *act) -> bool
@@ -569,8 +601,8 @@ static spret_type _cast_los_attack_spell(spell_type spell, int pow,
         // Singing Sword's spell shouldn't give a prompt at this time.
         if (spell != SPELL_SONIC_WAVE)
         {
-            if (stop_attack_prompt(hitfunc, "harm", vul_hitfunc))
-                return SPRET_ABORT;
+            if (stop_attack_prompt(hitfunc, prompt_verb, vul_hitfunc))
+                return spret::abort;
 
             fail_check();
         }
@@ -668,52 +700,55 @@ static spret_type _cast_los_attack_spell(spell_type spell, int pow,
         *damage_done = total_damage;
 
     if (actual)
-        return SPRET_SUCCESS;
-    return mons_should_fire(beam) ? SPRET_SUCCESS : SPRET_ABORT;
+        return spret::success;
+    return mons_should_fire(beam) ? spret::success : spret::abort;
 }
 
-spret_type trace_los_attack_spell(spell_type spell, int pow, const actor* agent)
+spret trace_los_attack_spell(spell_type spell, int pow, const actor* agent)
 {
     return _cast_los_attack_spell(spell, pow, agent, nullptr, false, false,
                                   nullptr);
 }
 
-spret_type fire_los_attack_spell(spell_type spell, int pow, const actor* agent,
+spret fire_los_attack_spell(spell_type spell, int pow, const actor* agent,
                                  actor *defender, bool fail, int* damage_done)
 {
     return _cast_los_attack_spell(spell, pow, agent, defender, true, fail,
                                   damage_done);
 }
 
-spret_type vampiric_drain(int pow, monster* mons, bool fail)
+spret vampiric_drain(int pow, monster* mons, bool fail)
 {
     if (you.hp == you.hp_max)
     {
         canned_msg(MSG_FULL_HEALTH);
-        return SPRET_ABORT;
+        return spret::abort;
     }
 
-    if (!mons || mons->submerged())
+    const bool observable = mons && mons->observable();
+    if (!mons
+        || mons->submerged()
+        || !observable && !actor_is_susceptible_to_vampirism(*mons))
     {
         fail_check();
 
         canned_msg(MSG_NOTHING_CLOSE_ENOUGH);
         // Cost to disallow freely locating invisible/submerged
         // monsters.
-        return SPRET_SUCCESS;
+        return spret::success;
     }
 
     // TODO: check known rN instead of holiness
-    if (mons->observable() && !(mons->holiness() & MH_NATURAL))
+    if (observable && !actor_is_susceptible_to_vampirism(*mons))
     {
         mpr("You can't drain life from that!");
-        return SPRET_ABORT;
+        return spret::abort;
     }
 
     if (stop_attack_prompt(mons, false, you.pos()))
     {
         canned_msg(MSG_OK);
-        return SPRET_ABORT;
+        return spret::abort;
     }
 
     fail_check();
@@ -721,7 +756,7 @@ spret_type vampiric_drain(int pow, monster* mons, bool fail)
     if (!mons->alive())
     {
         canned_msg(MSG_NOTHING_HAPPENS);
-        return SPRET_SUCCESS;
+        return spret::success;
     }
 
     // The practical maximum of this is about 25 (pow @ 100). - bwr
@@ -735,23 +770,23 @@ spret_type vampiric_drain(int pow, monster* mons, bool fail)
     if (!hp_gain)
     {
         canned_msg(MSG_NOTHING_HAPPENS);
-        return SPRET_SUCCESS;
+        return spret::success;
     }
 
     _player_hurt_monster(*mons, hp_gain, BEAM_NEG);
 
     hp_gain = div_rand_round(hp_gain, 2);
 
-    if (hp_gain && !mons->is_summoned() && !you.duration[DUR_DEATHS_DOOR])
+    if (hp_gain && !you.duration[DUR_DEATHS_DOOR])
     {
         mpr("You feel life coursing into your body.");
         inc_hp(hp_gain);
     }
 
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
-spret_type cast_freeze(int pow, monster* mons, bool fail)
+spret cast_freeze(int pow, monster* mons, bool fail)
 {
     pow = min(25, pow);
 
@@ -761,13 +796,13 @@ spret_type cast_freeze(int pow, monster* mons, bool fail)
         canned_msg(MSG_NOTHING_CLOSE_ENOUGH);
         // If there's no monster there, you still pay the costs in
         // order to prevent locating invisible/submerged monsters.
-        return SPRET_SUCCESS;
+        return spret::success;
     }
 
     if (stop_attack_prompt(mons, false, you.pos()))
     {
         canned_msg(MSG_OK);
-        return SPRET_ABORT;
+        return spret::abort;
     }
 
     fail_check();
@@ -777,28 +812,31 @@ spret_type cast_freeze(int pow, monster* mons, bool fail)
     god_conduct_trigger conducts[3];
     set_attack_conducts(conducts, *mons);
 
-    mprf("You freeze %s.", mons->name(DESC_THE).c_str());
-
     bolt beam;
     beam.flavour = BEAM_COLD;
     beam.thrower = KILL_YOU;
 
     const int orig_hurted = roll_dice(1, 3 + pow / 3);
     int hurted = mons_adjust_flavoured(mons, beam, orig_hurted);
+    mprf("You freeze %s%s%s",
+         mons->name(DESC_THE).c_str(),
+         hurted ? "" : " but do no damage",
+         attack_strength_punctuation(hurted).c_str());
+
     _player_hurt_monster(*mons, hurted, beam.flavour, false);
 
     if (mons->alive())
         mons->expose_to_element(BEAM_COLD, orig_hurted);
 
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
-spret_type cast_airstrike(int pow, const dist &beam, bool fail)
+spret cast_airstrike(int pow, const dist &beam, bool fail)
 {
     if (cell_is_solid(beam.target))
     {
         canned_msg(MSG_UNTHINKING_ACT);
-        return SPRET_ABORT;
+        return spret::abort;
     }
 
     monster* mons = monster_at(beam.target);
@@ -806,19 +844,15 @@ spret_type cast_airstrike(int pow, const dist &beam, bool fail)
     {
         fail_check();
         canned_msg(MSG_SPELL_FIZZLES);
-        return SPRET_SUCCESS; // still losing a turn
+        return spret::success; // still losing a turn
     }
 
     if (stop_attack_prompt(mons, false, you.pos()))
-        return SPRET_ABORT;
+        return spret::abort;
     fail_check();
 
     god_conduct_trigger conducts[3];
     set_attack_conducts(conducts, *mons, you.can_see(*mons));
-
-    mprf("The air twists around and %sstrikes %s!",
-         mons->airborne() ? "violently " : "",
-         mons->name(DESC_THE).c_str());
 
     noisy(spell_effect_noise(SPELL_AIRSTRIKE), beam.target);
 
@@ -831,9 +865,15 @@ spret_type cast_airstrike(int pow, const dist &beam, bool fail)
 #endif
     hurted = mons->apply_ac(mons->beam_resists(pbeam, hurted, false));
     dprf("preac: %d, postac: %d", preac, hurted);
+
+    mprf("The air twists around and %sstrikes %s%s%s",
+         mons->airborne() ? "violently " : "",
+         mons->name(DESC_THE).c_str(),
+         hurted ? "" : " but does no damage",
+         attack_strength_punctuation(hurted).c_str());
     _player_hurt_monster(*mons, hurted, pbeam.flavour);
 
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
 // Here begin the actual spells:
@@ -913,9 +953,13 @@ static int _shatter_walls(coord_def where, int pow, actor *agent)
     switch (grid)
     {
     case DNGN_CLOSED_DOOR:
+    case DNGN_CLOSED_CLEAR_DOOR:
     case DNGN_RUNED_DOOR:
+    case DNGN_RUNED_CLEAR_DOOR:
     case DNGN_OPEN_DOOR:
+    case DNGN_OPEN_CLEAR_DOOR:
     case DNGN_SEALED_DOOR:
+    case DNGN_SEALED_CLEAR_DOOR:
         if (you.see_cell(where))
             mpr("A door shatters!");
         chance = 100;
@@ -953,14 +997,14 @@ static int _shatter_walls(coord_def where, int pow, actor *agent)
         break;
     }
 
+    if (agent->deity() == GOD_FEDHAS && feat_is_tree(grid))
+        return 0;
+
     if (x_chance_in_y(chance, 100))
     {
         noisy(spell_effect_noise(SPELL_SHATTER), where);
 
         destroy_wall(where);
-
-        if (agent->is_player() && feat_is_tree(grid))
-            did_god_conduct(DID_KILL_PLANT, 1);
 
         return 1;
     }
@@ -997,11 +1041,11 @@ static bool _shatterable(const actor *act)
     return _shatter_mon_dice(act->as_monster());
 }
 
-spret_type cast_shatter(int pow, bool fail)
+spret cast_shatter(int pow, bool fail)
 {
     targeter_los hitfunc(&you, LOS_ARENA);
     if (stop_attack_prompt(hitfunc, "attack", _shatterable))
-        return SPRET_ABORT;
+        return spret::abort;
 
     fail_check();
     const bool silence = silenced(you.pos());
@@ -1030,7 +1074,7 @@ spret_type cast_shatter(int pow, bool fail)
     if (dest && !silence)
         mprf(MSGCH_SOUND, "Ka-crash!");
 
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
 static int _shatter_player(int pow, actor *wielder, bool devastator = false)
@@ -1044,8 +1088,9 @@ static int _shatter_player(int pow, actor *wielder, bool devastator = false)
 
     if (damage > 0)
     {
-        mpr(damage > 15 ? "You shudder from the earth-shattering force."
-                        : "You shudder.");
+        mprf(damage > 15 ? "You shudder from the earth-shattering force%s"
+                        : "You shudder%s",
+             attack_strength_punctuation(damage).c_str());
         if (devastator)
             ouch(damage, KILLED_BY_MONSTER, wielder->mid);
         else
@@ -1183,6 +1228,9 @@ static bool _irradiate_is_safe()
         if (!mon)
             continue;
 
+        if (you.deity() == GOD_FEDHAS && fedhas_protects(*mon))
+            continue;
+
         if (stop_attack_prompt(mon, false, you.pos()))
             return false;
     }
@@ -1203,17 +1251,23 @@ static int _irradiate_cell(coord_def where, int pow, actor *agent)
     if (!mons || !mons->alive())
         return 0; // XXX: handle damaging the player for mons casts...?
 
-    if (you.can_see(*mons))
-    {
-        mprf("%s is blasted with magical radiation!",
-             mons->name(DESC_THE).c_str());
-    }
-
     const int dice = 6;
     const int max_dam = 30 + div_rand_round(pow, 2);
     const dice_def dam_dice = calc_dice(dice, max_dam);
     const int dam = dam_dice.roll();
+    mprf("%s is blasted with magical radiation%s",
+         mons->name(DESC_THE).c_str(),
+         attack_strength_punctuation(dam).c_str());
     dprf("irr for %d (%d pow, max %d)", dam, pow, max_dam);
+
+    if (agent->deity() == GOD_FEDHAS && fedhas_protects(*mons))
+    {
+        simple_god_message(
+                    make_stringf(" protects %s plant from harm.",
+                        agent->is_player() ? "your" : "a").c_str(),
+                    GOD_FEDHAS);
+        return 0;
+    }
 
     if (agent->is_player())
         _player_hurt_monster(*mons, dam, BEAM_MMISSILE);
@@ -1233,14 +1287,14 @@ static int _irradiate_cell(coord_def where, int pow, actor *agent)
  * @param pow   The power at which the spell is being cast.
  * @param who   The actor doing the irradiating.
  * @param fail  Whether the player has failed to cast the spell.
- * @return      SPRET_ABORT if the player changed their mind about casting after
- *              realizing they would hit an ally; SPRET_FAIL if they failed the
- *              cast chance; SPRET_SUCCESS otherwise.
+ * @return      spret::abort if the player changed their mind about casting after
+ *              realizing they would hit an ally; spret::fail if they failed the
+ *              cast chance; spret::success otherwise.
  */
-spret_type cast_irradiate(int powc, actor* who, bool fail)
+spret cast_irradiate(int powc, actor* who, bool fail)
 {
     if (!_irradiate_is_safe())
-        return SPRET_ABORT;
+        return spret::abort;
 
     fail_check();
 
@@ -1275,7 +1329,7 @@ spret_type cast_irradiate(int powc, actor* who, bool fail)
 
     if (who->is_player())
         contaminate_player(1000 + random2(500));
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
 // How much work can we consider we'll have done by igniting a cloud here?
@@ -1289,6 +1343,10 @@ static int _ignite_tracer_cloud_value(coord_def where, actor *agent)
         const int dam = actor_cloud_immune(*act, CLOUD_FIRE)
                         ? 0
                         : resist_adjust_damage(act, BEAM_FIRE, 40);
+
+        if (agent->deity() == GOD_FEDHAS && fedhas_protects(*act->as_monster()))
+            return 0;
+
         return mons_aligned(act, agent) ? -dam : dam;
     }
     // We've done something, but its value is indeterminate
@@ -1540,13 +1598,13 @@ bool ignite_poison_affects(const actor* act)
  *                      player chooses not to abort the casting)
  * @param mon_tracer    Whether the 'casting' is just a tracer (a check to see
  *                      if it's worth actually casting)
- * @return              If it's a tracer, SPRET_SUCCESS if the spell should
- *                      be cast & SPRET_ABORT otherwise.
- *                      If it's a real spell, SPRET_ABORT if the player chose
- *                      to abort the spell, SPRET_FAIL if they failed the cast
- *                      chance, and SPRET_SUCCESS otherwise.
+ * @return              If it's a tracer, spret::success if the spell should
+ *                      be cast & spret::abort otherwise.
+ *                      If it's a real spell, spret::abort if the player chose
+ *                      to abort the spell, spret::fail if they failed the cast
+ *                      chance, and spret::success otherwise.
  */
-spret_type cast_ignite_poison(actor* agent, int pow, bool fail, bool tracer)
+spret cast_ignite_poison(actor* agent, int pow, bool fail, bool tracer)
 {
     if (tracer)
     {
@@ -1557,7 +1615,7 @@ spret_type cast_ignite_poison(actor* agent, int pow, bool fail, bool tracer)
                  + _ignite_poison_player(where, -1, agent);
         }, agent->pos());
 
-        return work > 0 ? SPRET_SUCCESS : SPRET_ABORT;
+        return work > 0 ? spret::success : spret::abort;
     }
 
     if (agent->is_player())
@@ -1565,7 +1623,7 @@ spret_type cast_ignite_poison(actor* agent, int pow, bool fail, bool tracer)
         if (maybe_abort_ignite())
         {
             canned_msg(MSG_OK);
-            return SPRET_ABORT;
+            return spret::abort;
         }
         fail_check();
     }
@@ -1592,7 +1650,7 @@ spret_type cast_ignite_poison(actor* agent, int pow, bool fail, bool tracer)
         return 0; // ignored
     }, agent->pos());
 
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
 static void _ignition_square(const actor *agent, bolt beam, coord_def square, bool center)
@@ -1605,7 +1663,7 @@ static void _ignition_square(const actor *agent, bolt beam, coord_def square, bo
         noisy(spell_effect_noise(SPELL_IGNITION),square);
 }
 
-spret_type cast_ignition(const actor *agent, int pow, bool fail)
+spret cast_ignition(const actor *agent, int pow, bool fail)
 {
     ASSERT(agent->is_player());
 
@@ -1699,7 +1757,7 @@ spret_type cast_ignition(const actor *agent, int pow, bool fail)
             _ignition_square(agent, beam_actual, pos, false);
     }
 
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
 static int _discharge_monsters(const coord_def &where, int pow,
@@ -1729,11 +1787,12 @@ static int _discharge_monsters(const coord_def &where, int pow,
 
     if (victim->is_player())
     {
-        mpr("You are struck by an arc of lightning.");
         damage = 1 + random2(3 + pow / 15);
         dprf("You: static discharge damage: %d", damage);
         damage = check_your_resists(damage, BEAM_ELECTRICITY,
                                     "static discharge");
+        mprf("You are struck by an arc of lightning%s",
+             attack_strength_punctuation(damage).c_str());
         ouch(damage, KILLED_BY_BEAM, agent.mid, "by static electricity", true,
              agent.is_player() ? "you" : agent.name(DESC_A).c_str());
         if (damage > 0)
@@ -1742,6 +1801,15 @@ static int _discharge_monsters(const coord_def &where, int pow,
     // rEelec monsters don't allow arcs to continue.
     else if (victim->res_elec() > 0)
         return 0;
+    else if (agent.deity() == GOD_FEDHAS
+             && fedhas_protects(*victim->as_monster()))
+    {
+        simple_god_message(
+                    make_stringf(" protects %s plant from harm.",
+                        agent.is_player() ? "your" : "a").c_str(),
+                    GOD_FEDHAS);
+        return 0;
+    }
     else
     {
         monster* mons = victim->as_monster();
@@ -1753,9 +1821,10 @@ static int _discharge_monsters(const coord_def &where, int pow,
 
         dprf("%s: static discharge damage: %d",
              mons->name(DESC_PLAIN, true).c_str(), damage);
-        mprf("%s is struck by an arc of lightning.",
-                mons->name(DESC_THE).c_str());
         damage = mons_adjust_flavoured(mons, beam, damage);
+        mprf("%s is struck by an arc of lightning%s",
+                mons->name(DESC_THE).c_str(),
+                attack_strength_punctuation(damage).c_str());
 
         if (agent.is_player())
             _player_hurt_monster(*mons, damage, beam.flavour, false);
@@ -1795,8 +1864,12 @@ bool safe_discharge(coord_def where, vector<const actor *> &exclude)
             if (act->is_monster())
             {
                 // Harmless to these monsters, so don't prompt about them.
-                if (act->res_elec() > 0)
+                if (act->res_elec() > 0
+                    || you.deity() == GOD_FEDHAS
+                       && fedhas_protects(*act->as_monster()))
+                {
                     continue;
+                }
 
                 if (stop_attack_prompt(act->as_monster(), false, where))
                     return false;
@@ -1812,11 +1885,11 @@ bool safe_discharge(coord_def where, vector<const actor *> &exclude)
     return true;
 }
 
-spret_type cast_discharge(int pow, const actor &agent, bool fail, bool prompt)
+spret cast_discharge(int pow, const actor &agent, bool fail, bool prompt)
 {
     vector<const actor *> exclude;
     if (agent.is_player() && prompt && !safe_discharge(you.pos(), exclude))
-        return SPRET_ABORT;
+        return spret::abort;
 
     fail_check();
 
@@ -1843,7 +1916,7 @@ spret_type cast_discharge(int pow, const actor &agent, bool fail, bool prompt)
                  plural ? " themselves" : "s itself");
         }
     }
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
 bool setup_fragmentation_beam(bolt &beam, int pow, const actor *caster,
@@ -2042,9 +2115,13 @@ bool setup_fragmentation_beam(bolt &beam, int pow, const actor *caster,
 
     // Stone arches and doors
     case DNGN_OPEN_DOOR:
+    case DNGN_OPEN_CLEAR_DOOR:
     case DNGN_CLOSED_DOOR:
+    case DNGN_CLOSED_CLEAR_DOOR:
     case DNGN_RUNED_DOOR:
+    case DNGN_RUNED_CLEAR_DOOR:
     case DNGN_SEALED_DOOR:
+    case DNGN_SEALED_CLEAR_DOOR:
         if (what)
             *what = "stone door frame";
         // fall-through
@@ -2077,7 +2154,7 @@ bool setup_fragmentation_beam(bolt &beam, int pow, const actor *caster,
     return true;
 }
 
-spret_type cast_fragmentation(int pow, const actor *caster,
+spret cast_fragmentation(int pow, const actor *caster,
                               const coord_def target, bool fail)
 {
     bool hole                = true;
@@ -2088,7 +2165,7 @@ spret_type cast_fragmentation(int pow, const actor *caster,
     if (!setup_fragmentation_beam(beam, pow, caster, target, false, &what,
                 hole))
     {
-        return SPRET_ABORT;
+        return spret::abort;
     }
 
     if (caster->is_player())
@@ -2102,7 +2179,7 @@ spret_type cast_fragmentation(int pow, const actor *caster,
         if (tempbeam.beam_cancelled)
         {
             canned_msg(MSG_OK);
-            return SPRET_ABORT;
+            return spret::abort;
         }
     }
 
@@ -2115,9 +2192,10 @@ spret_type cast_fragmentation(int pow, const actor *caster,
     }
     else if (target == you.pos()) // You explode.
     {
-        mpr("You shatter!");
+        const int dam = beam.damage.roll();
+        mprf("You shatter%s", attack_strength_punctuation(dam).c_str());
 
-        ouch(beam.damage.roll(), KILLED_BY_BEAM, caster->mid,
+        ouch(dam, KILLED_BY_BEAM, caster->mid,
              "by Lee's Rapid Deconstruction", true,
              caster->is_player() ? "you"
                                  : caster->name(DESC_A).c_str());
@@ -2129,10 +2207,13 @@ spret_type cast_fragmentation(int pow, const actor *caster,
         monster* mon = monster_at(target);
         ASSERT(mon);
 
-        if (you.see_cell(target))
-            mprf("%s shatters!", mon->name(DESC_THE).c_str());
-
         const int dam = beam.damage.roll();
+        if (you.see_cell(target))
+        {
+            mprf("%s shatters%s", mon->name(DESC_THE).c_str(),
+                 attack_strength_punctuation(dam).c_str());
+        }
+
         if (caster->is_player())
             _player_hurt_monster(*mon, dam, BEAM_DISINTEGRATION);
         else if (dam)
@@ -2141,10 +2222,10 @@ spret_type cast_fragmentation(int pow, const actor *caster,
 
     beam.explode(true, hole);
 
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
-spret_type cast_sandblast(int pow, bolt &beam, bool fail)
+spret cast_sandblast(int pow, bolt &beam, bool fail)
 {
     item_def *stone = nullptr;
     int num_stones = 0;
@@ -2161,13 +2242,13 @@ spret_type cast_sandblast(int pow, bolt &beam, bool fail)
     if (num_stones == 0)
     {
         mpr("You don't have any stones to cast with.");
-        return SPRET_ABORT;
+        return spret::abort;
     }
 
     zap_type zap = ZAP_SANDBLAST;
-    const spret_type ret = zapping(zap, pow, beam, true, nullptr, fail);
+    const spret ret = zapping(zap, pow, beam, true, nullptr, fail);
 
-    if (ret == SPRET_SUCCESS)
+    if (ret == spret::success)
     {
         if (dec_inv_item_quantity(letter_to_index(stone->slot), 1))
             mpr("You now have no stones remaining.");
@@ -2180,10 +2261,11 @@ spret_type cast_sandblast(int pow, bolt &beam, bool fail)
 
 static bool _elec_not_immune(const actor *act)
 {
-    return act->res_elec() < 3;
+    return act->res_elec() < 3 && !(you_worship(GOD_FEDHAS)
+                                    && fedhas_protects(*act->as_monster()));
 }
 
-spret_type cast_thunderbolt(actor *caster, int pow, coord_def aim, bool fail)
+spret cast_thunderbolt(actor *caster, int pow, coord_def aim, bool fail)
 {
     coord_def prev;
 
@@ -2206,7 +2288,7 @@ spret_type cast_thunderbolt(actor *caster, int pow, coord_def aim, bool fail)
     if (caster->is_player()
         && stop_attack_prompt(hitfunc, "zap", _elec_not_immune))
     {
-        return SPRET_ABORT;
+        return spret::abort;
     }
 
     fail_check();
@@ -2269,7 +2351,7 @@ spret_type cast_thunderbolt(actor *caster, int pow, coord_def aim, bool fail)
     if (charges < LIGHTNING_MAX_CHARGE)
         charges++;
 
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
 // Find an enemy who would suffer from Awaken Forest.
@@ -2336,29 +2418,34 @@ void forest_damage(const actor *mon)
                 if (!apply_chunked_AC(1, foe->evasion(EV_IGNORE_NONE, mon)))
                 {
                     msg = random_choose(
-                            "@foe@ @is@ waved at by a branch.",
-                            "A tree reaches out but misses @foe@.",
-                            "A root lunges up near @foe@.");
+                            "@foe@ @is@ waved at by a branch",
+                            "A tree reaches out but misses @foe@",
+                            "A root lunges up near @foe@");
                 }
                 else if (!(dmg = foe->apply_ac(hd + random2(hd), hd * 2 - 1,
                                                AC_PROPORTIONAL)))
                 {
                     msg = random_choose(
-                            "@foe@ @is@ scraped by a branch!",
-                            "A tree reaches out and scrapes @foe@!",
-                            "A root barely touches @foe@ from below.");
+                            "@foe@ @is@ scraped by a branch",
+                            "A tree reaches out and scrapes @foe@",
+                            "A root barely touches @foe@ from below");
+                    if (foe->is_monster())
+                        behaviour_event(foe->as_monster(), ME_WHACK);
                 }
                 else
                 {
                     msg = random_choose(
-                        "@foe@ @is@ hit by a branch!",
-                        "A tree reaches out and hits @foe@!",
-                        "A root smacks @foe@ from below.");
+                        "@foe@ @is@ hit by a branch",
+                        "A tree reaches out and hits @foe@",
+                        "A root smacks @foe@ from below");
+                    if (foe->is_monster())
+                        behaviour_event(foe->as_monster(), ME_WHACK);
                 }
 
                 msg = replace_all(replace_all(msg,
                     "@foe@", foe->name(DESC_THE)),
-                    "@is@", foe->conj_verb("be"));
+                    "@is@", foe->conj_verb("be"))
+                    + attack_strength_punctuation(dmg);
                 if (you.see_cell(foe->pos()))
                     mpr(msg);
 
@@ -2482,21 +2569,21 @@ static bool _dazzle_can_hit(const actor *act)
         return false;
 }
 
-spret_type cast_dazzling_spray(int pow, coord_def aim, bool fail)
+spret cast_dazzling_spray(int pow, coord_def aim, bool fail)
 {
     int range = spell_range(SPELL_DAZZLING_SPRAY, pow);
 
     targeter_spray hitfunc(&you, range, ZAP_DAZZLING_SPRAY);
     hitfunc.set_aim(aim);
     if (stop_attack_prompt(hitfunc, "fire towards", _dazzle_can_hit))
-        return SPRET_ABORT;
+        return spret::abort;
 
     fail_check();
 
     if (hitfunc.beams.size() == 0)
     {
         mpr("You can't see any targets in that direction!");
-        return SPRET_ABORT;
+        return spret::abort;
     }
 
     for (bolt &beam : hitfunc.beams)
@@ -2505,7 +2592,7 @@ spret_type cast_dazzling_spray(int pow, coord_def aim, bool fail)
         beam.fire();
     }
 
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
 static bool _toxic_can_affect(const actor *act)
@@ -2517,14 +2604,14 @@ static bool _toxic_can_affect(const actor *act)
     return act->res_poison() < (act->is_player() ? 3 : 1);
 }
 
-spret_type cast_toxic_radiance(actor *agent, int pow, bool fail, bool mon_tracer)
+spret cast_toxic_radiance(actor *agent, int pow, bool fail, bool mon_tracer)
 {
     if (agent->is_player())
     {
         targeter_los hitfunc(&you, LOS_NO_TRANS);
         {
             if (stop_attack_prompt(hitfunc, "poison", _toxic_can_affect))
-                return SPRET_ABORT;
+                return spret::abort;
         }
         fail_check();
 
@@ -2537,7 +2624,7 @@ spret_type cast_toxic_radiance(actor *agent, int pow, bool fail, bool mon_tracer
 
         flash_view_delay(UA_PLAYER, GREEN, 300, &hitfunc);
 
-        return SPRET_SUCCESS;
+        return spret::success;
     }
     else if (mon_tracer)
     {
@@ -2546,11 +2633,11 @@ spret_type cast_toxic_radiance(actor *agent, int pow, bool fail, bool mon_tracer
             if (!_toxic_can_affect(*ai) || mons_aligned(agent, *ai))
                 continue;
             else
-                return SPRET_SUCCESS;
+                return spret::success;
         }
 
         // Didn't find any susceptible targets
-        return SPRET_ABORT;
+        return spret::abort;
     }
     else
     {
@@ -2564,7 +2651,7 @@ spret_type cast_toxic_radiance(actor *agent, int pow, bool fail, bool mon_tracer
         targeter_los hitfunc(mon_agent, LOS_NO_TRANS);
         flash_view_delay(UA_MONSTER, GREEN, 300, &hitfunc);
 
-        return SPRET_SUCCESS;
+        return spret::success;
     }
 }
 
@@ -2623,12 +2710,12 @@ void toxic_radiance_effect(actor* agent, int mult)
         remove_sanctuary(true);
 }
 
-spret_type cast_searing_ray(int pow, bolt &beam, bool fail)
+spret cast_searing_ray(int pow, bolt &beam, bool fail)
 {
-    const spret_type ret = zapping(ZAP_SEARING_RAY_I, pow, beam, true, nullptr,
+    const spret ret = zapping(ZAP_SEARING_RAY_I, pow, beam, true, nullptr,
                                    fail);
 
-    if (ret == SPRET_SUCCESS)
+    if (ret == spret::success)
     {
         // Special value, used to avoid terminating ray immediately, since we
         // took a non-wait action on this turn (ie: casting it)
@@ -2722,7 +2809,7 @@ static bool _player_glaciate_affects(const actor *victim)
             && (!mons_is_avatar(mon->type) || !mons_aligned(&you, mon));
 }
 
-spret_type cast_glaciate(actor *caster, int pow, coord_def aim, bool fail)
+spret cast_glaciate(actor *caster, int pow, coord_def aim, bool fail)
 {
     const int range = spell_range(SPELL_GLACIATE, pow);
     targeter_cone hitfunc(caster, range);
@@ -2731,7 +2818,7 @@ spret_type cast_glaciate(actor *caster, int pow, coord_def aim, bool fail)
     if (caster->is_player()
         && stop_attack_prompt(hitfunc, "glaciate", _player_glaciate_affects))
     {
-        return SPRET_ABORT;
+        return spret::abort;
     }
 
     fail_check();
@@ -2806,17 +2893,17 @@ spret_type cast_glaciate(actor *caster, int pow, coord_def aim, bool fail)
 
     noisy(spell_effect_noise(SPELL_GLACIATE), hitfunc.origin);
 
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
-spret_type cast_random_bolt(int pow, bolt& beam, bool fail)
+spret cast_random_bolt(int pow, bolt& beam, bool fail)
 {
     // Need to use a 'generic' tracer regardless of the actual beam type,
     // to account for the possibility of both bouncing and irresistible damage
     // (even though only one of these two ever occurs on the same bolt type).
     bolt tracer = beam;
     if (!player_tracer(ZAP_RANDOM_BOLT_TRACER, 200, tracer))
-        return SPRET_ABORT;
+        return spret::abort;
 
     fail_check();
 
@@ -2831,7 +2918,7 @@ spret_type cast_random_bolt(int pow, bolt& beam, bool fail)
     beam.origin_spell = SPELL_NO_SPELL; // let zapping reset this
     zapping(zap, pow * 7 / 6 + 15, beam, false);
 
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
 size_t shotgun_beam_count(int pow)
@@ -2839,7 +2926,7 @@ size_t shotgun_beam_count(int pow)
     return 1 + stepdown((pow - 5) / 3, 5, ROUND_CLOSE);
 }
 
-spret_type cast_scattershot(const actor *caster, int pow, const coord_def &pos,
+spret cast_scattershot(const actor *caster, int pow, const coord_def &pos,
                             bool fail)
 {
     const size_t range = spell_range(SPELL_SCATTERSHOT, pow);
@@ -2852,7 +2939,7 @@ spret_type cast_scattershot(const actor *caster, int pow, const coord_def &pos,
     if (caster->is_player())
     {
         if (stop_attack_prompt(hitfunc, "scattershot"))
-            return SPRET_ABORT;
+            return spret::abort;
     }
 
     fail_check();
@@ -2913,7 +3000,7 @@ spret_type cast_scattershot(const actor *caster, int pow, const coord_def &pos,
         print_wounds(*mons);
     }
 
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
 static void _setup_borgnjors_vile_clutch(bolt &beam, int pow)
@@ -2931,12 +3018,12 @@ static void _setup_borgnjors_vile_clutch(bolt &beam, int pow)
     beam.origin_spell = SPELL_BORGNJORS_VILE_CLUTCH;
 }
 
-spret_type cast_borgnjors_vile_clutch(int pow, bolt &beam, bool fail)
+spret cast_borgnjors_vile_clutch(int pow, bolt &beam, bool fail)
 {
     if (cell_is_solid(beam.target))
     {
         canned_msg(MSG_SOMETHING_IN_WAY);
-        return SPRET_ABORT;
+        return spret::abort;
     }
 
     fail_check();
@@ -2945,5 +3032,5 @@ spret_type cast_borgnjors_vile_clutch(int pow, bolt &beam, bool fail)
     mpr("Decaying hands burst forth from the earth!");
     beam.explode();
 
-    return SPRET_SUCCESS;
+    return spret::success;
 }

@@ -335,7 +335,7 @@ bool fill_status_info(int status, status_info& inf)
         inf.long_text += "You are surrounded by a ring of frost.\n";
         if (exp)
             inf.long_text += "Expiring: ";
-        inf.long_text += "You are immune to frezzing clouds.";
+        inf.long_text += "You are immune to freezing clouds.";
         break;
     }
 
@@ -463,7 +463,7 @@ bool fill_status_info(int status, status_info& inf)
         }
         break;
 		
-    case DUR_OMNISCIENCE:
+	case DUR_OMNISCIENCE:
         inf.light_text
             = make_stringf("OmniV (%u)",
                            you.duration[DUR_OMNISCIENCE] / 10);
@@ -538,12 +538,19 @@ bool fill_status_info(int status, status_info& inf)
             inf.short_text   = "heavily drained";
             inf.long_text    = "Your life force is heavily drained.";
         }
-        else if (you.attribute[ATTR_XP_DRAIN])
+        else if (you.attribute[ATTR_XP_DRAIN] > 50)
         {
             inf.light_colour = YELLOW;
             inf.light_text   = "Drain";
             inf.short_text   = "drained";
             inf.long_text    = "Your life force is drained.";
+        }
+        else if (you.attribute[ATTR_XP_DRAIN])
+        {
+            inf.light_colour = LIGHTGREY;
+            inf.light_text   = "Drain";
+            inf.short_text   = "lightly drained";
+            inf.long_text    = "Your life force is lightly drained.";
         }
         break;
 
@@ -703,14 +710,14 @@ bool fill_status_info(int status, status_info& inf)
             inf.light_colour = DARKGREY;
         break;
     }
-	
+
 	case DUR_RED_BARRIER:
     {
         if (!enough_mp(1, true, false))
             inf.light_colour = DARKGREY;
         break;
     }
-
+	
     case STATUS_ORB:
     {
         if (player_has_orb())

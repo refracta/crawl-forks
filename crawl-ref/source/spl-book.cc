@@ -181,7 +181,6 @@ int book_rarity(book_type which_book)
 
     case BOOK_CLOUDS:
     case BOOK_POWER:
-	case BOOK_RED_MAGE:
         return 6;
 
     case BOOK_ENCHANTMENTS:
@@ -216,7 +215,7 @@ int book_rarity(book_type which_book)
         return 15;
 
     case BOOK_ANNIHILATIONS:
-    case BOOK_GRAND_GRIMOIRE:  // the Legion special
+    case BOOK_GRAND_GRIMOIRE:	// the Legion special
     case BOOK_NECRONOMICON:  // Kikubaaqudgha special
     case BOOK_MANUAL:
         return 20;
@@ -272,9 +271,9 @@ void init_spell_rarities()
             }
             last = spell;
 
-            unsigned int flags = get_spell_flags(spell);
+            spell_flags flags = get_spell_flags(spell);
 
-            if (flags & (SPFLAG_MONSTER | SPFLAG_TESTING))
+            if (flags & (spflag::monster | spflag::testing))
             {
                 item_def item;
                 item.base_type = OBJ_BOOKS;

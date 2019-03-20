@@ -207,7 +207,7 @@ static const duration_def duration_data[] =
        { "Your ring of frost is guttering out.", 2}}, 5},
     { DUR_ICY_ARMOUR,
       BLUE, "+AC",
-      "icy armour", "icy armour",
+      "icy armour", "",
       "You are protected by a layer of icy armour.", D_DISPELLABLE | D_EXPIRES,
       {}, 6},
     { DUR_LIQUID_FLAMES,
@@ -541,7 +541,7 @@ static const duration_def duration_data[] =
       {{ "The infernal howling subsides.", []() {
           you.props.erase(NEXT_DOOM_HOUND_KEY);
       }}}},
-    { DUR_VERTIGO, YELLOW, "Vertigo", "", "vertigo",
+    { DUR_VERTIGO, YELLOW, "Vertigo", "vertigo", "",
       "Vertigo is making it harder to attack, cast, and dodge.", D_DISPELLABLE,
       {{ "The world stops spinning.", []() {
           you.redraw_evasion = true;
@@ -637,7 +637,8 @@ static const duration_def duration_data[] =
       {{ "",  wu_jian_heaven_tick }}},
     { DUR_GRASPING_ROOTS, 0, "", "grasped by roots", "grasping roots",
       "You are constricted by grasping roots.", D_NO_FLAGS},
-    { DUR_NERGALLE_DELAY, 0, "", "", "nergalle the orcish lich delay", "", D_NO_FLAGS, {{""}}},
+    { DUR_SHAFT_IMMUNITY, 0, "", "", "shaft immunity", "", D_NO_FLAGS, {{""}}},
+	{ DUR_NERGALLE_DELAY, 0, "", "", "nergalle the orcish lich delay", "", D_NO_FLAGS, {{""}}},
 
 #if TAG_MAJOR_VERSION == 34
     // And removed ones

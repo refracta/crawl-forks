@@ -1001,64 +1001,6 @@ int mummy_curse_power(monster_type type)
     }
 }
 
-static void _mummy_curse(monster* mons, int pow, killer_type killer, int index)
-{
-    if (pow <= 0)
-        return;
-
-    switch (killer)
-    {
-        // Mummy killed by trap or something other than the player or
-        // another monster, so no curse.
-        case KILL_MISC:
-        case KILL_RESET:
-        case KILL_DISMISSED:
-        // Mummy sent to the Abyss wasn't actually killed, so no curse.
-        case KILL_BANISHED:
-            return;
-
-        default:
-            break;
-    }
-
-    actor* target;
-
-    if (YOU_KILL(killer))
-        target = &you;
-    // Killed by a Zot trap, a god, etc, or suicide.
-    else if (invalid_monster_index(index) || index == mons->mindex())
-        return;
-    else
-        target = &menv[index];
-
-    // Mummy was killed by a ballistomycete spore or ball lightning?
-    if (!target->alive())
-        return;
-
-    // Mummies are smart enough not to waste curses on summons or allies.
-    if (target->is_monster() && target->as_monster()->friendly()
-        && !crawl_state.game_is_arena())
-    {
-        target = &you;
-    }
-
-    // Stepped from time?
-    if (!in_bounds(target->pos()))
-        return;
-
-    if (target->is_player())
-        mprf(MSGCH_MONSTER_SPELL, "You feel extremely nervous for a moment...");
-    else if (you.can_see(*target))
-    {
-        mprf(MSGCH_MONSTER_SPELL, "A malignant aura surrounds %s.",
-             target->name(DESC_THE).c_str());
-    }
-    const string cause = make_stringf("%s death curse",
-                            apostrophise(mons->name(DESC_A)).c_str());
-    MiscastEffect(target, mons, MUMMY_MISCAST, SPTYP_NECROMANCY,
-                  pow, random2avg(88, 3), cause.c_str());
-}
-
 template<typename valid_T, typename connect_T>
 static void _search_dungeon(const coord_def & start,
                     valid_T & valid_target,
@@ -1585,6 +1527,15 @@ static void _make_derived_undead(monster* mons, bool quiet, bool bound_soul)
                         bound_soul ?
                         GOD_NO_GOD : static_cast<god_type>(you.attribute[ATTR_DIVINE_DEATH_CHANNEL]));
         mg.set_base(mons->type);
+
+        if (!mons->mname.empty() && !(mons->flags & MF_NAME_NOCORPSE))
+            mg.mname = mons->mname;
+        else if (mons_is_unique(mons->type))
+            mg.mname = mons_type_name(mons->type, DESC_PLAIN);
+        mg.extra_flags = mons->flags & (MF_NAME_SUFFIX
+                                          | MF_NAME_ADJECTIVE
+                                          | MF_NAME_DESCRIPTOR);
+
         if (mons->mons_species() == MONS_HYDRA)
         {
             // No undead 0-headed hydras, sorry.
@@ -1601,36 +1552,23 @@ static void _make_derived_undead(monster* mons, bool quiet, bool bound_soul)
                 mg.props[MGEN_NUM_HEADS] = mons->heads();
         }
 
-        if (monster *undead = create_monster(mg))
+        string agent_name = "";
+        if (bound_soul)
         {
-            if (!quiet)
-            {
-                mprf("A %s mist starts to gather...",
-                     bound_soul ? "freezing" : "glowing");
-            }
-
-            // If the original monster has been levelled up, its HD might be
-            // different from its class HD, in which case its HP should be
-            // rerolled to match.
-            if (undead->get_experience_level() != mons->get_experience_level())
-            {
-                undead->set_hit_dice(max(mons->get_experience_level(), 1));
-                roll_zombie_hp(undead);
-            }
-
-            name_zombie(*undead, *mons);
-
-            undead->add_ench(mon_enchant(ENCH_FAKE_ABJURATION, 6));
-            if (bound_soul)
-            {
-                const auto agent = mons->get_ench(ENCH_BOUND_SOUL).agent();
-                if (agent)
-                {
-                    mons_add_blame(undead,
-                        "animated by " + agent->as_monster()->full_name(DESC_A));
-                }
-            }
+            const auto agent = mons->get_ench(ENCH_BOUND_SOUL).agent();
+            if (agent)
+                agent_name = agent->as_monster()->full_name(DESC_A);
         }
+
+        string monster_name = "";
+
+        string message = quiet ? "" :
+            make_stringf("A %s mist starts to gather...",
+                         bound_soul ? "freezing" : "glowing");
+
+        make_derived_undead_fineff::schedule(mons->pos(), mg,
+                mons->get_experience_level(), agent_name, message);
+
     }
 }
 
@@ -1739,7 +1677,7 @@ static bool _god_will_bless_follower(monster* victim)
               && victim->evil()
               && random2(you.piety) >= piety_breakpoint(0)
 		   || have_passive(passive_t::bless_followers_legion)
-              && random2((you.skill(SK_SUMMONINGS) * 4) + (you.skill(SK_SUMMONINGS) * 3)) >= piety_breakpoint(0);
+              && random2(45+(you.skill(SK_SUMMONINGS) * 4)) >= piety_breakpoint(0);
 }
 
 /**
@@ -2586,11 +2524,10 @@ item_def* monster_die(monster& mons, killer_type killer,
         {
             // XXX: Actual blood curse effect for Boris? - bwr
 
-            // Now that Boris is dead, he's a valid target for monster
-            // creation again. - bwr
+            // Now that Boris is dead, he can be replaced when new levels
+            // are generated.
             you.unique_creatures.set(mons.type, false);
-            // And his vault can be placed again.
-            you.uniq_map_names.erase("uniq_boris");
+            you.props["killed_boris_once"] = true;
         }
         if (mons.type == MONS_JORY && !in_transit)
             blood_spray(mons.pos(), MONS_JORY, 50);
@@ -2607,7 +2544,7 @@ item_def* monster_die(monster& mons, killer_type killer,
         {
             drop_items = false;
 
-            // Like Boris, but her vault can't come back
+            // Like Boris, but regenerates immediately
             if (mons_is_mons_class(&mons, MONS_NATASHA))
                 you.unique_creatures.set(MONS_NATASHA, false);
             if (!mons_reset && !wizard)
@@ -2683,10 +2620,22 @@ item_def* monster_die(monster& mons, killer_type killer,
         treant_release_fauna(mons);
     }
     else if (!mons.is_summoned() && mummy_curse_power(mons.type) > 0)
-        _mummy_curse(&mons, mummy_curse_power(mons.type), killer, killer_index);
+    {
+        mummy_death_curse_fineff::schedule(
+                actor_by_mid(killer_index),
+                mons.name(DESC_A),
+                killer,
+                mummy_curse_power(mons.type));
+    }
 
-    if (mons.has_ench(ENCH_INFESTATION) && !was_banished && !mons_reset)
-        _infestation_create_scarab(&mons);
+    // Necromancy
+    if (!was_banished && !mons_reset)
+    {
+        if (mons.has_ench(ENCH_INFESTATION))
+            _infestation_create_scarab(&mons);
+        if (you.duration[DUR_DEATH_CHANNEL] && was_visible && gives_player_xp)
+            _make_derived_undead(&mons, !death_message, false);
+    }
 
     if (mons.mons_species() == MONS_BALLISTOMYCETE)
     {
@@ -2717,8 +2666,6 @@ item_def* monster_die(monster& mons, killer_type killer,
     }
     if (corpse && mons.has_ench(ENCH_BOUND_SOUL))
         _make_derived_undead(&mons, !death_message, true);
-    if (you.duration[DUR_DEATH_CHANNEL] && was_visible && gives_player_xp)
-        _make_derived_undead(&mons, !death_message, false);
 
     const unsigned int player_xp = gives_player_xp
         ? _calc_player_experience(&mons) : 0;
@@ -2797,18 +2744,11 @@ item_def* monster_die(monster& mons, killer_type killer,
     if (mons.is_divine_companion()
         && killer != KILL_RESET
         && !(mons.flags & MF_BANISHED))
-    {	
-		if (mons.type == MONS_NERGALLE_LICH)
-		{	
-			remove_companion(&mons);
-			mprf("Nergalle's bones disappeared...but she will return soon.");
-			// ready to respawn when beogh grants reinforcement.
-			you.duration[DUR_NERGALLE_DELAY] = INFINITE_DURATION;
-		}
-		
+    {
         remove_companion(&mons);
         if (mons_is_hepliaklqana_ancestor(mons.type))
         {
+            ASSERT(hepliaklqana_ancestor() == MID_NOBODY);
             if (!you.can_see(mons))
             {
                 mprf("%s has departed this plane of existence.",
@@ -2816,7 +2756,13 @@ item_def* monster_die(monster& mons, killer_type killer,
             }
             // respawn in ~30-60 turns
             you.duration[DUR_ANCESTOR_DELAY] = random_range(300, 600);
-        }	
+        }
+		if (mons.type == MONS_NERGALLE_LICH)
+		{	
+			mprf("Nergalle's bones disappeared...but she will return soon.");
+			// ready to respawn when beogh grants reinforcement.
+			you.duration[DUR_NERGALLE_DELAY] = INFINITE_DURATION;
+		}
     }
 
     // If we kill an invisible monster reactivate autopickup.

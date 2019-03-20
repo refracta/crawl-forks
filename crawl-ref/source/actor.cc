@@ -124,7 +124,8 @@ int actor::check_res_magic(int power)
     const int adj_pow = ench_power_stepdown(power);
 
     const int mrchance = (100 + mrs) - adj_pow;
-    const int mrch2 = random2(100) + random2(101);
+    int mrch2 = random2(100);
+    mrch2 += random2(101);
 
     dprf("Power: %d (%d pre-stepdown), MR: %d, target: %d, roll: %d",
          adj_pow, power, mrs, mrchance, mrch2);
@@ -216,7 +217,10 @@ bool actor::res_corr(bool calc_unid, bool items) const
 
 bool actor::cloud_immune(bool calc_unid, bool items) const
 {
-    return items && (wearing_ego(EQ_CLOAK, SPARM_CLOUD_IMMUNE, calc_unid));
+    const item_def *body_armour = slot_item(EQ_BODY_ARMOUR);
+    return items && (wearing_ego(EQ_CLOAK, SPARM_CLOUD_IMMUNE, calc_unid)
+                     || (body_armour
+                        && is_unrandom_artefact(*body_armour, UNRAND_RCLOUDS)));
 }
 
 bool actor::holy_wrath_susceptible() const
@@ -360,7 +364,9 @@ int actor::apply_ac(int damage, int max_damage, ac_type ac_rule,
         gdr /= 2;
         break;
     case AC_TRIPLE:
-        saved = random2(1 + ac) + random2(1 + ac) + random2(1 + ac);
+        saved = random2(1 + ac);
+        saved += random2(1 + ac);
+        saved += random2(1 + ac);
         ac *= 3;
         // apply GDR only twice rather than thrice, that's probably still waaay
         // too good. 50% gives 75% rather than 100%, too.
@@ -559,7 +565,9 @@ void actor::stop_constricting_all(bool intentional, bool quiet)
 
 static bool _invalid_constricting_map_entry(const actor *constrictee)
 {
-    return !constrictee || !constrictee->is_constricted();
+    return !constrictee
+        || !constrictee->alive()
+        || !constrictee->is_constricted();
 }
 
 /**
@@ -623,8 +631,8 @@ bool actor::has_invalid_constrictor(bool move) const
     if (!is_constricted())
         return false;
 
-    const actor* const attacker = actor_by_mid(constricted_by);
-    if (!attacker)
+    const actor* const attacker = actor_by_mid(constricted_by, true);
+    if (!attacker || !attacker->alive())
         return true;
 
     // When the player is at the origin, they don't have the normal
@@ -666,7 +674,7 @@ void actor::clear_invalid_constrictions(bool move)
     vector<mid_t> need_cleared;
     for (const auto &entry : *constricting)
     {
-        const actor * const constrictee = actor_by_mid(entry.first);
+        const actor * const constrictee = actor_by_mid(entry.first, true);
         if (_invalid_constricting_map_entry(constrictee)
             || constrictee->has_invalid_constrictor())
         {
@@ -867,7 +875,7 @@ void actor::handle_constriction()
     {
         actor* const defender = actor_by_mid(i.first);
         const int duration = i.second;
-        if (defender)
+        if (defender && defender->alive())
             constriction_damage_defender(*defender, duration);
     }
 

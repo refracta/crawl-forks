@@ -38,7 +38,7 @@ int allowed_deaths_door_hp()
     return max(hp, 1);
 }
 
-spret_type cast_deaths_door(int pow, bool fail)
+spret cast_deaths_door(int pow, bool fail)
 {
     fail_check();
     mpr("You stand defiantly in death's doorway!");
@@ -51,7 +51,7 @@ spret_type cast_deaths_door(int pow, bool fail)
 
     if (you.duration[DUR_DEATHS_DOOR] > 25 * BASELINE_DELAY)
         you.duration[DUR_DEATHS_DOOR] = (23 + random2(5)) * BASELINE_DELAY;
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
 void remove_ice_armour()
@@ -61,7 +61,7 @@ void remove_ice_armour()
     you.duration[DUR_ICY_ARMOUR] = 0;
 }
 
-spret_type ice_armour(int pow, bool fail)
+spret ice_armour(int pow, bool fail)
 {
     fail_check();
 
@@ -82,28 +82,28 @@ spret_type ice_armour(int pow, bool fail)
     you.props[ICY_ARMOUR_KEY] = pow;
     you.redraw_armour_class = true;
 
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
-spret_type deflection(int pow, bool fail)
+spret deflection(int pow, bool fail)
 {
     fail_check();
     you.attribute[ATTR_DEFLECT_MISSILES] = 1;
     mpr("You feel very safe from missiles.");
 
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
-spret_type cast_regen(int pow, bool fail)
+spret cast_regen(int pow, bool fail)
 {
     fail_check();
     you.increase_duration(DUR_REGENERATION, 5 + roll_dice(2, pow / 3 + 1), 100,
                           "Your skin crawls.");
 
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
-spret_type cast_revivification(int pow, bool fail)
+spret cast_revivification(int pow, bool fail)
 {
     fail_check();
     mpr("Your body is healed in an amazingly painful way.");
@@ -119,10 +119,10 @@ spret_type cast_revivification(int pow, bool fail)
         paralyse_player("Death's Door abortion");
         you.duration[DUR_DEATHS_DOOR] = 0;
     }
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
-spret_type cast_swiftness(int power, bool fail)
+spret cast_swiftness(int power, bool fail)
 {
     fail_check();
 
@@ -137,7 +137,7 @@ spret_type cast_swiftness(int power, bool fail)
                      "You feel quick.");
     you.attribute[ATTR_SWIFTNESS] = you.duration[DUR_SWIFTNESS];
 
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
 int cast_selective_amnesia(const string &pre_msg)
@@ -185,7 +185,7 @@ int cast_selective_amnesia(const string &pre_msg)
     return -1;
 }
 
-spret_type cast_infusion(int pow, bool fail)
+spret cast_infusion(int pow, bool fail)
 {
     fail_check();
     if (!you.duration[DUR_INFUSION])
@@ -196,10 +196,10 @@ spret_type cast_infusion(int pow, bool fail)
     you.increase_duration(DUR_INFUSION,  8 + roll_dice(2, pow), 100);
     you.props["infusion_power"] = pow;
 
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
-spret_type cast_song_of_slaying(int pow, bool fail)
+spret cast_song_of_slaying(int pow, bool fail)
 {
     fail_check();
 
@@ -211,10 +211,10 @@ spret_type cast_song_of_slaying(int pow, bool fail)
     you.set_duration(DUR_SONG_OF_SLAYING, 20 + random2avg(pow, 2));
 
     you.props[SONG_OF_SLAYING_KEY] = 0;
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
-spret_type cast_silence(int pow, bool fail)
+spret cast_silence(int pow, bool fail)
 {
     fail_check();
     mpr("A profound silence engulfs you.");
@@ -226,10 +226,10 @@ spret_type cast_silence(int pow, bool fail)
         you.update_beholders();
 
     learned_something_new(HINT_YOU_SILENCE);
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
-spret_type cast_liquefaction(int pow, bool fail)
+spret cast_liquefaction(int pow, bool fail)
 {
     fail_check();
     flash_view_delay(UA_PLAYER, BROWN, 80);
@@ -240,10 +240,10 @@ spret_type cast_liquefaction(int pow, bool fail)
 
     you.increase_duration(DUR_LIQUEFYING, 10 + random2avg(pow, 2), 100);
     invalidate_agrid(true);
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
-spret_type cast_shroud_of_golubria(int pow, bool fail)
+spret cast_shroud_of_golubria(int pow, bool fail)
 {
     fail_check();
     if (you.duration[DUR_SHROUD_OF_GOLUBRIA])
@@ -252,10 +252,10 @@ spret_type cast_shroud_of_golubria(int pow, bool fail)
         mpr("Space distorts slightly along a thin shroud covering your body.");
 
     you.increase_duration(DUR_SHROUD_OF_GOLUBRIA, 7 + roll_dice(2, pow), 50);
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
-spret_type cast_red_barrier(int pow, bool fail)
+spret cast_red_barrier(int pow, bool fail)
 {
     fail_check();
 	if (you.duration[DUR_SHROUD_OF_GOLUBRIA])
@@ -263,10 +263,10 @@ spret_type cast_red_barrier(int pow, bool fail)
 	else
 		mpr("You draw your magic to channel barrier.");
     you.increase_duration(DUR_RED_BARRIER, 12 + random2(pow) / 2, 10);
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
-spret_type cast_quicksilver_aura(int pow, bool fail)
+spret cast_quicksilver_aura(int pow, bool fail)
 {
     fail_check();
     if (!you.duration[DUR_QUICKSILVER_AURA])
@@ -276,10 +276,10 @@ spret_type cast_quicksilver_aura(int pow, bool fail)
 
     you.increase_duration(DUR_QUICKSILVER_AURA, 30 + random2(pow) / 2, 10);
 
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
-spret_type cast_napalm_charge(int pow, bool fail)
+spret cast_napalm_charge(int pow, bool fail)
 {
     fail_check();
 	if (you.duration[DUR_NAPALM_CHARGE])
@@ -287,18 +287,18 @@ spret_type cast_napalm_charge(int pow, bool fail)
 	else
 		mpr("Your fire magic is charged by deadly napalm!");
     you.increase_duration(DUR_NAPALM_CHARGE, 10 + pow/4 + random2avg(pow/2, 2), 100);
-    return SPRET_SUCCESS;
+    return spret::success;
 }
 
-spret_type cast_transform(int pow, transformation which_trans, bool fail)
+spret cast_transform(int pow, transformation which_trans, bool fail)
 {
     if (!transform(pow, which_trans, false, true)
         || !check_form_stat_safety(which_trans))
     {
-        return SPRET_ABORT;
+        return spret::abort;
     }
 
     fail_check();
     transform(pow, which_trans);
-    return SPRET_SUCCESS;
+    return spret::success;
 }
