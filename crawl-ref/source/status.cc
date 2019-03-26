@@ -463,6 +463,12 @@ bool fill_status_info(int status, status_info& inf)
         }
         break;
 		
+	case DUR_DIVINE_VIGOUR:
+        inf.light_text
+            = make_stringf("Vigour (%u)",
+                           you.duration[DUR_DIVINE_VIGOUR] / 10);
+        break;
+	
 	case DUR_OMNISCIENCE:
         inf.light_text
             = make_stringf("OmniV (%u)",

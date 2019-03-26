@@ -462,15 +462,8 @@ static int _los_spell_damage_player(const actor* agent, bolt &beam,
             ouch(hurted, KILLED_BY_BEAM, agent->mid,
                  make_stringf("by %s", beam.name.c_str()).c_str(), true,
                  agent->as_monster()->name(DESC_A).c_str());
-            you.expose_to_element(beam.flavour, 5);
         }
-        // -harm from player casting Ozo's Refridge.
-        else if (beam.origin_spell == SPELL_OZOCUBUS_REFRIGERATION)
-        {
-            ouch(hurted, KILLED_BY_FREEZING);
-            you.expose_to_element(beam.flavour, 5);
-            you.increase_duration(DUR_NO_POTIONS, 7 + random2(9), 15);
-        }
+        // -harm from player casting Ozo's Refridge - removed by addedcrawl
     }
 
     return hurted;
@@ -502,14 +495,15 @@ static int _los_spell_damage_monster(const actor* agent, monster &target,
     {
         if (YOU_KILL(beam.thrower))
             _player_hurt_monster(target, hurted, beam.flavour, false);
-        else if (hurted)
+        else if (hurted && !agent->is_monster())
             target.hurt(agent, hurted, beam.flavour);
 
-        // Cold-blooded creatures can be slowed.
+        // Target will be frozen, and cold-blooded creatures can be slowed.
         if (beam.origin_spell == SPELL_OZOCUBUS_REFRIGERATION
-            && target.alive())
+            && target.alive() && !agent->is_monster())
         {
-            target.expose_to_element(beam.flavour, 5);
+			target.add_ench(mon_enchant(ENCH_FROZEN,
+                   0, agent, 3 + random2(4) * BASELINE_DELAY));
         }
     }
 
@@ -553,7 +547,7 @@ static spret _cast_los_attack_spell(spell_type spell, int pow,
             verb = "frozen";
             prompt_verb = "refrigerate";
             vulnerable = [](const actor *caster, const actor *act) {
-                return act->is_player() || act->res_cold() < 3
+                return !act->is_player() || act->res_cold() < 3
                        && !(caster->deity() == GOD_FEDHAS
                             && fedhas_protects(*act->as_monster()));
             };

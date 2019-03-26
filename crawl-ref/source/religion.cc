@@ -207,6 +207,8 @@ const vector<god_power> god_powers[NUM_GODS] =
       { 5, "Trog will now gift you weapons as you gain piety.",
            "Trog will no longer gift you weapons.",
            "Trog will gift you weapons as you gain piety." },
+	  { 6, "Trog will now enhance your berserk.",
+		   "Trog will no longer enhance your berserk." }
     },
 
     // Nemelex

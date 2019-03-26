@@ -234,6 +234,10 @@ static const vector<god_passive> god_passives[] =
               "can NOW maintain berserk longer, and are less likely to pass out",
               "can NOW maintain berserk as long, and are more likely to pass out"
         },
+		{  6, passive_t::enhanced_berserk,
+			  "GOD NOW enhances your berserk with unstoppable rage",
+			  "GOD no longer enhances your berserk with unstoppable rage"
+		},
     },
 
     // Nemelex

@@ -4459,6 +4459,21 @@ void bolt::monster_post_hit(monster* mon, int dmg)
 			napalm_monster(mon, agent(), levels);
 		}
 	}
+	
+	if (you.duration[DUR_FROST_SHIELD])
+	{	
+		if (flavour = BEAM_COLD)
+		{
+			mon->add_ench(mon_enchant(ENCH_FROZEN,
+				0, &you, 5 + random2(3) * BASELINE_DELAY));
+		}
+		
+		if (flavour = BEAM_ICE)
+		{
+			mon->add_ench(mon_enchant(ENCH_FROZEN,
+				0, &you, 5 + random2(4) * BASELINE_DELAY));
+		}
+	}
 
     // Acid splash from yellow draconians / acid dragons
     if (origin_spell == SPELL_ACID_SPLASH)

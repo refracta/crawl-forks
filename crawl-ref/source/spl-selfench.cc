@@ -262,7 +262,7 @@ spret cast_red_barrier(int pow, bool fail)
         mpr("You renew your barrier.");
 	else
 		mpr("You draw your magic to channel barrier.");
-    you.increase_duration(DUR_RED_BARRIER, 12 + random2(pow) / 2, 10);
+    you.increase_duration(DUR_RED_BARRIER, 24 + random2(pow) / 2, 10);
     return spret::success;
 }
 

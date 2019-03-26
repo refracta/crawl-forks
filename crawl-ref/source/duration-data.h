@@ -190,7 +190,7 @@ static const duration_def duration_data[] =
       "You are divinely vitalised.", D_EXPIRES,
       {{ "", zin_remove_divine_stamina }}},
     { DUR_DIVINE_VIGOUR,
-      0, "",
+      CYAN, "Vigour",
       "divinely vigorous", "divine vigour",
       "You are imbued with divine vigour.", D_NO_FLAGS,
       {{ "", elyvilon_remove_divine_vigour }}},

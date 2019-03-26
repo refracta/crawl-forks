@@ -1407,7 +1407,7 @@ bool elyvilon_divine_vigour()
         const int old_mp_max = you.max_magic_points;
         you.attribute[ATTR_DIVINE_VIGOUR] = vigour_amt;
         you.set_duration(DUR_DIVINE_VIGOUR,
-                         40 + you.skill_rdiv(SK_INVOCATIONS, 5, 2));
+                         45 + you.skill_rdiv(SK_INVOCATIONS, 5, 1));
 
         calc_hp();
         inc_hp((you.hp_max * you.hp + old_hp_max - 1)/old_hp_max - you.hp);

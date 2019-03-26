@@ -1106,7 +1106,8 @@ Ring of Frost spell
 Surrounds the caster with a mobile ring of freezing cloud, and keeps other
 freezing clouds away from the caster. This spell attunes the caster to the
 forces of frost, increasing the power of their ice magic and giving protection
-from cold. However, it also makes them much more susceptible to fire.
+from cold, and infuses your ice and cold-based beam with freezing frost.
+However, it also makes them much more susceptible to fire.
 %%%%
 Ring of Thunder spell
 

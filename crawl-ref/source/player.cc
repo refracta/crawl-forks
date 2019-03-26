@@ -1083,6 +1083,13 @@ static int _player_bonus_regen()
     // if the duration of the effect is still active.
     if (you.duration[DUR_POWERED_BY_DEATH])
         rr += you.props[POWERED_BY_DEATH_KEY].get_int() * 100;
+	
+	//addedcrawl : 6* Trog's enhanced berserk.
+	if (you.duration[DUR_BERSERK]
+		&& have_passive(passive_t::enhanced_berserk))
+	{
+		rr = rr*1.5;
+	}
 
     return rr;
 }
@@ -1984,6 +1991,11 @@ int player_movement_speed()
         else if (mv == 7)
           mv = div_rand_round(7*6, 5); // balance for the cap at 6
     }
+	
+	if (you.duration[DUR_BERSERK] && have_passive(passive_t::enhanced_berserk))
+	{
+		mv *= 0.5;
+	}
 
     // We'll use the old value of six as a minimum, with haste this could
     // end up as a speed of three, which is about as fast as we want
@@ -3933,7 +3945,7 @@ int get_real_hp(bool trans, bool rotted)
 
     // Mutations that increase HP by a percentage
     hitp *= 100 + (you.get_mutation_level(MUT_ROBUST) * 10)
-                + (you.attribute[ATTR_DIVINE_VIGOUR] * 5)
+                + (you.attribute[ATTR_DIVINE_VIGOUR] * 7)
                 + (you.get_mutation_level(MUT_RUGGED_BROWN_SCALES) ?
                    you.get_mutation_level(MUT_RUGGED_BROWN_SCALES) * 2 + 1 : 0)
                 - (you.get_mutation_level(MUT_FRAIL) * 10)
@@ -8166,10 +8178,10 @@ void player_end_berserk()
 
     you.berserk_penalty = 0;
 
-    const int dur = 12 + roll_dice(2, 12);
-    // Slow durations are multiplied by haste_mul (3/2), exhaustion lasts
-    // slightly longer.
-    you.increase_duration(DUR_BERSERK_COOLDOWN, dur * 2);
+	const int dur = 12 + roll_dice(2, 12);
+	// Slow durations are multiplied by haste_mul (3/2), exhaustion lasts
+	// slightly longer.
+	you.increase_duration(DUR_BERSERK_COOLDOWN, dur * 2);
 
     notify_stat_change(STAT_STR, -5, true);
 
@@ -8177,7 +8189,10 @@ void player_end_berserk()
     const bool hints_slow = Hints.hints_events[HINT_YOU_ENCHANTED];
     Hints.hints_events[HINT_YOU_ENCHANTED] = false;
 
-    slow_player(dur);
+	if (!have_passive(passive_t::enhanced_berserk))
+	{
+		slow_player(dur);
+	}
 
     //Un-apply Berserk's +50% Current/Max HP
     calc_hp(true, false);

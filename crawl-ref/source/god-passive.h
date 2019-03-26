@@ -266,6 +266,9 @@ enum class passive_t
 	
 	/// Protect allies from torment and damation.
     legion_shield,
+	
+	/// addedcrawl : Trog's enhanced berserk.
+	enhanced_berserk,
 };
 
 enum ru_interference

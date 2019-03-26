@@ -733,12 +733,18 @@ bool player::go_berserk(bool intentional, bool potion)
 
     if (!_god_prevents_berserk_haste(intentional))
         mpr("You feel yourself moving faster!");
-
+	
     mpr("You feel mighty!");
 
     int berserk_duration = (20 + random2avg(19,2)) / 2;
 
     you.increase_duration(DUR_BERSERK, berserk_duration);
+	
+	if (have_passive(passive_t::enhanced_berserk))
+	{
+		simple_god_message(" says : Kill them all!");
+		you.increase_duration(DUR_TROGS_HAND, berserk_duration);
+	}
 
     //Apply Berserk's +50% Current/Max HP
     calc_hp(true, false);

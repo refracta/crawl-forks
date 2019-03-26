@@ -1143,6 +1143,8 @@ void torment_player(actor *attacker, torment_source_type taux)
         // Statue form is only partial petrification.
         if (you.form == transformation::statue || you.species == SP_GARGOYLE)
             hploss /= 2;
+		if (you.duration[DUR_DIVINE_VIGOUR])
+			hploss = 0;
     }
 
     // Kiku protects you from torment to a degree.
@@ -1167,8 +1169,16 @@ void torment_player(actor *attacker, torment_source_type taux)
 
     if (!hploss)
     {
-        mpr("You feel a surge of unholy energy.");
-        return;
+		if (you.duration[DUR_DIVINE_VIGOUR])
+		{
+			simple_god_message("'s divine vigour easily overcome unholy torment!");
+			return;
+		}
+		else
+		{
+			mpr("You feel a surge of unholy energy.");
+			return;
+		}
     }
 
     mpr("Your body is wracked with pain!");
