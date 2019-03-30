@@ -692,6 +692,8 @@ function ($, view_data, main, tileinfo_player, icons, dngn, enums,
                             this.draw_dngn(dngn.HALO_GD_NEUTRAL, x, y);
                         else if (fg.NEUTRAL)
                             this.draw_dngn(dngn.HALO_NEUTRAL, x, y);
+						if (cell.highlighted)
+                            this.draw_dngn(dngn.HALO_SUMMONER, x, y);
                     }
 
 
@@ -796,6 +798,8 @@ function ($, view_data, main, tileinfo_player, icons, dngn, enums,
                 this.draw_icon(icons.BERSERK, x, y);
             if (fg.IDEALISED)
                 this.draw_icon(icons.IDEALISED, x, y);
+			if (fg.OVERLOAD)
+				this.draw_icon(icons.OVERLOAD, x, y);
 
 
             var status_shift = 0;
@@ -920,6 +924,16 @@ function ($, view_data, main, tileinfo_player, icons, dngn, enums,
                 this.draw_icon(icons.RECALL, x, y, -status_shift, 0);
                 status_shift += 9;
             }
+			if (fg.HOLD_POSITION)
+			{
+                this.draw_icon(icons.HOLD_POSITION, x, y, -status_shift, 0);
+                status_shift += 6;
+            }
+			if (fg.FROZEN)
+			{
+				this.draw_icon(icons.FROZEN, x, y, -status_shift, 0);
+                status_shift += 7;
+			}
 
             // Anim. weap. and summoned might overlap, but that's okay
             if (fg.ANIM_WEP)
