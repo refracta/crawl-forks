@@ -780,24 +780,6 @@ static const map<species_type, species_def> species_data =
     nullptr,
     nullptr
 } },
-
-{ SP_HIGH_ELF, {
-    "HE",
-    "High Elf", "Elven", "Elf",
-    SPF_ELVEN,
-    -1, -1, 1, 4,
-    MONS_ELF,
-    HT_LAND, US_ALIVE, SIZE_MEDIUM,
-    7, 11, 10, // 28
-    { STAT_INT, STAT_DEX }, 3,
-    {},
-    {},
-    {},
-    {},
-    {},
-    nullptr,
-    nullptr
-} },
 #endif
 // Ideally this wouldn't be necessary...
 { SP_UNKNOWN, { // Line 1: enum
