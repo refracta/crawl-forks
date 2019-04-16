@@ -1883,40 +1883,14 @@ int player_spec_air()
 
 int player_spec_hex()
 {
-    int sh = 0;
-
     if (player_equip_unrand(UNRAND_BOTONO))
-        sh++;
+        return 1;
 
-    item_def * staff;
-
-    if (you.weapon(0) && you.weapon(0)->base_type == OBJ_STAVES)
-        staff = you.weapon(0);
-    else if (you.weapon(1) && you.weapon(1)->base_type == OBJ_STAVES)
-        staff = you.weapon(1);
-    else
-        return sh;
-
-    if (get_staff_facet(*staff) == SPSTF_FLAY)
-        sh++;
-
-    return sh;
+    return 0;
 }
 
 int player_spec_charm()
 {
-    item_def * staff;
-
-    if (you.weapon(0) && you.weapon(0)->base_type == OBJ_STAVES)
-        staff = you.weapon(0);
-    else if (you.weapon(1) && you.weapon(1)->base_type == OBJ_STAVES)
-        staff = you.weapon(1);
-    else
-        return 0;
-
-    if (get_staff_facet(*staff) == SPSTF_SHIELD)
-        return 1;
-
     return 0;
 }
 
@@ -1932,18 +1906,6 @@ int player_spec_poison()
 
 int player_spec_translo()
 {
-    item_def * staff;
-
-    if (you.weapon(0) && you.weapon(0)->base_type == OBJ_STAVES)
-        staff = you.weapon(0);
-    else if (you.weapon(1) && you.weapon(1)->base_type == OBJ_STAVES)
-        staff = you.weapon(1);
-    else
-        return 0;
-
-    if (get_staff_facet(*staff) == SPSTF_WARP)
-        return 1;
-
     return 0;
 }
 
