@@ -40,6 +40,7 @@
 #include "spl-goditem.h"   // For Sceptre of Torment tormenting
 #include "spl-miscast.h"   // For Staff of Wucad Mu and Scythe of Curses miscasts
 #include "spl-monench.h"   // For Zhor's aura
+#include "spl-selfench.h"  // addedcrawl : For Silent Executioner
 #include "spl-summoning.h" // For Zonguldrok animating dead
 #include "terrain.h"       // For storm bow
 #include "view.h"          // For arc blade's discharge effect
@@ -1419,4 +1420,32 @@ static void _ZHOR_world_reacts(item_def *item)
     {
         cast_englaciation(30, false);
     }
+}
+
+///////////////////////////////////////////////////
+
+static void _SILENT_AXE_melee_effects(item_def* weapon, actor* attacker,
+                                   actor* defender, bool mondied, int dam)
+{
+	if (you.duration[DUR_SILENCE])
+	{
+		you.increase_duration(DUR_SILENCE, 10);
+	}
+
+	else
+	{
+		cast_silence(100, false);
+	}
+}
+
+///////////////////////////////////////////////////
+
+static void _DRACOMONK_equip(item_def *item, bool *show_msgs, bool unmeld)
+{
+    _equip_mpr(show_msgs, "You can sense of the memory of the draconian monk...");
+}
+
+static void _DRACOMONK_unequip(item_def *item, bool *show_msgs)
+{
+	_equip_mpr(show_msgs, "The memory of the draconian monk fades away.");
 }

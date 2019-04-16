@@ -585,6 +585,12 @@ static const duration_def duration_data[] =
       "Your fire magic is charged by deadly napalm.", D_DISPELLABLE | D_EXPIRES,
       {{ "Your fire magic is no longer charged by napalm." },
         { "Your napalm charges are running out." }}, 6},
+	{ DUR_EARTH_BOND,
+      BLUE, "Bond",
+      "bond with earth", "",
+      "Your boots of earth gain bond with earth.", D_EXPIRES,
+      {{ "Your bond with earth is expires." },
+        { "Your bond with earth is fading." }}, 2},
     // The following are visible in wizmode only, or are handled
     // specially in the status lights and/or the % or @ screens.
 
@@ -639,6 +645,7 @@ static const duration_def duration_data[] =
       "You are constricted by grasping roots.", D_NO_FLAGS},
     { DUR_SHAFT_IMMUNITY, 0, "", "", "shaft immunity", "", D_NO_FLAGS, {{""}}},
 	{ DUR_NERGALLE_DELAY, 0, "", "", "nergalle the orcish lich delay", "", D_NO_FLAGS, {{""}}},
+	{ DUR_DRACOMONK, 0, "", "", "memory of the draconian monk", "", D_NO_FLAGS, {{""}}},
 
 #if TAG_MAJOR_VERSION == 34
     // And removed ones

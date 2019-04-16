@@ -1172,6 +1172,12 @@ int player_mp_regen()
 
     if (you.props[MANA_REGEN_AMULET_ACTIVE].get_int() == 1)
         regen_amount += 25;
+	
+	if (you.duration[DUR_EARTH_BOND])
+		regen_amount += 50;
+	
+	if (player_equip_unrand(UNRAND_WIZ_BUCKLER))
+		regen_amount += 25;
 
     return regen_amount;
 }
@@ -1799,7 +1805,12 @@ int player_spec_conj()
 
 int player_spec_hex()
 {
-    return 0;
+	int shex = 0;
+	
+	if (player_equip_unrand(UNRAND_BOTONO))
+        shex++;
+	
+    return shex;
 }
 
 int player_spec_charm()
@@ -3494,6 +3505,11 @@ bool player::clarity(bool calc_unid, bool items) const
     if (have_passive(passive_t::clarity))
         return true;
 
+	// addedcrawl : For unrand_dracomonk
+	if (you.form == transformation::dragon
+		&& you.duration[DUR_DRACOMONK])
+		return true;
+	
     return actor::clarity(calc_unid, items);
 }
 
@@ -4194,6 +4210,14 @@ bool confuse_player(int amount, bool quiet, bool force)
             mpr("Your divine stamina protects you from confusion!");
         return false;
     }
+	
+	// addedcrawl : For Trog's wrath
+	if (player_equip_unrand(UNRAND_TROG) && you.can_go_berserk(true, false, true))
+	{
+		mpr("Trog's unstoppable wrath push you into berserk!");
+		you.go_berserk(true);
+		return false;
+	}
 
     const int old_value = you.duration[DUR_CONF];
     you.increase_duration(DUR_CONF, amount, 40);
@@ -6329,6 +6353,10 @@ int player_res_magic(bool calc_unid, bool temp)
     // transformations
     if (you.form == transformation::lich && temp)
         rm += MR_PIP;
+	
+	// addedcrawl : For unrand_dracomonk's purple dragon form
+	if (you.duration[DUR_DRACOMONK] && you.form == transformation::dragon)
+		rm += MR_PIP * 2;
 
     // Trog's Hand
     if (you.duration[DUR_TROGS_HAND] && temp)
@@ -6712,7 +6740,15 @@ void player::paralyse(actor *who, int str, string source)
         mpr("Your stasis prevents you from being paralysed.");
         return;
     }
-
+	
+	// addedcrawl : For Trog's wrath
+	if (player_equip_unrand(UNRAND_TROG) && you.can_go_berserk(true, false, true))
+	{
+		mpr("Trog's unstoppable wrath push you into berserk!");
+		you.go_berserk(true);
+		return;
+	}
+	
     // The who check has an effect in a few cases, most notably making
     // Death's Door + Borg's paralysis unblockable.
     if (who && (duration[DUR_PARALYSIS] || duration[DUR_PARALYSIS_IMMUNITY]))
@@ -6762,6 +6798,14 @@ void player::petrify(actor *who, bool force)
         return;
     }
 
+	// addedcrawl : For Trog's wrath
+	if (player_equip_unrand(UNRAND_TROG) && you.can_go_berserk(true, false, true))
+	{
+		mpr("Trog's unstoppable wrath push you into berserk!");
+		you.go_berserk(true);
+		return;
+	}
+	
     // Petrification always wakes you up
     if (asleep())
         you.awaken();
@@ -7144,7 +7188,8 @@ bool player::can_bleed(bool allow_tran) const
 
 bool player::is_stationary() const
 {
-    return form == transformation::tree;
+    return form == transformation::tree
+		   || you.duration[DUR_EARTH_BOND];
 }
 
 bool player::malmutate(const string &reason)
@@ -7854,7 +7899,7 @@ void player_open_door(coord_def doorpos)
             noisy(15, you.pos());
         }
     }
-    else if (one_chance_in(skill) && !silenced(you.pos()))
+    else if (one_chance_in(skill) && !silenced(you.pos()) && player_equip_unrand(UNRAND_KEY))
     {
         if (!door_open_creak.empty())
             mprf(MSGCH_SOUND, door_open_creak.c_str(), adj, noun);
@@ -8165,6 +8210,11 @@ void player_end_berserk()
         {
             mpr("Trog's vigour flows through your veins.");
         }
+		// addedcrawl : For Trog's wrath
+		if (player_equip_unrand(UNRAND_TROG))
+		{
+			mpr("Trog's wrath prevents passing out.");
+		}
         else
         {
             mprf(MSGCH_WARN, "You pass out from exhaustion.");

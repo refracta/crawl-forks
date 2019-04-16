@@ -177,13 +177,15 @@ BRAND:   SPWPN_VORPAL
 
 NAME:    Wrath of Trog
 OBJ:     OBJ_WEAPONS/WPN_BATTLEAXE
-PLUS:    +8
+INSCRIP: +unstoppable
+PLUS:    +12
 COLOUR:  ETC_BLOOD
 TILE:    spwpn_wrath_of_trog
 TILE_EQ: axe_trog
 VALUE:   800
 ANGRY:   50
 BRAND:   SPWPN_ANTIMAGIC
+REGEN:   1
 
 NAME:    mace of Variability
 OBJ:     OBJ_WEAPONS/WPN_GREAT_MACE
@@ -479,22 +481,21 @@ TILE_EQ: eos
 BRAND:   SPWPN_ELECTROCUTION
 BOOL:    elec
 
-# TAG_MAJOR_VERSION == 34
 # Was "spear of Voo-Doo". In the African origin, there is a distinction
 # between voodoo and bo, the latter dealing with curses, witchcraft and
 # spells designed to do harm. Priests (or rather sorcerers) of bo are
 # called botono.
-NAME:     spear of the Botono
-OBJ:      OBJ_WEAPONS/WPN_SPEAR
-INSCRIP:  Hex
-PLUS:     +6
-COLOUR:   ETC_UNHOLY
+NAME:     dagger of the Botono
+OBJ:      OBJ_WEAPONS/WPN_DAGGER
+INSCRIP:  +Hex,
+PLUS:     +8
+COLOUR:   ETC_MAGIC
 TILE:     urand_botono
 TILE_EQ:  botono
-BRAND:    SPWPN_REAPING
-HP:       -6
+BRAND:    SPWPN_VENOM
 LIFE:     1
-BOOL:     poison, nogen
+BOOL:     poison
+VALUE:    400
 
 NAME:     trident of the Octopus King
 OBJ:      OBJ_WEAPONS/WPN_TRIDENT
@@ -1129,7 +1130,6 @@ BASE_DAM: +35
 BASE_DELAY: +13
 BRAND:    SPWPN_VORPAL
 
-# TAG_MAJOR_VERSION == 34
 ENUM:    HIGH_COUNCIL
 NAME:    hat of the High Council
 INSCRIP: Wiz-
@@ -1140,7 +1140,7 @@ TILE_EQ: wizard_lightgreen
 PLUS:    +2
 BRAND:   SPARM_ARCHMAGI
 STEALTH: -1
-BOOL:    nogen
+VALUE:	 600
 
 NAME:     arc blade
 INSCRIP:  discharge,
@@ -1288,10 +1288,10 @@ BOOL:     nogen
 
 ENUM:     WARLOCK_MIRROR
 NAME:     warlock's mirror
-OBJ:      OBJ_ARMOUR/ARM_BUCKLER
+OBJ:      OBJ_ARMOUR/ARM_SHIELD
 PLUS:     +3
 TILE:     urand_warlock
-TILE_EQ:  buckler_warlock
+TILE_EQ:  shield_warlock
 COLOUR:   ETC_SILVER
 BRAND:    SPARM_REFLECTION
 VALUE:    400
@@ -1322,6 +1322,100 @@ COLOUR:   ETC_WARP
 TILE:     urand_rift
 TILE_EQ:  rift
 BRAND:    SPWPN_DISTORTION
+
+# added by addedcrawl!
+ENUM:     SILENT_AXE
+NAME:     silent executioner
+INSCRIP:  silence,
+OBJ:      OBJ_WEAPONS/WPN_EXECUTIONERS_AXE
+PLUS:     +5
+COLOUR:   ETC_GOLD
+TILE:     urand_silent_executioner
+TILE_EQ:  silent_executioner
+VALUE:    600
+BRAND:    SPWPN_HOLY_WRATH
+BOOL:     berserk
+
+ENUM:     STEAM_POWERED
+NAME:     steam-powered armour
+OBJ:      OBJ_ARMOUR/ARM_STEAM_DRAGON_ARMOUR
+PLUS:     +1
+COLOUR:   ETC_FIRE
+TILE:     urand_steam_powered
+TILE_EQ:  steam_powered
+STEALTH:  -2
+STR:      6
+VALUE:    600
+
+ENUM:     DRACOMONK
+NAME:     scales of the Draconian Monk
+OBJ:      OBJ_ARMOUR/ARM_QUICKSILVER_DRAGON_ARMOUR
+PLUS:     +0
+COLOUR:   ETC_MAGIC
+TILE:     urand_draconian_monk
+TILE_EQ:  dragonarm_monk
+VALUE:    400
+BOOL: 	  clarity
+
+ENUM:	  SHAPESHIFTER
+NAME:     ring of shapeshifter
+INSCRIP:  *shapeshift,
+OBJ:      OBJ_JEWELLERY/RING_SLAYING
+PLUS:	  -6
+COLOUR:   ETC_MUTAGENIC
+TILE:     urand_shapeshifter
+VALUE:    600
+BOOL:	  mutate, chaotic, evil
+
+ENUM:     RED_MAGE_SWORD
+NAME:     sword of the Red Mage
+INSCRIP:  charm boost,
+OBJ:      OBJ_WEAPONS/WPN_LONG_SWORD
+TYPE:     magical sword
+TILE:     urand_sword_of_red_mage
+TILE_EQ:  red_mage_sword
+COLOUR:   RED
+PLUS:     +7
+BASE_ACC: +1
+BASE_DAM: +4
+BASE_DELAY: -1
+VALUE:    600
+EV:       4
+BRAND:    SPWPN_VORPAL
+
+ENUM:     BOOTS_EARTH
+NAME:     boots of earth
+OBJ:      OBJ_ARMOUR/ARM_BOOTS
+INSCRIP:  bond with earth,
+PLUS:     +2
+COLOUR:   LIGHTGREY
+TILE:     urand_boots_earth
+TILE_EQ:  earth
+VALUE:    400
+BOOL: 	  notelep
+
+ENUM:     KEY
+NAME:     short sword "Skeleton Key"
+OBJ:      OBJ_WEAPONS/WPN_SHORT_SWORD
+INSCRIP:  +Lockpick
+PLUS:     +4
+COLOUR:   ETC_BONE
+TILE:     urand_skeleton_key
+TILE_EQ:  skeleton_key
+VALUE:    800
+BRAND:    SPWPN_VORPAL
+STEALTH:  2
+
+ENUM:	  WIZ_BUCKLER
+NAME:     buckler of the Favoured
+OBJ:      OBJ_ARMOUR/ARM_BUCKLER
+INSCRIP:  RegenMP+
+PLUS:     +2
+COLOUR:   ETC_MAGIC
+TILE:     urand_wiz_buckler
+TILE_EQ:  buckler_wiz
+VALUE:    800
+MP:       +9
 
 # This entry must always be last.
 ENUM:   DUMMY2

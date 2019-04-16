@@ -1146,6 +1146,12 @@ static void _remove_equipment(const set<equipment_type>& removed,
                               transformation form,
                               bool meld = true, bool mutation = false)
 {
+	// addedcrawl : For unrand_dracomonk
+	if (player_equip_unrand(UNRAND_DRACOMONK) || you.duration[DUR_DRACOMONK])
+	{
+		you.duration[DUR_DRACOMONK] = INFINITE_DURATION;
+	}
+	
     // Meld items into you in (reverse) order. (set is a sorted container)
     for (const equipment_type e : removed)
     {
@@ -1239,6 +1245,12 @@ static void _unmeld_equipment_type(equipment_type e)
 
 static void _unmeld_equipment(const set<equipment_type>& melded)
 {
+	// addedcrawl : For unrand_dracomonk
+	if (you.duration[DUR_DRACOMONK])
+	{
+		you.duration[DUR_DRACOMONK] = 0;
+	}
+	
     // Unmeld items in order.
     for (const equipment_type e : melded)
     {
@@ -1921,7 +1933,7 @@ void untransform(bool skip_move)
     you.form = transformation::none;
     you.duration[DUR_TRANSFORMATION] = 0;
     update_player_symbol();
-
+	
     if (old_form == transformation::appendage)
     {
         mutation_type app = static_cast<mutation_type>(you.attribute[ATTR_APPENDAGE]);

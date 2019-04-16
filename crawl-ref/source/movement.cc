@@ -13,6 +13,7 @@
 #include "movement.h"
 
 #include "abyss.h"
+#include "art-enum.h"
 #include "bloodspatter.h"
 #include "cloud.h"
 #include "coord.h"
@@ -353,8 +354,19 @@ void open_door_action(coord_def move)
     }
     case DNGN_SEALED_DOOR:
     case DNGN_SEALED_CLEAR_DOOR:
-        mpr("That door is sealed shut!");
-        break;
+	{
+		if (player_equip_unrand(UNRAND_KEY))
+		{
+			mpr("Your skeleton key allow to open this door!");
+			player_open_door(doorpos);
+			break;
+		}
+		else
+		{
+			mpr("That door is sealed shut!");
+			break;
+		}
+	}
     default:
         mpr("There isn't anything that you can open there!");
         break;

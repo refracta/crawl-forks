@@ -2202,6 +2202,12 @@ static spret _do_ability(const ability_def& abil, bool fail)
         break;
 
     case ABIL_END_TRANSFORMATION:
+		if (player_equip_unrand(UNRAND_SHAPESHIFTER))
+		{
+			mprf("Your ring of shapeshifter prevents end transform!");
+			break;
+		}
+	
         fail_check();
         untransform();
         break;
@@ -3721,6 +3727,12 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
     {
         _add_talent(talents, ABIL_BREATHE_FIRE, check_confused);
     }
+	
+	// addedcrawl : For scales of draconian monk
+	if (you.duration[DUR_DRACOMONK] && you.form == transformation::dragon)
+	{
+		_add_talent(talents, ABIL_BREATHE_POWER, check_confused);
+	}	
 
     if (you.duration[DUR_PORTAL_PROJECTILE])
         _add_talent(talents, ABIL_CANCEL_PPROJ, check_confused);

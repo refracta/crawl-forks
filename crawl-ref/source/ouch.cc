@@ -64,6 +64,7 @@
 #include "shopping.h"
 #include "shout.h"
 #include "skills.h"
+#include "spl-cast.h"
 #include "spl-clouds.h"
 #include "spl-other.h"
 #include "spl-selfench.h"
@@ -762,6 +763,65 @@ int do_shave_damage(int dam)
     return dam;
 }
 
+// added by addedcrawl : For ring of shapeshfiter
+static void shapeshfit()
+{
+	switch (random2(5))
+	{
+		case 0:
+		case 1:
+		case 2:
+		{
+			break;
+		}
+		case 3:
+		{
+			switch (random2(8))
+			{
+			case 0:
+			{
+				cast_transform(50, transformation::spider, false);
+				you.set_duration(DUR_TRANSFORMATION, 12 + random2avg(12, 1));
+				break;
+			}
+			case 1:
+			{
+				cast_transform(50, transformation::ice_beast, false);
+				you.set_duration(DUR_TRANSFORMATION, 12 + random2avg(12, 1));
+				break;
+			}
+			case 2:
+			case 3:
+			{
+				cast_transform(50, transformation::statue, false);
+				you.set_duration(DUR_TRANSFORMATION, 12 + random2avg(12, 1));
+				break;
+			}
+			case 4:
+			case 5:
+			{
+				cast_transform(50, transformation::hydra, false);
+				you.set_duration(DUR_TRANSFORMATION, 12 + random2avg(12, 1));
+				break;
+			}
+			case 6:
+			{
+				cast_transform(50, transformation::dragon, false);
+				you.set_duration(DUR_TRANSFORMATION, 12 + random2avg(12, 1));
+				break;
+			}
+			case 7:
+			{
+				cast_transform(50, transformation::lich, false);
+				you.set_duration(DUR_TRANSFORMATION, 12 + random2avg(12, 1));
+				break;
+			}
+			}
+		}
+		break;
+	}
+}
+
 // Determine what's threatening for purposes of sacrifice drink and reading.
 // the statuses are guaranteed not to happen if the incoming damage is less
 // than 4% max hp. Otherwise, they scale up with damage taken and with lower
@@ -976,6 +1036,8 @@ void ouch(int dam, kill_method_type death_type, mid_t source, const char *aux,
             _maybe_spawn_monsters(dam, is_torment, death_type, source);
             _maybe_fog(dam);
             _powered_by_pain(dam);
+			if (player_equip_unrand(UNRAND_SHAPESHIFTER))
+				shapeshfit();
             if (sanguine_armour_valid())
                 activate_sanguine_armour();
             if (death_type != KILLED_BY_POISON)

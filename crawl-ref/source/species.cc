@@ -3,6 +3,8 @@
 
 #include "species.h"
 
+#include "artefact.h"
+#include "art-enum.h"
 #include "item-prop.h"
 #include "mutation.h"
 #include "output.h"
@@ -235,7 +237,12 @@ const char* scale_type(species_type species)
 
 monster_type dragon_form_dragon_type()
 {
-    switch (you.species)
+	if (you.duration[DUR_DRACOMONK])
+		{
+			return MONS_QUICKSILVER_DRAGON;
+		}
+		
+	switch (you.species)
     {
     case SP_WHITE_DRACONIAN:
         return MONS_ICE_DRAGON;

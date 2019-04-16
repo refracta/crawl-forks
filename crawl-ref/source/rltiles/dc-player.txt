@@ -241,6 +241,7 @@ mesh_black MESH_BLACK
 mesh_white MESH_WHITE
 mesh_blue MESH_BLUE LAST_NORM
 spider SPIDER
+earth BOOTS_EARTH
 
 ## Mutations
 hooves HOOVES
@@ -469,6 +470,8 @@ orange_crystal ORANGE_CRYSTAL
 vines VINES
 kryias KRYIAS
 talos TALOS
+steam_powered STEAM_POWERED
+dragonarm_monk DRACOMONK
 %end_ctg
 
 ### Arms
@@ -506,6 +509,7 @@ player/mutations/octopode1 OCTOPODE_SPIKE
 %sdir player/hand1/artefact
 # blades
 bloodbane BLOODBANE
+botono BOTONO
 doom_knight DOOM_KNIGHT
 leech LEECH
 morg MORG
@@ -521,6 +525,8 @@ capt_cutlass CAPT_CUTLASS
 arc_blade ARC_BLADE
 gyre GYRE
 thermic_engine THERMIC_ENGINE
+red_mage_sword RED_MAGE_SWORD
+skeleton_key KEY
 ## blunt
 wucad_mu WUCAD_MU
 mace_of_variability MACE_OF_VARIABILITY
@@ -552,6 +558,7 @@ arga ARGA
 demon_axe DEMON_AXE
 axe_of_woe AXE_OF_WOE
 frostbite FROSTBITE
+silent_executioner SILENT_AXE
 ## launchers
 blowgun_assassin BLOWGUN_ASSASSIN
 punk PUNK
@@ -560,7 +567,6 @@ crossbow_fire FIERY_DEVIL
 zephyr ZEPHYR
 sceptre_of_torment SCEPTRE_OF_TORMENT
 ## Remove these unrand entries when TAG_MAJOR_VERSION > 34
-botono BOTONO
 chilly_death CHILLY_DEATH
 crystal_spear CRYSTAL_SPEAR
 flaming_death FLAMING_DEATH
@@ -831,11 +837,13 @@ lshield_spiral LARGE_SHIELD_SPIRAL LSHIELD_LAST_NORM
 ##unrand (or unique) shields
 buckler_spriggan BUCKLER_SPRIGGAN
 buckler_warlock BUCKLER_WARLOCK
+buckler_wiz WIZ_BUCKLER
 
 shield_donald SHIELD_DONALD
 shield_bullseye SHIELD_BULLSEYE
 shield_gong SHIELD_GONG
 shield_of_resistance SHIELD_OF_RESISTANCE
+shield_warlock SHIELD_WARLOCK
 
 lshield_of_ignorance LARGE_SHIELD_OF_IGNORANCE
 lshield_louise LSHIELD_LOUISE

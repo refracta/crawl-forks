@@ -18,7 +18,8 @@ Wrath of Trog
 
 A bloodstained axe that was the favourite weapon of the old god Trog, before it
 was lost. It induces a bloodthirsty berserker rage in warriors who use it in
-battle.
+battle. It forged by Trog's unstoppable wrath, so it will push you into berserk
+when you cannot keep killing, and wearers never passing out after berserk.
 %%%%
 mace of Variability
 
@@ -192,11 +193,10 @@ A jewelled morningstar, glowing brightly with the light of the dawn. It
 illuminates the dungeon's recesses, revealing the machinations of those who
 would prefer to stay invisible.
 %%%%
-# TAG_MAJOR_VERSION == 34
-spear of the Botono
+dagger of the Botono
 
-A dark and malign artefact. It increases the potency of hexes cast by anyone
-unwise enough to risk wielding it.
+A tricky-styled dagger. Thanks to the rituals of Swamp-Shamans, it will
+increases the potency of hexes.
 %%%%
 trident of the Octopus King
 
@@ -565,7 +565,6 @@ A large, iron-shod maul specialised for dealing massively powerful blows. Such
 power comes at a price: the maul's head is so heavy it takes a great length of
 time to lift it up for another swing.
 %%%%
-# TAG_MAJOR_VERSION == 34
 hat of the High Council
 
 A relic of some ancient wizarding war. Centuries later, it still crackles with
@@ -682,4 +681,58 @@ demon trident "Rift"
 A small wrinkle in the very fabric of reality, magically bound to a shaft by
 some mad acolyte of Lugonu. It possesses an unusually large reach that
 teleports its attack directly to its victim.
+%%%%
+silent executioner
+
+This axe was created in the dark times, by a radical witch hunting order.
+Along with the intensed anger of gods and mortals, there is power to suppress
+the casting of spells. Many witches and warlocks have their necks cut off,
+but their real backdrop - demons, casts a spell without any problems and
+makes the former owner of this axe into ashes.
+%%%%
+steam-powered armour
+
+This armour keeps the breath of steam dragon and makes it constantly steam,
+and works by powering it. By the assistance of the steam engine thus operated,
+the wearer can swing a tremendous amount of power, but only as much noise as
+the steam engine will operate.
+%%%%
+scales of the Draconian Monk
+
+This armour is said to be the legacy of a draconian monk who left his name
+in search of his roots. It is not told whether it was for reunion with
+an ancestor, or for hunting or revenge. If you can take the form of a dragon,
+you can turn it into a purple-scale dragon to draw strength from the memory of the monk.
+%%%%
+ring of shapeshifter
+
+It is a milky ring of wax-like texture made from debris of shapeshifter.
+The power of a shapeshifter that flourishes in this ring will make your body
+extremely unstable!
+%%%%
+sword of the Red Mage
+
+The sword of the legendary warrior-mage, the Red Mage. The story of the Red Mage,
+who was especially talented in sword and charm, ends with a duel with an evil Genie
+who cursed the land of Red Mage's hometown.
+%%%%
+boots of earth
+
+A mysterious boots that touches the essence of the earth. If you bring the power
+of the earth, the earth will embrace you.
+%%%%
+short sword "Skeleton Key"
+
+A kind of lockpick. The wearer can door can be opened without sound, even
+if it is a sealed door!
+%%%%
+buckler of the Favoured
+
+As you can see from the deep blue and blazing cyan, it is a buckler that receives
+both the blessings of Sif Muna and Vefumet. A young scholar who has been favored
+by both gods of magic, has been known to have built an unprecedented
+level of knowledge under the blessings of both gods, but it is said that he
+has gone mad forever, reaching knowledge beyond the limits of the mortal.
+Now it has been forsaken and forgotten by both gods for a long time, but as
+it is the blessing of God, you can still draw its power.
 %%%%

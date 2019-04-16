@@ -6,6 +6,7 @@
 #include <cstdio>
 
 #include "artefact.h"
+#include "art-enum.h"
 #include "describe.h"
 #include "item-name.h"
 #include "item-prop.h"
@@ -473,20 +474,28 @@ tileidx_t tileidx_player()
                                                            you.heads() - 1);
                                     break;
     case transformation::dragon:
-    {
-        switch (you.species)
-        {
-        case SP_BLACK_DRACONIAN:   ch = TILEP_TRAN_DRAGON_BLACK;   break;
-        case SP_YELLOW_DRACONIAN:  ch = TILEP_TRAN_DRAGON_YELLOW;  break;
-        case SP_GREY_DRACONIAN:    ch = TILEP_TRAN_DRAGON_GREY;    break;
-        case SP_GREEN_DRACONIAN:   ch = TILEP_TRAN_DRAGON_GREEN;   break;
-        case SP_PALE_DRACONIAN:    ch = TILEP_TRAN_DRAGON_PALE;    break;
-        case SP_PURPLE_DRACONIAN:  ch = TILEP_TRAN_DRAGON_PURPLE;  break;
-        case SP_WHITE_DRACONIAN:   ch = TILEP_TRAN_DRAGON_WHITE;   break;
-        case SP_RED_DRACONIAN:     ch = TILEP_TRAN_DRAGON_RED;     break;
-        default:                   ch = TILEP_TRAN_DRAGON;         break;
+    {	
+		if (you.duration[DUR_DRACOMONK])
+		{
+			ch = TILEP_TRAN_DRAGON_PURPLE;	break;
+		}
+	
+		else
+		{
+			switch (you.species)
+			{
+			case SP_BLACK_DRACONIAN:   ch = TILEP_TRAN_DRAGON_BLACK;   break;
+			case SP_YELLOW_DRACONIAN:  ch = TILEP_TRAN_DRAGON_YELLOW;  break;
+			case SP_GREY_DRACONIAN:    ch = TILEP_TRAN_DRAGON_GREY;    break;
+			case SP_GREEN_DRACONIAN:   ch = TILEP_TRAN_DRAGON_GREEN;   break;
+			case SP_PALE_DRACONIAN:    ch = TILEP_TRAN_DRAGON_PALE;    break;
+			case SP_PURPLE_DRACONIAN:  ch = TILEP_TRAN_DRAGON_PURPLE;  break;
+			case SP_WHITE_DRACONIAN:   ch = TILEP_TRAN_DRAGON_WHITE;   break;
+			case SP_RED_DRACONIAN:     ch = TILEP_TRAN_DRAGON_RED;     break;
+			default:                   ch = TILEP_TRAN_DRAGON;         break;
+			}
+			break;
         }
-        break;
     }
     // no special tile
     case transformation::blade_hands:

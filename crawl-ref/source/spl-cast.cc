@@ -286,6 +286,12 @@ static int _apply_spellcasting_success_boosts(spell_type spell, int chance)
 {
     int fail_reduce = 100;
 
+	// addedcrawl : Red Mage's Sword
+	if (player_equip_unrand(UNRAND_RED_MAGE_SWORD) && spell_typematch(spell, spschool::charms)) 
+	{
+		fail_reduce = fail_reduce / 2;
+	}
+	
     if (have_passive(passive_t::spells_success) && vehumet_supports_spell(spell))
     {
         // [dshaligram] Fail rate multiplier used to be .5, scaled
@@ -888,6 +894,14 @@ bool cast_a_spell(bool check_range, spell_type spell)
         mpr("You briefly lose access to your magic!");
         you.set_duration(DUR_NO_CAST, 3 + random2avg(sifcast_amount * 2, 2));
     }
+	
+	// addedcrawl : For boots of earth
+	if (player_equip_unrand(UNRAND_BOOTS_EARTH)
+		&& spell_typematch(spell, spschool::earth))
+	{
+		mpr("You feel bond with earth!");
+		you.set_duration(DUR_EARTH_BOND, 4);
+	}
 
     you.turn_is_over = true;
     alert_nearby_monsters();
@@ -1616,7 +1630,7 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
 
         return spret::abort;
     }
-
+	
     return spret::success;
 }
 
