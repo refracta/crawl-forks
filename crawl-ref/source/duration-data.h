@@ -591,6 +591,17 @@ static const duration_def duration_data[] =
       "Your boots of earth gain bond with earth.", D_EXPIRES,
       {{ "Your bond with earth is expires." },
         { "Your bond with earth is fading." }}, 2},
+	{ DUR_CORE_COOLDOWN,
+      0, "",
+      "crystal core cooldown", "",
+      "", D_EXPIRES,
+      {{ "Your cores are now stabilized." }}},
+	{ DUR_MPREGEN_PAKELLAS,
+      BLUE, "RegenMP",
+      "evocational surge of magic.", "",
+      "Your core installed staff emits surge of magic.", D_DISPELLABLE | D_EXPIRES,
+      {{ "Your surge of magic is dissipates." },
+        { "Your surge of magic is dissipating." }}, 2},
     // The following are visible in wizmode only, or are handled
     // specially in the status lights and/or the % or @ screens.
 

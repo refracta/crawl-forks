@@ -3932,6 +3932,10 @@ colour_t item_def::miscellany_colour() const
             return ETC_DARK;
         case MISC_ZIGGURAT:
             return _zigfig_colour();
+		case MISC_PAKELLAS_HEAL:
+		case MISC_PAKELLAS_TELEPORT:
+		case MISC_PAKELLAS_HASTE:
+			return LIGHTGREEN;
         default:
             return LIGHTGREEN;
     }

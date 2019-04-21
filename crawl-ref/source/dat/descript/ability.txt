@@ -632,12 +632,26 @@ lower the remaining bribe fund; upon its exhaustion, bribed enemies will become
 indifferent if they have not become your allies.
 %%%%
 # Pakellas
-Device Surge ability
+Uninstall Core ability
 
-Readies a device surge, which triggers on your next usage of a magical device
-to strengthen its power at the cost of some magic. The amount of magical power
-that can be used for a surge varies, but correlates with how devoted a follower
-is to Pakellas.
+Uninstall crystal core from the core installed device. You can access up to 6 cores
+as Pakellas's experiment progresses.
+%%%%
+Install Core ability
+Install one crystal core into one device. You can install core to wands,
+magical staves, or miscellaneous. The core installed wand will consumes
+the piety instead of the amount of charge, and depending on the kind,
+the effect is improved than before. The core installed magical staff will cause
+meele effect every hit, have improved damage depending on evocation skill.
+Depending on the type of miscellany that core installed, it consumes piety
+instead of experience (in this case, the cores are overheated for a while),
+weakening the miss-evoke effects, or protecting the device from breakage.
+%%%%
+Invention ability
+
+PROGRESS! The moment of inspiration gave you some ideas to invent new device.
+You can imagine images of restoration, personal teleportation, and temporal
+acceleration ...
 %%%%
 # Qazlal
 Upheaval ability

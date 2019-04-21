@@ -15,6 +15,7 @@
 #include <sstream>
 
 #include "artefact.h"
+#include "art-enum.h"
 #include "colour.h"
 #include "command.h"
 #include "describe.h"
@@ -456,6 +457,10 @@ string no_selectables_message(int item_selector)
         return "You don't have any cursable items.";
     case OSEL_UNCURSED_WORN_RINGS:
         return "You aren't wearing any uncursed rings.";
+	case OSEL_CORE_INSTALL:
+		return "You aren't carrying any devices that can be core installed.";
+	case OSEL_CORE_INSTALLED:
+		return "You aren't carrying any devices that core installed.";
     }
 
     return "You aren't carrying any such object.";
@@ -1084,6 +1089,19 @@ bool item_is_selected(const item_def &i, int selector)
     case OSEL_UNCURSED_WORN_RINGS:
         return !i.cursed() && item_is_equipped(i) && itype == OBJ_JEWELLERY
             && !jewellery_is_amulet(i);
+			
+	case OSEL_CORE_INSTALL:
+		return itype == OBJ_WANDS && !item_ident(i, ISFLAG_CORE_INSTALLED)
+				|| itype == OBJ_MISCELLANY && i.sub_type != MISC_ZIGGURAT
+					&& i.sub_type !=  MISC_PHANTOM_MIRROR && !item_ident(i, ISFLAG_CORE_INSTALLED)
+				|| itype == OBJ_STAVES && !is_unrandom_artefact(i, UNRAND_ASMODEUS)
+					&& !is_unrandom_artefact(i, UNRAND_DISPATER) && !item_ident(i, ISFLAG_CORE_INSTALLED)
+				|| itype == OBJ_WEAPONS && is_unrandom_artefact(i, UNRAND_MAJIN)
+					&& !item_ident(i, ISFLAG_CORE_INSTALLED);
+				
+	case OSEL_CORE_INSTALLED:
+		if (you_worship(GOD_PAKELLAS))
+			return item_ident(i, ISFLAG_CORE_INSTALLED);
 
     default:
         return false;
@@ -1589,8 +1607,7 @@ bool needs_handle_warning(const item_def &item, operation_types oper,
     if (needs_notele_warning(item, oper))
         return true;
 
-    if (oper == OPER_ATTACK && god_hates_item(item)
-        && !you_worship(GOD_PAKELLAS))
+    if (oper == OPER_ATTACK && god_hates_item(item))
     {
         penance = true;
         return true;

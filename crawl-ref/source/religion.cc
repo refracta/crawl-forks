@@ -131,7 +131,8 @@ const vector<god_power> god_powers[NUM_GODS] =
     },
 
     // Yredelemnul
-    { { 1, ABIL_YRED_ANIMATE_REMAINS, "animate remains" },
+    { { 1, ABIL_YRED_ENSLAVE_SOUL, "enslave living souls depends on piety" },
+	  { 1, ABIL_YRED_ANIMATE_REMAINS, "animate remains" },
       { 2, ABIL_YRED_RECALL_UNDEAD_SLAVES, "recall your undead slaves" },
       { 2, ABIL_YRED_INJURY_MIRROR, "mirror injuries on your foes" },
       { 3, ABIL_YRED_ANIMATE_DEAD, "animate legions of the dead" },
@@ -139,7 +140,6 @@ const vector<god_power> god_powers[NUM_GODS] =
            "Yredelemnul will no longer gift you servants.",
            "Yredelemnul will gift you servants as you gain piety." },
       { 4, ABIL_YRED_DRAIN_LIFE, "drain ambient life force" },
-      { 5, ABIL_YRED_ENSLAVE_SOUL, "enslave living souls" },
     },
 
     // Xom
@@ -359,9 +359,20 @@ const vector<god_power> god_powers[NUM_GODS] =
 
     // Pakellas
     {
-      { 0, "gain magical power from killing" },
-      { 3, ABIL_PAKELLAS_DEVICE_SURGE,
-           "spend magic to empower your devices" },
+	  { 0, ABIL_PAKELLAS_UNINSTALL_CORE,
+		   "You can remove installed core." },
+	  { 1, "You can now install first crystal core." },
+	  { 1, ABIL_PAKELLAS_INSTALL_CORE,
+           "You can install crystal core to wands, magical staves, and miscellaneous." },
+	  { 2, "You can now install second crystal core." },
+	  { 3, "You can now install third crystal core." },
+	  { 4, "You can now install fourth crystal core." },
+	  { 5, "You can now install fifth crystal core." },
+	  { 6, "You can now install sixth crystal core, the last one!" },
+	  { 7, ABIL_PAKELLAS_INVENTION,
+		   "The momont of inspiration! You can now invent new device!",
+		   "Your momont of inspiration fades away." },
+
     },
 
     // Uskayaw
@@ -490,10 +501,6 @@ static bool _is_disabled_god(god_type god)
 {
     switch (god)
     {
-    // Disabled, pending a rework.
-    case GOD_PAKELLAS:
-        return true;
-
     default:
         return false;
     }
@@ -669,15 +676,11 @@ void dec_penance(god_type god, int val)
                 for (monster_iterator mi; mi; ++mi)
                      mi->del_ench(ENCH_AWAKEN_FOREST);
             }
-        }
-        else
-        {
-            if (god == GOD_PAKELLAS)
-            {
-                // Penance just ended w/o worshipping Pakellas;
-                // notify the player that MP regeneration will start again.
-                mprf(MSGCH_GOD, god, "You begin regenerating magic.");
-            }
+			
+			if (have_passive(passive_t::crystal_core))
+			{
+				mprf(MSGCH_GOD, "Your crystal core returns!");
+			}
             else if (god == GOD_HEPLIAKLQANA)
             {
                 calc_hp(); // frailty ends
@@ -848,11 +851,6 @@ static void _inc_penance(god_type god, int val)
                 you.duration[DUR_QAZLAL_AC] = 0;
                 you.redraw_armour_class = true;
             }
-        }
-        else if (god == GOD_PAKELLAS)
-        {
-            if (you.duration[DUR_DEVICE_SURGE])
-                you.duration[DUR_DEVICE_SURGE] = 0;
         }
         else if (god == GOD_SIF_MUNA)
         {
@@ -1226,13 +1224,18 @@ static bool _seen_wand(int wand)
     return get_ident_type(OBJ_WANDS, wand);
 }
 
+static bool _seen_staff(int staff)
+{
+    return get_ident_type(OBJ_STAVES, staff);
+}
+
 static int _pakellas_low_wand()
 {
     static const vector<int> low_wands = {
         WAND_FLAME,
-        WAND_POLYMORPH,
-        WAND_RANDOM_EFFECTS,
-    };
+        WAND_DIGGING,
+		WAND_POLYMORPH,
+	};
 
     return _preferably_unseen_item(low_wands, _seen_wand);
 }
@@ -1240,22 +1243,46 @@ static int _pakellas_low_wand()
 static int _pakellas_high_wand()
 {
     vector<int> high_wands = {
-        WAND_PARALYSIS,
+        WAND_DISINTEGRATION,
         WAND_ICEBLAST,
         WAND_ACID,
     };
-    if (!you.get_mutation_level(MUT_NO_LOVE))
-        high_wands.emplace_back(WAND_ENSLAVEMENT);
 
     return _preferably_unseen_item(high_wands, _seen_wand);
+}
+
+static int _pakellas_school_staff()
+{
+	vector<int> school_staves = {
+        STAFF_FIRE,
+		STAFF_COLD,
+		STAFF_POISON,
+		STAFF_DEATH,
+		STAFF_CONJURATION,
+		STAFF_AIR,
+		STAFF_EARTH,
+		STAFF_SUMMONING,
+    };
+
+    return _preferably_unseen_item(school_staves, _seen_staff);
+}
+
+static int _pakellas_magical_staff()
+{
+	vector<int> magical_staves = {
+        STAFF_WIZARDRY,
+		STAFF_POWER,
+		STAFF_ENERGY,
+    };
+
+    return _preferably_unseen_item(magical_staves, _seen_staff);
 }
 
 static int _pakellas_low_misc()
 {
     // Limited uses, so any of these are fine even if they've been seen before.
     return random_choose(MISC_BOX_OF_BEASTS,
-                         MISC_SACK_OF_SPIDERS,
-                         MISC_PHANTOM_MIRROR);
+                         MISC_SACK_OF_SPIDERS);
 }
 
 static int _pakellas_high_misc()
@@ -1294,12 +1321,32 @@ static bool _give_pakellas_gift()
     else if (you.piety >= piety_breakpoint(1)
              && you.num_total_gifts[GOD_PAKELLAS] == 1)
     {
+		if (you.species == SP_FELID)
+		{
+			basetype = OBJ_WANDS;
+            subtype = _pakellas_low_wand();
+		}
+		else
+		{
+			basetype = OBJ_STAVES;
+			subtype = _pakellas_school_staff();
+		}
+	}
+	else if (you.piety >= piety_breakpoint(2)
+             && you.num_total_gifts[GOD_PAKELLAS] == 2)
+	{
+		basetype = OBJ_WANDS;
+        subtype = _pakellas_high_wand();
+    }
+    else if (you.piety >= piety_breakpoint(3)
+             && you.num_total_gifts[GOD_PAKELLAS] == 3)
+    {
         // All the evoker options here are summon-based, so give another
         // low-level wand instead under Sacrifice Love.
         if (you.get_mutation_level(MUT_NO_LOVE))
         {
             basetype = OBJ_WANDS;
-            subtype = _pakellas_low_wand();
+            subtype = _pakellas_high_wand();
         }
         else
         {
@@ -1307,25 +1354,27 @@ static bool _give_pakellas_gift()
             subtype = _pakellas_low_misc();
         }
     }
-    else if (you.piety >= piety_breakpoint(2)
-             && you.num_total_gifts[GOD_PAKELLAS] == 2)
-    {
-        basetype = OBJ_WANDS;
-        subtype = _pakellas_high_wand();
-    }
-    else if (you.piety >= piety_breakpoint(3)
-             && you.num_total_gifts[GOD_PAKELLAS] == 3)
+    else if (you.piety >= piety_breakpoint(4)
+             && you.num_total_gifts[GOD_PAKELLAS] == 4)
     {
         basetype = OBJ_MISCELLANY;
         subtype = _pakellas_high_misc();
     }
-    else if (you.piety >= piety_breakpoint(4)
-             && you.num_total_gifts[GOD_PAKELLAS] == 4)
+    else if (you.piety >= piety_breakpoint(5)
+             && you.num_total_gifts[GOD_PAKELLAS] == 5)
     {
-        basetype = random_choose(OBJ_WANDS, OBJ_MISCELLANY);
-        subtype = (basetype == OBJ_WANDS) ? _pakellas_high_wand()
-                                          : _pakellas_high_misc();
-    }
+		if (you.species == SP_FELID)
+		{
+			basetype = random_choose(OBJ_WANDS, OBJ_MISCELLANY);
+			subtype = (basetype == OBJ_WANDS) ? _pakellas_high_wand()
+											  : _pakellas_high_misc();
+		}
+		else
+		{
+			basetype = OBJ_STAVES;
+			subtype = _pakellas_magical_staff();
+		}
+	}
 
     if (basetype == OBJ_UNASSIGNED)
         return false;
@@ -1358,6 +1407,14 @@ static bool _give_pakellas_gift()
 
     return false;
 }
+
+static bool _pakellas_core()
+{
+	you.props["max_crystal_core"].get_int() = piety_rank();
+	you.redraw_status_lights = true;
+
+    return false;
+}	
 
 static bool _give_trog_oka_gift(bool forced)
 {
@@ -2460,6 +2517,11 @@ static void _gain_piety_point()
                             end(you.ability_letter_table),
                             ABIL_YRED_ANIMATE_REMAINS, ABIL_YRED_ANIMATE_DEAD);
                 }
+				
+				if (have_passive(passive_t::crystal_core))
+				{
+					_pakellas_core();
+				}
             }
         }
         if (rank == rank_for_passive(passive_t::halo))
@@ -2633,6 +2695,11 @@ void lose_piety(int pgn)
                 // Deactivate the toggle
                 if (power.abil == ABIL_SIF_MUNA_DIVINE_ENERGY)
                     you.attribute[ATTR_DIVINE_ENERGY] = 0;
+				
+				if (have_passive(passive_t::crystal_core))
+				{
+					_pakellas_core();
+				}
             }
         }
 #ifdef USE_TILE_LOCAL
@@ -2740,6 +2807,7 @@ int initial_wrath_penance_for(god_type god)
         case GOD_HEPLIAKLQANA:
         case GOD_LUGONU:
         case GOD_NEMELEX_XOBEH:
+        case GOD_PAKELLAS:
         case GOD_TROG:
         case GOD_XOM:
             return 50;
@@ -2754,7 +2822,6 @@ int initial_wrath_penance_for(god_type god)
         case GOD_CHEIBRIADOS:
         case GOD_DITHMENOS:
         case GOD_MAKHLEB:
-        case GOD_PAKELLAS:
         case GOD_QAZLAL:
         case GOD_VEHUMET:
         case GOD_ZIN:
@@ -3019,10 +3086,8 @@ void excommunication(bool voluntary, god_type new_god)
         break;
 
     case GOD_PAKELLAS:
-        simple_god_message(" continues to block your magic from regenerating.",
-                           old_god);
-        if (you.duration[DUR_DEVICE_SURGE])
-            you.duration[DUR_DEVICE_SURGE] = 0;
+		you.props["max_crystal_core"].get_int() = 0;
+		you.props["used_crystal_core"].get_int() = 0;
         you.exp_docked[old_god] = exp_needed(min<int>(you.max_level, 27) + 1)
                                   - exp_needed(min<int>(you.max_level, 27));
         you.exp_docked_total[old_god] = you.exp_docked[old_god];
@@ -3631,13 +3696,6 @@ static void _join_zin()
     }
 }
 
-// Setup when becoming an overworked assistant to Pakellas.
-static void _join_pakellas()
-{
-    mprf(MSGCH_GOD, "You stop regenerating magic.");
-    you.attribute[ATTR_PAKELLAS_EXTRA_MP] = POT_MAGIC_MP;
-}
-
 // Setup for joining the easygoing followers of Cheibriados.
 static void _join_cheibriados()
 {
@@ -3665,7 +3723,6 @@ static const map<god_type, function<void ()>> on_join = {
         if (you.worshipped[GOD_LUGONU] == 0)
             gain_piety(20, 1, false);  // allow instant access to first power
     }},
-    { GOD_PAKELLAS, _join_pakellas },
     { GOD_RU, _join_ru },
     { GOD_TROG, _join_trog },
     { GOD_ZIN, _join_zin },
@@ -4004,10 +4061,6 @@ bool god_hates_spell(spell_type spell, god_type god, bool fake_spell)
         if (is_hasty_spell(spell))
             return true;
         break;
-    case GOD_PAKELLAS:
-        if (spell == SPELL_SUBLIMATION_OF_BLOOD)
-            return true;
-        break;
     default:
         break;
     }
@@ -4142,7 +4195,6 @@ void handle_god_time(int /*time_delta*/)
         case GOD_KIKUBAAQUDGHA:
         case GOD_VEHUMET:
         case GOD_ZIN:
-        case GOD_PAKELLAS:
         case GOD_JIYVA:
         case GOD_WU_JIAN:
             if (one_chance_in(17))
@@ -4158,6 +4210,7 @@ void handle_god_time(int /*time_delta*/)
         case GOD_SHINING_ONE:
 		case GOD_LEGION_FROM_BEYOND:
         case GOD_NEMELEX_XOBEH:
+		case GOD_PAKELLAS:
             if (one_chance_in(35))
                 lose_piety(1);
             break;
@@ -4683,9 +4736,8 @@ static bool _is_temple_god(god_type god)
     switch (god)
     {
     case GOD_NO_GOD:
-    case GOD_LUGONU:
+	// addedcrawl : Now Lugonu and Jiyva can found in temple!
     case GOD_BEOGH:
-    case GOD_JIYVA:
         return false;
 
     default:

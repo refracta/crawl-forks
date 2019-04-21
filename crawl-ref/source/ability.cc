@@ -18,6 +18,7 @@
 #include "acquire.h"
 #include "act-iter.h"
 #include "areas.h"
+#include "artefact.h"
 #include "art-enum.h"
 #include "branch.h"
 #include "butcher.h"
@@ -191,11 +192,8 @@ skill_type invo_skill(god_type god)
     {
         case GOD_KIKUBAAQUDGHA:
             return SK_NECROMANCY;
-
-#if TAG_MAJOR_VERSION == 34
         case GOD_PAKELLAS:
             return SK_EVOCATIONS;
-#endif
         case GOD_ASHENZARI:
         case GOD_JIYVA:
         case GOD_GOZAG:
@@ -413,7 +411,7 @@ static const ability_def Ability_List[] =
     { ABIL_YRED_DRAIN_LIFE, "Drain Life",
       6, 0, 200, 2, {fail_basis::invo, 60, 4, 25}, abflag::none },
     { ABIL_YRED_ENSLAVE_SOUL, "Enslave Soul",
-      8, 0, 500, 4, {fail_basis::invo, 80, 4, 25}, abflag::none },
+      0, 0, 200, 4, {fail_basis::invo, 40, 4, 20}, abflag::none },
 
     // Okawaru
     { ABIL_OKAWARU_HEROISM, "Heroism",
@@ -620,11 +618,18 @@ static const ability_def Ability_List[] =
       7, 0, 0, 10, {fail_basis::invo, 70, 4, 25}, abflag::none },
 
 #if TAG_MAJOR_VERSION == 34
-    // Pakellas
+    // Old Pakellas
     { ABIL_PAKELLAS_DEVICE_SURGE, "Device Surge",
       0, 0, 0, generic_cost::fixed(1),
       {fail_basis::invo, 40, 5, 20}, abflag::variable_mp | abflag::instant },
 #endif
+	// Pakellas
+	{ ABIL_PAKELLAS_UNINSTALL_CORE, "Uninstall Core",
+	  0, 0, 0, 0, {fail_basis::invo}, abflag::none },
+	{ ABIL_PAKELLAS_INSTALL_CORE, "Install Core",
+	  0, 0, 0, 0, {fail_basis::invo}, abflag::none },
+	{ ABIL_PAKELLAS_INVENTION, "Invention",
+	  0, 0, 0, 0, {fail_basis::invo}, abflag::none },
 
     // Uskayaw
     { ABIL_USKAYAW_STOMP, "Stomp",
@@ -2434,6 +2439,12 @@ static spret _do_ability(const ability_def& abil, bool fail)
             mpr("You see nothing there you can enslave the soul of!");
             return spret::abort;
         }
+		
+		if (you.piety/26 <= you.props["yred_souls"].get_int())
+		{
+			mpr("You already enslaved too many souls.");
+			return spret::abort;
+		}
 
         // The monster can be no more than lightly wounded/damaged.
         if (mons_get_damage_level(*mons) > MDAM_LIGHTLY_DAMAGED)
@@ -2443,7 +2454,7 @@ static spret _do_ability(const ability_def& abil, bool fail)
         }
         fail_check();
 
-        const int duration = you.skill_rdiv(SK_INVOCATIONS, 3, 4) + 2;
+        const int duration = you.skill_rdiv(SK_INVOCATIONS, 3, 4) + 10;
         mons->add_ench(mon_enchant(ENCH_SOUL_RIPE, 0, &you,
                                    duration * BASELINE_DELAY));
         simple_monster_message(*mons, "'s soul is now ripe for the taking.");
@@ -3083,7 +3094,154 @@ static spret _do_ability(const ability_def& abil, bool fail)
                               random2avg(you.piety / 4, 2) + 3, 100);
         break;
     }
-#endif
+#endif		
+	case ABIL_PAKELLAS_UNINSTALL_CORE:
+	{
+		int item_slot = prompt_invent_item("Choose device to uninstall core", MT_INVLIST,
+                                           OSEL_CORE_INSTALLED, OPER_ANY,
+                                           invprompt_flag::escape_only);
+
+        if (item_slot == PROMPT_NOTHING || item_slot == PROMPT_ABORT)
+            return spret::abort;
+
+        item_def& item(you.inv[item_slot]);
+		
+		unset_ident_flags(item, ISFLAG_CORE_INSTALLED);
+		
+		you.props["used_crystal_core"].get_int() -=1;
+		you.redraw_status_lights = true;
+
+        you.wield_change = true;
+		
+		mpr("You uninstall your crystal core.");
+		break;
+	}
+		
+	case ABIL_PAKELLAS_INSTALL_CORE:
+	{	
+		const int present_core
+				= you.props["max_crystal_core"].get_int() - you.props["used_crystal_core"].get_int();
+		if (present_core == 0)
+		{
+			mpr("You have run out of cores.");
+			return spret::abort;
+		}
+		
+		if (you.duration[DUR_CORE_COOLDOWN])
+		{
+			mpr("Your cores need time to cooldown.");
+			return spret::abort;
+		}
+		
+		fail_check();
+
+        int item_slot = prompt_invent_item("Choose device to install core", MT_INVLIST,
+                                           OSEL_CORE_INSTALL, OPER_ANY,
+                                           invprompt_flag::escape_only);
+
+        if (item_slot == PROMPT_NOTHING || item_slot == PROMPT_ABORT)
+            return spret::abort;
+
+        item_def& item(you.inv[item_slot]);
+
+        if (is_xp_evoker(item) && !evoker_charges(item.sub_type))
+        {
+            mpr("You need to recharge this device before install core.");
+            return spret::abort;
+        }
+
+		if (item.base_type == OBJ_WANDS)
+		{
+			mprf(MSGCH_GOD, "Core installed wand will spend small amount of piety instead charges, and its power will increased.");
+			
+			switch(item.sub_type)
+			{
+			case WAND_FLAME:
+				mprf(MSGCH_GOD, "Also, wand of flame will evoke bolt of fire instead increase power!");
+				break;
+			default:
+				break;
+			}
+		}
+		
+		if (item.base_type == OBJ_STAVES
+			|| is_unrandom_artefact(item, UNRAND_MAJIN))
+		{
+			mprf(MSGCH_GOD, "Core installed staff will always activate a melee effect, and deals more damage.");
+			
+			switch(item.sub_type)
+			{
+			case STAFF_SUMMONING:
+				mprf(MSGCH_GOD, "Also, staff of summoning gain abjuration aura as a melee effect!");
+				break;
+			case STAFF_CONJURATION:
+				mprf(MSGCH_GOD, "Also, staff of conjuration gain haste as a melee effect!");
+				break;
+			case STAFF_POWER:
+				mprf(MSGCH_GOD, "Also, staff of power gain magic regeneration as a melee effect!");
+				break;
+			case STAFF_ENERGY:
+				mprf(MSGCH_GOD, "Also, staff of energy try to activate instant channeling as a melee effect!");
+				break;
+			case STAFF_WIZARDRY:
+				mprf(MSGCH_GOD, "Also, wand of wizardry deals antimagic damage as a melee effect!");
+				break;
+			default:
+				break;
+			}
+			
+			if (is_unrandom_artefact(item, UNRAND_MAJIN))
+			{
+				mpr("The voice whispers : Also, I can drain magic from your pity enemies...");
+			}
+			
+			if (is_unrandom_artefact(item, UNRAND_WUCAD_MU))
+			{
+				mprf(MSGCH_GOD, "And your staff of Wucad Mu will makes you dizzy instead confuse.");
+			}
+		}
+
+		if (item.base_type == OBJ_MISCELLANY)
+		{
+			if (is_xp_evoker(item))
+				mprf(MSGCH_GOD, "Core installed elemental evoker will spend large amount of piety instead charges, but cause overheat cores!");
+				
+			if (item.sub_type == MISC_BOX_OF_BEASTS
+				|| item.sub_type == MISC_SACK_OF_SPIDERS)
+				mprf(MSGCH_GOD, "Core installed box and sack will never breoken!");
+				
+			if (item.sub_type == MISC_CRYSTAL_BALL_OF_ENERGY)
+				mprf(MSGCH_GOD, "Core installed crystal ball will makes you dizzy instead confuse, and only drains half of magic!");
+		}
+		
+        string prompt = "Do you want to install core to " + item.name(DESC_YOUR)
+                           + "?";
+
+        if (!yesno(prompt.c_str(), true, 'n'))
+        {
+            canned_msg(MSG_OK);
+            return spret::abort;
+        }
+
+        set_ident_flags(item, ISFLAG_CORE_INSTALLED);
+		
+		you.props["used_crystal_core"].get_int() += 1;
+		you.increase_duration(DUR_CORE_COOLDOWN, 10);
+		you.redraw_status_lights = true;
+
+        you.wield_change = true;
+
+        mprf(MSGCH_GOD, "Your %s glows brightly!",
+             item.name(DESC_QUALNAME).c_str());
+
+        break;
+    }
+	
+	case ABIL_PAKELLAS_INVENTION:
+		fail_check();
+        if (!pakellas_invention())
+            return spret::abort;;
+		break;
 
     case ABIL_USKAYAW_STOMP:
         fail_check();
@@ -3739,26 +3897,30 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
 
     // Evocations from items.
     if (you.scan_artefacts(ARTP_BLINK)
-        && !you.get_mutation_level(MUT_NO_ARTIFICE))
+        && !you.get_mutation_level(MUT_NO_ARTIFICE)
+		&& !player_under_penance(GOD_PAKELLAS))
     {
         _add_talent(talents, ABIL_EVOKE_BLINK, check_confused);
     }
 
     if (player_equip_unrand(UNRAND_THIEF)
-        && !you.get_mutation_level(MUT_NO_ARTIFICE))
+        && !you.get_mutation_level(MUT_NO_ARTIFICE)
+		&& !player_under_penance(GOD_PAKELLAS))
     {
         _add_talent(talents, ABIL_EVOKE_FOG, check_confused);
     }
 
     if (player_equip_unrand(UNRAND_RATSKIN_CLOAK)
         && !you.get_mutation_level(MUT_NO_ARTIFICE)
-        && !you.get_mutation_level(MUT_NO_LOVE))
+        && !you.get_mutation_level(MUT_NO_LOVE)
+		&& !player_under_penance(GOD_PAKELLAS))
     {
         _add_talent(talents, ABIL_EVOKE_RATSKIN, check_confused);
     }
 
     if (player_equip_unrand(UNRAND_RCLOUDS)
-        && !you.get_mutation_level(MUT_NO_ARTIFICE))
+        && !you.get_mutation_level(MUT_NO_ARTIFICE)
+		&& !player_under_penance(GOD_PAKELLAS))
     {
         _add_talent(talents, ABIL_EVOKE_THUNDER, check_confused);
     }
@@ -3768,12 +3930,14 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
 
     if (you.evokable_invis() > 0
         && !you.get_mutation_level(MUT_NO_ARTIFICE)
-        && !you.duration[DUR_INVIS])
+        && !you.duration[DUR_INVIS]
+		&& !player_under_penance(GOD_PAKELLAS))
     {
         _add_talent(talents, ABIL_EVOKE_TURN_INVISIBLE, check_confused);
     }
 
-    if (you.evokable_flight() && !you.get_mutation_level(MUT_NO_ARTIFICE))
+    if (you.evokable_flight() && !you.get_mutation_level(MUT_NO_ARTIFICE)
+			&& !player_under_penance(GOD_PAKELLAS))
     {
         // Has no effect on permanently flying Tengu.
         if (!you.permanent_flight() || !you.racial_permanent_flight())

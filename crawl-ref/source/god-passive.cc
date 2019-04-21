@@ -403,13 +403,8 @@ static const vector<god_passive> god_passives[] =
 
     // Pakellas
     {
-        { -1, passive_t::no_mp_regen,
-              "GOD NOW prevents you from regenerating your magical power" },
-        { -1, passive_t::mp_on_kill, "have a chance to gain magical power from"
-                                     " killing" },
-        {  1, passive_t::bottle_mp,
-              "GOD NOW collects and distills excess magic from your kills"
-        },
+        { 0, passive_t::crystal_core,
+              "Pakellas will gift you crystal cores as you gain piety." },
     },
 
     // Uskayaw

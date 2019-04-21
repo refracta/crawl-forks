@@ -512,7 +512,7 @@ bool melee_attack::handle_phase_hit()
     }
 
     // Check for weapon brand & inflict that damage too
-    apply_damage_brand();
+	apply_damage_brand();
 
     // Fireworks when using Serpent's Lash to kill.
     if (!defender->alive()
@@ -2168,12 +2168,18 @@ void melee_attack::attacker_sustain_passive_damage()
 
 int melee_attack::staff_damage(skill_type skill)
 {
-    if (x_chance_in_y(attacker->skill(SK_EVOCATIONS, 200)
+	if (attacker->is_player() && item_ident(*weapon, ISFLAG_CORE_INSTALLED))
+	{
+		return random2((attacker->skill(skill, 100)
+                      + attacker->skill(SK_EVOCATIONS, 100)) / 80);
+	}
+    else if (x_chance_in_y(attacker->skill(SK_EVOCATIONS, 200)
                     + attacker->skill(skill, 100), 3000))
     {
         return random2((attacker->skill(skill, 100)
                       + attacker->skill(SK_EVOCATIONS, 50)) / 80);
     }
+
     return 0;
 }
 
@@ -2187,6 +2193,9 @@ void melee_attack::apply_staff_damage()
 
     if (weapon->base_type != OBJ_STAVES)
         return;
+	
+	if (player_under_penance(GOD_PAKELLAS))
+		return;
 
     switch (weapon->sub_type)
     {
@@ -2263,6 +2272,10 @@ void melee_attack::apply_staff_damage()
 
     case STAFF_POISON:
     {
+		if (attacker->is_player() && item_ident(*weapon, ISFLAG_CORE_INSTALLED))
+			defender->poison(attacker, 2);
+			break;
+		
         if (random2(300) >= attacker->skill(SK_EVOCATIONS, 20) + attacker->skill(SK_POISON_MAGIC, 10))
             return;
 
@@ -2291,13 +2304,74 @@ void melee_attack::apply_staff_damage()
         break;
 
     case STAFF_SUMMONING:
+		if (attacker->is_player() && item_ident(*weapon, ISFLAG_CORE_INSTALLED))
+		{	
+			if (!you.duration[DUR_ABJURATION_AURA])
+			{
+				you.set_duration(DUR_ABJURATION_AURA, 2 + roll_dice(2, SK_EVOCATIONS / 9 + 1), 50, 
+								"Your staff of summonig emits aura of abjuration.");
+			}
+		}
+		break;
+		
     case STAFF_POWER:
+		if (attacker->is_player() && item_ident(*weapon, ISFLAG_CORE_INSTALLED))
+		{
+			if (!you.duration[DUR_MPREGEN_PAKELLAS])
+			{
+				you.set_duration(DUR_MPREGEN_PAKELLAS, 2 + roll_dice(2, SK_EVOCATIONS / 9 + 1), 50,
+								"Your staff of power emits surge of magic.");
+			}
+		}
+		break;
+		
     case STAFF_CONJURATION:
+		if (attacker->is_player() && item_ident(*weapon, ISFLAG_CORE_INSTALLED))
+		{
+			special_damage = staff_damage(SK_CONJURATIONS);
+
+			special_damage_message =
+				make_stringf(
+					"%s blast%s %s!",
+					attacker->name(DESC_THE).c_str(),
+					attacker->is_player() ? "" : "es",
+					defender->name(DESC_THE).c_str());
+		}
+		break;
 #if TAG_MAJOR_VERSION == 34
     case STAFF_ENCHANTMENT:
 #endif
     case STAFF_ENERGY:
+		if (attacker->is_player() && item_ident(*weapon, ISFLAG_CORE_INSTALLED))
+		{
+			if (apply_starvation_penalties())
+			{
+				break;
+			}
+			else if (you.magic_points >= you.max_magic_points)
+			{
+				break;
+			}
+			else if (x_chance_in_y(apply_enhancement(
+									you.skill(SK_EVOCATIONS, 100) + 1100,
+									you.spec_evoke()),
+								4000))
+			{
+				mpr("You channel some magical energy.");
+				inc_mp(1 + random2(3));
+				make_hungry(50, false, true);
+				practise_evoking(1);
+
+				did_god_conduct(DID_CHANNEL, 1, true);
+			}
+		}
+		break;
+		
     case STAFF_WIZARDRY:
+		if (attacker->is_player() && item_ident(*weapon, ISFLAG_CORE_INSTALLED))
+		{
+			antimagic_affects_defender(SK_EVOCATIONS * 8);
+        }
         break;
 
     default:

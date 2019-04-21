@@ -13,6 +13,7 @@
 #include "dgn-overview.h"
 #include "message.h"
 #include "mon-death.h"
+#include "mon-flags.h"
 #include "mon-util.h"
 #include "religion.h"
 #include "spl-other.h"
@@ -30,7 +31,7 @@ void init_companions()
 }
 
 void add_companion(monster* mons)
-{
+{	
     ASSERT(mons->alive());
     // Right now this is a special case for Saint Roka, but
     // future orcish uniques should behave in the same way.

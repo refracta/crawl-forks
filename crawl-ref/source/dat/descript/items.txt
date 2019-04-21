@@ -633,6 +633,12 @@ pearl dragon scales
 The nacreous scales of a pearl dragon. It grants its wearer resistance to
 negative energies.
 %%%%
+personal teleporter
+
+Your brilliant invention. This device needs core install to use. When evoked,
+this device creates personal teleportation field upon target. Like other teleportation,
+never affects for stasised target(include formicid).
+%%%%
 phantom mirror
 
 A hand mirror which can create a reflection of a nearby creature, shattering
@@ -767,6 +773,12 @@ ration
 
 Something for everyone: A filling meal of preserved meats, fruits, cheese,
 and stale, but hearty, bread.
+%%%%
+restoration device
+
+Your brilliant invention. This device needs core install to use. When evoked,
+this device emits restorating energy to target, heal wounds and cure
+bad effects, and restore from rotting.
 %%%%
 ring mail
 
@@ -1133,6 +1145,12 @@ scale armours, and gives its wearer resistance to electrical discharges.
 swamp dragon scales
 
 The scales of a swamp dragon. It confers resistance to poison on its wearer.
+%%%%
+temporal booster
+
+Your brilliant invention. This device needs core install to use. When evoked,
+this device boosts temporal flow of target. Like other haste effects,
+never affects for stasised target(include formicid).
 %%%%
 throwing net
 

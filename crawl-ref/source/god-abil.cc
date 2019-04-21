@@ -1769,16 +1769,13 @@ bool yred_can_enslave_soul(monster* mon)
            && !mons_enslaved_body_and_soul(*mon)
            && mon->attitude != ATT_FRIENDLY
            && mons_intel(*mon) >= I_HUMAN
-           && mon->type != MONS_PANDEMONIUM_LORD;
+		   && mon->type != MONS_PANDEMONIUM_LORD;
 }
 
 void yred_make_enslaved_soul(monster* mon, bool force_hostile)
 {
     ASSERT(mon); // XXX: change to monster &mon
     ASSERT(mons_enslaved_body_and_soul(*mon));
-
-    add_daction(DACT_OLD_ENSLAVED_SOULS_POOF);
-    remove_enslaved_soul_companion();
 
     const string whose = you.can_see(*mon) ? apostrophise(mon->name(DESC_THE))
                                            : mon->pronoun(PRONOUN_POSSESSIVE);
@@ -1856,6 +1853,9 @@ void yred_make_enslaved_soul(monster* mon, bool force_hostile)
     {
         invalidate_agrid();
     }
+	
+	const int soul = you.props["yred_souls"].get_int();
+	you.props["yred_souls"] = soul + 1;
 
     mprf("%s soul %s.", whose.c_str(),
          !force_hostile ? "is now yours" : "fights you");
@@ -6369,6 +6369,7 @@ bool ru_apocalypse()
     return true;
 }
 
+#if TAG_MAJOR_VERSION == 34
 /**
  * Calculate the effective power of a surged hex wand.
  * Works by iterating over the possible rolls from random2avg().
@@ -6453,6 +6454,7 @@ int pakellas_surge_devices()
     }
     return severity;
 }
+#endif
 
 static bool _mons_stompable(const monster &mons)
 {
@@ -7430,4 +7432,133 @@ bool beogh_call_chosen()
 		}
 		break;
 	}
+}
+
+static int _pakellas_invention_prompt()
+{
+	simple_god_message(" says : Catch the moment of inspiration!");
+    mprf(MSGCH_PROMPT, "What inspiration will you catch?");
+
+    string previous;
+
+	mprf(MSGCH_GOD,
+	"a) Restoration Device(Heal Wounds) "
+		" b) Personal Teleporter(Telportation) "
+		" c) Temporal Booster(Haste) "
+		" Anything else - Cancel.");
+
+    flush_prev_message(); // buffer doesn't get flushed otherwise
+
+    const int keyn = get_ch();
+    clear_messages();
+    return keyn;
+}
+
+bool pakellas_invention()
+{
+    switch (_pakellas_invention_prompt())
+    {
+        case 'a':
+		case 'A':
+		{
+			if (!yesno("Do you want to invent Restoration Device?", true, 'n'))
+			{
+				canned_msg(MSG_OK);
+				return false;
+			}
+			int thing_created = items(true, OBJ_MISCELLANY, MISC_PAKELLAS_HEAL,
+								1, 0, you.religion);
+			if (thing_created == NON_ITEM)
+			{
+				mpr("You already invented that.");
+				return false;
+			}
+			if (!move_item_to_grid(&thing_created, you.pos()))
+			{
+				return false;
+			}
+			set_ident_type(mitm[thing_created], true);
+			mprf(MSGCH_GOD, "PROGRESS! You invented new device!");
+			flash_view(UA_PLAYER, LIGHTGREEN);
+#ifndef USE_TILE_LOCAL
+			// Allow extra time for the flash to linger.
+			scaled_delay(1000);
+#endif
+			more();
+			you.one_time_ability_used.set(you.religion);
+			take_note(Note(NOTE_GOD_GIFT, you.religion));
+			return true;
+		}
+        break;
+		
+		case 'b':
+		case 'B':
+		{
+			if (!yesno("Do you want to invent Personal Teleporter?", true, 'n'))
+			{
+				canned_msg(MSG_OK);
+				return false;
+			}
+			int thing_created = items(true, OBJ_MISCELLANY, MISC_PAKELLAS_TELEPORT,
+								1, 0, you.religion);
+			if (thing_created == NON_ITEM)
+			{
+				mpr("You already invented that.");
+				return false;
+			}
+			if (!move_item_to_grid(&thing_created, you.pos()))
+			{
+				return false;
+			}
+			set_ident_type(mitm[thing_created], true);
+			mprf(MSGCH_GOD, "PROGRESS! You invented new device!");
+			flash_view(UA_PLAYER, LIGHTGREEN);
+#ifndef USE_TILE_LOCAL
+			// Allow extra time for the flash to linger.
+			scaled_delay(1000);
+#endif
+			more();
+			you.one_time_ability_used.set(you.religion);
+			take_note(Note(NOTE_GOD_GIFT, you.religion));
+			return true;
+		}
+        break;
+		
+		case 'c':
+		case 'C':
+		{
+			if (!yesno("Do you want to invent Temporal Booster?", true, 'n'))
+			{
+				canned_msg(MSG_OK);
+				return false;
+			}
+			int thing_created = items(true, OBJ_MISCELLANY, MISC_PAKELLAS_HASTE,
+								1, 0, you.religion);
+			if (thing_created == NON_ITEM)
+			{
+				mpr("You already invented that.");
+				return false;
+			}
+			if (!move_item_to_grid(&thing_created, you.pos()))
+			{
+				return false;
+			}
+			set_ident_type(mitm[thing_created], true);
+			mprf(MSGCH_GOD, "PROGRESS! You invented new device!");
+			flash_view(UA_PLAYER, LIGHTGREEN);
+#ifndef USE_TILE_LOCAL
+			// Allow extra time for the flash to linger.
+			scaled_delay(1000);
+#endif
+			more();
+			you.one_time_ability_used.set(you.religion);
+			take_note(Note(NOTE_GOD_GIFT, you.religion));
+			return true;
+		}
+        break;
+
+        default:
+            canned_msg(MSG_OK);
+            return false;
+    }
 }

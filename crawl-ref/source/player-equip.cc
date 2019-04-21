@@ -397,8 +397,6 @@ static void _equip_use_warning(const item_def& item)
         mpr("You really shouldn't be using a chaotic item like this.");
     else if (is_hasty_item(item) && you_worship(GOD_CHEIBRIADOS))
         mpr("You really shouldn't be using a hasty item like this.");
-    else if (is_channeling_item(item) && you_worship(GOD_PAKELLAS))
-        mpr("You really shouldn't be trying to channel magic like this.");
 }
 
 static void _wield_cursed(item_def& item, bool known_cursed, bool unmeld)
@@ -440,6 +438,9 @@ static void _equip_weapon_effect(item_def& item, bool showMsgs, bool unmeld)
 
         if (item.sub_type == STAFF_POWER)
         {
+			if (player_under_penance(GOD_PAKELLAS))
+				break;
+			
             canned_msg(MSG_MANA_INCREASE);
             calc_mp();
         }
@@ -783,8 +784,7 @@ static void _spirit_shield_message(bool unmeld)
         dec_mp(you.magic_points);
         mpr("You feel your power drawn to a protective spirit.");
         if (you.species == SP_DEEP_DWARF
-            && !(have_passive(passive_t::no_mp_regen)
-                 || player_under_penance(GOD_PAKELLAS)))
+            && !(have_passive(passive_t::no_mp_regen)))
         {
             mpr("Now linked to your health, your magic stops regenerating.");
         }
@@ -851,7 +851,8 @@ static void _equip_armour_effect(item_def& arm, bool unmeld,
         case SPARM_FLYING:
             // If you weren't flying when you took off the boots, don't restart.
             if (you.attribute[ATTR_LAST_FLIGHT_STATUS]
-                || you.has_mutation(MUT_NO_ARTIFICE))
+                || you.has_mutation(MUT_NO_ARTIFICE)
+				|| player_under_penance(GOD_PAKELLAS))
             {
                 if (you.airborne())
                 {
@@ -868,6 +869,11 @@ static void _equip_armour_effect(item_def& arm, bool unmeld,
             {
                 if (you.has_mutation(MUT_NO_ARTIFICE))
                     mpr("Take it off to stop flying.");
+				else if (player_under_penance(GOD_PAKELLAS))
+				{
+					simple_god_message("'s wrath prevents you from evoking "
+									"devices!", GOD_PAKELLAS);	
+				}
                 else
                 {
                 mprf("(use the <w>%s</w>bility menu to %s flying)",

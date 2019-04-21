@@ -135,11 +135,11 @@ reward worshippers for heroic feats against mighty foes.
 %%%%
 Pakellas
 
-Pakellas the Inventive believes in the supremacy of devices, magical or
-otherwise, over spells and other forms of magic. Followers, although cut off
-from ambient magical power, are provided with magical energy to empower their
-devices so long as they use them to assert Pakellas' supremacy. Pakellas will
-grant devout worshippers access to increasingly powerful devices.
+Pakellas the Inventive does not rest on the existing devices and always
+does new research. After a long period of research, he invented the 'Cyrstal
+Core' technology, which provide additional power to any atifical devices.
+Because followers receive power from crystal cores, so they do not need
+to be cut of from magic unlike the old days. PROGRESS for science!
 %%%%
 Qazlal
 
@@ -382,14 +382,11 @@ gift followers with ammunition, weapons and armour.
 %%%%
 Pakellas powers
 
-Followers of Pakellas do not regenerate their magic power naturally, and are
-forbidden from using external means to do so; instead, they are granted
-magical energy on killing beings. They may use increasing amounts of magical
-energy to strengthen their devices, temporarily granting them additional
-power, and can also use their magical energy to recharge their devices.
-Sufficiently devout followers will receive new devices from Pakellas, and may
-eventually petition Pakellas to personally charge one of their devices beyond
-its normal limits.
+As the experiment of Pakellas progresses, you get up to six crystal cores.
+Crystal cores are a versatile power source for any evocational device, and
+one device can be installed to one core. Core installed devices will improved
+before, such as use piety instead charges. By faithfully following the experiment
+of Pakellas, you will face the moment of inspiration to invent unique new device!
 %%%%
 Qazlal powers
 
@@ -614,10 +611,9 @@ surrounded by titans and elvish blademasters.
 %%%%
 Pakellas wrath
 
-Those that offend Pakellas will find themselves completely unable to make use
-of their devices for the duration of Pakellas's displeasure. Those who abandon
-Pakellas altogether will also continue to be unable to regenerate their magical
-power so long as Pakellas' attention remains on them.
+Against Pakellas, is against the evocation. Against the evocation is the opposite
+of all devices. So, all the devices of the betrayer of Pakellas will lose power - until
+you are satisfied with the hungry engine of the name PROGRESS!
 %%%%
 Qazlal wrath
 

@@ -257,7 +257,7 @@ enum class passive_t
     wu_jian_whirlwind,
     wu_jian_wall_jump,
 	
-	// for the Legion form beyond, added by addedcrawl!
+	// added by addedcrawl:
 	/// Protect allies from abjuration by decreasing the power to /10.
     abjuration_protection_legion,
 	
@@ -267,8 +267,11 @@ enum class passive_t
 	/// Protect allies from torment and damation.
     legion_shield,
 	
-	/// addedcrawl : Trog's enhanced berserk.
+	/// Trog's enhanced berserk.
 	enhanced_berserk,
+	
+	/// New Pakellas's crystal cores.
+	crystal_core,
 };
 
 enum ru_interference

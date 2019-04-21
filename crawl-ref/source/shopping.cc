@@ -725,6 +725,9 @@ unsigned int item_value(item_def item, bool ident)
         {
         case MISC_HORN_OF_GERYON:
         case MISC_ZIGGURAT:
+		case MISC_PAKELLAS_HEAL:
+		case MISC_PAKELLAS_TELEPORT:
+		case MISC_PAKELLAS_HASTE:
             valued += 5000;
             break;
 

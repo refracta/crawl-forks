@@ -15,6 +15,7 @@
 #include "act-iter.h"
 #include "areas.h"
 #include "artefact.h"
+#include "beam.h"
 #include "branch.h"
 #include "chardump.h"
 #include "cloud.h"
@@ -58,11 +59,13 @@
 #include "spl-book.h"
 #include "spl-cast.h"
 #include "spl-clouds.h"
+#include "spl-transloc.h"
 #include "spl-util.h"
 #include "spl-zap.h"
 #include "state.h"
 #include "stringutil.h"
 #include "target.h"
+#include "teleport.h"
 #include "terrain.h"
 #include "throw.h"
 #ifdef USE_TILE
@@ -457,10 +460,36 @@ void zap_wand(int slot)
 
     int power = (15 + you.skill(SK_EVOCATIONS, 7) / 2) * (mp_cost + 9) / 9;
 
-    const spell_type spell =
+	if (wand.sub_type == WAND_FLAME
+		&& item_ident(wand, ISFLAG_CORE_INSTALLED)
+		&& you_worship(GOD_PAKELLAS))
+	{
+		spret ret = your_spells(SPELL_BOLT_OF_FIRE, power, false, &wand);
+		
+		if (ret == spret::abort)
+			return;
+		else if (ret == spret::fail)
+		{
+			canned_msg(MSG_NOTHING_HAPPENS);
+			you.turn_is_over = true;
+			return;
+		}
+		
+		simple_god_message("'s crystal core provided additional power!");
+		lose_piety(3);
+		
+		practise_evoking(1);
+		count_action(CACT_EVOKE, EVOC_WAND);
+		alert_nearby_monsters();
+		
+		you.turn_is_over = true;
+		return;
+	}
+	
+	const spell_type spell =
         spell_in_wand(static_cast<wand_type>(wand.sub_type));
-
-    spret ret = your_spells(spell, power, false, &wand);
+	
+	spret ret = your_spells(spell, power, false, &wand);
 
     if (ret == spret::abort)
         return;
@@ -476,7 +505,16 @@ void zap_wand(int slot)
         dec_mp(mp_cost, false);
 
     // Take off a charge.
-    wand.charges--;
+	if (item_ident(wand, ISFLAG_CORE_INSTALLED) && you_worship(GOD_PAKELLAS))
+	{	
+		simple_god_message("'s crystal core provided additional power!");
+		power = power*1.2;
+		lose_piety(3);
+	}
+	else
+	{
+		wand.charges--;
+	}
 
     if (wand.charges == 0)
     {
@@ -642,9 +680,16 @@ static bool _box_of_beasts(item_def &box)
     // After unboxing a beast, chance to break.
     if (one_chance_in(3))
     {
-        mpr("The now-empty box falls apart.");
-        ASSERT(in_inventory(box));
-        dec_inv_item_quantity(box.link, 1);
+		if (item_ident(box, ISFLAG_CORE_INSTALLED) && you_worship(GOD_PAKELLAS))
+		{
+			simple_god_message("'s crystal core protected the box from breaking!");
+		}
+		else
+		{	
+			mpr("The now-empty box falls apart.");
+			ASSERT(in_inventory(box));
+			dec_inv_item_quantity(box.link, 1);
+		}
     }
 
     return true;
@@ -734,9 +779,16 @@ static bool _sack_of_spiders(item_def &sack)
         // After gettin' some bugs, check for destruction.
         if (one_chance_in(3))
         {
-            mpr("The now-empty bag unravels in your hand.");
-            ASSERT(in_inventory(sack));
-            dec_inv_item_quantity(sack.link, 1);
+			if (item_ident(sack, ISFLAG_CORE_INSTALLED) && you_worship(GOD_PAKELLAS))
+			{
+				simple_god_message("'s crystal core protected the sack from breaking!");
+			}
+			else
+			{
+				mpr("The now-empty bag unravels in your hand.");
+				ASSERT(in_inventory(sack));
+				dec_inv_item_quantity(sack.link, 1);
+			}
         }
     }
     else
@@ -770,7 +822,7 @@ static bool _make_zig(item_def &zig)
     return true;
 }
 
-static bool _ball_of_energy()
+static bool _ball_of_energy(item_def &ball)
 {
     bool ret = false;
 
@@ -785,11 +837,28 @@ static bool _ball_of_energy()
         lose_stat(STAT_INT, 1 + random2avg(5, 2));
     else if (use < 5 && enough_mp(1, true))
     {
-        mpr("You feel your power drain away!");
-        dec_mp(you.magic_points);
+        if (item_ident(ball, ISFLAG_CORE_INSTALLED) && you_worship(GOD_PAKELLAS))
+		{
+			simple_god_message("'s crystal core suppressed power drain by half!");
+			dec_mp(you.magic_points / 2);
+		}
+		else
+		{
+			mpr("You feel your power drain away!");
+			dec_mp(you.magic_points);
+		}
     }
     else if (use < 10)
-        confuse_player(10 + random2(10));
+		if (item_ident(ball, ISFLAG_CORE_INSTALLED) && you_worship(GOD_PAKELLAS))
+		{
+			simple_god_message("'s crystal core suppressed confusion to vertigo!");
+			you.increase_duration(DUR_VERTIGO, 10 + random2(10));
+            you.redraw_evasion = true;
+		}
+		else
+		{
+			confuse_player(10 + random2(10));
+		}
     else
     {
         int proportional = (you.magic_points * 100) / you.max_magic_points;
@@ -800,8 +869,16 @@ static bool _ball_of_energy()
             > proportional
             || one_chance_in(25))
         {
-            mpr("You feel your power drain away!");
-            dec_mp(you.magic_points);
+			if (item_ident(ball, ISFLAG_CORE_INSTALLED) && you_worship(GOD_PAKELLAS))
+			{
+				simple_god_message("'s crystal core suppressed power drain by half!");
+				dec_mp(you.magic_points / 2);
+			}
+			else
+			{
+				mpr("You feel your power drain away!");
+				dec_mp(you.magic_points);
+			}
         }
         else
         {
@@ -1457,6 +1534,131 @@ static spret _phantom_mirror()
     return spret::success;
 }
 
+static spret _restoration_device()
+{
+    bolt beam;
+    monster* mons = nullptr;
+    dist spd;
+    targeter_smite tgt(&you, LOS_RADIUS, 0, 0);
+
+    direction_chooser_args args;
+    args.restricts = DIR_TARGET;
+	args.mode = TARG_FRIEND;
+    args.needs_path = false;
+    args.top_prompt = "Aiming: <white>Restoration Device</white>";
+    args.hitfunc = &tgt;
+    if (!spell_direction(spd, beam, &args))
+        return spret::abort;
+    mons = monster_at(beam.target);
+    if (mons || beam.target == you.pos())
+    {
+        beam.flavour    = BEAM_HEALING;
+		beam.colour     = CYAN;
+		beam.source_id  = MID_PLAYER;
+		beam.auto_hit   = true;
+		beam.name       = "energy of restoration";
+		beam.damage     = dice_def(2, 4 + you.skill(SK_EVOCATIONS, 3));
+		beam.fire();
+		
+		if (mons)
+		{
+		mons->del_ench(ENCH_POISON, true);
+		mons->del_ench(ENCH_SICK, true);
+		mons->del_ench(ENCH_CONFUSION, true);
+		mons->del_ench(ENCH_SLOW, true);
+		mons->del_ench(ENCH_FATIGUE, true);
+		mons->del_ench(ENCH_WRETCHED, true);
+		}
+	
+		if (beam.target == you.pos())
+		{
+		you.disease = 0;
+		you.duration[DUR_POISONING] = 0;
+		you.duration[DUR_CONF] = 0;
+		you.duration[DUR_SLOW] = 0;
+		you.duration[DUR_PETRIFYING] = 0;
+		you.duration[DUR_WEAK] = 0;
+		unrot_hp(9999);
+		}
+    }
+	else
+	{
+		mpr("You can't see anything there to restorate.");
+		return spret::abort;
+	}
+    mprf(MSGCH_GOD, "Your device emits energy of restoration!");
+	you.increase_duration(DUR_CORE_COOLDOWN, 100);
+	lose_piety(6);
+    return spret::success;
+}
+
+static spret _personal_teleporter()
+{
+    bolt beam;
+    monster* mons = nullptr;
+    dist spd;
+    targeter_smite tgt(&you, LOS_RADIUS, 0, 0);
+
+    direction_chooser_args args;
+    args.restricts = DIR_TARGET;
+    args.needs_path = false;
+    args.top_prompt = "Aiming: <white>Personal_Teleporter</white>";
+    args.hitfunc = &tgt;
+    if (!spell_direction(spd, beam, &args))
+        return spret::abort;
+    mons = monster_at(beam.target);
+    if (mons)
+    {
+        monster_teleport(mons, false, false);
+    }
+	if (beam.target == you.pos())
+		you_teleport();
+	else
+	{
+		mpr("You can't see anything there to teleport.");
+		return spret::abort;
+	}
+    mprf(MSGCH_GOD, "Your device creates personal teleportation field!");
+	you.increase_duration(DUR_CORE_COOLDOWN, 100);
+	lose_piety(6);
+    return spret::success;
+}
+
+static spret _temporal_booster()
+{
+    bolt beam;
+    monster* mons = nullptr;
+    dist spd;
+    targeter_smite tgt(&you, LOS_RADIUS, 0, 0);
+
+    direction_chooser_args args;
+    args.restricts = DIR_TARGET;
+	args.mode = TARG_FRIEND;
+    args.needs_path = false;
+    args.top_prompt = "Aiming: <white>Temporal Booster</white>";
+    args.hitfunc = &tgt;
+    if (!spell_direction(spd, beam, &args))
+        return spret::abort;
+    mons = monster_at(beam.target);
+    if (mons)
+    {
+		const int duration = (4 + you.skill(SK_EVOCATIONS, 3)) * 2;
+		mons->add_ench(mon_enchant(ENCH_HASTE, 0, &you,
+							duration * BASELINE_DELAY));
+    }
+	if (beam.target == you.pos())
+		haste_player(12 + random2(you.skill(SK_EVOCATIONS, 2)));
+	else
+	{
+		mpr("You can't see anything there to boost.");
+		return spret::abort;
+	}
+    mprf(MSGCH_GOD, "Your device boosts temporal flow!");
+	you.increase_duration(DUR_CORE_COOLDOWN, 100);
+	lose_piety(6);
+    return spret::success;
+}
+
 bool evoke_check(int slot, bool quiet)
 {
     const bool reaching = slot != -1 && slot == you.equip[EQ_WEAPON]
@@ -1547,6 +1749,12 @@ bool evoke_item(int slot, bool check_range)
 
     case OBJ_STAVES:
         ASSERT(wielded);
+		if (player_under_penance(GOD_PAKELLAS))
+		{
+			simple_god_message("'s wrath prevents you from evoking devices!",
+                           GOD_PAKELLAS);
+			break;
+		}
         if (item.sub_type != STAFF_ENERGY)
         {
             unevokable = true;
@@ -1617,6 +1825,11 @@ bool evoke_item(int slot, bool check_range)
                 mpr("That is presently inert.");
                 return false;
             }
+			if (you.duration[DUR_CORE_COOLDOWN] && item_ident(item, ISFLAG_CORE_INSTALLED))
+			{
+                mpr("The core installed into fan is still overheated.");
+                return false;
+            }
 
             const int surge = pakellas_surge_devices();
             surge_power(you.spec_evoke() + surge);
@@ -1624,7 +1837,17 @@ bool evoke_item(int slot, bool check_range)
                        player_adjust_evoc_power(you.skill(SK_EVOCATIONS, 15),
                                                 surge),
                        coord_def());
-            expend_xp_evoker(item.sub_type);
+					   
+			if (item_ident(item, ISFLAG_CORE_INSTALLED) && you_worship(GOD_PAKELLAS))
+			{
+				simple_god_message("'s crystal core provided additional power!");
+				you.increase_duration(DUR_CORE_COOLDOWN, 100);
+				lose_piety(6);
+			}
+			else
+			{
+				expend_xp_evoker(item.sub_type);
+			}
             practise_evoking(3);
             break;
         }
@@ -1635,10 +1858,24 @@ bool evoke_item(int slot, bool check_range)
                 mpr("That is presently inert.");
                 return false;
             }
+			if (you.duration[DUR_CORE_COOLDOWN] && item_ident(item, ISFLAG_CORE_INSTALLED))
+			{
+                mpr("The core installed into lamp is still overheated.");
+                return false;
+            }
             if (_lamp_of_fire())
             {
-                expend_xp_evoker(item.sub_type);
-                practise_evoking(3);
+				if (item_ident(item, ISFLAG_CORE_INSTALLED) && you_worship(GOD_PAKELLAS))
+				{
+					simple_god_message("'s crystal core provided additional power!");
+					you.increase_duration(DUR_CORE_COOLDOWN, 100);
+					lose_piety(6);
+				}
+				else
+				{
+					expend_xp_evoker(item.sub_type);
+				}
+				practise_evoking(3);
             }
             else
                 return false;
@@ -1657,10 +1894,24 @@ bool evoke_item(int slot, bool check_range)
                 mpr("That is presently inert.");
                 return false;
             }
+			if (you.duration[DUR_CORE_COOLDOWN] && item_ident(item, ISFLAG_CORE_INSTALLED))
+			{
+                mpr("The core installed into phial is still overheated.");
+                return false;
+            }
             if (_phial_of_floods())
             {
-                expend_xp_evoker(item.sub_type);
-                practise_evoking(3);
+                if (item_ident(item, ISFLAG_CORE_INSTALLED) && you_worship(GOD_PAKELLAS))
+				{
+					simple_god_message("'s crystal core provided additional power!");
+					you.increase_duration(DUR_CORE_COOLDOWN, 100);
+					lose_piety(6);
+				}
+				else
+				{
+					expend_xp_evoker(item.sub_type);
+				}
+				practise_evoking(3);
             }
             else
                 return false;
@@ -1672,10 +1923,24 @@ bool evoke_item(int slot, bool check_range)
                 mpr("That is presently inert.");
                 return false;
             }
+			if (you.duration[DUR_CORE_COOLDOWN] && item_ident(item, ISFLAG_CORE_INSTALLED))
+			{
+                mpr("The core installed into horn is still overheated.");
+                return false;
+            }
             if (_evoke_horn_of_geryon())
             {
-                expend_xp_evoker(item.sub_type);
-                practise_evoking(3);
+                if (item_ident(item, ISFLAG_CORE_INSTALLED) && you_worship(GOD_PAKELLAS))
+				{
+					simple_god_message("'s crystal core provided additional power!");
+					you.increase_duration(DUR_CORE_COOLDOWN, 100);
+					lose_piety(6);
+				}
+				else
+				{
+					expend_xp_evoker(item.sub_type);
+				}
+				practise_evoking(3);
             }
             else
                 return false;
@@ -1694,7 +1959,7 @@ bool evoke_item(int slot, bool check_range)
         case MISC_CRYSTAL_BALL_OF_ENERGY:
             if (!_check_crystal_ball())
                 unevokable = true;
-            else if (_ball_of_energy())
+            else if (_ball_of_energy(item))
                 practise_evoking(1);
             break;
 
@@ -1704,10 +1969,24 @@ bool evoke_item(int slot, bool check_range)
                 mpr("That is presently inert.");
                 return false;
             }
+			if (you.duration[DUR_CORE_COOLDOWN] && item_ident(item, ISFLAG_CORE_INSTALLED))
+			{
+                mpr("The core installed into rod is still overheated.");
+                return false;
+            }
             if (_lightning_rod())
             {
                 practise_evoking(1);
-                expend_xp_evoker(item.sub_type);
+				if (item_ident(item, ISFLAG_CORE_INSTALLED) && you_worship(GOD_PAKELLAS))
+				{
+					simple_god_message("'s crystal core provided additional power!");
+					you.increase_duration(DUR_CORE_COOLDOWN, 50);
+					lose_piety(3);
+				}
+				else
+				{
+					expend_xp_evoker(item.sub_type);
+				}
                 if (!evoker_charges(item.sub_type))
                     mpr("The lightning rod overheats!");
             }
@@ -1743,6 +2022,93 @@ bool evoke_item(int slot, bool check_range)
         case MISC_ZIGGURAT:
             // Don't set did_work to false, _make_zig handles the message.
             unevokable = !_make_zig(item);
+            break;
+			
+		case MISC_PAKELLAS_HEAL:
+			if (!item_ident(item, ISFLAG_CORE_INSTALLED))
+			{
+                mpr("This device needs core install.");
+                return false;
+            }
+			if (you.duration[DUR_CORE_COOLDOWN])
+			{
+                mpr("The core installed into rod is still overheated.");
+                return false;
+            }
+			if (!you_worship(GOD_PAKELLAS))
+			{
+				mpr("This brillant invention is only allow to followers of Pakellas.");
+				return false;
+			}
+			switch (_restoration_device())
+            {
+                default:
+                case spret::abort:
+                    return false;
+
+                case spret::success:
+                case spret::fail:
+                    practise_evoking(1);
+                    break;
+            }
+            break;
+			
+		case MISC_PAKELLAS_TELEPORT:
+			if (!item_ident(item, ISFLAG_CORE_INSTALLED))
+			{
+                mpr("This device needs core install.");
+                return false;
+            }
+			if (you.duration[DUR_CORE_COOLDOWN])
+			{
+                mpr("The core installed into rod is still overheated.");
+                return false;
+            }
+			if (!you_worship(GOD_PAKELLAS))
+			{
+				mpr("This brillant invention is only allow to followers of Pakellas.");
+				return false;
+			}
+			switch (_personal_teleporter())
+            {
+                default:
+                case spret::abort:
+                    return false;
+
+                case spret::success:
+                case spret::fail:
+                    practise_evoking(1);
+                    break;
+            }
+            break;
+			
+		case MISC_PAKELLAS_HASTE:
+			if (!item_ident(item, ISFLAG_CORE_INSTALLED))
+			{
+                mpr("This device needs core install.");
+                return false;
+            }
+			if (you.duration[DUR_CORE_COOLDOWN])
+			{
+                mpr("The core installed into rod is still overheated.");
+                return false;
+            }
+			if (!you_worship(GOD_PAKELLAS))
+			{
+				mpr("This brillant invention is only allow to followers of Pakellas.");
+				return false;
+			}
+			switch (_temporal_booster())
+            {
+                default:
+                case spret::abort:
+                    return false;
+
+                case spret::success:
+                case spret::fail:
+                    practise_evoking(1);
+                    break;
+            }
             break;
 
         default:

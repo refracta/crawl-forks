@@ -1033,6 +1033,9 @@ static string misc_type_name(int type, bool known)
 #if TAG_MAJOR_VERSION == 34
     case MISC_XOMS_CHESSBOARD:           return "removed chess piece";
 #endif
+	case MISC_PAKELLAS_HEAL:			 return "restoration device";
+	case MISC_PAKELLAS_TELEPORT:		 return "personal teleporter";
+	case MISC_PAKELLAS_HASTE:			 return "temporal booster";
 
     default:
         return "buggy miscellaneous item";
@@ -1608,6 +1611,9 @@ string item_def::name_aux(description_level_type desc, bool terse, bool ident,
     switch (base_type)
     {
     case OBJ_WEAPONS:
+		if (item_ident(*this, ISFLAG_CORE_INSTALLED) && you_worship(GOD_PAKELLAS))
+            buff << "core installed ";
+		
         buff << _name_weapon(*this, desc, terse, ident, with_inscription,
                              ignore_flags);
         break;
@@ -1735,7 +1741,10 @@ string item_def::name_aux(description_level_type desc, bool terse, bool ident,
             buff << " (curse)";
         break;
 
-    case OBJ_WANDS:
+    case OBJ_WANDS:	
+		if (item_ident(*this, ISFLAG_CORE_INSTALLED) && you_worship(GOD_PAKELLAS))
+            buff << "core installed ";
+		
         if (basename)
         {
             buff << "wand";
@@ -1903,6 +1912,9 @@ string item_def::name_aux(description_level_type desc, bool terse, bool ident,
     }
     case OBJ_MISCELLANY:
     {
+		if (item_ident(*this, ISFLAG_CORE_INSTALLED) && you_worship(GOD_PAKELLAS))
+            buff << "core installed ";
+		
         if (!dbname && item_typ == MISC_ZIGGURAT && you.zigs_completed > 0)
             buff << "+" << you.zigs_completed << " ";
 
@@ -1946,6 +1958,9 @@ string item_def::name_aux(description_level_type desc, bool terse, bool ident,
 #endif
 
     case OBJ_STAVES:
+		if (item_ident(*this, ISFLAG_CORE_INSTALLED) && you_worship(GOD_PAKELLAS))
+            buff << "core installed ";
+	
         if (know_curse && !terse)
         {
             if (cursed())
@@ -3571,9 +3586,6 @@ bool is_useless_item(const item_def &item, bool temp)
                        && regeneration_is_inhibited())
                    || (temp && you.species == SP_VAMPIRE
                        && you.hunger_state <= HS_STARVING);
-
-        case AMU_MANA_REGENERATION:
-            return you_worship(GOD_PAKELLAS);
 
         case RING_SEE_INVISIBLE:
             return you.innate_sinv();

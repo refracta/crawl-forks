@@ -44,7 +44,5 @@ enum item_status_flag_type  // per item flags: ie. ident status, cursed status
 
     ISFLAG_SEEN              = 0x20000000,  // has it been seen
     ISFLAG_SUMMONED          = 0x40000000,  // Item generated on a summon
-#if TAG_MAJOR_VERSION == 34
-    ISFLAG_UNUSED4           = 0x80000000,  // was ISFLAG_DROPPED_BY_ALLY
-#endif
+    ISFLAG_CORE_INSTALLED    = 0x80000000,  // was ISFLAG_DROPPED_BY_ALLY, now for New Pakellas
 };

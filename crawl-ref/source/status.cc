@@ -474,6 +474,59 @@ bool fill_status_info(int status, status_info& inf)
             = make_stringf("OmniV (%u)",
                            you.duration[DUR_OMNISCIENCE] / 10);
         break;
+		
+	case STATUS_CORE:
+		if (you_worship(GOD_PAKELLAS))
+		{
+		if (you.duration[DUR_CORE_COOLDOWN] && have_passive(passive_t::crystal_core))
+			{
+				inf.light_colour = RED;
+				inf.light_text   = "-Core";
+			}
+			
+		if (!you.duration[DUR_CORE_COOLDOWN])
+		{	
+			const int present_core
+				= you.props["max_crystal_core"].get_int() - you.props["used_crystal_core"].get_int();
+
+			if (present_core == 6)
+			{
+				inf.light_colour = LIGHTCYAN;
+				inf.light_text   = "Core(******)";
+			}
+			if (present_core == 5)
+			{
+				inf.light_colour = CYAN;
+				inf.light_text   = "Core(*****.)";
+			}
+			if (present_core == 4)
+			{
+				inf.light_colour = LIGHTBLUE;
+				inf.light_text   = "Core(****..)";
+			}
+			if (present_core == 3)
+			{
+				inf.light_colour = LIGHTBLUE;
+				inf.light_text   = "Core(***...)";
+			}
+			if (present_core == 2)
+			{
+				inf.light_colour = BLUE;
+				inf.light_text   = "Core(**....)";
+			}
+			if (present_core == 1)
+			{
+				inf.light_colour = BLUE;
+				inf.light_text   = "Core(*.....)";
+			}
+			if (present_core == 0)
+			{
+				inf.light_colour = DARKGREY;
+				inf.light_text   = "Core(......)";
+			}
+		}
+		}
+        break;
 	
 	case DUR_ICY_ARMOUR:
         inf.light_text

@@ -1178,6 +1178,9 @@ int player_mp_regen()
 	
 	if (player_equip_unrand(UNRAND_WIZ_BUCKLER))
 		regen_amount += 25;
+	
+	if (you.duration[DUR_MPREGEN_PAKELLAS])
+		regen_amount += 100;
 
     return regen_amount;
 }
@@ -1847,7 +1850,9 @@ int player_energy()
     int pe = 0;
 
     // Staves
-    pe += you.wearing(EQ_STAFF, STAFF_ENERGY);
+	if (you.wearing(EQ_STAFF, STAFF_ENERGY)
+			&& !player_under_penance(GOD_PAKELLAS))
+		pe += you.wearing(EQ_STAFF, STAFF_ENERGY);
 
     return pe;
 }
@@ -2303,8 +2308,11 @@ int player_armour_shield_spell_penalty()
  */
 int player_wizardry(spell_type spell)
 {
-    return you.wearing(EQ_RINGS, RING_WIZARDRY)
-           + you.wearing(EQ_STAFF, STAFF_WIZARDRY);
+	if (player_under_penance(GOD_PAKELLAS))
+		return you.wearing(EQ_RINGS, RING_WIZARDRY);
+	else
+		return you.wearing(EQ_RINGS, RING_WIZARDRY)
+			+ you.wearing(EQ_STAFF, STAFF_WIZARDRY);
 }
 
 /**
@@ -4055,7 +4063,7 @@ bool player_regenerates_mp()
     if (you.spirit_shield() && you.species == SP_DEEP_DWARF)
         return false;
     // Pakellas blocks MP regeneration.
-    if (have_passive(passive_t::no_mp_regen) || player_under_penance(GOD_PAKELLAS))
+    if (have_passive(passive_t::no_mp_regen))
         return false;
     return true;
 }

@@ -48,6 +48,8 @@ enum object_selector
     OSEL_DIVINE_RECHARGE         = -18,
 #endif
     OSEL_UNCURSED_WORN_RINGS     = -19,
+	OSEL_CORE_INSTALL			 = -20, // addedcrawl : New Pakellas
+	OSEL_CORE_INSTALLED			 = -21, // addedcrawl : New Pakellas
 };
 
 /// Behaviour flags for prompt_invent_item().

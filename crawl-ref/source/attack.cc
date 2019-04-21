@@ -1551,7 +1551,8 @@ bool attack::apply_damage_brand(const char *what)
             || attacker->stat_hp() == attacker->stat_maxhp()
             || attacker->is_player() && you.duration[DUR_DEATHS_DOOR]
             || x_chance_in_y(2, 5)
-               && !is_unrandom_artefact(*weapon, UNRAND_LEECH))
+               && !is_unrandom_artefact(*weapon, UNRAND_LEECH)
+			   && !item_ident(*weapon, ISFLAG_CORE_INSTALLED))
         {
             break;
         }
@@ -1565,7 +1566,14 @@ bool attack::apply_damage_brand(const char *what)
             obvious_effect = true;
 
             if (attacker->is_player())
+			{
+				if (item_ident(*weapon, ISFLAG_CORE_INSTALLED)
+					&& !player_under_penance(GOD_PAKELLAS))
+				{
+					inc_mp(hp_boost);
+				}	
                 canned_msg(MSG_GAIN_HEALTH);
+			}
             else if (attacker_visible)
             {
                 if (defender->is_player())
