@@ -476,7 +476,7 @@ void zap_wand(int slot)
 		}
 		
 		simple_god_message("'s crystal core provided additional power!");
-		lose_piety(3);
+		lose_piety(2);
 		
 		practise_evoking(1);
 		count_action(CACT_EVOKE, EVOC_WAND);
@@ -509,7 +509,7 @@ void zap_wand(int slot)
 	{	
 		simple_god_message("'s crystal core provided additional power!");
 		power = power*1.2;
-		lose_piety(3);
+		lose_piety(2);
 	}
 	else
 	{
@@ -683,6 +683,8 @@ static bool _box_of_beasts(item_def &box)
 		if (item_ident(box, ISFLAG_CORE_INSTALLED) && you_worship(GOD_PAKELLAS))
 		{
 			simple_god_message("'s crystal core protected the box from breaking!");
+			you.increase_duration(DUR_CORE_COOLDOWN, 10);
+			lose_piety(4);
 		}
 		else
 		{	
@@ -782,6 +784,8 @@ static bool _sack_of_spiders(item_def &sack)
 			if (item_ident(sack, ISFLAG_CORE_INSTALLED) && you_worship(GOD_PAKELLAS))
 			{
 				simple_god_message("'s crystal core protected the sack from breaking!");
+				you.increase_duration(DUR_CORE_COOLDOWN, 10);
+				lose_piety(4);
 			}
 			else
 			{
@@ -1947,11 +1951,21 @@ bool evoke_item(int slot, bool check_range)
             break;
 
         case MISC_BOX_OF_BEASTS:
+			if (you.duration[DUR_CORE_COOLDOWN] && item_ident(item, ISFLAG_CORE_INSTALLED))
+			{
+                mpr("The core installed into box is still overheated.");
+                return false;
+            }
             if (_box_of_beasts(item))
                 practise_evoking(1);
             break;
 
         case MISC_SACK_OF_SPIDERS:
+			if (you.duration[DUR_CORE_COOLDOWN] && item_ident(item, ISFLAG_CORE_INSTALLED))
+			{
+                mpr("The core installed into sack is still overheated.");
+                return false;
+            }
             if (_sack_of_spiders(item))
                 practise_evoking(1);
             break;
