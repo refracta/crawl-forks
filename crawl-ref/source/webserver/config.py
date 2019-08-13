@@ -115,6 +115,18 @@ games = OrderedDict([
         client_path = "/home/crawl/games/lichcrawl/crawl-ref/source/webserver/game_data/",
         morgue_url = "gnollcrawl.tk/lichcrawl/%n/morgues/",
         send_json_options = True)),
+    ("dcss-boggartcrawl", dict(
+        name = "BoggartCrawl",
+        crawl_binary = "/home/crawl/games/boggartcrawl/crawl-ref/source/crawl",
+        rcfile_path = "/home/crawl/rcs/boggartcrawl/%n",
+        macro_path = "/home/crawl/rcs/boggartcrawl/%n",
+        morgue_path = "/home/crawl/rcs/boggartcrawl/%n/morgues",
+        inprogress_path = "/home/crawl/inprogress/boggartcrawl/%n/running",
+        ttyrec_path = "/home/crawl/rcs/boggartcrawl/%n/ttyrecs",
+        socket_path = "/home/crawl/rcs/boggartcrawl/%n",
+        client_path = "/home/crawl/games/boggartcrawl/crawl-ref/source/webserver/game_data/",
+        morgue_url = "gnollcrawl.tk/boggartcrawl/%n/morgues/",
+        send_json_options = True)),
 #    ("dcss-crawllight", dict(
 #        name = "CrawlLight",
 #        crawl_binary = "/home/crawl/games/crawllight/crawl-ref/source/crawl",

@@ -28,6 +28,10 @@ LIRCDIR=/home/crawl/rcs/lichcrawl/$1
 LIINPROGRESSDIR=/home/crawl/inprogress/lichcrawl/$1/running
 LITTYRECDIR=/home/crawl/rcs/lichcrawl/$1/ttyrecs
 
+BRCDIR=/home/crawl/rcs/boggartcrawl/$1
+BINPROGRESSDIR=/home/crawl/inprogress/boggartcrawl/$1/running
+BTTYRECDIR=/home/crawl/rcs/boggartcrawl/$1/ttyrecs
+
 DEFAULT_RC=../settings/init.txt
 PLAYERNAME=$1
 
@@ -52,6 +56,9 @@ mkdir -p $OTTYRECDIR
 mkdir -p $LIRCDIR
 mkdir -p $LIINPROGRESSDIR
 mkdir -p $LITTYRECDIR
+mkdir -p $BRCDIR
+mkdir -p $BINPROGRESSDIR
+mkdir -p $BTTYRECDIR
 
 if [ ! -f ${RCDIR}/${PLAYERNAME}.rc ]; then
     cp ${DEFAULT_RC} ${RCDIR}/${PLAYERNAME}.rc
@@ -73,4 +80,7 @@ if [ ! -f ${ORCDIR}/${PLAYERNAME}.rc ]; then
 fi
 if [ ! -f ${LIRCDIR}/${PLAYERNAME}.rc ]; then
     cp ${DEFAULT_RC} ${LIRCDIR}/${PLAYERNAME}.rc
+fi
+if [ ! -f ${BRCDIR}/${PLAYERNAME}.rc ]; then
+    cp ${DEFAULT_RC} ${BRCDIR}/${PLAYERNAME}.rc
 fi
