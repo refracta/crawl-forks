@@ -4041,9 +4041,9 @@ TILEG_ERROR,
 
 {
     SPELL_INFESTATION, "Infestation", "",
-    spschool::necromancy,
+    spschool::poison | spschool::transmutation,
     spflag::target | spflag::unclean,
-    8,
+    6,
     200,
     LOS_RADIUS, LOS_RADIUS,
     8, 4,

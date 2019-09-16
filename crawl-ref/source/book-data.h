@@ -125,6 +125,7 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_IRRADIATE,
     SPELL_CIGOTUVIS_DEGENERATION,
     SPELL_STATUE_FORM,
+    SPELL_INFESTATION,
     SPELL_HYDRA_FORM,
     SPELL_DRAGON_FORM,
 },
@@ -326,6 +327,7 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_DARKNESS,
     SPELL_SHADOW_CREATURES,
     SPELL_BORGNJORS_VILE_CLUTCH,
+    SPELL_INFESTATION,
 },
 
 {   // Book of Alchemy
@@ -359,10 +361,10 @@ static const vector<spell_type> spellbook_templates[] =
 },
 
 {   // Necronomicon
+    SPELL_INFESTATION,
     SPELL_HAUNT,
     SPELL_BORGNJORS_REVIVIFICATION,
     SPELL_DEATHS_DOOR,
-    SPELL_INFESTATION,
     SPELL_NECROMUTATION,
 },
 
