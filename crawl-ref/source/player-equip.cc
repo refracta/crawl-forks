@@ -161,6 +161,8 @@ void equip_effect(equipment_type slot, int item_slot, bool unmeld, bool msg)
     if (msg)
         _equip_use_warning(item);
 
+    const interrupt_block block_unmeld_interrupts(unmeld);
+
     if (slot >= EQ_CLOAK && slot <= EQ_BODY_ARMOUR 
         || (item.base_type == OBJ_SHIELDS && !is_hybrid(item.sub_type)))
         _equip_armour_effect(item, unmeld, slot);
@@ -176,6 +178,8 @@ void unequip_effect(equipment_type slot, int item_slot, bool meld, bool msg)
     equipment_type eq = get_item_slot(item);
 
     _assert_valid_slot(eq, slot);
+
+    const interrupt_block block_meld_interrupts(meld);
 
     if (slot >= EQ_CLOAK && slot <= EQ_BODY_ARMOUR 
         || (item.base_type == OBJ_SHIELDS && is_hybrid(item.sub_type)))
