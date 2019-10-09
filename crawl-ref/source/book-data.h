@@ -50,6 +50,7 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_IGNITE_POISON,
     SPELL_FIREBALL,
     SPELL_BOLT_OF_FIRE,
+    SPELL_STARBURST,
     SPELL_RING_OF_FLAMES,
     SPELL_IGNITION,
 },
