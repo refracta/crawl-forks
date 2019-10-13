@@ -944,7 +944,7 @@ void display_mutations()
 #endif
             bottom->set_text(_vampire_Ascreen_footer(c));
         } else
-            done = !vbox->on_event(ev);
+            done = !switcher->current_widget()->on_event(ev);
         return true;
     });
 
