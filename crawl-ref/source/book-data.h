@@ -31,9 +31,10 @@ static const vector<spell_type> spellbook_templates[] =
 
 {   // Book of Frost
     SPELL_FREEZE,
-    SPELL_THROW_FROST,
+    SPELL_THROW_FROST, // BCADDO: Replace this with something.
     SPELL_OZOCUBUS_ARMOUR,
     SPELL_THROW_ICICLE,
+    SPELL_HAILSTORM,
     SPELL_SUMMON_ICE_BEAST,
 },
 

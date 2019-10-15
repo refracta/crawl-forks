@@ -4261,6 +4261,17 @@ TILEG_ERROR,
     TILEG_FLAME_TONGUE,
 },
 
+{
+    SPELL_HAILSTORM, "Hailstorm",
+    spschool::conjuration | spschool::ice,
+    spflag::area,
+    4,
+    100,
+    3, 3, // Range special-cased in describe-spells
+    4, 0,
+    TILEG_THROW_ICICLE,
+},
+
 
 {
     SPELL_NO_SPELL, "nonexistent spell",
