@@ -396,7 +396,7 @@ static bool _reroll_random(newgame_def& ng)
 #endif
 #endif
     title_hbox->add_child(make_shared<Text>(prompt));
-    title_hbox->align_cross = Widget::CENTER;
+    title_hbox->set_cross_alignment(Widget::CENTER);
     title_hbox->set_margin_for_sdl(0, 0, 20, 0);
     title_hbox->set_margin_for_crt(0, 0, 1, 0);
 
@@ -624,7 +624,7 @@ static void _choose_name(newgame_def& ng, newgame_def& choice)
 #endif
 #endif
     title_hbox->add_child(make_shared<Text>(title));
-    title_hbox->align_cross = Widget::CENTER;
+    title_hbox->set_cross_alignment(Widget::CENTER);
     title_hbox->set_margin_for_sdl(0, 0, 20, 0);
     title_hbox->set_margin_for_crt(0, 0, 1, 0);
 
@@ -660,7 +660,7 @@ static void _choose_name(newgame_def& ng, newgame_def& choice)
                 formatted_string("That's a silly name!", LIGHTRED));
         err->set_margin_for_sdl(0, 0, 0, 10);
         auto box = make_shared<Box>(Box::HORZ);
-        box->align_cross = Widget::CENTER;
+        box->set_cross_alignment(Widget::CENTER);
         box->add_child(err);
 
         ok_switcher->add_child(btn);
@@ -1140,7 +1140,7 @@ public:
     {
         m_vbox = make_shared<Box>(Box::VERT);
         m_vbox->_set_parent(this);
-        m_vbox->align_cross = Widget::Align::STRETCH;
+        m_vbox->set_cross_alignment(Widget::Align::STRETCH);
 
         welcome.textcolour(BROWN);
         welcome.cprintf("%s", _welcome(m_ng).c_str());
@@ -1242,8 +1242,8 @@ protected:
 
 #ifdef USE_TILE
         auto hbox = make_shared<Box>(Box::HORZ);
-        hbox->align_cross = Widget::Align::CENTER;
-        hbox->align_main = Widget::Align::STRETCH;
+        hbox->set_cross_alignment(Widget::Align::CENTER);
+        hbox->set_main_alignment(Widget::Align::STRETCH);
         auto tile = make_shared<Image>();
         tile->set_tile(item_tile);
         tile->set_margin_for_sdl(0, 6, 0, 0);
@@ -1756,7 +1756,7 @@ static void _construct_weapon_menu(const newgame_def& ng,
         const auto& choice = choices[i];
 
         auto hbox = make_shared<Box>(Box::HORZ);
-        hbox->align_cross = Widget::Align::CENTER;
+        hbox->set_cross_alignment(Widget::Align::CENTER);
         hbox->set_margin_for_sdl(2, 10, 2, 2);
 
 #ifdef USE_TILE
@@ -1796,13 +1796,15 @@ static void _construct_weapon_menu(const newgame_def& ng,
 
         label->set_text(formatted_string(text, fg));
 
-        hbox->align_main = Widget::Align::STRETCH;
+        hbox->set_main_alignment(Widget::Align::STRETCH);
         string apt_text = "";
         int job_mod =                          ng.job == JOB_MUMMY      ? -2 :
                       ng.job == JOB_DEMIGOD || ng.job == JOB_DEMONSPAWN ? -1 : 0; 
         if (choice.skill != SK_FIGHTING)
             apt_text = make_stringf("(%+d apt)",
                     species_apt(choice.skill, ng.species) + job_mod);
+        string apt_text = make_stringf("(%+d apt)",
+                species_apt(choice.skill, ng.species));
         auto suffix = make_shared<Text>(formatted_string(apt_text, fg));
         hbox->add_child(suffix);
 
@@ -1865,12 +1867,12 @@ static bool _prompt_weapon(const newgame_def& ng, newgame_def& ng_choice,
 #endif
     auto title = make_shared<Text>(formatted_string(_welcome(ng), BROWN));
     title_hbox->add_child(title);
-    title_hbox->align_cross = Widget::CENTER;
+    title_hbox->set_cross_alignment(Widget::CENTER);
     title_hbox->set_margin_for_sdl(0, 0, 20, 0);
     title_hbox->set_margin_for_crt(0, 0, 1, 0);
 
     auto vbox = make_shared<Box>(Box::VERT);
-    vbox->align_cross = Widget::Align::STRETCH;
+    vbox->set_cross_alignment(Widget::Align::STRETCH);
     vbox->add_child(title_hbox);
 
     auto prompt = make_shared<Text>(formatted_string(job_custom_stats(ng.job) ? "You have a choice of base stats."
@@ -2193,7 +2195,7 @@ static void _construct_gamemode_map_menu(const mapref_vector& maps,
 
 #ifdef USE_TILE
         auto hbox = make_shared<Box>(Box::HORZ);
-        hbox->align_cross = Widget::Align::CENTER;
+        hbox->set_cross_alignment(Widget::Align::CENTER);
         auto tile = make_shared<Image>();
         tile->set_tile(tile_for_map_name(map_name));
         tile->set_margin_for_sdl(0, 6, 0, 0);
@@ -2287,7 +2289,7 @@ static void _prompt_gamemode_map(newgame_def& ng, newgame_def& ng_choice,
             ng_choice.type == GAME_TYPE_TUTORIAL ? "lessons" : "maps");
 
     auto vbox = make_shared<Box>(Box::VERT);
-    vbox->align_cross = Widget::Align::STRETCH;
+    vbox->set_cross_alignment(Widget::Align::STRETCH);
     vbox->add_child(make_shared<Text>(welcome));
 
     auto main_items = make_shared<OuterMenu>(true, 1, maps.size());
