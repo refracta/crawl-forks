@@ -598,11 +598,10 @@ static const struct spell_desc spelldata[] =
     TILEG_BLINK,
 },
 
-#if TAG_MAJOR_VERSION == 34
 {
-    SPELL_ISKENDERUNS_MYSTIC_BLAST, "Iskenderun's Mystic Blast",
-    spschool::ice,
-    spflag::dir_or_target | spflag::needs_tracer,
+    SPELL_MUSE_OAMS_AIR_BLAST, "Muse Oam's Air Blast",
+    spschool::air | spschool::translocation,
+    spflag::area,
     4,
     100,
     6, 6,
@@ -610,6 +609,7 @@ static const struct spell_desc spelldata[] =
     TILEG_ISKENDERUNS_MYSTIC_BLAST,
 },
 
+#if TAG_MAJOR_VERSION == 34
 {
     SPELL_SUMMON_SWARM, "Summon Swarm",
     spschool::summoning,

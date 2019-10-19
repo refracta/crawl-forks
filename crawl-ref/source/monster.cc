@@ -4936,7 +4936,7 @@ void monster::load_ghost_spells()
     {
         if (spells[i].spell == SPELL_MAGIC_DART)
             spells[i].spell = SPELL_STING;
-        if (spells[i].spell == SPELL_ISKENDERUNS_MYSTIC_BLAST)
+        if (spells[i].spell == SPELL_MUSE_OAMS_AIR_BLAST)
             spells[i].spell = SPELL_THROW_ICICLE;
         if (spells[i].spell == SPELL_EXCRUCIATING_WOUNDS)
             spells[i].spell = SPELL_AGONY;
