@@ -1053,14 +1053,10 @@ const char* deck_rarity_name(deck_rarity_type rarity)
     }
 }
 
-static string misc_type_name(int type, bool known)
+static string misc_type_name(int type)
 {
     if (is_deck_type(type, true))
-    {
-        if (!known)
-            return "deck of cards";
         return deck_name(type);
-    }
 
     switch (static_cast<misc_item_type>(type))
     {
@@ -1320,7 +1316,7 @@ string sub_type_string(const item_def &item, bool known)
 #if TAG_MAJOR_VERSION == 34
     case OBJ_RODS:   return "removed rod";
 #endif
-    case OBJ_MISCELLANY: return misc_type_name(sub_type, known);
+    case OBJ_MISCELLANY: return misc_type_name(sub_type);
     // these repeat as base_type_string
     case OBJ_ORBS: return "orb of Zot";
     case OBJ_CORPSES: return "corpse";
@@ -1488,9 +1484,9 @@ static void _name_deck(const item_def &deck, description_level_type desc,
         buff << deck_rarity_name(deck.deck_rarity) << ' ';
 
     if (deck.sub_type == MISC_DECK_UNKNOWN)
-        buff << misc_type_name(MISC_DECK_OF_ESCAPE, false);
+        buff << misc_type_name(MISC_DECK_OF_ESCAPE);
     else
-        buff << misc_type_name(deck.sub_type, know_type);
+        buff << misc_type_name(deck.sub_type);
 
     // name overriden, not a stacked deck, not a deck that's been drawn from
     if (dbname || !top_card_is_known(deck) && deck.used_count == 0)
@@ -2135,7 +2131,7 @@ string item_def::name_aux(description_level_type desc, bool terse, bool ident,
         if (!dbname && item_typ == MISC_ZIGGURAT && you.zigs_completed > 0)
             buff << "+" << you.zigs_completed << " ";
 
-        buff << misc_type_name(item_typ, know_type);
+        buff << misc_type_name(item_typ);
 
         if (is_xp_evoker(*this) && !dbname && !evoker_charges(sub_type))
             buff << " (inert)";

@@ -565,9 +565,9 @@ move_again:
             // Remove ROLLING and add DAZED
             _iood_stop(mon);
             _iood_stop(*mons);
-            if (!mon.check_clarity(false))
+            if (!mon.check_clarity())
                 mon.add_ench(ENCH_CONFUSION);
-            if (!mons->check_clarity(false))
+            if (!mons->check_clarity())
                 mons->add_ench(ENCH_CONFUSION);
             return true;
         }

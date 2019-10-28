@@ -46,8 +46,7 @@ public:
 public:
     melee_attack(actor *attacker, actor *defender,
                  int attack_num = -1, int effective_attack_num = -1,
-                 bool is_cleaving = false,
-                 coord_def attack_pos = coord_def(0, 0));
+                 bool is_cleaving = false);
 
     // Applies attack damage and other effects.
     bool attack();
@@ -72,7 +71,7 @@ private:
     bool using_weapon() const override;
     int weapon_damage() override;
     int calc_mon_to_hit_base() override;
-    int apply_damage_modifiers(int damage, int damage_max) override;
+    int apply_damage_modifiers(int damage) override;
     int calc_damage() override;
 
     /* Attack effects */
@@ -82,7 +81,7 @@ private:
     void rot_defender(int amount);
 
     bool consider_decapitation(int damage_done, int damage_type = -1);
-    bool attack_chops_heads(int damage_done, int damage_type, int wpn_brand);
+    bool attack_chops_heads(int damage_done, int damage_type);
     void decapitate(int dam_type);
 
     /* Axe cleaving */

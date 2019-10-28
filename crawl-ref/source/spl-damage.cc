@@ -477,7 +477,7 @@ static void _los_spell_pre_damage_monsters(const actor* agent,
         counted_monster_list mons_list =
             _counted_monster_list_from_vector(seen_monsters);
         const string message = make_stringf("%s %s %s.",
-                mons_list.describe(DESC_THE, true).c_str(),
+                mons_list.describe(DESC_THE).c_str(),
                 conjugate_verb("be", mons_list.count() > 1).c_str(), verb);
         if (strwidth(message) < get_number_of_cols() - 2)
             mpr(message);
@@ -533,7 +533,7 @@ static int _los_spell_damage_player(actor* agent, bolt &beam,
 }
 
 static int _los_spell_damage_monster(actor* agent, monster &target,
-                                     bolt &beam, bool actual, bool wounds)
+                                     bolt &beam, bool actual)
 {
 
     beam.thrower = (agent && agent->is_player()) ? KILL_YOU :
@@ -585,7 +585,7 @@ static int _los_spell_damage_monster(actor* agent, monster &target,
 
 
 static spret _cast_los_attack_spell(spell_type spell, int pow,
-                                         actor* agent, actor* defender,
+                                         actor* agent, actor* /*defender*/,
                                          bool actual, bool fail,
                                          int* damage_done)
 {
@@ -758,8 +758,7 @@ static spret _cast_los_attack_spell(spell_type spell, int pow,
         if (!m->alive())
             continue;
 
-        int this_damage = _los_spell_damage_monster(agent, *m, beam, actual,
-                                                    m != defender);
+        int this_damage = _los_spell_damage_monster(agent, *m, beam, actual);
         total_damage += this_damage;
 
         if (!actual && mons)
@@ -1351,7 +1350,7 @@ static int _shatter_monsters(coord_def where, int pow, actor *agent, bool chaos)
     return damage;
 }
 
-static int _shatter_walls(coord_def where, int pow, actor *agent)
+static int _shatter_walls(coord_def where, int /*pow*/, actor *agent)
 {
     int chance = 0;
 
@@ -2354,7 +2353,7 @@ spret cast_ignite_poison(actor* agent, int pow, bool fail, bool tracer)
     return spret::success;
 }
 
-static void _ignition_square(const actor *agent, bolt beam, coord_def square, bool center)
+static void _ignition_square(const actor */*agent*/, bolt beam, coord_def square, bool center)
 {
     // HACK: bypass visual effect
     beam.target = square;

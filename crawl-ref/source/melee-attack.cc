@@ -73,7 +73,7 @@
 */
 melee_attack::melee_attack(actor *attk, actor *defn,
                            int attack_num, int effective_attack_num,
-                           bool is_cleaving, coord_def attack_pos)
+                           bool is_cleaving)
     :  // Call attack's constructor
     ::attack(attk, defn),
 
@@ -2343,9 +2343,7 @@ bool melee_attack::consider_decapitation(int dam, int damage_type)
 {
     const int dam_type = (damage_type != -1) ? damage_type :
                                                attacker->damage_type();
-    const brand_type wpn_brand = attacker->damage_brand();
-
-    if (!attack_chops_heads(dam, dam_type, wpn_brand))
+    if (!attack_chops_heads(dam, dam_type))
         return false;
 
     decapitate(dam_type);
@@ -2361,14 +2359,14 @@ bool melee_attack::consider_decapitation(int dam, int damage_type)
     const int limit = defender->type == MONS_LERNAEAN_HYDRA ? 27
                                                             : MAX_HYDRA_HEADS;
 
-    if (wpn_brand == SPWPN_MOLTEN)
+    if (attacker->damage_brand() == SPWPN_MOLTEN)
     {
         if (defender_visible)
             mpr("The heat cauterises the wound!");
         return false;
     }
 
-    if (wpn_brand == SPWPN_ACID)
+    if (attacker->damage_brand() == SPWPN_ACID)
     {
         if (defender_visible)
             mpr("The acid burns away any new growth!");
@@ -2414,7 +2412,7 @@ static bool actor_can_lose_heads(const actor* defender)
  * @param wpn_brand     The brand_type of the attack.
  * @return              Whether the attack will chop off a head.
  */
-bool melee_attack::attack_chops_heads(int dam, int dam_type, int wpn_brand)
+bool melee_attack::attack_chops_heads(int dam, int dam_type)
 {
     // hydras and hydra-like things only.
     if (!actor_can_lose_heads(defender))
@@ -3727,7 +3725,7 @@ void melee_attack::mons_do_eyeball_confusion()
             mprf("The eyeballs on your body gaze at %s.",
                  mon->name(DESC_THE).c_str());
 
-            if (!mon->check_clarity(false))
+            if (!mon->check_clarity())
             {
                 mon->add_ench(mon_enchant(ENCH_CONFUSION, 0, &you,
                                           30 + random2(100)));
@@ -4171,7 +4169,7 @@ int melee_attack::calc_mon_to_hit_base()
  * Add modifiers to the base damage.
  * Currently only relevant for monsters.
  */
-int melee_attack::apply_damage_modifiers(int damage, int damage_max)
+int melee_attack::apply_damage_modifiers(int damage)
 {
     ASSERT(attacker->is_monster());
     monster *as_mon = attacker->as_monster();

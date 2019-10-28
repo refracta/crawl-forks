@@ -22,7 +22,7 @@ void free_stationary_net(int item_index);
 
 int get_trapping_net(const coord_def& where, bool trapped = true);
 const char* held_status(actor *act = nullptr);
-bool monster_caught_in_net(monster* mon, actor *agent);
+bool monster_caught_in_net(monster* mon);
 bool player_caught_in_net();
 void clear_trapping_net();
 void check_net_will_hold_monster(monster* mon);
@@ -35,7 +35,7 @@ trap_def* trap_at(const coord_def& where);
 trap_type get_trap_type(const coord_def& where);
 
 bool is_valid_shaft_level();
-level_id generic_shaft_dest(coord_def pos, bool known);
+level_id generic_shaft_dest(level_id place);
 
 int       trap_rate_for_place();
 trap_type random_trap_for_place();

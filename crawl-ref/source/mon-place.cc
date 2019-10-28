@@ -2740,7 +2740,7 @@ public:
         return travel_pathfind::pathfind(RMODE_CONNECTIVITY);
     }
 
-    bool path_flood(const coord_def &c, const coord_def &dc) override
+    bool path_flood(const coord_def &/*c*/, const coord_def &dc) override
     {
         if (best_distance && traveled_distance > best_distance)
             return true;

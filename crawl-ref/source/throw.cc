@@ -436,7 +436,7 @@ static bool _setup_missile_beam(const actor *agent, bolt &beam, item_def &item,
     return false;
 }
 
-static void _throw_noise(actor* act, const bolt &pbolt, const item_def &ammo, const item_def &launcher)
+static void _throw_noise(actor* act, const item_def &ammo, const item_def &launcher)
 {
     ASSERT(act); // XXX: change to actor &act
 
@@ -865,10 +865,9 @@ bool throw_it(bolt &pbolt, int throw_2, dist *target)
         canned_msg(MSG_EMPTY_HANDED_NOW);
 
     if (you.weapon(0) && is_range_weapon(*you.weapon(0)))
-        _throw_noise(&you, pbolt, *thrown, *you.weapon(0));
+        _throw_noise(&you, *thrown, *you.weapon(0));
 
     // BCAD NOTE: If we ever allow dual wielding ranged weapons this will take some rework.
-
     // ...any monster nearby can see that something has been thrown, even
     // if it didn't make any noise.
     alert_nearby_monsters();
@@ -1019,8 +1018,9 @@ bool mons_throw(monster* mons, bolt &beam, int msl, bool teleport)
         mpr(msg);
     }
 
-    if (projected == launch_retval::LAUNCHED)
-       _throw_noise(mons, beam, item, *mons->mslot_item(MSLOT_WEAPON));
+    _throw_noise(mons, item, *mons->mslot_item(MSLOT_WEAPON));
+
+    beam.drop_item = !returning;
 
     // Redraw the screen before firing, in case the monster just
     // came into view and the screen hasn't been updated yet.
@@ -1041,7 +1041,7 @@ bool mons_throw(monster* mons, bolt &beam, int msl, bool teleport)
     return true;
 }
 
-bool thrown_object_destroyed(item_def *item, const coord_def& where)
+bool thrown_object_destroyed(item_def *item)
 {
     ASSERT(item != nullptr);
 

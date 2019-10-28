@@ -1516,7 +1516,7 @@ bool evoke_check(int slot, bool quiet)
     return (item_is_evokable(you.inv[slot]));
 }
 
-bool evoke_item(int slot, bool check_range)
+bool evoke_item(int slot)
 {
     if (!evoke_check(slot))
         return false;

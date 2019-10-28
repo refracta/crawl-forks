@@ -430,7 +430,7 @@ bool ranged_attack::handle_phase_hit()
         if (defender->is_player())
             player_caught_in_net();
         else
-            monster_caught_in_net(defender->as_monster(), attacker);
+            monster_caught_in_net(defender->as_monster());
     }
     else
     {
@@ -535,7 +535,7 @@ int ranged_attack::calc_mon_to_hit_base()
     return (5 + attacker->get_hit_dice()) * hd_mult / 6;
 }
 
-int ranged_attack::apply_damage_modifiers(int damage, int damage_max)
+int ranged_attack::apply_damage_modifiers(int damage)
 {
     ASSERT(attacker->is_monster());
     if (attacker->as_monster()->is_archer())

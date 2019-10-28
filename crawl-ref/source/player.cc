@@ -1784,7 +1784,7 @@ int player_res_poison(bool calc_unid, bool temp, bool items)
     return rp;
 }
 
-int player_res_sticky_flame(bool calc_unid, bool temp, bool items)
+int player_res_sticky_flame(bool calc_unid, bool /*temp*/, bool items)
 {
     int rsf = 0;
 
@@ -5171,7 +5171,7 @@ void fly_player(int pow, bool already_flying)
 }
 
 // Forcing the player to land; via grasping roots or petrification.
-void force_land_player(actor * foe, bool damage)
+void force_land_player(actor */*foe*/, bool damage)
 {
     if (you.duration[DUR_FLIGHT] || you.attribute[ATTR_PERM_FLIGHT])
     {
@@ -6457,7 +6457,7 @@ bool player::undead_or_demonic() const
     return undead_state() || species == SP_DEMONSPAWN || char_class == JOB_DEMONSPAWN;
 }
 
-bool player::is_holy(bool check_spells) const
+bool player::is_holy(bool /*check_spells*/) const
 {
     return bool(holiness() & MH_HOLY);
 }
@@ -6856,7 +6856,7 @@ reach_type player::reach_range() const
     return REACH_NONE;
 }
 
-monster_type player::mons_species(bool zombie_base) const
+monster_type player::mons_species(bool /*zombie_base*/) const
 {
     return player_species_to_mons_species(species);
 }
@@ -6924,7 +6924,7 @@ void player::drain_stat(stat_type s, int amount)
     lose_stat(s, amount);
 }
 
-bool player::rot(actor *who, int amount, bool quiet, bool /*no_cleanup*/)
+bool player::rot(actor */*who*/, int amount, bool quiet, bool /*no_cleanup*/)
 {
     ASSERT(!crawl_state.game_is_arena());
 
@@ -7001,7 +7001,7 @@ bool player::corrode_equipment(const char* corrosion_source, int degree)
  * @param hurt_msg A message to display when dealing damage.
  */
 void player::splash_with_acid(const actor* evildoer, int acid_strength,
-                              bool allow_corrosion, const char* hurt_msg)
+                              bool allow_corrosion, const char* /*hurt_msg*/)
 {
     if (allow_corrosion && binomial(3, acid_strength + 1, 30))
         corrode_equipment();
@@ -7022,12 +7022,12 @@ void player::splash_with_acid(const actor* evildoer, int acid_strength,
     }
 }
 
-bool player::drain_exp(actor *who, bool quiet, int pow)
+bool player::drain_exp(actor */*who*/, bool quiet, int pow)
 {
     return drain_player(pow, !quiet);
 }
 
-void player::confuse(actor *who, int str)
+void player::confuse(actor */*who*/, int str)
 {
     confuse_player(str);
 }
@@ -7129,21 +7129,21 @@ void player::petrify(actor *who, bool force)
     mprf(MSGCH_WARN, "You are slowing down.");
 }
 
-bool player::fully_petrify(actor *foe, bool quiet)
+bool player::fully_petrify(actor */*foe*/, bool /*quiet*/)
 {
     duration[DUR_PETRIFIED] = 60
                         + random2(40);
     redraw_evasion = true;
     mpr("You have turned to stone.");
 
-    force_land_player(foe, true);
+    force_land_player(nullptr, true);
 
     end_searing_ray();
 
     return true;
 }
 
-void player::slow_down(actor *foe, int str)
+void player::slow_down(actor */*foe*/, int str)
 {
     ::slow_player(str);
 }
@@ -7932,7 +7932,7 @@ bool player::made_nervous_by(const monster *mons)
     return false;
 }
 
-void player::weaken(actor *attacker, int pow)
+void player::weaken(actor */*attacker*/, int pow)
 {
     if (!duration[DUR_WEAK])
         mprf(MSGCH_WARN, "You feel your attacks grow feeble.");

@@ -362,10 +362,6 @@ static void _give_basic_knowledge()
     // Removed item types are handled in _set_removed_types_as_identified.
 }
 
-static void _setup_normal_game();
-static void _setup_tutorial(const newgame_def& ng);
-static void _setup_sprint(const newgame_def& ng);
-static void _setup_hints();
 static void _setup_generic(const newgame_def& ng);
 
 // Initialise a game based on the choice stored in ng.
@@ -396,16 +392,13 @@ void setup_game(const newgame_def& ng)
     {
     case GAME_TYPE_NORMAL:
     case GAME_TYPE_CUSTOM_SEED:
-        _setup_normal_game();
-        break;
     case GAME_TYPE_TUTORIAL:
-        _setup_tutorial(ng);
+        make_hungry(0, true);
         break;
     case GAME_TYPE_SPRINT:
-        _setup_sprint(ng);
         break;
     case GAME_TYPE_HINTS:
-        _setup_hints();
+        init_hints();
         break;
     case GAME_TYPE_ARENA:
     default:
@@ -467,38 +460,6 @@ void note_equipment()
     const string combined_str = you.your_name + " set off with "
         + equip_str + spell_str + library_str;
     take_note(Note(NOTE_MESSAGE, 0, 0, combined_str));
-}
-
-/**
- * Special steps that normal game needs;
- */
-static void _setup_normal_game()
-{
-    make_hungry(0, true);
-}
-
-/**
- * Special steps that tutorial game needs;
- */
-static void _setup_tutorial(const newgame_def& ng)
-{
-    make_hungry(0, true);
-}
-
-/**
- * Special steps that sprint needs;
- */
-static void _setup_sprint(const newgame_def& ng)
-{
-    // nothing currently
-}
-
-/**
- * Special steps that hints mode needs;
- */
-static void _setup_hints()
-{
-    init_hints();
 }
 
 static void _free_up_slot(char letter)

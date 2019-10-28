@@ -280,10 +280,9 @@ static void _mark_net_trapping(const coord_def& where)
  * Attempt to trap a monster in a net.
  *
  * @param mon       The monster being trapped.
- * @param agent     The entity doing the trapping.
  * @return          Whether the monster was successfully trapped.
  */
-bool monster_caught_in_net(monster* mon, actor* agent)
+bool monster_caught_in_net(monster* mon)
 {
     if (mon->body_size(PSIZE_BODY) >= SIZE_GIANT)
     {
@@ -723,7 +722,7 @@ void trap_def::trigger(actor& triggerer)
                     }
 
                     // actually try to net the monster
-                    if (monster_caught_in_net(m, nullptr))
+                    if (monster_caught_in_net(m))
                     {
                         // Don't try to escape the net in the same turn
                         m->props[NEWLY_TRAPPED_KEY] = true;
@@ -1375,41 +1374,34 @@ bool is_valid_shaft_level()
     return (brdepth[place.branch] - place.depth) >= 1;
 }
 
-static level_id _generic_shaft_dest(level_pos lpos, bool known = false)
+level_id generic_shaft_dest(level_id place)
 {
-    level_id lid = lpos.id;
+    if (!is_connected_branch(place))
+        return place;
 
-    if (!is_connected_branch(lid))
-        return lid;
-
-    int curr_depth = lid.depth;
-    int max_depth = brdepth[lid.branch];
+    int curr_depth = place.depth;
+    int max_depth = brdepth[place.branch];
 
     // Shafts drop you 1/2/3 levels with equal chance.
     // 33.3% for 1, 2, 3 from D:3, less before
-    lid.depth += 1 + random2(min(lid.depth, 3));
+    place.depth += 1 + random2(min(place.depth, 3));
 
-    if (lid.depth > max_depth)
-        lid.depth = max_depth;
+    if (place.depth > max_depth)
+        place.depth = max_depth;
 
-    if (lid.depth == curr_depth)
-        return lid;
+    if (place.depth == curr_depth)
+        return place;
 
     // Only shafts on the level immediately above a dangerous branch
     // bottom will take you to that dangerous bottom.
-    if (branches[lid.branch].branch_flags & brflag::dangerous_end
-        && lid.depth == max_depth
+    if (branches[place.branch].branch_flags & brflag::dangerous_end
+        && place.depth == max_depth
         && (max_depth - curr_depth) > 1)
     {
-        lid.depth--;
+        place.depth--;
     }
 
-    return lid;
-}
-
-level_id generic_shaft_dest(coord_def pos, bool known = false)
-{
-    return _generic_shaft_dest(level_pos(level_id::current(), pos));
+    return place;
 }
 
 /**
