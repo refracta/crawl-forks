@@ -4834,6 +4834,7 @@ item_info get_item_info(const item_def& item)
         break;
 #endif
     case OBJ_STAVES:
+        ii.sub_type = item.sub_type;
         ii.subtype_rnd = item.subtype_rnd;
         ii.brand = item.brand;
         ii.sub_type = item.sub_type;

@@ -1873,9 +1873,14 @@ hands_reqd_type basic_hands_reqd(const item_def &item, size_type size)
     if (item.base_type == OBJ_SHIELDS)
         return size >= Shield_prop[Shield_index[item.sub_type]].min_1h_size ? HANDS_ONE
                                                                             : HANDS_TWO;
-    const int wpn_type = OBJ_WEAPONS == item.base_type ? item.sub_type :
-                          OBJ_STAVES == item.base_type ? WPN_STAFF :
-                                                         WPN_UNKNOWN;
+
+    const auto wpn_type = [&item]() {
+        if (item.base_type == OBJ_WEAPONS)
+            return static_cast<weapon_type>(item.sub_type);
+        if (item.base_type == OBJ_STAVES)
+            return WPN_STAFF;
+        return WPN_UNKNOWN;
+    }();
 
     if (wpn_type == WPN_UNKNOWN)
         return HANDS_ONE;
@@ -2205,7 +2210,7 @@ bool is_weapon_wieldable(const item_def &item, size_type size)
         return true;
     }
 
-    const int subtype = OBJ_STAVES == item.base_type ? WPN_STAFF
+    const int subtype = OBJ_STAVES == item.base_type ? int{WPN_STAFF}
                                                      : item.sub_type;
 
     if (item.base_type == OBJ_WEAPONS || item.base_type == OBJ_STAVES)
