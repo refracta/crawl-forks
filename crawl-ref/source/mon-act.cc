@@ -1077,6 +1077,7 @@ static bool _handle_wand(monster& mons)
 
     const spell_type mzap =
         spell_in_wand(static_cast<wand_type>(wand->sub_type));
+    const int power = mons_evokepower(mons);
 
     if (!setup_mons_cast(&mons, beem, mzap, true))
         return false;
@@ -1085,10 +1086,25 @@ static bool _handle_wand(monster& mons)
     beem.aux_source =
         wand->name(DESC_QUALNAME, false, true, false, false);
 
-    // Fire tracer, if necessary.
-    fire_tracer(&mons, beem);
+    bool should_fire = false;
+    const wand_type kind = (wand_type)wand->sub_type;
+    switch (kind)
+    {
+    case WAND_SCATTERSHOT:
+        should_fire = scattershot_tracer(&mons, power, beem.target);
+        break;
 
-    if (mons_should_fire(beem))
+    case WAND_CLOUDS:
+        should_fire = mons_should_cloud_cone(&mons, power, beem.target);
+        break;
+
+    default:
+        fire_tracer(&mons, beem);
+        should_fire = mons_should_fire(beem);
+        break;
+    }
+
+    if (should_fire)
     {
         _mons_fire_wand(mons, *wand, beem, you.see_cell(mons.pos()));
         return true;

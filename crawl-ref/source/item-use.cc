@@ -1874,7 +1874,7 @@ static bool _safe_to_remove_or_wear(const item_def &item, bool remove, bool quie
     }
     else if (item.base_type == OBJ_ARMOURS && item_type_known(item))
     {
-        switch (get_armour_ego_type(*item))
+        switch (get_armour_ego_type(item))
         {
         case SPARM_STRENGTH:
             prop_str = 3;
@@ -1914,7 +1914,7 @@ static bool _safe_to_remove_or_wear(const item_def &item, bool remove, bool quie
     bool disto = false;
     bool vampiric = false;
 
-    if (item.base_type == OBJ_ARMOURS && get_armour_ego_type(*item) == SPARM_WIELDING)
+    if (item.base_type == OBJ_ARMOURS && get_armour_ego_type(item) == SPARM_WIELDING)
     {
         if (you.wearing_ego(EQ_WEAPON0, SPWPN_DISTORTION) || you.wearing_ego(EQ_WEAPON1, SPWPN_DISTORTION)
             && !have_passive(passive_t::safe_distortion))

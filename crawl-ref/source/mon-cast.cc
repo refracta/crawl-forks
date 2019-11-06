@@ -1176,7 +1176,7 @@ int mons_power_for_hd(spell_type spell, int hd)
 /**
 * Evocations power for the monster.
 */
-static int _mons_evokepower(const monster &mons)
+int mons_evokepower(const monster &mons)
 {
     int xp = mons.get_experience_level();
     if (xp < 8)
@@ -2073,7 +2073,7 @@ bool setup_mons_cast(const monster* mons, bolt &pbolt, spell_type spell_cast,
     }
     }
 
-    const int power = evoke ? _mons_evokepower(*mons)
+    const int power = evoke ? mons_evokepower(*mons)
                             : _mons_spellpower(spell_cast, *mons);
 
     bolt theBeam = mons_spell_beam(mons, spell_cast, power);
