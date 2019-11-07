@@ -647,7 +647,7 @@ public:
         {
             instructions_text +=
                     "<white>[tab]</white> quick-start last combo: "
-                    + defaults.name + " the "
+                    + (defaults.name.size() ? (defaults.name + " the ") : "")
                     + newgame_char_description(defaults) + "\n";
         }
         instructions_text +=
@@ -810,6 +810,11 @@ void UIStartupMenu::on_show()
             replay_messages_during_startup();
             return true;
         }
+        else if (keyn == '*')
+        {
+            input_string = newgame_random_name();
+            changed_name = true;
+        }
         else if (keyn == CONTROL('U'))
         {
             input_string = "";
@@ -966,7 +971,7 @@ bool startup_step()
     crawl_state.type = choice.type;
 
     newgame_def defaults = read_startup_prefs();
-    if (crawl_state.default_startup_name.size() == 0)
+    if (crawl_state.default_startup_name.size() == 0 && Options.remember_name)
         crawl_state.default_startup_name = defaults.name;
 
     // Set the crawl_state gametype to the requested game type. This must
@@ -1050,7 +1055,8 @@ bool startup_step()
                                     // setup_game.
         write_newgame_options_file(choice);
     }
-    crawl_state.default_startup_name = you.your_name;
+    if (Options.remember_name)
+        crawl_state.default_startup_name = you.your_name;
 
     _post_init(newchar);
 
