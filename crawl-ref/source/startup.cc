@@ -681,6 +681,7 @@ private:
     string input_string;
     vector<player_save_info> chars;
     int num_saves;
+    bool first_action = true;
 
     bool button_event_hook(const wm_event& ev, MenuButton* btn)
     {
@@ -834,6 +835,12 @@ void UIStartupMenu::on_show()
         }
         else if (keyn == CK_BKSP)
         {
+            if (first_action)
+            {
+                first_action = false;
+                input_string = "";
+                changed_name = true;
+            }
             if (!input_string.empty())
             {
                 input_string.erase(input_string.size() - 1);
