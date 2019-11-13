@@ -1054,6 +1054,7 @@ enum monster_type                      // menv[].type
     MONS_ORB_OF_CHAOS,    // a projectile, not a real mon
     MONS_PLUTONIUM_CRAB,
     MONS_TEST_STATUE,
+    MONS_FOXFIRE,
 #endif
 
     NUM_MONSTERS,               // used for polymorph

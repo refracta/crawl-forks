@@ -393,6 +393,7 @@ void handle_behaviour(monster* mon)
         && mon->type != MONS_BALLISTOMYCETE_SPORE
         && mon->type != MONS_BALL_LIGHTNING
         && mon->type != MONS_ENTROPIC_SPHERE
+        && mon->type != MONS_FOXFIRE
         && !mons_is_avatar(mon->type))
     {
         if (you.pet_target != MHITNOT)
@@ -407,7 +408,8 @@ void handle_behaviour(monster* mon)
             || ((mon->berserk()
                  || mon->type == MONS_BALLISTOMYCETE_SPORE
                  || mon->type == MONS_BALL_LIGHTNING
-                 || mon->type == MONS_ENTROPIC_SPHERE)
+                 || mon->type == MONS_ENTROPIC_SPHERE
+                 || mon->type == MONS_FOXFIRE)
                 && (mon->foe == MHITNOT
                     || isFriendly && mon->foe == MHITYOU))))
     {
@@ -530,7 +532,8 @@ void handle_behaviour(monster* mon)
                     || patrolling
                     || mon->type == MONS_BALLISTOMYCETE_SPORE
                     || mon->type == MONS_BALL_LIGHTNING
-                    || mon->type == MONS_ENTROPIC_SPHERE)
+                    || mon->type == MONS_ENTROPIC_SPHERE
+                    || mon->type == MONS_FOXFIRE)
                 {
                     new_beh = BEH_WANDER;
                 }
@@ -1210,7 +1213,8 @@ void behaviour_event(monster* mon, mon_event_type event, const actor *src,
         if (mon->friendly()
             && (mon->type == MONS_BALLISTOMYCETE_SPORE
                 || mon->type == MONS_BALL_LIGHTNING
-                || mon->type == MONS_ENTROPIC_SPHERE))
+                || mon->type == MONS_ENTROPIC_SPHERE
+                || mon->type == MONS_FOXFIRE))
         {
             break;
         }

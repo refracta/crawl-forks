@@ -4251,6 +4251,18 @@ TILEG_ERROR,
 },
 
 {
+    SPELL_FOXFIRE, "Foxfire",
+    spschool::fire,
+    spflag::selfench,
+    1,
+    25,
+    -1, -1,
+    1, 0,
+    TILEG_FLAME_TONGUE,
+},
+
+
+{
     SPELL_NO_SPELL, "nonexistent spell",
     spschool::none,
     spflag::testing,

@@ -99,5 +99,6 @@ enum zap_type
     ZAP_CHAOS_ERUPTION,
     ZAP_CHAOS_ICEFALL,
     ZAP_CHAOS_STALACTITE,
+    ZAP_FOXFIRE,
     NUM_ZAPS
 };

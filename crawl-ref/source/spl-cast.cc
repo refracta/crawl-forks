@@ -1460,6 +1460,9 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
     if (!powc)
         powc = calc_spell_power(spell, true);
 
+    const int range = calc_spell_range(spell, powc, allow_fail);
+    beam.range = range;
+
     // XXX: This handles only some of the cases where spells need
     // targeting. There are others that do their own that will be
     // missed by this (and thus will not properly ESC without cost
@@ -1954,6 +1957,9 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
 
     case SPELL_INFESTATION:
         return cast_infestation(powc, beam, fail);
+
+    case SPELL_FOXFIRE:
+        return cast_foxfire(powc, god, fail);
 
     // Enchantments.
     case SPELL_CONFUSING_TOUCH:
