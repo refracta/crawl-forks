@@ -60,6 +60,9 @@ enum dungeon_feature_type
     DNGN_DEEP_WATER,
 
     DNGN_SHALLOW_WATER,
+#if TAG_MAJOR_VERSION > 34
+    DNGN_TOXIC_BOG,                   // Eringya's Noxious Bog
+#endif
 
     DNGN_FLOOR,
     DNGN_OPEN_DOOR,
@@ -297,6 +300,7 @@ enum dungeon_feature_type
     DNGN_OPEN_CLEAR_DOOR,
     DNGN_RUNED_CLEAR_DOOR,
     DNGN_SEALED_CLEAR_DOOR,
+    DNGN_TOXIC_BOG,
 #endif
 
     DNGN_RUNED_CLEAR_STONE_WALL,  // Probably the only necessary runed wall type; but just to be clear what it is in case of later additions.
