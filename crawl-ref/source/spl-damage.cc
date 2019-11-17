@@ -1970,6 +1970,38 @@ static int _ignite_tracer_cloud_value(coord_def where, actor *agent)
 }
 
 /**
+ * Place flame clouds over toxic bogs, by the power of Ignite Poison.
+ *
+ * @param where     The tile in question.
+ * @param pow       The power with which Ignite Poison is being cast.
+ *                  If -1, this indicates the spell is a test-run 'tracer'.
+ * @param agent     The caster of Ignite Poison.
+ * @return          If we're just running a tracer, return the expected 'value'
+ *                  of creating fire clouds in the given location (could be
+ *                  negative if there are allies there).
+ *                  If it's not a tracer, return 1 if a flame cloud is created
+ *                  and 0 otherwise.
+ */
+static int _ignite_poison_bog(coord_def where, int pow, actor *agent)
+{
+    const bool tracer = (pow == -1);  // Only testing damage, not dealing it
+
+    if (grd(where) != DNGN_TOXIC_BOG)
+        return false;
+
+    if (tracer)
+    {
+        const int value = _ignite_tracer_cloud_value(where, agent);
+        // Player doesn't care about magnitude.
+        return agent && agent->is_player() ? sgn(value) : value;
+    }
+
+    place_cloud(CLOUD_FIRE, where,
+                30 + random2(20 + pow), agent);
+    return true;
+}
+
+/**
  * Turn poisonous clouds in the given tile into flame clouds, by the power of
  * Ignite Poison.
  *
@@ -2204,6 +2236,7 @@ static int _ignite_ally_harm(const coord_def &where)
 
     return (_ignite_poison_clouds(where, BEAM_FIRE, -1, &you) < 0)   ? 1 :
            (_ignite_poison_monsters(where, BEAM_FIRE, -1, &you) < 0) ? 1 :
+           (_ignite_poison_bog(where, -1, &you) < 0)      ? 1 :
             0;
 }
 
@@ -2279,7 +2312,8 @@ spret cast_ignite_poison(actor* agent, int pow, bool fail, bool tracer)
         const int work = apply_area_visible([agent] (coord_def where) {
             return _ignite_poison_clouds(where, BEAM_FIRE, -1, agent)
                  + _ignite_poison_monsters(where, BEAM_FIRE, -1, agent)
-                 + _ignite_poison_player(where, BEAM_FIRE, -1, agent);
+                 + _ignite_poison_player(where, BEAM_FIRE, -1, agent)
+                 + _ignite_poison_bog(where, -1, agent);
         }, agent->pos());
 
         return work > 0 ? spret::success : spret::abort;
@@ -2333,6 +2367,7 @@ spret cast_ignite_poison(actor* agent, int pow, bool fail, bool tracer)
     apply_area_visible([dam_type, pow, agent] (coord_def where) {
         _ignite_poison_clouds(where, dam_type, pow, agent);
         _ignite_poison_monsters(where, dam_type, pow, agent);
+        _ignite_poison_bog(where, pow, agent);
         // Only relevant if a monster is casting this spell
         // (never hurts the caster)
         _ignite_poison_player(where, dam_type, pow, agent);

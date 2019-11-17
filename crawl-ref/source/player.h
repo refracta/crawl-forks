@@ -52,6 +52,7 @@
 #define LAST_ACTION_WAS_MOVE_OR_REST_KEY "last_action_was_move_or_rest"
 #define PARALYSED_BY_KEY "paralysed_by"
 #define PETRIFIED_BY_KEY "petrified_by"
+#define NOXIOUS_BOG_KEY "noxious_bog_pow"
 
 // display/messaging breakpoints for penalties from Ru's MUT_HORROR
 #define HORROR_LVL_EXTREME  3

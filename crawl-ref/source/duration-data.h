@@ -669,6 +669,11 @@ static const duration_def duration_data[] =
       {{ "You regain access to your magic." }, {}, true }},
     { DUR_HEAVENLY_STORM, 0, "", "", "", "", D_NO_FLAGS,
       {{ "",  wu_jian_heaven_tick }}},
+    { DUR_NOXIOUS_BOG,
+      MAGENTA, "Bog",
+      "noxious spew", "noxious bog",
+      "You are spewing a noxious bog.", D_DISPELLABLE,
+      {{ "Your noxious spew wanes." }}},
 
 #if TAG_MAJOR_VERSION == 34
     // And removed ones

@@ -208,5 +208,6 @@ enum duration_type
     DUR_PHYS_VULN,
     DUR_STFSHIELD_COOLDOWN,
     DUR_CHAOSNADO,
+    DUR_NOXIOUS_BOG,
     NUM_DURATIONS
 };

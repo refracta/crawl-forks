@@ -4272,6 +4272,16 @@ TILEG_ERROR,
     TILEG_HAILSTORM,
 },
 
+{
+    SPELL_NOXIOUS_BOG, "Eringya's Noxious Bog",
+    spschool::poison | spschool::transmutation,
+    spflag::selfench,
+    6,
+    200,
+    -1, -1,
+    2, 0,
+    TILEG_ERROR,
+},
 
 {
     SPELL_NO_SPELL, "nonexistent spell",

@@ -488,5 +488,6 @@ enum spell_type : int
     SPELL_STARBURST,
     SPELL_FOXFIRE,
     SPELL_HAILSTORM,
+    SPELL_NOXIOUS_BOG,
     NUM_SPELLS
 };
