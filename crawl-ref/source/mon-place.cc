@@ -111,6 +111,11 @@ static bool _feat_compatible(dungeon_feature_type wanted_feat,
            || wanted_feat == DNGN_METAL_WALL && actual_feat == DNGN_SILVER_WALL;
 }
 
+static bool _hab_requires_mon_flight(dungeon_feature_type g)
+{
+    return g == DNGN_LAVA || g == DNGN_DEEP_WATER;
+}
+
 /**
  * Can this monster survive on actual_grid?
  *
@@ -127,7 +132,7 @@ bool monster_habitable_grid(const monster* mon,
     const monster_type mt = fixup_zombie_type(mon->type,
         mons_base_type(*mon));
 
-    return monster_habitable_grid(mt, actual_grid, DNGN_UNSEEN, mon->airborne(), true);
+    return monster_habitable_grid(mt, actual_grid, DNGN_UNSEEN, true);
 }
 
 
@@ -139,7 +144,9 @@ bool monster_habitable_grid(const monster* mon,
     const monster_type mt = fixup_zombie_type(mon->type,
                                               mons_base_type(*mon));
 
-    return monster_habitable_grid(mt, actual_grid, DNGN_UNSEEN, mon->airborne(), ai_check);
+    bool type_safe = monster_habitable_grid(mt, actual_grid, DNGN_UNSEEN, ai_check);
+    return type_safe ||
+                    _hab_requires_mon_flight(actual_grid) && mon->airborne();
 }
 
 /**
@@ -158,7 +165,7 @@ bool monster_habitable_grid(const monster* mon,
 bool monster_habitable_grid(monster_type mt,
                             dungeon_feature_type actual_grid,
                             dungeon_feature_type wanted_grid,
-                            bool flies, bool ai_check)
+                            bool ai_check)
 {
     // No monster may be placed in walls etc.
     if (!mons_class_can_pass(mt, actual_grid))
@@ -179,13 +186,11 @@ bool monster_habitable_grid(monster_type mt,
     const dungeon_feature_type feat_nonpreferred =
         habitat2grid(mons_class_secondary_habitat(mt));
 
-    const bool monster_is_airborne = mons_class_flag(mt, M_FLIES) || flies;
-
     // If the caller insists on a specific feature type, try to honour
     // the request. This allows the builder to place amphibious
     // creatures only on land, or flying creatures only on lava, etc.
     if (wanted_grid != DNGN_UNSEEN
-        && monster_habitable_grid(mt, wanted_grid, DNGN_UNSEEN, flies))
+        && monster_habitable_grid(mt, wanted_grid, DNGN_UNSEEN))
     {
         return _feat_compatible(wanted_grid, actual_grid);
     }
@@ -210,11 +215,8 @@ bool monster_habitable_grid(monster_type mt,
     // [dshaligram] Flying creatures are all HT_LAND, so we
     // only have to check for the additional valid grids of deep
     // water and lava.
-    if (monster_is_airborne
-        && (actual_grid == DNGN_LAVA || actual_grid == DNGN_DEEP_WATER))
-    {
+    if (_hab_requires_mon_flight(actual_grid) && (mons_class_flag(mt, M_FLIES)))
         return true;
-    }
 
     if (!ai_check)
         return true;
