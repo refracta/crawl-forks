@@ -476,7 +476,8 @@ void artefact_desc_properties(const item_def &item,
         return;
 
     // actual artefact properties
-    artefact_properties(item, proprt, known);
+    artefact_properties(item, proprt);
+    artefact_known_properties(item, known);
 
     // fake artefact properties (intrinsics)
     _populate_item_intrinsic_artps(item, proprt, known);
@@ -1070,9 +1071,8 @@ static bool _init_artefact_properties(item_def &item)
     return true;
 }
 
-void artefact_properties(const item_def &item,
-                         artefact_properties_t  &proprt,
-                         artefact_known_props_t &known)
+void artefact_known_properties(const item_def &item,
+                               artefact_known_props_t &known)
 {
     ASSERT(is_artefact(item));
     if (!item.props.exists(KNOWN_PROPS_KEY))
@@ -1095,6 +1095,13 @@ void artefact_properties(const item_def &item,
         for (vec_size i = 0; i < ART_PROPERTIES; i++)
             known[i] = known_vec[i];
     }
+}
+
+void artefact_properties(const item_def &item,
+                         artefact_properties_t  &proprt)
+{
+    ASSERT(is_artefact(item));
+    ASSERT(item.props.exists(ARTEFACT_PROPS_KEY) || is_unrandom_artefact(item));
 
     if (item.props.exists(ARTEFACT_PROPS_KEY))
     {
@@ -1107,70 +1114,42 @@ void artefact_properties(const item_def &item,
         for (vec_size i = 0; i < ART_PROPERTIES; i++)
             proprt[i] = rap_vec[i].get_short();
     }
-    else if (is_unrandom_artefact(item))
+    else // if (is_unrandom_artefact(item))
     {
         const unrandart_entry *unrand = _seekunrandart(item);
 
         for (int i = 0; i < ART_PROPERTIES; i++)
             proprt[i] = static_cast<short>(unrand->prpty[i]);
     }
-    else
-        _get_randart_properties(item, proprt);
-}
-
-void artefact_properties(const item_def &item,
-                         artefact_properties_t &proprt)
-{
-    artefact_known_props_t known;
-
-    artefact_properties(item, proprt, known);
-}
-
-int artefact_property(const item_def &item, artefact_prop_type prop,
-    bool &_known)
-{
-    artefact_properties_t  proprt;
-    artefact_known_props_t known;
-    proprt.init(0);
-    known.init(0);
-
-    if (is_artefact(item))
-    {
-        artefact_properties(item, proprt, known);
-        _known = known[prop];
-        if (proprt[prop] != 0)
-            return proprt[prop];
-    }
-    if (item.cursed())
-    {
-        curse_desc_properties(item, proprt);
-        if (proprt[prop] != 0)
-            _known = true;
-    }
-
-    return proprt[prop];
 }
 
 int artefact_property(const item_def &item, artefact_prop_type prop)
 {
-    bool known;
+    ASSERT(is_artefact(item) || item.cursed());
+    ASSERT(item.props.exists(ARTEFACT_PROPS_KEY) || item.props.exists(CURSE_PROPS_KEY) || is_unrandom_artefact(item));
 
-    return artefact_property(item, prop, known);
-}
+    // Curses first.
+    if (item.props.exists(CURSE_PROPS_KEY))
+    {
+        const CrawlVector &rap_vec =
+            item.props[CURSE_PROPS_KEY].get_vector();
+        int retval = rap_vec[prop].get_short();
+        if (retval != 0 || !is_artefact(item))
+            return retval;
+    }
 
-int artefact_known_property(const item_def &item, artefact_prop_type prop)
-{
-    artefact_properties_t  proprt;
-    artefact_known_props_t known;
-    proprt.init(0);
-    known.init(0);
-
-    artefact_properties(item, proprt, known);
-
-    if (known[prop])
-        return proprt[prop];
-    else
-        return 0;
+    // Cause we can stack on either.
+    if (item.props.exists(ARTEFACT_PROPS_KEY))
+    {
+        const CrawlVector &rap_vec =
+            item.props[ARTEFACT_PROPS_KEY].get_vector();
+        return rap_vec[prop].get_short();
+    }
+    else // if (is_unrandom_artefact(item))
+    {
+        const unrandart_entry *unrand = _seekunrandart(item);
+        return static_cast<short>(unrand->prpty[prop]);
+    }
 }
 
 static int _artefact_num_props(const artefact_properties_t &proprt)

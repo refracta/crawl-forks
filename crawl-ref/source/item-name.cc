@@ -2306,8 +2306,8 @@ bool item_type_has_ids(object_class_type base_type)
 bool item_brand_known(const item_def& item)
 {
     return item_ident(item, ISFLAG_KNOW_TYPE)
-           || is_artefact(item)
-           && artefact_known_property(item, ARTP_BRAND);
+           || (is_artefact(item)
+           && artefact_property(item, ARTP_BRAND));
 }
 
 bool item_type_known(const item_def& item)

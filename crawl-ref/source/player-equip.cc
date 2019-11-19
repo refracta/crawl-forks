@@ -197,8 +197,6 @@ void unequip_effect(equipment_type slot, int item_slot, bool meld, bool msg)
 static void _equip_artefact_effect(item_def &item, bool *show_msgs, bool unmeld,
                                    equipment_type slot)
 {
-#define unknown_proprt(prop) (proprt[(prop)] && !known[(prop)])
-
     ASSERT(is_artefact(item) || item.cursed());
 
     // Call unrandart equip function first, so that it can modify the
@@ -222,7 +220,10 @@ static void _equip_artefact_effect(item_def &item, bool *show_msgs, bool unmeld,
     artefact_known_props_t known;
     artefact_properties_t curses;
     if (is_artefact(item))
-        artefact_properties(item, proprt, known);
+    {
+        artefact_properties(item, proprt);
+        artefact_known_properties(item, known);
+    }
     if (item.cursed())
     {
         curse_desc_properties(item, curses);
@@ -250,13 +251,13 @@ static void _equip_artefact_effect(item_def &item, bool *show_msgs, bool unmeld,
 
     // Modify ability scores.
     notify_stat_change(STAT_STR, proprt[ARTP_STRENGTH],
-                       !(msg && unknown_proprt(ARTP_STRENGTH)));
+                       !(msg && proprt[ARTP_STRENGTH] && !unmeld));
     notify_stat_change(STAT_INT, proprt[ARTP_INTELLIGENCE],
-                       !(msg && unknown_proprt(ARTP_INTELLIGENCE)));
+                       !(msg && proprt[ARTP_INTELLIGENCE] && !unmeld));
     notify_stat_change(STAT_DEX, proprt[ARTP_DEXTERITY],
-                       !(msg && unknown_proprt(ARTP_DEXTERITY)));
+                       !(msg && proprt[ARTP_DEXTERITY] && !unmeld));
 
-    if (unknown_proprt(ARTP_CONTAM) && msg)
+    if (proprt[ARTP_CONTAM] && msg && !unmeld)
         mpr("You feel a build-up of mutagenic energy.");
 
     if (!unmeld)
@@ -291,7 +292,6 @@ static void _equip_artefact_effect(item_def &item, bool *show_msgs, bool unmeld,
         set_ident_type(item, true);
         set_ident_flags(item, ISFLAG_IDENT_MASK);
     }
-#undef unknown_proprt
 }
 
 /**
@@ -342,7 +342,10 @@ static void _unequip_artefact_effect(item_def &item,
     artefact_known_props_t known;
     artefact_properties_t curse;
     if (is_artefact(item))
-        artefact_properties(item, proprt, known);
+    {
+        artefact_properties(item, proprt);
+        artefact_known_properties(item, known);
+    }
     if (item.cursed())
     {
         curse_desc_properties(item, curse);

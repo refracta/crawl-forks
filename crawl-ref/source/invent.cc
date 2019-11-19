@@ -1628,11 +1628,10 @@ static bool _is_wielded(const item_def &item)
 
 static bool _is_known_no_tele_item(const item_def &item)
 {
-    if (!is_artefact(item))
+    if (!is_artefact(item) && !item.cursed())
         return false;
 
-    bool known;
-    return artefact_property(item, ARTP_PREVENT_TELEPORTATION, known) && known;
+    return artefact_property(item, ARTP_PREVENT_TELEPORTATION);
 }
 
 bool needs_notele_warning(const item_def &item, operation_types oper)
@@ -1717,7 +1716,7 @@ bool needs_handle_warning(const item_def &item, operation_types oper,
         }
 
         if ((is_artefact(item) || item.cursed()) && ((artefact_property(item, ARTP_DRAIN) && (!you.wearing_ego(EQ_GLOVES, SPARM_WIELDING) || wielding_pass))
-                                  || (artefact_property(item, ARTP_FRAGILE) && !wielding_pass)))
+                               || (artefact_property(item, ARTP_FRAGILE) && !wielding_pass)))
         {
             return true;
         }

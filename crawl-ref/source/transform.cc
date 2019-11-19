@@ -1332,7 +1332,7 @@ static bool _flying_in_new_form(transformation which_trans)
         item_info inf = get_item_info(*item);
 
         //similar code to safe_to_remove from item-use.cc
-        if (is_artefact(inf) && artefact_known_property(inf, ARTP_FLY))
+        if (is_artefact(inf) && artefact_property(inf, ARTP_FLY))
             sources_removed++;
     }
 

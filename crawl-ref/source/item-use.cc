@@ -1890,11 +1890,11 @@ static bool _safe_to_remove_or_wear(const item_def &item, bool remove, bool quie
         }
     }
 
-    if (is_artefact(item))
+    if (is_artefact(item) || item.cursed())
     {
-        prop_str += artefact_known_property(item, ARTP_STRENGTH);
-        prop_int += artefact_known_property(item, ARTP_INTELLIGENCE);
-        prop_dex += artefact_known_property(item, ARTP_DEXTERITY);
+        prop_str += artefact_property(item, ARTP_STRENGTH);
+        prop_int += artefact_property(item, ARTP_INTELLIGENCE);
+        prop_dex += artefact_property(item, ARTP_DEXTERITY);
     }
 
     if (!remove)
@@ -2011,7 +2011,7 @@ bool safe_to_remove(const item_def &item, bool quiet)
     item_info inf = get_item_info(item);
 
     const bool grants_flight = is_artefact(inf)
-            && artefact_known_property(inf, ARTP_FLY);
+            && artefact_property(inf, ARTP_FLY);
 
     // assumes item can't grant flight twice
     const bool removing_ends_flight = you.airborne()

@@ -3436,7 +3436,8 @@ bool item_def::has_spells() const
 
 bool item_def::cursed() const
 {
-    return flags & ISFLAG_CURSED;
+    return bool(flags & ISFLAG_CURSED) && props.exists(CURSE_PROPS_KEY);
+    // BCADNOTE: We can probably deprecate ISFLAG_CURSED and rely on the prop existing...
 }
 
 bool item_def::soul_bound() const
