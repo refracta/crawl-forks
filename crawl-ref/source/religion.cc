@@ -202,13 +202,10 @@ const vector<god_power> god_powers[NUM_GODS] =
       { 1, ABIL_TROG_BERSERK, "go berserk at will" },
       { 2, ABIL_TROG_REGEN_MR,
            "call upon Trog for regeneration and magic resistance" },
-      { 3, "Trog will now gift you ammunition as you gain piety.",
-           "Trog will no longer gift you ammunition.",
-           "Trog will gift you ammunition as you gain piety." },
       { 4, ABIL_TROG_BROTHERS_IN_ARMS, "call in reinforcements" },
-      { 5, "Trog will now gift you weapons as you gain piety.",
+      { 5, "Trog will now gift you melee weapons as you gain piety.",
            "Trog will no longer gift you weapons.",
-           "Trog will gift you weapons as you gain piety." },
+           "Trog will gift you melee weapons as you gain piety." },
     },
 
     // Nemelex
@@ -1404,28 +1401,18 @@ static bool _give_trog_oka_gift(bool forced)
     }
 
     // Should gift catnip instead.
+    // BCADDO: Catnip.
     if (you.species == SP_FELID)
         return false;
 
     object_class_type gift_type;
 
-    if (forced && coinflip()
-        || (!forced && you.piety >= piety_breakpoint(4)
-            && random2(you.piety) > 120
-            && one_chance_in(4)))
-    {
-        if (you_worship(GOD_TROG)
-            || (you_worship(GOD_OKAWARU) && coinflip()))
-        {
+    if (you_worship(GOD_TROG) && (forced || you.piety >= piety_breakpoint(4)))
             gift_type = OBJ_WEAPONS;
-        }
-        else if (you_worship(GOD_OKAWARU) && one_chance_in(4))
-            gift_type = OBJ_SHIELDS;
-        else
-            gift_type = OBJ_ARMOURS;
-    }
+    else if (you_worship(GOD_OKAWARU) && one_chance_in(4))
+        gift_type = OBJ_SHIELDS;
     else
-        return false;
+        gift_type = OBJ_ARMOURS;
 
     success = acquirement(gift_type, you.religion);
     if (success)
