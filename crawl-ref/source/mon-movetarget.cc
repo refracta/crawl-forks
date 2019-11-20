@@ -160,9 +160,7 @@ bool try_pathfind(monster* mon)
     // shallow water. Retreating monsters retry every turn.
     if (target_is_unreachable(mon) && !one_chance_in(12)
         && !(mon->can_cling_to_walls() && one_chance_in(4)))
-    {
         return false;
-    }
 
 #ifdef DEBUG_PATHFIND
     mprf("%s: Target out of reach! What now?",
