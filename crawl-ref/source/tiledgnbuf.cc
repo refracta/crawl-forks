@@ -472,11 +472,26 @@ void DungeonCellBuffer::pack_foreground(int x, int y, const packed_cell &cell)
         }
     }
 
-    if (fg & TILE_FLAG_POISON)
+    if (fg & TILE_FLAG_POISON_MASK)
     {
-        m_buf_icons.add(TILEI_POISON, x, y, -status_shift, 0);
-        status_shift += 5;
+        const tileidx_t poison_flag = fg & TILE_FLAG_POISON_MASK;
+        if (poison_flag == TILE_FLAG_POISON)
+        {
+            m_buf_icons.add(TILEI_POISON, x, y, -status_shift, 0);
+            status_shift += 5;
+        }
+        else if (poison_flag == TILE_FLAG_MORE_POISON)
+        {
+            m_buf_icons.add(TILEI_MORE_POISON, x, y, -status_shift, 0);
+            status_shift += 5;
+        }
+        else if (poison_flag == TILE_FLAG_MAX_POISON)
+        {
+            m_buf_icons.add(TILEI_MAX_POISON, x, y, -status_shift, 0);
+            status_shift += 5;
+        }
     }
+
     if (fg & TILE_FLAG_STICKY_FLAME)
     {
         m_buf_icons.add(TILEI_STICKY_FLAME, x, y, -status_shift, 0);
@@ -560,11 +575,13 @@ void DungeonCellBuffer::pack_foreground(int x, int y, const packed_cell &cell)
         m_buf_icons.add(TILEI_WRETCHED, x, y, -status_shift, 0);
         status_shift += 7;
     }
+    /* BCADDO: Find a way to put this back.
     if (fg & TILE_FLAG_DAZED)
     {
         m_buf_icons.add(TILEI_DAZED, x, y, -status_shift, 0);
         status_shift += 9;
     }
+    */
     if (fg & TILE_FLAG_BOUND_SOUL)
     {
         m_buf_icons.add(TILEI_BOUND_SOUL, x, y, -status_shift, 0);

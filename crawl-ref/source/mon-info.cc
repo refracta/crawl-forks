@@ -170,6 +170,13 @@ static monster_info_flags ench_to_mb(const monster& mons, enchant_type ench)
         if (mons.get_ench(ench).degree < max_mons_charge(mons.type))
             return MB_PARTIALLY_CHARGED;
         return MB_FULLY_CHARGED;
+    case ENCH_POISON:
+        if (mons.get_ench(ench).degree == 1)
+            return MB_POISONED;
+        else if (mons.get_ench(ench).degree < MAX_ENCH_DEGREE_DEFAULT)
+            return MB_MORE_POISONED;
+        else
+            return MB_MAX_POISONED;
     default:
         return NUM_MB_FLAGS;
     }
@@ -1405,6 +1412,11 @@ vector<string> monster_info::attributes() const
 
     if (is(MB_POISONED))
         v.emplace_back("poisoned");
+    else if (is(MB_MORE_POISONED))
+        v.emplace_back("very poisoned");
+    else if (is(MB_MAX_POISONED))
+        v.emplace_back("extremely poisoned");
+
     if (is(MB_SICK))
         v.emplace_back("sick");
     if (is(MB_GLOWING))
