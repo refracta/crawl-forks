@@ -393,7 +393,9 @@ void tornado_damage(actor *caster, int dur, bool is_vortex)
                             float_player();
                     }
 
-                    if (dur > 0)
+                    // alive check here in case the annoy event above dismissed
+                    // the victim.
+                    if (dur > 0 && victim->alive())
                     {
                         int cfac = 0;
                         beam_type cflav = BEAM_AIR;
