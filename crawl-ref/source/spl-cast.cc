@@ -537,6 +537,8 @@ bool staff_enhances_spell(item_def * staff, spell_type spell)
     if (!staff)
         return false;
 
+    // BCADDO: When Elemental Staff is made into an actual staff; add case for it here.
+
     const spschools_type typeflags = get_spell_disciplines(spell);
 
     if (bool(typeflags & spschool::evocation))
