@@ -683,7 +683,7 @@ static spret _cast_los_attack_spell(spell_type spell, int pow,
     {
         ASSERT(actual);
 
-        targeter_los hitfunc(&you, LOS_NO_TRANS);
+        targeter_radius hitfunc(&you, LOS_NO_TRANS);
         // Singing Sword's spell shouldn't give a prompt at this time.
         if (spell != SPELL_SONIC_WAVE)
         {
@@ -1611,7 +1611,7 @@ static void _shatter_chaos(actor * agent, int pow)
 
 spret cast_shatter(int pow, bool fail)
 {
-    targeter_los hitfunc(&you, LOS_ARENA);
+    targeter_radius hitfunc(&you, LOS_ARENA);
     if (stop_attack_prompt(hitfunc, "attack", _shatterable))
         return spret::abort;
 
@@ -2313,8 +2313,8 @@ spret cast_ignite_poison(actor* agent, int pow, bool fail, bool tracer)
     bool chaos = determine_chaos(agent, SPELL_IGNITE_POISON);
 
     beam_type dam_type = BEAM_FIRE;
+    targeter_radius hitfunc(agent, LOS_NO_TRANS);
     colour_t tyr;
-    targeter_los hitfunc(agent, LOS_NO_TRANS);
     string verb = "";
 
     if (chaos)
@@ -2375,8 +2375,7 @@ spret cast_ignition(const actor *agent, int pow, bool fail)
 
     bool chaos = determine_chaos(agent, SPELL_IGNITION);
     bool menacing = _is_menacing(agent, SPELL_IGNITION);
-
-    targeter_los hitfunc(agent, LOS_NO_TRANS);
+    //targeter_radius hitfunc(agent, LOS_NO_TRANS);
 
     // Ignition affects squares that had hostile monsters on them at the time
     // of casting. This way nothing bad happens when monsters die halfway
@@ -3408,7 +3407,7 @@ spret cast_toxic_radiance(actor *agent, int pow, bool fail, bool mon_tracer)
     bool chaos = determine_chaos(agent, SPELL_OLGREBS_TOXIC_RADIANCE);
     if (agent->is_player())
     {
-        targeter_los hitfunc(&you, LOS_NO_TRANS);
+        targeter_radius hitfunc(&you, LOS_NO_TRANS);
         {
             if (stop_attack_prompt(hitfunc, "poison", _toxic_can_affect))
                 return spret::abort;
@@ -3450,7 +3449,7 @@ spret cast_toxic_radiance(actor *agent, int pow, bool fail, bool mon_tracer)
                                         (4 + random2avg(pow/15, 2)) * BASELINE_DELAY));
         toxic_radiance_effect(agent, 10);
 
-        targeter_los hitfunc(mon_agent, LOS_NO_TRANS);
+        targeter_radius hitfunc(mon_agent, LOS_NO_TRANS);
         flash_view_delay(UA_MONSTER, chaos ? ETC_SLIME : GREEN, 300, &hitfunc);
 
         return spret::success;
