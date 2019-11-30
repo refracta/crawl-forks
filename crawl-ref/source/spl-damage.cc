@@ -519,9 +519,9 @@ static int _los_spell_damage_player(actor* agent, bolt &beam,
                 slow_player(hurted);
         }
         // -harm from player casting Ozo's Refridge.
+        // we don't actually take damage, but can get slowed and lose potions
         else if (beam.origin_spell == SPELL_OZOCUBUS_REFRIGERATION)
         {
-            ouch(hurted, KILLED_BY_FREEZING);
             you.expose_to_element(beam.flavour, 5);
             if (chaos)
                 temp_mutate(RANDOM_CORRUPT_MUTATION, "chaos magic");
