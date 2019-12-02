@@ -4269,7 +4269,7 @@ TILEG_ERROR,
     100,
     3, 3, // Range special-cased in describe-spells
     4, 0,
-    TILEG_THROW_ICICLE,
+    TILEG_HAILSTORM,
 },
 
 
