@@ -4247,7 +4247,7 @@ TILEG_ERROR,
     200,
     5, 5,
     6, 0,
-    TILEG_BOLT_OF_FIRE,
+    TILEG_STARBURST,
 },
 
 {
