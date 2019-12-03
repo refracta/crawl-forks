@@ -4,7 +4,7 @@ enum monuse_flags
 {
     MU_NOTHING       = 0x0001,
     MU_START_ONLY    = 0x0002,
-    MU_DOOR          = 0x0003,
+    MU_DOOR          = 0x0004,
     MU_WEAPON_MELEE  = 0x0008,
     MU_WEAPON_RANGED = 0x0010,
     MU_ARMOUR        = 0x0020,
