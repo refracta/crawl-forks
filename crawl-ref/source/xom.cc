@@ -796,9 +796,6 @@ static bool _choose_chaos_upgrade(const monster& mon)
         return false;
     }
 
-    if (mons_itemuse(mon) < MU_WEAPON_MELEE)
-        return false;
-
     // Holy beings are presumably protected by another god, unless
     // they're gifts from a chaotic god.
     if (mon.is_holy() && !is_chaotic_god(mon.god))
@@ -818,50 +815,52 @@ static bool _choose_chaos_upgrade(const monster& mon)
         return false;
     }
 
-    mon_inv_type slots[] = {MSLOT_WEAPON, MSLOT_ALT_WEAPON, MSLOT_MISSILE};
-
-    // NOTE: Code assumes that the monster will only be carrying one
-    // missile launcher at a time.
-    bool special_launcher = false;
-    for (int i = 0; i < 3; ++i)
+    if (mons_itemuse(mon) & MU_WEAPONS)
     {
-        const mon_inv_type slot = slots[i];
-        const int          midx = mon.inv[slot];
+        mon_inv_type slots[] = { MSLOT_WEAPON, MSLOT_ALT_WEAPON, MSLOT_MISSILE };
 
-        if (midx == NON_ITEM)
-            continue;
-        const item_def &item(mitm[midx]);
-
-        // The monster already has a chaos weapon. Give the upgrade to
-        // a different monster.
-        if (is_chaotic_item(item))
-            return false;
-
-        if (_is_chaos_upgradeable(item, &mon))
+        // NOTE: Code assumes that the monster will only be carrying one
+        // missile launcher at a time.
+        bool special_launcher = false;
+        for (int i = 0; i < 3; ++i)
         {
-            if (item.base_type != OBJ_MISSILES)
-                return true;
+            const mon_inv_type slot = slots[i];
+            const int          midx = mon.inv[slot];
 
-            // If, for some weird reason, a monster is carrying a bow
-            // and javelins, then branding the javelins is okay, since
-            // they won't be fired by the bow.
-            if (!special_launcher || !has_launcher(item))
-                return true;
-        }
+            if (midx == NON_ITEM)
+                continue;
+            const item_def &item(mitm[midx]);
 
-        if (is_range_weapon(item))
-        {
-            // If the launcher alters its ammo, then branding the
-            // monster's ammo won't be an upgrade.
-            int brand = get_weapon_brand(item);
-            if (brand == SPWPN_MOLTEN || brand == SPWPN_FREEZING
-                || brand == SPWPN_VENOM)
+            // The monster already has a chaos weapon. Give the upgrade to
+            // a different monster.
+            if (is_chaotic_item(item))
+                return false;
+
+            if (_is_chaos_upgradeable(item, &mon))
             {
-                special_launcher = true;
+                if (item.base_type != OBJ_MISSILES)
+                    return true;
+
+                // If, for some weird reason, a monster is carrying a bow
+                // and javelins, then branding the javelins is okay, since
+                // they won't be fired by the bow.
+                if (!special_launcher || !has_launcher(item))
+                    return true;
+            }
+
+            if (is_range_weapon(item))
+            {
+                // If the launcher alters its ammo, then branding the
+                // monster's ammo won't be an upgrade.
+                int brand = get_weapon_brand(item);
+                if (brand == SPWPN_MOLTEN || brand == SPWPN_FREEZING
+                    || brand == SPWPN_VENOM)
+                {
+                    special_launcher = true;
+                }
             }
         }
     }
-
     return false;
 }
 
@@ -1353,7 +1352,7 @@ static monster* _find_monster_with_animateable_weapon()
     for (monster_near_iterator mi(&you, LOS_NO_TRANS); mi; ++mi)
     {
         if (mi->wont_attack() || mi->is_summoned()
-            || !mons_itemuse(**mi) & MU_WEAPON_MELEE
+            || !(mons_itemuse(**mi) & MU_WEAPON_MELEE)
             || (mi->flags & MF_HARD_RESET))
         {
             continue;
