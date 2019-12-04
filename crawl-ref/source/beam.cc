@@ -1642,7 +1642,7 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
             if (pbolt.agent()->is_player())
             {
                 if (!mons->wont_attack() && !mons->neutral() && you.religion == GOD_ELYVILON)
-                    try_to_pacify(*mons, hurted, hurted);
+                    try_to_pacify(*mons, hurted, hurted * 2);
                 else
                     heal_monster(*mons, hurted);
             }

@@ -289,7 +289,7 @@ static int _pacify_chance(const monster_info& mi, const int pow, int scale)
          / (sides * sides);
 }
 
-static vector<string> _desc_pacify_chance(const monster_info& mi, const int pow)
+vector<string> desc_pacify_chance(const monster_info& mi, const int pow)
 {
     vector<string> descs;
 
@@ -322,7 +322,7 @@ spret cast_healing(int pow, bool fail)
     args.needs_path = false;
     args.self = confirm_prompt_type::cancel;
     args.target_prefix = "Heal";
-    args.get_desc_func = bind(_desc_pacify_chance, placeholders::_1, pow);
+    args.get_desc_func = bind(desc_pacify_chance, placeholders::_1, pow);
     direction(spd, args);
 
     if (!spd.isValid)

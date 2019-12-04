@@ -1386,6 +1386,8 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
         const bool mr_check = testbits(flags, spflag::MR_check)
                               && testbits(flags, spflag::dir_or_target)
                               && !testbits(flags, spflag::helpful);
+        // Add pacification chance for Healing Wand.
+        const bool healing = testbits(flags, spflag::not_evil);
         desc_filter additional_desc = nullptr;
         if (mr_check)
         {
@@ -1395,6 +1397,19 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
                                                                  false);
             additional_desc = bind(desc_success_chance, placeholders::_1,
                                    eff_pow, evoked_item, hitfunc.get());
+        }
+        
+        // BCADNOTE: This is a hack. Unlike melee damage there's no quick
+        // way for an average from zapinfo; rather than coding one in that
+        // only has one use I'm duplicating some stuff. If ZAP_WAND_HEALING
+        // is changed again; these numbers need to change too. Additionally,
+        // if additional healing spells that use BEAM_HEALING are added this
+        // would need to be changed (and maybe it'd be worth writing the whole
+        // backdoor there for zapinfo to get the info here automatically).
+        if (healing && you.religion == GOD_ELYVILON) 
+        {
+            const int average_heal = (3 * (2 + powc) - 3) / 2;
+            additional_desc = bind(desc_pacify_chance, placeholders::_1, average_heal);
         }
 
         string title = make_stringf("Aiming: <w>%s</w>", spell_title(spell));
