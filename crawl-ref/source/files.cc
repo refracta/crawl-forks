@@ -63,6 +63,7 @@
 #include "mon-behv.h"
 #include "mon-death.h"
 #include "mon-place.h"
+#include "ng-setup.h"
 #include "notes.h"
 #include "output.h"
 #include "place.h"
@@ -1796,6 +1797,9 @@ bool load_level(dungeon_feature_type stair_taken, load_mode_type load_mode,
         delete_level(level_id(BRANCH_START_MARKET, 1));
         delete_level(level_id(BRANCH_START_TEMPLE, 1));
         you.chapter = CHAPTER_ORB_HUNTING;
+
+        if (you.char_class == JOB_NOBLE)
+            note_equipment();
     }
 
     // GENERATE new level(s) when the file can't be opened:
