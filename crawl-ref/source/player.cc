@@ -7484,6 +7484,10 @@ bool player::can_bleed(bool allow_tran) const
     if (allow_tran && !form_can_bleed(form))
         return false;
 
+    // Lignifites can't bleed while they are trees.
+    if (species == SP_LIGNIFITE && form == transformation::none)
+        return false;
+
     if (is_lifeless_undead() || is_nonliving())
     {   // demonspawn and demigods have a mere drop of taint
         return false;

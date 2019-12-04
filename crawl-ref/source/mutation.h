@@ -55,7 +55,7 @@ bool delete_mutation(mutation_type which_mutation, const string &reason,
 
 bool delete_all_mutations(const string &reason);
 
-const char* mutation_name(mutation_type mut, bool allow_category = false);
+const char* mutation_name(mutation_type mut, bool allow_category = false, bool for_display = false);
 const char* category_mutation_name(mutation_type mut);
 mutation_type mutation_from_name(string name, bool allow_category, vector<mutation_type> *partial_matches = nullptr);
 

@@ -2658,7 +2658,7 @@ string mutation_overview()
 
         const int max_levels = mutation_max_levels(mut);
 
-        current = mutation_name(mut);
+        current = mutation_name(mut, false, true);
 
         if (max_levels > 1)
         {

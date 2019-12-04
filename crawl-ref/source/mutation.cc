@@ -40,6 +40,7 @@
 #include "religion.h"
 #include "scroller.h"
 #include "skills.h"
+#include "species_mutation_messaging.h"
 #include "state.h"
 #include "stringutil.h"
 #include "transform.h"
@@ -1261,12 +1262,9 @@ bool physiology_mutation_conflict(mutation_type mutat, bool ds_roll)
     if (you.species != SP_OCTOPODE && mutat == MUT_TENTACLE_SPIKE)
         return true;
 
-    // No bones for thin skeletal structure, and too squishy for horns.
-    if (you.species == SP_OCTOPODE
-        && (mutat == MUT_THIN_SKELETAL_STRUCTURE || mutat == MUT_HORNS))
-    {
+    // Too squishy for horns.
+    if (you.species == SP_OCTOPODE && mutat == MUT_HORNS)
         return true;
-    }
 
     // No feet.
     if (!player_has_feet(false, false)
@@ -1296,12 +1294,9 @@ bool physiology_mutation_conflict(mutation_type mutat, bool ds_roll)
     }
 
     // Felids have innate claws, and unlike trolls/ghouls, there are no
-    // increases for them. And octopodes have no hands.
-    if ((you.species == SP_FELID || you.species == SP_OCTOPODE)
-         && mutat == MUT_CLAWS)
-    {
+    // increases for them.
+    if (you.species == SP_FELID  && mutat == MUT_CLAWS)
         return true;
-    }
 
     // Merfolk have no feet in the natural form, and we never allow mutations
     // that show up only in a certain transformation.
@@ -1435,6 +1430,19 @@ static bool _resist_mutation(mutation_permanence_class mutclass,
 bool undead_mutation_rot()
 {
     return !you.can_safely_mutate();
+}
+
+static species_mutation_message _spmut_msg(mutation_type mutat)
+{
+    for (unsigned int i = 0; i < spmu_length; ++i)
+    {
+        if (spmu_data[i].species == you.species)
+        {
+            if (spmu_data[i].mutation == mutat)
+                return spmu_data[i];
+        }
+    }
+    return spmu_data[0];
 }
 
 /*
@@ -1691,7 +1699,13 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
         notify_stat_change();
 
         if (gain_msg)
-            mprf(MSGCH_MUTATION, "%s", mdef.gain[cur_base_level - 1]);
+        {
+            species_mutation_message msg = _spmut_msg(mutat);
+            if (msg.mutation == MUT_NON_MUTATION)
+                mprf(MSGCH_MUTATION, "%s", mdef.gain[cur_base_level - 1]);
+            else
+                mprf(MSGCH_MUTATION, "%s", msg.gain[cur_base_level - 1]);
+        }
 
         // Do post-mutation effects.
         switch (mutat)
@@ -1888,7 +1902,13 @@ static bool _delete_single_mutation_level(mutation_type mutat,
     notify_stat_change();
 
     if (lose_msg)
-        mprf(MSGCH_MUTATION, "%s", mdef.lose[you.mutation[mutat]]);
+    {
+        species_mutation_message msg = _spmut_msg(mutat);
+        if (msg.mutation == MUT_NON_MUTATION)
+            mprf(MSGCH_MUTATION, "%s", mdef.lose[you.mutation[mutat]]);
+        else
+            mprf(MSGCH_MUTATION, "%s", msg.lose[you.mutation[mutat]]);
+    }
 
     // Do post-mutation effects.
     if (mutat == MUT_FRAIL || mutat == MUT_ROBUST
@@ -2108,7 +2128,7 @@ bool delete_temp_mutation()
     return false;
 }
 
-const char* mutation_name(mutation_type mut, bool allow_category)
+const char* mutation_name(mutation_type mut, bool allow_category, bool for_display)
 {
     if (allow_category && mut >= CATEGORY_MUTATIONS && mut < MUT_NON_MUTATION)
         return _get_category_mutation_def(mut).short_desc;
@@ -2117,7 +2137,13 @@ const char* mutation_name(mutation_type mut, bool allow_category)
     if (!_is_valid_mutation(mut))
         return nullptr;
 
-    return _get_mutation_def(mut).short_desc;
+    if (!for_display)
+        return _get_mutation_def(mut).short_desc;
+
+    species_mutation_message msg = _spmut_msg(mut);
+    if (msg.mutation == MUT_NON_MUTATION)
+        return _get_mutation_def(mut).short_desc;
+    return msg.short_desc;
 }
 
 const char* category_mutation_name(mutation_type mut)
@@ -2239,6 +2265,7 @@ string mutation_desc(mutation_type mut, int level, bool colour,
     string result;
 
     const mutation_def& mdef = _get_mutation_def(mut);
+    const species_mutation_message msg = _spmut_msg(mut);
 
     if (mut == MUT_STRONG || mut == MUT_CLEVER
         || mut == MUT_AGILE || mut == MUT_WEAK
@@ -2249,13 +2276,19 @@ string mutation_desc(mutation_type mut, int level, bool colour,
     if (mut == MUT_ICEMAIL)
     {
         ostringstream ostr;
-        ostr << mdef.have[0] << player_icemail_armour_class() << ")";
+        if (msg.mutation == MUT_NON_MUTATION)
+            ostr << mdef.have[0] << player_icemail_armour_class() << ")";
+        else
+            ostr << msg.have[0] << player_icemail_armour_class() << ")";
         result = ostr.str();
     }
     else if (mut == MUT_SANGUINE_ARMOUR)
     {
         ostringstream ostr;
-        ostr << mdef.have[level - 1] << sanguine_armour_bonus() / 100 << ")";
+        if (msg.mutation == MUT_NON_MUTATION)
+            ostr << mdef.have[level - 1] << sanguine_armour_bonus() / 100 << ")";
+        else
+            ostr << msg.have[level - 1] << sanguine_armour_bonus() / 100 << ")";
         result = ostr.str();
     }
     else if (!ignore_player && you.species == SP_FELID && mut == MUT_CLAWS)
@@ -2263,7 +2296,12 @@ string mutation_desc(mutation_type mut, int level, bool colour,
     else if (have_passive(passive_t::no_mp_regen) && mut == MUT_ANTIMAGIC_BITE)
         result = "Your bite disrupts the magic of your enemies.";
     else if (result.empty() && level > 0)
-        result = mdef.have[level - 1];
+    {
+        if (msg.mutation == MUT_NON_MUTATION)
+            result = mdef.have[level - 1];
+        else
+            result = msg.have[level - 1];
+    }
 
     if (!ignore_player)
     {

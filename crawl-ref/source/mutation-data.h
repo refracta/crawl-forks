@@ -709,9 +709,9 @@ static const mutation_def mut_data[] =
 { MUT_CLAWS, 2, 3, mutflag::good, true,
   "claws",
 
-  {"You have sharp fingernails.",
-   "You have very sharp fingernails.",
-   "You have claws for hands."},
+  {"You have sharp fingernails. (+2 Unarmed)",
+   "You have very sharp fingernails. (+4 Unarmed)",
+   "You have claws for hands. (+6 Unarmed)"},
 
   {"Your fingernails lengthen.",
    "Your fingernails sharpen.",
