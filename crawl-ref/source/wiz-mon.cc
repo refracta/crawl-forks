@@ -702,7 +702,6 @@ void wizard_apply_monster_blessing(monster* mon)
 void wizard_give_monster_item(monster* mon)
 {
     monuse_flags item_use = mons_itemuse(*mon);
-
     if (item_use & MU_WIELD_MASK)
     {
         int player_slot = prompt_invent_item("Give which item to monster?",

@@ -2539,9 +2539,16 @@ static bool _handle_pickup(monster* mons)
     if (mons_eats_items(*mons) && _monster_eat_item(mons))
         return false;
 
-    // Monsters with START_ONLY set don't pick things up
-    if (mons_itemuse(*mons) & MU_START_ONLY)
+    if (mons_itemuse(*mons) & MU_NOTHING)
         return false;
+
+    // Keep neutral, charmed, and friendly monsters from
+    // picking up stuff.
+    const bool never_pickup
+        = mons->neutral() || mons->friendly()
+          || have_passive(passive_t::neutral_slimes) && mons_is_slime(*mons)
+          || mons->has_ench(ENCH_CHARM) || mons->has_ench(ENCH_HEXED);
+
 
     // Note: Monsters only look at stuff near the top of stacks.
     //
@@ -2553,6 +2560,25 @@ static bool _handle_pickup(monster* mons)
     // (jpeg)
     for (stack_iterator si(mons->pos()); si; ++si)
     {
+        if (!crawl_state.game_is_arena()
+            && (never_pickup
+                // Monsters being able to pick up items you've seen encourages
+                // tediously moving everything away from a place where they
+                // could use them. Maurice being able to pick up such items
+                // encourages killing Maurice, since there's just one of him.
+                // Usually.
+                || (testbits(si->flags, ISFLAG_SEEN)
+                    && !mons->has_attack_flavour(AF_STEAL)))
+            // ...but it's ok if it dropped the item itself.
+            && !(si->props.exists(DROPPER_MID_KEY)
+                 && si->props[DROPPER_MID_KEY].get_int() == (int)mons->mid))
+        {
+            // don't pick up any items beneath one that the player's seen,
+            // to prevent seemingly-buggy behavior (monsters picking up items
+            // from the middle of a stack while the player is watching)
+            return false;
+        }
+
         if (si->flags & ISFLAG_NO_PICKUP)
             continue;
 

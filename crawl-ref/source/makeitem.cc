@@ -1543,7 +1543,7 @@ static void _generate_wand_item(item_def& item, int force_type, int item_level)
     item.charges = 1 + random2avg(wand_charge_value(item.sub_type), 3);
 
     // Don't let monsters pickup early high-tier wands
-    if (item_level < 4 && is_high_tier_wand(item.sub_type))
+    if (item_level < 2 && is_high_tier_wand(item.sub_type))
         item.flags |= ISFLAG_NO_PICKUP;
 }
 
@@ -1615,7 +1615,7 @@ static void _generate_potion_item(item_def& item, int force_type,
         item.sub_type = stype;
     }
     // don't let monsters pickup early dangerous potions
-    if (item_level < 4 && item.sub_type == POT_BERSERK_RAGE)
+    if (item_level < 2 && item.sub_type == POT_BERSERK_RAGE)
         item.flags |= ISFLAG_NO_PICKUP;
 }
 
