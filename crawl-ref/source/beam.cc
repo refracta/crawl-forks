@@ -4628,17 +4628,16 @@ static void _glaciate_freeze(monster* mon, killer_type englaciator,
 
 void bolt::monster_post_hit(monster* mon, int dmg)
 {
-    // Suppress the message for scattershot.
-    if (YOU_KILL(thrower) && you.see_cell(mon->pos())
-        && name != "burst of metal fragments"
-        && flavour != BEAM_WAND_HEALING)
-    {
-        print_wounds(*mon);
-    }
-
     // Don't annoy anyone with a harmless mist.
     if (flavour == BEAM_WAND_HEALING)
         return;
+
+    // Suppress the message for scattershot.
+    if (YOU_KILL(thrower) && you.see_cell(mon->pos())
+        && name != "burst of metal fragments")
+    {
+        print_wounds(*mon);
+    }
 
     // Don't annoy friendlies or good neutrals if the player's beam
     // did no damage. Hostiles will still take umbrage.
