@@ -4198,18 +4198,17 @@ mons_list::mons_spec_slot mons_list::parse_mons_spec(string spec)
                 error = "Can't give spec items to a random monster.";
                 return slot;
             }
-            else if ((mons_class_itemuse(type) & MU_WIELD_MASK)
+            else if (((mons_class_itemuse(type) & MU_WIELD_MASK)
                 || (mons_class_is_animated_weapon(type) && mspec.items.size() <= 1)
                 || ((type == MONS_ZOMBIE || type == MONS_SKELETON)
                     && !invalid_monster_type(mspec.monbase)
-                    && mons_class_itemuse(mspec.monbase) & MU_WIELD_MASK))
+                    && mons_class_itemuse(mspec.monbase) & MU_WIELD_MASK)) != true)
             {
-                slot.mlist.push_back(mspec);
-            }
-            else 
                 error = make_stringf("Monster '%s' can't use items.",
                                      mon_str.c_str());
+            }
         }
+        slot.mlist.push_back(mspec);
     }
     return slot;
 }
