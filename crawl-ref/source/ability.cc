@@ -98,7 +98,7 @@ enum class abflag
     exhaustion          = 0x00000010, // fails if you.exhausted
     instant             = 0x00000020, // doesn't take time to use
     berserk_only        = 0x00000040, // can only be used while berserk
-                        //0x00000080,
+    silence_ok          = 0x00000080, // can be used while silenced
     conf_ok             = 0x00000100, // can use even if confused
     rations             = 0x00000200, // ability requires 2 rations per target
     rations_or_piety    = 0x00000400, // ability requires 2 rations or piety
@@ -546,11 +546,11 @@ static const ability_def Ability_List[] =
 
     // Ru
     { ABIL_RU_DRAW_OUT_POWER, "Draw Out Power", 0, 0, 0, 0,
-      {fail_basis::invo}, abflag::exhaustion|abflag::skill_drain|abflag::conf_ok },
+      {fail_basis::invo}, abflag::exhaustion | abflag::skill_drain | abflag::conf_ok | abflag::silence_ok },
     { ABIL_RU_POWER_LEAP, "Power Leap",
-      5, 0, 0, 0, {fail_basis::invo}, abflag::exhaustion },
+      5, 0, 0, 0, {fail_basis::invo}, abflag::exhaustion | abflag::silence_ok },
     { ABIL_RU_APOCALYPSE, "Apocalypse",
-      8, 0, 0, 0, {fail_basis::invo}, abflag::exhaustion|abflag::skill_drain },
+      8, 0, 0, 0, {fail_basis::invo}, abflag::exhaustion | abflag::skill_drain | abflag::silence_ok },
 
     { ABIL_RU_SACRIFICE_PURITY, "Sacrifice Purity",
       0, 0, 0, 0, {fail_basis::invo}, abflag::sacrifice },
@@ -1332,7 +1332,7 @@ static bool _check_ability_possible(const ability_def& abil, bool quiet = false)
         || you.drowning())
     {
         talent tal = get_talent(abil.ability, false);
-        if (tal.is_invocation)
+        if (tal.is_invocation && !testbits(abil.flags, abflag::silence_ok))
         {
             if (!quiet)
             {
@@ -3740,6 +3740,15 @@ vector<ability_type> get_god_abilities(bool ignore_silence, bool ignore_piety,
         }
         if (any_sacrifices)
             abilities.push_back(ABIL_RU_REJECT_SACRIFICES);
+        if (silenced(you.pos()))
+        {
+            if (piety_rank() >= 3)
+                abilities.push_back(ABIL_RU_DRAW_OUT_POWER);
+            if (piety_rank() >= 4)
+                abilities.push_back(ABIL_RU_POWER_LEAP);
+            if (piety_rank() >= 5)
+                abilities.push_back(ABIL_RU_APOCALYPSE);
+        }
     }
     // XXX: should we check ignore_piety?
     if (you_worship(GOD_HEPLIAKLQANA)
