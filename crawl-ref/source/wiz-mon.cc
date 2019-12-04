@@ -702,42 +702,44 @@ void wizard_apply_monster_blessing(monster* mon)
 void wizard_give_monster_item(monster* mon)
 {
     monuse_flags item_use = mons_itemuse(*mon);
-    if (item_use & MU_NOTHING)
+    if (item_use & MU_WIELD_MASK)
+    {
+        int player_slot = prompt_invent_item("Give which item to monster?",
+            menu_type::drop, OSEL_ANY);
+
+        if (prompt_failed(player_slot))
+            return;
+
+        item_def &item = you.inv[player_slot];
+
+        if (item_is_equipped(item))
+        {
+            mpr("Can't give equipped items to a monster.");
+            return;
+        }
+
+        mon_inv_type mon_slot = item_to_mslot(item);
+
+        if (mon_slot == NUM_MONSTER_SLOTS)
+        {
+            mpr("You can't give that type of item to a monster.");
+            return;
+        }
+
+        if (mon_slot == MSLOT_WEAPON
+            && item.inscription.find("alt") != string::npos)
+        {
+            mon_slot = MSLOT_ALT_WEAPON;
+        }
+
+        if (!mon->take_item(player_slot, mon_slot))
+            mpr("Error: monster failed to take item.");
+    }
+    else
     {
         mpr("That type of monster can't use any items.");
         return;
     }
-
-    int player_slot = prompt_invent_item("Give which item to monster?",
-                                          menu_type::drop, OSEL_ANY);
-
-    if (prompt_failed(player_slot))
-        return;
-
-    item_def &item = you.inv[player_slot];
-
-    if (item_is_equipped(item))
-    {
-        mpr("Can't give equipped items to a monster.");
-        return;
-    }
-
-    mon_inv_type mon_slot = item_to_mslot(item);
-
-    if (mon_slot == NUM_MONSTER_SLOTS)
-    {
-        mpr("You can't give that type of item to a monster.");
-        return;
-    }
-
-    if (mon_slot == MSLOT_WEAPON
-        && item.inscription.find("alt") != string::npos)
-    {
-        mon_slot = MSLOT_ALT_WEAPON;
-    }
-
-    if (!mon->take_item(player_slot, mon_slot))
-        mpr("Error: monster failed to take item.");
 }
 
 static void _move_player(const coord_def& where)

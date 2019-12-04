@@ -2,18 +2,19 @@
 
 enum monuse_flags
 {
-    MU_NOTHING       = 0x0001,
-    MU_START_ONLY    = 0x0002,
-    MU_DOOR          = 0x0004,
-    MU_WEAPON_MELEE  = 0x0008,
-    MU_WEAPON_RANGED = 0x0010,
-    MU_ARMOUR        = 0x0020,
-    MU_SHIELD        = 0x0040,
-    MU_WAND          = 0x0080,
-    MU_JEWELS        = 0x0100,
-    MU_CONSUMABLES   = 0x0200, // Scrolls/Potions
-    MU_MISC          = 0x0400, // Phials of Floods, etc.
+    MU_NOTHING       = 0x0000,
+    MU_START_ONLY    = 0x0001,
+    MU_DOOR          = 0x0002,
+    MU_WEAPON_MELEE  = 0x0004,
+    MU_WEAPON_RANGED = 0x0008,
+    MU_ARMOUR        = 0x0010,
+    MU_SHIELD        = 0x0020,
+    MU_WAND          = 0x0040,
+    MU_JEWELS        = 0x0080,
+    MU_CONSUMABLES   = 0x0100, // Scrolls/Potions
+    MU_MISC          = 0x0200, // Phials of Floods, etc.
 
+    // unused        = 0x0400,
     // unused        = 0x0800,
 
     MU_THROW_ROCK    = 0x1000,

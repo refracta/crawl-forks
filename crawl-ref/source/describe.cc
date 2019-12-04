@@ -4492,7 +4492,7 @@ static string _monster_stat_description(const monster_info& mi)
                               conjugate_verb("use", plural)
                               + " special abilities",
                               fast, slow);
-        if (!mons_class_itemuse(mi.type) & MU_NOTHING)
+        if (mons_class_itemuse(mi.type) & MU_EVOKE)
         {
             _add_energy_to_string(speed, me.item,
                                   conjugate_verb("use", plural) + " items",
