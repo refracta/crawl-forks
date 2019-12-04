@@ -1571,7 +1571,11 @@ bool monster::wants_weapon(const item_def &weap) const
     if (is_giant_club_type(weap.sub_type))
         return false;
 
-    return true;
+    if (is_range_weapon(weap) && (mons_itemuse(*this) & MU_WEAPON_RANGED))
+        return true;
+    else if (mons_itemuse(*this) & MU_WEAPON_MELEE)
+        return true;
+    return false;
 }
 
 bool monster::wants_armour(const item_def &item) const
@@ -1590,7 +1594,9 @@ bool monster::wants_armour(const item_def &item) const
     }
 
     // Returns whether this armour is the monster's size.
-    return check_armour_size(item, body_size());
+    if (mons_itemuse(*this) & MU_ARMOUR)
+        return check_armour_size(item, body_size());
+    return false;
 }
 
 bool monster::wants_jewellery(const item_def &item) const
@@ -1607,7 +1613,9 @@ bool monster::wants_jewellery(const item_def &item) const
         return false;
 
     // TODO: figure out what monsters actually want rings or amulets
-    return true;
+    if (mons_itemuse(*this) & MU_JEWELS)
+        return true;
+    return false;
 }
 
 // Monsters magically know the real properties of all items.
@@ -1893,7 +1901,7 @@ bool monster::pickup_shield(item_def &item, bool msg, bool force)
     if (!force && props.exists(BEOGH_SH_GIFT_KEY))
         return false;
     
-    if (is_weapon_wieldable(item, body_size()))
+    if (is_weapon_wieldable(item, body_size()) && (mons_itemuse(*this) & MU_SHIELD))
         return pickup(item, MSLOT_SHIELD, msg);
     return false;
 }
@@ -1989,11 +1997,7 @@ bool monster::pickup_wand(item_def &item, bool msg, bool force)
 {
     if (!force)
     {
-        // Don't pick up empty wands.
-        if (item.plus == 0)
-            return false;
-
-        // Only low-HD monsters bother with wands.
+        // Only low-HD monsters bother with weaker wands.
         if (!likes_wand(item))
             return false;
 
@@ -2003,11 +2007,11 @@ bool monster::pickup_wand(item_def &item, bool msg, bool force)
             return false;
     }
 
-    // If a monster already has a charged wand, don't bother.
-    // Otherwise, replace with a charged one.
-    if (item_def *wand = mslot_item(MSLOT_WAND))
+    // If a monster already has a wand, don't bother.
+    item_def * wand = mslot_item(MSLOT_WAND);
+    if (wand)
     {
-        if (wand->plus > 0 && !force)
+        if (!force)
             return false;
 
         if (!drop_item(MSLOT_WAND, msg))
@@ -2026,14 +2030,18 @@ bool monster::pickup_wand(item_def &item, bool msg, bool force)
 
 bool monster::pickup_scroll(item_def &item, bool msg)
 {
-    return pickup(item, MSLOT_SCROLL, msg);
+    if (mons_itemuse(*this) & MU_CONSUMABLES)
+        return pickup(item, MSLOT_SCROLL, msg);
+    return false;
 }
 
 bool monster::pickup_potion(item_def &item, bool msg, bool force)
 {
     if (!can_drink() && !force)
         return false;
-    return pickup(item, MSLOT_POTION, msg);
+    if (mons_itemuse(*this) & MU_CONSUMABLES)
+        return pickup(item, MSLOT_POTION, msg);
+    return false;
 }
 
 bool monster::pickup_gold(item_def &item, bool msg)
@@ -2045,6 +2053,8 @@ bool monster::pickup_misc(item_def &item, bool msg, bool force)
 {
     // Monsters can't use any miscellaneous items right now, so don't
     // let them pick them up unless explicitly given.
+
+    // BCADDO: Teach monsters to use Misc items.
     if (!force)
         return false;
     return pickup(item, MSLOT_MISCELLANY, msg);
