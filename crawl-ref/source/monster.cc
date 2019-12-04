@@ -2034,6 +2034,8 @@ bool monster::pickup_wand(item_def &item, bool msg, bool force)
 
 bool monster::pickup_scroll(item_def &item, bool msg)
 {
+    if (mons->friendly())
+        return false;
     if (mons_itemuse(*this) & MU_CONSUMABLES)
         return pickup(item, MSLOT_SCROLL, msg);
     return false;
@@ -2041,6 +2043,8 @@ bool monster::pickup_scroll(item_def &item, bool msg)
 
 bool monster::pickup_potion(item_def &item, bool msg, bool force)
 {
+    if (mons->friendly())
+        return false;
     if (!can_drink() && !force)
         return false;
     if (mons_itemuse(*this) & MU_CONSUMABLES)
@@ -2050,6 +2054,8 @@ bool monster::pickup_potion(item_def &item, bool msg, bool force)
 
 bool monster::pickup_gold(item_def &item, bool msg)
 {
+    if (mons->friendly())
+        return false;  
     return pickup(item, MSLOT_GOLD, msg);
 }
 
