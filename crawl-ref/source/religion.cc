@@ -3228,9 +3228,10 @@ static bool _god_rejects_loveless(god_type god)
     switch (god)
     {
     case GOD_BEOGH:
-    case GOD_JIYVA:
-    case GOD_HEPLIAKLQANA:
+    case GOD_ELYVILON:
     case GOD_FEDHAS:
+    case GOD_HEPLIAKLQANA:
+    case GOD_JIYVA:
     case GOD_YREDELEMNUL:
         return true;
     default:
