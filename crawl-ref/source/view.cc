@@ -289,13 +289,15 @@ static string _monster_headsup(const vector<monster*> &monsters,
         const bool has_branded_weapon
             = _is_weapon_worth_listing(mon->weapon())
               || _is_weapon_worth_listing(mon->weapon(1));
+
+        monster_info mi(mon);
+        const bool has_wand = mi.inv[MSLOT_WAND].get();
+
         if ((divine && !zin_ided)
-            || (!divine && !has_branded_weapon))
+            || (!divine && !has_branded_weapon && !has_wand))
         {
             continue;
         }
-
-        monster_info mi(mon);
 
         if (warning_msg.size())
             warning_msg += " ";
