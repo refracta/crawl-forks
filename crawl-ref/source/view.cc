@@ -356,15 +356,6 @@ static void _divine_headsup(const vector<monster*> &monsters,
 #endif
 }
 
-static void _secular_headsup(const vector<monster*> &monsters,
-                             const map<monster_type, int> &types)
-{
-    const string warnings = _monster_headsup(monsters, types, false);
-    if (!warnings.size())
-        return;
-    mprf(MSGCH_MONSTER_WARNING, "%s", warnings.c_str());
-}
-
 static map<monster_type, int> _count_monster_types(const vector<monster*>& monsters,
                                                    const unsigned int max_types = UINT_MAX)
 {
@@ -413,7 +404,6 @@ static void _handle_comes_into_view(const vector<string> &msgs,
 
     const auto& types = _count_monster_types(monsters);
     _divine_headsup(monsters, types);
-    _secular_headsup(monsters, types);
 }
 
 /// If the player has the shout mutation, maybe shout at newly-seen monsters.
