@@ -628,7 +628,7 @@ static const ability_def Ability_List[] =
 
     { ABIL_STOP_RECALL, "Stop Recall", 0, 0, 0, 0, {fail_basis::invo}, abflag::starve_ok },
     { ABIL_RENOUNCE_RELIGION, "Renounce Religion",
-      0, 0, 0, 0, {fail_basis::invo}, abflag::starve_ok },
+      0, 0, 0, 0, {fail_basis::invo}, abflag::starve_ok | abflag::silence_ok },
     { ABIL_CONVERT_TO_BEOGH, "Convert to Beogh",
       0, 0, 0, 0, {fail_basis::invo}, abflag::starve_ok },
 };
