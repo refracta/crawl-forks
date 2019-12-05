@@ -39,6 +39,7 @@ msc += $warning:floor suddenly vibrates
 msc += $warning:a sudden draft
 msc += $warning:intense greed
 msc += $warning:coins.*counted
+msc += $warning:brandishing
 msc += $warning:tolling.*bell
 msc += $warning:heat of battle
 msc += $warning:creaking.*portcullis

@@ -3392,10 +3392,6 @@ string get_monster_equipment_desc(const monster_info& mi,
 
     string weap = _describe_monster_weapon(mi, level == DESC_IDENTIFIED);
 
-    // Print the rest of the equipment only for full descriptions.
-    if (level == DESC_WEAPON || level == DESC_WEAPON_WARNING)
-        return desc + weap;
-
     item_def* mon_arm = mi.inv[MSLOT_ARMOUR].get();
     item_def* mon_shd = mi.inv[MSLOT_SHIELD].get();
     item_def* mon_qvr = mi.inv[MSLOT_MISSILE].get();
@@ -3403,7 +3399,7 @@ string get_monster_equipment_desc(const monster_info& mi,
     item_def* mon_wnd = mi.inv[MSLOT_WAND].get();
     item_def* mon_rng = mi.inv[MSLOT_JEWELLERY].get();
 
-#define no_warn(x) (!item_type_known(*x) || !item_is_branded(*x))
+#define no_warn(x) (!item_is_branded(*x))
     // For Ashenzari warnings, we only care about ided and branded stuff.
     if (level == DESC_IDENTIFIED)
     {
@@ -3426,7 +3422,7 @@ string get_monster_equipment_desc(const monster_info& mi,
     if (mi.wields_two_weapons())
         mon_alt = 0;
 
-    const bool mon_has_wand = mi.props.exists("wand_known") && mon_wnd;
+    const bool mon_has_wand = mon_wnd;
     const bool mon_carry = mon_alt || mon_has_wand;
 
     // Print the rest of the equipment only for full descriptions.
@@ -3435,9 +3431,9 @@ string get_monster_equipment_desc(const monster_info& mi,
         if (mon_has_wand)
         {
             if (weap.empty())
-                return desc + " wielding " + mon_wnd->name(DESC_A);
+                return desc + " brandishing " + mon_wnd->name(DESC_A);
             else
-                return desc + weap + " and " + mon_wnd->name(DESC_A);
+                return desc + weap + " and brandishing " + mon_wnd->name(DESC_A);
         }
         else
             return desc + weap;
