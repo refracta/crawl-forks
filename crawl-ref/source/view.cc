@@ -325,7 +325,6 @@ static string _monster_headsup(const vector<monster*> &monsters,
                                                       DESC_NONE);
             continue;
         }
-
         if (you_worship(GOD_ZIN))
         {
             warning_msg += " a foul ";
@@ -339,7 +338,7 @@ static string _monster_headsup(const vector<monster*> &monsters,
     return warning_msg;
 }
 
-/// Let Ash/Zin warn the player about newly-seen monsters, as appropriate.
+/// Let Zin warn the player about newly-seen monsters, as appropriate.
 static void _divine_headsup(const vector<monster*> &monsters,
                             const map<monster_type, int> &types)
 {

@@ -1476,16 +1476,17 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
     {
         hurted = resist_adjust_damage(mons, pbolt.flavour, hurted);
 
-        if (!hurted && doFlavouredEffects)
+        if (doFlavouredEffects)
         {
-            simple_monster_message(*mons,
-                (original > 0) ? " completely resists."
-                : " appears unharmed.");
+            if (!hurted)
+                simple_monster_message(*mons,
+                    (original > 0) ? " completely resists."
+                    : " appears unharmed.");
+            else if (hurted < original)
+                simple_monster_message(*mons, " partially resists.");
+            else
+                poison_monster(mons, pbolt.agent());
         }
-        else if (hurted < original)
-            simple_monster_message(*mons, " partially resists.");
-        else if (doFlavouredEffects)
-            poison_monster(mons, pbolt.agent());
 
         break;
     }
