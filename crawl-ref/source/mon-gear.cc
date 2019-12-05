@@ -1335,15 +1335,6 @@ static void _give_ammo(monster* mon, int level, bool mons_summoned)
         const object_class_type xitc = OBJ_MISSILES;
         int xitt = fires_ammo_type(*launcher);
 
-        if (xitt == MI_STONE
-            && (mon->type == MONS_JOSEPH
-                || mon->type == MONS_SATYR
-                || (mon->type == MONS_FAUN && one_chance_in(3))
-                || one_chance_in(15)))
-        {
-            xitt = MI_SLING_BULLET;
-        }
-
         const int thing_created = items(false, xitc, xitt, level);
 
         if (thing_created == NON_ITEM)
@@ -1411,15 +1402,6 @@ static void _give_ammo(monster* mon, int level, bool mons_summoned)
         int qty = 0;
         switch (mon->type)
         {
-        case MONS_KOBOLD:
-        case MONS_BIG_KOBOLD:
-            if (x_chance_in_y(2, 5))
-            {
-                weap_type  = MI_STONE;
-                qty = 1 + random2(5);
-            }
-            break;
-
         case MONS_ORC_WARRIOR:
             if (one_chance_in(
                     player_in_branch(BRANCH_ORC)? 9 : 20))

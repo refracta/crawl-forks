@@ -428,7 +428,7 @@ ENDMAP
 NAME:    hangedman_abyss_feature_spike
 TAGS:    extra no_item_gen no_pool_fixup allow_dup
 MONS:    fungus, plant, bush
-ITEM:    stone q:1, large rock q:1
+ITEM:    scroll of random uselessness q:1, large rock q:1
 KFEAT:   - = altar_lugonu
 KMASK:   wWl = no_monster_gen
 SHUFFLE: fghij / opqrs, fghijopqrs / JKLMNOPQRS
@@ -539,7 +539,7 @@ NAME:    hangedman_abyss_batty_box
 MONS:    bat / fire bat / vampire bat, butterfly, wyvern
 MONS:    spatial vortex, wind drake, harpy, unseen horror
 KMONS:   8 = wind drake w:9 / harpy w:1
-KITEM:   8 = acquire any / any good_item / stone q:1 w:5
+KITEM:   8 = acquire any / any good_item / scroll of random uselessness q:1 w:5
 NSUBST:  A = 2:2 / 1:2 / 2 = 1122., B = 1:3 / 1:4 / 1:1334. / 1:12334.
 NSUBST:  C = 1:556 / 1:6 / 1:7 / 1:66777. / 1:1234567.
 SUBST:   x = x:25 c:14 v:6 b:4 G:1 n:2, y = c:3 v:1 b:1, z = x:2 c:1 v:1 b:1 .:1
@@ -1459,7 +1459,7 @@ KMONS:   6 = lurking horror
 # Note: if anything in these two item sets becomes useful for more then a tiny
 # fraction of characters finding the abyssal rune, remove or replace them.
 KITEM:   4d = scroll of random uselessness w:15 q:1 / ration w:1 / \
-         club w:6 / stone q:1 / needle q:1 ego:confusion / \
+         club w:6 / needle q:1 ego:confusion / \
          mundane animal skin / mundane ring mail / gold q:1
 KITEM:   5 = wand of random effects / wand of flame / whip not_cursed w:2 / \
          hat not_cursed mundane w:5
@@ -1728,7 +1728,7 @@ ENDMAP
 
 NAME:  evilmike_abyss_exit_4
 TAGS:  abyss_exit unrand allow_dup
-ITEM:  stone q:1 no_pickup
+ITEM:  scroll of random uselessness no_pickup
 : init_abyss_exit(_G, "O")
 MAP
     x
@@ -1744,7 +1744,7 @@ ENDMAP
 
 NAME:   evilmike_abyss_exit_5
 TAGS:   abyss_exit unrand allow_dup
-ITEM:   stone q:1 no_pickup
+ITEM:   scroll of random uselessness no_pickup
 NSUBST: d = 1:O / *:d
 : init_abyss_exit(_G, "O")
 MAP
@@ -1990,7 +1990,7 @@ ENDMAP
 # Make sure to close the doors if you don't like what you see behind them...
 NAME:   evilmike_abyss_exit_vortex
 TAGS:   abyss_exit
-ITEM:   stone q:1 no_pickup
+ITEM:   scroll of random uselessness no_pickup
 SUBST:  x:xxxcv, 1=1., g:G.
 SUBST:  G:Gb.
 MONS:   generate_awake spatial vortex

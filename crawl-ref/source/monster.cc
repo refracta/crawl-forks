@@ -762,10 +762,6 @@ bool monster::can_use_missile(const item_def &item) const
     if (item.base_type != OBJ_MISSILES)
         return false;
 
-    // Stones are allowed even without launcher.
-    if (item.sub_type == MI_STONE)
-        return true;
-
     item_def *launch;
     for (int i = MSLOT_WEAPON; i <= MSLOT_ALT_WEAPON; ++i)
     {
@@ -1966,8 +1962,6 @@ bool monster::pickup_missile(item_def &item, bool msg, bool force)
                 // Don't drop huge stacks for tiny stacks.
                 if (item.launched_by(*launch)
                     && (!miss->launched_by(*launch)
-                        || item.sub_type == MI_SLING_BULLET
-                           && miss->sub_type == MI_STONE
                         || get_ammo_brand(*miss) == SPMSL_NORMAL
                            && item_brand != SPMSL_NORMAL)
                     && item.quantity * 2 > miss->quantity)

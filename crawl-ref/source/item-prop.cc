@@ -716,10 +716,10 @@ static const weapon_def Weapon_prop[] =
         DAMV_NON_MELEE, 5, 0, 25, {}, },
 
     { WPN_HUNTING_SLING,     "hunting sling",       5,  2, 12,
-        SK_SLINGS,       SIZE_LITTLE, SIZE_LITTLE, MI_STONE,
+        SK_SLINGS,       SIZE_LITTLE, SIZE_LITTLE, MI_SLING_BULLET,
         DAMV_NON_MELEE, 8, 10, 15, RANGED_BRANDS },
     { WPN_FUSTIBALUS,        "fustibalus",          8, -1, 14,
-        SK_SLINGS,       SIZE_LITTLE, SIZE_LITTLE, MI_STONE,
+        SK_SLINGS,       SIZE_LITTLE, SIZE_LITTLE, MI_SLING_BULLET,
         DAMV_NON_MELEE, 2, 2, 150, RANGED_BRANDS },
 
     { WPN_HAND_CROSSBOW,     "hand crossbow",      12,  5, 15,
@@ -757,7 +757,9 @@ static const missile_def Missile_prop[] =
     { MI_DART,          "dart",          2, 1,  1,  true  },
 #endif
     { MI_NEEDLE,        "needle",        0, 12, 2,  false },
+#if TAG_MAJOR_VERSION == 34
     { MI_STONE,         "stone",         2, 8,  1,  true  },
+#endif
     { MI_ARROW,         "arrow",         0, 8,  2,  false },
     { MI_BOLT,          "bolt",          0, 8,  2,  false },
     { MI_LARGE_ROCK,    "large rock",   20, 25, 7,  true  },
@@ -890,6 +892,7 @@ const set<pair<object_class_type, int> > removed_items =
     { OBJ_WANDS,     WAND_FROST_REMOVED },
     { OBJ_WANDS,     WAND_FIRE_REMOVED },
     { OBJ_WANDS,     WAND_COLD_REMOVED },
+    { OBJ_WANDS,     WAND_DIGGING_REMOVED },
     { OBJ_WANDS,     WAND_INVISIBILITY_REMOVED },
     { OBJ_WANDS,     WAND_TELEPORTATION_REMOVED },
     { OBJ_WANDS,     WAND_SLOWING_REMOVED },
@@ -904,6 +907,7 @@ const set<pair<object_class_type, int> > removed_items =
     { OBJ_FOOD,      FOOD_ROYAL_JELLY },
     { OBJ_FOOD,      FOOD_UNUSED },
     { OBJ_FOOD,      FOOD_FRUIT },
+    { OBJ_MISSILES,  MI_STONE },
 #endif
     // Outside the #if because we probably won't remove these.
     { OBJ_RUNES,     RUNE_ELF },

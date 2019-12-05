@@ -1527,8 +1527,8 @@ NAME:  okawaru_altar_gauntlet_db
 TAGS:  uniq_altar_okawaru temple_overflow_1 temple_overflow_okawaru
 DEPTH: D:2-9
 KFEAT: _ = altar_okawaru
-MONS:  goblin; stone q:5 / hobgoblin; stone q:5 / gnoll; stone q:5 /\
-       orc; stone q:5 / kobold; stone q:5
+MONS:  goblin / hobgoblin / gnoll /\
+       orc / kobold
 MAP
   xxx
 xxx_xxx
@@ -1645,7 +1645,7 @@ KPROP:  c = no_tele_into
 SUBST:  c = cccl^.
 SUBST:  - = ..l^
 KFEAT:  ^ = known shaft trap
-KITEM:  . = nothing w:189 / stone / large rock q:1 w:1
+KITEM:  . = nothing w:189 / large rock q:1 w:1
 KFEAT:  . = .
 : interest_check(_G)
 MAP
@@ -2127,10 +2127,10 @@ ENDMAP
 NAME:   trog_hazing_becter
 TAGS:   overflow_altar_trog no_monster_gen no_item_gen no_pool_fixup
 DEPTH:  D:2-9, Orc, !Orc:$
-MONS:   goblin ; stone q:5 . animal skin / \
-        hobgoblin ; stone q:5 . animal skin / \
-        kobold ; stone q:5 | throwing net q:1 . animal skin
-ITEM:   stone
+MONS:   goblin ; animal skin / \
+        hobgoblin ; animal skin / \
+        kobold ; throwing net q:1 . animal skin
+ITEM:   scroll of random uselessness
 NSUBST: T = 6:1 / *:.
 SUBST:  . = d....
 KFEAT:  _ = altar_trog

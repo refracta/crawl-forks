@@ -1172,7 +1172,7 @@ NAME:    roderic_nine_men_s_morris
 TAGS:    transparent extra decor
 DEPTH:   D, Depths, Elf
 WEIGHT:  1
-ITEM:    q:1 $, ration q:1, stone q:1
+ITEM:    q:1 $, ration q:1, scroll of random uselessness
 NSUBST:  ' = 2:d / 1:e / 2:f / *:.
 SHUFFLE: ddeff
 MAP
@@ -1200,7 +1200,7 @@ NAME:   roderic_three_in_a_row
 TAGS:   transparent extra decor
 DEPTH:  D, Depths, Elf
 WEIGHT: 1
-ITEM:   q:1 $, ration, stone
+ITEM:   q:1 $, ration, scroll of random uselessness
 SUBST:  ' : TTUUddeff
 MAP
 @xxxx@xxxx@
@@ -3191,7 +3191,7 @@ DEPTH: D:4-12
 SUBST: Q = TPW, T = tP, P = p'', Y = W', Z = tW, ' = ':13 r:1
 FTILE: tp'r = floor_sand
 KMONS: p = plant
-KITEM: r = stone q:1 / large rock q:1 w:5
+KITEM: r = scroll of random uselessness q:1 / large rock q:1 w:5
 KITEM: s = pair of boots
 KFEAT: ' = .
 MAP
@@ -3300,7 +3300,7 @@ NAME:  bh_chokoban
 TAGS:  extra decor no_exits
 TAGS:  no_rotate no_hmirror no_vmirror
 DEPTH: D:2-, !D:$, Depths:2-, !Depths:$, Lair:2-, !Lair:$
-ITEM:  ration w:5 / stone
+ITEM:  ration w:5 / scroll of random uselessness
 MAP
 cccccc  ccccc
 c....c  c...c

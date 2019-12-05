@@ -183,8 +183,6 @@ void practise_launching(const item_def &weapon)
 /// Skill training when the player throws a projectile at a monster.
 void practise_throwing(missile_type mi_type)
 {
-    if (mi_type == MI_STONE && coinflip())
-        return;
     exercise(SK_THROWING, 1);
 }
 

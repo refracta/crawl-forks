@@ -57,10 +57,10 @@ NAME:    minmay_goblin_kobold_castle
 TAGS:    no_rotate
 ORIENT:  north
 DEPTH:   D:3-6
-MONS:    goblin; hunting sling . stone / hobgoblin w:2; hunting sling . sling \
+MONS:    goblin; hunting sling . sling bullet / hobgoblin w:2; hunting sling . sling \
          bullet / nothing
 MONS:    goblin; club / hobgoblin; club / gnoll w:3; club | spear / nothing
-MONS:    kobold; stone / nothing
+MONS:    kobold
 MONS:    kobold; club / big kobold w:1; club | short sword w:2 / nothing
 SUBST:   y : y:48 w:1 W:1, Y : Y:48 W:1 .:1, y = wWW, Y = WW.
 SUBST:   5 = 2 1:2 .:24
@@ -1639,7 +1639,7 @@ DEPTH:  D:3-4
   end
   kmons("O = " .. boss)
 }}
-MONS:   goblin, goblin ; hunting sling . stone, jackal
+MONS:   goblin, goblin ; hunting sling . sling bullet, jackal
 NSUBST: . = 1:0 / 3:3 / *:.
 MAP
 xxxxxxxxxxxxxxxxxxx

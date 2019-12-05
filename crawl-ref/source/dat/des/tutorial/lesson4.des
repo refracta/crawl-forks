@@ -38,7 +38,7 @@ ITEM:    randbook numspells:2 spells:magic_dart&mephitic_cloud title:Introductio
 ITEM:    ring of magical power not_cursed
 ITEM:    staff of wizardry not_cursed
 ITEM:    ration
-MONS:    training dummy ; stone q:20
+MONS:    training dummy
 MONS:    bat skeleton, goblin skeleton
 MONS:    rat, goblin
 KMONS:   8 = training dummy hd:3 hp:7

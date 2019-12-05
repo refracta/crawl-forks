@@ -720,9 +720,9 @@ static special_missile_type _determine_missile_brand(const item_def& item,
     {
 #if TAG_MAJOR_VERSION == 34
     case MI_DART:
+    case MI_STONE:
 #endif
     case MI_THROWING_NET:
-    case MI_STONE:
     case MI_LARGE_ROCK:
     case MI_SLING_BULLET:
     case MI_ARROW:
@@ -770,8 +770,7 @@ static special_missile_type _determine_missile_brand(const item_def& item,
 bool is_missile_brand_ok(int type, int brand, bool strict)
 {
     // Launcher ammo can never be branded.
-    if ((type == MI_STONE
-        || type == MI_LARGE_ROCK
+    if ((type == MI_LARGE_ROCK
         || type == MI_SLING_BULLET
         || type == MI_ARROW
         || type == MI_BOLT)
@@ -869,10 +868,9 @@ static void _generate_missile_item(item_def& item, int force_type,
     else
     {
         item.sub_type =
-            random_choose_weighted(50, MI_STONE,
-                                   20, MI_ARROW,
-                                   12, MI_BOLT,
-                                   12, MI_SLING_BULLET,
+            random_choose_weighted(32, MI_SLING_BULLET,
+                                   30, MI_ARROW,
+                                   22, MI_BOLT,
                                    10, MI_NEEDLE,
                                    3,  MI_TOMAHAWK,
                                    2,  MI_JAVELIN,
@@ -884,14 +882,6 @@ static void _generate_missile_item(item_def& item, int force_type,
     if (item.sub_type == MI_LARGE_ROCK)
     {
         item.quantity = 2 + random2avg(5,2);
-        return;
-    }
-    else if (item.sub_type == MI_STONE)
-    {
-        item.quantity = 1 + random2(7); // sequence points for random2
-        item.quantity += random2(10);
-        item.quantity += random2(12);
-        item.quantity += random2(10);
         return;
     }
     else if (item.sub_type == MI_THROWING_NET) // no fancy nets, either

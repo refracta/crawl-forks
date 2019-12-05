@@ -3450,7 +3450,7 @@ bool item_def::launched_by(const item_def &launcher) const
     if (base_type != OBJ_MISSILES)
         return false;
     const missile_type mt = fires_ammo_type(launcher);
-    return sub_type == mt || (mt == MI_STONE && sub_type == MI_SLING_BULLET);
+    return sub_type == mt;
 }
 
 int item_def::index() const
@@ -3573,9 +3573,9 @@ colour_t item_def::missile_colour() const
     // TODO: move this into item-prop.cc
     switch (sub_type)
     {
+#if TAG_MAJOR_VERSION == 34
         case MI_STONE:
             return BROWN;
-#if TAG_MAJOR_VERSION == 34
         case MI_DART:
 #endif
         case MI_SLING_BULLET:

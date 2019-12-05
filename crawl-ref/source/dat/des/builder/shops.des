@@ -331,9 +331,9 @@ DEPTH:   D:11-, Depths
 KMONS:   1 = gargoyle / basilisk / earth elemental / cyclops w:3
 KMONS:   2 = stone giant / catoblepas w:20 / deep troll earth mage /\
              iron dragon w:4
-ITEM:    stone
+ITEM:    scroll of random uselessness
 KFEAT:   v = general shop type:Pet suffix:Rocks count:7 ; \
-         w:15 stone | w:15 large rock | w:8 hunting sling | w:1 fustibalus | \
+         w:15 large rock | w:8 hunting sling | w:1 fustibalus | \
          w:8 sling bullet | w:7 crystal ball of energy | \
          w:5 randbook disc:earth | \
          w:2 book of the earth | w:2 book of geomancy | w:4 staff of earth | \

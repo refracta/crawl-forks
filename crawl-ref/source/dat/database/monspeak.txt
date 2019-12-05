@@ -1303,7 +1303,7 @@ Evocations player ghost
 
 @The_monster@ says @to_foe@, "Are you sure you're pointing that wand in the right direction?"
 
-@The_monster@ says, "I could kill you with a [stone|fan|lamp]."
+@The_monster@ says, "I could kill you with a [tomato|fan|lamp]."
 %%%%
 Ashenzari player ghost
 

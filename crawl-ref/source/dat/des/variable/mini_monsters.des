@@ -367,7 +367,7 @@ KMONS:   1 = tyrant leech
 KMONS:   2 = earth elemental
 KMONS:   3 = redback w:5 / orb spider w:5 / nothing
 KMONS:   4 = thrashing horror
-KITEM:   ' = stone no_pickup q:1 w:5 / nothing
+KITEM:   ' = scroll of random uselessness no_pickup q:1 w:5 / nothing
 KITEM:   01234 = % w:90 no_pickup / * no_pickup
 SHUFFLE: ABCDEF / ABCDEF / ABCCBA, ABC, DEF, 13 / 13 / 31, {`
 :  if you.in_branch("Abyss") then
@@ -1111,7 +1111,7 @@ KMONS:  P = withered plant
 ITEM:   heater shield ego:reflection ident:type / \
         buckler ego:reflection ident:type w:1 / \
         scutum ego:reflection ident:type w:1
-ITEM:   stone
+ITEM:   scroll of random uselessness
 NSUBST: H = 4:G / 2:G. / *:e
 MAP
      xxxxxxx
@@ -1164,7 +1164,7 @@ ENDMAP
 NAME:    minmay_goblin_outpost
 TAGS:    no_pool_fixup transparent
 DEPTH:   D:2-4
-MONS:    goblin / hobgoblin w:5, goblin ; hunting sling . stone q:20
+MONS:    goblin / hobgoblin w:5, goblin ; hunting sling . sling bullet q:20
 KMASK:   >_"+2 = opaque
 SUBST:   y = .WWw, Y = ...W, . = .....1
 SHUFFLE: >X/_"
@@ -1207,8 +1207,8 @@ TAGS:   patrolling transparent
 DEPTH:  D:8-
 WEIGHT: 5
 KMONS:  1 = Joseph / cyclops, \
-            yaktaur ; quarterstaff . hunting sling . stone / cyclops
-ITEM:   stone / club w:5 / large rock w:3 / quarterstaff w:1
+            yaktaur ; quarterstaff . hunting sling . sling bullet / cyclops
+ITEM:   scroll of random uselessness / club w:5 / large rock w:3 / quarterstaff w:1
 NSUBST: . = 4:d / 4:. / * = d:30 .:150
 MAP
 .........
@@ -1346,7 +1346,7 @@ NAME:   minmay_ruffians
 TAGS:   transparent
 DEPTH:  D:6-10
 MONS:   human; club | mace w:3 . animal skin | leather armour
-MONS:   human; hunting sling . stone | sling bullet w:3 . animal skin | \
+MONS:   human; hunting sling . sling bullet w:3 . animal skin | \
         leather armour
 SUBST:  1 = 112.
 KMONS:  3 = human; flail . ring mail | scale mail
@@ -1388,7 +1388,7 @@ TAGS:    no_monster_gen
 KPROP:   56' = no_tele_into
 MONS:    kobold, plant, bush
 : if you.absdepth() < 4 then
-MONS:    kobold ; dagger . stone
+MONS:    kobold ; dagger
 : else
 MONS:    big kobold ; dagger . throwing net q:2
 : end
@@ -1865,7 +1865,7 @@ NAME:  guppyfry_early_orc_mine
 DEPTH: D:2-5
 TAGS:  patrolling no_monster_gen transparent
 MONS:  orc, goblin, hobgoblin, orc priest, orc wizard, orc warrior
-ITEM:  stone / large rock q:1 w:1
+ITEM:  scroll of random uselessness / large rock q:1 w:1
 NSUBST: ? = 2:$ / 2:d / *:.
 : if you.absdepth() > 3 then
 NSUBST: - = 1:6 / 1:5 / 1:4 / 3:1 / 2:. / 2:x / 2:I / *:.
