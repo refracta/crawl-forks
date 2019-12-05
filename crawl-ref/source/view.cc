@@ -333,14 +333,6 @@ static string _monster_headsup(const vector<monster*> &monsters,
                 warning_msg += "glowing ";
             warning_msg += "shapeshifter";
         }
-        else
-        {
-            // TODO: deduplicate
-            if (mon->type != MONS_DANCING_WEAPON)
-                warning_msg += " ";
-            warning_msg += get_monster_equipment_desc(mi, DESC_IDENTIFIED,
-                                                      DESC_NONE);
-        }
         warning_msg += ".";
     }
 
