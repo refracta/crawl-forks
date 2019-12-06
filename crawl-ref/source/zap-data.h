@@ -565,12 +565,12 @@ _mon_hex_zap(ZAP_BANISHMENT, BEAM_BANISH, 150),
     new tohit_calculator<AUTOMATIC_HIT>,
     GREEN,
     false,
-    BEAM_POISON_ARROW,
+    BEAM_POISON,
     DCHAR_FIRED_ZAP,
     true,
     false,
     false,
-    0 // XXX: Maybe silent because it's poison?
+    0
 },
 
 {

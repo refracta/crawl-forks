@@ -1122,11 +1122,11 @@ bool handle_throw(monster* mons, bolt & beem, bool teleport, bool check_only)
         return false;
     }
 
-    if (!mons_itemuse(*mons) & MU_THROW_MASK && !mons_itemuse(*mons) & MU_WEAPON_RANGED
-        && mons->type != MONS_SPECTRAL_THING)
-    {
+    bool can_throw = (mons_itemuse(*mons) & MU_THROW_MASK);
+    bool can_ranged = (mons_itemuse(*mons) & MU_WEAPON_RANGED);
+
+    if (!can_throw && !can_ranged && (mons->type != MONS_SPECTRAL_THING))
         return false;
-    }
 
     const bool archer = mons_class_flag(mons->type, M_DONT_MELEE);
 
