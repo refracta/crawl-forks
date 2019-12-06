@@ -952,6 +952,7 @@ void SMDDelay::finish()
         if (!cell_is_solid(*ai) && !cloud_at(*ai) && !one_chance_in(3))
             place_cloud(CLOUD_DUST, *ai, 5 + random2(10), &you);
     }
+    viewwindow();
 }
 
 void BlurryScrollDelay::finish()

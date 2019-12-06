@@ -1133,6 +1133,7 @@ bool handle_throw(monster* mons, bolt & beem, bool teleport, bool check_only)
     const bool liquefied = mons->liquefied_ground();
 
     // Don't allow offscreen throwing for now.
+    // BCADDO: Test allowing this (afterall offscreen casters can hit your summons).
     if (mons->foe == MHITYOU && !you.see_cell(mons->pos()))
         return false;
 
