@@ -694,7 +694,7 @@ monster_info::monster_info(const monster* m, int milev)
         else if (attitude == ATT_FRIENDLY)
             ok = true;
         else if (i == MSLOT_WAND)
-            ok = props.exists("wand_known") && props["wand_known"];
+            ok = true;
         else if (m->props.exists("ash_id") && item_type_known(mitm[m->inv[i]]))
             ok = true;
         else if (i == MSLOT_ALT_WEAPON)

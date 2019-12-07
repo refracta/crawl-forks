@@ -860,10 +860,7 @@ void passive_id_monster_equipment(monster* mon)
         item_def &item = mitm[mon->inv[i]];
 
         if (i == MSLOT_WAND)
-        {
             set_ident_type(OBJ_WANDS, item.sub_type, true);
-            mon->props["wand_known"] = true;
-        }
         else
             set_ident_flags(item, ISFLAG_IDENT_MASK);
     }

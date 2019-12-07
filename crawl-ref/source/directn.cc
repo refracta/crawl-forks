@@ -3489,12 +3489,7 @@ string get_monster_equipment_desc(const monster_info& mi,
         }
 
         if (mon_has_wand)
-        {
-            if (mi.props["wand_known"])
-                carried_desc += mon_wnd->name(DESC_A);
-            else
-                carried_desc += "a wand";
-        }
+            carried_desc += mon_wnd->name(DESC_A);
 
         item_descriptions.push_back(carried_desc);
     }

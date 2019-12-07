@@ -1046,16 +1046,7 @@ static void _mons_fire_wand(monster& mons, item_def &wand, bolt &beem,
     mons_cast(&mons, beem, mzap, MON_SPELL_EVOKE, false);
 
     if (was_visible)
-    {
-        const int wand_type = wand.sub_type;
-
-        set_ident_type(OBJ_WANDS, wand_type, true);
-        if (!mons.props["wand_known"].get_bool())
-            mprf("It is %s.", wand.name(DESC_A).c_str());
-
-        mons.props["wand_known"] = true;
         mons.flags |= MF_SEEN_RANGED;
-    }
 
     mons.lose_energy(EUT_ITEM);
 }
