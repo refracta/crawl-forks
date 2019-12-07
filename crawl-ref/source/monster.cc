@@ -5005,14 +5005,18 @@ void monster::load_ghost_spells()
 
     spells = ghost->spells;
 
-#ifdef DEBUG_DIAGNOSTICS
     dprf(DIAG_MONPLACE, "Ghost spells:");
     for (unsigned int i = 0; i < spells.size(); i++)
     {
+        if (spells[i].spell == SPELL_MAGIC_DART)
+            spells[i].spell = SPELL_STING;
+        if (spells[i].spell == SPELL_ISKENDERUNS_MYSTIC_BLAST)
+            spells[i].spell = SPELL_THROW_ICICLE;
+        if (spells[i].spell == SPELL_EXCRUCIATING_WOUNDS)
+            spells[i].spell = SPELL_AGONY;
         dprf(DIAG_MONPLACE, "Spell #%d: %d (%s)",
              i, spells[i].spell, spell_title(spells[i].spell));
     }
-#endif
 }
 
 bool monster::has_hydra_multi_attack() const
