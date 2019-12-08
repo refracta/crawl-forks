@@ -990,19 +990,6 @@ int yred_random_servants(unsigned int threshold, bool force_hostile)
     return created;
 }
 
-static bool _need_missile_gift(bool forced)
-{
-    skill_type sk = best_skill(SK_SLINGS, SK_THROWING);
-    // Default to throwing if all missile skills are at zero.
-    if (you.skills[sk] == 0)
-        sk = SK_THROWING;
-    return forced
-           || (you.piety >= piety_breakpoint(2)
-               && random2(you.piety) > 70
-               && one_chance_in(8)
-               && x_chance_in_y(1 + you.skills[sk], 12));
-}
-
 static bool _give_nemelex_gift(bool forced = false)
 {
     // But only if you're not flying over deep water.
@@ -1417,7 +1404,6 @@ static bool _give_trog_oka_gift(bool forced)
     if (you.species == SP_FELID)
         return false;
 
-    const bool need_missiles = _need_missile_gift(forced);
     object_class_type gift_type;
 
     if (forced && coinflip()
@@ -1433,31 +1419,21 @@ static bool _give_trog_oka_gift(bool forced)
         else
             gift_type = OBJ_ARMOURS;
     }
-    else if (need_missiles)
-        gift_type = OBJ_MISSILES;
     else
         return false;
 
     success = acquirement(gift_type, you.religion);
     if (success)
     {
-        if (gift_type == OBJ_MISSILES)
-        {
-            simple_god_message(" grants you ammunition!");
-            _inc_gift_timeout(4 + roll_dice(2, 4));
-        }
+        if (gift_type == OBJ_WEAPONS)
+            simple_god_message(" grants you a weapon!");
         else
-        {
-            if (gift_type == OBJ_WEAPONS)
-                simple_god_message(" grants you a weapon!");
-            else
-                simple_god_message(" grants you armour!");
-            // Okawaru charges extra for armour acquirements.
-            if (you_worship(GOD_OKAWARU) && gift_type == OBJ_ARMOURS)
-                _inc_gift_timeout(30 + random2avg(15, 2));
+            simple_god_message(" grants you armour!");
+        // Okawaru charges extra for armour acquirements.
+        if (you_worship(GOD_OKAWARU) && gift_type == OBJ_ARMOURS)
+            _inc_gift_timeout(30 + random2avg(15, 2));
 
-            _inc_gift_timeout(30 + random2avg(19, 2));
-        }
+        _inc_gift_timeout(30 + random2avg(19, 2));
         you.num_current_gifts[you.religion]++;
         you.num_total_gifts[you.religion]++;
         take_note(Note(NOTE_GOD_GIFT, you.religion));
