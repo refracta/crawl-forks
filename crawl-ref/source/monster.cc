@@ -744,36 +744,6 @@ static bool _needs_ranged_attack(const monster* mon)
     return true;
 }
 
-bool monster::can_use_missile(const item_def &item) const
-{
-    // Don't allow monsters to pick up missiles without the corresponding
-    // launcher. The opposite is okay, and sufficient wandering will
-    // hopefully take the monster to a stack of appropriate missiles.
-
-    if (!_needs_ranged_attack(this))
-        return false;
-
-    if (item.base_type == OBJ_WEAPONS
-        || item.base_type == OBJ_MISSILES && !has_launcher(item))
-    {
-        return is_throwable(this, item);
-    }
-
-    if (item.base_type != OBJ_MISSILES)
-        return false;
-
-    item_def *launch;
-    for (int i = MSLOT_WEAPON; i <= MSLOT_ALT_WEAPON; ++i)
-    {
-        launch = mslot_item(static_cast<mon_inv_type>(i));
-        if (launch && item.launched_by(*launch))
-            return true;
-    }
-
-    // No fitting launcher in inventory.
-    return false;
-}
-
 /**
  * Does this monster have any interest in using the given wand? (Will they
  * pick it up?)
@@ -1906,75 +1876,14 @@ bool monster::pickup_missile(item_def &item, bool msg, bool force)
 {
     const item_def *miss = missiles();
 
-    if (!force)
-    {
-        if (item.sub_type == MI_THROWING_NET)
-        {
-            // Monster may not pick up trapping net.
-            if (caught() && item_is_stationary_net(item))
-                return false;
-        }
-        else // None of these exceptions hold for throwing nets.
-        {
-            // Spellcasters should not waste time with ammunition.
-            // Neither summons nor hostile enchantments are counted for
-            // this purpose.
-            if (!force && mons_has_ranged_spell(*this, true, false))
-                return false;
-
-            // Monsters in a fight will only pick up missiles if doing so
-            // is worthwhile.
-            if (!mons_is_wandering(*this)
-                && foe != MHITYOU
-                && (item.quantity < 5 || miss && miss->quantity >= 7))
-            {
-                return false;
-            }
-        }
-    }
-
     if (miss && items_stack(*miss, item))
         return pickup(item, MSLOT_MISSILE, msg);
 
-    if (!force && !can_use_missile(item))
+    if (!force)
         return false;
 
-    if (miss)
-    {
-        item_def *launch;
-        for (int i = MSLOT_WEAPON; i <= MSLOT_ALT_WEAPON; ++i)
-        {
-            launch = mslot_item(static_cast<mon_inv_type>(i));
-            if (launch)
-            {
-                const int item_brand = get_ammo_brand(item);
-                // If this ammunition is better, drop the old ones.
-                // Don't upgrade to ammunition whose brand cancels the
-                // launcher brand or doesn't improve it further.
-                // Don't drop huge stacks for tiny stacks.
-                if (item.launched_by(*launch)
-                    && (!miss->launched_by(*launch)
-                        || get_ammo_brand(*miss) == SPMSL_NORMAL
-                           && item_brand != SPMSL_NORMAL)
-                    && item.quantity * 2 > miss->quantity)
-                {
-                    if (!drop_item(MSLOT_MISSILE, msg))
-                        return false;
-                    break;
-                }
-            }
-        }
-
-        // Allow upgrading throwing weapon brands (XXX: improve this!)
-        if (item.sub_type == miss->sub_type
-            && (item.sub_type == MI_TOMAHAWK || item.sub_type == MI_JAVELIN)
-            && get_ammo_brand(*miss) == SPMSL_NORMAL
-            && get_ammo_brand(item) != SPMSL_NORMAL)
-        {
-            if (!drop_item(MSLOT_MISSILE, msg))
-                return false;
-        }
-    }
+    if (miss && !drop_item(MSLOT_MISSILE, msg))
+        return false;
 
     return pickup(item, MSLOT_MISSILE, msg);
 }

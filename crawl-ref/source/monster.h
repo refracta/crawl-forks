@@ -317,7 +317,6 @@ public:
                         bool is_stolen = false);
     item_def* disarm();
 
-    bool      can_use_missile(const item_def &item) const;
     bool      likes_wand(const item_def &item) const;
 
     string name(description_level_type type, bool force_visible = false,
