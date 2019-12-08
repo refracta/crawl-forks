@@ -199,7 +199,7 @@ int attack::calc_to_hit(bool random, bool player_aux)
         // slaying bonus
         mhit *= (20 + slaying_bonus(weapon && is_range_weapon(*weapon)
                                            && using_weapon(),
-                                              using_weapon())));
+                                              using_weapon()));
         mhit /= 20;
 
         // hunger penalty

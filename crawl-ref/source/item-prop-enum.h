@@ -687,8 +687,10 @@ enum weapon_type
     WPN_RANDOM,
     WPN_VIABLE,
 
+#if TAG_MAJOR_VERSION == 34
 // thrown weapons (for hunter weapon selection) - rocks, javelins, tomahawks
     WPN_THROWN,
+#endif
 };
 
 enum weapon_property_type

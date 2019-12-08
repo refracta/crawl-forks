@@ -1793,11 +1793,12 @@ static void _construct_weapon_menu(const newgame_def& ng,
     {
         string text = "Tab - ";
 
-        ASSERT(defweapon != WPN_THROWN || thrown_name != "");
+        if (defweapon == WPN_THROWN)
+            defweapon = WPN_VIABLE;
+
         text += defweapon == WPN_RANDOM  ? "Random" :
                 defweapon == WPN_VIABLE  ? "Recommended" :
                 defweapon == WPN_UNARMED ? "unarmed" :
-                defweapon == WPN_THROWN  ? thrown_name :
                 weapon_base_name(defweapon);
 
         _add_menu_sub_item(sub_items, 1, 2, text,
@@ -1969,7 +1970,7 @@ static vector<weapon_choice> _get_weapons(const newgame_def& ng)
     vector<weapon_choice> weapons;
     if (job_gets_ranged_weapons(ng.job))
     {
-        weapon_type startwep[4] = { WPN_THROWN, WPN_HUNTING_SLING,
+        weapon_type startwep[4] = { WPN_HUNTING_SLING,
                                     WPN_SHORTBOW, WPN_HAND_CROSSBOW };
 
         for (int i = 0; i < 4; i++)

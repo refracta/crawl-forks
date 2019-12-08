@@ -217,15 +217,6 @@ static void _give_ammo(weapon_type weapon, int plus)
 
     switch (weapon)
     {
-    case WPN_THROWN:
-        if (species_can_throw_large_rocks(you.species))
-            newgame_make_item(OBJ_MISSILES, MI_LARGE_ROCK, 4 + plus);
-        else if (you.body_size(PSIZE_TORSO) <= SIZE_SMALL)
-            newgame_make_item(OBJ_MISSILES, MI_TOMAHAWK, 8 + 2 * plus);
-        else
-            newgame_make_item(OBJ_MISSILES, MI_JAVELIN, 5 + plus);
-        newgame_make_item(OBJ_MISSILES, MI_THROWING_NET, 2);
-        break;
     case WPN_SHORTBOW:
         newgame_make_item(OBJ_MISSILES, MI_ARROW, 20);
         break;
@@ -619,7 +610,7 @@ static void _setup_generic(const newgame_def& ng)
     // you can use ' to swap between your items.
     if (you.char_class == JOB_EARTH_ELEMENTALIST)
         _free_up_slot('a');
-    if (you.char_class == JOB_ARCANE_MARKSMAN && ng.weapon != WPN_THROWN)
+    if (you.char_class == JOB_ARCANE_MARKSMAN)
         _free_up_slot('b');
 
     // Give tutorial skills etc

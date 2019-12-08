@@ -554,11 +554,6 @@ static map<string, weapon_type> _special_weapon_map = {
     {"unarmed",     WPN_UNARMED},
     {"claws",       WPN_UNARMED},
 
-    {"thrown",      WPN_THROWN},
-    {"rocks",       WPN_THROWN},
-    {"tomahawks",   WPN_THROWN},
-    {"javelins",    WPN_THROWN},
-
     {"random",      WPN_RANDOM},
 
     {"viable",      WPN_VIABLE},
@@ -592,8 +587,6 @@ static string _weapon_to_str(weapon_type wpn_type)
     {
     case WPN_UNARMED:
         return "claws";
-    case WPN_THROWN:
-        return "thrown";
     case WPN_VIABLE:
         return "viable";
     case WPN_RANDOM:
