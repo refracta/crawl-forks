@@ -737,9 +737,6 @@ void taken_new_item(object_class_type item_type)
     case OBJ_ARMOURS:
         learned_something_new(HINT_SEEN_ARMOUR);
         break;
-    case OBJ_MISSILES:
-        learned_something_new(HINT_SEEN_MISSILES);
-        break;
     case OBJ_MISCELLANY:
         learned_something_new(HINT_SEEN_MISC);
         break;
@@ -3159,51 +3156,6 @@ string hints_describe_item(const item_def &item)
             Hints.hints_events[HINT_SEEN_WEAPON] = false;
             break;
         }
-        case OBJ_MISSILES:
-            if (is_throwable(&you, item))
-            {
-                ostr << item.name(DESC_YOUR)
-                     << " can be <w>%</w>ired without the use of a launcher. ";
-                ostr << _hints_throw_stuff(item);
-                cmd.push_back(CMD_FIRE);
-            }
-            else if (is_launched(&you, you.weapon(0), you.weapon(1), item) == launch_retval::LAUNCHED)
-            {
-                ostr << "As you're already wielding the appropriate launcher, "
-                        "you can simply ";
-#ifdef USE_TILE
-                ostr << "<w>left mouse click</w> on the monster you want "
-                        "to hit while pressing the <w>Shift key</w>. "
-                        "Alternatively, you can <w>left mouse click</w> on "
-                        "this tile of the ammo you want to fire, and then "
-                        "<w>left mouse click</w> on the monster you want "
-                        "to hit.\n\n"
-
-                        "To launch this ammo using the keyboard, you can "
-                        "simply ";
-#endif
-
-                ostr << "<w>%</w>ire "
-                     << (item.quantity > 1 ? "these" : "this")
-                     << " " << item.name(DESC_BASENAME)
-                     << (item.quantity > 1? "s" : "")
-                     << ". You'll ";
-                ostr << _hints_target_mode();
-                cmd.push_back(CMD_FIRE);
-            }
-            else
-            {
-                ostr << "To shoot "
-                     << (item.quantity > 1 ? "these" : "this")
-                     << " " << item.name(DESC_BASENAME)
-                     << (item.quantity > 1? "s" : "")
-                     << ", first you need to <w>%</w>ield an appropriate "
-                        "launcher.";
-                cmd.push_back(CMD_WIELD_WEAPON);
-            }
-            Hints.hints_events[HINT_SEEN_MISSILES] = false;
-            break;
-
         case OBJ_ARMOURS:
         {
             bool wearable = true;
