@@ -47,7 +47,7 @@ NAME:    bcadren_noble_market
 TAGS:    arrival no_rotate no_hmirror no_vmirror no_mimic
 ORIENT:  encompass
 KFEAT:  0 = book shop type:Expert suffix:Tomes greed:9 count:3 use_all ; \
-	    necronomicon | book of annihilations | grand grimoire
+			necronomicon | book of annihilations | grand grimoire
 KFEAT:  1 = armour shop count:10 greed:10 type:Dragon suffix:Armour use_all ; \
             mundane not_cursed storm dragon scales | mundane not_cursed fire dragon scales |\
             mundane not_cursed shadow dragon scales | mundane not_cursed quicksilver dragon scales |\
@@ -82,20 +82,12 @@ KFEAT:  Y = armour shop count:3 greed:31 type:the suffix:Resistance use_all ; \
             not_cursed buckler ego:resistance plus:0 |\
             not_cursed heater shield ego:resistance plus:0 |\
             not_cursed scutum ego:resistance plus:0
-KFEAT:  2 = weapon shop type:Archery suffix:Annex count:6 use_all greed:40 ; \
+KFEAT:  2 = weapon shop type:Archery suffix:Annex count:5 use_all greed:40 ; \
             mundane not_cursed shortbow | mundane not_cursed longbow |\
             mundane not_cursed hand crossbow | mundane not_cursed arbalest |\
-			mundane not_cursed triple crossbow | mundane not_cursed blowgun
+			mundane not_cursed triple crossbow
 KFEAT:  4 = weapon shop type:Sling suffix:Spring count:2 use_all greed:20 ; \
             mundane not_cursed hunting sling | mundane not_cursed fustibalus
-KFEAT:  6 = weapon shop type:Ammo suffix:outlet count:7 use_all greed:5 ; \
-            arrow q:50 | arrow q:50 | bolt q:50 | bolt q:50 |\
-            sling bullet q:50 | sling bullet q:50 | needle q:30
-KFEAT:  7 = weapon shop type:Blowgun suffix:Blowout count:7 use_all greed:100 ; \
-            needle ego:curare q:5 |\
-			needle ego:confusion q:5 | needle ego:frenzy q:5 |\
-            needle ego:sleep q:5 | needle ego:petrification q:5 |\
-            large rock q:5 | large rock q:5
 KFEAT:  8 = armour shop type:Auxillary suffix:Armour count:12 use_all greed:20 ; \
             mundane not_cursed hat | not_cursed hat ego:magic_resistance plus:0|\
             not_cursed hat ego:intelligence plus:0 |\
@@ -243,7 +235,7 @@ KFEAT:  G = book shop type:Further suffix:Studies_in_the_Mystic_Arts count:18 gr
             book of unlife | book of the earth | book of the dragon |\
             book of burglary | book of dreams | book of alchemy
 KFEAT:  H = distillery shop type:Alchemist suffix:Brewery count:15 greed:20 use_all ; \
-	    potion of curing q:1 | potion of curing q:2 | potion of heal wounds q:1 |\
+			potion of curing q:1 | potion of curing q:2 | potion of heal wounds q:1 |\
             potion of heal wounds q:2 | potion of haste q:1 | potion of might q:1 |\
             potion of brilliance q:1 | potion of agility q:1 |\
             potion of cancellation q:1 | potion of ambrosia q:1 | potion of invisibility q:1 |\
@@ -255,7 +247,7 @@ KFEAT:  I = jewellery shop type:Amulets suffix:and_Necklaces count:9 greed:10 us
             mundane not_cursed amulet of the gourmand | mundane cursed amulet of reduced vision |\
             mundane not_cursed amulet of guardian spirit |\
             mundane not_cursed amulet of reflection | mundane not_cursed amulet of regeneration |\
-	    mundane not_cursed amulet of faith
+			mundane not_cursed amulet of faith
 KFEAT:  J = jewellery shop type:Rings, suffix:Glorious_Rings count:17 greed:8 use_all ; \
             mundane not_cursed ring of protection | mundane not_cursed ring of evasion |\
             mundane not_cursed ring of poison resistance | mundane not_cursed ring of resist corrosion|\
@@ -267,14 +259,6 @@ KFEAT:  J = jewellery shop type:Rings, suffix:Glorious_Rings count:17 greed:8 us
             mundane not_cursed ring of fire | mundane not_cursed ring of ice |\
             mundane not_cursed ring of protection from magic | mundane not_cursed ring of positive energy
 KFEAT:  R = abandoned_shop
-KFEAT:  T = weapon shop type:Tossed_out suffix:Treasures count:16 greed:10 use_all ; \
-			tomahawk q:10 | tomahawk ego:poisoned q:10 | tomahawk ego:returning q:10 |\
-            tomahawk ego:chaos q:10 | tomahawk ego:dispersal q:10 | tomahawk ego:exploding q:10|\
-            tomahawk ego:steel q:10 | tomahawk ego:silver q:10 |\
-			javelin q:10 | javelin ego:poisoned q:10 | javelin ego:returning q:10 |\
-            javelin ego:chaos q:10 | javelin ego:penetration q:10 |\
-            javelin ego:steel q:10 | javelin ego:silver q:10 |\
-            throwing net q:5
 KFEAT:  S = dry_fountain
 PLACE: Start Market
 
@@ -282,8 +266,8 @@ MAP
 xxxxxxxxxxxxxxxxxxxxx
 x...................x
 x.........8.........x
-x........7.H........x
-x.......6...G.......x
+x........R.H........x
+x.......R...G.......x
 x......R.....F......x
 x.....4.......E.....x
 x....3.........D....x
@@ -296,7 +280,7 @@ x....K.........L....x
 x.....M.......N.....x
 x......O.....P......x
 x.......Q...9.......x
-x........T.R........x
+x........R.R........x
 x.........R.........x
 x...................x
 xxxxxxxxxxxxxxxxxxxxx
