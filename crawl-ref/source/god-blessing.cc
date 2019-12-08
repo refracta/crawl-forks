@@ -153,48 +153,6 @@ static void _gift_weapon_to_orc(monster* orc, int weapon_type)
 }
 
 /**
- * Attempt to give a follower appropriate ammo.
- *
- * @param[in] orc               The orc to give ammo to.
- * @param[in] initial_gift      Whether this is starting ammo or a restock.
- * (Give more ammo when restocking than initially.)
- */
-void gift_ammo_to_orc(monster* orc, bool initial_gift)
-{
-    const item_def* launcher = orc->launcher();
-
-    item_def ammo;
-    ammo.base_type = OBJ_MISSILES;
-
-    if (!launcher)
-        ammo.sub_type = MI_TOMAHAWK;
-    else
-        ammo.sub_type = fires_ammo_type(*launcher);
-
-    // XXX: should beogh be gifting needles?
-    // if not, we'd need special checks in player gifting, etc... better to
-    // go along for now.
-    if (ammo.sub_type == MI_NEEDLE)
-        ammo.brand = SPMSL_POISONED;
-
-    ammo.quantity = 30 + random2(10);
-    if (initial_gift || !launcher)
-        ammo.quantity /= 2;
-
-    const item_def* old_ammo = orc->missiles();
-    // don't give a drop message - it'd come before the bless message
-    if (old_ammo && !items_stack(*old_ammo, ammo) &&
-        !orc->drop_item(MSLOT_MISSILE, false))
-    {
-        return; // can't force them to drop the ammo, for some reason?
-    }
-
-    set_ident_flags(ammo, ISFLAG_IDENT_MASK);
-
-    give_specific_item(orc, ammo);
-}
-
-/**
  * Attempt to bless a follower's melee weapon.
  *
  * @param[in] mon      The follower whose weapon should be blessed.
@@ -274,45 +232,27 @@ static string _beogh_bless_ranged_weapon(monster* mon)
                 return "uncursed armament";
         }
 
-        // Otherwise gift ammunition.
-        if (!blessed)
-        {
-            gift_ammo_to_orc(mon);
-            if (mon->missiles() != nullptr)
-                return "ammunition";
-
-            dprf("Couldn't give ammo to follower!");
-            return ""; // ?
-        }
-        else
+        if (blessed)
         {
             item_set_appearance(launcher);
             return "superior armament";
         }
-    }
-
-    // If they have a shield but no launcher, give tomahawks.
-    if (mon->shield() != nullptr)
-    {
-        gift_ammo_to_orc(mon);
-        if (mon->missiles() != nullptr)
-            return "ranged armament";
-
-        dprf("Couldn't give ammo to follower!");
         return ""; // ?
     }
 
-    // No launcher, no shield: give them a crossbow & some ammo.
-    _gift_weapon_to_orc(mon, WPN_ARBALEST);
+    // If they have a shield but no launcher, give hand xbow.
+    if (mon->shield() != nullptr)
+        _gift_weapon_to_orc(mon, WPN_HAND_CROSSBOW);
+    // No launcher, no shield: give them an arbalest.
+    else
+        _gift_weapon_to_orc(mon, WPN_ARBALEST);
+
     if (mon->launcher() == nullptr)
     {
         dprf("Couldn't give crossbow to follower!");
         return ""; // ?
     }
 
-    gift_ammo_to_orc(mon, true);
-    if (mon->missiles() == nullptr)
-        dprf("Couldn't give initial ammo to follower");
     return "ranged armament";
 }
 
@@ -332,18 +272,6 @@ static string _beogh_bless_weapon(monster* mon)
             return "armament";
 
         dprf("Couldn't give a weapon to follower!");
-        return ""; // ?
-    }
-
-    const item_def* launch_ptr = mon->launcher();
-    const item_def* ammo_ptr = mon->missiles();
-    if (launch_ptr != nullptr && ammo_ptr == nullptr)
-    {
-        gift_ammo_to_orc(mon);
-        if (mon->missiles() != nullptr)
-            return "ammunition";
-
-        dprf("Couldn't give ammo to follower!");
         return ""; // ?
     }
 
