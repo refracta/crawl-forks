@@ -365,15 +365,7 @@ int ranged_attack::weapon_damage()
  */
 int ranged_attack::calc_base_unarmed_damage()
 {
-    // No damage bonus for throwing non-throwing weapons.
-    if (launch_type == launch_retval::FUMBLED)
-        return 0;
-
-    int damage = you.skill_rdiv(wpn_skill);
-
-    // Stones get half bonus; everything else gets full bonus.
-    return div_rand_round(damage
-                          * min(4, property(*projectile, PWPN_DAMAGE)), 4);
+    return 0;
 }
 
 int ranged_attack::calc_mon_to_hit_base()
