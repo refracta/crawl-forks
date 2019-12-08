@@ -2223,13 +2223,7 @@ const char *ammo_name(const weapon_type bow)
 bool has_launcher(const item_def &ammo)
 {
     ASSERT(ammo.base_type == OBJ_MISSILES);
-    return ammo.sub_type != MI_LARGE_ROCK
-#if TAG_MAJOR_VERSION == 34
-           && ammo.sub_type != MI_DART
-#endif
-           && ammo.sub_type != MI_JAVELIN
-           && ammo.sub_type != MI_TOMAHAWK
-           && ammo.sub_type != MI_THROWING_NET;
+    return !(Missile_prop[Missile_index[ammo.sub_type]].throwable);
 }
 
 // Returns true if item can be reasonably thrown without a launcher.

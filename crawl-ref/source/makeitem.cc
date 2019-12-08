@@ -720,8 +720,8 @@ static special_missile_type _determine_missile_brand(const item_def& item,
     {
 #if TAG_MAJOR_VERSION == 34
     case MI_DART:
-    case MI_STONE:
 #endif
+    case MI_STONE:
     case MI_THROWING_NET:
     case MI_LARGE_ROCK:
     case MI_SLING_BULLET:
@@ -2083,7 +2083,7 @@ int items(bool allow_uniques,
     else
     {
         ASSERT(force_type == OBJ_RANDOM);
-        // Total weight: 2060
+        // Total weight: 1760
         item.base_type = random_choose_weighted(
                                     10, OBJ_STAVES,
                                     30, OBJ_BOOKS,
@@ -2094,7 +2094,6 @@ int items(bool allow_uniques,
                                    212, OBJ_ARMOURS,
                                    212, OBJ_WEAPONS,
                                    166, OBJ_POTIONS,
-                                   300, OBJ_MISSILES,
                                    280, OBJ_SCROLLS,
                                    450, OBJ_GOLD);
 
