@@ -653,15 +653,15 @@ void trap_def::trigger(actor& triggerer)
         case TRAP_NET:
             if (you_trigger)
             {
-                item_def item = generate_trap_item();
-                copy_item_to_grid(item, triggerer.pos());
-
                 if (random2avg(2 * you.evasion(), 2) > 18 + env.absdepth0 / 2)
                 {
-                    mpr("A net drops to the ground!");
+                    mpr("A net drops down and disappears into the ground!");
                 }
                 else
                 {
+                    item_def item = generate_trap_item();
+                    copy_item_to_grid(item, triggerer.pos());
+
                     mpr("A large net falls onto you!");
                     if (player_caught_in_net())
                     {
@@ -698,7 +698,7 @@ void trap_def::trigger(actor& triggerer)
                                                     " nimbly jumps out of the way "
                                                     "of a falling net."))
                         {
-                            mpr("A large net falls down!");
+                            mpr("A large net falls down and disappears into the ground!");
                         }
                     }
                 }
@@ -706,6 +706,10 @@ void trap_def::trigger(actor& triggerer)
                 {
                     // Triggered and hit.
                     triggered = true;
+
+                    item_def item = generate_trap_item();
+                    copy_item_to_grid(item, triggerer.pos());
+                    _mark_net_trapping(m->pos());
 
                     if (in_sight)
                     {
@@ -727,15 +731,7 @@ void trap_def::trigger(actor& triggerer)
                 }
 
                 if (triggered)
-                {
-                    item_def item = generate_trap_item();
-                    copy_item_to_grid(item, triggerer.pos());
-
-                    if (m->caught())
-                        _mark_net_trapping(m->pos());
-
                     trap_destroyed = true;
-                }
             }
             break;
 
@@ -1130,15 +1126,7 @@ void free_stationary_net(int item_index)
     if (item.is_type(OBJ_MISSILES, MI_THROWING_NET))
     {
         const coord_def pos = item.pos;
-        // Probabilistically mulch net based on damage done, otherwise
-        // reset damage counter (ie: item.net_durability).
-        if (x_chance_in_y(-item.net_durability, 9))
-            destroy_item(item_index);
-        else
-        {
-            item.net_durability = 0;
-            item.net_placed = false;
-        }
+        destroy_item(item_index);
 
         // Make sure we don't leave a bad trapping net in the stash
         // FIXME: may leak info if a monster escapes an out-of-sight net.
