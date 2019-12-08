@@ -72,12 +72,6 @@ static void _give_bonus_items()
     newgame_make_item(OBJ_SCROLLS, SCR_BLINKING);
 }
 
-static void _autopickup_ammo(missile_type missile)
-{
-    if (Options.autopickup_starting_ammo)
-        you.force_autopickup[OBJ_MISSILES][missile] = AP_FORCE_ON;
-}
-
 /**
  * Make an item during character creation.
  *

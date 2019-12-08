@@ -2669,7 +2669,6 @@ static void _add_fake_item(object_class_type base, int sub,
 void check_item_knowledge(bool unknown_items)
 {
     vector<const item_def*> items;
-    vector<const item_def*> items_missile; //List of missiles should go after normal items
     vector<const item_def*> items_food;    //List of foods should come next
     vector<const item_def*> items_misc;
     vector<const item_def*> items_other;   //List of other items should go after everything
@@ -2710,15 +2709,6 @@ void check_item_knowledge(bool unknown_items)
             if (i == OBJ_BOOKS || !item_type_has_ids(i))
                 continue;
             _add_fake_item(i, get_max_subtype(i), selected_items, items);
-        }
-        // Missiles
-        for (int i = 0; i < NUM_MISSILES; i++)
-        {
-#if TAG_MAJOR_VERSION == 34
-            if (i == MI_DART)
-                continue;
-#endif
-            _add_fake_item(OBJ_MISSILES, i, selected_items, items_missile);
         }
         // Foods
         for (int i = 0; i < NUM_FOODS; i++)
@@ -2762,7 +2752,6 @@ void check_item_knowledge(bool unknown_items)
     }
 
     sort(items.begin(), items.end(), _identified_item_names);
-    sort(items_missile.begin(), items_missile.end(), _identified_item_names);
     sort(items_food.begin(), items_food.end(), _identified_item_names);
     sort(items_misc.begin(), items_misc.end(), _identified_item_names);
 
@@ -2790,7 +2779,6 @@ void check_item_knowledge(bool unknown_items)
     ml = menu.load_items(items, unknown_items ? unknown_item_mangle
                                               : known_item_mangle, 'a', false);
 
-    ml = menu.load_items(items_missile, known_item_mangle, ml, false);
     ml = menu.load_items(items_food, known_item_mangle, ml, false);
     ml = menu.load_items(items_misc, known_item_mangle, ml, false);
     if (!items_other.empty())
@@ -2805,7 +2793,6 @@ void check_item_knowledge(bool unknown_items)
     auto last_char = menu.getkey();
 
     deleteAll(items);
-    deleteAll(items_missile);
     deleteAll(items_food);
     deleteAll(items_misc);
     deleteAll(items_other);
@@ -3574,21 +3561,7 @@ bool is_useless_item(const item_def &item, bool temp)
         return false;
 
     case OBJ_MISSILES:
-        if (you.species == SP_FELID)
-            return true;
-
-        // These are the same checks as in is_throwable(), except that
-        // we don't take launchers into account.
-        switch (item.sub_type)
-        {
-        case MI_LARGE_ROCK:
-            return !you.can_throw_large_rocks();
-        case MI_JAVELIN:
-            return you.body_size(PSIZE_BODY, !temp) < SIZE_MEDIUM
-                   && !you.can_throw_large_rocks();
-        }
-
-        return false;
+        return true;
 
     case OBJ_ARMOURS:
         if (!can_wear_armour(item, false, true))
@@ -4011,9 +3984,6 @@ string item_prefix(const item_def &item, bool temp)
     case OBJ_JEWELLERY:
         if (is_artefact(item))
             prefixes.push_back("artefact");
-        // fall through
-
-    case OBJ_MISSILES:
         if (item_is_equipped(item, true))
             prefixes.push_back("equipped");
         break;

@@ -814,7 +814,9 @@ void InvMenu::sort_menu(vector<InvEntry*> &invitems,
 FixedVector<int, NUM_OBJECT_CLASSES> inv_order(
     OBJ_WEAPONS,
     OBJ_SHIELDS,
+#if TAG_MAJOR_VERSION == 34
     OBJ_MISSILES,
+#endif
     OBJ_ARMOURS,
     OBJ_STAVES,
 #if TAG_MAJOR_VERSION == 34
