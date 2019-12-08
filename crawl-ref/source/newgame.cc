@@ -1667,19 +1667,11 @@ static void _construct_weapon_menu(const newgame_def& ng,
         case WPN_UNARMED:
             choices.emplace_back(SK_UNARMED_COMBAT, species_has_claws(ng.species) ? "claws" : "unarmed");
             break;
-        }
         default:
             string text = weapon_base_name(wpn_type);
             item_def dummy;
             dummy.base_type = OBJ_WEAPONS;
             dummy.sub_type = wpn_type;
-            if (is_ranged_weapon_type(wpn_type))
-            {
-                text += " and ";
-                text += wpn_type == WPN_HUNTING_SLING ? ammo_name(MI_SLING_BULLET)
-                    : ammo_name(wpn_type);
-                text += "s";
-            }
             if (_is_non_weapon(dummy))
             {
                 choices.emplace_back(SK_FIGHTING, text
@@ -1792,9 +1784,6 @@ static void _construct_weapon_menu(const newgame_def& ng,
     if (defweapon != WPN_UNKNOWN)
     {
         string text = "Tab - ";
-
-        if (defweapon == WPN_THROWN)
-            defweapon = WPN_VIABLE;
 
         text += defweapon == WPN_RANDOM  ? "Random" :
                 defweapon == WPN_VIABLE  ? "Recommended" :
@@ -1970,10 +1959,10 @@ static vector<weapon_choice> _get_weapons(const newgame_def& ng)
     vector<weapon_choice> weapons;
     if (job_gets_ranged_weapons(ng.job))
     {
-        weapon_type startwep[4] = { WPN_HUNTING_SLING,
+        weapon_type startwep[3] = { WPN_HUNTING_SLING,
                                     WPN_SHORTBOW, WPN_HAND_CROSSBOW };
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 3; i++)
         {
             weapon_choice wp;
             wp.first = startwep[i];

@@ -3088,7 +3088,7 @@ string hints_describe_item(const item_def &item)
 
                 // Maybe this is a launching weapon?
                 if (is_range_weapon(item))
-                    best_wpskill = best_skill(SK_SLINGS);
+                    best_wpskill = SK_SLINGS;
                 else
                     best_wpskill = best_skill(SK_SHORT_BLADES, SK_MACES_STAVES);
 

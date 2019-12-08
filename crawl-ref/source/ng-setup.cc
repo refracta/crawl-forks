@@ -171,12 +171,6 @@ item_def* newgame_make_item(object_class_type base,
     if (item.base_type == OBJ_SHIELDS && can_wield(&item, false, false))
         you.equip[EQ_WEAPON1] = slot;
 
-    if (item.base_type == OBJ_MISSILES)
-        _autopickup_ammo(static_cast<missile_type>(item.sub_type));
-    // You can get the books without the corresponding items as a wanderer.
-    else if (item.base_type == OBJ_BOOKS && item.sub_type == BOOK_CHANGES)
-        _autopickup_ammo(MI_ARROW);
-
     origin_set_startequip(item);
 
     // Wanderers may or may not already have a spell. - bwr
@@ -205,26 +199,6 @@ static void _give_ranged_weapon(weapon_type weapon, int plus)
     case WPN_HAND_CROSSBOW:
     case WPN_HUNTING_SLING:
         newgame_make_item(OBJ_WEAPONS, weapon, 1, plus);
-        break;
-    default:
-        break;
-    }
-}
-
-static void _give_ammo(weapon_type weapon, int plus)
-{
-    ASSERT(weapon != NUM_WEAPONS);
-
-    switch (weapon)
-    {
-    case WPN_SHORTBOW:
-        newgame_make_item(OBJ_MISSILES, MI_ARROW, 20);
-        break;
-    case WPN_HAND_CROSSBOW:
-        newgame_make_item(OBJ_MISSILES, MI_BOLT, 20);
-        break;
-    case WPN_HUNTING_SLING:
-        newgame_make_item(OBJ_MISSILES, MI_SLING_BULLET, 20);
         break;
     default:
         break;
@@ -323,9 +297,6 @@ void give_items_skills(const newgame_def& ng)
 
     give_job_equipment(you.char_class);
     give_job_skills(you.char_class);
-
-    if (job_gets_ranged_weapons(you.char_class))
-        _give_ammo(ng.weapon, you.char_class == JOB_HUNTER ? 1 : 0);
 
     if (you.species == SP_FELID)
         you.skills[SK_SHIELDS] = 0;
