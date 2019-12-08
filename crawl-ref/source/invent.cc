@@ -1091,17 +1091,7 @@ bool item_is_selected(const item_def &i, int selector)
         return itype == OBJ_MISSILES || itype == OBJ_WEAPONS;
 
     case OSEL_THROWABLE:
-    {
-        if (itype != OBJ_WEAPONS && itype != OBJ_MISSILES)
-            return false;
-
-        const launch_retval projected = is_launched(&you, you.weapon(0), you.weapon(1), i);
-
-        if (projected == launch_retval::FUMBLED)
-            return false;
-
-        return true;
-    }
+        return false;
     case OBJ_WEAPONS:
     case OBJ_SHIELDS:
     case OSEL_WIELD:
