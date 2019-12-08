@@ -197,10 +197,9 @@ int attack::calc_to_hit(bool random, bool player_aux)
         }
 
         // slaying bonus
-        mhit *= (20 + slaying_bonus(wpn_skill == SK_THROWING
-                              || (weapon && is_range_weapon(*weapon)
-                                         && using_weapon(),
-                                            using_weapon())));
+        mhit *= (20 + slaying_bonus(weapon && is_range_weapon(*weapon)
+                                           && using_weapon(),
+                                              using_weapon())));
         mhit /= 20;
 
         // hunger penalty
@@ -1211,9 +1210,8 @@ int attack::player_apply_slaying_bonuses(int damage, bool aux)
         damage_plus = get_weapon_plus();
     if (you.duration[DUR_CORROSION])
         damage_plus -= 4 * you.props["corrosion_amount"].get_int();
-    damage_plus += slaying_bonus(!weapon && wpn_skill == SK_THROWING
-                                 || (weapon && is_range_weapon(*weapon)
-                                            && using_weapon()),
+    damage_plus += slaying_bonus(weapon && is_range_weapon(*weapon)
+                                            && using_weapon(),
                                                using_weapon());
 
     damage += (damage_plus > -1) ? (random2(1 + damage_plus))
@@ -1273,7 +1271,7 @@ int attack::calc_damage()
     {
         int damage = 0;
         int damage_max = 0;
-        if (using_weapon() || wpn_skill == SK_THROWING)
+        if (using_weapon() || wpn_skill == SK_FIGHTING)
         {
             damage_max = weapon_damage();
             damage += random2avg(damage_max + 1, 3); // if we're averaging player damage let's do enemies too.
@@ -1311,8 +1309,7 @@ int attack::calc_damage()
     {
         int potential_damage, damage;
 
-        potential_damage = using_weapon() || wpn_skill == SK_THROWING
-            ? weapon_damage() : calc_base_unarmed_damage();
+        potential_damage = weapon_damage();
 
         potential_damage = player_stat_modify_damage(potential_damage);
 

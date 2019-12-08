@@ -8,7 +8,6 @@
     APT({enum}, SK_SLINGS,           {slings}),
     APT({enum}, SK_BOWS,             {bows}),
     APT({enum}, SK_CROSSBOWS,        {crossbows}),
-    APT({enum}, SK_THROWING,         {throwing}),
     APT({enum}, SK_ARMOUR,           {armour}),
     APT({enum}, SK_DODGING,          {dodging}),
     APT({enum}, SK_STEALTH,          {stealth}),
@@ -32,4 +31,5 @@
     APT({enum}, SK_STABBING,         UNUSABLE_SKILL),
     APT({enum}, SK_TRAPS,            UNUSABLE_SKILL),
     APT({enum}, SK_CONJURATIONS,     UNUSABLE_SKILL),
+    APT({enum}, SK_THROWING,         UNUSABLE_SKILL),
 #endif

@@ -21,7 +21,6 @@ aptitudes:
   slings: -1
   bows: -2
   crossbows: -2
-  throwing: -1
   armour: -1
   dodging: 2
   stealth: 3
@@ -69,5 +68,4 @@ recommended_weapons:
   - SK_POLEARMS
   - SK_MACES_STAVES
   - SK_LONG_BLADES
-  - SK_THROWING
 create_enum: False

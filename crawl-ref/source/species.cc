@@ -188,7 +188,6 @@ bool species_recommends_job(species_type species, job_type job)
 bool species_recommends_weapon(species_type species, weapon_type wpn)
 {
     const skill_type sk =
-          wpn == WPN_THROWN  ? SK_THROWING :
           wpn == WPN_UNARMED ? SK_UNARMED_COMBAT :
                                item_attack_skill(OBJ_WEAPONS, wpn);
 

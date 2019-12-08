@@ -13,7 +13,7 @@ aptitudes:
   short_blades: -1
   long_blades: -1
   maces_and_staves: 2
-  slings: -3
+  slings: 0
   bows: -3
   crossbows: -3
   armour: -2
@@ -56,4 +56,5 @@ recommended_weapons:
   - SK_POLEARMS
   - SK_MACES_STAVES
   - SK_AXES
+  - SK_SLINGS
 create_enum: False

@@ -770,7 +770,6 @@ void hints_gained_new_skill(skill_type skill)
     case SK_EVOCATIONS:
     case SK_DODGING:
     case SK_SHIELDS:
-    case SK_THROWING:
     case SK_SPELLCASTING:
     {
         mprf(MSGCH_TUTORIAL, "%s", get_skill_description(skill).c_str());
@@ -3089,7 +3088,7 @@ string hints_describe_item(const item_def &item)
 
                 // Maybe this is a launching weapon?
                 if (is_range_weapon(item))
-                    best_wpskill = best_skill(SK_SLINGS, SK_THROWING);
+                    best_wpskill = best_skill(SK_SLINGS);
                 else
                     best_wpskill = best_skill(SK_SHORT_BLADES, SK_MACES_STAVES);
 

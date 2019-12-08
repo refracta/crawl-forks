@@ -20,7 +20,9 @@ enum skill_type
     SK_BOWS,
     SK_CROSSBOWS,
     SK_LAST_WEAPON = SK_CROSSBOWS,
+#if TAG_MAJOR_VERSION == 34
     SK_THROWING,
+#endif
     SK_ARMOUR,
     SK_DODGING,
     SK_STEALTH,

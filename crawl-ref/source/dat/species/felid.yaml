@@ -19,7 +19,6 @@ aptitudes:
   slings: False
   bows: False
   crossbows: False
-  throwing: False
   armour: False
   dodging: 3
   stealth: 4
@@ -60,8 +59,8 @@ mutations:
 fake_mutations:
   - long: You cannot wear armour.
     short: no armour
-  - long: You are incapable of wielding weapons or throwing items.
-    short: no weapons or thrown items
+  - long: You are incapable of wielding weapons or throwing rocks.
+    short: no weapons
   - long: Your paws allow you to move quietly. (Stealth)
     short: stealth
 recommended_jobs:

@@ -70,12 +70,11 @@ static const map<job_type, job_def> job_data =
 { JOB_ASSASSIN, {
     "As", "Assassin",
     3, 3, 6,
-    { SP_TROLL, SP_HALFLING, SP_SPRIGGAN, SP_VINE_STALKER, },
-    { "dagger plus:2", "blowgun", "robe", "cloak", "needle ego:poisoned q:8",
-      "needle ego:curare q:2" },
+    { },
+    { "dagger plus:2", "robe", "cloak" },
     WCHOICE_NONE,
     { { SK_FIGHTING, 2 }, { SK_DODGING, 1 }, { SK_STEALTH, 4 },
-      { SK_THROWING, 2 }, { SK_WEAPON, 2 }, },
+      { SK_WEAPON, 2 }, },
 } },
 #endif
 { JOB_BERSERKER, {
@@ -277,11 +276,10 @@ static const map<job_type, job_def> job_data =
     3, 5, 4,
     { SP_FELID, SP_HALFLING, SP_SILENT_SPECTRE, SP_SPRIGGAN, SP_CENTAUR,
       SP_BASE_DRACONIAN, },
-    { "leather armour", "book of Spatial Translocations", "scroll of blinking",
-      "tomahawk ego:dispersal q:5" },
+    { "leather armour", "book of Spatial Translocations", "scroll of blinking" },
     WCHOICE_PLAIN,
     { { SK_FIGHTING, 2 }, { SK_ARMOUR, 1 }, { SK_DODGING, 2 },
-      { SK_SPELLCASTING, 2 }, { SK_TRANSLOCATIONS, 3 }, { SK_THROWING, 1 },
+      { SK_SPELLCASTING, 2 }, { SK_TRANSLOCATIONS, 3 },
       { SK_WEAPON, 2 }, },
 } },
 

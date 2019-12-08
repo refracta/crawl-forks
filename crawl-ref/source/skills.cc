@@ -365,7 +365,7 @@ void redraw_skill(skill_type exsk, skill_type old_best_skill, bool recalculate_o
     }
 
     // Identify weapon pluses.
-    if (exsk <= SK_THROWING)
+    if (exsk <= SK_CROSSBOWS)
         auto_id_inventory();
 }
 
@@ -568,8 +568,6 @@ bool training_restricted(skill_type sk)
     switch (sk)
     {
     case SK_FIGHTING:
-    // Requiring missiles would mean disabling the skill when you run out.
-    case SK_THROWING:
     case SK_ARMOUR:
     case SK_DODGING:
     case SK_STEALTH:
@@ -1989,11 +1987,7 @@ vector<skill_type> get_crosstrain_skills(skill_type sk)
     case SK_WHIPS_FLAILS:
         return { SK_MACES_STAVES };
     case SK_POLEARMS:
-        return { SK_AXES, SK_MACES_STAVES }; 
-    case SK_SLINGS:
-        return { SK_THROWING };
-    case SK_THROWING:
-        return { SK_SLINGS };
+        return { SK_AXES, SK_MACES_STAVES };
     case SK_BOWS:
         return { SK_CROSSBOWS };
     case SK_CROSSBOWS:

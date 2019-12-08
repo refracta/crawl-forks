@@ -13,23 +13,6 @@
 
 static void _give_wanderer_weapon(skill_type wpn_skill, int plus)
 {
-    if (wpn_skill == SK_THROWING)
-    {
-        // Plus is set if we are getting a good item. In that case, we
-        // get curare here.
-        if (plus)
-        {
-            newgame_make_item(OBJ_MISSILES, MI_NEEDLE, 1 + random2(4),
-                              0, SPMSL_CURARE);
-        }
-        // Otherwise, we just get some poisoned needles.
-        else
-        {
-            newgame_make_item(OBJ_MISSILES, MI_NEEDLE, 5 + roll_dice(2, 5),
-                              0, SPMSL_POISONED);
-        }
-    }
-
     weapon_type sub_type;
 
     // Now fill in the type according to the random wpn_skill.
@@ -57,10 +40,6 @@ static void _give_wanderer_weapon(skill_type wpn_skill, int plus)
 
     case SK_MACES_STAVES:
         sub_type = WPN_QUARTERSTAFF;
-        break;
-
-    case SK_THROWING:
-        sub_type = WPN_BLOWGUN;
         break;
 
     case SK_BOWS:
@@ -490,7 +469,6 @@ static void _wanderer_good_equipment(skill_type & skill)
     case SK_WHIPS_FLAILS:
     case SK_AXES:
     case SK_POLEARMS:
-    case SK_THROWING:
     case SK_SHORT_BLADES:
     case SK_LONG_BLADES:
     case SK_BOWS:
@@ -598,7 +576,6 @@ static void _wanderer_decent_equipment(skill_type & skill,
     case SK_POLEARMS:
     case SK_BOWS:
     case SK_CROSSBOWS:
-    case SK_THROWING:
     case SK_MACES_STAVES:
     case SK_SHORT_BLADES:
     case SK_LONG_BLADES:
@@ -691,7 +668,7 @@ void create_wanderer()
 
     // Regardless of roles, players get a couple levels in these skills.
     const skill_type util_skills[] =
-    { SK_THROWING, SK_STEALTH, SK_SHIELDS, SK_EVOCATIONS };
+    { SK_STEALTH, SK_SHIELDS, SK_EVOCATIONS };
 
     int util_size = ARRAYSZ(util_skills);
 

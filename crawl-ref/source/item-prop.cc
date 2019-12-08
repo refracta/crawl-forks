@@ -712,7 +712,7 @@ static const weapon_def Weapon_prop[] =
 
     // Range weapons
     { WPN_BLOWGUN,           "blowgun",             0,  2, 10,
-        SK_THROWING,     SIZE_LITTLE, SIZE_LITTLE, MI_NEEDLE,
+        SK_SLINGS,     SIZE_LITTLE, SIZE_LITTLE, MI_NEEDLE,
         DAMV_NON_MELEE, 5, 0, 25, {}, },
 
     { WPN_HUNTING_SLING,     "hunting sling",       5,  2, 12,
@@ -2058,8 +2058,6 @@ skill_type item_attack_skill(const item_def &item)
         return SK_MACES_STAVES;
     else if (item.base_type == OBJ_SHIELDS)
         return Shield_prop[Shield_index[item.sub_type]].skill;
-    else if (item.base_type == OBJ_MISSILES && !has_launcher(item))
-        return SK_THROWING;
 
     // This is used to mark that only fighting applies.
     return SK_FIGHTING;
@@ -2151,7 +2149,7 @@ bool item_skills(const item_def &item, set<skill_type> &skills)
     }
 
     skill_type sk = item_attack_skill(item);
-    if (sk != SK_FIGHTING && sk != SK_THROWING)
+    if (sk != SK_FIGHTING)
         skills.insert(sk);
 
     return !skills.empty();

@@ -17,7 +17,7 @@ aptitudes:
   whips_and_flails: -2
   polearms: 3
   maces_and_staves: 1
-  slings: -2
+  slings: 0
   bows: -2
   crossbows: -2
   armour: -3

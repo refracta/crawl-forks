@@ -337,10 +337,7 @@ void give_items_skills(const newgame_def& ng)
         _give_ammo(ng.weapon, you.char_class == JOB_HUNTER ? 1 : 0);
 
     if (you.species == SP_FELID)
-    {
-        you.skills[SK_THROWING] = 0;
         you.skills[SK_SHIELDS] = 0;
-    }
 
     if (!you_worship(GOD_NO_GOD))
     {

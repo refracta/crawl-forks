@@ -331,7 +331,7 @@ static int _get_blowgun_chance(const int hd)
 {
     ASSERT(you.weapon()->is_type(OBJ_WEAPONS, WPN_BLOWGUN));
     const int plus = you.weapon()->plus;
-    const int skill = you.skill_rdiv(SK_THROWING);
+    const int skill = you.skill_rdiv(SK_SLINGS);
 
     int chance = 10000 - 10000 * (hd - 2) / (4 + skill + plus);
     chance = min(max(chance, 0), 10000);
@@ -932,7 +932,7 @@ bool throw_it(bolt &pbolt, int throw_2, dist *target)
     if (returning && projected != launch_retval::FUMBLED)
     {
         const skill_type sk =
-            projected == launch_retval::THROWN ? SK_THROWING
+            projected == launch_retval::THROWN ? SK_FIGHTING
                                      : item_attack_skill(*you.weapon());
         if (!one_chance_in(1 + skill_bump(sk)))
             did_return = true;

@@ -181,10 +181,7 @@ void practise_launching(const item_def &weapon)
 }
 
 /// Skill training when the player throws a projectile at a monster.
-void practise_throwing(missile_type mi_type)
-{
-    exercise(SK_THROWING, 1);
-}
+void practise_throwing(missile_type mi_type) { exercise(SK_THROWING, 1); }
 
 /// Skill training when the player stabs an vulnerable monster for extra dam.
 void practise_stabbing() { exercise(SK_STEALTH, 1 + random2avg(5, 4)); }

@@ -31,7 +31,7 @@ ranged_attack::ranged_attack(actor *attk, actor *defn, item_def *proj,
       projectile(proj), teleport(tele), orig_to_hit(0),
       should_alert_defender(true), launch_type(launch_retval::BUGGY)
 {
-    init_attack(SK_THROWING, 0);
+    init_attack(SK_BOWS, 0);
     kill_type = KILLED_BY_BEAM;
 
     string proj_name = projectile->name(DESC_PLAIN);
@@ -61,7 +61,7 @@ ranged_attack::ranged_attack(actor *attk, actor *defn, item_def *proj,
     needs_message = defender_visible;
 
     if (!using_weapon())
-        wpn_skill = SK_THROWING;
+        wpn_skill = SK_FIGHTING;
 }
 
 int ranged_attack::calc_to_hit(bool random, bool player_aux)
@@ -581,7 +581,7 @@ bool ranged_attack::blowgun_check(special_missile_type type)
         return x_chance_in_y(chance, 100);
     }
 
-    const int skill = you.skill_rdiv(SK_THROWING);
+    const int skill = you.skill_rdiv(SK_SLINGS);
 
     // You have a really minor chance of hitting with no skills or good
     // enchants.
@@ -620,7 +620,7 @@ int ranged_attack::blowgun_duration_roll(special_missile_type type)
 
     const int base_power = (attacker->is_monster())
                            ? attacker->get_hit_dice()
-                           : attacker->skill_rdiv(SK_THROWING);
+                           : attacker->skill_rdiv(SK_SLINGS);
 
     const int plus = using_weapon() ? weapon->plus : 0;
 

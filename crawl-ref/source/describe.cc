@@ -959,14 +959,11 @@ static int _item_training_target(const item_def &item)
  */
 static skill_type _item_training_skill(const item_def &item)
 {
-    const int throw_dam = property(item, PWPN_DAMAGE);
     if (item.base_type == OBJ_WEAPONS || item.base_type == OBJ_STAVES
         || item.base_type == OBJ_SHIELDS)
         return item_attack_skill(item);
     else if (item.base_type == OBJ_ARMOURS)
         return SK_ARMOUR;
-    else if (item.base_type == OBJ_MISSILES && throw_dam)
-        return SK_THROWING;
     else if (item_is_evokable(item)) // not very accurate
         return SK_EVOCATIONS;
     else
@@ -1971,15 +1968,6 @@ static string _describe_ammo(const item_def &item)
             (float) FASTEST_PLAYER_THROWING_SPEED / 10,
             target_skill / 10
         );
-
-        if (!is_useless_item(item))
-        {
-            description += "\n    " +
-                    _your_skill_desc(SK_THROWING,
-                        could_set_target && in_inventory(item), target_skill);
-        }
-        if (could_set_target)
-            _append_skill_target_desc(description, SK_THROWING, target_skill, false);
     }
 
     return description;

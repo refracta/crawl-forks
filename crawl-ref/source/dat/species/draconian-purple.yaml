@@ -16,7 +16,6 @@ aptitudes:
   slings: -1
   bows: -1
   crossbows: -1
-  throwing: -1
   armour: False
   dodging: -1
   invocations: 1

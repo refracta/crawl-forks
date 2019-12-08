@@ -17,7 +17,7 @@ aptitudes:
   axes: -3
   whips_and_flails: 1
   maces_and_staves: 1
-  slings: -2
+  slings: 0
   bows: -2
   crossbows: -2
   armour: -2
@@ -66,5 +66,4 @@ recommended_weapons:
   - SK_WHIPS_FLAILS
   - SK_POLEARMS
   - SK_MACES_STAVES
-  - SK_THROWING
 create_enum: False

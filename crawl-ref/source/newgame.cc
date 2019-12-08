@@ -1667,34 +1667,6 @@ static void _construct_weapon_menu(const newgame_def& ng,
         case WPN_UNARMED:
             choices.emplace_back(SK_UNARMED_COMBAT, species_has_claws(ng.species) ? "claws" : "unarmed");
             break;
-        case WPN_THROWN:
-        {
-            // We don't support choosing among multiple thrown weapons.
-            tileidx_t tile = 0;
-            if (species_can_throw_large_rocks(ng.species))
-            {
-                thrown_name = "large rocks";
-#ifdef USE_TILE
-                tile = TILE_MI_LARGE_ROCK;
-#endif
-            }
-            else if (species_size(ng.species, PSIZE_TORSO) <= SIZE_SMALL)
-            {
-                thrown_name = "tomahawks";
-#ifdef USE_TILE
-                tile = TILE_MI_TOMAHAWK;
-#endif
-            }
-            else
-            {
-                thrown_name = "javelins";
-#ifdef USE_TILE
-                tile = TILE_MI_JAVELIN;
-#endif
-            }
-            choices.emplace_back(SK_THROWING,
-                thrown_name + " and throwing nets", tile);
-            break;
         }
         default:
             string text = weapon_base_name(wpn_type);
@@ -1746,11 +1718,6 @@ static void _construct_weapon_menu(const newgame_def& ng,
         tile_stack->flex_grow = 0;
         hbox->add_child(tile_stack);
 
-        if (choice.skill == SK_THROWING)
-        {
-            tile_stack->add_child(make_shared<Image>(
-                    tile_def(TILE_MI_THROWING_NET, TEX_DEFAULT)));
-        }
         if (choice.skill == SK_UNARMED_COMBAT)
         {
             tile_stack->min_size() =
