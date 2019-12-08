@@ -674,7 +674,6 @@ private:
     colour_t rune_colour() const;
 
     colour_t weapon_colour() const;
-    colour_t missile_colour() const;
     colour_t armour_colour() const;
     colour_t wand_colour() const;
     colour_t food_colour() const;

@@ -3564,44 +3564,6 @@ colour_t item_def::weapon_colour() const
 }
 
 /**
- * Assuming this item is a missile (stone/arrow/bolt/etc), what colour is it?
- */
-colour_t item_def::missile_colour() const
-{
-    ASSERT(base_type == OBJ_MISSILES);
-
-    // TODO: move this into item-prop.cc
-    switch (sub_type)
-    {
-#if TAG_MAJOR_VERSION == 34
-        case MI_STONE:
-            return BROWN;
-        case MI_DART:
-#endif
-        case MI_SLING_BULLET:
-            return CYAN;
-        case MI_LARGE_ROCK:
-            return LIGHTGREY;
-        case MI_ARROW:
-            return BLUE;
-        case MI_NEEDLE:
-            return WHITE;
-        case MI_BOLT:
-            return LIGHTBLUE;
-        case MI_JAVELIN:
-            return RED;
-        case MI_THROWING_NET:
-            return MAGENTA;
-        case MI_TOMAHAWK:
-            return GREEN;
-        case NUM_SPECIAL_MISSILES:
-        case NUM_REAL_SPECIAL_MISSILES:
-        default:
-            die("invalid missile type");
-    }
-}
-
-/**
  * Assuming this item is a piece of armour, what colour is it?
  */
 colour_t item_def::armour_colour() const
@@ -4078,7 +4040,7 @@ colour_t item_def::get_colour() const
         case OBJ_WEAPONS:
             return weapon_colour();
         case OBJ_MISSILES:
-            return missile_colour();
+            return BROWN;
         case OBJ_ARMOURS:
             return armour_colour();
         case OBJ_WANDS:
