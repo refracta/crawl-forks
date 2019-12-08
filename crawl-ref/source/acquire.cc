@@ -527,51 +527,6 @@ static int _acquirement_weapon_subtype(bool divine, int & /*quantity*/)
     return result;
 }
 
-static int _acquirement_missile_subtype(bool /*divine*/, int & /*quantity*/)
-{
-    int count = 0;
-    int skill = SK_THROWING;
-
-    for (int i = SK_SLINGS; i <= SK_THROWING; i++)
-    {
-        const int sk = _skill_rdiv((skill_type)i);
-        count += sk;
-        if (x_chance_in_y(sk, count))
-            skill = i;
-    }
-
-    missile_type result = MI_TOMAHAWK;
-
-    switch (skill)
-    {
-    case SK_SLINGS:    result = MI_SLING_BULLET; break;
-    case SK_BOWS:      result = MI_ARROW; break;
-    case SK_CROSSBOWS: result = MI_BOLT; break;
-
-    case SK_THROWING:
-        {
-            // Choose from among all usable missile types.
-            vector<pair<missile_type, int> > missile_weights;
-
-            missile_weights.emplace_back(MI_TOMAHAWK, 50);
-            missile_weights.emplace_back(MI_NEEDLE, 75);
-
-            if (you.body_size() >= SIZE_MEDIUM)
-                missile_weights.emplace_back(MI_JAVELIN, 100);
-
-            if (you.can_throw_large_rocks())
-                missile_weights.emplace_back(MI_LARGE_ROCK, 100);
-
-            result = *random_choose_weighted(missile_weights);
-        }
-        break;
-
-    default:
-        break;
-    }
-    return result;
-}
-
 static int _acquirement_jewellery_subtype(bool /*divine*/, int & /*quantity*/)
 {
     int result = 0;
@@ -727,7 +682,7 @@ typedef int (*acquirement_subtype_finder)(bool divine, int &quantity);
 static const acquirement_subtype_finder _subtype_finders[] =
 {
     _acquirement_weapon_subtype,
-    _acquirement_missile_subtype,
+    0, // no missiles
     _acquirement_armour_subtype,
     _acquirement_wand_subtype,
     _acquirement_food_subtype,
@@ -1359,8 +1314,6 @@ int acquirement_create_item(object_class_type class_wanted,
                                     + roll_dice(1, 20)
                                     + quantity_rnd);
         }
-        else if (class_wanted == OBJ_MISSILES && !divine)
-            acq_item.quantity *= 5;
         else if (quant > 1)
             acq_item.quantity = quant;
 
