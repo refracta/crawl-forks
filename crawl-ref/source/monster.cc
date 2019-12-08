@@ -1052,12 +1052,8 @@ void monster::lose_pickup_energy()
 
 void monster::pickup_message(const item_def &item)
 {
-    if (is_range_weapon(item)
-        || is_throwable(this, item)
-        || item.base_type == OBJ_MISSILES)
-    {
+    if (is_range_weapon(item))
         flags |= MF_SEEN_RANGED;
-    }
 
     mprf("%s picks up %s.",
          name(DESC_THE).c_str(),
