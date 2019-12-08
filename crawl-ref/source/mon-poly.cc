@@ -66,7 +66,7 @@ void monster_drop_things(monster* mons,
         {
             const bool summoned_item =
                 testbits(mitm[item].flags, ISFLAG_SUMMONED);
-            if (summoned_item)
+            if (summoned_item || mitm[item].base_type == OBJ_MISSILES)
             {
                 item_was_destroyed(mitm[item]);
                 destroy_item(item);

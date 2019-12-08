@@ -44,6 +44,7 @@
 #include "mon-book.h"
 #include "mon-cast.h"
 #include "mon-death.h"
+#include "mon-gear.h"
 #include "mon-movetarget.h"
 #include "mon-place.h"
 #include "mon-poly.h"
@@ -1102,7 +1103,7 @@ static bool _handle_wand(monster& mons)
 }
 
 // This function is poorly named; it's throwing AND ranged weapon attacks.
-bool handle_throw(monster* mons, bolt & beem, bool teleport, bool check_only)
+bool handle_throw(monster* mons, bolt & beem, spell_type call_spell, bool check_only)
 {
     // Yes, there is a logic to this ordering {dlb}:
     if (mons->incapacitated()
@@ -1123,10 +1124,10 @@ bool handle_throw(monster* mons, bolt & beem, bool teleport, bool check_only)
 
     const bool liquefied = mons->liquefied_ground();
 
-    // Don't allow offscreen throwing for now.
-    // BCADDO: Test allowing this (afterall offscreen casters can hit your summons).
-    if (mons->foe == MHITYOU && !you.see_cell(mons->pos()))
-        return false;
+    const bool teleport = (call_spell == SPELL_PORTAL_PROJECTILE);
+
+    if (teleport)
+        call_spell = SPELL_NO_SPELL;
 
     // Monsters won't shoot in melee range, largely for balance reasons.
     // Specialist archers are an exception to this rule.
@@ -1150,17 +1151,23 @@ bool handle_throw(monster* mons, bolt & beem, bool teleport, bool check_only)
     if (mons_is_fleeing(*mons) || mons->pacified())
         return false;
 
-    item_def *launcher = nullptr;
-    const item_def *weapon = nullptr;
-    const int mon_item = mons_usable_missile(mons, &launcher);
-
-    if (mon_item == NON_ITEM || !mitm[mon_item].defined())
-        return false;
-
     if (player_or_mon_in_sanct(*mons))
         return false;
 
-    item_def *missile = &mitm[mon_item];
+    item_def *launcher = mons->launcher();
+    const item_def *weapon = nullptr;
+
+    // If the attack needs a launcher that we can't wield, bail out.
+    if (launcher)
+    {
+        weapon = mons->mslot_item(MSLOT_WEAPON);
+        if (weapon && weapon != launcher && weapon->cursed())
+            return false;
+    }
+
+    // Create temporary missile item.
+    int m = items(false, OBJ_MISSILES, fires_ammo_type(*launcher), 1);
+    item_def *missile = &mitm[m];
 
     const actor *act = actor_at(beem.target);
     ASSERT(missile->base_type == OBJ_MISSILES);
@@ -1173,14 +1180,6 @@ bool handle_throw(monster* mons, bolt & beem, bool teleport, bool check_only)
         // Netting targets that are already permanently stuck in place
         // is similarly useless.
         if (mons_class_is_stationary(act->type))
-            return false;
-    }
-
-    // If the attack needs a launcher that we can't wield, bail out.
-    if (launcher)
-    {
-        weapon = mons->mslot_item(MSLOT_WEAPON);
-        if (weapon && weapon != launcher && weapon->cursed())
             return false;
     }
 
@@ -1203,6 +1202,7 @@ bool handle_throw(monster* mons, bolt & beem, bool teleport, bool check_only)
             simple_monster_message(*mons,
                                 " is stunned by your will and fails to attack.",
                                 MSGCH_GOD);
+            destroy_item(m);
             return false;
         }
         else if (interference == DO_REDIRECT_ATTACK)
@@ -1246,7 +1246,10 @@ bool handle_throw(monster* mons, bolt & beem, bool teleport, bool check_only)
     if (teleport || mons_should_fire(beem) || interference != DO_NOTHING)
     {
         if (check_only)
+        {
+            destroy_item(missile->index(), true);
             return true;
+        }
 
         // Monsters shouldn't shoot if fleeing, so let them "turn to attack".
         make_mons_stop_fleeing(mons);
@@ -1255,9 +1258,10 @@ bool handle_throw(monster* mons, bolt & beem, bool teleport, bool check_only)
             mons->swap_weapons();
 
         beem.name.clear();
-        return mons_throw(mons, beem, mon_item, teleport);
+        return mons_throw(mons, beem, missile->index(), teleport);
     }
 
+    destroy_item(missile->index(), true);
     return false;
 }
 
@@ -1802,7 +1806,7 @@ void handle_monster_move(monster* mons)
         }
 
         bolt beem = setup_targetting_beam(*mons);
-        if (handle_throw(mons, beem, false, false))
+        if (handle_throw(mons, beem))
         {
             DEBUG_ENERGY_USE("_handle_throw()");
             return;

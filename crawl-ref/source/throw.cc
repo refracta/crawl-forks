@@ -1077,9 +1077,6 @@ bool mons_throw(monster* mons, bolt &beam, int msl, bool teleport)
 
     const int weapon    = mons->inv[MSLOT_WEAPON];
 
-    mon_inv_type slot = get_mon_equip_slot(mons, mitm[msl]);
-    ASSERT(slot != NUM_MONSTER_SLOTS);
-
     // Energy is already deducted for the spell cast, if using portal projectile
     // FIXME: should it use this delay and not the spell delay?
     if (!teleport)
@@ -1096,7 +1093,10 @@ bool mons_throw(monster* mons, bolt &beam, int msl, bool teleport)
     item.quantity = 1;
 
     if (_setup_missile_beam(mons, beam, item, ammo_name, returning))
+    {
+        destroy_item(msl);
         return false;
+    }
 
     beam.aimed_at_spot |= returning;
 
@@ -1149,15 +1149,6 @@ bool mons_throw(monster* mons, bolt &beam, int msl, bool teleport)
     if (projected == launch_retval::LAUNCHED)
        _throw_noise(mons, beam, item, *mons->mslot_item(MSLOT_WEAPON));
 
-    // decrease inventory
-    bool really_returns;
-    if (returning && !one_chance_in(mons_power(mons->type) + 3))
-        really_returns = true;
-    else
-        really_returns = false;
-
-    beam.drop_item = !really_returns;
-
     // Redraw the screen before firing, in case the monster just
     // came into view and the screen hasn't been updated yet.
     viewwindow();
@@ -1166,46 +1157,14 @@ bool mons_throw(monster* mons, bolt &beam, int msl, bool teleport)
         beam.use_target_as_pos = true;
         beam.affect_cell();
         beam.affect_endpoint();
-        if (!really_returns)
-            beam.drop_object();
     }
     else
-    {
         beam.fire();
-
-        // The item can be destroyed before returning.
-        if (really_returns && thrown_object_destroyed(&item, beam.target))
-            really_returns = false;
-    }
-
-    if (really_returns)
-    {
-        // Fire beam in reverse.
-        beam.setup_retrace();
-        viewwindow();
-        beam.fire();
-
-        // Only print a message if you can see the target or the thrower.
-        // Otherwise we get "The weapon returns whence it came from!" regardless.
-        if (you.see_cell(beam.target) || you.can_see(*mons))
-        {
-            msg::stream << "The weapon returns "
-                        << (you.can_see(*mons)?
-                              ("to " + mons->name(DESC_THE))
-                            : "from whence it came")
-                        << "!" << endl;
-        }
-
-        // Player saw the item return.
-        if (!is_artefact(item))
-            set_ident_flags(mitm[msl], ISFLAG_KNOW_TYPE);
-    }
-    else if (dec_mitm_item_quantity(msl, 1))
-        mons->inv[slot] = NON_ITEM;
 
     if (beam.special_explosion != nullptr)
         delete beam.special_explosion;
 
+    destroy_item(msl);
     return true;
 }
 

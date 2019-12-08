@@ -6672,13 +6672,17 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
     {
         // Swap weapons if necessary so that that happens before the spell
         // casting message.
-        item_def *launcher = nullptr;
-        mons_usable_missile(mons, &launcher);
+        item_def *launcher = mons->launcher();
+        if (!launcher)
+        {
+            mpr("Bcadren says this is a bug.");
+            return;
+        }
         const item_def *weapon = mons->mslot_item(MSLOT_WEAPON);
-        if (launcher && launcher != weapon)
+        if (launcher != weapon)
             mons->swap_weapons();
         mons_cast_noise(mons, pbolt, spell_cast, slot_flags);
-        handle_throw(mons, pbolt, true, false);
+        handle_throw(mons, pbolt, SPELL_PORTAL_PROJECTILE);
         return;
     }
 
@@ -7976,7 +7980,7 @@ static bool _ms_waste_of_time(monster* mon, mon_spell_slot slot)
         beam.source    = mon->pos();
         beam.target    = mon->target;
         beam.source_id = mon->mid;
-        return !handle_throw(mon, beam, true, true);
+        return !handle_throw(mon, beam, SPELL_PORTAL_PROJECTILE, true);
     }
 
     case SPELL_FLASH_FREEZE:

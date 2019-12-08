@@ -896,22 +896,7 @@ static void _generate_missile_item(item_def& item, int force_type,
                            _determine_missile_brand(item, item_level));
     }
 
-    // Reduced quantity if special.
-    if (item.sub_type == MI_JAVELIN || item.sub_type == MI_TOMAHAWK
-        || (item.sub_type == MI_NEEDLE && get_ammo_brand(item) != SPMSL_POISONED)
-        || get_ammo_brand(item) == SPMSL_RETURNING)
-    {
-        item.quantity = random_range(2, 8);
-    }
-    else
-    {
-        item.quantity = 1 + random2(7); // sequence points for random2
-        item.quantity += random2(10);
-        item.quantity += random2(10);
-        if (get_ammo_brand(item) == SPMSL_NORMAL)
-            item.quantity += random2(12);
-
-    }
+    item.quantity = 1;
 }
 
 static bool _armour_disallows_randart(int sub_type)

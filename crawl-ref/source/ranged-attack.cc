@@ -361,7 +361,7 @@ int ranged_attack::weapon_damage()
 }
 
 /**
- * For ranged attacked, "unarmed" is throwing damage.
+ * For ranged attacks, "unarmed" is throwing damage.
  */
 int ranged_attack::calc_base_unarmed_damage()
 {

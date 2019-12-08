@@ -62,7 +62,6 @@ int dual_wield_mindelay_skill(const item_def &weap0, const item_def &weap1);
 int mons_weapon_damage_rating(const item_def &launcher);
 int mons_missile_damage(monster* mons, const item_def *launch,
                         const item_def *missile);
-int mons_usable_missile(monster* mons, item_def **launcher);
 
 bool bad_attack(const monster *mon, string& adj, string& suffix,
                 bool& would_cause_penance,
