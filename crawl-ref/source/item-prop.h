@@ -229,7 +229,6 @@ equipment_type get_item_slot(object_class_type type, int sub_type) IMMUTABLE;
 equipment_type get_item_slot(const item_def &item) PURE;
 
 int weapon_base_price(weapon_type type) PURE;
-int missile_base_price(missile_type type) PURE;
 int armour_base_price(armour_type type) PURE;
 int shield_base_price(shield_type type) PURE;
 

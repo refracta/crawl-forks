@@ -4658,7 +4658,6 @@ void bolt::monster_post_hit(monster* mon, int dmg)
                 return;
         }
 
-
         // Don't allow needles of sleeping to awaken monsters.
         if (m_brand == SPMSL_SLEEP && was_asleep && !mon->asleep())
             mon->put_to_sleep(agent(), 0);
