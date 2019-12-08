@@ -3574,14 +3574,6 @@ bool is_useless_item(const item_def &item, bool temp)
         return false;
 
     case OBJ_MISSILES:
-        if ((you.has_spell(SPELL_STICKS_TO_SNAKES)
-                || !you.num_turns && you.char_class == JOB_TRANSMUTER)
-                && item.sub_type == MI_ARROW)
-        {
-            return false;
-        }
-
-        // Save for the above spells, all missiles are useless for felids.
         if (you.species == SP_FELID)
             return true;
 
