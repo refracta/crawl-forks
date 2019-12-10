@@ -1231,8 +1231,9 @@ static spell_type _major_destruction_spell()
 static spell_type _legendary_destruction_spell()
 {
     return random_choose_weighted(25, SPELL_FIREBALL,
-                                  20, SPELL_ICEBLAST,
-                                  15, SPELL_GHOSTLY_FIREBALL);
+                                  20, SPELL_ORB_OF_ELECTRICITY,
+                                  15, SPELL_GHOSTLY_FIREBALL
+                                  10, SPELL_HURL_DAMNATION);
 }
 
 // TODO: documentme
