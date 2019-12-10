@@ -36,7 +36,7 @@ enum class spflag
     noisy              = 0x00100000,      // makes noise, even if innate
     testing            = 0x00200000,      // a testing/debugging spell
     corpse_violating   = 0x00400000,      // Conduct violation for Fedhas
-                     //  0x00800000,      // was SPFLAG_ALLOW_SELF
+    ranged             = 0x00800000,      // is the spell monster ranged attack?
     utility            = 0x01000000,      // usable no matter what foe is
     no_ghost           = 0x02000000,      // ghosts can't get this spell
     cloud              = 0x04000000,      // makes a cloud

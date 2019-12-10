@@ -406,6 +406,13 @@ static const mon_spellbook mspell_list[] =
       }
     },
 
+    // Shared by Urug.
+    {  MST_MERFOLK_JAVELINEER,
+      {
+        { SPELL_THROW_JAVELIN, 160, MON_SPELL_NATURAL },
+      }
+    },
+
     // ('n') Rotting hulks.
     {  MST_BOG_BODY,
       {
@@ -1900,6 +1907,7 @@ static const mon_spellbook mspell_list[] =
     {  MST_SONJA,
       {
        { SPELL_BLINK, 28, MON_SPELL_WIZARD },
+       { SPELL_THROW_CURARE, 100, MON_SPELL_NATURAL},
        { SPELL_TELEPORT_SELF, 28, MON_SPELL_WIZARD | MON_SPELL_EMERGENCY },
       }
     },
@@ -2074,8 +2082,10 @@ static const mon_spellbook mspell_list[] =
 
     {  MST_HAROLD,
       {
-       { SPELL_HARPOON_SHOT, 20, MON_SPELL_WIZARD },
+       { SPELL_HARPOON_SHOT, 20, MON_SPELL_NATURAL },
        { SPELL_SENTINEL_MARK, 20, MON_SPELL_WIZARD },
+       { SPELL_THROW_NET, 60, MON_SPELL_NATURAL },
+       { SPELL_THROW_JAVELIN, 60, MON_SPELL_NATURAL },
       }
     },
 

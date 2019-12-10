@@ -1245,6 +1245,9 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
         mon->props["dbname"] = mons_class_name(mon->type);
     }
 
+    if (mons_class_itemuse(mon->type) & MU_THROW_MASK)
+        maybe_give_throw_spell(*mon, mg.place.absdepth());
+
     if (mon->type == MONS_HELLBINDER || mon->type == MONS_CLOUD_MAGE)
     {
         mon->props[MON_GENDER_KEY] = random_choose(GENDER_FEMALE, GENDER_MALE,

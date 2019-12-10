@@ -5716,6 +5716,50 @@ static void _add_ancestor_spell(monster_spells &spells, spell_type spell)
 }
 
 /**
+* Randomly give throwing abilities to a creature, if appropriate.
+*
+* @param monster      The monster in question.
+* @param place        Absolute depth (monster placement data)
+*                       - Base depth in dungeon
+*                       - Depth of branch start otherwise.
+*/
+void maybe_give_throw_spell(monster &mon, int place)
+{
+    // Don't need two kinds of ranged weapons.
+    if (mon.launcher())
+        return;
+
+    // Don't give a ranged spell if it already has one.
+    for (auto spellslot : mon.spells)
+        if (testbits(get_spell_flags(spellslot.spell), spflag::ranged))
+            return;
+
+    mon.props[CUSTOM_SPELLS_KEY] = true;
+
+    if ((mons_itemuse(mon) & MU_THROW_ROCK) && one_chance_in(8))
+        mon.spells.emplace_back(SPELL_THROW_ROCK, 100, MON_SPELL_NATURAL);
+
+    else if (place < 4)
+        return;
+
+    else if ((mons_itemuse(mon) & MU_THROW_NET) && one_chance_in(5))
+        mon.spells.emplace_back(SPELL_THROW_NET, 100, MON_SPELL_NATURAL);
+
+    else if ((mons_itemuse(mon) & MU_THROW_BLOWGUN) && one_chance_in(10))
+        mon.spells.emplace_back(SPELL_THROW_BLOWGUN, 100, MON_SPELL_NATURAL);
+
+    else if ((mons_itemuse(mon) & MU_THROW_JAVELIN) && one_chance_in(6))
+    {
+        if (mon.body_size() < SIZE_MEDIUM)
+            mon.spells.emplace_back(SPELL_THROW_TOMAHAWK, 100, MON_SPELL_NATURAL);
+        else if (x_chance_in_y(mon.get_experience_level(), 20))
+            mon.spells.emplace_back(SPELL_THROW_JAVELIN, 100, MON_SPELL_NATURAL);
+        else
+            mon.spells.emplace_back(SPELL_THROW_TOMAHAWK, 100, MON_SPELL_NATURAL);
+    }
+}
+
+/**
  * Set the correct spells for a given ancestor, corresponding to their HD and
  * type.
  *
