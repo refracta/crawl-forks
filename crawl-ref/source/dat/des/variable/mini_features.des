@@ -2898,7 +2898,7 @@ ENDMAP
 NAME:   supply_closet_lemuel
 DEPTH:  D:1-9
 TAGS:   no_monster_gen extra
-ITEM:   ration w:20 / arrow / bolt / spear / any potion w:5
+ITEM:   ration w:20 / any potion w:5
 MAP
 x+xx
 xddx

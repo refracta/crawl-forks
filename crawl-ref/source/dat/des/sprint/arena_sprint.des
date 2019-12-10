@@ -1074,17 +1074,14 @@ KFEAT:  N = weapon shop type:Staff suffix:Store count:8 use_all greed:30 ; \
             staff of summoning | staff of wizardry |\
             staff of fire | staff of air | staff of earth | staff of cold |\
             staff of poison | staff of death
-KFEAT:  Q = weapon shop type:Weapon suffix:Rack count:17 use_all greed:30 ; \
+KFEAT:  Q = weapon shop type:Weapon suffix:Rack count:14 use_all greed:30 ; \
             mundane not_cursed quick blade | mundane not_cursed demon blade |\
             mundane not_cursed triple sword | mundane not_cursed broad axe |\
             mundane not_cursed executioner's axe | mundane not_cursed demon whip |\
             mundane not_cursed great mace | mundane not_cursed giant spiked club |\
             mundane not_cursed demon trident | mundane not_cursed bardiche |\
             mundane not_cursed lajatang | mundane not_cursed longbow |\
-            mundane not_cursed fustibalus | mundane not_cursed triple crossbow \
-                |\
-            mundane bolt q:50 | mundane sling bullet q:50 |\
-            mundane arrow q:50
+            mundane not_cursed fustibalus | mundane not_cursed triple crossbow
 KFEAT:  H = distillery shop type:Bottled suffix:Wisdom count:5 use_all greed:6 ; \
             potion of experience q:1 | potion of experience q:1 |\
             potion of experience q:2 | potion of experience q:3 |\

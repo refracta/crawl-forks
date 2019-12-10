@@ -67,15 +67,12 @@ end
 
 -- Axes.
 function axe_returning(e)
-  e.mons("generate_awake kobold ; tomahawk ego:returning ident:type q:4 | \
-                                  tomahawk ego:returning ident:type q:3 / \
-          generate_awake hobgoblin ; tomahawk ego:returning ident:type q:4 | \
-                                     tomahawk ego:returning ident:type q:3")
+  e.mons("kobold spells:throw_tomahawk.120.natural generate_awake / \
+          hobgoblin spells:throw_tomahawk.120.natural generate_awake")
 end
 
 function kobold_axe_returning(e)
-  e.mons("generate_awake kobold ; tomahawk ego:returning ident:type q:4 | \
-                                  tomahawk ego:returning ident:type q:3")
+  e.mons("kobold spells:throw_tomahawk.120.natural")
 end
 
 function easy_axe_fighter(e)
@@ -186,12 +183,9 @@ WEIGHT: 5
 : local rnd = crawl.random2(2)
 : if rnd == 0 then
 MONS:   goblin ; hand axe / hobgoblin ; hand axe / orc ; hand axe
-MONS:   goblin ; tomahawk ego:returning ident:type q:4 | \
-                 tomahawk ego:returning ident:type q:3 / \
-        hobgoblin ; tomahawk ego:returning ident:type q:4 | \
-                    tomahawk ego:returning ident:type q:3 / \
-        orc ; tomahawk ego:returning ident:type q:4 | \
-              tomahawk ego:returning ident:type q:3
+MONS:   goblin spells:throw_tomahawk.100.natural / \
+        hobgoblin spells:throw_tomahawk.100.natural / \
+        orc spells:throw_tomahawk.100.natural
 SUBST: 1 = 122
 :   bailey_portal_axe(_G)
 : elseif rnd == 1 then
@@ -215,8 +209,7 @@ NAME: enter_bailey_5
 TAGS: transparent
 : local rnd = crawl.random2(2)
 : if rnd == 0 then
-MONS: goblin ; tomahawk ego:returning ident:type q:4 | \
-               tomahawk ego:returning ident:type q:3
+MONS: goblin spells:throw_tomahawk.100.natural
 :   bailey_portal_axe(_G)
 : elseif rnd == 1 then
 MONS: goblin ; spear
@@ -322,8 +315,7 @@ TAGS: transparent
 WEIGHT: 1
 : local rnd = crawl.random2(2)
 : if rnd == 0 then
-MONS: orc ; tomahawk ego:returning ident:type q:3 | \
-            tomahawk ego:returning ident:type q:4 . hand axe
+MONS: orc spells:throw_tomahawk.100.natural ; hand axe
 MONS: gnoll ; hand axe / goblin ; hand axe
 :   bailey_portal_axe(_G)
 : elseif rnd == 1 then
@@ -582,8 +574,7 @@ SUBST:   N = nc
 SUBST:   H = W.
 # the following KMONS duplicates monster 1 from kobold_axe_returning
 KFEAT:   ( = exit_bailey
-KMONS:   ( = generate_awake kobold ; tomahawk ego:returning ident:type q:4 | \
-                                     tomahawk ego:returning ident:type q:3
+KMONS:   ( = kobold spells:throw_tomahawk.120.natural generate_awake
 #
 : kobold_axe_returning(_G)
 : easy_axe_fighter(_G)
@@ -764,8 +755,8 @@ ENDMAP
 NAME:   bailey_polearm_2
 ORIENT: encompass
 TAGS:   bailey_polearm no_rotate no_pool_fixup no_monster_gen
-MONS:   orc warrior w:5 ; arbalest . bolt . ring mail | scale mail / \
-        orc ; arbalest . bolt . ring mail | scale mail
+MONS:   orc warrior w:5 ; arbalest . ring mail | scale mail / \
+        orc ; arbalest . ring mail | scale mail
 : orc_with_polearm(_G)
 : orc_warrior_with_polearm(_G)
 : orc_knight_with_polearm(_G)
@@ -843,7 +834,7 @@ ITEM:    scroll of enchantment q:2 / scroll of enchantment q:3 /\
          book of annihilations w:1 / grand grimoire w:1 / necronomicon w:1
 MONS:    deep elf mage
 MONS:    deep elf knight ; short sword . leather armour /\
-         deep elf archer ; shortbow . arrow . leather armour
+         deep elf archer ; shortbow . leather armour
 : bailey_setup(_G)
 MAP
          ccccc
@@ -880,7 +871,7 @@ NAME:   bailey_polearm_4
 ORIENT: encompass
 TAGS:   bailey_polearm no_rotate no_item_gen no_monster_gen no_pool_fixup
 ITEM:   any good_item
-MONS:   orc warrior ; arbalest . bolt . ring mail | scale mail | chain mail / \
+MONS:   orc warrior ; arbalest . ring mail | scale mail | chain mail / \
         orc warrior ; halberd . ring mail | scale mail | chain mail
 : orc_with_polearm(_G)
 : orc_warrior_with_polearm(_G)
@@ -955,8 +946,7 @@ ORIENT: encompass
 TAGS:   bailey_polearm no_item_gen no_monster_gen no_pool_fixup patrolling
 : orc_with_polearm(_G)
 : orc_warrior_with_polearm(_G)
-MONS:   centaur ; javelin ego:returning ident:type q:2 | \
-            javelin ego:returning ident:type q:3 . spear | trident | halberd . \
+MONS:   centaur spells:throw_javelin.80.natural ; spear | trident | halberd . \
             ring mail | scale mail | chain mail
 NSUBST: _ = 4:2 / 5:1 / *:.
 NSUBST: ; = 6:2 / 6:1 / *:.
@@ -1003,8 +993,7 @@ NAME:   bailey_polearm_gnolls_kennysheep
 ORIENT: encompass
 TAGS:   bailey_polearm no_item_gen no_monster_gen no_pool_fixup
 MONS:   gnoll ; spear | trident | halberd . \
-            ring mail | scale mail | chain mail . \
-            throwing net | nothing
+            ring mail | scale mail | chain mail
 MONS:   gnoll sergeant ; halberd | glaive | bardiche w:1 . \
             chain mail w:20 | plate armour | crystal plate armour w:1
 MONS:   gnoll shaman ; spear | trident | halberd . \

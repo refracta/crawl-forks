@@ -4127,6 +4127,18 @@ static const struct spell_desc spelldata[] =
 },
 
 {
+    SPELL_THROW_DISPERSAL, "Throw Dispersal",
+    spschool::earth | spschool::translocation,
+    spflag::dir_or_target | spflag::needs_tracer | spflag::monster |
+    spflag::ranged,
+    4,
+    200,
+    LOS_RADIUS, LOS_RADIUS,
+    0, 6,
+    TILEG_GENERIC_MONSTER_SPELL,
+},
+
+{
     SPELL_THROW_JAVELIN, "Throw Javelin",
     spschool::earth,
     spflag::dir_or_target | spflag::needs_tracer | spflag::monster |

@@ -1310,19 +1310,25 @@ ENDMAP
 NAME:    wizlab_golubria
 TAGS:    no_pool_fixup
 KMONS:   1 = spatial vortex w:7 / blink frog / insubstantial wisp w:3 / nothing w:5
-KMONS:   2 = deep elf mage w:5 ; tomahawk ego:dispersal w:20 | tomahawk w:5 | nothing / \
-             rakshasa w:5 ; tomahawk ego:dispersal w:20 | tomahawk w:5 | nothing / \
-             boggart ; tomahawk ego:dispersal w:20 | tomahawk w:5 | nothing /  \
-             wizard ; tomahawk ego:dispersal w:20 | tomahawk w:5 | nothing
-KMONS:   3 = rakshasa w:5 ; whip ego:distortion | whip ego:vorpal w:6 | dagger \
+KMONS:   2 = deep elf mage spells:throw_dispersal.60.natural add_spells w:5 ; \
+			     rapier ego:distortion | rapier ego:vorpal w:5 | nothing / \
+             rakshasa spells:throw_dispersal.80.natural add_spells w:5 ; \
+			     rapier ego:distortion | rapier ego:vorpal w:5 | nothing / \
+             boggart spells:throw_dispersal.60.natural add_spells / \
+             wizard spells:throw_dispersal.80.natural add_spells ; \
+			     rapier ego:distortion | rapier ego:vorpal w:5 | nothing 
+KMONS:   3 = rakshasa spells:throw_dispersal.60.natural add_spells w:5 ; \
+		     whip ego:distortion | whip ego:vorpal w:6 | dagger \
              ego:distortion | dagger ego:vorpal w:6 | spear ego:distortion | \
-             spear ego:vorpal w:6 . tomahawk ego:dispersal / \
-             boggart w:5 ; whip ego:distortion | whip ego:vorpal w:6 | dagger \
+             spear ego:vorpal w:6 / \
+             boggart spells:throw_dispersal.60.natural add_spells w:5 ; \
+			 whip ego:distortion | whip ego:vorpal w:6 | dagger \
              ego:distortion | dagger ego:vorpal w:6 | spear ego:distortion | \
-             spear ego:vorpal w:6 . tomahawk ego:dispersal / \
-             wizard ; whip ego:distortion | whip ego:vorpal w:6 | dagger \
+             spear ego:vorpal w:6 / \
+             wizard spells:throw_dispersal.60.natural add_spells ; \ 
+			 whip ego:distortion | whip ego:vorpal w:6 | dagger \
              ego:distortion | dagger ego:vorpal w:6 | spear ego:distortion | \
-             spear ego:vorpal w:6 . tomahawk ego:dispersal . robe
+             spear ego:vorpal w:6 . robe
 KMONS:   04 = large abomination w:15 / small abomination w:15 / unseen horror w:5 / \
               thrashing horror w:30 / skeleton w:30 / freezing wraith w:5 /  \
               hellwing / chaos spawn w:5 / orange demon / ice devil /  \

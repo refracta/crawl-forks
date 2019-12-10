@@ -241,7 +241,7 @@ dgn.delayed_decay_extra(_G, 'C', 'spriggan skeleton', 'dagger good_item / '
 
  -- Centaur hunter of Fedhas. 3-4 (stacks of) items.
 dgn.delayed_decay_extra(_G, 'D', 'centaur skeleton', 'shortbow good_item / longbow w:2, '
-   .. 'arrow good_item, ration / nothing, '
+   .. 'ration / nothing, '
    .. 'helmet / centaur barding / pair of gloves' )
 
  -- Dwarven artificer. 3 items.
@@ -276,7 +276,7 @@ dgn.delayed_decay_extra(_G, 'K', 'dwarf skeleton', 'plate armour, '
    .. 'ring of wizardry / any jewellery / nothing w:20' )
 
  -- Halfling warper. 4-5 items.
-dgn.delayed_decay_extra(_G, 'L', 'halfling skeleton', 'tomahawk ego:dispersal / sling bullet, '
+dgn.delayed_decay_extra(_G, 'L', 'halfling skeleton', 'fustibalus, '
    .. 'randbook disc:translocation / any book, scroll of blinking / '
    .. 'scroll of teleportation / nothing w:45, '
    .. 'robe / leather armour, short sword good_item' )

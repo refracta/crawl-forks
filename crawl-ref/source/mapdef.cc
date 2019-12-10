@@ -3878,6 +3878,10 @@ mons_list::mons_spec_slot mons_list::parse_mons_spec(string spec)
         mspec.generate_awake = strip_tag(mon_str, "generate_awake");
         mspec.patrolling     = strip_tag(mon_str, "patrolling");
         mspec.band           = strip_tag(mon_str, "band");
+        mspec.additional_spells = strip_tag(mon_str, "add_spells");
+
+        if (mspec.additional_spells)
+            mspec.explicit_spells = false;
 
         const string att = strip_tag_prefix(mon_str, "att:");
         if (att.empty() || att == "hostile")

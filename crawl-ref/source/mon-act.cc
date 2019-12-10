@@ -1210,6 +1210,12 @@ bool handle_throw(monster* mons, bolt & beem, spell_type call_spell, bool check_
         }
         else missile->brand = SPMSL_NORMAL;
     }
+    if (call_spell == SPELL_THROW_DISPERSAL)
+    {
+        m = items(false, OBJ_MISSILES, MI_TOMAHAWK, 1);
+        missile = &mitm[m];
+        missile->brand = SPMSL_DISPERSAL;
+    }
     if (call_spell == SPELL_THROW_NET)
     {
         m = items(false, OBJ_MISSILES, MI_THROWING_NET, 1);

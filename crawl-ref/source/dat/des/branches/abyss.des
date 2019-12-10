@@ -68,7 +68,7 @@ ENDMAP
 NAME:  marbit_kobold_abyss_entry
 TAGS:  no_monster_gen nolayout_encompass
 WEIGHT: 5
-MONS:  big kobold ; tomahawk ego:dispersal, kobold demonologist
+MONS:  big kobold spells:throw_dispersal.80.natural, kobold demonologist
 : abyss_entry(_G, '_')
 MAP
 xxxxxxxxxxxxxxx
@@ -955,7 +955,7 @@ MONS:    bone dragon / tentacled starspawn / starcursed mass / \
          apocalypse crab / dancing weapon / tentacled monstrosity / \
          glowing shapeshifter
 ITEM:    superb_item, ration
-ITEM:    bolt good_item q:40 / arrow good_item q:40, any magical staff
+ITEM:    any magical staff
 ITEM:    scroll of magic mapping q:4 / scroll of random uselessness q:4
 ITEM:    ring mail randart / scale mail randart / chain mail randart w:20
 ITEM:    demon blade ego:chaos good_item ident:type / \

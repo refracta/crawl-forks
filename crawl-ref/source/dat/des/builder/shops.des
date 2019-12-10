@@ -306,8 +306,6 @@ TAGS:    no_monster_gen transparent
 DEPTH:   D:4-, Depths
 MONS:    ball python w:5 / adder / water moccasin, place:Snake:1
 KFEAT:   v = general shop type:Serpentskin suffix:Sales count:7 ; \
-         w:8 blowgun | w:8 needle ego:poisoned | w:4 needle ego:curare | \
-         w:14 tomahawk ego:poisoned | \
          w:3 ring of poison resistance | w:6 randbook disc:poison | \
          w:2 staff of poison | w:4 any weapon ego:venom | \
          w:4 any armour ego:poison_resistance | w:1 swamp dragon scales
@@ -334,7 +332,7 @@ KMONS:   2 = stone giant / catoblepas w:20 / deep troll earth mage /\
 ITEM:    scroll of random uselessness
 KFEAT:   v = general shop type:Pet suffix:Rocks count:7 ; \
          w:15 large rock | w:8 hunting sling | w:1 fustibalus | \
-         w:8 sling bullet | w:7 crystal ball of energy | \
+         w:7 crystal ball of energy | \
          w:5 randbook disc:earth | \
          w:2 book of the earth | w:2 book of geomancy | w:4 staff of earth | \
          w:1 crystal plate armour
@@ -412,7 +410,7 @@ TAGS: no_monster_gen no_trap_gen transparent
 SHUFFLE: _s
 KFEAT: s = general shop type:Hallowed suffix:Reliquary ; \
    potion of heal wounds | potion of curing | \
-   tomahawk ego:silver w:2 | javelin ego:silver w:2 | \
+   eudemon blade ego:silver | trishula ego:silver | \
    any weapon ego:holy_wrath | scroll of holy word |\
    amulet of faith w:2 | ring of positive energy w:5 |\
    any armour ego:positive_energy w:5
@@ -465,9 +463,8 @@ KFEAT: s = general shop type:Demolitions suffix:Depot ; \
    book of power | book of annihilations | \
    randbook disc:fire | book of the tempests | book of clouds | \
    wand of iceblast | wand of flame | wand of disintegration | \
-   wand of clouds | wand of scattershot | \
-   large rock ego:exploding | javelin ego:exploding | wand of acid | \
-   tomahawk ego:exploding | fan of gales | lightning rod | lamp of fire | \
+   wand of clouds | wand of scattershot | wand of acid | \
+   fan of gales | lightning rod | lamp of fire | \
    phial of floods | scroll of immolation | book of flames | book of fire | \
    book of air | manual of evocations
 FTILE: ' = floor_rough_red

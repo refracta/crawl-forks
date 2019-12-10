@@ -1552,12 +1552,13 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
         beam.thrower  = KILL_MON_MISSILE;
         break;
 
-    case SPELL_THROW_ROCK:
-    case SPELL_THROW_TOMAHAWK:
-    case SPELL_THROW_JAVELIN:
-    case SPELL_THROW_NET:
-    case SPELL_THROW_BLOWGUN:
-    case SPELL_THROW_CURARE:
+    case SPELL_THROW_DISPERSAL:       // ditto
+    case SPELL_THROW_ROCK:            // ditto
+    case SPELL_THROW_TOMAHAWK:        // ditto
+    case SPELL_THROW_JAVELIN:         // ditto
+    case SPELL_THROW_NET:             // ditto
+    case SPELL_THROW_BLOWGUN:         // ditto
+    case SPELL_THROW_CURARE:          // ditto
     case SPELL_IOOD:                  // tracer only
     case SPELL_PORTAL_PROJECTILE:     // for noise generation purposes
     case SPELL_GLACIATE:              // ditto
@@ -6699,6 +6700,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
     case SPELL_THROW_NET:
     case SPELL_THROW_BLOWGUN:
     case SPELL_THROW_CURARE:
+    case SPELL_THROW_DISPERSAL:
         handle_throw(mons, pbolt, spell_cast);
         return;
 

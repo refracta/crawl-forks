@@ -4899,6 +4899,16 @@ monster* dgn_place_monster(mons_spec &mspec, coord_def where,
         mons->props[CUSTOM_SPELLS_KEY] = true;
     }
 
+    if (mspec.additional_spells)
+    {
+        int spl_book = random2(mspec.spells.size());
+
+        for (unsigned int i = 0; i < mspec.spells[spl_book].size(); ++i)
+            mons->spells.emplace_back(mspec.spells[spl_book][i]);
+
+        mons->props[CUSTOM_SPELLS_KEY] = true;
+    }
+
     // this prop is mainly for the seed explorer.
     // not a great or complete measure of monster danger: the builder can roll
     // on the low side of the ood range, and vaults don't get this set.

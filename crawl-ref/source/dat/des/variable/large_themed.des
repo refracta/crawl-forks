@@ -57,8 +57,7 @@ NAME:    minmay_goblin_kobold_castle
 TAGS:    no_rotate
 ORIENT:  north
 DEPTH:   D:3-6
-MONS:    goblin; hunting sling . sling bullet / hobgoblin w:2; hunting sling . sling \
-         bullet / nothing
+MONS:    goblin; hunting sling / hobgoblin w:2; hunting sling / nothing
 MONS:    goblin; club / hobgoblin; club / gnoll w:3; club | spear / nothing
 MONS:    kobold
 MONS:    kobold; club / big kobold w:1; club | short sword w:2 / nothing
@@ -1161,7 +1160,7 @@ KFEAT:   _ = altar_okawaru
 # Lots of loot in this one. In true Okawaru fashion, most of it is junk!
 ITEM:    any armour, any armour good_item
 ITEM:    any weapon, any weapon good_item
-ITEM:    arrow, bolt, sling bullet, gold
+ITEM:    gold
 SHUFFLE: df, hi, jk, eg
 NSUBST:  d = 1:e / *:d, f = 1:g / *:f
 SUBST:   n = nv, 5 = 2221'
@@ -1639,7 +1638,7 @@ DEPTH:  D:3-4
   end
   kmons("O = " .. boss)
 }}
-MONS:   goblin, goblin ; hunting sling . sling bullet, jackal
+MONS:   goblin, goblin ; hunting sling, jackal
 NSUBST: . = 1:0 / 3:3 / *:.
 MAP
 xxxxxxxxxxxxxxxxxxx

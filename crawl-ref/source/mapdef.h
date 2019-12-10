@@ -672,6 +672,7 @@ public:
     string non_actor_summoner;
 
     bool explicit_spells;
+    bool additional_spells;
     vector<monster_spells> spells;
     monster_flags_t extra_monster_flags;
     vector<mon_enchant> ench;
@@ -687,8 +688,8 @@ public:
           generate_awake(false), patrolling(false), band(false),
           colour(COLOUR_INHERIT), god(GOD_NO_GOD), god_gift(false), hd(0),
           hp(0), abjuration_duration(0), summon_type(0), items(), monname(""),
-          non_actor_summoner(""), explicit_spells(false), spells(),
-          extra_monster_flags(), initial_shifter(RANDOM_MONSTER), props()
+          non_actor_summoner(""), explicit_spells(false), additional_spells(false), 
+          spells(), extra_monster_flags(), initial_shifter(RANDOM_MONSTER), props()
     {
     }
 };

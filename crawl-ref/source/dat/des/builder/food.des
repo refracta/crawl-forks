@@ -134,15 +134,16 @@ cccccccccccc
 ENDMAP
 
 # Not really a fish farm now that fish are gone...
+# BCADDO: Readd fish.
 NAME:   hangedman_fish_farm
 DEPTH:  D:9-14
 : food_weight(_G, 7)
 WEIGHT: 15
 TAGS:   uniq_second_food extra chance_second_food no_monster_gen no_pool_fixup \
         patrolling
-KMONS:  A = merfolk ; spear
+KMONS:  A = merfolk spells:throw_net.100.natural ; spear
 KFEAT:  g = shallow_water
-ITEM:   ration q:2, throwing net
+ITEM:   ration q:2
 :       dgn.delayed_decay(_G, 'g', 'electric eel corpse')
 MAP
 xxxxxx
@@ -302,7 +303,7 @@ TAGS:   uniq_second_food extra chance_second_food no_monster_gen no_trap_gen \
   dgn.delayed_decay(_G, 'g', 'orc skeleton / human skeleton / elf skeleton'
                              .. ' / dwarf skeleton')
 }}
-ITEM:   ration q:3, ration q:1, throwing net
+ITEM:   ration q:3, ration q:1
 MARKER: O = lua:fog_machine { cloud_type = "flame", pow_min = 10, \
                               pow_max = 10, delay = 10, size = 1, \
                               walk_dist = 0, excl_rad = 0 }
