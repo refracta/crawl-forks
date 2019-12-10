@@ -1551,6 +1551,12 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
         beam.thrower  = KILL_MON_MISSILE;
         break;
 
+    case SPELL_THROW_ROCK:
+    case SPELL_THROW_TOMAHAWK:
+    case SPELL_THROW_JAVELIN:
+    case SPELL_THROW_NET:
+    case SPELL_THROW_BLOWGUN:
+    case SPELL_THROW_CURARE:
     case SPELL_IOOD:                  // tracer only
     case SPELL_PORTAL_PROJECTILE:     // for noise generation purposes
     case SPELL_GLACIATE:              // ditto
@@ -5795,7 +5801,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         return;
     }
 
-    if (spell_cast == SPELL_PORTAL_PROJECTILE
+    if (spell_cast == SPELL_PORTAL_PROJECTILE || spell_cast >= SPELL_THROW_ROCK 
         || logic && (logic->flags & MSPELL_NO_AUTO_NOISE))
     {
         do_noise = false;       // Spell itself does the messaging.
@@ -6685,6 +6691,15 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         handle_throw(mons, pbolt, SPELL_PORTAL_PROJECTILE);
         return;
     }
+
+    case SPELL_THROW_ROCK:
+    case SPELL_THROW_TOMAHAWK:
+    case SPELL_THROW_JAVELIN:
+    case SPELL_THROW_NET:
+    case SPELL_THROW_BLOWGUN:
+    case SPELL_THROW_CURARE:
+        handle_throw(mons, pbolt, spell_cast);
+        return;
 
     case SPELL_IGNITE_POISON:
         cast_ignite_poison(mons, splpow, false);
@@ -7974,13 +7989,19 @@ static bool _ms_waste_of_time(monster* mon, mon_spell_slot slot)
         // Perhaps it will be used recklessly like chain lightning...
         return !foe || !adjacent(foe->pos(), mon->pos());
 
+    case SPELL_THROW_ROCK:
+    case SPELL_THROW_TOMAHAWK:
+    case SPELL_THROW_JAVELIN:
+    case SPELL_THROW_NET:
+    case SPELL_THROW_BLOWGUN:
+    case SPELL_THROW_CURARE:
     case SPELL_PORTAL_PROJECTILE:
     {
         bolt beam;
         beam.source    = mon->pos();
         beam.target    = mon->target;
         beam.source_id = mon->mid;
-        return !handle_throw(mon, beam, SPELL_PORTAL_PROJECTILE, true);
+        return !handle_throw(mon, beam, monspell, true);
     }
 
     case SPELL_FLASH_FREEZE:

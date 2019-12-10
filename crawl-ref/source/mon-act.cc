@@ -1166,11 +1166,74 @@ bool handle_throw(monster* mons, bolt & beem, spell_type call_spell, bool check_
     }
 
     // Create temporary missile item.
-    int m = items(false, OBJ_MISSILES, fires_ammo_type(*launcher), 1);
-    item_def *missile = &mitm[m];
+    int m;
+    item_def *missile; 
+
+    if (call_spell == SPELL_THROW_BLOWGUN)
+    {
+        m = items(false, OBJ_MISSILES, MI_NEEDLE, 1);
+        missile = &mitm[m];
+        if (x_chance_in_y(mons->get_experience_level(), 25))
+             missile->brand = SPMSL_CURARE;
+        else missile->brand = SPMSL_POISONED;
+    }
+    if (call_spell == SPELL_THROW_CURARE)
+    {
+        m = items(false, OBJ_MISSILES, MI_NEEDLE, 1);
+        missile = &mitm[m];
+        missile->brand = SPMSL_CURARE;
+    }
+    if (call_spell == SPELL_THROW_JAVELIN)
+    {
+        m = items(false, OBJ_MISSILES, MI_JAVELIN, 1);
+        missile = &mitm[m];
+        if (x_chance_in_y(mons->get_experience_level(), 25))
+        {
+            missile->brand = random_choose_weighted(52, SPMSL_PENETRATION,
+                                                    32, SPMSL_POISONED,
+                                                    21, SPMSL_STEEL,
+                                                    20, SPMSL_SILVER);
+        }
+        else missile->brand = SPMSL_NORMAL;
+    }
+    if (call_spell == SPELL_THROW_TOMAHAWK)
+    {
+        m = items(false, OBJ_MISSILES, MI_TOMAHAWK, 1);
+        missile = &mitm[m];
+        if (x_chance_in_y(mons->get_experience_level(), 25))
+        {
+            missile->brand = random_choose_weighted(15, SPMSL_POISONED,
+                                                    10, SPMSL_SILVER,
+                                                    10, SPMSL_STEEL,
+                                                    12, SPMSL_DISPERSAL,
+                                                    15, SPMSL_EXPLODING);
+        }
+        else missile->brand = SPMSL_NORMAL;
+    }
+    if (call_spell == SPELL_THROW_NET)
+    {
+        m = items(false, OBJ_MISSILES, MI_THROWING_NET, 1);
+        missile = &mitm[m];
+        missile->brand = SPMSL_NORMAL;
+    }
+    if (call_spell == SPELL_THROW_ROCK)
+    {
+        m = items(false, OBJ_MISSILES, MI_STONE, 1);
+        missile = &mitm[m];
+        missile->brand = SPMSL_NORMAL;
+    }
+    if (call_spell == SPELL_NO_SPELL)
+    {
+        if (!launcher)
+            return false;
+        m = items(false, OBJ_MISSILES, fires_ammo_type(*launcher), 1);
+        missile = &mitm[m];
+        missile->brand = SPMSL_NORMAL;
+    }
+
+    missile->quantity = 1;
 
     const actor *act = actor_at(beem.target);
-    ASSERT(missile->base_type == OBJ_MISSILES);
     if (act && missile->sub_type == MI_THROWING_NET)
     {
         // Throwing a net at a target that is already caught would be

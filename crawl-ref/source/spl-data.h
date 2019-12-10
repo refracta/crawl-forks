@@ -4091,6 +4091,83 @@ static const struct spell_desc spelldata[] =
 },
 
 {
+    SPELL_THROW_ROCK, "Throw Stone",
+    spschool::earth,
+    spflag::dir_or_target | spflag::needs_tracer | spflag::monster,
+    1,
+    200,
+    LOS_RADIUS, LOS_RADIUS,
+    0, 2,
+    TILEG_GENERIC_MONSTER_SPELL,
+},
+
+{
+    SPELL_THROW_FRUIT, "Throw Rotten Fruit",
+    spschool::earth,
+    spflag::dir_or_target | spflag::needs_tracer | spflag::monster,
+    2,
+    200,
+    LOS_RADIUS, LOS_RADIUS,
+    0, 4,
+    TILEG_GENERIC_MONSTER_SPELL,
+},
+
+{
+    SPELL_THROW_TOMAHAWK, "Throw Tomahawk",
+    spschool::earth,
+    spflag::dir_or_target | spflag::needs_tracer | spflag::monster,
+    3,
+    200,
+    LOS_RADIUS, LOS_RADIUS,
+    0, 6,
+    TILEG_GENERIC_MONSTER_SPELL,
+},
+
+{
+    SPELL_THROW_JAVELIN, "Throw Javelin",
+    spschool::earth,
+    spflag::dir_or_target | spflag::needs_tracer | spflag::monster,
+    4,
+    200,
+    LOS_RADIUS, LOS_RADIUS,
+    0, 8,
+    TILEG_GENERIC_MONSTER_SPELL,
+},
+
+{
+    SPELL_THROW_NET, "Throw Net",
+    spschool::earth,
+    spflag::dir_or_target | spflag::needs_tracer | spflag::monster,
+    6,
+    200,
+    LOS_RADIUS, LOS_RADIUS,
+    0, 0,
+    TILEG_GENERIC_MONSTER_SPELL,
+},
+
+{
+    SPELL_THROW_BLOWGUN, "Fire Blowgun",
+    spschool::poison,
+    spflag::dir_or_target | spflag::needs_tracer | spflag::monster,
+    3,
+    200,
+    LOS_RADIUS, LOS_RADIUS,
+    0, 0,
+    TILEG_GENERIC_MONSTER_SPELL,
+},
+
+{
+    SPELL_THROW_CURARE, "Fire Curare",
+    spschool::poison,
+    spflag::dir_or_target | spflag::needs_tracer | spflag::monster,
+    6,
+    200,
+    LOS_RADIUS, LOS_RADIUS,
+    0, 0,
+    TILEG_GENERIC_MONSTER_SPELL,
+},
+
+{
     SPELL_NO_SPELL, "nonexistent spell",
     spschool::none,
     spflag::testing,
