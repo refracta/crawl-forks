@@ -285,30 +285,6 @@ vector<string> fire_target_behaviour::get_monster_desc(const monster_info& mi)
             descs.emplace_back("immune to nets");
         }
 
-        // Display the chance for a needle of para/confuse/sleep/frenzy
-        // to affect monster
-        if (you.weapon() && you.weapon()->is_type(OBJ_WEAPONS, WPN_BLOWGUN))
-        {
-            special_missile_type brand = get_ammo_brand(*item);
-            if (brand == SPMSL_PETRIFICATION || brand == SPMSL_CONFUSION
-                || brand == SPMSL_FRENZY || brand == SPMSL_SLEEP)
-            {
-                int chance = _get_blowgun_chance(mi.hd);
-                bool immune = false;
-                if (mi.holi & (MH_UNDEAD | MH_NONLIVING))
-                    immune = true;
-
-                string verb = brand == SPMSL_PETRIFICATION ? "petrify" :
-                              brand == SPMSL_CONFUSION     ? "confuse"  :
-                              brand == SPMSL_FRENZY        ? "frenzy"
-                              /* SPMSL_SLEEP */            : "sleep";
-
-                string chance_string = immune ? "immune to needles" :
-                                       make_stringf("chance to %s on hit: %d%%",
-                                                    verb.c_str(), chance);
-                descs.emplace_back(chance_string);
-            }
-        }
     }
     return descs;
 }
@@ -329,7 +305,6 @@ vector<string> fire_target_behaviour::get_monster_desc(const monster_info& mi)
  */
 static int _get_blowgun_chance(const int hd)
 {
-    ASSERT(you.weapon()->is_type(OBJ_WEAPONS, WPN_BLOWGUN));
     const int plus = you.weapon()->plus;
     const int skill = you.skill_rdiv(SK_SLINGS);
 
@@ -470,13 +445,13 @@ bool fire_warn_if_impossible(bool silent)
     if (you.attribute[ATTR_HELD])
     {
         const item_def *weapon = you.weapon();
-        if (!weapon || !is_range_weapon(*weapon))
+        if (!weapon)
         {
             if (!silent)
                 mprf("You cannot throw anything while %s.", held_status());
             return true;
         }
-        else if (weapon->sub_type != WPN_BLOWGUN)
+        else
         {
             if (!silent)
             {
@@ -694,9 +669,6 @@ static void _throw_noise(actor* act, const bolt &pbolt, const item_def &ammo, co
 
     switch (launcher.sub_type)
     {
-    case WPN_BLOWGUN:
-        return;
-
     case WPN_HUNTING_SLING:
         level = 1;
         msg   = "You hear a whirring sound.";
@@ -1100,9 +1072,12 @@ bool mons_throw(monster* mons, bolt &beam, int msl, bool teleport)
 
     beam.aimed_at_spot |= returning;
 
-    const launch_retval projected =
+    launch_retval projected =
         is_launched(mons, mons->mslot_item(MSLOT_WEAPON), mons->mslot_item(MSLOT_WEAPON),
                     mitm[msl]);
+
+    if (mitm[msl].sub_type == MI_NEEDLE)
+        projected = launch_retval::LAUNCHED;
 
     if (projected == launch_retval::THROWN)
         returning = returning && !teleport;

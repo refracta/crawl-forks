@@ -403,20 +403,9 @@ void player_quiver::_get_fire_order(vector<int>& order,
     const int inv_start = (ignore_inscription_etc ? 0
                                                   : Options.fire_items_start);
 
-    // If in a net, cannot throw anything, and can only launch from blowgun.
+    // If in a net, cannot throw or launch anything.
     if (you.attribute[ATTR_HELD])
-    {
-        if (launcher && launcher->sub_type == WPN_BLOWGUN)
-        {
-            for (int i_inv = inv_start; i_inv < ENDOFPACK; i_inv++)
-                if (you.inv[i_inv].defined()
-                    && you.inv[i_inv].launched_by(*launcher))
-                {
-                    order.push_back(i_inv);
-                }
-        }
         return;
-    }
 
     for (int i_inv = inv_start; i_inv < ENDOFPACK; i_inv++)
     {

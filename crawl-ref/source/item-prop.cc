@@ -604,6 +604,9 @@ static const weapon_def Weapon_prop[] =
     { WPN_BLESSED_TRIPLE_SWORD,      "old triple sword", 17, -4, 19,
         SK_LONG_BLADES,  SIZE_MEDIUM, NUM_SIZE_LEVELS,  MI_NONE,
         DAMV_SLICING, 0, 0, 0, {} },
+    { WPN_BLOWGUN,           "old blowgun",               0,  2, 10,
+        SK_SLINGS,     SIZE_LITTLE, SIZE_LITTLE, MI_NEEDLE,
+        DAMV_NON_MELEE, 5, 0, 25, {}, },
 #endif
 
     // Axes
@@ -711,10 +714,6 @@ static const weapon_def Weapon_prop[] =
         DAMV_CRUSHING, 0, 0, 15, {} },
 
     // Range weapons
-    { WPN_BLOWGUN,           "blowgun",             0,  2, 10,
-        SK_SLINGS,     SIZE_LITTLE, SIZE_LITTLE, MI_NEEDLE,
-        DAMV_NON_MELEE, 5, 0, 25, {}, },
-
     { WPN_HUNTING_SLING,     "hunting sling",       9,  2, 12,
         SK_SLINGS,       SIZE_LITTLE, SIZE_LITTLE, MI_SLING_BULLET,
         DAMV_NON_MELEE, 8, 10, 15, RANGED_BRANDS },
@@ -754,7 +753,7 @@ static const missile_def Missile_prop[] =
 #if TAG_MAJOR_VERSION == 34
     { MI_DART,          "dart",          2, true  },
 #endif
-    { MI_NEEDLE,        "needle",        0, false },
+    { MI_NEEDLE,        "needle",        0, true  },
     { MI_STONE,         "stone",         2, true  },
     { MI_ARROW,         "arrow",         0, false },
     { MI_BOLT,          "bolt",          0, false },

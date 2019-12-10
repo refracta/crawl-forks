@@ -973,7 +973,6 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
                 { WPN_SHORTBOW,                 1 },
                 { WPN_LONGBOW,                  1 },
         } } },
-        { MONS_SONJA, { { { WPN_BLOWGUN, 1 } } } },
         // salamanders only have secondary weapons; melee or bow, not both
         { MONS_SALAMANDER, {
             { { WPN_HALBERD,                    5 },
@@ -982,10 +981,6 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
               { WPN_GLAIVE,                     2 },
               { WPN_SHORTBOW,                   5 }, },
             { 4, 0, 4 },
-        } },
-        { MONS_SPRIGGAN_RIDER, {
-            { { WPN_BLOWGUN,                    1 },
-              { NUM_WEAPONS,                    14 }, },
         } },
         { MONS_WARMONGER, {
             { { WPN_LONGBOW,                    10 }, // total 60
@@ -1025,14 +1020,6 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
     switch (type)
     {
     case MONS_KOBOLD:
-        // A few of the smarter kobolds have blowguns.
-        if (one_chance_in(10) && level > 1)
-        {
-            item.base_type = OBJ_WEAPONS;
-            item.sub_type  = WPN_BLOWGUN;
-            break;
-        }
-        // intentional fallthrough
     case MONS_BIG_KOBOLD:
         if (x_chance_in_y(3, 5))     // give hand weapon
         {

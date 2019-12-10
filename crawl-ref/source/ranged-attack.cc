@@ -564,13 +564,10 @@ bool ranged_attack::blowgun_check(special_missile_type type)
         return false;
     }
 
-    const int enchantment = using_weapon() ? weapon->plus : 0;
-
     if (attacker->is_monster())
     {
         int chance = 85 - ((defender->get_hit_dice()
                             - attacker->get_hit_dice()) * 5 / 2);
-        chance += enchantment * 4;
         chance = min(95, chance);
 
         if (type == SPMSL_FRENZY)
@@ -588,7 +585,7 @@ bool ranged_attack::blowgun_check(special_missile_type type)
     if (defender->get_hit_dice() < 15 && random2(100) <= 2)
         return true;
 
-    const int resist_roll = 2 + random2(4 + skill + enchantment);
+    const int resist_roll = 2 + random2(4 + skill);
 
     dprf(DIAG_COMBAT, "Brand rolled %d against defender HD: %d.",
          resist_roll, defender->get_hit_dice());
