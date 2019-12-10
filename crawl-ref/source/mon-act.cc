@@ -1192,7 +1192,8 @@ bool handle_throw(monster* mons, bolt & beem, spell_type call_spell, bool check_
             missile->brand = random_choose_weighted(52, SPMSL_PENETRATION,
                                                     32, SPMSL_POISONED,
                                                     21, SPMSL_STEEL,
-                                                    20, SPMSL_SILVER);
+                                                    20, SPMSL_SILVER
+                                                    20, SPMSL_CHAOS);
         }
         else missile->brand = SPMSL_NORMAL;
     }
@@ -1206,7 +1207,8 @@ bool handle_throw(monster* mons, bolt & beem, spell_type call_spell, bool check_
                                                     10, SPMSL_SILVER,
                                                     10, SPMSL_STEEL,
                                                     12, SPMSL_DISPERSAL,
-                                                    15, SPMSL_EXPLODING);
+                                                    15, SPMSL_EXPLODING
+                                                    10, SPMSL_CHAOS);
         }
         else missile->brand = SPMSL_NORMAL;
     }
