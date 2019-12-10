@@ -715,10 +715,10 @@ static const weapon_def Weapon_prop[] =
         SK_SLINGS,     SIZE_LITTLE, SIZE_LITTLE, MI_NEEDLE,
         DAMV_NON_MELEE, 5, 0, 25, {}, },
 
-    { WPN_HUNTING_SLING,     "hunting sling",       5,  2, 12,
+    { WPN_HUNTING_SLING,     "hunting sling",       9,  2, 12,
         SK_SLINGS,       SIZE_LITTLE, SIZE_LITTLE, MI_SLING_BULLET,
         DAMV_NON_MELEE, 8, 10, 15, RANGED_BRANDS },
-    { WPN_FUSTIBALUS,        "fustibalus",          8, -1, 14,
+    { WPN_FUSTIBALUS,        "fustibalus",         12, -1, 14,
         SK_SLINGS,       SIZE_LITTLE, SIZE_LITTLE, MI_SLING_BULLET,
         DAMV_NON_MELEE, 2, 2, 150, RANGED_BRANDS },
 
@@ -759,7 +759,7 @@ static const missile_def Missile_prop[] =
     { MI_ARROW,         "arrow",         0, false },
     { MI_BOLT,          "bolt",          0, false },
     { MI_LARGE_ROCK,    "large rock",   20, true  },
-    { MI_SLING_BULLET,  "sling bullet",  4, false },
+    { MI_SLING_BULLET,  "sling bullet",  0, false },
     { MI_JAVELIN,       "javelin",      10, true  },
     { MI_THROWING_NET,  "throwing net",  0, true  },
     { MI_TOMAHAWK,      "tomahawk",      6, true  },

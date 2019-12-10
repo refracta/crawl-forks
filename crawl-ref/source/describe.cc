@@ -1182,13 +1182,6 @@ static void _append_weapon_stats(string &description, const item_def &item)
     const bool could_set_target = _could_set_training_target(item, true);
     bool could_set_dual_target = false;
 
-    if (skill == SK_SLINGS)
-    {
-        description += make_stringf("\nFiring bullets:    Base damage: %d",
-                                    base_dam +
-                                    ammo_type_damage(MI_SLING_BULLET));
-    }
-
     if (item.base_type == OBJ_SHIELDS)
     {
         description += make_stringf(
