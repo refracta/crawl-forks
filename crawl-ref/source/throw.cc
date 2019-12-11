@@ -1099,6 +1099,32 @@ bool mons_throw(monster* mons, bolt &beam, int msl, bool teleport)
     // Now, if a monster is, for some reason, throwing something really
     // stupid, it will have baseHit of 0 and damage of 0. Ah well.
     string msg = mons->name(DESC_THE);
+
+    if (item.sub_type == MI_SNOWBALL)
+        msg += " balls up snow from the ground and";
+    else if (item.sub_type == MI_OOZE)
+        msg += " balls up the remains of a slime creature and";
+    else if (item.sub_type == MI_ABYSS)
+        msg += " makes a ball from the fabric of the abyss and";
+    else if (item.sub_type == MI_BLADE)
+        msg += " picks up a piece of a broken weapon and";
+    else if (item.sub_type == MI_ROOT)
+        msg += " rips up a gnarled root and";
+    else if (item.sub_type == MI_BANDAGE)
+        msg += " mangles together a loose clump of bandages and embalming tools and";
+    else if (item.sub_type == MI_PANDEMONIUM)
+        msg += " rips off a chunk of the weird stuff that makes up pandemonium and";
+    else if (item.sub_type == MI_BONE && ((mons_genus(mons->type) == MONS_SKELETAL_WARRIOR) 
+                                       || (mons_genus(mons->type) == MONS_SKELETON)))
+        msg += " takes a piece of bone from its own ripcage and";
+
+    else if (ammo_type_damage(item.sub_type) == 2)
+    {
+        msg += " picks up ";
+        msg += item.name(DESC_A, false, false, false);
+        msg += " and";
+    }
+
     if (teleport)
         msg += " magically";
     msg += ((projected == launch_retval::LAUNCHED) ? " shoots " : " throws ");
@@ -1108,7 +1134,10 @@ bool mons_throw(monster* mons, bolt &beam, int msl, bool teleport)
     else
     {
         // build shoot message
-        msg += item.name(DESC_A, false, false, false);
+        if (ammo_type_damage(item.sub_type) == 2)
+            msg += "it";
+        else
+            msg += item.name(DESC_A, false, false, false);
 
         // build beam name
         beam.name = item.name(DESC_PLAIN, false, false, false);

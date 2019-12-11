@@ -711,6 +711,7 @@ static special_missile_type _determine_missile_brand(const item_def& item,
     case MI_SLING_BULLET:
     case MI_ARROW:
     case MI_BOLT:
+    default:
         rc = SPMSL_NORMAL;
         break;
     case MI_NEEDLE:

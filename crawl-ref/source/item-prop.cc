@@ -755,6 +755,18 @@ static const missile_def Missile_prop[] =
 #endif
     { MI_NEEDLE,        "needle",        0, true  },
     { MI_STONE,         "stone",         2, true  },
+    { MI_SNOWBALL,      "snowball",      2, true  },
+    { MI_BLADE,         "rusty metal",   2, true  },
+    { MI_SKULL,         "skull",         2, true  },
+    { MI_BONE,          "bone",          2, true  },
+    { MI_ROOT,          "gnarled root",  2, true  },
+    { MI_MUD,           "clump of mud",  2, true  },
+    { MI_SEASHELL,      "seashell",      2, true  },
+    { MI_ABYSS,         "chaotic dust",  2, true  },
+    { MI_PANDEMONIUM,   "weird clump",   2, true  },
+    { MI_OOZE,          "ball of ooze",  2, true  },
+    { MI_GOLD,          "gold ore",      2, true  },
+    { MI_BANDAGE,    "ball of bandages", 2, true  },
     { MI_ARROW,         "arrow",         0, false },
     { MI_BOLT,          "bolt",          0, false },
     { MI_LARGE_ROCK,    "large rock",   20, true  },
@@ -902,7 +914,6 @@ const set<pair<object_class_type, int> > removed_items =
     { OBJ_FOOD,      FOOD_ROYAL_JELLY },
     { OBJ_FOOD,      FOOD_UNUSED },
     { OBJ_FOOD,      FOOD_FRUIT },
-    { OBJ_MISSILES,  MI_STONE },
 #endif
     // Outside the #if because we probably won't remove these.
     { OBJ_RUNES,     RUNE_ELF },

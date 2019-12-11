@@ -2892,6 +2892,9 @@ tileidx_t tileidx_item_throw(const item_def &item, int dx, int dy)
                 break;
             case MI_TOMAHAWK:
                 ch = TILE_MI_TOMAHAWK0;
+                break;
+            case MI_PANDEMONIUM:
+                ch = TILE_MI_PAN0;
             default:
                 break;
         }
@@ -2921,14 +2924,43 @@ tileidx_t tileidx_item_throw(const item_def &item, int dx, int dy)
             case MI_LARGE_ROCK:
                 ch = TILE_MI_LARGE_ROCK0;
                 break;
-            case MI_THROWING_NET:
-                ch = TILE_MI_THROWING_NET0;
+            case MI_GOLD:
+                ch = TILE_MI_GOLD0;
                 break;
+            case MI_MUD:
+                ch = TILE_MI_MUD0;
+                break;
+            case MI_ROOT:
+                ch = TILE_MI_ROOT0;
+                break;
+            case MI_SNOWBALL:
+                ch = TILE_MI_SNOWBALL0;
+                break;
+            case MI_SEASHELL:
+                ch = TILE_MI_SHELL0;
+                break;
+            case MI_BANDAGE:
+                ch = TILE_MI_BANDAGE0;
+                break;
+            case MI_ABYSS:
+                ch = TILE_MI_ABYSS0;
+                break;
+            case MI_OOZE:
+                ch = TILE_MI_OOZE0;
+                break;
+            case MI_SKULL:
+                ch = TILE_MI_SKULL0;
             default:
                 break;
         }
         if (ch != -1)
             return tileidx_enchant_equ(item, ch);
+
+        if (item.sub_type == MI_BONE)
+            return (TILE_MI_BONE0 + (dx + dy) % 4);
+
+        if (item.sub_type == MI_BLADE)
+            return (TILE_MI_BLADE0 + (dx + dy) % 2);
     }
 
     // If not a special case, just return the default tile.

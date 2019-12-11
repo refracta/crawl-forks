@@ -244,6 +244,31 @@ stone MI_STONE
 # flying stone
 effect/stone0 MI_STONE0
 
+# flying misc
+effect/gold0 MI_GOLD0
+effect/skull0 MI_SKULL0
+effect/bone0 MI_BONE0
+effect/bone1
+effect/bone2
+effect/bone3
+effect/blade0 MI_BLADE0
+effect/blade1
+effect/mud0 MI_MUD0
+effect/root0 MI_ROOT0
+effect/snowball0 MI_SNOWBALL0
+effect/shell0 MI_SHELL0
+effect/pan0 MI_PAN0
+effect/pan1
+effect/pan2
+effect/pan3
+effect/pan4
+effect/pan5
+effect/pan6
+effect/pan7
+effect/bandage0 MI_BANDAGE0
+effect/abyss0 MI_ABYSS0
+effect/ooze0 MI_OOZE0
+
 sling_bullet1 MI_SLING_BULLET
 sling_bullet2
 steel_sling_bullet1 MI_SLING_BULLET_STEEL
@@ -517,6 +542,7 @@ large_shield1 SHD_LARGE_SHIELD
 large_shield2
 large_shield3
 
+%rim 0
 sai1 SHD_SAI
 sai2
 sai3
@@ -528,6 +554,7 @@ targe3
 nunchaku1 SHD_NUNCHAKU
 nunchaku2
 nunchaku3
+%rim 1
 
 buckler_spriggan SHD_BUCKLER_SPRIGGAN
 
