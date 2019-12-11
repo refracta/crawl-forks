@@ -720,6 +720,9 @@ static const weapon_def Weapon_prop[] =
     { WPN_FUSTIBALUS,        "fustibalus",         12, -1, 14,
         SK_SLINGS,       SIZE_LITTLE, SIZE_LITTLE, MI_SLING_BULLET,
         DAMV_NON_MELEE, 2, 2, 150, RANGED_BRANDS },
+    { WPN_MANGONEL,        "mangonel",             28, -5, 19,
+        SK_SLINGS,       SIZE_LARGE,   SIZE_LARGE, MI_LARGE_ROCK,
+        DAMV_NON_MELEE, 4, 10, 250, RANGED_BRANDS },
 
     { WPN_HAND_CROSSBOW,     "hand crossbow",      12,  5, 15,
         SK_CROSSBOWS,    SIZE_LITTLE, SIZE_LITTLE, MI_BOLT,
@@ -769,7 +772,7 @@ static const missile_def Missile_prop[] =
     { MI_BANDAGE,    "ball of bandages", 2, true  },
     { MI_ARROW,         "arrow",         0, false },
     { MI_BOLT,          "bolt",          0, false },
-    { MI_LARGE_ROCK,    "large rock",   20, true  },
+    { MI_LARGE_ROCK,    "boulder",       0, false },
     { MI_SLING_BULLET,  "sling bullet",  0, false },
     { MI_JAVELIN,       "javelin",      10, true  },
     { MI_THROWING_NET,  "throwing net",  0, true  },
@@ -2244,9 +2247,6 @@ bool is_throwable(const actor *actor, const item_def &wpn, bool force)
 
     if (!force)
     {
-        if (wpn.sub_type == MI_LARGE_ROCK)
-            return actor->can_throw_large_rocks();
-
         if (bodysize < SIZE_MEDIUM
             && wpn.sub_type == MI_JAVELIN)
         {

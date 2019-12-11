@@ -331,7 +331,7 @@ KMONS:   2 = stone giant / catoblepas w:20 / deep troll earth mage /\
              iron dragon w:4
 ITEM:    scroll of random uselessness
 KFEAT:   v = general shop type:Pet suffix:Rocks count:7 ; \
-         w:15 large rock | w:8 hunting sling | w:1 fustibalus | \
+         w:15 mangonel | w:8 hunting sling | w:1 fustibalus | \
          w:7 crystal ball of energy | \
          w:5 randbook disc:earth | \
          w:2 book of the earth | w:2 book of geomancy | w:4 staff of earth | \
@@ -781,7 +781,7 @@ TAGS:   transparent extra
 WEIGHT: 3
 # Only deals in items that are probably really heavy.
 KFEAT:  S = general shop type:Mass suffix:Market ; \
-        large rock w:30 | \
+        mangonel w:30 | \
         giant club w:20 | \
         giant spiked club | \
         great mace | \

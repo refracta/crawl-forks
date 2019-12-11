@@ -970,6 +970,7 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
         { MONS_CHERUB,
             { { { WPN_HUNTING_SLING,            1 },
                 { WPN_FUSTIBALUS,               1 },
+                { WPN_MANGONEL,                 1 },
                 { WPN_SHORTBOW,                 1 },
                 { WPN_LONGBOW,                  1 },
         } } },
@@ -1085,8 +1086,10 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
 
     case MONS_CYCLOPS:
     case MONS_STONE_GIANT:
-        item.base_type = OBJ_MISSILES;
-        item.sub_type  = MI_LARGE_ROCK;
+        item.base_type = OBJ_WEAPONS;
+        item.sub_type  = WPN_MANGONEL;
+        if (one_chance_in(4))
+            level = ISPEC_GOOD_ITEM;
         break;
 
     case MONS_MERFOLK_IMPALER:

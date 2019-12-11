@@ -694,6 +694,8 @@ enum weapon_type
     WPN_INTELLIGENT,
     WPN_DEFT,
 
+    WPN_MANGONEL,
+
     NUM_WEAPONS,
 
 // special cases

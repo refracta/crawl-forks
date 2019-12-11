@@ -783,6 +783,8 @@ axe_short AXE_SHORT
 ## launchers
 sling HUNTING_SLING
 fustibalus FUSTIBALUS
+mangonel0 MANGONEL
+mangonel1
 bow BOW
 bow_two BOW2
 bow_three BOW3
@@ -1138,6 +1140,8 @@ axe_short AXE_SHORT
 ## launchers
 sling HUNTING_SLING
 fustibalus FUSTIBALUS
+mangonel0 MANGONEL
+mangonel1
 bow BOW
 bow_two BOW2
 bow_three BOW3

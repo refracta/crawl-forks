@@ -3191,7 +3191,7 @@ DEPTH: D:4-12
 SUBST: Q = TPW, T = tP, P = p'', Y = W', Z = tW, ' = ':13 r:1
 FTILE: tp'r = floor_sand
 KMONS: p = plant
-KITEM: r = scroll of random uselessness q:1 / large rock q:1 w:5
+KITEM: r = scroll of random uselessness q:1
 KITEM: s = pair of boots
 KFEAT: ' = .
 MAP

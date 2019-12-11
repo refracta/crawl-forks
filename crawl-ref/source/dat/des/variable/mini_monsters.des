@@ -1200,7 +1200,7 @@ DEPTH:  D:8-
 WEIGHT: 5
 KMONS:  1 = Joseph / cyclops, \
             yaktaur ; quarterstaff . hunting sling / cyclops
-ITEM:   scroll of random uselessness / club w:5 / large rock w:3 / quarterstaff w:1
+ITEM:   hunting sling w:5 / club w:5 / mangonel w:3 / quarterstaff w:1
 NSUBST: . = 4:d / 4:. / * = d:30 .:150
 MAP
 .........
@@ -1857,7 +1857,7 @@ NAME:  guppyfry_early_orc_mine
 DEPTH: D:2-5
 TAGS:  patrolling no_monster_gen transparent
 MONS:  orc, goblin, hobgoblin, orc priest, orc wizard, orc warrior
-ITEM:  scroll of random uselessness / large rock q:1 w:1
+ITEM:  gold q:1
 NSUBST: ? = 2:$ / 2:d / *:.
 : if you.absdepth() > 3 then
 NSUBST: - = 1:6 / 1:5 / 1:4 / 3:1 / 2:. / 2:x / 2:I / *:.

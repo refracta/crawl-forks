@@ -283,7 +283,7 @@ dgn.delayed_decay_extra(_G, 'L', 'halfling skeleton', 'fustibalus, '
 
  -- Ogre, maybe an ogre mage of some kind. 4-5 items.
 dgn.delayed_decay_extra(_G, 'M', 'ogre skeleton', 'giant club good_item / '
-   .. 'giant spiked club good_item, robe, large rock, ration, '
+   .. 'giant spiked club good_item, robe, mangonel good_item, ration, '
    .. 'any book / nothing' )
 }}
 MAP

@@ -662,14 +662,6 @@ bool monster::could_wield(const item_def &item, bool ignore_brand,
     return true;
 }
 
-bool monster::can_throw_large_rocks() const
-{
-    monster_type species = mons_species(false); // zombies can't
-    return species == MONS_STONE_GIANT
-           || species == MONS_CYCLOPS
-           || species == MONS_OGRE;
-}
-
 bool monster::can_speak()
 {
     if (has_ench(ENCH_MUTE))

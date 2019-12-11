@@ -938,7 +938,7 @@ NAME:   rock_pile
 TAGS:   no_item_gen no_monster_gen transparent
 DEPTH:  Orc
 MONS:   orc ; hunting sling . stone q:30
-KITEM:  d = w:3 stone / w:1 large rock q:1
+KITEM:  d = gold q:1
 SUBST:  a = .:4 b
 NSUBST: b = 6:1 / *:d
 SUBST:  1 = 1 .
@@ -1100,7 +1100,7 @@ SUBST: X = 'xx, ' = .:5 d:4 ^:1
 : if you.depth() == dgn.br_depth(you.branch()) then
 SUBST: ^ = .:5 d:4
 : end
-KITEM: d = stone q:1 / large rock q:1 w:3 / gold q:1 w:3
+KITEM: d = gold q:1
 KFEAT: ^ = shaft trap
 MAP
    xxx.
@@ -1296,9 +1296,9 @@ ENDMAP
 NAME: nicolae_orc_rockfall
 TAGS: transparent extra decor no_item_gen
 DEPTH: Orc
-: dgn.delayed_decay_extra(_G, 'o', 'orc corpse', 'stone q:1 / nothing, large rock q:1')
-KITEM: r = stone q:1 / nothing w:5 / large rock q:1 w:3
-KITEM: R = stone q:1 / stone q:2 / large rock q:1 w:5
+: dgn.delayed_decay_extra(_G, 'o', 'orc corpse', 'gold q:1')
+KITEM: r = gold q:1
+KITEM: R = gold q:1
 MAP
  .....
 ..rrr..

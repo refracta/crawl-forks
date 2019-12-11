@@ -453,7 +453,6 @@ public:
     int constriction_damage(bool direct) const override;
     bool constriction_does_damage(bool direct) const override;
 
-    bool can_throw_large_rocks() const override;
     bool can_speak();
     bool is_silenced() const;
 

@@ -377,8 +377,8 @@ NAME:   ebering_ghost_rock_garden
 ORIENT: float
 KMONS:  O = player_ghost
 : local large_rocks = crawl.random_range(3,7)
-: kitem("O = large rock q:" .. large_rocks)
-KITEM:  ' = scroll of random uselessness / large rock w:1
+: kitem("O = gold q:" .. large_rocks)
+KITEM:  ' = gold q:1
 NSUBST: r = O / d / e / tG / t'' / '
 : lone_ghost_extra_loot(_G, "'")
 COLOUR: '-O|*%$tG = yellow, c = white

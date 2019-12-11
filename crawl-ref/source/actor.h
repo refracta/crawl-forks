@@ -256,8 +256,6 @@ public:
 
     virtual int stealth () const = 0;
 
-    virtual bool can_throw_large_rocks() const = 0;
-
     virtual int armour_class(bool calc_unid = true) const = 0;
     virtual int gdr_perc() const = 0;
     int apply_ac(int damage, int max_damage = 0,

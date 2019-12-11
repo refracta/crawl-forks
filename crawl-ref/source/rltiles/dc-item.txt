@@ -167,6 +167,9 @@ sling3
 fustibalus1 WPN_FUSTIBALUS
 fustibalus2
 fustibalus3
+mangonel1 WPN_MANGONEL
+mangonel2
+mangonel3
 
 shortbow1 WPN_SHORTBOW
 shortbow2

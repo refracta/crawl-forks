@@ -7590,11 +7590,6 @@ bool player::cannot_act() const
     return asleep() || cannot_move();
 }
 
-bool player::can_throw_large_rocks() const
-{
-    return species_can_throw_large_rocks(species);
-}
-
 bool player::can_smell() const
 {
     return (species != SP_MUMMY && char_class != JOB_MUMMY);

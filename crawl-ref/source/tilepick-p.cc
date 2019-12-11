@@ -264,6 +264,9 @@ tileidx_t tilep_equ_hand1(const item_def &item)
     case WPN_FUSTIBALUS:
         tile = TILEP_HAND1_FUSTIBALUS;
         break;
+    case WPN_MANGONEL:
+        tile = TILEP_HAND1_MANGONEL;
+        break;
     case WPN_SHORTBOW:
         tile = TILEP_HAND1_BOW2;
         break;
@@ -522,6 +525,9 @@ tileidx_t tilep_equ_hand2(const item_def &item)
         break;
     case WPN_FUSTIBALUS:
         tile = TILEP_HAND2_FUSTIBALUS;
+        break;
+    case WPN_MANGONEL:
+        tile = TILEP_HAND2_MANGONEL;
         break;
     case WPN_SHORTBOW:
         tile = TILEP_HAND2_BOW2;
@@ -790,6 +796,9 @@ tileidx_t tilep_equ_weapon(const item_def &item)
         break;
     case WPN_FUSTIBALUS:
         tile = TILEP_HAND1_FUSTIBALUS;
+        break;
+    case WPN_MANGONEL:
+        tile = TILEP_HAND1_MANGONEL;
         break;
     case WPN_SHORTBOW:
         tile = TILEP_HAND1_BOW2;

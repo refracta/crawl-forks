@@ -814,7 +814,6 @@ public:
     int beam_resists(bolt &beam, int hurted, bool doEffects, string source)
         override;
 
-    bool can_throw_large_rocks() const override;
     bool can_smell() const;
     bool can_sleep(bool holi_only = false) const override;
 

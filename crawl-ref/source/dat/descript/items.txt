@@ -587,6 +587,10 @@ mace
 
 A short club with a metal head.
 %%%%
+mangonel
+
+A massive sling for hurling boulders. Humans have a machine to make these work; Ogres, well, they can just use an arm.
+%%%%
 manual
 
 A valuable book which allows one to practise a certain skill more efficiently

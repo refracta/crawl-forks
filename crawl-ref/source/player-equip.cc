@@ -493,12 +493,13 @@ static void _equip_weapon_effect(item_def& item, bool showMsgs, bool unmeld, equ
                 switch (special)
                 {
                 case SPWPN_MOLTEN:
-                    if (item.sub_type == WPN_HAND_CROSSBOW || item.sub_type == WPN_ARBALEST ||
-                        item.sub_type == WPN_TRIPLE_CROSSBOW)
+                    if (fires_ammo_type(item) == MI_BOLT)
                         mprf("As you load %s, your bolt melts into a column of liquid metal!", item_name.c_str());
-                    else if (item.sub_type == WPN_HUNTING_SLING || item.sub_type == WPN_FUSTIBALUS)
+                    else if (fires_ammo_type(item) == MI_SLING_BULLET)
                         mprf("As you load %s, your sling bullet melts into a ball of liquid metal!", item_name.c_str());
-                    else if (item.sub_type == WPN_SHORTBOW || item.sub_type == WPN_LONGBOW)
+                    else if (fires_ammo_type(item) == MI_LARGE_ROCK)
+                        mprf("As you load %s, your boulder melts into a mass of molten lava!", item_name.c_str());
+                    else if (fires_ammo_type(item) == MI_ARROW)
                         mprf("As you load %s, the head of your arrow melts into a liquid metal spear!", item_name.c_str());
                     else
                         mprf("The surface of %s melts into red hot liquid metal!", item_name.c_str());

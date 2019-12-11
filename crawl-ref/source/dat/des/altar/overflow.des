@@ -1645,7 +1645,7 @@ KPROP:  c = no_tele_into
 SUBST:  c = cccl^.
 SUBST:  - = ..l^
 KFEAT:  ^ = known shaft trap
-KITEM:  . = nothing w:189 / large rock q:1 w:1
+KITEM:  . = gold q:1
 KFEAT:  . = .
 : interest_check(_G)
 MAP

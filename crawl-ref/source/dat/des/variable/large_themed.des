@@ -234,7 +234,7 @@ SHUFFLE: '1 / '1 / w2 / l3
 KMONS:   Z = cyclops zombie / stone giant zombie / titan zombie
 KMONS:   P = plant
 KITEM:   ( = any weapon good_item
-KITEM:   Z = large rock
+KITEM:   Z = mangonel
 SHUFFLE: aA / bB / dD / eE
 SUBST:   aA = ., b : x., B : x., d : x., D : x., e : x., E : x.
 SUBST:   0 = 4 7 9:2 P:18 ., 5 = 5:20 x`

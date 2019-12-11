@@ -677,6 +677,10 @@ static void _throw_noise(actor* act, const bolt &pbolt, const item_def &ammo, co
         level = 3;
         msg   = "You hear a loud whirring sound.";
         break;
+    case WPN_MANGONEL:
+        level = 9;
+        msg = "You hear an immense crack.";
+        break;
     case WPN_SHORTBOW:
         level = 5;
         msg   = "You hear a twanging sound.";
@@ -1127,7 +1131,10 @@ bool mons_throw(monster* mons, bolt &beam, int msl, bool teleport)
 
     if (teleport)
         msg += " magically";
-    msg += ((projected == launch_retval::LAUNCHED) ? " shoots " : " throws ");
+    if (item.sub_type != MI_LARGE_ROCK)
+        msg += ((projected == launch_retval::LAUNCHED) ? " shoots " : " throws ");
+    else
+        msg += " hurls ";
 
     if (!beam.name.empty() && projected == launch_retval::LAUNCHED)
         msg += article_a(beam.name);
