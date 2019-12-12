@@ -365,7 +365,7 @@ int ranged_attack::weapon_damage()
  */
 int ranged_attack::calc_base_unarmed_damage()
 {
-    return 0;
+    return 2;
 }
 
 int ranged_attack::calc_mon_to_hit_base()

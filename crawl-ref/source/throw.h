@@ -44,3 +44,5 @@ bool thrown_object_destroyed(item_def *item, const coord_def& where);
 
 void setup_monster_throw_beam(monster* mons, bolt &beam);
 bool mons_throw(monster* mons, bolt &beam, int msl, bool teleport = false);
+
+int random_stone();

@@ -1239,61 +1239,7 @@ bool handle_throw(monster* mons, bolt & beem, spell_type call_spell, bool check_
     }
     if (call_spell == SPELL_THROW_ROCK)
     {
-        missile_type branch_specific0 = MI_STONE;
-        missile_type branch_specific1 = MI_STONE;
-        if (you.where_are_you == BRANCH_ICE_CAVE ||
-            you.where_are_you == BRANCH_COCYTUS)
-        {
-            branch_specific0 = MI_SNOWBALL;
-            branch_specific1 = MI_SNOWBALL;
-        }
-        if (you.where_are_you == BRANCH_SEWER ||
-            you.where_are_you == BRANCH_SWAMP)
-        {
-            branch_specific0 = MI_MUD;
-            branch_specific1 = MI_ROOT;
-        }
-        if (you.where_are_you == BRANCH_ORC)
-        {
-            branch_specific0 = MI_GOLD;
-            branch_specific1 = MI_SKULL;
-        }
-        if (you.where_are_you == BRANCH_ABYSS)
-        {
-            branch_specific0 = MI_ABYSS;
-            branch_specific1 = MI_ABYSS;
-        }
-        if (you.where_are_you == BRANCH_PANDEMONIUM)
-        {
-            branch_specific0 = MI_PANDEMONIUM;
-            branch_specific1 = MI_PANDEMONIUM;
-        }
-        if (you.where_are_you == BRANCH_SLIME)
-        {
-            branch_specific0 = MI_OOZE;
-            branch_specific1 = MI_OOZE;
-        }
-        if (you.where_are_you == BRANCH_LAIR)
-        {
-            branch_specific0 = MI_ROOT;
-            branch_specific1 = MI_BONE;
-        }
-        if (you.where_are_you == BRANCH_CRYPT)
-        {
-            branch_specific0 = MI_BONE;
-            branch_specific1 = MI_SKULL;
-        }
-        if (you.where_are_you == BRANCH_TOMB)
-        {
-            branch_specific0 = MI_BANDAGE;
-            branch_specific1 = MI_STONE;
-        }
-        if (you.where_are_you == BRANCH_VAULTS ||
-            you.where_are_you == BRANCH_DEPTHS)
-            branch_specific0 = MI_OOZE;
-
-        missile_type stone = random_choose(branch_specific0, 
-              branch_specific1, MI_BLADE, MI_BONE, MI_SKULL);
+        int stone = random_stone();
         m = items(false, OBJ_MISSILES, stone, 1);
         missile = &mitm[m];
         missile->brand = SPMSL_NORMAL;

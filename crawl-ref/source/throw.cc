@@ -486,6 +486,70 @@ static void _throw_noise(actor* act, const bolt &pbolt, const item_def &ammo, co
     noisy(level, act->pos(), msg, act->mid);
 }
 
+int random_stone()
+{
+    missile_type branch_specific0 = MI_STONE;
+    missile_type branch_specific1 = MI_STONE;
+    if (you.where_are_you == BRANCH_ICE_CAVE ||
+        you.where_are_you == BRANCH_COCYTUS)
+    {
+        branch_specific0 = MI_SNOWBALL;
+        branch_specific1 = MI_SNOWBALL;
+    }
+    if (you.where_are_you == BRANCH_SEWER ||
+        you.where_are_you == BRANCH_SWAMP)
+    {
+        branch_specific0 = MI_MUD;
+        branch_specific1 = MI_ROOT;
+    }
+    if (you.where_are_you == BRANCH_ORC)
+    {
+        branch_specific0 = MI_GOLD;
+        branch_specific1 = MI_SKULL;
+    }
+    if (you.where_are_you == BRANCH_ABYSS)
+    {
+        branch_specific0 = MI_ABYSS;
+        branch_specific1 = MI_ABYSS;
+    }
+    if (you.where_are_you == BRANCH_PANDEMONIUM)
+    {
+        branch_specific0 = MI_PANDEMONIUM;
+        branch_specific1 = MI_PANDEMONIUM;
+    }
+    if (you.where_are_you == BRANCH_SLIME)
+    {
+        branch_specific0 = MI_OOZE;
+        branch_specific1 = MI_OOZE;
+    }
+    if (you.where_are_you == BRANCH_LAIR)
+    {
+        branch_specific0 = MI_ROOT;
+        branch_specific1 = MI_BONE;
+    }
+    if (you.where_are_you == BRANCH_CRYPT)
+    {
+        branch_specific0 = MI_BONE;
+        branch_specific1 = MI_SKULL;
+    }
+    if (you.where_are_you == BRANCH_TOMB)
+    {
+        branch_specific0 = MI_BANDAGE;
+        branch_specific1 = MI_STONE;
+    }
+    if (you.where_are_you == BRANCH_SHOALS)
+    {
+        branch_specific0 = MI_SEASHELL;
+        branch_specific1 = MI_MUD;
+    }
+    if (you.where_are_you == BRANCH_VAULTS ||
+        you.where_are_you == BRANCH_DEPTHS)
+        branch_specific0 = MI_OOZE;
+
+    return random_choose(branch_specific0,
+        branch_specific1, MI_BLADE, MI_BONE, MI_SKULL);
+}
+
 // throw_it - currently handles player throwing only. Monster
 // throwing is handled in mon-act:_mons_throw()
 // Note: If teleport is true, assume that pbolt is already set up,
@@ -532,9 +596,10 @@ bool throw_it(bolt &pbolt, int throw_2, dist *target)
         thrown = &you.inv[throw_2];
     else
     {
-        missile_type typ = MI_STONE;
+        int typ = MI_STONE;
         if (you.weapon(0) && is_range_weapon(*you.weapon(0)))
             typ = fires_ammo_type(*you.weapon(0));
+        else typ = random_stone();
         t = items(false, OBJ_MISSILES, typ, 1);
         thrown = &mitm[t];
         thrown->quantity = 1;
@@ -555,8 +620,7 @@ bool throw_it(bolt &pbolt, int throw_2, dist *target)
         return false;
     }
 
-    // Get the ammo/weapon type. Convenience.
-    const object_class_type wepClass = thrown->base_type;
+    // Get the ammo type. Convenience.
     const int               wepType  = thrown->sub_type;
 
     // Don't trace at all when confused.
@@ -691,26 +755,52 @@ bool throw_it(bolt &pbolt, int throw_2, dist *target)
     if (teleport)
         returning = false;
 
-    if (ammo_type_damage(thrown->sub_type) == 2)
+    if (ammo_type_damage(wepType) == 2)
         you.time_taken = 5;
     else if (thrown->base_type != OBJ_MISSILES)
         you.time_taken = 10;
     else
         you.time_taken = you.attack_delay(thrown).roll();
 
+    string prefix = "";
+
+    if (wepType == MI_SNOWBALL)
+        prefix += "ball up some snow and ";
+    else if (wepType == MI_OOZE)
+        prefix += "ball up the remains of a slime creature and ";
+    else if (wepType == MI_ABYSS)
+        prefix += "make a ball from the fabric of the abyss and ";
+    else if (wepType == MI_BLADE)
+        prefix += "pick up a piece of a broken weapon and ";
+    else if (wepType == MI_ROOT)
+        prefix += "rip up a gnarled root and ";
+    else if (wepType == MI_BANDAGE)
+        prefix += "mangle together a loose clump of bandages and embalming tools and ";
+    else if (wepType == MI_PANDEMONIUM)
+        prefix += "rip off a chunk of the weird stuff that makes up pandemonium and ";
+
+    else if (ammo_type_damage(wepType) == 2)
+    {
+        prefix += "pick up ";
+        prefix += thrown->name(DESC_A, false, false, false);
+        prefix += " and ";
+    }
+
     // Create message.
-    mprf("You %s%s %s.",
+    mprf("You %s%s%s %s.",
+          prefix.c_str(),
           teleport ? "magically " : "",
-          (projected == launch_retval::FUMBLED ? "toss away" :
+          (wepType == MI_LARGE_ROCK ? "hurl" :
+           projected == launch_retval::FUMBLED ? "toss away" :
            projected == launch_retval::LAUNCHED ? "shoot" : "throw"),
-          ammo_name.c_str());
+          (ammo_type_damage(wepType) == 2) ? "it" : ammo_name.c_str());
 
     // Ensure we're firing a 'missile'-type beam.
     pbolt.pierce    = false;
     pbolt.is_tracer = false;
 
     pbolt.loudness = thrown->base_type == OBJ_MISSILES
-                   ? ammo_type_damage(thrown->sub_type) / 3
+                   ? ammo_type_damage(wepType) / 3
                    : 0; // Maybe not accurate, but reflects the damage.
 
     pbolt.hit = teleport ? random2(you.attribute[ATTR_PORTAL_PROJECTILE] / 4)

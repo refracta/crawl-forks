@@ -2958,10 +2958,10 @@ tileidx_t tileidx_item_throw(const item_def &item, int dx, int dy)
             return tileidx_enchant_equ(item, ch);
 
         if (item.sub_type == MI_BONE)
-            return (TILE_MI_BONE0 + (dx + dy) % 4);
+            return (TILE_MI_BONE0 + ((dx + dy) % 4));
 
         if (item.sub_type == MI_BLADE)
-            return (TILE_MI_BLADE0 + (dx + dy) % 2);
+            return (TILE_MI_BLADE0 + ((dx + dy) % 2));
     }
 
     // If not a special case, just return the default tile.
