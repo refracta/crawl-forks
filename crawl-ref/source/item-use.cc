@@ -3791,12 +3791,7 @@ void tile_item_use_secondary(int idx)
 {
     const item_def item = you.inv[idx];
 
-    if (item.base_type == OBJ_WEAPONS && is_throwable(&you, item))
-    {
-        if (check_warning_inscriptions(item, OPER_FIRE))
-            fire_thing(idx); // fire weapons
-    }
-    else if (you.equip[EQ_WEAPON0] == idx)
+    if (you.equip[EQ_WEAPON0] == idx)
         wield_weapon(true, SLOT_BARE_HANDS);
     else if (item_is_wieldable(item))
     {
@@ -3848,8 +3843,6 @@ void tile_item_use(int idx)
             return;
 
         case OBJ_MISSILES:
-            if (check_warning_inscriptions(item, OPER_FIRE))
-                fire_thing(idx);
             return;
 
         case OBJ_ARMOURS:
