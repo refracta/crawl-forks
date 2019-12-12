@@ -1309,7 +1309,7 @@ int attack::calc_damage()
     {
         int potential_damage, damage;
 
-        potential_damage = weapon_damage();
+        potential_damage = using_weapon() ? weapon_damage() : calc_base_unarmed_damage();
 
         potential_damage = player_stat_modify_damage(potential_damage);
 

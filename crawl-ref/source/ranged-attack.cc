@@ -31,7 +31,7 @@ ranged_attack::ranged_attack(actor *attk, actor *defn, item_def *proj,
       projectile(proj), teleport(tele), orig_to_hit(0),
       should_alert_defender(true), launch_type(launch_retval::BUGGY)
 {
-    init_attack(SK_BOWS, 0);
+    init_attack(SK_FIGHTING, 0);
     kill_type = KILLED_BY_BEAM;
 
     string proj_name = projectile->name(DESC_PLAIN);
