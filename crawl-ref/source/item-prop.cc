@@ -734,10 +734,10 @@ static const weapon_def Weapon_prop[] =
         SK_CROSSBOWS,    SIZE_LITTLE, NUM_SIZE_LEVELS, MI_TRIPLE_BOLT,
         DAMV_NON_MELEE, 0, 2, 100, RANGED_BRANDS },
 
-    { WPN_SHORTBOW,          "shortbow",            9,  2, 13,
+    { WPN_SHORTBOW,          "shortbow",           11,  2, 12,
         SK_BOWS,         SIZE_LITTLE, NUM_SIZE_LEVELS, MI_ARROW,
         DAMV_NON_MELEE, 8, 10, 30, RANGED_BRANDS },
-    { WPN_LONGBOW,           "longbow",            15,  0, 17,
+    { WPN_LONGBOW,           "longbow",            17,  0, 15,
         SK_BOWS,         SIZE_MEDIUM, NUM_SIZE_LEVELS, MI_ARROW,
         DAMV_NON_MELEE, 2, 10, 45, RANGED_BRANDS },
 };

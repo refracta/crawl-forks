@@ -856,9 +856,10 @@ int weapon_min_delay(const item_def &weapon, bool check_speed)
     if (is_unrandom_artefact(weapon, UNRAND_ZEPHYR))
         min_delay = 3;
 
-    // Short blades can get up to at least unarmed speed.
-    if (item_attack_skill(weapon) == SK_SHORT_BLADES && min_delay > 5)
-        min_delay = 5;
+    // Short blades and bows can get up to at least unarmed speed.
+    if (item_attack_skill(weapon) == SK_SHORT_BLADES 
+        || item_attack_skill(weapon) == SK_BOWS)
+        min_delay = min(5, min_delay);
 
     // All weapons have min delay 7 or better
     if (min_delay > 7)
