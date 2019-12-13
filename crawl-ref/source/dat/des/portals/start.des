@@ -86,8 +86,9 @@ KFEAT:  2 = weapon shop type:Archery suffix:Annex count:5 use_all greed:40 ; \
             mundane not_cursed shortbow | mundane not_cursed longbow |\
             mundane not_cursed hand crossbow | mundane not_cursed arbalest |\
 			mundane not_cursed triple crossbow
-KFEAT:  4 = weapon shop type:Sling suffix:Spring count:2 use_all greed:20 ; \
-            mundane not_cursed hunting sling | mundane not_cursed fustibalus
+KFEAT:  4 = weapon shop type:Sling suffix:Spring count:3 use_all greed:20 ; \
+            mundane not_cursed hunting sling | mundane not_cursed fustibalus |\
+			mundane not_cursed mangonel
 KFEAT:  8 = armour shop type:Auxillary suffix:Armour count:12 use_all greed:20 ; \
             mundane not_cursed hat | not_cursed hat ego:magic_resistance plus:0|\
             not_cursed hat ego:intelligence plus:0 |\

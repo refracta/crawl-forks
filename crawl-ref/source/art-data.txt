@@ -548,14 +548,15 @@ MAGIC:    2
 AC:       5
 BOOL:     elec
 
-NAME:     heavy crossbow "Sniper"
-OBJ:      OBJ_WEAPONS/WPN_TRIPLE_CROSSBOW
-TYPE:     heavy crossbow
+NAME:     ballista "Sniper"
+OBJ:      OBJ_WEAPONS/WPN_ARBALEST
+TYPE:     ballista
 PLUS:     +9
 COLOUR:   ETC_DARK
 TILE:     urand_sniper
 TILE_EQ:  sniper
-BASE_DELAY: +4
+BASE_DAM: +6
+BASE_DELAY: +6
 BRAND:    SPWPN_VORPAL
 BOOL:     seeinv
 INSCRIP:  Acc+∞
