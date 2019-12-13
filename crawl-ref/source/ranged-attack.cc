@@ -11,6 +11,7 @@
 #include "beam.h"
 #include "chardump.h"
 #include "coord.h"
+#include "coordit.h"
 #include "directn.h"
 #include "english.h"
 #include "env.h"
@@ -21,6 +22,7 @@
 #include "makeitem.h"
 #include "message.h"
 #include "mon-behv.h"
+#include "monster.h"
 #include "mon-util.h"
 #include "monster.h"
 #include "player.h"
@@ -197,7 +199,8 @@ void ranged_attack::set_path(bolt path)
 
 bool ranged_attack::handle_phase_end()
 {
-    if (projectile->base_type == OBJ_MISSILES && (projectile->sub_type == MI_TRIPLE_BOLT || projectile->sub_type == MI_DOUBLE_BOLT))
+    if (projectile->base_type == OBJ_MISSILES &&
+       (projectile->sub_type == MI_TRIPLE_BOLT || projectile->sub_type == MI_DOUBLE_BOLT))
     {
         bolt continuation = the_path;
         continuation.range = you.current_vision - range_used;
@@ -214,6 +217,48 @@ bool ranged_attack::handle_phase_end()
         continuation.name = item.name(DESC_PLAIN, false, false, false);
 
         continuation.fire();
+        destroy_item(i);
+    }
+
+    if (projectile->base_type == OBJ_MISSILES && 
+        projectile->sub_type == MI_SLING_BULLET && one_chance_in(3))
+    {
+        bolt continuation = the_path;
+        continuation.range = you.current_vision - range_used;
+        continuation.source = defender->pos();
+        int i = items(false, OBJ_MISSILES, MI_SLING_BULLET, 1);
+        item_def item = mitm[i];
+        item.quantity = 1;
+        continuation.item = &item;
+        continuation.aux_source.clear();
+        continuation.name = item.name(DESC_PLAIN, false, false, false);
+        continuation.effect_known = false;
+        continuation.effect_wanton = false;
+        continuation.source_name = "a ricochet";
+        vector<coord_def> coord_list;
+        for (rectangle_iterator ri(defender->pos(), 3, true); ri; ++ri)
+        {
+            if (defender->see_cell_no_trans(*ri))
+            {
+                coord_def cp(*ri);
+
+                if ((cp != defender->pos()) && (cp == you.pos() || monster_at(*ri)))
+                    coord_list.emplace_back(cp);
+            }
+        }
+
+        if (coord_list.size() > 0)
+        {
+            coord_def target = coord_list[random2(coord_list.size())];
+            dist dest;
+            dest.target.x = target.x;
+            dest.target.y = target.y;
+            dest.isValid = true;
+            continuation.set_target(dest);
+            mpr("The sling bullet ricochets!");
+            continuation.fire();
+        }
+
         destroy_item(i);
     }
 

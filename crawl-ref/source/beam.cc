@@ -4650,6 +4650,13 @@ void bolt::monster_post_hit(monster* mon, int dmg)
         if (item && item->base_type == OBJ_MISSILES)
             m_brand = get_ammo_brand(*item);
 
+        if (item && item->base_type == OBJ_MISSILES
+            && item->sub_type == MI_SLING_BULLET
+            && !effect_known && mon->wont_attack())
+        {
+            return; // Don't annoy friendlies with ricochets.
+        }
+
         // Don't immediately turn insane monsters hostile.
         if (m_brand != SPMSL_FRENZY)
         {
