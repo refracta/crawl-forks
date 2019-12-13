@@ -3450,6 +3450,10 @@ bool item_def::launched_by(const item_def &launcher) const
     if (base_type != OBJ_MISSILES)
         return false;
     const missile_type mt = fires_ammo_type(launcher);
+    if (mt == MI_TRIPLE_BOLT &&
+        (sub_type == MI_DOUBLE_BOLT || sub_type == MI_BOLT))
+        return true;
+
     return sub_type == mt;
 }
 

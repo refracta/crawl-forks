@@ -3966,6 +3966,7 @@ void bolt::affect_player()
     if (flavour == BEAM_MISSILE && item)
     {
         ranged_attack attk(agent(true), &you, item, use_target_as_pos, agent());
+        attk.set_path(*this);
         attk.attack();
         // fsim purposes - throw_it detects if an attack connected through
         // hit_verb
@@ -5007,6 +5008,7 @@ void bolt::affect_monster(monster* mon)
     if (flavour == BEAM_MISSILE && item)
     {
         ranged_attack attk(agent(true), mon, item, use_target_as_pos, agent());
+        attk.set_path(*this);
         attk.attack();
         // fsim purposes - throw_it detects if an attack connected through
         // hit_verb

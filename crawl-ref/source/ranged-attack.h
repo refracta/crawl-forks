@@ -17,6 +17,7 @@ public:
 
     int calc_to_hit(bool random, bool player_aux = false) override;
 
+    void set_path(bolt path);
 
     // Applies attack damage and other effects.
     bool attack();
@@ -27,7 +28,10 @@ private:
     bool handle_phase_blocked() override;
     bool handle_phase_dodged() override;
     bool handle_phase_hit() override;
+    bool handle_phase_end() override;
     bool ignores_shield(bool verbose) override;
+
+    bolt the_path;
 
     /* Combat Calculations */
     bool using_weapon() const override;
@@ -45,6 +49,8 @@ private:
 
     /* Weapon Effects */
     bool check_unrand_effects() override;
+
+    int attack_count;
 
     /* Attack Effects */
     bool mons_attack_effects() override;

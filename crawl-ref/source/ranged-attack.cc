@@ -8,13 +8,17 @@
 #include "ranged-attack.h"
 
 #include "areas.h"
+#include "beam.h"
 #include "chardump.h"
 #include "coord.h"
+#include "directn.h"
 #include "english.h"
 #include "env.h"
 #include "fprop.h"
 #include "god-conduct.h"
+#include "items.h"
 #include "item-prop.h"
+#include "makeitem.h"
 #include "message.h"
 #include "mon-behv.h"
 #include "mon-util.h"
@@ -112,6 +116,15 @@ bool ranged_attack::attack()
         return true;
     }
 
+    attack_count = 1;
+    if (projectile->base_type == OBJ_MISSILES)
+    {
+        if (projectile->sub_type == MI_TRIPLE_BOLT)
+            attack_count = 3;
+        if (projectile->sub_type == MI_DOUBLE_BOLT)
+            attack_count = 2;
+    }
+
     const int ev = defender->evasion(ev_ignore::none, attacker);
     ev_margin = test_hit(to_hit, ev, !attacker->is_player());
     bool shield_blocked = attack_shield_blocked(false);
@@ -142,6 +155,7 @@ bool ranged_attack::attack()
             {
                 if (!defender->alive())
                     handle_phase_killed();
+
                 handle_phase_end();
                 return false;
             }
@@ -174,6 +188,40 @@ bool ranged_attack::handle_phase_attempted()
     attack_occurred = true;
 
     return true;
+}
+
+void ranged_attack::set_path(bolt path)
+{
+    the_path = path;
+}
+
+bool ranged_attack::handle_phase_end()
+{
+    if (projectile->base_type == OBJ_MISSILES && (projectile->sub_type == MI_TRIPLE_BOLT || projectile->sub_type == MI_DOUBLE_BOLT))
+    {
+        bolt continuation = the_path;
+        continuation.range = you.current_vision - range_used;
+        range_used = BEAM_STOP;
+        continuation.source = defender->pos();
+        int x = MI_BOLT;
+        if (attack_count > 1)
+            x = MI_DOUBLE_BOLT;
+        int i = items(false, OBJ_MISSILES, x, 1);
+        item_def item = mitm[i];
+        item.quantity = 1;
+        continuation.item = &item;
+        continuation.aux_source.clear();
+        continuation.name = item.name(DESC_PLAIN, false, false, false);
+
+        continuation.fire();
+        destroy_item(i);
+    }
+
+    // XXX: this kind of hijacks the shield block check
+    if (!is_penetrating_attack(*attacker, weapon, *projectile) && attack_count <= 1)
+        range_used = BEAM_STOP;
+
+    return attack::handle_phase_end();
 }
 
 bool ranged_attack::handle_phase_blocked()
@@ -275,10 +323,6 @@ bool ranged_attack::handle_phase_dodged()
 
 bool ranged_attack::handle_phase_hit()
 {
-    // XXX: this kind of hijacks the shield block check
-    if (!is_penetrating_attack(*attacker, weapon, *projectile))
-        range_used = BEAM_STOP;
-
     if (projectile->is_type(OBJ_MISSILES, MI_NEEDLE))
     {
         damage_done = blowgun_duration_roll(get_ammo_brand(*projectile));
@@ -296,30 +340,33 @@ bool ranged_attack::handle_phase_hit()
     }
     else
     {
-        damage_done = calc_damage();
-        if (damage_done > 0 || projectile->is_type(OBJ_MISSILES, MI_NEEDLE))
+        for (attack_count; attack_count > 0; --attack_count)
         {
-            if (!handle_phase_damaged())
-                return false;
-        }
-        else if (needs_message)
-        {
-            mprf("%s %s %s but does no damage.",
-                 projectile->name(DESC_THE).c_str(),
-                 attack_verb.c_str(),
-                 defender->name(DESC_THE).c_str());
-        }
-    }
+            damage_done = calc_damage();
+            if (damage_done > 0 || projectile->is_type(OBJ_MISSILES, MI_NEEDLE))
+            {
+                if (!handle_phase_damaged())
+                    return false;
+            }
+            else if (needs_message)
+            {
+                mprf("%s %s %s but does no damage.",
+                    projectile->name(DESC_THE).c_str(),
+                    attack_verb.c_str(),
+                    defender->name(DESC_THE).c_str());
+            }
 
-    if (using_weapon() || launch_type == launch_retval::THROWN)
-    {
-        if (using_weapon()
-            && apply_damage_brand(projectile->name(DESC_THE).c_str()))
-        {
-            return false;
+            if (using_weapon() || launch_type == launch_retval::THROWN)
+            {
+                if (using_weapon()
+                    && apply_damage_brand(projectile->name(DESC_THE).c_str()))
+                {
+                    return false;
+                }
+                if (apply_missile_brand())
+                    return false;
+            }
         }
-        if (apply_missile_brand())
-            return false;
     }
 
     // XXX: unify this with melee_attack's code

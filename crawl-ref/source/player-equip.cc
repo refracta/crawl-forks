@@ -495,6 +495,8 @@ static void _equip_weapon_effect(item_def& item, bool showMsgs, bool unmeld, equ
                 case SPWPN_MOLTEN:
                     if (fires_ammo_type(item) == MI_BOLT)
                         mprf("As you load %s, your bolt melts into a column of liquid metal!", item_name.c_str());
+                    if (fires_ammo_type(item) == MI_TRIPLE_BOLT)
+                        mprf("As you load %s, each of your bolts melts into a column of liquid metal!", item_name.c_str());
                     else if (fires_ammo_type(item) == MI_SLING_BULLET)
                         mprf("As you load %s, your sling bullet melts into a ball of liquid metal!", item_name.c_str());
                     else if (fires_ammo_type(item) == MI_LARGE_ROCK)

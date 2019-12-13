@@ -2882,6 +2882,12 @@ tileidx_t tileidx_item_throw(const item_def &item, int dx, int dy)
             case MI_BOLT:
                 ch = TILE_MI_BOLT0;
                 break;
+            case MI_TRIPLE_BOLT:
+                ch = TILE_MI_TRIBOLT0;
+                break;
+            case MI_DOUBLE_BOLT:
+                ch = TILE_MI_DOUBOLT0;
+                break;
             case MI_NEEDLE:
                 ch = TILE_MI_NEEDLE0;
                 break;

@@ -59,7 +59,7 @@ bool is_penetrating_attack(const actor& attacker, const item_def* weapon,
 {
     return is_launched(&attacker, weapon, weapon, projectile) != launch_retval::FUMBLED
             && projectile.base_type == OBJ_MISSILES
-            && get_ammo_brand(projectile) == SPMSL_PENETRATION
+            && (get_ammo_brand(projectile) == SPMSL_PENETRATION || projectile.sub_type == MI_BOLT)
            || weapon
               && is_launched(&attacker, weapon, weapon, projectile) == launch_retval::LAUNCHED
               && (get_weapon_brand(*weapon) == SPWPN_PENETRATION
@@ -393,7 +393,8 @@ static bool _setup_missile_beam(const actor *agent, bolt &beam, item_def &item,
                 && get_ammo_brand(item) == SPMSL_RETURNING;
 
     if (item.base_type == OBJ_MISSILES
-        && get_ammo_brand(item) == SPMSL_EXPLODING)
+        && (get_ammo_brand(item) == SPMSL_EXPLODING
+            || item.sub_type == MI_LARGE_ROCK))
     {
         bolt *expl = new bolt(beam);
 

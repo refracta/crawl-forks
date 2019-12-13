@@ -373,6 +373,8 @@ enum missile_type
     MI_NEEDLE,
     MI_ARROW,
     MI_BOLT,
+    MI_TRIPLE_BOLT,
+    MI_DOUBLE_BOLT,
     MI_JAVELIN,
 
     MI_STONE,
