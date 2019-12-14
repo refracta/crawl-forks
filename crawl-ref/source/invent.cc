@@ -1780,6 +1780,7 @@ bool needs_handle_warning(const item_def &item, operation_types oper,
         && (
                 (is_artefact(item) && artefact_property(item, ARTP_INVISIBLE))
                 || (item.base_type == OBJ_ARMOURS && get_armour_ego_type(item) == SPARM_INVISIBILITY)
+                || (item.base_type == OBJ_ARMOURS && armour_type_prop(item.sub_type, ARMF_INVIS))
             )
         && you.evokable_invis() < 2 // If you've got 2 sources, removing 1 is fine.
         && you.duration[DUR_INVIS] > 1

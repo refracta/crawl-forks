@@ -352,6 +352,8 @@ static void _populate_armour_intrinsic_artps(const armour_type arm,
     proprt[ARTP_MAGIC_RESISTANCE] += armour_type_prop(arm, ARMF_RES_MAGIC);
     proprt[ARTP_STEALTH] += armour_type_prop(arm, ARMF_STEALTH);
     proprt[ARTP_REGENERATION] += armour_type_prop(arm, ARMF_REGENERATION);
+    proprt[ARTP_BERSERK] += armour_type_prop(arm, ARMF_BERSERK);
+    proprt[ARTP_INVISIBLE] += armour_type_prop(arm, ARMF_INVIS);
 }
 
 /// The artefact properties corresponding to a given piece of jewellery.

@@ -103,6 +103,8 @@ enum armour_type
     ARM_SCARF,
 #endif
 
+    ARM_SALAMANDER_HIDE_ARMOUR,
+
     NUM_ARMOURS
 };
 

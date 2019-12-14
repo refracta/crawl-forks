@@ -113,6 +113,9 @@ static const armour_def Armour_prop[] =
     { ARM_TROLL_LEATHER_ARMOUR, "troll leather armour",  4,  -40,    150,
        EQ_BODY_ARMOUR, SIZE_LITTLE, SIZE_GIANT, false, ARMF_REGENERATION, 50 },
 
+    { ARM_SALAMANDER_HIDE_ARMOUR, "salamander hide armour", 5, -40, 250,
+       EQ_BODY_ARMOUR, SIZE_LITTLE, SIZE_GIANT, false, ARMF_RES_FIRE | ARMF_BERSERK, 25},
+
     { ARM_CLOAK,                "cloak",                  1,   0,   45,
         EQ_CLOAK,       SIZE_LITTLE, SIZE_GIANT, true },
     { ARM_SCARF,                "scarf",                  0,   0,   50,
@@ -173,7 +176,7 @@ static const armour_def Armour_prop[] =
     DRAGON_ARMOUR(STORM,       "storm",                  10, -150,  800,
         ARMF_RES_ELEC),
     DRAGON_ARMOUR(SHADOW,      "shadow",                 10, -150,  800,
-        ard(ARMF_STEALTH, 4)),
+        ard(ARMF_STEALTH, 4) | ARMF_INVIS),
     DRAGON_ARMOUR(GOLD,        "gold",                   12, -230,  800,
         ARMF_RES_FIRE | ARMF_RES_COLD | ARMF_RES_POISON),
 
@@ -1435,6 +1438,7 @@ static map<monster_type, armour_type> _monster_hides = {
     { MONS_TROLL,               ARM_TROLL_LEATHER_ARMOUR },
     { MONS_DEEP_TROLL,          ARM_TROLL_LEATHER_ARMOUR },
     { MONS_IRON_TROLL,          ARM_TROLL_LEATHER_ARMOUR },
+    { MONS_SALAMANDER,          ARM_SALAMANDER_HIDE_ARMOUR },
 
     { MONS_FIRE_DRAGON,         ARM_FIRE_DRAGON_ARMOUR },
     { MONS_ICE_DRAGON,          ARM_ICE_DRAGON_ARMOUR },

@@ -805,16 +805,17 @@ COLD:    3
 BOOL:    seeinv
 INSCRIP: Hibernate
 
+# TAG_MAJOR_VERSION == 34
 ENUM:    SALAMANDER
 NAME:    salamander hide armour
 OBJ:     OBJ_ARMOURS/ARM_LEATHER_ARMOUR
 FB_BRAND: SPARM_FIRE_RESISTANCE
 PLUS:    +3
 COLOUR:  ETC_FIRE
-TILE:    urand_salamander
+TILE:    urand_zhor
 TILE_EQ: leather_red
 FIRE:    2
-BOOL:    berserk
+BOOL:    berserk, nogen
 
 NAME:    gauntlets of War
 OBJ:     OBJ_ARMOURS/ARM_GLOVES

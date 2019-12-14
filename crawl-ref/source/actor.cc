@@ -310,14 +310,21 @@ bool actor::rmut_from_item(bool calc_unid) const
 
 bool actor::evokable_berserk(bool calc_unid) const
 {
+    item_def * armour = you.slot_item(EQ_BODY_ARMOUR, false);
+    if (armour && armour_type_prop(armour->sub_type, ARMF_BERSERK))
+        return true;
     return wearing(EQ_AMULET, AMU_RAGE, calc_unid)
            || scan_artefacts(ARTP_BERSERK, calc_unid);
 }
 
 int actor::evokable_invis(bool calc_unid) const
 {
+    int ret = 0;
+    item_def * armour = you.slot_item(EQ_BODY_ARMOUR, false);
+    if (armour && armour_type_prop(armour->sub_type, ARMF_INVIS))
+        ret++;
     return wearing_ego(EQ_CLOAK, SPARM_INVISIBILITY, calc_unid)
-           + scan_artefacts(ARTP_INVISIBLE, calc_unid);
+           + scan_artefacts(ARTP_INVISIBLE, calc_unid) + ret;
 }
 
 // Return an int so we know whether an item is the sole source.

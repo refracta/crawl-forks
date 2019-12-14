@@ -1137,7 +1137,8 @@ bool is_armour_brand_ok(int type, int brand, bool strict)
     case SPARM_RESISTANCE:
         if (type == ARM_FIRE_DRAGON_ARMOUR
             || type == ARM_ICE_DRAGON_ARMOUR
-            || type == ARM_GOLD_DRAGON_ARMOUR)
+            || type == ARM_GOLD_DRAGON_ARMOUR
+            || type == ARM_SALAMANDER_HIDE_ARMOUR)
         {
             return false; // contradictory or redundant
         }
@@ -1244,7 +1245,8 @@ static armour_type _get_random_armour_type(int item_level)
         armtype = random_choose(ARM_CRYSTAL_PLATE_ARMOUR,
                                 ARM_TROLL_LEATHER_ARMOUR,
                                 ARM_FIRE_DRAGON_ARMOUR,
-                                ARM_ICE_DRAGON_ARMOUR);
+                                ARM_ICE_DRAGON_ARMOUR,
+                                ARM_SALAMANDER_HIDE_ARMOUR);
 
     }
     else if (x_chance_in_y(11 + item_level, 60))

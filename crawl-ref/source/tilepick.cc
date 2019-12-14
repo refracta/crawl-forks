@@ -2383,6 +2383,9 @@ static tileidx_t _tileidx_armour_base(const item_def &item)
     case ARM_TROLL_LEATHER_ARMOUR:
         return TILE_ARM_TROLL_LEATHER_ARMOUR;
 
+    case ARM_SALAMANDER_HIDE_ARMOUR:
+        return TILE_ARM_SALAMANDER_HIDE_ARMOUR;
+
     case ARM_FIRE_DRAGON_ARMOUR:
         return TILE_ARM_FIRE_DRAGON_ARMOUR;
 
