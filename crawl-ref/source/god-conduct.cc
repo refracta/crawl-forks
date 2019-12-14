@@ -266,7 +266,7 @@ static dislike_response _on_fedhas_friend_death(const char* desc)
         desc, false,
         1, 0, nullptr, nullptr, [] (const monster* victim) -> bool {
             // ballistomycetes are penalized separately.
-            return victim && fedhas_protects(*victim)
+            return victim && fedhas_protects(victim)
             && victim->mons_species() != MONS_BALLISTOMYCETE;
         }
     };

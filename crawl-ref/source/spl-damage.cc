@@ -633,7 +633,7 @@ static spret _cast_los_attack_spell(spell_type spell, int pow,
                 prompt_verb = "refrigerate or chaotically strike";
                 vulnerable = [](const actor *caster, const actor *act) {
                     return !(caster->deity() == GOD_FEDHAS
-                            && fedhas_protects(*act->as_monster()));
+                            && fedhas_protects(act->as_monster()));
                 };
             }
             else
@@ -642,7 +642,7 @@ static spret _cast_los_attack_spell(spell_type spell, int pow,
                 vulnerable = [](const actor *caster, const actor *act) {
                     return act->is_player() || act->res_cold() < 3
                         && !(caster->deity() == GOD_FEDHAS
-                            && fedhas_protects(*act->as_monster()));
+                            && fedhas_protects(act->as_monster()));
                 };
             }
             break;
@@ -668,7 +668,7 @@ static spret _cast_los_attack_spell(spell_type spell, int pow,
             vulnerable = [](const actor *caster, const actor *act) {
                 return act != caster
                        && !(caster->deity() == GOD_FEDHAS
-                            && fedhas_protects(*act->as_monster()));
+                            && fedhas_protects(act->as_monster()));
             };
             break;
 
@@ -1828,7 +1828,7 @@ static int _irradiate_cell(coord_def where, int pow, actor *agent)
 
     monster * mons = act->as_monster();
 
-    if (agent->deity() == GOD_FEDHAS && fedhas_protects(*mons))
+    if (agent->deity() == GOD_FEDHAS && fedhas_protects(mons))
     {
         simple_god_message(
                     make_stringf(" protects %s plant from harm.",
@@ -1869,7 +1869,7 @@ spret cast_irradiate(int powc, actor* who, bool fail)
     {
         return act->is_player()
                && !(who->deity() == GOD_FEDHAS
-                    && fedhas_protects(*act->as_monster()));
+                    && fedhas_protects(act->as_monster()));
     };
 
     if (stop_attack_prompt(hitfunc, "irradiate", vulnerable))
@@ -1957,7 +1957,7 @@ static int _ignite_tracer_cloud_value(coord_def where, actor *agent)
                         : resist_adjust_damage(act, BEAM_FIRE, 40);
 
         if (agent->deity() == GOD_FEDHAS && agent->is_player()
-            && !act->is_player() && fedhas_protects(*act->as_monster()))
+            && fedhas_protects(act->as_monster()))
         {
             return 0;
         }
@@ -2586,7 +2586,7 @@ static int _discharge_monsters(const coord_def &where, int pow,
     else if (victim->as_monster()->immune_to_flavour(flavour))
         return 0;
     else if (agent.deity() == GOD_FEDHAS
-             && fedhas_protects(*victim->as_monster()))
+             && fedhas_protects(victim->as_monster()))
     {
         simple_god_message(
                     make_stringf(" protects %s plant from harm.",
@@ -2654,7 +2654,7 @@ bool safe_discharge(coord_def where, vector<const actor *> &exclude)
                 // Harmless to these monsters, so don't prompt about them.
                 if (act->res_elec() > 0
                     || you.deity() == GOD_FEDHAS
-                       && fedhas_protects(*act->as_monster()))
+                       && fedhas_protects(act->as_monster()))
                 {
                     continue;
                 }
@@ -3074,7 +3074,7 @@ spret cast_fragmentation(int pow, const actor *caster,
 static bool _elec_not_immune(const actor *act)
 {
     return act->res_elec() < 3 && !(you_worship(GOD_FEDHAS)
-                                    && fedhas_protects(*act->as_monster()));
+                                    && fedhas_protects(act->as_monster()));
 }
 
 spret cast_thunderbolt(actor *caster, int pow, coord_def aim, bool fail)
@@ -4046,7 +4046,7 @@ spret cast_hailstorm(int pow, bool fail, bool tracer)
     {
         return !act->is_icy()
             && !(you_worship(GOD_FEDHAS)
-                 && fedhas_protects(*(act->as_monster())));
+                 && fedhas_protects(act->as_monster()));
     };
 
     if (tracer)
