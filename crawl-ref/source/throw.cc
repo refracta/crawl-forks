@@ -217,6 +217,13 @@ bool fire_warn_if_impossible(bool silent)
         return true;
     }
 
+    if (you.drowning())
+    {
+        if (!silent)
+            mpr("You can't fire or throw effectively while struggling to swim!");
+        return true;
+    }
+
     // If you can't wield it, you can't throw it.
     if (!form_can_wield())
     {
@@ -720,6 +727,24 @@ bool throw_it(bolt &pbolt, int throw_2, dist *target)
                           ? get_weapon_brand(*you.weapon())
                           : SPWPN_NORMAL;
     const int ammo_brand = get_ammo_brand(*thrown);
+
+    for (rectangle_iterator ri(you.pos(), 1, true); ri; ++ri)
+    {
+        monster * mon = monster_at(*ri);
+        if (mon && mon->attitude == ATT_HOSTILE && !mon->incapacitated() 
+            && projected == launch_retval::LAUNCHED && coinflip())
+        {
+            you.time_taken = 1;
+            mprf(MSGCH_WARN,
+                "%s strikes at your weapon causing you to fumble your attack!",
+                mon->name(DESC_THE).c_str());
+            mon->lose_energy(EUT_ATTACK, 2);
+            you.turn_is_over = true;
+            if (throw_2 == -1)
+                destroy_item(t);
+            return false;
+        }
+    }
 
     switch (projected)
     {
