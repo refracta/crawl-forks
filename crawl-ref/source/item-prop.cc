@@ -113,7 +113,7 @@ static const armour_def Armour_prop[] =
     { ARM_TROLL_LEATHER_ARMOUR, "troll leather armour",  4,  -40,    150,
        EQ_BODY_ARMOUR, SIZE_LITTLE, SIZE_GIANT, false, ARMF_REGENERATION, 50 },
 
-    { ARM_SALAMANDER_HIDE_ARMOUR, "salamander hide armour", 5, -40, 250,
+    { ARM_SALAMANDER_HIDE_ARMOUR, "salamander hide armour", 4, -50, 250,
        EQ_BODY_ARMOUR, SIZE_LITTLE, SIZE_GIANT, false, ARMF_RES_FIRE | ARMF_BERSERK, 25},
 
     { ARM_CLOAK,                "cloak",                  1,   0,   45,
