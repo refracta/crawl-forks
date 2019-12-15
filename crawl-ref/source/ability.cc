@@ -100,8 +100,8 @@ enum class abflag
     berserk_only        = 0x00000040, // can only be used while berserk
     silence_ok          = 0x00000080, // can be used while silenced
     conf_ok             = 0x00000100, // can use even if confused
-    rations             = 0x00000200, // ability requires 2 rations per target
-    rations_or_piety    = 0x00000400, // ability requires 2 rations or piety
+                        //0x00000200, // was rations
+                        //0x00000400, // was rations_or_piety
     variable_mp         = 0x00000800, // costs a variable amount of MP
                         //0x00001000,
                         //0x00002000,
@@ -784,12 +784,6 @@ const string make_cost_description(ability_type ability)
     if (abil.flags & abflag::instant)
         ret += ", Instant"; // not really a cost, more of a bonus - bwr
 
-    if (abil.flags & abflag::rations)
-        ret += ", 2 Rations per target";
-
-    if (abil.flags & abflag::rations_or_piety)
-        ret += ", Piety or 2 Rations";
-
     if (abil.flags & abflag::skill_drain)
         ret += ", Skill drain";
 
@@ -886,12 +880,6 @@ static const string _detailed_cost_description(ability_type ability)
         else
             ret << "variable";
     }
-
-    if (abil.flags & abflag::rations_or_piety)
-        ret << "\nPiety, or 2 rations";
-
-    if (abil.flags & abflag::rations)
-        ret << "\nRations: 2 per target";
 
     if (abil.flags & abflag::remove_curse_scroll)
     {

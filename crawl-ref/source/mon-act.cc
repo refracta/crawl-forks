@@ -1231,8 +1231,22 @@ bool handle_throw(monster* mons, bolt & beem, spell_type call_spell, bool check_
         missile = &mitm[m];
         missile->brand = SPMSL_DISPERSAL;
     }
+
+    const actor *act = actor_at(beem.target);
+
     if (call_spell == SPELL_THROW_NET)
     {
+        if (act)
+        {
+            // Throwing a net at a target that is already caught would be
+            // completely useless, so bail out.
+            if (act->caught())
+                return false;
+            // Netting targets that are already permanently stuck in place
+            // is similarly useless.
+            if (mons_class_is_stationary(act->type))
+                return false;
+        }
         m = items(false, OBJ_MISSILES, MI_THROWING_NET, 1);
         missile = &mitm[m];
         missile->brand = SPMSL_NORMAL;
@@ -1254,19 +1268,6 @@ bool handle_throw(monster* mons, bolt & beem, spell_type call_spell, bool check_
     }
 
     missile->quantity = 1;
-
-    const actor *act = actor_at(beem.target);
-    if (act && missile->sub_type == MI_THROWING_NET)
-    {
-        // Throwing a net at a target that is already caught would be
-        // completely useless, so bail out.
-        if (act->caught())
-            return false;
-        // Netting targets that are already permanently stuck in place
-        // is similarly useless.
-        if (mons_class_is_stationary(act->type))
-            return false;
-    }
 
     // Ok, we'll try it.
     setup_monster_throw_beam(mons, beem);
