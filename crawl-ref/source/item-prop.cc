@@ -608,7 +608,7 @@ static const weapon_def Weapon_prop[] =
         SK_LONG_BLADES,  SIZE_MEDIUM, NUM_SIZE_LEVELS,  MI_NONE,
         DAMV_SLICING, 0, 0, 0, {} },
     { WPN_BLOWGUN,           "old blowgun",               0,  2, 10,
-        SK_SLINGS,     SIZE_LITTLE, SIZE_LITTLE, MI_NEEDLE,
+        SK_SHORT_BLADES, SIZE_LITTLE, SIZE_LITTLE, MI_NONE,
         DAMV_NON_MELEE, 5, 0, 25, {}, },
 #endif
 
@@ -857,6 +857,7 @@ void init_properties()
 const set<pair<object_class_type, int> > removed_items =
 {
 #if TAG_MAJOR_VERSION == 34
+    { OBJ_WEAPONS,   WPN_BLOWGUN },
     { OBJ_JEWELLERY, AMU_CONTROLLED_FLIGHT },
     { OBJ_JEWELLERY, AMU_CONSERVATION },
     { OBJ_JEWELLERY, RING_REGENERATION },
