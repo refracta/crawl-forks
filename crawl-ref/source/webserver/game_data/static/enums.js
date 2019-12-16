@@ -53,7 +53,8 @@ define(function () {
     // equipment_type
     exports.equip = {};
     val = 0;
-    exports.equip.WEAPON = val++;
+    exports.equip.WEAPON0 = val++;
+    exports.equip.WEAPON1 = val++;
     exports.equip.CLOAK = val++;
     exports.equip.HELMET = val++;
     exports.equip.GLOVES = val++;
@@ -71,6 +72,7 @@ define(function () {
     exports.equip.RING_SIX = val++;
     exports.equip.RING_SEVEN = val++;
     exports.equip.RING_EIGHT = val++;
+    exports.equip.RING_AMULET = val++;
     exports.equip.NUM_EQUIP = val++;
 
     // Tile flags.

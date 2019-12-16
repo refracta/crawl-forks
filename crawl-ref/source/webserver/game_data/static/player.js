@@ -168,10 +168,10 @@ function ($, comm, enums, map_knowledge, messages, options) {
         return elem;
     }
 
-    function wielded_weapon()
+    function wielded_weapon(index)
     {
         var elem;
-        var wielded = player.equip[enums.equip.WEAPON];
+        var wielded = player.equip[index];
         if (wielded == -1)
         {
             elem = $("<span>");
@@ -433,12 +433,12 @@ function ($, comm, enums, map_knowledge, messages, options) {
         }
         $("#stats_status_lights").html(status);
 
-        $("#stats_weapon_letter").text(
-            index_to_letter(player.equip[enums.equip.WEAPON]) + ")");
-        $("#stats_weapon").html(wielded_weapon());
-        $("#stats_quiver_letter").text(
-            index_to_letter(player.quiver_item) + ")");
-        $("#stats_quiver").html(quiver());
+        $("#stats_weapon0_letter").text(
+            index_to_letter(player.equip[enums.equip.WEAPON0]) + ")");
+        $("#stats_weapon0").html(wielded_weapon(enums.equip.WEAPON0));
+        $("#stats_weapon1_letter").text(
+            index_to_letter(player.equip[enums.equip.WEAPON1]) + ")");
+        $("#stats_weapon1").html(wielded_weapon(enums.equip.WEAPON1));
     }
 
     function handle_player_message(data)
