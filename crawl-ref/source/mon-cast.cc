@@ -1126,6 +1126,20 @@ int mons_power_for_hd(spell_type spell, int hd)
 }
 
 /**
+* Evocations power for the monster.
+*/
+static int _mons_evokepower(const monster &mons)
+{
+    int xp = mons.get_experience_level();
+    if (xp < 8)
+        return 2 * xp;
+    else if (xp < 16)
+        return 8 + xp;
+    else
+        return 16 + xp / 2;
+}
+
+/**
  * What power does the given monster cast the given spell with?
  *
  * @param spell     The spell in question.
@@ -1966,7 +1980,7 @@ bool setup_mons_cast(const monster* mons, bolt &pbolt, spell_type spell_cast,
     }
     }
 
-    const int power = evoke ? div_round_up(4 * mons->get_hit_dice(), 3)
+    const int power = evoke ? _mons_evokepower(mons)
                             : _mons_spellpower(spell_cast, *mons);
 
     bolt theBeam = mons_spell_beam(mons, spell_cast, power);
