@@ -5487,7 +5487,8 @@ string get_damage_level_string(mon_holy_type holi, mon_dam_level_type mdam)
         break;
     case MDAM_OKAY:
     default:
-        ss << "not";
+        ss << (wounded_damaged(holi) ? "undamaged" : "healthy");
+        return ss.str();
         break;
     }
     ss << (wounded_damaged(holi) ? " damaged" : " wounded");
@@ -5496,14 +5497,14 @@ string get_damage_level_string(mon_holy_type holi, mon_dam_level_type mdam)
 
 void print_wounds(const monster& mons)
 {
-    if (!mons.alive() || mons.hit_points == mons.max_hit_points)
+    if (!mons.alive())
         return;
 
     mon_dam_level_type dam_level = mons_get_damage_level(mons);
     string desc = get_damage_level_string(mons.holiness(), dam_level);
 
     desc.insert(0, " is ");
-    desc += ".";
+    desc += make_stringf(". (%d/%d) HP", mons.hit_points, mons.max_hit_points);
     simple_monster_message(mons, desc.c_str(), MSGCH_MONSTER_DAMAGE,
                            dam_level);
 }

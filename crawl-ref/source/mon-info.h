@@ -205,6 +205,8 @@ struct monster_info_base
     mon_holy_type holi;
     mon_intel_type mintel;
     int hd;
+    int max_hp;
+    int current_hp;
     int ac;
     int ev;
     int base_ev;

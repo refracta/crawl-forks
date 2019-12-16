@@ -329,6 +329,8 @@ monster_info::monster_info(monster_type p_type, monster_type p_base_type)
     mintel = mons_class_intel(type);
 
     hd = mons_class_hit_dice(type);
+    max_hp = mons_avg_hp(type);
+    current_hp = mons_avg_hp(type);
     ac = get_mons_class_ac(type);
     ev = base_ev = get_mons_class_ev(type);
     mresists = get_mons_class_resists(type);
@@ -545,6 +547,8 @@ monster_info::monster_info(const monster* m, int milev)
 
     mintel = mons_intel(*m);
     hd = m->get_hit_dice();
+    max_hp = m->max_hit_points;
+    current_hp = m->hit_points;
     ac = m->armour_class(false);
     ev = m->evasion(ev_ignore::unided);
     base_ev = m->base_evasion();
@@ -774,24 +778,7 @@ monster_info::monster_info(const monster* m, int milev)
 /// Player-known max HP information for a monster: "about 55", "243".
 string monster_info::get_max_hp_desc() const
 {
-    if (props.exists(KNOWN_MAX_HP_KEY))
-        return std::to_string(props[KNOWN_MAX_HP_KEY].get_int());
-
-    const int base_avg_hp = mons_class_is_zombified(type) ?
-                            derived_undead_avg_hp(type, hd, 1) :
-                            mons_avg_hp(type);
-    int mhp = base_avg_hp;
-    if (props.exists(VAULT_HD_KEY))
-    {
-        const int xl = props[VAULT_HD_KEY].get_int();
-        const int base_xl = mons_class_hit_dice(type);
-        mhp = base_avg_hp * xl / base_xl; // rounds down - close enough
-    }
-
-    if (type == MONS_SLIME_CREATURE)
-        mhp *= slime_size;
-
-    return make_stringf("about %d", mhp);
+    return make_stringf("%d", max_hp);
 }
 
 
@@ -1571,10 +1558,8 @@ string monster_info::wounds_description_sentence() const
 
 string monster_info::wounds_description(bool use_colour) const
 {
-    if (dam == MDAM_OKAY)
-        return "";
-
     string desc = get_damage_level_string(holi, dam);
+    desc += make_stringf(" (%d/%d)", current_hp, max_hp);
     if (use_colour)
     {
         const int col = channel_to_colour(MSGCH_MONSTER_DAMAGE, dam);
