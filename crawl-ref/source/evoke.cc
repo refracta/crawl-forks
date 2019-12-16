@@ -479,7 +479,7 @@ void zap_wand(int slot)
     else 
         power += 80;
     if (power > 240)
-        power = 160 + evo_power / 2;
+        power = 160 + power / 2;
 
     power *= (mp_cost + 9);
     power /= 90;
