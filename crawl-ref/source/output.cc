@@ -2101,13 +2101,19 @@ static string _god_powers()
               _god_status_colour(god_colour(you.religion)));
 }
 
+static string _god_asterion()
+{
+    const int prank = piety_rank();
+    return string(prank, '*') + string(NUM_PIETY_STARS - prank, '.');
+}
+
 static string _god_asterisks()
 {
     if (you_worship(GOD_NO_GOD))
         return "";
 
     if (player_under_penance())
-        return "*";
+        return make_stringf("-%d", you.penance[you.religion]);
 
     if (you_worship(GOD_GOZAG))
         return "";
@@ -2124,10 +2130,7 @@ static string _god_asterisks()
             return string(NUM_PIETY_STARS, '.'); // very special plaything
     }
     else
-    {
-        const int prank = piety_rank();
-        return string(prank, '*') + string(NUM_PIETY_STARS - prank, '.');
-    }
+        return make_stringf("%s (%d)", _god_asterion().c_str(), you.piety);
 }
 
 /**
