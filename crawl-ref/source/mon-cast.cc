@@ -1335,7 +1335,6 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
     case SPELL_WAND_POLYMORPH:
     case SPELL_WAND_HEALING:
     case SPELL_WAND_ENSNARE:
-    case SPELL_WAND_HASTING:
         zappy(spell_to_zap(real_spell), power, true, beam);
         break;
 
