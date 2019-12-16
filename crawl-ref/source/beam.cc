@@ -5015,6 +5015,8 @@ void bolt::affect_monster(monster* mon)
     if (flavour == BEAM_MISSILE && item)
     {
         ranged_attack attk(agent(true), mon, item, use_target_as_pos, agent());
+        if (source_name == "a ricochet")
+            attk.ricochet();
         attk.set_path(*this);
         attk.attack();
         // fsim purposes - throw_it detects if an attack connected through

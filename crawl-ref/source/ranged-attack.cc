@@ -132,7 +132,7 @@ bool ranged_attack::attack()
     bool shield_blocked = attack_shield_blocked(false);
 
     god_conduct_trigger conducts[3];
-    if (attacker->is_player() && attacker != defender)
+    if (attacker->is_player() && attacker != defender  && should_alert_defender)
     {
         set_attack_conducts(conducts, *defender->as_monster(),
                             you.can_see(*defender));
@@ -423,6 +423,11 @@ bool ranged_attack::handle_phase_hit()
     }
 
     return true;
+}
+
+void ranged_attack::ricochet()
+{
+    should_alert_defender = false;
 }
 
 bool ranged_attack::using_weapon() const

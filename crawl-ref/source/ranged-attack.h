@@ -18,6 +18,7 @@ public:
     int calc_to_hit(bool random, bool player_aux = false) override;
 
     void set_path(bolt path);
+    void ricochet();
 
     // Applies attack damage and other effects.
     bool attack();
