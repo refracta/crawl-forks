@@ -4561,8 +4561,16 @@ void unmarshallItem(reader &th, item_def &item)
     if (item.base_type == OBJ_GOLD)
         item.special = 0;
 
+    if (item.base_type == OBJ_WEAPONS && item.sub_type == WPN_BLOWGUN)
+        item.base_type = OBJ_MISSILES;
+
     if (item.base_type == OBJ_MISSILES && !item_is_stationary_net(item))
-        destroy_item(item);
+    {
+        item.sub_type = MI_STONE;
+        item.quantity = 1;
+        item.plus = item.plus2 = 0;
+        item.brand = SPMSL_NORMAL;
+    }
 
     if (th.getMinorVersion() < TAG_MINOR_REMOVE_ITEM_COLOUR)
         /* item.colour = */ unmarshallUByte(th);
