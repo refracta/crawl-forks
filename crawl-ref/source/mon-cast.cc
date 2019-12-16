@@ -1980,7 +1980,7 @@ bool setup_mons_cast(const monster* mons, bolt &pbolt, spell_type spell_cast,
     }
     }
 
-    const int power = evoke ? _mons_evokepower(mons)
+    const int power = evoke ? _mons_evokepower(*mons)
                             : _mons_spellpower(spell_cast, *mons);
 
     bolt theBeam = mons_spell_beam(mons, spell_cast, power);
