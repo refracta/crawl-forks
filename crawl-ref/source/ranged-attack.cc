@@ -221,7 +221,7 @@ bool ranged_attack::handle_phase_end()
     }
 
     if (projectile->base_type == OBJ_MISSILES && 
-        projectile->sub_type == MI_SLING_BULLET && one_chance_in(3))
+        projectile->sub_type == MI_SLING_BULLET && !reflected && one_chance_in(3))
     {
         bolt continuation = the_path;
         continuation.range = you.current_vision - range_used;
@@ -305,7 +305,7 @@ bool ranged_attack::handle_phase_blocked()
             punctuation = "!";
     }
     else
-        range_used = BEAM_STOP;
+        attack_count = 0;
 
     if (needs_message)
     {
