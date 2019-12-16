@@ -882,6 +882,22 @@ void cloud_strike(actor * caster, actor * foe, int damage)
         return;
     case CLOUD_FIRE:
     case CLOUD_FOREST_FIRE:
+        damage = resist_adjust_damage(foe, BEAM_FIRE, damage);
+        if (damage > 0)
+        {
+            foe->hurt(caster, damage, BEAM_FIRE, KILLED_BY_BEAM,
+                "", "by the air");
+            if (foe->is_player())
+                mprf("You are engulfed in scorching flames%s", 
+                      attack_strength_punctuation(damage).c_str());
+            else
+            {
+                string msg = make_stringf(" is engulfed in scorching flames%s", 
+                                            attack_strength_punctuation(damage).c_str());
+                simple_monster_message(*foe->as_monster(), msg.c_str());
+            }
+        }
+        break;
     case CLOUD_STEAM:
         damage = resist_adjust_damage(foe, BEAM_FIRE, damage);
         if (damage > 0)
@@ -889,9 +905,14 @@ void cloud_strike(actor * caster, actor * foe, int damage)
             foe->hurt(caster, damage, BEAM_FIRE, KILLED_BY_BEAM,
                 "", "by the air");
             if (foe->is_player())
-                mpr("You are burned by the wild clouds!");
-            else 
-                simple_monster_message(*foe->as_monster(), " is engulfed in scorching flames!");
+                mprf("You are burned by the wild steam%s",
+                      attack_strength_punctuation(damage).c_str());
+            else
+            {
+                string msg = make_stringf(" is burned by wild steam%s",
+                    attack_strength_punctuation(damage).c_str());
+                simple_monster_message(*foe->as_monster(), msg.c_str());
+            }
         }
         break;
     case CLOUD_MEPHITIC:
@@ -905,12 +926,15 @@ void cloud_strike(actor * caster, actor * foe, int damage)
             if (foe->is_player())
             {
                 poison_player(1, "the air");
-                mpr("You are engulfed by the poisonous vapours!");
+                mprf("You are engulfed by the poisonous vapours%s",
+                    attack_strength_punctuation(damage).c_str());
             }
             else
             {
                 poison_monster(foe->as_monster(), caster);
-                simple_monster_message(*foe->as_monster(), " is engulfed in poisonous vapours!");
+                string msg = make_stringf(" is engulfed in poisonous vapours%s",
+                    attack_strength_punctuation(damage).c_str());
+                simple_monster_message(*foe->as_monster(), msg.c_str());
             }
         }
         break;
@@ -921,9 +945,14 @@ void cloud_strike(actor * caster, actor * foe, int damage)
             foe->hurt(caster, damage, BEAM_COLD, KILLED_BY_BEAM,
                 "", "by the air");
             if (foe->is_player())
-                mpr("The freezing vapours engulf you!");
+                mprf("The freezing vapours engulf you%s",
+                    attack_strength_punctuation(damage).c_str());
             else
-                simple_monster_message(*foe->as_monster(), " is engulfed in freezing air!");
+            {
+                string msg = make_stringf(" is engulfed in freezing vapours%s",
+                    attack_strength_punctuation(damage).c_str());
+                simple_monster_message(*foe->as_monster(), msg.c_str());
+            }
         }
         break;
     case CLOUD_HOLY:
@@ -933,9 +962,14 @@ void cloud_strike(actor * caster, actor * foe, int damage)
             foe->hurt(caster, damage, BEAM_HOLY, KILLED_BY_BEAM,
                 "", "by the air");
             if (foe->is_player())
-                mpr("You are rebuked by the blessed clouds!");
+                mprf("You are rebuked by the blessed clouds%s",
+                    attack_strength_punctuation(damage).c_str());
             else
-                simple_monster_message(*foe->as_monster(), " is rebuked by the holy cloud!");
+            {
+                string msg = make_stringf(" is rebuked by the holy cloud%s",
+                    attack_strength_punctuation(damage).c_str());
+                simple_monster_message(*foe->as_monster(), msg.c_str());
+            }
         }
         break;
     case CLOUD_BLACK_SMOKE:
@@ -956,9 +990,14 @@ void cloud_strike(actor * caster, actor * foe, int damage)
             foe->hurt(caster, damage, BEAM_COLD, KILLED_BY_BEAM,
                 "", "by the air");
             if (foe->is_player())
-                mpr("The cloud makes the air strike you more forcefully!");
+                mprf("The cloud makes the air strike you more forcefully%s",
+                    attack_strength_punctuation(damage).c_str());
             else
-                simple_monster_message(*foe->as_monster(), " is struck by the cloud!");
+            {
+                string msg = make_stringf(" is struck by the cloud%s",
+                    attack_strength_punctuation(damage).c_str());
+                simple_monster_message(*foe->as_monster(), msg.c_str());
+            }
         }
         break;
     case CLOUD_MUTAGENIC:
@@ -971,9 +1010,14 @@ void cloud_strike(actor * caster, actor * foe, int damage)
             foe->hurt(caster, damage, BEAM_COLD, KILLED_BY_BEAM,
                 "", "by the air");
             if (foe->is_player())
-                mpr("The dense cloud makes the air strike wildly!");
+                mprf("The dense cloud makes the air strike wildly%s",
+                    attack_strength_punctuation(damage).c_str());
             else
-                simple_monster_message(*foe->as_monster(), " is struck by the thick clouds!");
+            {
+                string msg = make_stringf(" is struck by thick clouds%s",
+                    attack_strength_punctuation(damage).c_str());
+                simple_monster_message(*foe->as_monster(), msg.c_str());
+            }
         }
         break;
 
@@ -986,12 +1030,15 @@ void cloud_strike(actor * caster, actor * foe, int damage)
                 "", "by the air");
             if (foe->is_player())
             {
-                mpr("You are drained as the cloud strikes you!");
+                mprf("You are drained as the cloud strikes you%s",
+                    attack_strength_punctuation(damage).c_str());
                 drain_player();
             }
             else
             {
-                simple_monster_message(*foe->as_monster(), " is drained by the clouds!");
+                string msg = make_stringf(" is drained by the clouds%s",
+                    attack_strength_punctuation(damage).c_str());
+                simple_monster_message(*foe->as_monster(), msg.c_str());
             }
         }
         break;
@@ -1002,9 +1049,14 @@ void cloud_strike(actor * caster, actor * foe, int damage)
             foe->hurt(caster, damage, BEAM_ACID, KILLED_BY_BEAM,
                 "", "by the air");
             if (foe->is_player())
-                mpr("You are engulfed in acidic fog!");
+                mprf("You are engulfed in acidic fog%s",
+                    attack_strength_punctuation(damage).c_str());
             else
-                simple_monster_message(*foe->as_monster(), " is engulfed in acidic fog!");
+            {
+                string msg = make_stringf(" is engulfed in acidic fog%s",
+                    attack_strength_punctuation(damage).c_str());
+                simple_monster_message(*foe->as_monster(), msg.c_str());
+            }
         }
         break;
     case CLOUD_STORM:
@@ -1014,9 +1066,14 @@ void cloud_strike(actor * caster, actor * foe, int damage)
             foe->hurt(caster, damage, BEAM_ELECTRICITY, KILLED_BY_BEAM,
                 "", "by the air");
             if (foe->is_player())
-                mpr("The airstrike triggers a lightning strike through you!");
+                mprf("The airstrike triggers a lightning strike through you%s",
+                    attack_strength_punctuation(damage).c_str());
             else
-                simple_monster_message(*foe->as_monster(), " is struck by lightning!");
+            {
+                string msg = make_stringf(" is struck by lightning%s",
+                    attack_strength_punctuation(damage).c_str());
+                simple_monster_message(*foe->as_monster(), msg.c_str());
+            }
             noisy(15, foe->pos());
         }
         break;
