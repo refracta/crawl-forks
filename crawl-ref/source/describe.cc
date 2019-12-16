@@ -4132,57 +4132,6 @@ static void _add_energy_to_string(int speed, int energy, string what,
         slow.push_back(what + " " + _speed_description(act_speed));
 }
 
-
-/**
- * Print a bar of +s and .s representing a given stat to a provided stream.
- *
- * @param value[in]         The current value represented by the bar.
- * @param scale[in]         The value that each + and . represents.
- * @param name              The name of the bar.
- * @param result[in,out]    The stringstream to append to.
- * @param base_value[in]    The 'base' value represented by the bar. If
- *                          INT_MAX, is ignored.
- */
-static void _print_bar(int value, int scale, string name,
-                       ostringstream &result, int base_value = INT_MAX)
-{
-    if (base_value == INT_MAX)
-        base_value = value;
-
-    result << name << " ";
-
-    const int display_max = value ? value : base_value;
-    const bool currently_disabled = !value && base_value;
-
-    if (currently_disabled)
-      result << "(";
-
-    for (int i = 0; i * scale < display_max; i++)
-    {
-        result << "+";
-        if (i % 5 == 4)
-            result << " ";
-    }
-
-    if (currently_disabled)
-      result << ")";
-
-#ifdef DEBUG_DIAGNOSTICS
-    if (!you.suppress_wizard)
-        result << " (" << value << ")";
-#endif
-
-    if (currently_disabled)
-    {
-        result << " (Normal " << name << ")";
-
-#ifdef DEBUG_DIAGNOSTICS
-        if (!you.suppress_wizard)
-            result << " (" << base_value << ")";
-#endif
-    }
-}
-
 /**
  * Append information about a given monster's HP to the provided stream.
  *
@@ -4202,9 +4151,18 @@ static void _describe_monster_hp(const monster_info& mi, ostringstream &result)
  */
 static void _describe_monster_ac(const monster_info& mi, ostringstream &result)
 {
-    // MAX_GHOST_EVASION + two pips (so with EV in parens it's the same)
-    _print_bar(mi.ac, 5, "AC", result);
-    result << "\n";
+    string msg = "";
+    if (mi.is(MB_CORROSION))
+    {
+        msg = " (corroded";
+        if (mi.is(MB_WRETCHED))
+            msg += ", wretched)";
+        else
+            msg += ")";
+    }
+    else if (mi.is(MB_WRETCHED))
+        msg = " (wretched)";
+    result << "AC: " << mi.ac << msg << "\n";
 }
 
 /**
@@ -4215,8 +4173,10 @@ static void _describe_monster_ac(const monster_info& mi, ostringstream &result)
  */
 static void _describe_monster_ev(const monster_info& mi, ostringstream &result)
 {
-    _print_bar(mi.ev, 5, "EV", result, mi.base_ev);
-    result << "\n";
+    string msg = "";
+    if (mi.is(MB_SLEEPING) || mi.is(MB_PETRIFIED))
+        msg = " (incap)";
+    result << "EV: " << mi.ev << msg << "\n";
 }
 
 /**
@@ -4229,13 +4189,10 @@ static void _describe_monster_mr(const monster_info& mi, ostringstream &result)
 {
     if (mi.res_magic() == MAG_IMMUNE)
     {
-        result << "MR ∞\n";
+        result << "MR: ∞\n";
         return;
     }
-
-    const int bar_scale = MR_PIP;
-    _print_bar(mi.res_magic(), bar_scale, "MR", result);
-    result << "\n";
+    result << "MR: " << mi.res_magic() << "\n";
 }
 
 // Size adjectives

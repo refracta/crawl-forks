@@ -1080,6 +1080,8 @@ void cloud_strike(actor * caster, actor * foe, int damage)
     default:
         break;
     }
+    if (foe->is_monster())
+        print_wounds(*foe->as_monster());
     return;
 }
 
