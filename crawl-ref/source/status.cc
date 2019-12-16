@@ -793,7 +793,7 @@ static void _describe_glow(status_info& inf)
         inf.light_colour = LIGHTGREY;
     else
         inf.light_colour = DARKGREY;
-    inf.light_text = "Contam";
+    inf.light_text = make_stringf("Contam (%d)", you.magic_contamination);
 
     /// Mappings from contamination levels to descriptions.
     static const string contam_adjectives[] =
