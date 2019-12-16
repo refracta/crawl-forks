@@ -322,7 +322,7 @@ unsigned int item_value(item_def item, bool ident)
         break;
 
     case OBJ_MISSILES:          // ammunition
-        valued += 20;
+        valued += 1;
         break;
 
     case OBJ_SHIELDS:

@@ -5837,14 +5837,15 @@ object_class_type item_in_shop(shop_type shop_type)
     switch (shop_type)
     {
     case SHOP_WEAPON:
-        if (one_chance_in(5))
-            return OBJ_MISSILES;
-        // *** deliberate fall through here  {dlb} ***
     case SHOP_WEAPON_ANTIQUE:
+        if (one_chance_in(6))
+            return OBJ_SHIELDS;
         return OBJ_WEAPONS;
 
     case SHOP_ARMOUR:
     case SHOP_ARMOUR_ANTIQUE:
+        if (one_chance_in(6))
+            return OBJ_SHIELDS;
         return OBJ_ARMOURS;
 
     case SHOP_GENERAL:
