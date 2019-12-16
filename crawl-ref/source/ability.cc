@@ -119,32 +119,6 @@ enum class abflag
 };
 DEF_BITFIELD(ability_flags, abflag);
 
-struct generic_cost
-{
-    int base, add, rolls;
-
-    generic_cost(int num)
-        : base(num), add(num == 0 ? 0 : (num + 1) / 2 + 1), rolls(1)
-    {
-    }
-    generic_cost(int num, int _add, int _rolls = 1)
-        : base(num), add(_add), rolls(_rolls)
-    {
-    }
-    static generic_cost fixed(int fixed)
-    {
-        return generic_cost(fixed, 0, 1);
-    }
-    static generic_cost range(int low, int high, int _rolls = 1)
-    {
-        return generic_cost(low, high - low + 1, _rolls);
-    }
-
-    int cost() const PURE;
-
-    operator bool () const { return base > 0 || add > 0; }
-};
-
 struct scaling_cost
 {
     int value;
@@ -270,7 +244,7 @@ struct ability_def
     unsigned int        mp_cost;        // magic cost of ability
     scaling_cost        hp_cost;        // hit point cost of ability
     unsigned int        food_cost;      // + rand2avg(food_cost, 2)
-    generic_cost        piety_cost;     // + random2((piety_cost + 1) / 2 + 1)
+    unsigned int        piety_cost;     // piety cost of ability
     failure_info        failure;        // calculator for failure odds
     ability_flags       flags;          // used for additional cost notices
 };
@@ -278,7 +252,6 @@ struct ability_def
 static int _lookup_ability_slot(ability_type abil);
 static spret _do_ability(const ability_def& abil, bool fail);
 static void _pay_ability_costs(const ability_def& abil);
-static int _scale_piety_cost(ability_type abil, int original_cost);
 
 // The description screen was way out of date with the actual costs.
 // This table puts all the information in one place... -- bwr
@@ -371,29 +344,29 @@ static const ability_def Ability_List[] =
     { ABIL_ZIN_RECITE, "Recite",
       0, 0, 0, 0, {fail_basis::invo, 30, 6, 20}, abflag::none },
     { ABIL_ZIN_VITALISATION, "Vitalisation",
-      2, 0, 0, 1, {fail_basis::invo, 40, 5, 20}, abflag::none },
+      2, 0, 0, 2, {fail_basis::invo, 40, 5, 20}, abflag::none },
     { ABIL_ZIN_IMPRISON, "Imprison",
-      5, 0, 0, 4, {fail_basis::invo, 60, 5, 20}, abflag::none },
+      5, 0, 0, 6, {fail_basis::invo, 60, 5, 20}, abflag::none },
     { ABIL_ZIN_SANCTUARY, "Sanctuary",
-      7, 0, 0, 15, {fail_basis::invo, 80, 4, 25}, abflag::none },
+      7, 0, 0, 20, {fail_basis::invo, 80, 4, 25}, abflag::none },
     { ABIL_ZIN_DONATE_GOLD, "Donate Gold",
       0, 0, 0, 0, {fail_basis::invo}, abflag::none },
 
     // The Shining One
     { ABIL_TSO_DIVINE_SHIELD, "Divine Shield",
-      3, 0, 50, 2, {fail_basis::invo, 40, 5, 20}, abflag::none },
+      3, 0, 50, 3, {fail_basis::invo, 40, 5, 20}, abflag::none },
     { ABIL_TSO_CLEANSING_FLAME, "Cleansing Flame",
-      5, 0, 100, 2, {fail_basis::invo, 70, 4, 25}, abflag::none },
+      5, 0, 100, 3, {fail_basis::invo, 70, 4, 25}, abflag::none },
     { ABIL_TSO_SUMMON_DIVINE_WARRIOR, "Summon Divine Warrior",
-      8, 0, 150, 5, {fail_basis::invo, 80, 4, 25}, abflag::none },
+      8, 0, 150, 8, {fail_basis::invo, 80, 4, 25}, abflag::none },
     { ABIL_TSO_BLESS_WEAPON, "Brand Weapon With Holy Wrath", 0, 0, 0, 0,
       {fail_basis::invo}, abflag::none },
 
     // Kikubaaqudgha
     { ABIL_KIKU_RECEIVE_CORPSES, "Receive Corpses",
-      3, 0, 200, 2, {fail_basis::invo, 40, 5, 20}, abflag::none },
+      3, 0, 200, 3, {fail_basis::invo, 40, 5, 20}, abflag::none },
     { ABIL_KIKU_TORMENT, "Torment",
-      4, 0, 0, 8, {fail_basis::invo, 60, 5, 20}, abflag::none },
+      4, 0, 0, 12, {fail_basis::invo, 60, 5, 20}, abflag::none },
     { ABIL_KIKU_GIFT_NECRONOMICON, "Receive Necronomicon", 0, 0, 0, 0,
       {fail_basis::invo}, abflag::none },
     { ABIL_KIKU_BLESS_WEAPON, "Brand Weapon With Pain", 0, 0, 0, 0,
@@ -409,26 +382,26 @@ static const ability_def Ability_List[] =
     { ABIL_YRED_ANIMATE_DEAD, "Animate Dead",
       2, 0, 200, 0, {fail_basis::invo, 40, 4, 20}, abflag::none },
     { ABIL_YRED_DRAIN_LIFE, "Drain Life",
-      6, 0, 200, 2, {fail_basis::invo, 60, 4, 25}, abflag::none },
+      6, 0, 200, 3, {fail_basis::invo, 60, 4, 25}, abflag::none },
     { ABIL_YRED_ENSLAVE_SOUL, "Enslave Soul",
-      8, 0, 500, 4, {fail_basis::invo, 80, 4, 25}, abflag::none },
+      8, 0, 500, 6, {fail_basis::invo, 80, 4, 25}, abflag::none },
 
     // Okawaru
     { ABIL_OKAWARU_HEROISM, "Heroism",
-      2, 0, 0, 1, {fail_basis::invo, 30, 6, 20}, abflag::none },
+      2, 0, 0, 2, {fail_basis::invo, 30, 6, 20}, abflag::none },
     { ABIL_OKAWARU_FINESSE, "Finesse",
-      5, 0, 0, 3, {fail_basis::invo, 60, 4, 25}, abflag::none },
+      5, 0, 0, 6, {fail_basis::invo, 60, 4, 25}, abflag::none },
 
     // Makhleb
     { ABIL_MAKHLEB_MINOR_DESTRUCTION, "Minor Destruction",
       0, scaling_cost::fixed(1), 0, 0, {fail_basis::invo, 40, 5, 20}, abflag::none },
     { ABIL_MAKHLEB_LESSER_SERVANT_OF_MAKHLEB, "Lesser Servant of Makhleb",
-      0, scaling_cost::fixed(4), 0, 2, {fail_basis::invo, 40, 5, 20}, abflag::hostile },
+      0, scaling_cost::fixed(4), 0, 3, {fail_basis::invo, 40, 5, 20}, abflag::hostile },
     { ABIL_MAKHLEB_MAJOR_DESTRUCTION, "Major Destruction",
-      0, scaling_cost::fixed(6), 0, generic_cost::range(0, 1),
+      0, scaling_cost::fixed(6), 0, 1,
       {fail_basis::invo, 60, 4, 25}, abflag::none },
     { ABIL_MAKHLEB_GREATER_SERVANT_OF_MAKHLEB, "Greater Servant of Makhleb",
-      0, scaling_cost::fixed(10), 0, 5,
+      0, scaling_cost::fixed(10), 0, 8,
       {fail_basis::invo, 90, 2, 5}, abflag::hostile },
 
     // Sif Muna
@@ -437,72 +410,72 @@ static const ability_def Ability_List[] =
     { ABIL_SIF_MUNA_STOP_DIVINE_ENERGY, "Stop Divine Energy",
       0, 0, 0, 0, {fail_basis::invo}, abflag::instant | abflag::starve_ok },
     { ABIL_SIF_MUNA_FORGET_SPELL, "Forget Spell",
-      0, 0, 0, 8, {fail_basis::invo}, abflag::none },
+      0, 0, 0, 12, {fail_basis::invo}, abflag::none },
     { ABIL_SIF_MUNA_CHANNEL_ENERGY, "Channel Magic",
-      0, 0, 200, 2, {fail_basis::invo, 60, 4, 25}, abflag::none },
+      0, 0, 200, 3, {fail_basis::invo, 60, 4, 25}, abflag::none },
 
     // Trog
     { ABIL_TROG_BERSERK, "Berserk",
       0, 0, 600, 0, {fail_basis::invo}, abflag::none },
     { ABIL_TROG_REGEN_MR, "Trog's Hand",
-      0, 0, 200, 2, {fail_basis::invo, piety_breakpoint(2), 0, 1}, abflag::berserk_only },
+      0, 0, 200, 3, {fail_basis::invo, piety_breakpoint(2), 0, 1}, abflag::berserk_only },
     { ABIL_TROG_BROTHERS_IN_ARMS, "Brothers in Arms",
-      0, 0, 250, generic_cost::range(5, 6),
+      0, 0, 250, 6,
       {fail_basis::invo, piety_breakpoint(5), 0, 1}, abflag::berserk_only },
 
     // Elyvilon
     { ABIL_ELYVILON_LIFESAVING, "Divine Protection",
       0, 0, 0, 0, {fail_basis::invo}, abflag::piety },
-    { ABIL_ELYVILON_LESSER_HEALING, "Lesser Healing", 1, 0, 100,
-      generic_cost::range(0, 1), {fail_basis::invo, 30, 6, 20}, abflag::none },
+    { ABIL_ELYVILON_LESSER_HEALING, "Lesser Healing",
+      1, 0, 100, 1, {fail_basis::invo, 30, 6, 20}, abflag::none },
     { ABIL_ELYVILON_HEAL_OTHER, "Heal Other",
-      2, 0, 250, 2, {fail_basis::invo, 40, 5, 20}, abflag::none },
-    { ABIL_ELYVILON_PURIFICATION, "Purification",
-      3, 0, 300, 3, {fail_basis::invo, 20, 5, 20}, abflag::conf_ok },
-    { ABIL_ELYVILON_GREATER_HEALING, "Greater Healing",
       2, 0, 250, 3, {fail_basis::invo, 40, 5, 20}, abflag::none },
+    { ABIL_ELYVILON_PURIFICATION, "Purification",
+      3, 0, 300, 5, {fail_basis::invo, 20, 5, 20}, abflag::conf_ok },
+    { ABIL_ELYVILON_GREATER_HEALING, "Greater Healing",
+      2, 0, 250, 5, {fail_basis::invo, 40, 5, 20}, abflag::none },
     { ABIL_ELYVILON_DIVINE_VIGOUR, "Divine Vigour",
-      0, 0, 600, 6, {fail_basis::invo, 80, 4, 25}, abflag::none },
+      0, 0, 600, 9, {fail_basis::invo, 80, 4, 25}, abflag::none },
 
     // Lugonu
     { ABIL_LUGONU_ABYSS_EXIT, "Depart the Abyss",
-      1, 0, 0, 10, {fail_basis::invo, 30, 6, 20}, abflag::none },
+      1, 0, 0, 15, {fail_basis::invo, 30, 6, 20}, abflag::none },
     { ABIL_LUGONU_BEND_SPACE, "Bend Space",
       1, scaling_cost::fixed(2), 0, 0, {fail_basis::invo, 40, 5, 20}, abflag::none },
-    { ABIL_LUGONU_BANISH, "Banish", 4, 0, 200, generic_cost::range(3, 4),
+    { ABIL_LUGONU_BANISH, "Banish", 4, 0, 200, 4,
       {fail_basis::invo, 85, 7, 20}, abflag::none },
-    { ABIL_LUGONU_CORRUPT, "Corrupt", 7, scaling_cost::fixed(5), 500, 10,
+    { ABIL_LUGONU_CORRUPT, "Corrupt", 7, scaling_cost::fixed(5), 500, 15,
       {fail_basis::invo, 70, 4, 25}, abflag::none },
-    { ABIL_LUGONU_ABYSS_ENTER, "Enter the Abyss", 10, 0, 500, 28,
+    { ABIL_LUGONU_ABYSS_ENTER, "Enter the Abyss", 10, 0, 500, 42,
       {fail_basis::invo, 80, 4, 25}, abflag::pain },
     { ABIL_LUGONU_BLESS_WEAPON, "Brand Weapon With Distortion", 0, 0, 0, 0,
       {fail_basis::invo}, abflag::none },
 
     // Nemelex
     { ABIL_NEMELEX_TRIPLE_DRAW, "Triple Draw",
-      2, 0, 0, 2, {fail_basis::invo, 60, 5, 20}, abflag::none },
+      2, 0, 0, 3, {fail_basis::invo, 60, 5, 20}, abflag::none },
     { ABIL_NEMELEX_DEAL_FOUR, "Deal Four",
-      8, 0, 0, 8, {fail_basis::invo, -1}, abflag::none }, // failure special-cased
+      8, 0, 0, 12, {fail_basis::invo, -1}, abflag::none }, // failure special-cased
     { ABIL_NEMELEX_STACK_FIVE, "Stack Five",
-      5, 0, 0, 10, {fail_basis::invo, 80, 4, 25}, abflag::none },
+      5, 0, 0, 15, {fail_basis::invo, 80, 4, 25}, abflag::none },
 
     // Beogh
     { ABIL_BEOGH_SMITING, "Smiting",
-      3, 0, 0, generic_cost::fixed(3), {fail_basis::invo, 40, 5, 20}, abflag::none },
+      3, 0, 0, 2, {fail_basis::invo, 40, 5, 20}, abflag::none },
     { ABIL_BEOGH_RECALL_ORCISH_FOLLOWERS, "Recall Orcish Followers",
       2, 0, 0, 0, {fail_basis::invo, 30, 6, 20}, abflag::none },
     { ABIL_BEOGH_GIFT_ITEM, "Give Item to Named Follower",
       0, 0, 0, 0, {fail_basis::invo}, abflag::none },
     { ABIL_BEOGH_RESURRECTION, "Resurrection",
-      0, 0, 0, 28, {fail_basis::invo}, abflag::none },
+      0, 0, 0, 42, {fail_basis::invo}, abflag::none },
 
     // Jiyva
     { ABIL_JIYVA_CALL_JELLY, "Request Jelly",
-      2, 0, 0, 1, {fail_basis::invo}, abflag::none },
+      2, 0, 0, 2, {fail_basis::invo}, abflag::none },
     { ABIL_JIYVA_SLIMIFY, "Slimify",
-      4, 0, 0, 8, {fail_basis::invo, 90, 0, 2}, abflag::none },
+      4, 0, 0, 12, {fail_basis::invo, 90, 0, 2}, abflag::none },
     { ABIL_JIYVA_CURE_BAD_MUTATION, "Cure Bad Mutation",
-      0, 0, 0, 15, {fail_basis::invo}, abflag::none },
+      0, 0, 0, 20, {fail_basis::invo}, abflag::none },
 
     // Fedhas
     { ABIL_FEDHAS_FUNGAL_BLOOM, "Fungal Bloom",
@@ -512,37 +485,37 @@ static const ability_def Ability_List[] =
     { ABIL_FEDHAS_EVOLUTION, "Evolution",
       2, 0, 100, 0, {fail_basis::invo, 30, 6, 20}, abflag::none },
     { ABIL_FEDHAS_PLANT_RING, "Growth",
-      8, 0, 100, 10, {fail_basis::invo, 40, 5, 20}, abflag::none },
+      8, 0, 100, 15, {fail_basis::invo, 40, 5, 20}, abflag::none },
     { ABIL_FEDHAS_SPAWN_SPORES, "Reproduction",
-      4, 0, 100, 1, {fail_basis::invo, 60, 4, 25}, abflag::none },
+      4, 0, 100, 2, {fail_basis::invo, 60, 4, 25}, abflag::none },
     { ABIL_FEDHAS_RAIN, "Rain",
-      4, 0, 150, 4, {fail_basis::invo, 70, 4, 25}, abflag::none },
+      4, 0, 150, 6, {fail_basis::invo, 70, 4, 25}, abflag::none },
 
     // Cheibriados
     { ABIL_CHEIBRIADOS_TIME_BEND, "Bend Time",
-      3, 0, 50, 1, {fail_basis::invo, 40, 4, 20}, abflag::none },
+      3, 0, 50, 2, {fail_basis::invo, 40, 4, 20}, abflag::none },
     { ABIL_CHEIBRIADOS_DISTORTION, "Temporal Distortion",
-      4, 0, 200, 3, {fail_basis::invo, 60, 5, 20}, abflag::instant },
+      4, 0, 200, 5, {fail_basis::invo, 60, 5, 20}, abflag::instant },
     { ABIL_CHEIBRIADOS_SLOUCH, "Slouch",
-      5, 0, 100, 8, {fail_basis::invo, 60, 4, 25}, abflag::none },
+      5, 0, 100, 12, {fail_basis::invo, 60, 4, 25}, abflag::none },
     { ABIL_CHEIBRIADOS_TIME_STEP, "Step From Time",
-      10, 0, 200, 10, {fail_basis::invo, 80, 4, 25}, abflag::none },
+      10, 0, 200, 15, {fail_basis::invo, 80, 4, 25}, abflag::none },
 
     // Ashenzari
     { ABIL_ASHENZARI_CURSE, "Curse Item",
       0, 0, 0, 0, {fail_basis::invo}, abflag::remove_curse_scroll },
     { ABIL_ASHENZARI_SCRYING, "Scrying",
-      4, 0, 0, 2, {fail_basis::invo}, abflag::instant },
+      4, 0, 0, 3, {fail_basis::invo}, abflag::instant },
     { ABIL_ASHENZARI_TRANSFER_KNOWLEDGE, "Transfer Knowledge",
-      0, 0, 0, 10, {fail_basis::invo}, abflag::none },
+      0, 0, 0, 15, {fail_basis::invo}, abflag::none },
     { ABIL_ASHENZARI_END_TRANSFER, "End Transfer Knowledge",
       0, 0, 0, 0, {fail_basis::invo}, abflag::starve_ok },
 
     // Dithmenos
     { ABIL_DITHMENOS_SHADOW_STEP, "Shadow Step",
-      4, 80, 0, 5, {fail_basis::invo, 30, 6, 20}, abflag::none },
+      4, 80, 0, 8, {fail_basis::invo, 30, 6, 20}, abflag::none },
     { ABIL_DITHMENOS_SHADOW_FORM, "Shadow Form",
-      9, 0, 0, 12, {fail_basis::invo, 80, 4, 25}, abflag::skill_drain },
+      9, 0, 0, 18, {fail_basis::invo, 80, 4, 25}, abflag::skill_drain },
 
     // Ru
     { ABIL_RU_DRAW_OUT_POWER, "Draw Out Power", 0, 0, 0, 0,
@@ -599,36 +572,36 @@ static const ability_def Ability_List[] =
 
     // Qazlal
     { ABIL_QAZLAL_UPHEAVAL, "Upheaval",
-      4, 0, 0, 3, {fail_basis::invo, 40, 5, 20}, abflag::none },
+      4, 0, 0, 5, {fail_basis::invo, 40, 5, 20}, abflag::none },
     { ABIL_QAZLAL_ELEMENTAL_FORCE, "Elemental Force",
-      6, 0, 0, 6, {fail_basis::invo, 60, 5, 20}, abflag::none },
+      6, 0, 0, 9, {fail_basis::invo, 60, 5, 20}, abflag::none },
     { ABIL_QAZLAL_DISASTER_AREA, "Disaster Area",
-      7, 0, 0, 10, {fail_basis::invo, 70, 4, 25}, abflag::none },
+      7, 0, 0, 15, {fail_basis::invo, 70, 4, 25}, abflag::none },
 
 #if TAG_MAJOR_VERSION == 34
     // Pakellas
     { ABIL_PAKELLAS_DEVICE_SURGE, "Device Surge",
-      0, 0, 0, generic_cost::fixed(1),
+      0, 0, 0, 1,
       {fail_basis::invo, 40, 5, 20}, abflag::variable_mp | abflag::instant },
 #endif
 
     // Uskayaw
     { ABIL_USKAYAW_STOMP, "Stomp",
-        3, 0, 100, generic_cost::fixed(20), {fail_basis::invo}, abflag::none },
+        3, 0, 100, 20, {fail_basis::invo}, abflag::none },
     { ABIL_USKAYAW_LINE_PASS, "Line Pass",
-        4, 0, 200, generic_cost::fixed(20), {fail_basis::invo}, abflag::none},
+        4, 0, 200, 20, {fail_basis::invo}, abflag::none},
     { ABIL_USKAYAW_GRAND_FINALE, "Grand Finale",
-        8, 0, 500, generic_cost::fixed(0),
+        8, 0, 500, 0,
         {fail_basis::invo, 120 + piety_breakpoint(4), 5, 1}, abflag::none},
 
     // Hepliaklqana
     { ABIL_HEPLIAKLQANA_RECALL, "Recall Ancestor",
         2, 0, 0, 0, {fail_basis::invo}, abflag::none },
     { ABIL_HEPLIAKLQANA_TRANSFERENCE, "Transference",
-        2, 0, 0, 3, {fail_basis::invo, 40, 5, 20},
+        2, 0, 0, 5, {fail_basis::invo, 40, 5, 20},
         abflag::none },
     { ABIL_HEPLIAKLQANA_IDEALISE, "Idealise",
-        4, 0, 0, 4, {fail_basis::invo, 60, 4, 25},
+        4, 0, 0, 6, {fail_basis::invo, 60, 4, 25},
         abflag::none },
 
     { ABIL_HEPLIAKLQANA_TYPE_KNIGHT,       "Ancestor Life: Knight",
@@ -643,9 +616,9 @@ static const ability_def Ability_List[] =
 
     // Wu Jian
     { ABIL_WU_JIAN_SERPENTS_LASH, "Serpent's Lash",
-        0, 0, 0, 2, {fail_basis::invo}, abflag::exhaustion | abflag::instant },
+        0, 0, 0, 3, {fail_basis::invo}, abflag::exhaustion | abflag::instant },
     { ABIL_WU_JIAN_HEAVENLY_STORM, "Heavenly Storm",
-        0, 0, 0, 20, {fail_basis::invo, piety_breakpoint(5), 0, 1}, abflag::none },
+        0, 0, 0, 30, {fail_basis::invo, piety_breakpoint(5), 0, 1}, abflag::none },
     // Lunge and Whirlwind abilities aren't menu abilities but currently need
     // to exist for action counting, hence need enums/entries.
     { ABIL_WU_JIAN_LUNGE, "Lunge", 0, 0, 0, 0, {}, abflag::berserk_ok },
@@ -766,8 +739,11 @@ const string make_cost_description(ability_type ability)
         ret += ", Hunger"; // randomised and exact amount hidden from player
     }
 
-    if (abil.piety_cost || abil.flags & abflag::piety)
-        ret += ", Piety"; // randomised and exact amount hidden from player
+    if (abil.piety_cost)
+        ret += make_stringf(", %d Piety", abil.piety_cost);
+    
+    if (abil.flags & abflag::piety)
+        ret += (", Variable Piety"); // randomised and exact amount hidden from player
 
     if (abil.flags & abflag::breath)
         ret += ", Breath";
@@ -817,14 +793,6 @@ const string make_cost_description(ability_type ability)
     return ret;
 }
 
-static string _get_piety_amount_str(int value)
-{
-    return value > 15 ? "extremely large" :
-           value > 10 ? "large" :
-           value > 5  ? "moderate" :
-                        "small";
-}
-
 static const string _detailed_cost_description(ability_type ability)
 {
     const ability_def& abil = get_ability_def(ability);
@@ -863,8 +831,7 @@ static const string _detailed_cost_description(ability_type ability)
             ret << "variable";
         else
         {
-            int avgcost = abil.piety_cost.base + abil.piety_cost.add / 2;
-            ret << _get_piety_amount_str(avgcost);
+            ret << abil.piety_cost;
         }
     }
 
@@ -3152,19 +3119,6 @@ static spret _do_ability(const ability_def& abil, bool fail)
     return spret::success;
 }
 
-// [ds] Increase piety cost for god abilities that are particularly
-// overpowered in Sprint. Yes, this is a hack. No, I don't care.
-static int _scale_piety_cost(ability_type abil, int original_cost)
-{
-    // Abilities that have aroused our ire earn 2.5x their classic
-    // Crawl piety cost.
-    return (crawl_state.game_is_sprint()
-            && (abil == ABIL_TROG_BROTHERS_IN_ARMS
-                || abil == ABIL_MAKHLEB_GREATER_SERVANT_OF_MAKHLEB))
-           ? div_rand_round(original_cost * 5, 2)
-           : original_cost;
-}
-
 static void _pay_ability_costs(const ability_def& abil)
 {
     // wall jump handles its own timing, because it can be instant if
@@ -3179,8 +3133,7 @@ static void _pay_ability_costs(const ability_def& abil)
         you.turn_is_over = true;
 
     const int food_cost  = abil.food_cost + random2avg(abil.food_cost, 2);
-    const int piety_cost =
-        _scale_piety_cost(abil.ability, abil.piety_cost.cost());
+    const int piety_cost = abil.piety_cost;
     const int hp_cost    = abil.hp_cost.cost(you.hp_max);
 
     dprf("Cost: mp=%d; hp=%d; food=%d; piety=%d",
@@ -3815,12 +3768,7 @@ int abil_skill_weight(ability_type ability)
 
 
 ////////////////////////////////////////////////////////////////////////
-// generic_cost
-
-int generic_cost::cost() const
-{
-    return base + (add > 0 ? random2avg(add, rolls) : 0);
-}
+// scaling_cost
 
 int scaling_cost::cost(int max) const
 {
