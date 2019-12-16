@@ -198,7 +198,7 @@ define(function () {
     fg_flags.flags.ANIM_WEP     = [0, 0x4000];
     fg_flags.flags.SUMMONED     = [0, 0x8000];
     fg_flags.flags.PERM_SUMMON  = [0, 0x10000];
-    fg_flags.flags.DEATHS_DOOR  = [0, 0x20000];
+    fg_flags.flags.CONFUSED     = [0, 0x20000];
     fg_flags.flags.RECALL       = [0, 0x40000];
     fg_flags.flags.DRAIN        = [0, 0x80000];
     fg_flags.flags.IDEALISED    = [0, 0x100000];
