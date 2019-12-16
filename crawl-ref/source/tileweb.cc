@@ -898,6 +898,10 @@ void TilesFramework::_send_player(bool force_full)
         god = god_name(you.religion);
     _update_string(force_full, c.god, god, "god");
     _update_int(force_full, c.under_penance, (bool) player_under_penance(), "penance");
+    int piety = -1;
+    if (!you_worship(GOD_NO_GOD) && !you_worship(GOD_GOZAG))
+        piety = you.piety;
+    _update_int(force_full, c.piety, piety, "piety");
     uint8_t prank = 0;
     if (!you_worship(GOD_NO_GOD))
         prank = max(0, piety_rank());
