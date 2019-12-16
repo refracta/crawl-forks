@@ -2215,6 +2215,7 @@ string spell_noise_string(spell_type spell, int chop_wiz_display_width)
         return desc;
 }
 
+// Preserving because lua wants it for some of the bot protocalls.
 int power_to_barcount(int power)
 {
     if (power == -1)
@@ -2224,40 +2225,13 @@ int power_to_barcount(int power)
     return breakpoint_rank(power, breakpoints, ARRAYSZ(breakpoints)) + 1;
 }
 
-static int _spell_power_bars(spell_type spell)
-{
-    const int cap = spell_power_cap(spell);
-    if (cap == 0)
-        return -1;
-    const int power = min(calc_spell_power(spell, true, false, false), cap);
-    return power_to_barcount(power);
-}
-
-#ifdef WIZARD
-static string _wizard_spell_power_numeric_string(spell_type spell)
+string spell_power_string(spell_type spell)
 {
     const int cap = spell_power_cap(spell);
     if (cap == 0)
         return "N/A";
     const int power = min(calc_spell_power(spell, true, false, false), cap);
     return make_stringf("%d (%d)", power, cap);
-}
-#endif
-
-string spell_power_string(spell_type spell)
-{
-#ifdef WIZARD
-    if (you.wizard)
-        return _wizard_spell_power_numeric_string(spell);
-#endif
-
-    const int numbars = _spell_power_bars(spell);
-    const int capbars = power_to_barcount(spell_power_cap(spell));
-    ASSERT(numbars <= capbars);
-    if (numbars < 0)
-        return "N/A";
-    else
-        return string(numbars, '#') + string(capbars - numbars, '.');
 }
 
 int calc_spell_range(spell_type spell, int power, bool allow_bonus)
