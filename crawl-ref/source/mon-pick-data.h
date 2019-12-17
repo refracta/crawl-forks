@@ -171,7 +171,6 @@ static const pop_entry pop_temple[] =
 
 static const pop_entry pop_orc[] =
 { // Orcish Mines
-  {  1,  4,  384, FLAT, MONS_NO_MONSTER },
   {  1,  4,  192, FLAT, MONS_ORC_WARRIOR },
   {  1,  4,   25, FLAT, MONS_ORC_PRIEST },
   {  1,  4,   25, FLAT, MONS_ORC_WIZARD },
@@ -180,12 +179,16 @@ static const pop_entry pop_orc[] =
   {  1,  4,   25, FLAT, MONS_ORC_SORCERER },
   {  1,  4,    8, FLAT, MONS_ORC_WARLORD },
   {  1,  4,   40, FLAT, MONS_WARG },
-  {  1,  4,    3, FLAT, MONS_GNOLL },
-  {  1,  4,    1, FLAT, MONS_GNOLL_SHAMAN },
-  {  1,  4,    1, FLAT, MONS_GNOLL_SERGEANT },
+  {  1,  4,    2, FLAT, MONS_SUN_DEMON },
+  {  1,  4,    2, FLAT, MONS_SMOKE_DEMON },
+  {  1,  4,    2, FLAT, MONS_SOUL_EATER },
+  {  1,  4,    2, FLAT, MONS_NEQOXEC },
+  {  1,  4,    2, FLAT, MONS_YNOXINUL },
+  {  1,  4,    2, FLAT, MONS_SIXFIRHY },
+  {  1,  4,    2, FLAT, MONS_LOROCYPROCA },
   {  1,  4,   89, FLAT, MONS_OGRE },
   {  1,  4,    8, FLAT, MONS_TWO_HEADED_OGRE },
-  {  1,  4,    1, FLAT, MONS_OGRE_MAGE },
+  {  1,  4,    4, FLAT, MONS_OGRE_MAGE },
   {  1,  4,   40, FLAT, MONS_TROLL },
   {  1,  4,    8, FLAT, MONS_CYCLOPS },
   {  1,  4,    4, FLAT, MONS_ETTIN },
