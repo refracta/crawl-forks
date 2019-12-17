@@ -17,8 +17,6 @@ static const pop_entry pop_d[] =
   {  2, 12,  515, SEMI, MONS_QUOKKA },
   {  2,  6,  515, FALL, MONS_WORM },
   {  3, 13, 1000, FLAT, MONS_ORC },
-  {  4,  7, 1000, FLAT, MONS_NO_MONSTER},
-  {  4, 10, 4000, FLAT, MONS_NO_MONSTER},
   {  4, 10,   52, SEMI, MONS_GNOLL_SHAMAN },
   {  4, 12,  136, SEMI, MONS_ORC_PRIEST },
   {  4, 12,  335, SEMI, MONS_PORCUPINE },
@@ -47,7 +45,7 @@ static const pop_entry pop_d[] =
   {  6, 16, 1000, FLAT, MONS_BULLFROG },
   {  6, 16,  825, SEMI, MONS_ORC_WARRIOR },
   {  6, 16,  335, SEMI, MONS_WIGHT },
-  {  6, 16,  335, SEMI, MONS_NO_MONSTER }, // Old ballistomycete spore weight.
+  {  6, 16,  335, SEMI, MONS_BUTTERFLY },
   {  7, 13,  200, PEAK, MONS_RED_DEVIL },
   {  7, 13,  200, PEAK, MONS_RUST_DEVIL },
   {  7, 13,  200, PEAK, MONS_ICE_DEVIL },
@@ -252,7 +250,6 @@ static const pop_entry pop_lab[] =
 
 static const pop_entry pop_lair[] =
 { // Lair (OOD cap: 12)
-  {  1,  5, 5500, FLAT, MONS_NO_MONSTER }, // Roughly old D:1-4 chaff weight
   { -1,  5,   52, SEMI, MONS_BLACK_BEAR },
   { -1,  7,  260, SEMI, MONS_BASILISK },
   { -1, 11,  440, SEMI, MONS_HYDRA },
@@ -295,7 +292,6 @@ static const pop_entry pop_lair[] =
 
 static const pop_entry pop_swamp[] =
 { // Swamp
-  {  1,  4, 2000, FLAT, MONS_NO_MONSTER }, // was plant + fungus
   { -6,  4,  480, RISE, MONS_SLIME_CREATURE },
   { -2,  6,  245, SEMI, MONS_SHADOW },
   {  0,  5,  480, SEMI, MONS_SPRIGGAN_RIDER },
@@ -396,7 +392,6 @@ static const pop_entry pop_slime[] =
   {  1,  5,  200, RISE, MONS_DEATH_OOZE },
   {  2,  5,  100, RISE, MONS_GLOWING_ORANGE_BRAIN },
   {  2,  8,   50, SEMI, MONS_FLOATING_EYE },
-  {  1,  5, 2750, FLAT, MONS_NO_MONSTER }, // Old ooze and jelly weight
   { 0,0,0,FLAT,MONS_0 }
 };
 
@@ -1300,7 +1295,6 @@ COMPILE_CHECK(ARRAYSZ(population_zombie) == NUM_BRANCHES);
 static const pop_entry pop_water_generic[] =
 { // Generic water monsters
   {  1,  27,  150, FLAT, MONS_ELECTRIC_EEL },
-  {  1,  27,  500, FLAT, MONS_NO_MONSTER },
   { 0,0,0,FLAT,MONS_0 }
 };
 
@@ -1309,8 +1303,6 @@ static const pop_entry pop_water_d[] =
   {  5,  16,   60, FLAT, MONS_ELECTRIC_EEL },
   {  7,  16,  185, PEAK, MONS_ELECTRIC_EEL },
   {  11, 27,  600, RISE, MONS_WATER_ELEMENTAL },
-  {  5,  22,  130, FLAT, MONS_NO_MONSTER },
-  {  9,  32,  250, SEMI, MONS_NO_MONSTER },
   { 0,0,0,FLAT,MONS_0 }
 };
 
@@ -1319,7 +1311,6 @@ static const pop_entry pop_water_depths[] =
   {  1,  6,   600, FLAT, MONS_WATER_ELEMENTAL },
   {  1,  6,    45, FLAT, MONS_MERFOLK_IMPALER },
   {  1,  6,    45, FLAT, MONS_MERFOLK_JAVELINEER },
-  {  1,  6,   200, FALL, MONS_NO_MONSTER },
   { 0,0,0,FLAT,MONS_0 }
 };
 
@@ -1328,7 +1319,6 @@ static const pop_entry pop_water_swamp[] =
   {  1,  4,   400, FLAT, MONS_SWAMP_WORM },
   {  1,  4,   100, FLAT, MONS_TYRANT_LEECH },
   {  1,  4,   100, FLAT, MONS_ALLIGATOR },
-  {  1,  4,  1050, FLAT, MONS_NO_MONSTER },
   { 0,0,0,FLAT,MONS_0 }
 };
 
@@ -1423,7 +1413,6 @@ static const pop_entry pop_lava_generic[] =
   {  1,  27,   50, FLAT, MONS_FIRE_VORTEX },
   {  1,  27,  145, FLAT, MONS_LAVA_SNAKE },
   {  1,  27,   15, FLAT, MONS_SALAMANDER },
-  {  1,  27,  290, FLAT, MONS_NO_MONSTER },
   { 0,0,0,FLAT,MONS_0 }
 };
 
@@ -1433,7 +1422,6 @@ static const pop_entry pop_lava_d[] =
   {  11, 27,  290, RISE, MONS_FIRE_ELEMENTAL },
   {  11, 27,  145, RISE, MONS_MOLTEN_GARGOYLE },
   {  11, 27,  145, RISE, MONS_FIRE_VORTEX },
-  {  7,  27,  290, FLAT, MONS_NO_MONSTER },
   { 0,0,0,FLAT,MONS_0 }
 };
 
@@ -1453,7 +1441,6 @@ static const pop_entry pop_lava_depths[] =
   {  1,  6,   11, FALL, MONS_MOLTEN_GARGOYLE },
   {  1,  6,  100, FLAT, MONS_SALAMANDER },
   {  1,  8,   85, SEMI, MONS_SALAMANDER_MYSTIC },
-  {  1,  6,  400, FLAT, MONS_NO_MONSTER },
   { 0,0,0,FLAT,MONS_0 }
 };
 
@@ -1462,7 +1449,6 @@ static const pop_entry pop_lava_hell[] =
   {  1,  8,   300, FALL, MONS_FIRE_ELEMENTAL },
   {  1,  6,    25, FALL, MONS_MOLTEN_GARGOYLE },
   {  1,  7,    25, FLAT, MONS_SMOKE_DEMON },
-  {  1,  7,   100, FLAT, MONS_NO_MONSTER },
   { 0,0,0,FLAT,MONS_0 }
 };
 
