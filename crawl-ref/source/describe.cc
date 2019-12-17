@@ -4132,6 +4132,14 @@ static void _add_energy_to_string(int speed, int energy, string what,
         slow.push_back(what + " " + _speed_description(act_speed));
 }
 
+static void _describe_monster_hd(const monster_info& mi, ostringstream &result)
+{
+    string spell = "";
+    if (mi.hd != mi.spell_hd())
+        spell = make_stringf(" (%d for spells)", mi.spell_hd());
+    result << "HD: " << mi.hd << spell << "\n";
+}
+
 /**
  * Append information about a given monster's HP to the provided stream.
  *
@@ -4226,6 +4234,7 @@ static string _monster_stat_description(const monster_info& mi)
 
     ostringstream result;
 
+    _describe_monster_hd(mi, result);
     _describe_monster_hp(mi, result);
     _describe_monster_ac(mi, result);
     _describe_monster_ev(mi, result);
