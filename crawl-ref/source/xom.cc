@@ -731,6 +731,7 @@ static bool _is_chaos_upgradeable(const item_def &item,
     if (item.base_type == OBJ_STAVES
 #if TAG_MAJOR_VERSION == 34
         || item.base_type == OBJ_RODS
+        || item.base_type == OBJ_MISSILES
 #endif
        )
 {
@@ -756,33 +757,9 @@ static bool _is_chaos_upgradeable(const item_def &item,
 
     // Leave branded items alone, since this is supposed to be an
     // upgrade.
-    if (item.base_type == OBJ_MISSILES)
-    {
-        // Don't make boulders or throwing nets of chaos.
-        if (item.sub_type == MI_LARGE_ROCK
-            || item.sub_type == MI_THROWING_NET)
-        {
-            return false;
-        }
-
-        if (get_ammo_brand(item) == SPMSL_NORMAL)
-            return true;
-    }
-    else
-    {
-        // If the weapon is a launcher, and the monster is either out
-        // of ammo or is carrying javelins, then don't bother upgrading
-        // the launcher.
-        if (is_range_weapon(item)
-            && (mon->inv[MSLOT_MISSILE] == NON_ITEM
-                || !has_launcher(mitm[mon->inv[MSLOT_MISSILE]])))
-        {
-            return false;
-        }
-
-        if (get_weapon_brand(item) == SPWPN_NORMAL)
-            return true;
-    }
+    if (item.base_type == OBJ_WEAPONS || (item.base_type == OBJ_SHIELDS && 
+        is_hybrid(item.sub_type)) && get_weapon_brand(item) == SPWPN_NORMAL)
+        return true;
 
     return false;
 }
@@ -817,12 +794,9 @@ static bool _choose_chaos_upgrade(const monster& mon)
 
     if (mons_itemuse(mon) & MU_WEAPONS)
     {
-        mon_inv_type slots[] = { MSLOT_WEAPON, MSLOT_ALT_WEAPON, MSLOT_MISSILE };
+        mon_inv_type slots[] = { MSLOT_WEAPON, MSLOT_ALT_WEAPON };
 
-        // NOTE: Code assumes that the monster will only be carrying one
-        // missile launcher at a time.
-        bool special_launcher = false;
-        for (int i = 0; i < 3; ++i)
+        for (int i = 0; i < 2; ++i)
         {
             const mon_inv_type slot = slots[i];
             const int          midx = mon.inv[slot];
@@ -837,28 +811,7 @@ static bool _choose_chaos_upgrade(const monster& mon)
                 return false;
 
             if (_is_chaos_upgradeable(item, &mon))
-            {
-                if (item.base_type != OBJ_MISSILES)
-                    return true;
-
-                // If, for some weird reason, a monster is carrying a bow
-                // and javelins, then branding the javelins is okay, since
-                // they won't be fired by the bow.
-                if (!special_launcher || !has_launcher(item))
-                    return true;
-            }
-
-            if (is_range_weapon(item))
-            {
-                // If the launcher alters its ammo, then branding the
-                // monster's ammo won't be an upgrade.
-                int brand = get_weapon_brand(item);
-                if (brand == SPWPN_MOLTEN || brand == SPWPN_FREEZING
-                    || brand == SPWPN_VENOM)
-                {
-                    special_launcher = true;
-                }
-            }
+                return true;
         }
     }
     return false;
@@ -866,12 +819,10 @@ static bool _choose_chaos_upgrade(const monster& mon)
 
 static void _do_chaos_upgrade(item_def &item, const monster* mon)
 {
-    ASSERT(item.base_type == OBJ_MISSILES
-           || item.base_type == OBJ_WEAPONS);
     ASSERT(!is_unrandom_artefact(item));
 
     bool seen = false;
-    if (mon && you.can_see(*mon) && item.base_type == OBJ_WEAPONS)
+    if (mon && you.can_see(*mon))
     {
         seen = true;
 
@@ -889,19 +840,16 @@ static void _do_chaos_upgrade(item_def &item, const monster* mon)
         mpr(msg);
     }
 
-    const int brand = (item.base_type == OBJ_WEAPONS) ? (int) SPWPN_CHAOS
-                                                      : (int) SPMSL_CHAOS;
-
     if (is_random_artefact(item))
     {
-        artefact_set_property(item, ARTP_BRAND, brand);
+        artefact_set_property(item, ARTP_BRAND, SPWPN_CHAOS);
 
         if (seen)
             artefact_learn_prop(item, ARTP_BRAND);
     }
     else
     {
-        item.brand = brand;
+        item.brand = SPWPN_CHAOS;
 
         if (seen)
             set_ident_flags(item, ISFLAG_KNOW_TYPE);
@@ -911,8 +859,7 @@ static void _do_chaos_upgrade(item_def &item, const monster* mon)
             item.flags |= ISFLAG_GLOWING;
 
         // Make the pluses more like a randomly generated ego item.
-        if (item.base_type == OBJ_WEAPONS)
-            item.plus  += random2(5);
+        item.plus  += random2(5);
     }
 }
 
