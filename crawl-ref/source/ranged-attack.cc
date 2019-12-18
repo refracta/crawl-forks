@@ -132,7 +132,7 @@ bool ranged_attack::attack()
     bool shield_blocked = attack_shield_blocked(false);
 
     god_conduct_trigger conducts[3];
-    if (attacker->is_player() && attacker != defender  && should_alert_defender)
+    if (attacker->is_player() && attacker != defender && should_alert_defender)
     {
         set_attack_conducts(conducts, *defender->as_monster(),
                             you.can_see(*defender));
@@ -221,7 +221,8 @@ bool ranged_attack::handle_phase_end()
     }
 
     if (projectile->base_type == OBJ_MISSILES && 
-        projectile->sub_type == MI_SLING_BULLET && !reflected && one_chance_in(3))
+        projectile->sub_type == MI_SLING_BULLET && !reflected && one_chance_in(3) &&
+        (defender->is_player() || !mons_is_firewood(*defender->as_monster())))
     {
         bolt continuation = the_path;
         continuation.range = you.current_vision - range_used;
@@ -415,11 +416,11 @@ bool ranged_attack::handle_phase_hit()
     }
 
     // XXX: unify this with melee_attack's code
-    if (attacker->is_player() && defender->is_monster()
-        && should_alert_defender)
+    if (attacker->is_player() && defender->is_monster())
     {
-        behaviour_event(defender->as_monster(), ME_WHACK, attacker,
-                        coord_def());
+        if (should_alert_defender || defender->as_monster()->temp_attitude() == ATT_HOSTILE)
+            behaviour_event(defender->as_monster(), ME_WHACK, attacker,
+                            coord_def());
     }
 
     return true;

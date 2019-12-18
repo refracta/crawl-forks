@@ -731,7 +731,7 @@ bool throw_it(bolt &pbolt, int throw_2, dist *target)
     for (rectangle_iterator ri(you.pos(), 1, true); ri; ++ri)
     {
         monster * mon = monster_at(*ri);
-        if (mon && mon->attitude == ATT_HOSTILE && !mon->incapacitated() 
+        if (mon && !mon->friendly() && !mon->incapacitated() 
             && !mons_is_firewood(*mon)
             && projected == launch_retval::LAUNCHED && coinflip())
         {
