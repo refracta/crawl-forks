@@ -1847,10 +1847,8 @@ static bool _wu_jian_whirlwind(const coord_def& old_pos)
         {
             if (!mons->alive())
                 break;
-            melee_attack whirlwind(&you, mons);
-            whirlwind.wu_jian_attack = WU_JIAN_ATTACK_WHIRLWIND;
-            whirlwind.wu_jian_number_of_targets = common_targets.size();
-            whirlwind.attack();
+            fight_melee(&you, mons, nullptr, false,
+                WU_JIAN_ATTACK_WHIRLWIND, common_targets.size());
             if (!did_at_least_one_attack)
               did_at_least_one_attack = true;
         }
@@ -1923,11 +1921,8 @@ void wu_jian_wall_jump_effects(const coord_def& old_pos)
         {
             if (!target->alive())
                 break;
-
-            melee_attack aerial(&you, target);
-            aerial.wu_jian_attack = WU_JIAN_ATTACK_WALL_JUMP;
-            aerial.wu_jian_number_of_targets = targets.size();
-            aerial.attack();
+            fight_melee(&you, target, nullptr, false,
+                WU_JIAN_ATTACK_WALL_JUMP, targets.size());
         }
     }
 }

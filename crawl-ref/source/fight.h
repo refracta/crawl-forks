@@ -28,7 +28,8 @@ enum stab_type
 };
 
 bool fight_melee(actor *attacker, actor *defender, bool *did_hit = nullptr,
-                 bool simu = false, wu_jian_attack_type wu = WU_JIAN_ATTACK_NONE);
+                 bool simu = false, wu_jian_attack_type wu = WU_JIAN_ATTACK_NONE,
+                 int wu_num = 1);
 
 int resist_adjust_damage(const actor *defender, beam_type flavour,
                          int rawdamage);

@@ -68,11 +68,13 @@ int melee_confuse_chance(int HD)
 // Quick wrapper for all the logic that follows a player attacking.
 static bool _handle_player_attack(actor * defender, bool simu, int atk_num,
                                   int eff_atk_num, bool * did_hit,
-                                  wu_jian_attack_type wu)
+                                  wu_jian_attack_type wu, int wu_num)
 {
     melee_attack attk(&you, defender, atk_num, eff_atk_num);
     if (wu != WU_JIAN_ATTACK_NONE)
         attk.wu_jian_attack = wu;
+    
+    attk.wu_jian_number_of_targets = wu_num;
 
     if (simu)
         attk.simu = true;
@@ -126,7 +128,7 @@ static bool _handle_player_attack(actor * defender, bool simu, int atk_num,
  * @return Whether the attack took time (i.e. wasn't cancelled).
  */
 bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
-                 bool simu, wu_jian_attack_type wu)
+                 bool simu, wu_jian_attack_type wu, int wu_num)
 {
     ASSERT(attacker); // XXX: change to actor &attacker
     ASSERT(defender); // XXX: change to actor &defender
@@ -170,28 +172,28 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
             if (!you.weapon(1) || is_melee_weapon(*you.weapon(1)))
             {
                 if (you.weapon(0) && you.hands_reqd(*you.weapon(0)) == HANDS_TWO)
-                    return _handle_player_attack(defender, simu, 0, 2, did_hit, wu);
+                    return _handle_player_attack(defender, simu, 0, 2, did_hit, wu, wu_num);
                 else if (you.weapon(1) && you.hands_reqd(*you.weapon(1)) == HANDS_TWO)
-                    return _handle_player_attack(defender, simu, 1, 2, did_hit, wu);
+                    return _handle_player_attack(defender, simu, 1, 2, did_hit, wu, wu_num);
                 else
                 {
                     coord_def pos = defender->pos();
-                    local_time = _handle_player_attack(defender, simu, 0, 0, did_hit, wu);
+                    local_time = _handle_player_attack(defender, simu, 0, 0, did_hit, wu, wu_num);
                     if (!defender->alive()
                         || defender->pos() != pos
                         || defender->is_banished())
                         return local_time;
                     else
-                        return _handle_player_attack(defender, simu, 1, 1, did_hit, wu) || local_time;
+                        return _handle_player_attack(defender, simu, 1, 1, did_hit, wu, wu_num) || local_time;
                 }
             }
             else
-                return _handle_player_attack(defender, simu, 0, 2, did_hit, wu);
+                return _handle_player_attack(defender, simu, 0, 2, did_hit, wu, wu_num);
         }
         else if (!you.weapon(1) || is_melee_weapon(*you.weapon(1)))
         {
             if (!(you.weapon(0) && you.hands_reqd(*you.weapon(0)) == HANDS_TWO))
-                return _handle_player_attack(defender, simu, 1, 2, did_hit, wu);
+                return _handle_player_attack(defender, simu, 1, 2, did_hit, wu, wu_num);
         }
 
         mpr("You can't melee attack with what you're currently wielding.");
