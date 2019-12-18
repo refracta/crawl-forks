@@ -732,9 +732,10 @@ bool throw_it(bolt &pbolt, int throw_2, dist *target)
     {
         monster * mon = monster_at(*ri);
         if (mon && mon->attitude == ATT_HOSTILE && !mon->incapacitated() 
+            && !mons_is_firewood(*mon)
             && projected == launch_retval::LAUNCHED && coinflip())
         {
-            you.time_taken = 1;
+            you.time_taken = 10;
             mprf(MSGCH_WARN,
                 "%s strikes at your weapon causing you to fumble your attack!",
                 mon->name(DESC_THE).c_str());
