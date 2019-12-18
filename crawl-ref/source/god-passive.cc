@@ -1772,9 +1772,7 @@ static bool _wu_jian_lunge(const coord_def& old_pos)
     {
         if (!mons->alive())
             break;
-        melee_attack lunge(&you, mons);
-        lunge.wu_jian_attack = WU_JIAN_ATTACK_LUNGE;
-        lunge.attack();
+        fight_melee(&you, mons, nullptr, false, WU_JIAN_ATTACK_LUNGE);
     }
 
     return true;
