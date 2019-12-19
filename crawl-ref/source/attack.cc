@@ -151,7 +151,7 @@ bool attack::handle_phase_end()
 int attack::calc_to_hit(bool random, bool player_aux)
 {
     float mhit = attacker->is_player() ?
-                5 + you.dex()
+                4 + you.dex() * 0.85
               : calc_mon_to_hit_base();
 
 #ifdef DEBUG_DIAGNOSTICS
@@ -165,8 +165,8 @@ int attack::calc_to_hit(bool random, bool player_aux)
     if (attacker->is_player())
     {
         // fighting contribution
-        mhit *= (2000 + you.skill(SK_FIGHTING, 100));
-        mhit /= 2000;
+        mhit *= (2700 + you.skill(SK_FIGHTING, 100));
+        mhit /= 2700;
 
         // weapon skill contribution
         if (player_aux) {}
@@ -177,14 +177,14 @@ int attack::calc_to_hit(bool random, bool player_aux)
                 if (you.skill(wpn_skill) < 1 && player_in_a_dangerous_place())
                     xom_is_stimulated(10); // Xom thinks that is mildly amusing.
 
-                mhit *= (2000 + you.skill(wpn_skill, 100));
-                mhit /= 2000;
+                mhit *= (2700 + you.skill(wpn_skill, 100));
+                mhit /= 2700;
             }
         }
         else if (you.form_uses_xl())
         {
-            mhit *= (20 + you.experience_level);
-            mhit /= 20;
+            mhit *= (27 + you.experience_level);
+            mhit /= 27;
         }
         else
         {
@@ -192,15 +192,15 @@ int attack::calc_to_hit(bool random, bool player_aux)
             mhit *= (you.get_mutation_level(MUT_CLAWS) > 0
                      && wpn_skill == SK_UNARMED_COMBAT) ? 1.1 : 1;
 
-            mhit *= (2000 + you.skill(wpn_skill, 100));
-            mhit /= 2000;
+            mhit *= (2700 + you.skill(wpn_skill, 100));
+            mhit /= 2700;
         }
 
         // slaying bonus
-        mhit *= (20 + slaying_bonus(weapon && is_range_weapon(*weapon)
+        mhit *= (50 + slaying_bonus(weapon && is_range_weapon(*weapon)
                                            && using_weapon(),
                                               using_weapon()));
-        mhit /= 20;
+        mhit /= 50;
 
         // hunger penalty
         if (apply_starvation_penalties())
