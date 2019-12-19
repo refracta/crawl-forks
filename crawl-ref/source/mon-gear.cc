@@ -119,11 +119,17 @@ static void _give_book(monster* mon, int level)
     give_specific_item(mon, thing_created);
 }
 
-static void _give_wand(monster* mon, int level)
+static void _give_wand(monster* mon, int level, bool summoned)
 {
     bool wand_allowed = mons_itemuse(*mon) & MU_WAND;
 
     if (!wand_allowed)
+        return;
+
+    if (mons_is_hepliaklqana_ancestor(mon->type))
+        return;
+
+    if (summoned)
         return;
 
     bool give_wand = mons_class_flag(mon->type, M_ALWAYS_WAND);
@@ -2011,7 +2017,7 @@ void give_item(monster *mons, int level_number, bool mons_summoned)
     if (mons->type == MONS_ROXANNE)
         _give_book(mons, level_number);
     if (itemuse & MU_WAND)
-        _give_wand(mons, level_number);
+        _give_wand(mons, level_number, mons_summoned);
     if (itemuse & MU_CONSUMABLES)
         _give_potion(mons, level_number);
     if (itemuse & MU_WEAPONS)
