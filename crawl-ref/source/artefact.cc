@@ -370,6 +370,7 @@ static map<jewellery_type, vector<jewellery_fake_artp>> jewellery_artps = {
     { AMU_REGENERATION, { { ARTP_REGENERATION, 1 } } },
     { AMU_REFLECTION, { { ARTP_SHIELDING, 5 } } },
     { AMU_HARM, { { ARTP_DRAIN, 1 } } },
+    { AMU_INACCURACY, { { ARTP_INACCURACY, 1 } } },
 
     { RING_MAGICAL_POWER, { { ARTP_MAGICAL_POWER, 9 } } },
     { RING_STEALTH, { { ARTP_STEALTH, 1 } } },
@@ -595,11 +596,10 @@ static bool _artp_can_go_on_item(artefact_prop_type prop, const item_def &item,
                    && (item_class != OBJ_JEWELLERY
                        || jewellery_is_amulet(item));
 
-        case ARTP_ACCURACY:
         case ARTP_IMPROVED_VISION:
             return (!extant_props[ARTP_INACCURACY] && !item.is_type(OBJ_ARMOURS, ARM_NAGA_BARDING)); //contradictory properties.
         case ARTP_INACCURACY:
-            return !extant_props[ARTP_IMPROVED_VISION] && !extant_props[ARTP_ACCURACY]; //contradictory properties.
+            return !extant_props[ARTP_IMPROVED_VISION]; //contradictory properties.
         case ARTP_HARM:
             return item_class != OBJ_JEWELLERY && extant_props[ARTP_DRAIN];
             // only get harm with *Drain

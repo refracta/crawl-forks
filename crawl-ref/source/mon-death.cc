@@ -3009,6 +3009,11 @@ string summoned_poof_msg(const monster* mons, bool plural)
         }
         break;
 
+    case SPELL_STICKS_TO_SNAKES:
+        msg = "wither%s and die" + string(plural ? "" : "s");
+        no_chaos = true;
+        break;
+
     case SPELL_SPECTRAL_CLOUD:
     case SPELL_CALL_LOST_SOUL:
         msg = "fade%s away";

@@ -4278,8 +4278,12 @@ bool handle_mon_spell(monster* mons)
 static int _monster_abjure_target(monster* target, int pow, bool actual)
 {
     int duration;
+    int spell;
 
-    if (!target->is_summoned(&duration))
+    if (!target->is_summoned(&duration, &spell))
+        return 0;
+
+    if (spell == SPELL_STICKS_TO_SNAKES)
         return 0;
 
     pow = max(20, fuzz_value(pow, 40, 25));

@@ -142,8 +142,11 @@ spret cast_sticks_to_snakes(int pow, god_type god, bool fail)
     if (otr_stop_summoning_prompt("create snakes"))
         return spret::abort;
 
-    const int dur = min(3 + random2(pow) / 20, 5);
-    int how_many_max = 1 + min(6, random2(pow) / 15);
+    int how_many_max = 1;
+    int fence = random2(100); // Breakpoint for Random2.
+
+    if (random2(pow) > fence)
+        how_many_max++;
 
     int count = 0;
 
@@ -158,18 +161,13 @@ spret cast_sticks_to_snakes(int pow, god_type god, bool fail)
         }
         else
             mon = MONS_BALL_PYTHON;
-        if (monster *snake = create_monster(_pal_data(mon, 0, god,
-                                                      SPELL_STICKS_TO_SNAKES),
-                                            false))
-        {
+        if (create_monster(_pal_data(mon, 3, god, SPELL_STICKS_TO_SNAKES), false))
             count++;
-            snake->add_ench(mon_enchant(ENCH_FAKE_ABJURATION, dur));
-        }
     }
     if (count)
     {
         if (count > 1)
-            mprf("You create %d snakes!", count);
+            mpr("You create a pair of snakes!");
         else
             mpr("You create a snake!");
     }
@@ -2433,13 +2431,20 @@ static int _abjuration(int pow, monster *mon)
         return false;
 
     int duration;
-    if (mon->is_summoned(&duration))
+    int summ_type;
+    if (mon->is_summoned(&duration, &summ_type))
     {
         int sockage = max(fuzz_value(abjdur, 60, 30), 40);
         dprf("%s abj: dur: %d, abj: %d",
              mon->name(DESC_PLAIN).c_str(), duration, sockage);
 
         bool shielded = false;
+        // Vestiges of "Pseudosummon" status.
+        if (summ_type == SPELL_STICKS_TO_SNAKES)
+        {
+            sockage = 0;
+            shielded = true;
+        }
         // TSO and Trog's abjuration protection.
         if (mons_is_god_gift(*mon, GOD_SHINING_ONE))
         {
@@ -3291,6 +3296,7 @@ static const map<spell_type, summon_cap> summonsdata =
     // Beasts
     { SPELL_SUMMON_BUTTERFLIES,         { 8, 5 } },
     { SPELL_SUMMON_SMALL_MAMMAL,        { 4, 2 } },
+    { SPELL_STICKS_TO_SNAKES,           { 4, 3 } },
     { SPELL_CALL_CANINE_FAMILIAR,       { 1, 2 } },
     { SPELL_SUMMON_ICE_BEAST,           { 3, 3 } },
     { SPELL_SUMMON_HYDRA,               { 3, 2 } },
