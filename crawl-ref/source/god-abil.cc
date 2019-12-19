@@ -5746,9 +5746,9 @@ string ru_sacrifice_description(ability_type sac)
         return "";
 
     const int piety_gain = _ru_get_sac_piety_gain(sac);
-    return make_stringf("This is %s sacrifice. Piety after sacrifice: %s",
-                        _describe_sacrifice_piety_gain(piety_gain),
-                        _piety_asterisks(you.piety + piety_gain).c_str());
+    return make_stringf("This is %s sacrifice (%d). Piety after sacrifice: %s (%d/160)",
+                        _describe_sacrifice_piety_gain(piety_gain), piety_gain,
+                        _piety_asterisks(you.piety + piety_gain).c_str(), you.piety + piety_gain);
 }
 
 
