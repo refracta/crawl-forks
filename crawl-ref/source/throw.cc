@@ -950,9 +950,6 @@ bool mons_throw(monster* mons, bolt &beam, int msl, bool teleport)
         is_launched(mons, mons->mslot_item(MSLOT_WEAPON), mons->mslot_item(MSLOT_WEAPON),
                     mitm[msl]);
 
-    if (mitm[msl].sub_type == MI_NEEDLE)
-        projected = launch_retval::LAUNCHED;
-
     if (projected == launch_retval::THROWN)
         returning = returning && !teleport;
 
@@ -1001,7 +998,9 @@ bool mons_throw(monster* mons, bolt &beam, int msl, bool teleport)
 
     if (teleport)
         msg += " magically";
-    if (item.sub_type != MI_LARGE_ROCK)
+    if (item.sub_type == MI_NEEDLE)
+        msg += " launches ";
+    else if (item.sub_type != MI_LARGE_ROCK)
         msg += ((projected == launch_retval::LAUNCHED) ? " shoots " : " throws ");
     else
         msg += " hurls ";

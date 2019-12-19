@@ -374,6 +374,11 @@ bool ranged_attack::handle_phase_hit()
         damage_done = blowgun_duration_roll(get_ammo_brand(*projectile));
         set_attack_verb(0);
         announce_hit();
+
+        if (!handle_phase_damaged())
+            return false;
+        if (apply_missile_brand())
+            return false;
     }
     else if (projectile->is_type(OBJ_MISSILES, MI_THROWING_NET))
     {
@@ -389,7 +394,7 @@ bool ranged_attack::handle_phase_hit()
         for (attack_count; attack_count > 0; --attack_count)
         {
             damage_done = calc_damage();
-            if (damage_done > 0 || projectile->is_type(OBJ_MISSILES, MI_NEEDLE))
+            if (damage_done > 0)
             {
                 if (!handle_phase_damaged())
                     return false;
@@ -706,41 +711,16 @@ bool ranged_attack::blowgun_check(special_missile_type type)
 
 int ranged_attack::blowgun_duration_roll(special_missile_type type)
 {
-    // Leaving monster poison the same by separating it from player poison
-    if (type == SPMSL_POISONED && attacker->is_monster())
-        return 6 + random2(8);
-
     if (type == SPMSL_CURARE)
         return 2;
 
-    const int base_power = (attacker->is_monster())
-                           ? attacker->get_hit_dice()
-                           : attacker->skill_rdiv(SK_SLINGS);
+    const int base_power = attacker->get_hit_dice();
+    // BCADNOTE: If/when player blowgun/darts return add a calculation for player power here.
 
-    const int plus = using_weapon() ? weapon->plus : 0;
-
-    // Scale down nastier needle effects against players.
-    // Fixed duration regardless of power, since power already affects success
-    // chance considerably, and this helps avoid effects being too nasty from
-    // high HD shooters and too ignorable from low ones.
-    if (defender->is_player())
-    {
-        switch (type)
-        {
-            case SPMSL_PETRIFICATION:
-                return 3 + random2(4);
-            case SPMSL_SLEEP:
-                return 5 + random2(5);
-            case SPMSL_CONFUSION:
-                return 2 + random2(4);
-            default:
-                return 5 + random2(5);
-        }
-    }
-    else if (type == SPMSL_POISONED) // Player poison needles
-        return random2(3 + base_power * 2 + plus);
+    if (type == SPMSL_POISONED)
+        return random2(6 + base_power * 2);
     else
-        return 5 + random2(base_power + plus);
+        return 5 + random2(base_power);
 }
 
 bool ranged_attack::apply_missile_brand()
@@ -773,7 +753,6 @@ bool ranged_attack::apply_missile_brand()
         break;
     case SPMSL_POISONED:
         if (projectile->is_type(OBJ_MISSILES, MI_NEEDLE)
-                && using_weapon()
                 && damage_done > 0
             || !one_chance_in(4))
         {

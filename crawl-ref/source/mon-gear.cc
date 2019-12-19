@@ -1029,7 +1029,7 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
                                            WPN_SHORT_SWORD, WPN_SHORT_SWORD,
                                            WPN_CLUB,        WPN_WHIP);
         }
-        else if (one_chance_in(30) && level > 2)
+        else if (one_chance_in(10) && level > 2)
         {
             item.base_type = OBJ_WEAPONS;
             item.sub_type  = WPN_HAND_CROSSBOW;
