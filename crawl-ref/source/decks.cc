@@ -12,16 +12,15 @@
 #include <sstream>
 
 #include "abyss.h"
-#include "act-iter.h"
 #include "artefact.h"
 #include "attitude-change.h"
+#include "beam.h"
 #include "cloud.h"
 #include "coordit.h"
 #include "dactions.h"
 #include "database.h"
 #include "directn.h"
 #include "dungeon.h"
-#include "english.h"
 #include "evoke.h"
 #include "food.h"
 #include "ghost.h"

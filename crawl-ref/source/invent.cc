@@ -19,7 +19,6 @@
 #include "command.h"
 #include "decks.h"
 #include "describe.h"
-#include "english.h"
 #include "env.h"
 #include "food.h"
 #include "god-item.h"
