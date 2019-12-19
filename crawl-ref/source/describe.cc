@@ -1439,16 +1439,25 @@ static string _weapon_brand_desc(const item_def &item)
         description += "It is coated in a slimy acidic goo that may deal extra damage to those"
             " that don't resist corrosion. Additionally may debuff the target's defensive"
             " and weapon capabilities by coating them in acid.";
+
+        if (!is_range_weapon(item) &&
+            (damtype == DVORP_SLICING || damtype == DVORP_CHOPPING
+                || damtype == DVORP_DP || damtype == DVORP_TP))
+        {
+            description += " Big, acidic blades are also staple "
+                "armaments of hydra-hunters.";
+        }
+        break;
     case SPWPN_MOLTEN:
         if (is_range_weapon(item))
         {
-            description += "It melts metal ammo placed within it; making them maluable so they can"
+            description += "It melts metal ammo placed within it; making them malleable so they can"
                 " partially ignore armour. Causes less base damage than a standard weapon; but partially"
                 " ignores enemy's defense, occasionally melts through shields, and burns causing"
                 " additional damage to those that don't resist heat.";
         }
         else
-            description += "Its maluable surface is completely molten, allowing it to meld around and"
+            description += "Its malleable surface is completely molten, allowing it to meld around and"
             " partially ignore armour. Causes less base damage than a standard weapon; but partially"
             " ignores enemy's defense and burns causing additional damage to those that don't resist heat.";
 

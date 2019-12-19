@@ -2039,6 +2039,13 @@ bool melee_attack::consider_decapitation(int dam, int damage_type)
         return false;
     }
 
+    if (wpn_brand == SPWPN_ACID)
+    {
+        if (defender_visible)
+            mpr("The acid burns away any new growth!");
+        return false;
+    }
+
     int heads = defender->heads();
     if (heads >= limit - 1)
         return false; // don't overshoot the head limit!
