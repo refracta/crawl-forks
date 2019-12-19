@@ -723,7 +723,7 @@ static const weapon_def Weapon_prop[] =
     { WPN_FUSTIBALUS,        "fustibalus",         12, -1, 14,
         SK_SLINGS,       SIZE_LITTLE, SIZE_LITTLE, MI_SLING_BULLET,
         DAMV_NON_MELEE, 2, 2, 150, RANGED_BRANDS },
-    { WPN_MANGONEL,        "mangonel",             28, -5, 19,
+    { WPN_MANGONEL,        "mangonel",             20, -5, 19,
         SK_SLINGS,       SIZE_LARGE,   SIZE_LARGE, MI_LARGE_ROCK,
         DAMV_NON_MELEE, 4, 10, 250, RANGED_BRANDS },
 
@@ -733,7 +733,7 @@ static const weapon_def Weapon_prop[] =
     { WPN_ARBALEST,          "arbalest",           18,  2, 19,
         SK_CROSSBOWS,    SIZE_LITTLE, SIZE_BIG, MI_BOLT,
         DAMV_NON_MELEE, 5, 10, 45, RANGED_BRANDS },
-    { WPN_TRIPLE_CROSSBOW,   "triple crossbow",    22,  0, 16,
+    { WPN_TRIPLE_CROSSBOW,   "triple crossbow",    16, -1, 22,
         SK_CROSSBOWS,    SIZE_LITTLE, NUM_SIZE_LEVELS, MI_TRIPLE_BOLT,
         DAMV_NON_MELEE, 0, 2, 100, RANGED_BRANDS },
 
