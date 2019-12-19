@@ -38,7 +38,6 @@
 #include "prompt.h"
 #include "religion.h"
 #include "showsymb.h"
-#include "spl-summoning.h"
 #include "state.h"
 #include "stringutil.h"
 #include "throw.h"

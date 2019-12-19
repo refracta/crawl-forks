@@ -33,7 +33,6 @@
 #include "nearby-danger.h"
 #include "notes.h"
 #include "options.h"
-#include "output.h"
 #include "religion.h"
 #include "rot.h"
 #include "state.h"

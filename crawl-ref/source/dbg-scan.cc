@@ -22,9 +22,7 @@
 #include "end.h"
 #include "env.h"
 #include "god-abil.h"
-#include "initfile.h"
 #include "invent.h"
-#include "item-name.h"
 #include "item-prop.h"
 #include "item-status-flag-type.h"
 #include "items.h"
@@ -32,14 +30,12 @@
 #include "maps.h"
 #include "message.h"
 #include "mon-util.h"
-#include "ng-init.h"
 #include "shopping.h"
 #include "state.h"
 #include "stepdown.h"
 #include "stringutil.h"
 #include "terrain.h"
 #include "traps.h"
-#include "version.h"
 
 #ifdef DEBUG_ITEM_SCAN
 

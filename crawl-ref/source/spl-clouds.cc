@@ -20,11 +20,9 @@
 #include "fight.h"
 #include "items.h"
 #include "level-state-type.h"
-#include "losglobal.h"
 #include "message.h"
 #include "mon-behv.h" // ME_WHACK
 #include "ouch.h"
-#include "prompt.h"
 #include "random-pick.h"
 #include "religion.h"
 #include "shout.h"
@@ -32,7 +30,6 @@
 #include "spl-util.h"
 #include "target.h"
 #include "terrain.h"
-#include "viewchar.h"
 
 // Random Cloud type to be created by a chaos magic tick.
 cloud_type chaos_cloud()

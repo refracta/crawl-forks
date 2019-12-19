@@ -28,7 +28,6 @@
 #include "fprop.h"
 #include "god-conduct.h"
 #include "invent.h"
-#include "item-name.h"
 #include "item-prop.h"
 #include "items.h"
 #include "los.h"
