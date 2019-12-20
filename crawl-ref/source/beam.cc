@@ -5965,6 +5965,11 @@ mon_resist_type bolt::apply_enchantment_to_monster(monster* mon)
         obvious_effect = true;
         break;
 
+    case BEAM_SNAKES_TO_STICKS:
+        stickify(agent(), mon);
+        obvious_effect = true;
+        break;
+
     case BEAM_RESISTANCE:
         if (!mon->has_ench(ENCH_RESISTANCE)
             && mon->add_ench(ENCH_RESISTANCE))
@@ -6514,6 +6519,8 @@ bool bolt::nasty_to(const monster* mon) const
             return ench_flavour_affects_monster(flavour, mon);
         case BEAM_TUKIMAS_DANCE:
             return tukima_affects(*mon); // XXX: move to ench_flavour_affects?
+        case BEAM_SNAKES_TO_STICKS:
+            return is_snake(*mon);
         case BEAM_UNRAVELLING:
             return monster_is_debuffable(*mon); // XXX: as tukima's
         default:
@@ -6778,6 +6785,7 @@ static string _beam_type_name(beam_type type)
     case BEAM_CRYSTAL:               return "crystal bolt";
     case BEAM_DRAIN_MAGIC:           return "drain magic";
     case BEAM_TUKIMAS_DANCE:         return "tukima's dance";
+    case BEAM_SNAKES_TO_STICKS:      return "stickify";
     case BEAM_BOUNCY_TRACER:         return "bouncy tracer";
     case BEAM_DEATH_RATTLE:          return "breath of the dead";
     case BEAM_RESISTANCE:            return "resistance";

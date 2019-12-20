@@ -694,6 +694,14 @@ bool tukima_affects(const actor &target)
            && !mons_is_hepliaklqana_ancestor(target.type);
 }
 
+bool is_snake(const monster &mon)
+{
+    if (mons_is_zombified(mon))
+        return (mons_genus(mon.base_monster) == MONS_SNAKE 
+                || mons_genus(mon.base_monster) == MONS_GUARDIAN_SERPENT);
+    return (mons_genus(mon.type) == MONS_SNAKE || mons_genus(mon.type) == MONS_GUARDIAN_SERPENT);
+}
+
 /**
  * Checks if Tukima's Dance is being cast on a valid target.
  *
@@ -831,6 +839,16 @@ static void _animate_weapon(int pow, actor* target, int weap_slot)
         simple_god_message(" booms: How dare you animate that foul thing!");
         did_god_conduct(why, 10, true, mons);
     }
+}
+
+void stickify(actor * caster, actor * target)
+{
+    if (target->is_player() || !is_snake(*target->as_monster()))
+        return;
+
+    simple_monster_message(*target->as_monster(), " straightens out and turns into a wooden club.");
+    target->as_monster()->add_ench(ENCH_STICK);
+    target->hurt(caster, INSTANT_DEATH, BEAM_SNAKES_TO_STICKS, KILLED_BY_BEAM);
 }
 
 /**

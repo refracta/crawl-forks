@@ -1360,15 +1360,25 @@ int player_spell_levels()
     bool LRD = false;
     bool SMD = false;
 
+    bool STS = false;
+    bool S2S = false;
+
     for (const spell_type spell : you.spells)
     {
         if (spell == SPELL_LRD)
             LRD = true;
         if (spell == SPELL_SMD)
             SMD = true;
+        if (spell == SPELL_STICKS_TO_SNAKES)
+            STS = true;
+        if (spell == SPELL_SNAKES_TO_STICKS)
+            S2S = true;
         if (spell != SPELL_NO_SPELL)
             sl -= spell_difficulty(spell);
     }
+
+    if (STS && S2S)
+        sl += spell_difficulty(SPELL_STICKS_TO_SNAKES);
 
     if (LRD && SMD)
         sl += spell_difficulty(SPELL_LRD);

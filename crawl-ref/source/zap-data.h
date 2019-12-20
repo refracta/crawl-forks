@@ -315,6 +315,24 @@ _mon_hex_zap(ZAP_CONFUSE, BEAM_CONFUSION),
 },
 
 {
+    ZAP_SNAKES_TO_STICKS,
+    "",
+    100,
+    nullptr,
+    new tohit_calculator<0, 1, 4>,
+    nullptr,
+    nullptr,
+    BLACK,
+    true,
+    BEAM_SNAKES_TO_STICKS,
+    NUM_DCHAR_TYPES,
+    false,
+    false,
+    false,
+    0
+},
+
+{
     ZAP_INVISIBILITY,
     "",
     100,

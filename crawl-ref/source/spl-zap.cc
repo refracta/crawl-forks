@@ -56,6 +56,7 @@ static pair<spell_type, zap_type> _spl_zaps[] =
     { SPELL_DIG,                    ZAP_DIG },
     { SPELL_CRYSTAL_BOLT,           ZAP_CRYSTAL_BOLT },
     { SPELL_TUKIMAS_DANCE,          ZAP_TUKIMAS_DANCE },
+    { SPELL_SNAKES_TO_STICKS,       ZAP_SNAKES_TO_STICKS },
     { SPELL_CORROSIVE_BOLT,         ZAP_CORROSIVE_BOLT },
     { SPELL_BECKONING,              ZAP_BECKONING },
     { SPELL_DEBUGGING_RAY,          ZAP_DEBUGGING_RAY },

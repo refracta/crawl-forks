@@ -95,5 +95,6 @@ enum zap_type
     ZAP_WAND_HEALING,
     ZAP_WAND_ENSNARE,
     ZAP_WAND_HASTING,
+    ZAP_SNAKES_TO_STICKS,
     NUM_ZAPS
 };

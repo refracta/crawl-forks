@@ -393,11 +393,11 @@ bool del_spell_from_memory_by_slot(int slot)
 
 bool del_spell_from_memory(spell_type spell)
 {
-    int i = _get_spell_slot(spell);
-    if (i == -1)
-        return false;
-    else
-        return del_spell_from_memory_by_slot(i);
+int i = _get_spell_slot(spell);
+if (i == -1)
+return false;
+else
+return del_spell_from_memory_by_slot(i);
 }
 
 int spell_hunger(spell_type which_spell)
@@ -412,7 +412,7 @@ int spell_hunger(spell_type which_spell)
     int hunger;
 
     if (level < 10 && level > 0)
-        hunger = basehunger[level-1];
+        hunger = basehunger[level - 1];
     else
         hunger = (basehunger[0] * level * level) / 4;
 
@@ -429,7 +429,7 @@ int spell_hunger(spell_type which_spell)
 bool spell_is_direct_explosion(spell_type spell)
 {
     return spell == SPELL_FIRE_STORM || spell == SPELL_CALL_DOWN_DAMNATION
-           || spell == SPELL_GHOSTLY_SACRIFICE || spell == SPELL_UPHEAVAL;
+        || spell == SPELL_GHOSTLY_SACRIFICE || spell == SPELL_UPHEAVAL;
 }
 
 bool spell_harms_target(spell_type spell)
@@ -481,7 +481,17 @@ int spell_levels_required(spell_type which_spell)
         levels = 0;
     }
     else if (which_spell == SPELL_SMD
-            && you.has_spell(SPELL_LRD))
+        && you.has_spell(SPELL_LRD))
+    {
+        levels = 0;
+    }
+    else if (which_spell == SPELL_SNAKES_TO_STICKS
+        && you.has_spell(SPELL_STICKS_TO_SNAKES))
+    {
+        levels = 1;
+    }
+    else if (which_spell == SPELL_STICKS_TO_SNAKES
+        && you.has_spell(SPELL_SNAKES_TO_STICKS))
     {
         levels = 0;
     }

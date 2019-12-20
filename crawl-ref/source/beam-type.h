@@ -74,6 +74,7 @@ enum beam_type                  // bolt::flavour
     BEAM_IRRESISTIBLE_CONFUSION,
     BEAM_INFESTATION,
     BEAM_AGONY,
+    BEAM_SNAKES_TO_STICKS,
     BEAM_VILE_CLUTCH,
     BEAM_LAST_ENCHANTMENT = BEAM_VILE_CLUTCH,
 

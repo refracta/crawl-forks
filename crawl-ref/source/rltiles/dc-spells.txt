@@ -121,6 +121,7 @@ call_imp CALL_IMP
 malign_gateway MALIGN_GATEWAY
 recall RECALL
 sticks_to_snakes STICKS_TO_SNAKES
+snakes_to_sticks SNAKES_TO_STICKS
 summon_butterflies SUMMON_BUTTERFLIES
 summon_demon SUMMON_DEMON
 summon_dragon SUMMON_DRAGON

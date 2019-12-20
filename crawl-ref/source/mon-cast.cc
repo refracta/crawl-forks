@@ -5820,7 +5820,8 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         return;
     }
 
-    if (spell_cast == SPELL_PORTAL_PROJECTILE || spell_cast >= SPELL_THROW_ROCK 
+    if (spell_cast == SPELL_PORTAL_PROJECTILE ||
+        (spell_cast >= SPELL_THROW_ROCK && spell_cast <= SPELL_THROW_DISPERSAL)
         || logic && (logic->flags & MSPELL_NO_AUTO_NOISE))
     {
         do_noise = false;       // Spell itself does the messaging.

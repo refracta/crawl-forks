@@ -573,6 +573,11 @@ item_def* place_monster_corpse(const monster& mons, bool silent, bool force)
             return nullptr;
         }
     }
+    else if (mons.has_ench(ENCH_STICK))
+    {
+        int i = items(false, OBJ_WEAPONS, WPN_CLUB, 1, SPWPN_NORMAL);
+        corpse = mitm[i];
+    }
     else if (!_fill_out_corpse(mons, corpse))
         return nullptr;
 

@@ -969,6 +969,18 @@ static const struct spell_desc spelldata[] =
 },
 
 {
+    SPELL_SNAKES_TO_STICKS, "Snakes to Sticks",
+    spschool::transmutation | spschool::hexes,
+    spflag::dir_or_target | spflag::needs_tracer | spflag::MR_check
+        | spflag::not_self,
+    3, 
+    100,
+    LOS_RADIUS, LOS_RADIUS,
+    3, 7,
+    TILEG_SNAKES_TO_STICKS,
+},
+
+{
     SPELL_SUMMON_DEMON, "Summon Demon",
     spschool::summoning,
     spflag::unholy | spflag::selfench | spflag::mons_abjure,
