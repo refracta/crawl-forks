@@ -1144,6 +1144,7 @@ void wind_blast(actor* agent, int pow, coord_def target, bool card)
         if (ai->is_stationary()
             || ai->pos().distance_from(agent->pos()) > radius
             || ai->pos() == agent->pos() // so it's never aimed_at_feet
+            || ai->wearing_ego(EQ_BOOTS, SPARM_STURDY)
             || !target.origin()
                && _angle_between(agent->pos(), target, ai->pos()) > PI/4.0)
         {

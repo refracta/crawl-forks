@@ -114,7 +114,7 @@ KFEAT:  L = armour shop type:Shoe suffix:Department count:14 use_all greed:30 ; 
             not_cursed centaur barding ego:fire_resistance plus:0|\
             mundane not_cursed pair of boots |\
             not_cursed pair of boots ego:running plus:0|\
-            mundane not_cursed pair of boots |\
+            not_cursed pair of boots ego:sturdiness plus:0|\
             not_cursed pair of boots ego:stealth plus:0
 KFEAT:  K = armour shop type:Bundle_Up suffix:Cloaks_and_Scarves use_all count:8 greed:30 ; \
             mundane not_cursed cloak |\

@@ -1413,6 +1413,12 @@ static string _armour_brand_desc(const item_def item)
             " weapons, making you more effective with them (Slay+2).";
         break;
 
+    case SPARM_STURDY:
+        description += "These boots make your extremely sure on your"
+            " feet. Making you immune to all effects that would move you"
+            " against your will.";
+        break;
+
         // These are only for scarves.
     case SPARM_REPULSION:
         description += "It protects its wearer by repelling missiles.";

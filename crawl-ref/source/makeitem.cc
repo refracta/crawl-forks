@@ -1000,7 +1000,7 @@ static special_armour_type _generate_armour_type_ego(armour_type type,
                                       1, SPARM_WIELDING);
 
     case ARM_BOOTS:
-        return random_choose(SPARM_RUNNING, SPARM_STRENGTH, SPARM_STEALTH);
+        return random_choose(SPARM_RUNNING, SPARM_STURDY, SPARM_STEALTH);
 
     case ARM_NAGA_BARDING:
     case ARM_CENTAUR_BARDING:
@@ -1098,6 +1098,7 @@ bool is_armour_brand_ok(int type, int brand, bool strict)
 #endif
     case SPARM_RUNNING:
     case SPARM_STEALTH:
+    case SPARM_STURDY:
 #if TAG_MAJOR_VERSION == 34
     case SPARM_JUMPING:
 #endif

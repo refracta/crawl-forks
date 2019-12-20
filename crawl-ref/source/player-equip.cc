@@ -1018,6 +1018,10 @@ static void _equip_armour_effect(item_def& arm, bool unmeld,
             _wielding_wear_effects(false, unmeld);
             break;
 
+        case SPARM_STURDY:
+            mpr("You feel more steady on your feet.");
+            break;
+
         case SPARM_REPULSION:
             mpr("You are surrounded by a repulsion field.");
             break;
@@ -1198,6 +1202,10 @@ static void _unequip_armour_effect(item_def& item, bool meld,
 
     case SPARM_WIELDING:
         _wielding_wear_effects(true, meld);
+        break;
+
+    case SPARM_STURDY:
+        mpr("You feel less sure of your steps.");
         break;
 
     case SPARM_REPULSION:

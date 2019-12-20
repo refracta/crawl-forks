@@ -2634,7 +2634,8 @@ bool melee_attack::mons_attack_effects()
         return false;
     }
 
-    if (attacker != defender && attk_flavour == AF_TRAMPLE)
+    if (attacker != defender && attk_flavour == AF_TRAMPLE
+        && !defender->wearing_ego(EQ_BOOTS, SPARM_STURDY))
         do_knockback();
 
     special_damage = 0;

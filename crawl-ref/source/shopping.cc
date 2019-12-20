@@ -235,6 +235,7 @@ static int _armour_brand_value(special_armour_type sparm)
     case SPARM_ARCHMAGI:
     case SPARM_HIGH_PRIEST:
     case SPARM_RESISTANCE:
+    case SPARM_STURDY:
         return 250;
 
     case SPARM_WIELDING:

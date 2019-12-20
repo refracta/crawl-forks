@@ -6846,7 +6846,8 @@ bool bolt::can_knockback(const actor &act, int dam) const
 */
 bool bolt::can_pull(const actor &act, int dam) const
 {
-    if (act.is_stationary() || adjacent(source, act.pos()))
+    if (act.is_stationary() || adjacent(source, act.pos())
+        || act.wearing_ego(EQ_BOOTS, SPARM_STURDY))
         return false;
 
     return origin_spell == SPELL_HARPOON_SHOT && dam;
