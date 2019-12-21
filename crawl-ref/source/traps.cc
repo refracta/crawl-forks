@@ -1605,6 +1605,7 @@ bool ensnare(actor *fly, int pow)
     {
         simple_monster_message(*fly->as_monster(), " is caught in a web!");
         fly->as_monster()->add_ench(ENCH_HELD);
+        fly->as_monster()->lose_energy(EUT_ATTACK, 1, 1 + pow);
     }
 
     // Drowned?
