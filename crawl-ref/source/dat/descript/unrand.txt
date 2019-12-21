@@ -350,9 +350,8 @@ the chill of its native habitat, slowing creatures from warmer climes.
 salamander hide armour
 
 Most salamanders' bodies are consigned to the fiery depths from which they
-sprang. Rarely, though, salamanders instead preserve the skins of those that
-passed. The runes and decorations on this hide suggest it once belonged to a
-respected warrior or priest - perhaps even a king.
+sprang. Those that die on the surface leave hides that grant some protection
+from their natural hot environment and can be evoked for a hot-tempered rage.
 %%%%
 gauntlets of War
 
