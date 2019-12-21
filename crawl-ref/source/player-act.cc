@@ -700,6 +700,9 @@ bool player::fumbles_attack()
 {
     bool did_fumble = false;
 
+    if (you.wearing_ego(EQ_BOOTS, SPARM_STURDY))
+        return false;
+
     // Fumbling in shallow water.
     if (floundering() || liquefied_ground() || you.in_lava())
     {

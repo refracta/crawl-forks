@@ -2618,6 +2618,8 @@ void monster::moveto(const coord_def& c, bool clear_net)
 
 bool monster::fumbles_attack()
 {
+    if (wearing_ego(EQ_BOOTS, SPARM_STURDY))
+        return false;
     if (floundering() && one_chance_in(4))
     {
         if (you.can_see(*this))
