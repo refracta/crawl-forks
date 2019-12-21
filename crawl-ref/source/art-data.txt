@@ -1210,7 +1210,6 @@ TILE_EQ:  spellbinder
 MAGIC:    1
 
 NAME:    lajatang of Order
-INSCRIP: silver,
 OBJ:     OBJ_WEAPONS/WPN_LAJATANG
 BRAND:   SPWPN_SILVER
 # not really comparable...
