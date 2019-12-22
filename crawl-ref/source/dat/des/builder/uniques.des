@@ -104,7 +104,7 @@ NAME:   uniq_blork_the_orc
 DEPTH:  D:4-6
 : place_unique(_G, "Blork the orc")
 
-# Crazy Yuif's hut is bottom of this file.
+# Crazy Yiuf's hut is bottom of this file.
 
 NAME:   uniq_duvessa
 DEPTH:  D:4-7
@@ -478,6 +478,34 @@ MONS: Ignacio
 MAP
 1
 ENDMAP
+
+################################################################################
+# Gammafunk in his transporter vault.
+NAME:    uniq_gammafunk_teleport
+DEPTH:   D:11-14, Lair:2-4, Vaults:1-3, Snake:1-3, Spider:1-3
+TAGS:    place_unique no_monster_gen no_item_gen
+KMONS:   Y = Gammafunk
+KITEM:   Y = any good_item armour
+KITEM:   X = Potion of Experience
+KFEAT:   ^ = zot trap
+MARKER:  P = lua:transp_loc("gammafunk_entry")
+MARKER:  Q = lua:transp_dest_loc("gammafunk_entry")
+MARKER:  R = lua:transp_loc("gammafunk_exit")
+MARKER:  S = lua:transp_dest_loc("gammafunk_exit")
+TILE:    G = dngn_golden_statue
+: set_feature_name("granite_statue", "golden statue")
+MAP
+ .......
+....P....
+..nnnnn..
+..n^R^n..
+..nXGYn..
+..n^Q^n..
+..nnnnn..
+....S....
+ .......
+ENDMAP
+
 
 ###############################################################################
 # Crazy Yiuf! Only in his cottage.

@@ -4178,6 +4178,23 @@ _Fannar_rare_
 
 @The_monster@ says @to_foe@, "Does this not give you the chills?"
 %%%%
+############ Gammafunk ### A proud vault guardian
+Gammafunk
+
+@_Gammafunk_common_@
+%%%%
+_Gammafunk_common_
+
+@The_monster@ says @to_foe@, "Look! There's extra experience for you in here. Come on in!"
+
+@The_monster@ says @to_foe@, "Nevermind the Zot Traps, they're just for decoration..."
+
+@The_monster@ says @to_foe@, "Can you let me out? The transporter doesn't let me back out..."
+
+@The_monster@ says @to_foe@, "I just love adventurers! Why don't you visit for awhile longer?"
+
+@The_monster@ says @to_foe@, "You have no idea how hard it is to set up these transporters..."
+%%%%
 ############ Gastronok ### A rather hungry wizard-slug
 # Cantrip messages:
 gastronok_self_buff

@@ -1047,6 +1047,7 @@ enum monster_type                      // menv[].type
     MONS_FROG,
     MONS_BARACHI,
     MONS_BULTUNGIN,             // remove this someday
+    MONS_GAMMAFUNK,
     MONS_TEST_STATUE,
 #endif
 

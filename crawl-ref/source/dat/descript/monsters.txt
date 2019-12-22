@@ -179,6 +179,12 @@ A svelte fighter-mage with a gold-rimmed monocle, a keen sense of tradition,
 and the blood of the gods running through his veins. He's here looking for a
 worthy opponent, but he's yet to find one.
 %%%%
+Gammafunk
+
+A many-armed designer of traps and temptations that usually tries to kill his
+prey by luring them with expensive gear inside deadly vaults. It seems he trapped
+himself in this one and can't get out...
+%%%%
 Gastronok
 
 A voracious and surprisingly intelligent slug, devoted to eating everything and
