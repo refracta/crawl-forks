@@ -4238,7 +4238,7 @@ void bolt::update_hurt_or_helped(monster* mon)
 {
     if (!mons_atts_aligned(attitude, mons_attitude(*mon)))
     {
-        if (nasty_to(mon))
+        if (!is_harmless(mon))
             foe_info.hurt++;
         else if (nice_to(monster_info(mon)))
         {
@@ -4254,7 +4254,7 @@ void bolt::update_hurt_or_helped(monster* mon)
     }
     else
     {
-        if (nasty_to(mon))
+        if (!is_harmless(mon))
         {
             friend_info.hurt++;
 
