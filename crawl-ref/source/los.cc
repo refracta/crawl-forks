@@ -882,7 +882,7 @@ void losight(los_grid& sh, const coord_def& center,
 opacity_type mons_opacity(const monster* mon, los_type how)
 {
     // no regard for LOS_ARENA
-    if (mons_species(mon->type) == MONS_BUSH
+    if (mons_class_holiness(mon->type) == MH_PLANT && mons_class_is_stationary(mon->type)
         && how != LOS_SOLID)
     {
         return OPC_HALF;
