@@ -156,6 +156,7 @@ struct bolt
 private:
     bool can_see_invis = false;
     bool nightvision = false;
+    int tunnelpower = 0;
 
 public:
     bool is_enchantment() const; // no block/dodge, use magic resist

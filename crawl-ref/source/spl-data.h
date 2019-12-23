@@ -100,11 +100,11 @@ static const struct spell_desc spelldata[] =
 },
 
 {
-    SPELL_DIG, "Dig",
+    SPELL_DIG, "Tunneling",
     spschool::earth,
     spflag::dir_or_target | spflag::not_self | spflag::neutral
         | spflag::utility,
-    4,
+    8,
     200,
     LOS_RADIUS, LOS_RADIUS,
     3, 0,

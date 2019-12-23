@@ -832,9 +832,21 @@ void bolt::digging_wall_effect()
         finish_beam();
         return;
     }
-
+    
+    bool stop_dig = false;
     const dungeon_feature_type feat = grd(pos());
-    if (feat_is_diggable(feat))
+    if (feat_is_endless(feat) || feat_is_permarock(feat) 
+        || feat_is_closed_door(feat) || feat_is_tree(feat)
+        || (feat_is_metal(feat) && feat != DNGN_GRATE))
+        stop_dig = true;
+    else if (feat == DNGN_CLEAR_STONE_WALL || feat == DNGN_STONE_WALL
+             || feat == DNGN_CRYSTAL_WALL)
+        tunnelpower -= 50;
+    else if (feat_is_solid(feat))
+        tunnelpower -= 20;
+    if (tunnelpower < 0)
+        stop_dig = true;
+    if (!stop_dig)
     {
         destroy_wall(pos());
         if (!msg_generated)
@@ -862,6 +874,10 @@ void bolt::digging_wall_effect()
             }
             else if (feat == DNGN_SLIMY_WALL)
                 wall = "slime";
+            else if (feat_is_metal(feat))
+                wall = "metal";
+            else if (feat == DNGN_CRYSTAL_WALL)
+                wall = "crystal";
             else if (player_in_branch(BRANCH_PANDEMONIUM))
                 wall = "weird stuff";
             else
@@ -1070,6 +1086,12 @@ static void _undo_tracer(bolt &orig, bolt &copy)
 void bolt::fire()
 {
     path_taken.clear();
+
+    if (flavour == BEAM_DIGGING)
+    {   // Two lines because RNG rules.
+        tunnelpower = damage.size * random_range(6, 15);
+        tunnelpower = div_rand_round(tunnelpower, 10);
+    }
 
     if (special_explosion)
         special_explosion->is_tracer = is_tracer;

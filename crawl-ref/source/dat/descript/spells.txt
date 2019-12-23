@@ -394,9 +394,11 @@ significantly easier to dodge. It is highly effective against both
 single-target and penetrating attacks. Each time a missile is deflected the
 spell has a chance of expiring, with a lower chance of expiry at high power.
 %%%%
-Dig spell
+Tunneling spell
 
-Digs a tunnel through unworked rock.
+Rapidly blasts a tunnel though any hard material it's directed towards. How
+far it blasts varies with spellpower. Can make it through stone and crystal;
+but not metal.
 %%%%
 Dimension Anchor spell
 

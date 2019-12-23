@@ -478,9 +478,9 @@ bool feat_is_endless(dungeon_feature_type feat)
  */
 bool feat_is_diggable(dungeon_feature_type feat)
 {
-    return feat == DNGN_ROCK_WALL || feat == DNGN_CLEAR_ROCK_WALL
-           || feat == DNGN_SLIMY_WALL || feat == DNGN_GRATE
-           || feat == DNGN_ORCISH_IDOL || feat == DNGN_GRANITE_STATUE;
+    return feat_is_solid(feat) && !feat_is_permarock(feat) && !feat_is_tree(feat) 
+        && !feat_is_door(feat) && !feat_is_endless(feat) 
+        && (!feat_is_metal(feat) || feat == DNGN_GRATE);
 }
 
 /** Is this feature a type of trap?
