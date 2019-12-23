@@ -46,7 +46,7 @@ function lab_intruders(e)
   e.subst("2 : 2:60 3:30 4")
   e.subst("0 : 5:30 678")
   e.item("any weapon w:14 no_pickup / any armour w:14 no_pickup / \
-          any missile w:3 no_pickup / any wand no_pickup / \
+          any wand no_pickup / \
           any scroll no_pickup / any jewellery no_pickup / gold no_pickup w:19")
 end
 }}

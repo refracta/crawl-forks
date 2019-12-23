@@ -1707,7 +1707,7 @@ NAME:  minmay_the_grid_armoury
 TAGS:  the_grid unrand
 MONS:  orc knight band, orc warlord band
 MONS:  centaur warrior band / yaktaur captain band
-ITEM:  any weapon / any armour / any missile
+ITEM:  any weapon / any armour
 : if you.absdepth() < 12 then
 SUBST: 0 = 1
 : elseif you.absdepth() < 14 then
