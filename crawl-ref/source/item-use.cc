@@ -803,11 +803,25 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
 
     // At this point, we know it's possible to equip this item. However, there
     // might be reasons it's not advisable.
-    if (!check_warning_inscriptions(new_wpn, OPER_WIELD)
-        || !_safe_to_remove_or_wear(new_wpn, false))
+    if (!_safe_to_remove_or_wear(new_wpn, false))
     {
         canned_msg(MSG_OK);
         return false;
+    }
+
+    bool lopen = false;
+    if (needs_handle_warning(new_wpn, OPER_WIELD, lopen))
+    {
+        string prompt =
+            "Really wield " + new_wpn.name(DESC_INVENTORY) + "?";
+        if (lopen)
+            prompt += " This could place you under penance!";
+
+        if (!yesno(prompt.c_str(), false, 'n'))
+        {
+            canned_msg(MSG_OK);
+            return false;
+        }
     }
 
     if (you.hands_reqd(new_wpn) == HANDS_TWO)
@@ -864,6 +878,9 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
             equip_item(EQ_WEAPON0, item_slot, show_weff_messages);
         }
 
+        if (!_handle_warning(*you.weapon(0)))
+            return false;
+
         if (!unwield_item(true, show_weff_messages))
             return false;
 
@@ -877,6 +894,9 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
             mpr("You can't unwield your magical staff to draw a new one.");
             return false;
         }
+
+        if (!_handle_warning(*you.weapon(0)))
+            return false;
 
         if (!unwield_item(true, show_weff_messages))
             return false;
@@ -893,6 +913,9 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
             return false;
         }
 
+        if (!_handle_warning(*you.weapon(1)))
+            return false;
+
         if (!unwield_item(false, show_weff_messages))
             return false;
 
@@ -908,6 +931,8 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
     {
         if (you.hands_reqd(*(you.weapon(0))) == HANDS_TWO)
         {
+            if (!_handle_warning(*you.weapon(0)))
+                return false;
             if (unwield_item(true, show_weff_messages))
                 equip_item(EQ_WEAPON0, item_slot, show_weff_messages);
             else
@@ -919,12 +944,17 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
 
     else if (you.weapon(0)->cursed() && you.get_mutation_level(MUT_GHOST) == 0)
     {
+
+        if (!_handle_warning(*you.weapon(1)))
+            return false;
         if (unwield_item(false, show_weff_messages))
             equip_item(EQ_WEAPON1, item_slot, show_weff_messages);
     }
 
     else if (you.weapon(1)->cursed() && you.get_mutation_level(MUT_GHOST) == 0)
     {
+        if (!_handle_warning(*you.weapon(0)))
+            return false;
         if (unwield_item(true, show_weff_messages))
             equip_item(EQ_WEAPON0, item_slot, show_weff_messages);
     }
@@ -935,12 +965,18 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
         {
             if (you.weapon(1)->base_type == OBJ_SHIELDS && !is_hybrid(you.weapon(1)->sub_type))
             {
+                if (!_handle_warning(*you.weapon(0)))
+                    return false;
                 if (unwield_item(true, show_weff_messages))
                     equip_item(EQ_WEAPON0, item_slot, show_weff_messages);
             }
+            if (!_handle_warning(*you.weapon(1)))
+                return false;
             else if (unwield_item(false, show_weff_messages))
                 equip_item(EQ_WEAPON1, item_slot, show_weff_messages);
         }
+        if (!_handle_warning(*you.weapon(0)))
+            return false;
         else if (unwield_item(true, show_weff_messages))
             equip_item(EQ_WEAPON0, item_slot, show_weff_messages);
     }
@@ -967,6 +1003,9 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
         // check if you'd get stat-zeroed
 
         if (!_safe_to_remove_or_wear(*wpn, true))
+            return false;
+
+        if (!_handle_warning(*wpn))
             return false;
 
         if (wpn == you.weapon(0))
