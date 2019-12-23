@@ -863,17 +863,11 @@ static void _generate_missile_item(item_def& item, int force_type,
                                    1,  MI_LARGE_ROCK);
     }
 
+    item.quantity = 1;
+
     // No fancy rocks -- break out before we get to special stuff.
-    if (item.sub_type == MI_LARGE_ROCK)
-    {
-        item.quantity = 2 + random2avg(5,2);
+    if (item.sub_type == MI_LARGE_ROCK || item.sub_type == MI_THROWING_NET) 
         return;
-    }
-    else if (item.sub_type == MI_THROWING_NET) // no fancy nets, either
-    {
-        item.quantity = 1 + one_chance_in(4); // and only one, rarely two
-        return;
-    }
 
     if (!no_brand)
     {
@@ -881,7 +875,6 @@ static void _generate_missile_item(item_def& item, int force_type,
                            _determine_missile_brand(item, item_level));
     }
 
-    item.quantity = 1;
 }
 
 static bool _armour_disallows_randart(int sub_type)

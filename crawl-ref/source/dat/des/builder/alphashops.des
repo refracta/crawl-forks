@@ -162,9 +162,8 @@
       elseif s == "T" then i = { "book of the tempests", "scroll of torment",
        "book of transfigurations", "ring of teleportation",
        "scroll of teleportation", "triple sword", "triple crossbow",
-       "troll leather armour", "manual of throwing",
-       "manual of translocations", "manual of transmutations",
-       "trident" }
+       "troll leather armour", "manual of translocations",
+	   "manual of transmutations", "trident" }
 
       elseif s == "U" then i = { "book of unlife", "manual of unarmed combat" }
 
