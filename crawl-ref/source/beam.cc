@@ -2637,14 +2637,16 @@ void bolt::drop_object()
             {
                 // If no trapping net found mark this one.
                 if (get_trapping_net(pos(), true) == NON_ITEM)
+                {
                     set_net_stationary(*item);
+                    copy_item_to_grid(*item, pos(), 1);
+                    return;
+                }
             }
         }
 
-        copy_item_to_grid(*item, pos(), 1);
     }
-    else
-        item_was_destroyed(*item);
+    item_was_destroyed(*item);
 }
 
 // Returns true if the beam hits the player, fuzzing the beam if necessary
