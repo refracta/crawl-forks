@@ -1238,6 +1238,8 @@ static armour_type _get_random_armour_type(int item_level)
         // monsters for hides.
         armtype = random_choose(ARM_CRYSTAL_PLATE_ARMOUR,
                                 ARM_TROLL_LEATHER_ARMOUR,
+                                ARM_IRON_TROLL_LEATHER_ARMOUR,
+                                ARM_DEEP_TROLL_LEATHER_ARMOUR,
                                 ARM_FIRE_DRAGON_ARMOUR,
                                 ARM_ICE_DRAGON_ARMOUR,
                                 ARM_SALAMANDER_HIDE_ARMOUR);

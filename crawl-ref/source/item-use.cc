@@ -2976,7 +2976,9 @@ bool enchant_item(item_def &item, bool quiet)
         if (!quiet)
         {
             const bool plural = armour_is_hide(item)
-                && item.sub_type != ARM_TROLL_LEATHER_ARMOUR;
+                && item.sub_type != ARM_TROLL_LEATHER_ARMOUR
+                && item.sub_type != ARM_IRON_TROLL_LEATHER_ARMOUR
+                && item.sub_type != ARM_DEEP_TROLL_LEATHER_ARMOUR;
             mprf("%s %s green for a moment.",
                 iname.c_str(),
                 conjugate_verb("glow", plural).c_str());

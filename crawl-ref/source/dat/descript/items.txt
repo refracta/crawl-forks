@@ -339,7 +339,7 @@ all of those energies completely, or cause other negative mental effects. When
 used with low reserves of magic it becomes increasingly likely to deplete those
 reserves.
 %%%%
-crystal plate armour
+crystal plate
 
 An incredibly heavy but extremely effective suit of crystalline armour.
 %%%%
@@ -1179,9 +1179,19 @@ A blessed trident moulded by cleansing flame, with three points symbolising the
 combined might of the three holy gods. It is a favoured weapon of the Shining
 One's servants.
 %%%%
-troll leather armour
+troll leather
 
 The stiff and knobbly skin of a troll. It magically regenerates its wearer's
+flesh.
+%%%%
+deep troll leather
+
+The thick and course skin of a deep troll. It magically regenerates its wearer's
+flesh.
+%%%%
+iron troll leather
+
+The metallic, grating skin of a iron troll. It magically regenerates its wearer's
 flesh.
 %%%%
 wand of acid
