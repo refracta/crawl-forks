@@ -609,7 +609,7 @@ static const weapon_def Weapon_prop[] =
         DAMV_SLICING, 0, 0, 0, {} },
     { WPN_BLOWGUN,           "old blowgun",               0,  2, 10,
         SK_SHORT_BLADES, SIZE_LITTLE, SIZE_LITTLE, MI_NONE,
-        DAMV_NON_MELEE, 5, 0, 25, {}, },
+        DAMV_NON_MELEE, 0, 0, 0, {}, },
 #endif
 
     // Axes
