@@ -1416,6 +1416,8 @@ static bool _give_trog_oka_gift(bool forced)
         {
             gift_type = OBJ_WEAPONS;
         }
+        else if (you_worship(GOD_OKAWARU) && one_chance_in(4))
+            gift_type = OBJ_SHIELDS;
         else
             gift_type = OBJ_ARMOURS;
     }
@@ -1427,6 +1429,8 @@ static bool _give_trog_oka_gift(bool forced)
     {
         if (gift_type == OBJ_WEAPONS)
             simple_god_message(" grants you a weapon!");
+        else if (gift_type == OBJ_SHIELDS)
+            simple_god_message(" grants you a shield!");
         else
             simple_god_message(" grants you armour!");
         // Okawaru charges extra for armour acquirements.
