@@ -63,6 +63,7 @@ static bool _is_consonant(char let);
 static char _random_vowel();
 static char _random_cons();
 static string _random_consonant_set(size_t seed);
+static bool _eventually_useful(const item_def &item);
 
 static void _maybe_identify_pack_item()
 {
@@ -3444,6 +3445,20 @@ bool is_bad_item(const item_def &item, bool temp)
     }
 }
 
+static bool _eventually_useful(const item_def &item)
+{
+    if (you.species != SP_LIGNIFITE)
+        return false;
+
+    if (item.base_type == OBJ_WEAPONS || item.sub_type == OBJ_SHIELDS)
+    {
+        if (!is_weapon_wieldable(item, you.body_size()) &&
+            is_weapon_wieldable(item, SIZE_GIANT))
+            return true;
+    }
+    return false;
+}
+
 /**
  * Is an item dangerous but potentially worthwhile?
  *
@@ -3927,6 +3942,8 @@ string item_prefix(const item_def &item, bool temp)
         prefixes.push_back("dangerous_item");
     if (is_bad_item(item, temp))
         prefixes.push_back("bad_item");
+    if (_eventually_useful(item))
+        prefixes.push_back("useful_later");
     if (is_useless_item(item, temp))
         prefixes.push_back("useless_item");
 

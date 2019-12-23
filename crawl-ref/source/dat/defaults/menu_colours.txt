@@ -12,6 +12,9 @@ menu += lightred:.*bad_item.*
 # Useless items, comes here to override artefacts etc.
 menu += darkgrey:.*useless_item.*
 
+# Eventually useful items. You'll grow into it.
+menu += lightblue:.*useful_later.*
+
 # Items disliked by your god.
 menu += $forbidden:.*forbidden.*
 
@@ -36,9 +39,9 @@ menu += white:.*artefact.*
 #
 menu += lightblue:(^identified armour.* pair of .* of )
 menu += lightgrey:(^identified armour.* pair of )
-menu += lightblue:(^identified (weapon|armour).* of )
-menu += lightblue:(^identified weapon.* vampiric .*)
-menu += lightblue:(^identified weapon.* antimagic .*)
+menu += lightblue:(^identified (weapon|armour|shield).* of )
+menu += lightblue:(^identified (weapon|shield).* vampiric .*)
+menu += lightblue:(^identified (weapon|shield).* antimagic .*)
 
 # Possible egos
 menu += lightblue:^unidentified .*weapon.*(runed|glowing)
