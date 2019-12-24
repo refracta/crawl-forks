@@ -1568,16 +1568,6 @@ bool beogh_can_gift_items_to(const monster* mons, bool quiet)
         return false;
     }
 
-    if (given_gift(mons))
-    {
-        if (!quiet)
-        {
-            mprf("%s has already been given a gift.",
-                 mons->name(DESC_THE, false).c_str());
-        }
-        return false;
-    }
-
     return true;
 }
 
