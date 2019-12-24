@@ -231,6 +231,21 @@ static string _beogh_bless_ranged_weapon(monster* mon)
 
     if (mon_has_launcher)
     {
+        bool knows_pproj = false;
+
+        for (monster_spells::iterator i = mon->spells.begin(); i < mon->spells.end(); ++i)
+        {
+            if (mon_spell_slot(*i).spell == SPELL_PORTAL_PROJECTILE)
+                knows_pproj = true;
+        }
+
+        if (!knows_pproj && one_chance_in(3))
+        {
+            mon->spells.emplace_back(SPELL_PORTAL_PROJECTILE, 20, MON_SPELL_PRIEST);
+            mon->props[CUSTOM_SPELLS_KEY] = true;
+            return "knowledge of portal projectile";
+        }
+
         item_def& launcher = *mon->launcher();
 
         // 50% chance of upgrading weapon type.
