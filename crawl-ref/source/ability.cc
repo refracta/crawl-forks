@@ -467,7 +467,7 @@ static const ability_def Ability_List[] =
     { ABIL_BEOGH_GIFT_ITEM, "Give Item to Named Follower",
       0, 0, 0, 0, {fail_basis::invo}, abflag::none },
     { ABIL_BEOGH_RESURRECTION, "Resurrection",
-      0, 0, 0, 42, {fail_basis::invo}, abflag::none },
+      0, 0, 0, 25, {fail_basis::invo}, abflag::none },
 
     // Jiyva
     { ABIL_JIYVA_CALL_JELLY, "Request Jelly",
