@@ -649,7 +649,8 @@ monster_type player_mons(bool transform)
     {
         if (you_worship(GOD_BEOGH))
         {
-            mons = (you.piety >= piety_breakpoint(4)) ? MONS_ORC_HIGH_PRIEST
+            mons = (you.piety >= piety_breakpoint(6)) ? MONS_ORC_CLERIC :
+                   (you.piety >= piety_breakpoint(4)) ? MONS_ORC_HIGH_PRIEST
                                                       : MONS_ORC_PRIEST;
         }
     }

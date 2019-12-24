@@ -1589,6 +1589,39 @@ spret cast_irradiate(int powc, actor* who, bool fail)
     return spret::success;
 }
 
+spret cast_heal_blast(int powc, actor* who, bool fail)
+{
+    fail_check();
+
+    ASSERT(who);
+    if (who->is_player())
+        mpr("A fountain of healing energy spills forth from you!");
+    else
+    {
+        simple_monster_message(*who->as_monster(),
+            " erupts in a fountain of healing energy!");
+    }
+
+    bolt beam;
+    beam.name = "healing mist";
+    beam.flavour = BEAM_WAND_HEALING;
+    beam.set_agent(who);
+    beam.colour = WHITE;
+    beam.glyph = dchar_glyph(DCHAR_EXPLOSION);
+    beam.range = 1;
+    beam.ex_size = 1;
+    beam.is_explosion = true;
+    beam.explode_delay = beam.explode_delay * 3 / 2;
+    beam.source = who->pos();
+    beam.target = who->pos();
+    beam.hit = AUTOMATIC_HIT;
+    beam.loudness = 20;
+    beam.damage = dice_def(4, 3 + powc/3);
+    beam.explode(true, false);
+
+    return spret::success;
+}
+
 // How much work can we consider we'll have done by igniting a cloud here?
 // Considers a cloud under a susceptible ally bad, a cloud under a a susceptible
 // enemy good, and other clouds relatively unimportant.

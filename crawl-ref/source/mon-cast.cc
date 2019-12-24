@@ -201,6 +201,30 @@ static const map<spell_type, mons_spell_logic> spell_to_logic = {
         _fire_simple_beam,
         _setup_minor_healing,
     } },
+    { SPELL_HEALING_BLAST, {
+        [](const monster &caster) {
+            if (caster.hit_points <= caster.max_hit_points / 2)
+                return true;
+            for (adjacent_iterator ai(caster.pos()); ai; ++ai)
+            {
+                if (actor *patient = actor_at(*ai))
+                {
+                    if (patient->is_monster())
+                    {
+                        monster * pat = patient->as_monster();
+                        if (pat->attitude == caster.attitude && pat->hit_points <= pat->max_hit_points / 2)
+                            return true;
+                    }
+                }
+            }
+            return false;
+        },
+        [](monster &caster, mon_spell_slot slot, bolt& pbolt) {
+            const int splpow = _mons_spellpower(slot.spell, caster);
+            cast_heal_blast(splpow, &caster, false);
+        },
+        nullptr,
+    } },
     { SPELL_TELEPORT_SELF, {
         [](const monster &caster)
         {

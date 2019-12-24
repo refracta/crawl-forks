@@ -1778,6 +1778,18 @@ static const struct spell_desc spelldata[] =
 },
 
 {
+    SPELL_HEALING_BLAST, "Healing Blast",
+    spschool::necromancy,
+    spflag::recovery | spflag::helpful | spflag::monster | spflag::selfench
+        | spflag::emergency | spflag::utility | spflag::not_evil,
+    6,
+    0,
+    1, 1,
+    6, 0,
+    TILEG_MAJOR_HEALING,
+},
+
+{
     SPELL_MAJOR_HEALING, "Major Healing",
     spschool::necromancy,
     spflag::recovery | spflag::helpful | spflag::monster | spflag::selfench
