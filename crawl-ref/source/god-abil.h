@@ -19,6 +19,8 @@
 #define BEOGH_MELEE_WPN_GIFT_KEY "given beogh melee weapon"
 #define BEOGH_ARM_GIFT_KEY "given beogh armour"
 #define BEOGH_SH_GIFT_KEY "given beogh shield"
+#define BEOGH_WAND_GIFT_KEY "given beogh wand"
+#define BEOGH_JEWEL_GIFT_KEY "given beogh jewelry"
 
 #define AVAILABLE_SAC_KEY "available_sacrifices"
 #define HEALTH_SAC_KEY "current_health_sacrifice"

@@ -587,24 +587,73 @@ static formatted_string _beogh_extra_description()
         }
         else if (given_gift(mons))
         {
-            mon_inv_type slot =
-                mons->props.exists(BEOGH_SH_GIFT_KEY) ? MSLOT_SHIELD :
-                mons->props.exists(BEOGH_ARM_GIFT_KEY) ? MSLOT_ARMOUR :
-                mons->props.exists(BEOGH_RANGE_WPN_GIFT_KEY) ? MSLOT_ALT_WEAPON :
-                MSLOT_WEAPON;
-
             // An orc can still lose its gift, e.g. by being turned into a
             // shapeshifter via a chaos cloud. TODO: should the gift prop be
             // deleted at that point?
-            if (mons->inv[slot] != NON_ITEM)
-            {
-                desc.cprintf(" (");
+            desc.cprintf(" ( ");
+            item_def gift;
 
-                item_def &gift = mitm[mons->inv[slot]];
-                desc += formatted_string::parse_string(
-                                    menu_colour_item_name(gift,DESC_PLAIN));
-                desc.cprintf(")");
+            if (mons->props.exists(BEOGH_MELEE_WPN_GIFT_KEY))
+            {
+                gift = mitm[mons->inv[MSLOT_WEAPON]];
+                if (gift.defined())
+                {
+                    desc += formatted_string::parse_string(
+                        menu_colour_item_name(gift, DESC_PLAIN));
+                    desc.cprintf(" ");
+                }
             }
+            if (mons->props.exists(BEOGH_RANGE_WPN_GIFT_KEY))
+            {
+                gift = mitm[mons->inv[MSLOT_ALT_WEAPON]];
+                if (gift.defined())
+                {
+                    desc += formatted_string::parse_string(
+                        menu_colour_item_name(gift, DESC_PLAIN));
+                    desc.cprintf(" ");
+                }
+            }
+            if (mons->props.exists(BEOGH_SH_GIFT_KEY))
+            {
+                gift = mitm[mons->inv[MSLOT_SHIELD]];
+                if (gift.defined())
+                {
+                    desc += formatted_string::parse_string(
+                        menu_colour_item_name(gift, DESC_PLAIN));
+                    desc.cprintf(" ");
+                }
+            }
+            if (mons->props.exists(BEOGH_ARM_GIFT_KEY))
+            {
+                gift = mitm[mons->inv[MSLOT_ARMOUR]];
+                if (gift.defined())
+                {
+                    desc += formatted_string::parse_string(
+                        menu_colour_item_name(gift, DESC_PLAIN));
+                    desc.cprintf(" ");
+                }
+            }
+            if (mons->props.exists(BEOGH_WAND_GIFT_KEY))
+            {
+                gift = mitm[mons->inv[MSLOT_WAND]];
+                if (gift.defined())
+                {
+                    desc += formatted_string::parse_string(
+                        menu_colour_item_name(gift, DESC_PLAIN));
+                    desc.cprintf(" ");
+                }
+            }
+            if (mons->props.exists(BEOGH_JEWEL_GIFT_KEY))
+            {
+                gift = mitm[mons->inv[MSLOT_WEAPON]];
+                if (gift.defined())
+                {
+                    desc += formatted_string::parse_string(
+                        menu_colour_item_name(gift, DESC_PLAIN));
+                    desc.cprintf(" ");
+                }
+            }
+            desc.cprintf(")");
         }
         desc.cprintf("\n");
     }

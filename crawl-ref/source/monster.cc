@@ -6387,6 +6387,14 @@ item_def* monster::take_item(int steal_what, mon_inv_type mslot,
     inv[mslot] = index;
     new_item.set_holding_monster(*this);
 
+
+    if (you.inv[steal_what].base_type == OBJ_WANDS && !is_stolen)
+    {
+        new_item.charges = 4;
+        you.inv[steal_what].charges -= 10;
+        return &new_item;
+    }
+
     if (mslot != MSLOT_ALT_WEAPON || mons_wields_two_weapons(*this))
         equip_message(new_item);
 

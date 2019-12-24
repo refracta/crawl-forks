@@ -1535,7 +1535,9 @@ bool given_gift(const monster* mon)
     return mon->props.exists(BEOGH_RANGE_WPN_GIFT_KEY)
             || mon->props.exists(BEOGH_MELEE_WPN_GIFT_KEY)
             || mon->props.exists(BEOGH_ARM_GIFT_KEY)
-            || mon->props.exists(BEOGH_SH_GIFT_KEY);
+            || mon->props.exists(BEOGH_SH_GIFT_KEY)
+            || mon->props.exists(BEOGH_JEWEL_GIFT_KEY)
+            || mon->props.exists(BEOGH_WAND_GIFT_KEY);
 }
 
 /**
@@ -1632,6 +1634,8 @@ bool beogh_gift_item()
                              && get_armour_slot(gift) == EQ_BODY_ARMOUR;
     const bool weapon = gift.base_type == OBJ_WEAPONS;
     const bool range_weapon = weapon && is_range_weapon(gift);
+    const bool jewel = gift.base_type == OBJ_JEWELLERY;
+    const bool wand = gift.base_type == OBJ_WANDS;
     const item_def* mons_weapon = mons->weapon();
     const item_def* mons_alt_weapon = mons->mslot_item(MSLOT_ALT_WEAPON);
 
@@ -1663,6 +1667,8 @@ bool beogh_gift_item()
     const auto mslot = body_armour ? MSLOT_ARMOUR :
                                     shield ? MSLOT_SHIELD :
                               use_alt_slot ? MSLOT_ALT_WEAPON :
+                                      wand ? MSLOT_WAND :
+                                     jewel ? MSLOT_JEWELLERY:
                                              MSLOT_WEAPON;
 
     // need to remove any curses so that drop_item won't fail
@@ -1687,6 +1693,10 @@ bool beogh_gift_item()
         do_uncurse_item(*shield_slot);
     }
 
+    if (wand)
+        mprf("You expend 10 charges from your wand to make a copy for %s.",
+            mons->name(DESC_THE, false).c_str());
+
     item_def *floor_item = mons->take_item(item_slot, mslot);
     if (!floor_item)
     {
@@ -1707,6 +1717,10 @@ bool beogh_gift_item()
         mons->props[BEOGH_ARM_GIFT_KEY] = true;
     else if (range_weapon)
         mons->props[BEOGH_RANGE_WPN_GIFT_KEY] = true;
+    else if (wand)
+        mons->props[BEOGH_WAND_GIFT_KEY] = true;
+    else if (jewel)
+        mons->props[BEOGH_JEWEL_GIFT_KEY] = true;
     else
         mons->props[BEOGH_MELEE_WPN_GIFT_KEY] = true;
 
