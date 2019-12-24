@@ -196,6 +196,22 @@ static string _beogh_bless_melee_weapon(monster* mon)
     return "superior armament";
 }
 
+static bool _can_throw(monster* mon)
+{
+    for (monster_spells::iterator i = mon->spells.begin(); i < mon->spells.end(); ++i)
+    {
+        if (mon_spell_slot(*i).spell == SPELL_THROW_JAVELIN)
+            return true;
+        if (mon_spell_slot(*i).spell == SPELL_THROW_TOMAHAWK)
+            return true;
+        if (mon_spell_slot(*i).spell == SPELL_THROW_NET)
+            return true;
+        if (mon_spell_slot(*i).spell == SPELL_THROW_BLOWGUN)
+            return true;
+    }
+    return false;
+}
+
 /**
  * Attempt to give a follower a ranged weapon/ammo.
  *
@@ -206,6 +222,12 @@ static string _beogh_bless_ranged_weapon(monster* mon)
 {
     bool blessed = false;
     const bool mon_has_launcher = mon->launcher() != nullptr;
+
+    for (monster_spells::iterator i = mon->spells.begin(); i < mon->spells.end(); ++i)
+    {
+        if (mon_spell_slot(*i).spell == SPELL_THROW_ROCK)
+            mon->spells.erase(i);
+    }
 
     if (mon_has_launcher)
     {
@@ -240,9 +262,13 @@ static string _beogh_bless_ranged_weapon(monster* mon)
         return ""; // ?
     }
 
-    // If they have a shield but no launcher, give hand xbow.
-    if (mon->shield() != nullptr)
-        _gift_weapon_to_orc(mon, WPN_HAND_CROSSBOW);
+    // If they have a shield but no launcher, give throw spell.
+    if (mon->shield() != nullptr && !_can_throw(mon))
+    {
+        mon->spells.emplace_back(coinflip() ? SPELL_THROW_JAVELIN : 
+                                 coinflip() ? SPELL_THROW_TOMAHAWK : 
+                                              SPELL_THROW_NET, 100, MON_SPELL_NATURAL);
+    }
     // No launcher, no shield: give them an arbalest.
     else
         _gift_weapon_to_orc(mon, WPN_ARBALEST);
@@ -666,9 +692,9 @@ static bool _beogh_bless_follower(monster* follower, bool force)
             dprf("Couldn't promote monster to priesthood");
     }
 
-    // ~15% chance of blessing armament (assume that most priest buffs fail)
+    // ~25% chance of blessing armament (assume that most priest buffs fail)
     if (blessing.empty() && mons_genus(follower->type) == MONS_ORC
-        && (force || one_chance_in(7)))
+        && (force || one_chance_in(4)))
     {
         blessing = coinflip() ? _beogh_bless_weapon(follower)
                               : _beogh_bless_armour(follower);
@@ -679,7 +705,7 @@ static bool _beogh_bless_follower(monster* follower, bool force)
     if (!blessing.empty())
         give_monster_proper_name(*follower);
 
-    // ~85% chance of trying to heal.
+    // ~75% chance of trying to heal.
     if (blessing.empty())
         blessing = _bless_with_healing(follower);
 
