@@ -576,6 +576,10 @@ void set_ancestor_spells(monster &ancestor, bool notify = false);
 
 void maybe_give_throw_spell(monster &mon, int depth);
 
+bool can_throw(monster* mon);
+
+bool silenceable(monster* mon);
+
 typedef function<bool (monster& mon)> monster_func;
 bool apply_monsters_around_square(monster_func mf, const coord_def& where,
                                   int radius = 1);

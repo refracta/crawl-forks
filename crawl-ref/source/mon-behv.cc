@@ -147,6 +147,23 @@ static void _set_firing_pos(monster* mon, coord_def target)
     mon->firing_pos = best_pos;
 }
 
+static bool _should_keep_range(monster* mon)
+{
+    if (mons_class_flag(mon->type, M_MAINTAIN_RANGE))
+        return true;
+    if (mons_class_flag(mon->type, M_FIGHTER))
+        return false;
+    if (mons_class_flag(mon->type, M_ARCHER) && (mon->launcher() || can_throw(mon)))
+        return true;
+    if (mons_class_flag(mon->type, M_SPELLCASTER))
+    {
+        if (silenceable(mon) && mon->is_silenced())
+            return false;
+        return true;
+    }
+    return false;
+}
+
 static void _decide_monster_firing_position(monster* mon, actor* owner)
 {
     // Monster can see foe: continue 'tracking'
@@ -157,7 +174,7 @@ static void _decide_monster_firing_position(monster* mon, actor* owner)
                                               || mon->berserk_or_insane();
 
         // The foe is the player.
-        if (mons_class_flag(mon->type, M_MAINTAIN_RANGE)
+        if (_should_keep_range(mon)
             && !ignore_special_firing_AI)
             {
                 // Get to firing range even if we are close.
@@ -188,7 +205,7 @@ static void _decide_monster_firing_position(monster* mon, actor* owner)
         monster* target = &menv[mon->foe];
         mon->target = target->pos();
 
-        if (mons_class_flag(mon->type, M_MAINTAIN_RANGE)
+        if (_should_keep_range(mon)
             && !mon->berserk_or_insane()
             && !(mons_is_avatar(mon->type)
                  && owner && mon->foe == owner->mindex()))

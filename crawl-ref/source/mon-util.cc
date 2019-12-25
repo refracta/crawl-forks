@@ -5760,6 +5760,43 @@ void maybe_give_throw_spell(monster &mon, int place)
     }
 }
 
+// Does this monster know how to throw anything other than rocks?
+bool can_throw(monster* mon)
+{
+    for (monster_spells::iterator i = mon->spells.begin(); i < mon->spells.end(); ++i)
+    {
+        if (mon_spell_slot(*i).spell == SPELL_THROW_JAVELIN)
+            return true;
+        if (mon_spell_slot(*i).spell == SPELL_THROW_TOMAHAWK)
+            return true;
+        if (mon_spell_slot(*i).spell == SPELL_THROW_DISPERSAL)
+            return true;
+        if (mon_spell_slot(*i).spell == SPELL_THROW_NET)
+            return true;
+        if (mon_spell_slot(*i).spell == SPELL_THROW_BLOWGUN)
+            return true;
+        if (mon_spell_slot(*i).spell == SPELL_THROW_CURARE)
+            return true;
+    }
+    return false;
+}
+
+// Are the majority of this monster's spells affected by silence?
+bool silenceable(monster* mon)
+{
+    int x = 0;
+    for (monster_spells::iterator i = mon->spells.begin(); i < mon->spells.end(); ++i)
+    {
+        if (mon_spell_slot(*i).flags | MON_SPELL_WIZARD)
+            x++;
+        else if (mon_spell_slot(*i).flags | MON_SPELL_PRIEST)
+            x++;
+        else
+            x--;
+    }
+    return x > 0;
+}
+
 /**
  * Set the correct spells for a given ancestor, corresponding to their HD and
  * type.

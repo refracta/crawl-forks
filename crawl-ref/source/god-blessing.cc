@@ -196,22 +196,6 @@ static string _beogh_bless_melee_weapon(monster* mon)
     return "superior armament";
 }
 
-static bool _can_throw(monster* mon)
-{
-    for (monster_spells::iterator i = mon->spells.begin(); i < mon->spells.end(); ++i)
-    {
-        if (mon_spell_slot(*i).spell == SPELL_THROW_JAVELIN)
-            return true;
-        if (mon_spell_slot(*i).spell == SPELL_THROW_TOMAHAWK)
-            return true;
-        if (mon_spell_slot(*i).spell == SPELL_THROW_NET)
-            return true;
-        if (mon_spell_slot(*i).spell == SPELL_THROW_BLOWGUN)
-            return true;
-    }
-    return false;
-}
-
 /**
  * Attempt to give a follower a ranged weapon/ammo.
  *
@@ -278,7 +262,7 @@ static string _beogh_bless_ranged_weapon(monster* mon)
     }
 
     // If they have a shield but no launcher, give throw spell.
-    if (mon->shield() != nullptr && !_can_throw(mon))
+    if (mon->shield() != nullptr && !can_throw(mon))
     {
         mon->spells.emplace_back(coinflip() ? SPELL_THROW_JAVELIN : 
                                  coinflip() ? SPELL_THROW_TOMAHAWK : 
