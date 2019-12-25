@@ -3044,7 +3044,7 @@ triple crossbow
 
 <arbalest>
 %%%%
-troll leather armour
+troll leather
 
 “THE TROLL KING: Now, listen, Prince Peer, and give way to reason!
  You're cut out for a Troll. Why, look, already

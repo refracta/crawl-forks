@@ -1012,7 +1012,7 @@ SHUFFLE: bvc, DELM, DEFHJK, LMNOPQ
 {{
 -- These adventurers always place a weapon.
 
-local light_scales = "troll leather armour good_item" ..
+local light_scales = "troll leather good_item" ..
     " / stream dragon scales good_item / acid dragon scales good_item"
 local medium_scales = "swamp dragon scales good_item" ..
     " / quicksilver dragon scales / fire dragon scales good_item" ..
@@ -1021,7 +1021,7 @@ local medium_scales = "swamp dragon scales good_item" ..
 local heavy_scales = "storm dragon scales / shadow dragon scales" ..
     " / gold dragon scales"
 local heavy_armour = "scale mail good_item w:50 / chain mail good_item w:50" ..
-    " / plate armour good_item w:50 / crystal plate armour good_item"
+    " / plate armour good_item w:50 / crystal plate good_item"
 
  -- Dwarven fighter. Maybe the minotaur got the last MD.
 dgn.delayed_decay_extra(_G, "D", "dwarf skeleton",

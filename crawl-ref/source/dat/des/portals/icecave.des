@@ -778,13 +778,13 @@ SUBST:   ` = .
 ITEM: demon whip good_item / demon blade good_item / demon trident good_item
 : item("cloak " .. coldres .. " / hat good_item / pair of gloves good_item / " ..
 :   " / pair of boots good_item / buckler " .. coldres)
-: item("crystal plate armour " .. coldres ..
-:   " / troll leather armour " .. coldres ..
+: item("crystal plate " .. coldres ..
+:   " / troll leather " .. coldres ..
 :   " / ice dragon scales good_item / robe ego:resistance ident:type / " ..
 :   " / naga barding " .. goodcoldres .. " w:5" ..
 :   " / centaur barding " .. goodcoldres .. " w:5" ..
-:   " / crystal plate armour " .. goodcoldres ..
-:   " / troll leather armour " .. goodcoldres)
+:   " / crystal plate " .. goodcoldres ..
+:   " / troll leather " .. goodcoldres)
 MAP
                     xxxxxx
                   xxx....xxx

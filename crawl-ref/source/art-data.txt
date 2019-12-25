@@ -1134,7 +1134,7 @@ TILE:     urand_axe_of_woe
 TILE_EQ:  axe_of_woe
 BOOL:     nogen, no_upgrade
 
-NAME:     moon troll leather armour
+NAME:     moon troll leather
 OBJ:      OBJ_ARMOURS/ARM_TROLL_LEATHER_ARMOUR
 PLUS:     +4
 COLOUR:   ETC_SHIMMER_BLUE
@@ -1232,7 +1232,7 @@ BRAND:    SPWPN_MOLTEN
 FIRE:     2
 BOOL:     skip_ego
 
-NAME:     orange crystal plate armour
+NAME:     orange crystal plate
 OBJ:      OBJ_ARMOURS/ARM_CRYSTAL_PLATE_ARMOUR
 COLOUR:   LIGHTRED
 TILE:     urand_orange_crystal

@@ -73,7 +73,7 @@
 
       elseif s == "C" then i = { "book of callings", "book of cantrips",
        "club", "book of changes", "centaur barding",
-       "chain mail", "crystal ball of energy", "cloak", "crystal plate armour",
+       "chain mail", "crystal ball of energy", "cloak", "crystal plate",
        "potion of cancellation", "book of clouds", "staff of cold",
 	   "manual of crossbows",
        "manual of charms", "potion of curing", "wand of clouds" }
@@ -162,7 +162,7 @@
       elseif s == "T" then i = { "book of the tempests", "scroll of torment",
        "book of transfigurations", "ring of teleportation",
        "scroll of teleportation", "triple sword", "triple crossbow",
-       "troll leather armour", "manual of translocations",
+       "troll leather", "manual of translocations",
 	   "manual of transmutations", "trident" }
 
       elseif s == "U" then i = { "book of unlife", "manual of unarmed combat" }

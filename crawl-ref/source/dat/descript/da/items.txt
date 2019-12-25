@@ -256,7 +256,7 @@ corpse
 
 Et kadaver. Du kan slagte det for at få spiselige kødklumper.
 %%%%
-crystal plate armour
+crystal plate
 
 En utroligt tung, men ekstremt effektiv krystallinsk rustning.
 %%%%
@@ -937,7 +937,7 @@ En velsignet trefork, som er formet af rensende flammer, med tre takker, som
 symboliserer de tre hellige guders samlede kraft. Den er et yndet våben for Den
 Strålendes tjenere.
 %%%%
-troll leather armour
+troll leather
 
 En rustning, som er lavet af det stive og noprede skind fra en helt almindelig
 trold. Det regenerer lige så langsomt bærerens kød ved hjælp af magi (med

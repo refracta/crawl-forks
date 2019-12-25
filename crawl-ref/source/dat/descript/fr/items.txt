@@ -390,7 +390,7 @@ corpse
 Un cadavre. Vous pouvez le découper pour produire des morceaux de viande
 comestibles.
 %%%%
-crystal plate armour
+crystal plate
 
 Une armure cristalline incroyablement lourde mais extrêmement protectrice.
 %%%%
@@ -1019,7 +1019,7 @@ troll hide
 La peau raide et noueuse d'un troll doté de propriété régénératrice. Il existe
 des méthodes magiques pour la transformer en armure.
 %%%%
-troll leather armour
+troll leather
 
 Une armure magique confectionnée à partir de la peau raide et bosselée d'un
 troll. Elle est capable de régénérer les tissus de son porteur à un rythme lent

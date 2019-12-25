@@ -539,7 +539,7 @@ As you hold this axe your mind does not feel fully your own. Your body begins
 to exhibit strength far beyond its capabilities, and your movements become
 guided by Makhleb.
 %%%%
-moon troll leather armour
+moon troll leather
 
 A suit of armour rumoured to have been created by enchanting the hide of a
 now-extinct species of troll. Whether the name rings true or is merely
@@ -596,7 +596,7 @@ A huge mace imbued with potent fire magic. It fills those it strikes with
 inner flame, and offers protection against the resulting devastation as well
 as immunity to clouds of flame.
 %%%%
-orange crystal plate armour
+orange crystal plate
 
 A suit of armour carved from transparent orange crystal. It provides remarkable
 protection for both mind and body. The wearer can even channel psychic energies

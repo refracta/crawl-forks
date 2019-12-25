@@ -191,7 +191,7 @@ corpse
 
 Un cadáver. Puedes descuartizarlo para conseguir trozos de carne comestible.
 %%%%
-crystal plate armour
+crystal plate
 
 Una armadura de cristal, increíblemente pesada, pero extremadamente efectiva.
 %%%%

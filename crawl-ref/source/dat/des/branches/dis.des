@@ -834,7 +834,7 @@ TILE:    G = dngn_statue_iron_golem
 COLOUR:  G = cyan
 KMONS:   8 = iron golem
 KMONS:   9 = war gargoyle
-ITEM:    plate armour good_item / crystal plate armour good_item w:3
+ITEM:    plate armour good_item / crystal plate good_item w:3
 ITEM:    any weapon good_item
 KMONS:   K = Hell Sentinel
 KITEM:   K = |

@@ -1318,7 +1318,7 @@ MONS: freezing wraith, shadow wraith
 KMONS: | = ancient lich
 KITEM: | = plate armour good_item ego:cold_resistance \
            / ice dragon scales good_item \
-           / crystal plate armour good_item ego:cold_resistance w:5 \
+           / crystal plate good_item ego:cold_resistance w:5 \
            / executioner's axe good_item ego:freezing w:5 \
            / battleaxe good_item ego:freezing \
            / lajatang good_item ego:freezing \

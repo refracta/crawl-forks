@@ -191,7 +191,7 @@ corpse
 
 Trup. Możesz oprawić go aby uzyskać jadalne mięso.
 %%%%
-crystal plate armour
+crystal plate
 
 Niewiarygodnie ciężka ale też i nieziemsko efektywna zbroja z litego kawału
 wytrzymałego kryształu.
@@ -713,7 +713,7 @@ Błogosławiony trójząb uformowany w świętym ogniu, z trzema zębami
 symbolizującymi połączoną potęgę trójcy dobrych bogów. Jest to ulubiona broń
 sług Świetlistego.
 %%%%
-troll leather armour
+troll leather
 
 Zaczarowana zbroja ze skóry trolla. Jest twardsza od zwykłej skórzanej zbroi, a
 także daje nosicielowi część zdolności regeneracji właściwej trollom (chyba że

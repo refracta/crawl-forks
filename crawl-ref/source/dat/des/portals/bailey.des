@@ -101,21 +101,21 @@ function orc_warrior_with_polearm(e)
   e.mons("orc warrior ; \
           spear w:5 | trident w:5 | halberd | glaive | bardiche w:1 . \
           ring mail | scale mail | chain mail | plate armour |\
-          crystal plate armour w:1")
+          crystal plate w:1")
 end
 
 function orc_knight_with_polearm(e)
   e.mons("orc knight ; \
           trident w:5 | halberd | glaive | bardiche w:1 . \
           ring mail | scale mail | chain mail | plate armour | \
-          crystal plate armour w:1")
+          crystal plate w:1")
 end
 
 -- defined but not used, since the depth for the current entry vaults is 7-14
 function orc_warlord_with_polearm(e)
   e.mons("orc warlord ; \
           halberd | glaive | bardiche w:1 . \
-          chain mail w:20 | plate armour | crystal plate armour w:1")
+          chain mail w:20 | plate armour | crystal plate w:1")
 end
 
 }}
@@ -710,7 +710,7 @@ NSUBST: E = 1:+ / *:c
 : orc_knight_with_polearm(_G)
 SUBST:  2 = 223.
 SUBST:  1 = 1 2:1 .
-ITEM:   good_item crystal plate armour / good_item plate armour /\
+ITEM:   good_item crystal plate / good_item plate armour /\
         good_item gold dragon scales w:5 / good_item ice dragon scales w:5 /\
         good_item fire dragon scales w:5 / good_item steam dragon scales w:5
 ITEM:   good_item cloak / good_item pair of gloves /\
@@ -995,7 +995,7 @@ TAGS:   bailey_polearm no_item_gen no_monster_gen no_pool_fixup
 MONS:   gnoll ; spear | trident | halberd . \
             ring mail | scale mail | chain mail
 MONS:   gnoll sergeant ; halberd | glaive | bardiche w:1 . \
-            chain mail w:20 | plate armour | crystal plate armour w:1
+            chain mail w:20 | plate armour | crystal plate w:1
 MONS:   gnoll shaman ; spear | trident | halberd . \
             ring mail | scale mail
 MONS:   hound

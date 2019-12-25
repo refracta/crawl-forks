@@ -229,7 +229,7 @@ dgn.delayed_decay_extra(_G, 'A', 'dwarf skeleton', 'battleaxe / '
    .. "eveningstar / executioner's axe w:2 / "
    .. 'great mace w:2, helmet good_item / '
    .. 'pair of gloves good_item / pair of boots good_item, '
-   .. 'plate armour / crystal plate armour w:2' )
+   .. 'plate armour / crystal plate w:2' )
 
  -- Elf caster. 4 items.
 dgn.delayed_decay_extra(_G, 'B', 'elf skeleton', 'robe, randbook, '
@@ -268,7 +268,7 @@ dgn.delayed_decay_extra(_G, 'I', 'human skeleton', 'any armour, any weapon, '
  -- Orc fighter. 3 items.
 dgn.delayed_decay_extra(_G, 'J', 'orc skeleton', 'heater shield / scutum w:2, '
    .. 'long sword / eveningstar / broad axe / demon blade, '
-   .. 'plate armour / crystal plate armour w:2' )
+   .. 'plate armour / crystal plate w:2' )
 
  -- Dwarven heavy armour earth elementalist. 3-4 items.
 dgn.delayed_decay_extra(_G, 'K', 'dwarf skeleton', 'plate armour, '

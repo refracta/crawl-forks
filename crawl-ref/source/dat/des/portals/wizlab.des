@@ -27,7 +27,7 @@
 #Hellbinder|demons, summoners,      |fire/summoning/         |17000
 #          |Hellbinder              |demonic items           |
 #--------------------------------------------------------------------
-#Lehudib   |earth-themed monsters,  |Moon Troll Leather Armour
+#Lehudib   |earth-themed monsters,  |Moon Troll Leather
 #          |"space" themed abyss    |random loot and         |20000+
 #          |monsters                |randbook of             |
 #          |                        |earth/transmutations,   |
@@ -1791,7 +1791,7 @@ MONS:       orange crystal statue name:lunar_statue n_rpl n_des \
                      shadow_creatures.48.magical \
               col:lightmagenta tile:mons_zot_statue
 {{
-mons("patrolling moon troll ; moon troll leather armour")
+mons("patrolling moon troll ; moon troll leather")
 set_random_mon_list ("rust devil w:20 / eye of devastation / stone giant " ..
                      "/ tentacled starspawn / great orb of eyes " ..
                      "/ neqoxec w:5 / golden eye w:5 / very ugly thing w:5 " ..

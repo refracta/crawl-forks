@@ -801,7 +801,7 @@ MONS:    storm dragon zombie
 MONS:    golden dragon zombie
 MONS:    fire dragon skeleton
 ITEM:    animal skin good_item / any armour good_item
-ITEM:    gold dragon scales / storm dragon scales / fire dragon scales / troll leather armour / any useful armour good_item
+ITEM:    gold dragon scales / storm dragon scales / fire dragon scales / troll leather / any useful armour good_item
 ITEM:    scroll of random uselessness
 ITEM:    longbow good_item / arbalest good_item / any useful weapon good_item
 SHUFFLE: 123

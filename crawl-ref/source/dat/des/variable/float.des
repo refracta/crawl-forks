@@ -3272,7 +3272,7 @@ MONS:   two-headed ogre / troll
 KMONS:  2 = stone giant / iron dragon
 ITEM:   book of geomancy / book of the earth / manual of earth magic / \
         staff of earth ident:type / ring of protection ident:type / \
-        wand of scattershot ident:type / crystal plate armour w:5
+        wand of scattershot ident:type / crystal plate w:5
 KITEM:  2 = devastator
 : minmay_elemental_octagon_setup(_G)
 MAP
@@ -8067,7 +8067,7 @@ NSUBST: 7 = 2:H / *:.
 KMONS: _ = torpor snail patrolling
 KFEAT: _ = altar_cheibriados
 KITEM: _ = plate armour good_item ego:ponderousness no_pickup /\
-           crystal plate armour good_item ego:ponderousness no_pickup w:5 /\
+           crystal plate good_item ego:ponderousness no_pickup w:5 /\
            gold dragon scales good_item ego:ponderousness no_pickup w:5
 # general settings
 KMONS: T = torpor snail
@@ -9090,7 +9090,7 @@ ITEM:    executioner's axe good_item no_pickup w:5 / \
          glaive good_item randart no_pickup / \
          demon trident good_item no_pickup
 ITEM:    plate armour good_item randart w:20 no_pickup / \
-         crystal plate armour good_item no_pickup / \
+         crystal plate good_item no_pickup / \
          chain mail good_item randart no_pickup
 ITEM:    potion of berserk rage ident:type
 SHUFFLE: def
