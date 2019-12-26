@@ -3151,55 +3151,6 @@ void level_change(bool skip_attribute_increase)
                 }
                 break;
 
-            case SP_DEMONSPAWN:
-            {
-                bool gave_message = false;
-                int level = 0;
-                mutation_type first_body_facet = NUM_MUTATIONS;
-
-                for (const player::demon_trait trait : you.demonic_traits)
-                {
-                    if (is_body_facet(trait.mutation))
-                    {
-                        if (first_body_facet < NUM_MUTATIONS
-                            && trait.mutation != first_body_facet)
-                        {
-                            if (you.experience_level == level)
-                            {
-                                mprf(MSGCH_MUTATION, "You feel monstrous as "
-                                     "your demonic heritage exerts itself.");
-                                mark_milestone("monstrous", "discovered their "
-                                               "monstrous ancestry!");
-                            }
-                            break;
-                        }
-
-                        if (first_body_facet == NUM_MUTATIONS)
-                        {
-                            first_body_facet = trait.mutation;
-                            level = trait.level_gained;
-                        }
-                    }
-                }
-
-                for (const player::demon_trait trait : you.demonic_traits)
-                {
-                    if (trait.level_gained == you.experience_level)
-                    {
-                        if (!gave_message)
-                        {
-                            mprf(MSGCH_INTRINSIC_GAIN,
-                                 "Your demonic ancestry asserts itself...");
-
-                            gave_message = true;
-                        }
-                        perma_mutate(trait.mutation, 1, "demonic ancestry");
-                    }
-                }
-
-                break;
-            }
-
             case SP_FELID:
                 _felid_extra_life();
                 break;
@@ -3208,55 +3159,19 @@ void level_change(bool skip_attribute_increase)
                 break;
             }
 
-            if (you.char_class == JOB_DEMONSPAWN)
+            if (you.char_class == JOB_DEMONSPAWN || you.species == SP_DEMONSPAWN)
             {
-                bool gave_message = false;
-                int level = 0;
-                mutation_type first_body_facet = NUM_MUTATIONS;
-
-                for (const player::demon_trait trait : you.demonic_traits)
-                {
-                    if (is_body_facet(trait.mutation))
-                    {
-                        if (first_body_facet < NUM_MUTATIONS
-                            && trait.mutation != first_body_facet)
-                        {
-                            if (you.experience_level == level)
-                            {
-                                mprf(MSGCH_MUTATION, "You feel monstrous as "
-                                    "your demonic heritage exerts itself.");
-                                mark_milestone("monstrous", "discovered their "
-                                    "monstrous ancestry!");
-                            }
-                        }
-
-                        if (first_body_facet == NUM_MUTATIONS)
-                        {
-                            first_body_facet = trait.mutation;
-                            level = trait.level_gained;
-                        }
-                    }
-                }
-
                 for (const player::demon_trait trait : you.demonic_traits)
                 {
                     if (trait.level_gained == you.experience_level)
                     {
-                        if (!gave_message)
-                        {
-                            mprf(MSGCH_INTRINSIC_GAIN,
-                                "Your demonic ancestry asserts itself...");
-
-                            gave_message = true;
-                        }
+                        mprf(MSGCH_INTRINSIC_GAIN,
+                            "Your demonic ancestry asserts itself...");
                         perma_mutate(trait.mutation, 1, "demonic ancestry");
                     }
                 }
-;
             }
-
             give_level_mutations(you.species, you.experience_level);
-
         }
 
         if (species_is_draconian(you.species) && !(you.experience_level % 3))
