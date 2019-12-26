@@ -159,9 +159,13 @@ Khufu title
 
 Khufu the Undying Pharaoh
 %%%%
-Kirke title
+Circe title
 
-Kirke, Weaver of Myths
+Circe, Weaver of Myths
+%%%%
+Gammafunk title
+
+Gammafunk, Crafter of Traps
 %%%%
 Lom Lobon title
 

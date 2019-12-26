@@ -3152,7 +3152,7 @@ void hogs_to_humans()
     string final_msg;
     if (any > 0)
     {
-        final_msg = make_stringf("No longer under Kirke's spell, the %s %s %s!",
+        final_msg = make_stringf("No longer under Circe's spell, the %s %s %s!",
                                  any > 1 ? "hogs return to their"
                                          : "hog returns to its",
                                  any == human ? "human" : "original",
