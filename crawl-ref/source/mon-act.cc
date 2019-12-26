@@ -2883,6 +2883,18 @@ bool mon_can_move_to_pos(const monster* mons, const coord_def& delta,
     if (feat_is_endless(target_grid))
         return false;
 
+    if (!mons->friendly() && mons->is_summoned())
+    {
+        const actor * const summoner = actor_by_mid(mons->summoner);
+        if (summoner)
+        {
+            int x = grid_distance(targ, summoner->pos());
+            int y = grid_distance(mons->pos(), summoner->pos());
+            if (x > 4 && x >= y)
+                return false;
+        }
+    }
+
     // A confused monster will happily go wherever it can, regardless of
     // consequences.
     if (mons->confused() && mons->can_pass_through(targ))

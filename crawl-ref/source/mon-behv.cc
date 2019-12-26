@@ -359,6 +359,12 @@ void handle_behaviour(monster* mon)
         }
     }
 
+    if (!mon->friendly() && mon->is_summoned() && owner && grid_distance(mon->pos(), owner->pos()) > 8)
+    {
+        simple_monster_message(*mon, " has wandered too far from their summoner and loses cohesion!");
+        mon->lose_ench_duration(ENCH_ABJ, INFINITE_DURATION);
+    }
+
     // Change proxPlayer depending on invisibility and standing
     // in shallow water.
     if (proxPlayer && !you.visible_to(mon))

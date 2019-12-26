@@ -710,7 +710,7 @@ static void _catchup_monster_moves(monster* mon, int turns)
     if (mon->asleep() || mon->paralysed())
         return;
 
-
+    // BCADDO: Melt ice here?
 
     const int mon_turns = (turns * mon->speed) / 10;
     const int moves = min(mon_turns, 50);
