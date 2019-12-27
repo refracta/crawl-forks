@@ -3491,8 +3491,6 @@ void melee_attack::cleave_setup()
 // cleave damage modifier for additional attacks: 70% of base damage
 int melee_attack::cleave_damage_mod(int dam)
 {
-    if (weapon && is_unrandom_artefact(*weapon, UNRAND_GYRE))
-        return dam;
     return div_rand_round(dam * 7, 10);
 }
 

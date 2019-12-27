@@ -730,7 +730,17 @@ void get_cleave_targets(const actor &attacker, const coord_def& def,
 
     const item_def* weap = attacker.weapon(which_attack);
 
-    if (weap && item_attack_skill(*weap) == SK_AXES
+    if (weap && weap->base_type == OBJ_WEAPONS && weap->sub_type == WPN_SCYTHE)
+    {
+        for (rectangle_iterator ri(attacker.pos(), 2); ri; ++ri)
+        {
+            actor *target = actor_at(*ri);
+            if (target && !_dont_harm(attacker, *target))
+                targets.push_back(target);
+        }
+    }
+
+    else if (weap && item_attack_skill(*weap) == SK_AXES
             || attacker.is_player()
                && (you.form == transformation::hydra && you.heads() > 1
                    || you.duration[DUR_CLEAVE]))
@@ -772,11 +782,16 @@ void attack_cleave_targets(actor &attacker, list<actor*> &targets,
         }
     }
 
+    item_def* wpn = attacker.weapon(attack_number);
+    int range = 1;
+    if (wpn && wpn->base_type == OBJ_WEAPONS && wpn->sub_type == WPN_SCYTHE)
+        range = 2;
+
     while (attacker.alive() && !targets.empty())
     {
         actor* def = targets.front();
 
-        if (def && def->alive() && !_dont_harm(attacker, *def) && adjacent(attacker.pos(), def->pos()))
+        if (def && def->alive() && !_dont_harm(attacker, *def) && (grid_distance(attacker.pos(), def->pos()) <= range))
         {
             melee_attack attck(&attacker, def, attack_number,
                                ++effective_attack_number, true);
