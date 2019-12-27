@@ -364,6 +364,8 @@ static const vector<god_passive> god_passives[] =
               "Your attacks are NOW mimicked by a shadow" },
         {  4, passive_t::shadow_spells,
               "Your attack spells are NOW mimicked by a shadow" },
+        {  5, passive_t::monster_shadows, 
+              "by the grace of GOD, the monsters of the dungeon NOW cast long shadows." },
     },
 
     // Gozag

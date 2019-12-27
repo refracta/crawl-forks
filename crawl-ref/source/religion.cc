@@ -311,6 +311,9 @@ const vector<god_power> god_powers[NUM_GODS] =
       { 4, "Your shadow now sometimes tangibly mimics your actions.",
            "Your shadow no longer tangibly mimics your actions.",
            "Your shadow sometimes tangibly mimics your actions." },
+      { 5, "Monster shadows will now obscure the view of the dungeon.",
+           "Monster shadows no longer obscure the view."
+           "Monster shadows block monsters from seeing you and vice versa." },
       { 5, ABIL_DITHMENOS_SHADOW_FORM,
            "transform into a swirling mass of shadows" },
     },

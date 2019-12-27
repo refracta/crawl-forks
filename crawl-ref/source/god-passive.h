@@ -95,6 +95,9 @@ enum class passive_t
     /// Your shadow casts attack spells alongside you.
     shadow_spells,
 
+    /// Monsters block LoS.
+    monster_shadows,
+
     /// No accuracy penalty in umbra. Gain stealth in umbra.
     nightvision,
 
