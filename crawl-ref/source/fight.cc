@@ -735,7 +735,7 @@ void get_cleave_targets(const actor &attacker, const coord_def& def,
         for (rectangle_iterator ri(attacker.pos(), 2); ri; ++ri)
         {
             actor *target = actor_at(*ri);
-            if (target && !_dont_harm(attacker, *target))
+            if (target && !_dont_harm(attacker, *target) && (*ri != def))
                 targets.push_back(target);
         }
     }

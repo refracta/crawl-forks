@@ -228,10 +228,12 @@ static void _FINISHER_melee_effects(item_def* weapon, actor* attacker,
     if (mondied || dam == 0 || defender->is_player())
         return;
 
+    int local = dam > 1 ? 50 : 30;
+
     // Chance to insta-kill based on HD. From 1/4 for small HD popcorn down to
     // 1/10 for an Orb of Fire (compare to the 3/20 chance for banish or
     // instant teleport on distortion).
-    if (x_chance_in_y(50 - defender->get_hit_dice(), 200))
+    if (x_chance_in_y(max(1 , local - defender->get_hit_dice()), 200))
     {
         monster* mons = defender->as_monster();
         mons->flags |= MF_EXPLODE_KILL;

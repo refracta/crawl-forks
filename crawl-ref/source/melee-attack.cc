@@ -1018,6 +1018,21 @@ bool melee_attack::check_unrand_effects()
         if (weapon->unrand_idx == UNRAND_WYRMBANE && died)
             return true;
 
+        // Hack Hack Hack
+        if (weapon->unrand_idx == UNRAND_FINISHER)
+        {
+            if (damage_done > 0)
+            {
+                if (cleaving)
+                    unrand_entry->melee_effects(weapon, attacker, 
+                        defender, died, 1);
+                else
+                    unrand_entry->melee_effects(weapon, attacker, 
+                        defender, died, 2);
+            }
+            return !defender->alive();
+        }
+
         // Recent merge added damage_done to this method call
         unrand_entry->melee_effects(weapon, attacker, defender,
                                     died, damage_done);
