@@ -15,6 +15,7 @@
 #include "cio.h"
 #include "database.h"
 #include "describe.h"
+#include "directn.h"
 #include "english.h"
 #include "env.h"
 #include "eq-type-flags.h"
@@ -574,86 +575,26 @@ static formatted_string _beogh_extra_description()
         [] (monster* a, monster* b) { return a->experience > b->experience;});
 
     bool has_named_followers = false;
+    bool red = true;
     for (auto mons : followers)
     {
         if (!mons->is_named()) continue;
         has_named_followers = true;
 
-        desc += formatted_string(mons->full_name(DESC_PLAIN).c_str());
         if (companion_is_elsewhere(mons->mid))
         {
+            desc += formatted_string(mons->full_name(DESC_PLAIN).c_str());
             desc += formatted_string::parse_string(
                             " (<blue>on another level</blue>)");
         }
-        else if (given_gift(mons))
+        else
         {
-            // An orc can still lose its gift, e.g. by being turned into a
-            // shapeshifter via a chaos cloud. TODO: should the gift prop be
-            // deleted at that point?
-            desc.cprintf(" ( ");
-            item_def gift;
-
-            if (mons->props.exists(BEOGH_MELEE_WPN_GIFT_KEY))
-            {
-                gift = mitm[mons->inv[MSLOT_WEAPON]];
-                if (gift.defined())
-                {
-                    desc += formatted_string::parse_string(
-                        menu_colour_item_name(gift, DESC_PLAIN));
-                    desc.cprintf(" ");
-                }
-            }
-            if (mons->props.exists(BEOGH_RANGE_WPN_GIFT_KEY))
-            {
-                gift = mitm[mons->inv[MSLOT_ALT_WEAPON]];
-                if (gift.defined())
-                {
-                    desc += formatted_string::parse_string(
-                        menu_colour_item_name(gift, DESC_PLAIN));
-                    desc.cprintf(" ");
-                }
-            }
-            if (mons->props.exists(BEOGH_SH_GIFT_KEY))
-            {
-                gift = mitm[mons->inv[MSLOT_SHIELD]];
-                if (gift.defined())
-                {
-                    desc += formatted_string::parse_string(
-                        menu_colour_item_name(gift, DESC_PLAIN));
-                    desc.cprintf(" ");
-                }
-            }
-            if (mons->props.exists(BEOGH_ARM_GIFT_KEY))
-            {
-                gift = mitm[mons->inv[MSLOT_ARMOUR]];
-                if (gift.defined())
-                {
-                    desc += formatted_string::parse_string(
-                        menu_colour_item_name(gift, DESC_PLAIN));
-                    desc.cprintf(" ");
-                }
-            }
-            if (mons->props.exists(BEOGH_WAND_GIFT_KEY))
-            {
-                gift = mitm[mons->inv[MSLOT_WAND]];
-                if (gift.defined())
-                {
-                    desc += formatted_string::parse_string(
-                        menu_colour_item_name(gift, DESC_PLAIN));
-                    desc.cprintf(" ");
-                }
-            }
-            if (mons->props.exists(BEOGH_JEWEL_GIFT_KEY))
-            {
-                gift = mitm[mons->inv[MSLOT_WEAPON]];
-                if (gift.defined())
-                {
-                    desc += formatted_string::parse_string(
-                        menu_colour_item_name(gift, DESC_PLAIN));
-                    desc.cprintf(" ");
-                }
-            }
-            desc.cprintf(")");
+            monster_info mi(mons);
+            if (red)
+                desc += formatted_string::parse_string("<lightred>" + get_monster_equipment_desc(mi) + "</lightred>");
+            else
+                desc += formatted_string::parse_string("<lightblue>" + get_monster_equipment_desc(mi) + "</lightblue>");
+            red = !red;
         }
         desc.cprintf("\n");
     }
