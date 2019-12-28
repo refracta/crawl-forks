@@ -67,7 +67,7 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_BLINK,
     SPELL_SHROUD_OF_GOLUBRIA,
     SPELL_BECKONING,
-    SPELL_GRAVITAS,
+    SPELL_FORCE_LANCE,
     SPELL_TELEPORT_OTHER,
     SPELL_GOLUBRIAS_PASSAGE,
 },
@@ -199,8 +199,8 @@ static const vector<spell_type> spellbook_templates[] =
 },
 
 {   // Book of the Warp
-    SPELL_GRAVITAS,
     SPELL_PORTAL_PROJECTILE,
+    SPELL_BECKONING
     SPELL_FORCE_LANCE,
     SPELL_DISPERSAL,
     SPELL_CONTROLLED_BLINK,
@@ -281,8 +281,8 @@ static const vector<spell_type> spellbook_templates[] =
 {   // Book of Party Tricks
     SPELL_SUMMON_BUTTERFLIES,
     SPELL_APPORTATION,
-    SPELL_BECKONING,
     SPELL_TUKIMAS_DANCE,
+    SPELL_BECKONING,
     SPELL_INVISIBILITY
 },
 
