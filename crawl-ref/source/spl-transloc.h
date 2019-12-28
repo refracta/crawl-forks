@@ -32,4 +32,4 @@ int gravitas_range(int pow);
 bool fatal_attraction(const coord_def& pos, const actor *agent, int pow);
 spret cast_gravitas(int pow, const coord_def& where, bool fail);
 
-bool beckon(actor &beckoned, const bolt &path);
+bool beckon(coord_def &origin, actor &beckoned, const bolt &path, int pow);

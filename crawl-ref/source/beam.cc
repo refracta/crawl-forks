@@ -222,7 +222,6 @@ static void _ench_animation(int flavour, const monster* mon, bool force)
     case BEAM_BANISH:
     case BEAM_BLINK:
     case BEAM_BLINK_CLOSE:
-    case BEAM_BECKONING:
         elem = ETC_WARP;
         break;
     case BEAM_MAGIC:
@@ -3571,10 +3570,6 @@ void bolt::affect_player_enchantment(bool resistible)
         obvious_effect = true;
         break;
 
-    case BEAM_BECKONING:
-        obvious_effect = beckon(you, *this);
-        break;
-
     case BEAM_ENSLAVE:
         mprf(MSGCH_WARN, "Your will is overpowered!");
         confuse_player(5 + random2(3));
@@ -4055,6 +4050,9 @@ void bolt::affect_player()
         int blood = min(you.hp, pre_res_dam / 2);
         bleed_onto_floor(you.pos(), MONS_PLAYER, blood, true);
     }
+
+    if (origin_spell == SPELL_BECKONING && you.alive())
+        beckon(source, you, *this, damage.size);
 
     // Apply resistances to damage, but don't print "You resist" messages yet
     int final_dam = check_your_resists(pre_res_dam, flavour, "", this, false);
@@ -4674,6 +4672,12 @@ void bolt::monster_post_hit(monster* mon, int dmg)
         if (item && item->base_type == OBJ_MISSILES)
             m_brand = get_ammo_brand(*item);
 
+        if (origin_spell == SPELL_BECKONING && mon->alive())
+        {
+            actor &ma = *mon;
+            beckon(source, ma, *this, damage.size);
+        }
+
         if (item && item->base_type == OBJ_MISSILES
             && item->sub_type == MI_SLING_BULLET
             && !effect_known && mon->wont_attack())
@@ -4786,11 +4790,11 @@ void bolt::knockback_actor(actor *act, int dam)
 
     const int distance =
         (origin_spell == SPELL_FORCE_LANCE)
-            ? 1 + div_rand_round(ench_power, 40) :
+            ? 1 + div_rand_round(ench_power, 30) :
         (origin_spell == SPELL_CHILLING_BREATH) ? 2 : 1;
 
     const int roll = origin_spell == SPELL_FORCE_LANCE
-                     ? 7 + 0.27 * ench_power
+                     ? 7 + 0.5 * ench_power
                      : 17;
     const int weight = max_corpse_chunks(act->is_monster() ? act->type :
                                    player_species_to_mons_species(you.species));
@@ -5369,7 +5373,6 @@ bool bolt::has_saving_throw() const
     case BEAM_DISPEL_UNDEAD:
     case BEAM_BLINK_CLOSE:
     case BEAM_BLINK:
-    case BEAM_BECKONING:
     case BEAM_MALIGN_OFFERING:
     case BEAM_AGILITY:
     case BEAM_RESISTANCE:
@@ -5576,10 +5579,6 @@ mon_resist_type bolt::apply_enchantment_to_monster(monster* mon)
             obvious_effect = true;
         blink_other_close(mon, source);
         return MON_AFFECTED;
-
-    case BEAM_BECKONING:
-        obvious_effect = beckon(*mon, *this);
-        return obvious_effect ? MON_AFFECTED : MON_OTHER; // ?
 
     case BEAM_POLYMORPH:
         if (mon->polymorph(ench_power))
@@ -6528,7 +6527,6 @@ bool bolt::nasty_to(const monster* mon) const
             // Co-aligned inner flame is fine.
             return !mons_aligned(mon, agent());
         case BEAM_TELEPORT:
-        case BEAM_BECKONING:
             // Friendly and good neutral monsters don't mind being teleported.
             return !mon->wont_attack();
         case BEAM_INFESTATION:
@@ -6786,7 +6784,6 @@ static string _beam_type_name(beam_type type)
     case BEAM_DISINTEGRATION:        return "disintegration";
     case BEAM_BLINK:                 return "blink";
     case BEAM_BLINK_CLOSE:           return "blink close";
-    case BEAM_BECKONING:             return "beckoning";
     case BEAM_PETRIFY:               return "petrify";
     case BEAM_MAGIC_CANDLE:          return "magic candle";
     case BEAM_PORKALATOR:            return "porkalator";

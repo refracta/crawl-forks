@@ -52,7 +52,6 @@ enum beam_type                  // bolt::flavour
     BEAM_DISINTEGRATION,
     BEAM_BLINK,
     BEAM_BLINK_CLOSE,
-    BEAM_BECKONING,
     BEAM_PETRIFY,
     BEAM_PORKALATOR,
     BEAM_HIBERNATION,

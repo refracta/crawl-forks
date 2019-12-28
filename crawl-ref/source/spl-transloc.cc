@@ -1162,7 +1162,7 @@ spret cast_gravitas(int pow, const coord_def& where, bool fail)
  * @return              The closest point for the actor to be moved to;
  *                      guaranteed to be on the path or its original location.
  */
-static coord_def _beckon_destination(const actor &beckoned, const bolt &path)
+static coord_def _beckon_destination(const coord_def &origin, const actor &beckoned, const bolt &path, int pow)
 {
     if (beckoned.is_stationary()  // don't move statues, etc
         || mons_is_tentacle_or_tentacle_segment(beckoned.type)) // a mess...
@@ -1170,15 +1170,23 @@ static coord_def _beckon_destination(const actor &beckoned, const bolt &path)
         return beckoned.pos();
     }
 
+    pow -= 6;
+    int distance = grid_distance(origin, beckoned.pos());
+    distance -= div_rand_round(pow, 4);
+    coord_def retval = beckoned.pos();
+
     for (coord_def pos : path.path_taken)
     {
         if (actor_at(pos) || !beckoned.is_habitable(pos))
             continue; // actor could be caster, or a bush
 
-        return pos;
+        int x = grid_distance(pos, origin);
+
+        if (x >= distance && x < grid_distance(retval, origin))
+            retval = pos;
     }
 
-    return beckoned.pos(); // failed to find any point along the path
+    return retval;
 }
 
 /**
@@ -1190,9 +1198,9 @@ static coord_def _beckon_destination(const actor &beckoned, const bolt &path)
  * @param path      The path to move the creature along.
  * @return          Whether the beckoned creature actually moved.
  */
-bool beckon(actor &beckoned, const bolt &path)
+bool beckon(coord_def &origin, actor &beckoned, const bolt &path, int pow)
 {
-    const coord_def dest = _beckon_destination(beckoned, path);
+    const coord_def dest = _beckon_destination(origin, beckoned, path, pow);
     if (dest == beckoned.pos())
         return false;
 
@@ -1200,9 +1208,13 @@ bool beckon(actor &beckoned, const bolt &path)
     if (!beckoned.move_to_pos(dest))
         return false;
 
-    mprf("%s %s suddenly forward!",
-         beckoned.name(DESC_THE).c_str(),
-         beckoned.conj_verb("hurl").c_str());
+    mprf("%s %s wrenched violently forward by a lasso of force!",
+        beckoned.name(DESC_THE).c_str(),
+        beckoned.is_player() ? "are" : "is");
+
+    // If pulled adjacent ministun.
+    if (adjacent(origin, dest) && beckoned.is_monster())
+        beckoned.as_monster()->lose_energy(EUT_MOVE, 2, 1);
 
     beckoned.apply_location_effects(old_pos); // traps, etc.
     if (beckoned.is_monster())

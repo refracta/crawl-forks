@@ -495,6 +495,16 @@ int spell_levels_required(spell_type which_spell)
     {
         levels = 0;
     }
+    if (which_spell == SPELL_FORCE_LANCE
+        && you.has_spell(SPELL_BECKONING))
+    {
+        levels = 0;
+    }
+    else if (which_spell == SPELL_BECKONING
+        && you.has_spell(SPELL_FORCE_LANCE))
+    {
+        levels = 0;
+    }
 
     return levels;
 }

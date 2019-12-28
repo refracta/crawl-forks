@@ -823,9 +823,10 @@ Lehudib's Crystal Spear spell
 
 Hurls a lethally sharp shard of crystal.
 %%%%
-Lesser Beckoning spell
+Force Lasso spell
 
-Beckons the target forward, attempting to place them adjacent to the caster.
+Jerks the target forward violently, damaging and attempting to place them
+adjacent to the caster.
 %%%%
 Lightning Bolt spell
 

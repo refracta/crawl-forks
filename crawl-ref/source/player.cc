@@ -1365,6 +1365,9 @@ int player_spell_levels()
     bool STS = false;
     bool S2S = false;
 
+    bool lasso = false;
+    bool lance = false;
+
     for (const spell_type spell : you.spells)
     {
         if (spell == SPELL_LRD)
@@ -1375,6 +1378,10 @@ int player_spell_levels()
             STS = true;
         if (spell == SPELL_SNAKES_TO_STICKS)
             S2S = true;
+        if (spell == SPELL_FORCE_LANCE)
+            lance = true;
+        if (spell == SPELL_BECKONING)
+            lasso = true;
         if (spell != SPELL_NO_SPELL)
             sl -= spell_difficulty(spell);
     }
@@ -1384,6 +1391,9 @@ int player_spell_levels()
 
     if (LRD && SMD)
         sl += spell_difficulty(SPELL_LRD);
+
+    if (lance && lasso)
+        sl += spell_difficulty(SPELL_FORCE_LANCE);
 
     // Note: This can happen because of draining. -- bwr
     if (sl < 0)
