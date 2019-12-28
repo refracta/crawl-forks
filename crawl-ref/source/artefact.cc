@@ -994,7 +994,6 @@ static bool _init_artefact_properties(item_def &item)
         rap[i] = static_cast<short>(prop[i]);
     }
 
-
     return true;
 }
 
@@ -1615,19 +1614,19 @@ bool randart_is_bad(const item_def &item)
     return randart_is_bad(item, proprt);
 }
 
-static void _artefact_setup_prop_vectors(item_def &item)
+static void _artefact_setup_prop_vectors(item_def &item, bool curse = false)
 {
     CrawlHashTable &props = item.props;
-    if (!props.exists(ARTEFACT_PROPS_KEY))
-        props[ARTEFACT_PROPS_KEY].new_vector(SV_SHORT).resize(ART_PROPERTIES);
+    if (!props.exists(curse ? CURSE_PROPS_KEY : ARTEFACT_PROPS_KEY))
+        props[curse ? CURSE_PROPS_KEY : ARTEFACT_PROPS_KEY].new_vector(SV_SHORT).resize(ART_PROPERTIES);
 
-    CrawlVector &rap = props[ARTEFACT_PROPS_KEY].get_vector();
+    CrawlVector &rap = props[curse ? CURSE_PROPS_KEY : ARTEFACT_PROPS_KEY].get_vector();
     rap.set_max_size(ART_PROPERTIES);
 
     for (vec_size i = 0; i < ART_PROPERTIES; i++)
         rap[i].get_short() = 0;
 
-    if (!item.props.exists(KNOWN_PROPS_KEY))
+    if (!item.props.exists(KNOWN_PROPS_KEY) && !curse)
     {
         props[KNOWN_PROPS_KEY].new_vector(SV_BOOL).resize(ART_PROPERTIES);
         CrawlVector &known = item.props[KNOWN_PROPS_KEY].get_vector();
@@ -1635,6 +1634,27 @@ static void _artefact_setup_prop_vectors(item_def &item)
         for (vec_size i = 0; i < ART_PROPERTIES; i++)
             known[i] = static_cast<bool>(false);
     }
+}
+
+bool curse_item(item_def &item)
+{
+    if (item.base_type != OBJ_WEAPONS
+        && item.base_type != OBJ_ARMOURS
+        && item.base_type != OBJ_JEWELLERY
+        && item.base_type != OBJ_SHIELDS
+        && item.base_type != OBJ_STAVES)
+    {
+        return false;
+    }
+
+    _artefact_setup_prop_vectors(item, true);
+
+    return true;
+}
+
+bool apply_curse(item_def &item, artefact_prop_type prop)
+{
+    return true;
 }
 
 // If force_mundane is true, normally mundane items are forced to
