@@ -1593,11 +1593,11 @@ static void _generate_scroll_item(item_def& item, int force_type,
         // _is_boring_item). Otherwise just weighted-choose a scroll.
         do
         {
-            // total weight:    470  if depth_mod < 4
+            // total weight:    495  if depth_mod < 4
             //                  574  otherwise
             //                 -376  in sprint
             item.sub_type = random_choose_weighted(
-                112, SCR_REMOVE_CURSE,
+                112, SCR_RANDOM_USELESSNESS,
                  // [Cha] don't generate teleportation scrolls if in sprint
                 100, (crawl_state.game_is_sprint() ? NUM_SCROLLS
                                                    : SCR_TELEPORTATION),
@@ -1614,6 +1614,7 @@ static void _generate_scroll_item(item_def& item, int force_type,
                  15, (depth_mod < 4 ? NUM_SCROLLS : SCR_ACQUIREMENT),
                  15, (depth_mod < 4 ? NUM_SCROLLS : SCR_NOISE),
                  15, (depth_mod < 4 ? NUM_SCROLLS : SCR_SILENCE),
+                 15, (depth_mod < 4 ? NUM_SCROLLS : SCR_REMOVE_CURSE),
                  15, (depth_mod < 4 ? NUM_SCROLLS : SCR_BRAND_WEAPON),
                  15, (depth_mod < 4 ? NUM_SCROLLS : SCR_TORMENT),
                  15, (depth_mod < 4 ? NUM_SCROLLS : SCR_HOLY_WORD));
