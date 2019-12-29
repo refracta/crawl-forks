@@ -121,6 +121,13 @@ static string _item_inscription(const item_def &item)
             insparts.push_back(part);
     }
 
+    if (item_known_cursed(item))
+    {
+        const string part = artefact_inscription(item, true);
+        if (!part.empty())
+            insparts.push_back(part);
+    }
+
     if (!item.inscription.empty())
         insparts.push_back(item.inscription);
 

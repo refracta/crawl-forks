@@ -460,6 +460,23 @@ void artefact_desc_properties(const item_def &item,
     _populate_item_intrinsic_artps(item, proprt, known);
 }
 
+void curse_desc_properties(const item_def        &item,
+                           artefact_properties_t &curse)
+{
+    if (item.props.exists(CURSE_PROPS_KEY))
+    {
+        const CrawlVector &rap_vec =
+            item.props[CURSE_PROPS_KEY].get_vector();
+        ASSERT(rap_vec.get_type() == SV_SHORT);
+        ASSERT(rap_vec.size() == ART_PROPERTIES);
+        ASSERT(rap_vec.get_max_size() == ART_PROPERTIES);
+
+        for (vec_size i = 0; i < ART_PROPERTIES; i++)
+            curse[i] = rap_vec[i].get_short();
+    }
+    return;
+}
+
 static void _add_randart_weapon_brand(const item_def &item,
                                     artefact_properties_t &item_props)
 {
@@ -892,8 +909,11 @@ static void _get_randart_properties(const item_def &item,
     for (int i = 0; i < ARTP_NUM_PROPERTIES; ++i)
     {
         if (curse)
+        {
             art_prop_weights.emplace_back(static_cast<artefact_prop_type>(i),
                 artp_data[i].curse_weight);
+            mprf("%d, %d", artp_data[i].curse_weight, artp_data[i].weight);
+        }
         else
             art_prop_weights.emplace_back(static_cast<artefact_prop_type>(i),
                                           artp_data[i].weight);
@@ -950,7 +970,7 @@ static void _get_randart_properties(const item_def &item,
             continue;
 
         // don't choose the same prop twice
-        const auto weight_tuple = make_pair(prop, artp_data[prop].weight);
+        const auto weight_tuple = make_pair(prop, curse ? artp_data[prop].curse_weight : artp_data[prop].weight);
         const auto old_end = art_prop_weights.end();
         const auto new_end = std::remove(art_prop_weights.begin(), old_end,
                                          weight_tuple);
@@ -1651,6 +1671,10 @@ static void _artefact_setup_prop_vectors(item_def &item, bool curse = false)
 
 bool curse_item(item_def &item)
 {
+    // Already cursed?
+    if (item.flags & ISFLAG_CURSED)
+        return false;
+
     if (item.base_type != OBJ_WEAPONS
         && item.base_type != OBJ_ARMOURS
         && item.base_type != OBJ_JEWELLERY
@@ -1666,10 +1690,12 @@ bool curse_item(item_def &item)
 
     artefact_properties_t prop;
     prop.init(0);
-    _get_randart_properties(item, prop, 0, 2, true);
+    _get_randart_properties(item, prop, 0, 3, true);
 
     for (int i = 0; i < ART_PROPERTIES; i++)
         rap[i] = static_cast<short>(prop[i]);
+
+    item.flags |= ISFLAG_CURSED;
 
     return true;
 }

@@ -14,6 +14,7 @@
 
 #include "act-iter.h"
 #include "areas.h"
+#include "artefact.h"
 #include "attitude-change.h"
 #include "bloodspatter.h"
 #include "branch.h"
@@ -3665,7 +3666,8 @@ bool ashenzari_curse_item(int num_rc)
         return false;
     }
 
-    do_curse_item(item, false);
+//    do_curse_item(item, false);
+    curse_item(item); //BCADDO: Change this to fragile curse.
     learned_something_new(HINT_YOU_CURSED);
     return true;
 }

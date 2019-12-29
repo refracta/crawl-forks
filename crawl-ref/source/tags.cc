@@ -4577,6 +4577,7 @@ void unmarshallItem(reader &th, item_def &item)
 
     if (th.getMinorVersion() < TAG_MINOR_CURSE_REWORK)
     {
+        // BCADDO: FIXME.
         if (item.cursed() && !item.props.exists(CURSE_PROPS_KEY))
             curse_item(item);
 

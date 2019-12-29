@@ -107,6 +107,9 @@ void artefact_desc_properties(const item_def        &item,
                               artefact_properties_t &proprt,
                               artefact_known_props_t &known);
 
+void curse_desc_properties(const item_def        &item,
+                           artefact_properties_t &curse);
+
 void artefact_properties(const item_def       &item,
                          artefact_properties_t &proprt,
                          artefact_known_props_t &known);

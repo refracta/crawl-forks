@@ -256,7 +256,7 @@ const char* jewellery_base_ability_string(int subtype)
     return "";
 }
 
-#define known_proprt(prop) (proprt[(prop)] && known[(prop)])
+#define known_proprt(prop) (proprt[(prop)] && (known[(prop)]))
 
 /// How to display props of a given type?
 enum class prop_note
@@ -276,11 +276,15 @@ struct property_annotators
 };
 
 static vector<string> _randart_propnames(const item_def& item,
-                                         bool no_comma = false)
+                                         bool no_comma = false,
+                                         bool curse = false)
 {
     artefact_properties_t  proprt;
     artefact_known_props_t known;
-    artefact_desc_properties(item, proprt, known);
+    if (curse)
+        curse_desc_properties(item, proprt);
+    else 
+        artefact_desc_properties(item, proprt, known);
 
     vector<string> propnames;
 
@@ -338,61 +342,64 @@ static vector<string> _randart_propnames(const item_def& item,
         { ARTP_RMSL,                  prop_note::plain },
     };
 
-    const unrandart_entry *entry = nullptr;
-    if (is_unrandom_artefact(item))
-        entry = get_unrand_entry(item.unrand_idx);
+    if (!curse)
+    {
+        const unrandart_entry *entry = nullptr;
+        if (is_unrandom_artefact(item))
+            entry = get_unrand_entry(item.unrand_idx);
 
-    // For randart jewellery, note the base jewellery type if it's not
-    // covered by artefact_desc_properties()
-    if (item.base_type == OBJ_JEWELLERY
-        && (item_ident(item, ISFLAG_KNOW_TYPE)))
-    {
-        const char* type = jewellery_base_ability_string(item.sub_type);
-        if (*type)
-            propnames.push_back(type);
-    }
-    else if (item_brand_known(item)
-             && !(is_unrandom_artefact(item) && entry
-                  && entry->flags & UNRAND_FLAG_SKIP_EGO))
-    {
-        string ego;
-        if (item.base_type == OBJ_WEAPONS || (item.base_type == OBJ_SHIELDS && is_hybrid(item.sub_type)))
-            ego = weapon_brand_name(item, true);
-        else if (item.base_type == OBJ_ARMOURS || (item.base_type == OBJ_SHIELDS && !is_hybrid(item.sub_type)))
-            ego = armour_ego_name(item, true);
-        if (!ego.empty())
+        // For randart jewellery, note the base jewellery type if it's not
+        // covered by artefact_desc_properties()
+        if (item.base_type == OBJ_JEWELLERY
+            && (item_ident(item, ISFLAG_KNOW_TYPE)))
         {
-            // XXX: Ugly hack for adding a comma if needed.
-            bool extra_props = false;
-            for (const property_annotators &ann : propanns)
-                if (known_proprt(ann.prop) && ann.prop != ARTP_BRAND)
+            const char* type = jewellery_base_ability_string(item.sub_type);
+            if (*type)
+                propnames.push_back(type);
+        }
+        else if (item_brand_known(item)
+            && !(is_unrandom_artefact(item) && entry
+                && entry->flags & UNRAND_FLAG_SKIP_EGO))
+        {
+            string ego;
+            if (item.base_type == OBJ_WEAPONS || (item.base_type == OBJ_SHIELDS && is_hybrid(item.sub_type)))
+                ego = weapon_brand_name(item, true);
+            else if (item.base_type == OBJ_ARMOURS || (item.base_type == OBJ_SHIELDS && !is_hybrid(item.sub_type)))
+                ego = armour_ego_name(item, true);
+            if (!ego.empty())
+            {
+                // XXX: Ugly hack for adding a comma if needed.
+                bool extra_props = false;
+                for (const property_annotators &ann : propanns)
+                    if (known_proprt(ann.prop) && ann.prop != ARTP_BRAND)
+                    {
+                        extra_props = true;
+                        break;
+                    }
+
+                if (!no_comma && extra_props
+                    || is_unrandom_artefact(item)
+                    && entry && entry->inscrip != nullptr)
                 {
-                    extra_props = true;
-                    break;
+                    ego += ",";
                 }
 
-            if (!no_comma && extra_props
-                || is_unrandom_artefact(item)
-                   && entry && entry->inscrip != nullptr)
-            {
-                ego += ",";
+                propnames.push_back(ego);
             }
-
-            propnames.push_back(ego);
         }
-    }
 
-    if (is_unrandom_artefact(item) && entry && entry->inscrip != nullptr)
-        propnames.push_back(entry->inscrip);
+        if (is_unrandom_artefact(item) && entry && entry->inscrip != nullptr)
+            propnames.push_back(entry->inscrip);
+    }
 
     for (const property_annotators &ann : propanns)
     {
-        if (known_proprt(ann.prop))
+        if (known_proprt(ann.prop) || (proprt[ann.prop] && curse))
         {
             const int val = proprt[ann.prop];
 
             // Don't show rF+/rC- for =Fire, or vice versa for =Ice.
-            if (item.base_type == OBJ_JEWELLERY)
+            if (item.base_type == OBJ_JEWELLERY && !curse)
             {
                 if (item.sub_type == RING_FIRE
                     && (ann.prop == ARTP_FIRE && val == 1
@@ -438,17 +445,22 @@ static vector<string> _randart_propnames(const item_def& item,
     return propnames;
 }
 
-string artefact_inscription(const item_def& item)
+string artefact_inscription(const item_def& item, bool curse)
 {
     if (item.base_type == OBJ_BOOKS)
         return "";
 
-    const vector<string> propnames = _randart_propnames(item);
+    const vector<string> propnames = _randart_propnames(item, false, curse);
 
-    string insc = comma_separated_line(propnames.begin(), propnames.end(),
+    string insc = curse ? "(Curse: " : "";
+
+    insc += comma_separated_line(propnames.begin(), propnames.end(),
                                        " ", " ");
     if (!insc.empty() && insc[insc.length() - 1] == ',')
         insc.erase(insc.length() - 1);
+
+    if (curse)
+        insc += ")";
     return insc;
 }
 
