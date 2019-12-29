@@ -3649,10 +3649,7 @@ bool ashenzari_end_transfer(bool finished, bool force)
 bool ashenzari_curse_item(int num_rc)
 {
     ASSERT(num_rc > 0);
-    const string prompt_msg = make_stringf(
-            "Curse which item? (%d remove curse scroll%s left)"
-            " (Esc to abort)",
-            num_rc, num_rc == 1 ? "" : "s");
+    const string prompt_msg = "Curse which item? (Esc to abort)";
     const int item_slot = prompt_invent_item(prompt_msg.c_str(),
                                              menu_type::invlist,
                                              OSEL_CURSABLE, OPER_ANY,

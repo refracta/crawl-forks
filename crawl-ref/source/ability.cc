@@ -109,7 +109,7 @@ enum class abflag
                         //0x00008000,
                         //0x00010000,
                         //0x00020000,
-    remove_curse_scroll = 0x00040000, // Uses ?rc
+                        //0x00040000, // was remove_curse_scroll
     skill_drain         = 0x00080000, // drains skill levels
     gold                = 0x00100000, // costs gold
     sacrifice           = 0x00200000, // sacrifice (Ru)
@@ -503,7 +503,7 @@ static const ability_def Ability_List[] =
 
     // Ashenzari
     { ABIL_ASHENZARI_CURSE, "Curse Item",
-      0, 0, 0, 0, {fail_basis::invo}, abflag::remove_curse_scroll },
+      0, 0, 0, 0, {fail_basis::invo}, abflag::none },
     { ABIL_ASHENZARI_SCRYING, "Scrying",
       4, 0, 0, 3, {fail_basis::invo}, abflag::instant },
     { ABIL_ASHENZARI_TRANSFER_KNOWLEDGE, "Transfer Knowledge",
@@ -763,9 +763,6 @@ const string make_cost_description(ability_type ability)
     if (abil.flags & abflag::skill_drain)
         ret += ", Skill drain";
 
-    if (abil.flags & abflag::remove_curse_scroll)
-        ret += ", Scroll of remove curse";
-
     if (abil.flags & abflag::gold)
     {
         const int amount = get_gold_cost(ability);
@@ -846,12 +843,6 @@ static const string _detailed_cost_description(ability_type ability)
             ret << "free";
         else
             ret << "variable";
-    }
-
-    if (abil.flags & abflag::remove_curse_scroll)
-    {
-        have_cost = true;
-        ret << "\nOne scroll of remove curse";
     }
 
     if (!have_cost)
@@ -2807,25 +2798,8 @@ static spret _do_ability(const ability_def& abil, bool fail)
     case ABIL_ASHENZARI_CURSE:
     {
         fail_check();
-        auto iter = find_if(begin(you.inv), end(you.inv),
-                [] (const item_def &it) -> bool
-                {
-                    return it.defined()
-                           && it.is_type(OBJ_SCROLLS, SCR_REMOVE_CURSE)
-                           && check_warning_inscriptions(it, OPER_DESTROY);
-                });
-        if (iter != end(you.inv))
-        {
-            if (ashenzari_curse_item(iter->quantity))
-                dec_inv_item_quantity(iter - begin(you.inv), 1);
-            else
-                return spret::abort;
-        }
-        else
-        {
-            mpr("You need a scroll of remove curse to do this.");
+        if (!ashenzari_curse_item(1))
             return spret::abort;
-        }
         break;
     }
 
