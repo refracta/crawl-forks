@@ -3595,24 +3595,8 @@ void read_scroll(item_def& scroll)
 #if TAG_MAJOR_VERSION == 34
     case SCR_CURSE_WEAPON:
     {
-        // Not you.weapon() because we want to handle melded weapons too.
-        item_def * const weapon = you.slot_item(EQ_WEAPON0, true);
-        if (!weapon || !is_weapon(*weapon) || weapon->cursed())
-        {
-            bool plural = false;
-            const string weapon_name =
-                weapon ? weapon->name(DESC_YOUR)
-                       : "Your " + you.hand_name(true, &plural);
-            mprf("%s very briefly gain%s a black sheen.",
-                 weapon_name.c_str(), plural ? "" : "s");
-        }
-        else
-        {
-            // Also sets wield_change.
-            do_curse_item(*weapon, false);
-            learned_something_new(HINT_YOU_CURSED);
-            bad_effect = true;
-        }
+        mpr("This item has been removed, sorry!");
+        cancel_scroll = true;
         break;
     }
 #endif
@@ -3654,8 +3638,8 @@ void read_scroll(item_def& scroll)
     case SCR_CURSE_ARMOUR:
     case SCR_CURSE_JEWELLERY:
     {
-        const bool armour = which_scroll == SCR_CURSE_ARMOUR;
-        cancel_scroll = !curse_item(armour, pre_succ_msg);
+        mpr("This item has been removed, sorry!");
+        cancel_scroll = true;
         break;
     }
 

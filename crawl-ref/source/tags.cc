@@ -4561,15 +4561,37 @@ void unmarshallItem(reader &th, item_def &item)
     if (item.base_type == OBJ_GOLD)
         item.special = 0;
 
-    if (item.base_type == OBJ_WEAPONS && item.sub_type == WPN_BLOWGUN)
-        item.base_type = OBJ_MISSILES;
-
-    if (item.base_type == OBJ_MISSILES && !item_is_stationary_net(item))
+    if (th.getMinorVersion() < TAG_MINOR_REMOVE_AMMO)
     {
-        item.sub_type = MI_STONE;
-        item.quantity = 1;
-        item.plus = item.plus2 = 0;
-        item.brand = SPMSL_NORMAL;
+        if (item.base_type == OBJ_WEAPONS && item.sub_type == WPN_BLOWGUN)
+            item.base_type = OBJ_MISSILES;
+
+        if (item.base_type == OBJ_MISSILES && !item_is_stationary_net(item))
+        {
+            item.sub_type = MI_STONE;
+            item.quantity = 1;
+            item.plus = item.plus2 = 0;
+            item.brand = SPMSL_NORMAL;
+        }
+    }
+
+    if (th.getMinorVersion() < TAG_MINOR_CURSE_REWORK)
+    {
+        if (item.cursed() && !item.props.exists(CURSE_PROPS_KEY))
+            curse_item(item);
+
+        if (item.base_type == OBJ_SCROLLS && item.sub_type == SCR_REMOVE_CURSE)
+        {
+            if (item.quantity == 1)
+            {
+                if (!one_chance_in(5))
+                    item.sub_type = SCR_RANDOM_USELESSNESS;
+            }
+            else
+                item.quantity = div_rand_round(item.quantity, 5);
+        }
+
+        // BCADDO: Ashenzari Case here.
     }
 
     if (th.getMinorVersion() < TAG_MINOR_REMOVE_ITEM_COLOUR)

@@ -232,6 +232,8 @@ enum tag_minor_version
     TAG_MINOR_SINGULAR_THEY,       // Add singular they pronouns
     TAG_MINOR_ABYSS_UNIQUE_VAULTS, // Separate abyss vault tracking from main dungeon
     TAG_MINOR_INCREMENTAL_PREGEN,  // save tracks whether the game is an incremental pregen game
+    TAG_MINOR_REMOVE_AMMO,         // Removal of Ammunition/Missile items
+    TAG_MINOR_CURSE_REWORK,        // Change from basic curses to negative artProp curses
 #endif
     NUM_TAG_MINORS,
     TAG_MINOR_VERSION = NUM_TAG_MINORS - 1
