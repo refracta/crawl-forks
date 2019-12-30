@@ -529,13 +529,16 @@ struct property_descriptor
     bool is_graded_resist;
 };
 
-static string _randart_descrip(const item_def &item)
+static string _randart_descrip(const item_def &item, bool curse = false)
 {
     string description;
 
     artefact_properties_t  proprt;
     artefact_known_props_t known;
-    artefact_desc_properties(item, proprt, known);
+    if (curse)
+        curse_desc_properties(item, proprt);
+    else
+        artefact_desc_properties(item, proprt, known);
 
     const property_descriptor propdescs[] =
     {
@@ -585,7 +588,7 @@ static string _randart_descrip(const item_def &item)
 
     // Give a short description of the base type, for base types with no
     // corresponding ARTP.
-    if (item.base_type == OBJ_JEWELLERY
+    if (!curse && item.base_type == OBJ_JEWELLERY
         && (item_ident(item, ISFLAG_KNOW_TYPE)))
     {
         const char* type = _jewellery_base_ability_description(item.sub_type);
@@ -598,7 +601,7 @@ static string _randart_descrip(const item_def &item)
 
     for (const property_descriptor &desc : propdescs)
     {
-        if (known_proprt(desc.property))
+        if (known_proprt(desc.property) || proprt[desc.property] && curse)
         {
             string sdesc = desc.desc;
 
@@ -631,7 +634,7 @@ static string _randart_descrip(const item_def &item)
         }
     }
 
-    if (known_proprt(ARTP_STEALTH))
+    if (known_proprt(ARTP_STEALTH) || proprt[ARTP_STEALTH] && curse)
     {
         const int stval = proprt[ARTP_STEALTH];
         char buf[80];
@@ -2495,15 +2498,25 @@ string get_item_description(const item_def &item, bool verbose,
     }
 
     if (!verbose && item_known_cursed(item))
-        description << "\nIt has a curse placed upon it.";
+    {
+        description << "\nIt has a curse placed upon it. { ";
+        description << artefact_inscription(item, true);
+        description << "}";
+    }
     else
     {
         if (verbose)
         {
             if (need_extra_line)
                 description << "\n";
+
             if (item_known_cursed(item))
-                description << "\nIt has a curse placed upon it.";
+            {
+                description << "\nThis item has the following curse placed upon it:";
+                description << _randart_descrip(item, true);
+                if (is_artefact(item))
+                    description << "\n";
+            }
 
             if (is_artefact(item))
             {
