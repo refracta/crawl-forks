@@ -296,11 +296,14 @@ static void _unequip_invis()
 
 static void _unequip_fragile_artefact(item_def& item, bool meld)
 {
-    ASSERT(is_artefact(item));
+    ASSERT(is_artefact(item) || item.cursed());
 
     artefact_properties_t proprt;
     artefact_known_props_t known;
-    artefact_properties(item, proprt, known);
+    if (is_artefact(item))
+        artefact_properties(item, proprt, known);
+    if (item.cursed())
+        curse_desc_properties(item, proprt);
 
     if (proprt[ARTP_FRAGILE] && !meld)
     {
@@ -315,11 +318,14 @@ static void _unequip_artefact_effect(item_def &item,
                                      bool weapon,
                                      bool wielding_wield = false)
 {
-    ASSERT(is_artefact(item));
+    ASSERT(is_artefact(item) || item.cursed());
 
     artefact_properties_t proprt;
     artefact_known_props_t known;
-    artefact_properties(item, proprt, known);
+    if (is_artefact(item))
+        artefact_properties(item, proprt, known);
+    if (item.cursed())
+        curse_desc_properties(item, proprt);
     const bool msg = !show_msgs || *show_msgs;
 
     if (proprt[ARTP_AC] || proprt[ARTP_SHIELDING])
@@ -656,7 +662,7 @@ static void _unequip_weapon_effect(item_def& real_item, bool showMsgs,
 
     // Call this first, so that the unrandart func can set showMsgs to
     // false if it does its own message handling.
-    if (is_artefact(item))
+    if (is_artefact(item) || item.cursed())
     {
         _unequip_artefact_effect(real_item, &showMsgs, meld, slot,
                                  true);
@@ -887,9 +893,9 @@ static void _wielding_wear_effects(bool unwield, bool unmeld)
         }
         
         bool * dummy;
-        if (you.weapon(0) && is_artefact(*you.weapon(0)))
+        if (you.weapon(0) && (is_artefact(*you.weapon(0)) || you.weapon(0)->cursed()))
             _unequip_artefact_effect(*you.weapon(0), dummy, false, EQ_WEAPON0, true, true);
-        if (you.weapon(1) && is_artefact(*you.weapon(1)))
+        if (you.weapon(1) && (is_artefact(*you.weapon(1)) || you.weapon(1)->cursed()))
             _unequip_artefact_effect(*you.weapon(1), dummy, false, EQ_WEAPON1, true, true);
     }
 }
@@ -1221,7 +1227,7 @@ static void _unequip_armour_effect(item_def& item, bool meld,
         break;
     }
 
-    if (is_artefact(item))
+    if (is_artefact(item) || item.cursed())
         _unequip_artefact_effect(item, nullptr, meld, slot, false);
 }
 
@@ -1548,7 +1554,7 @@ static void _unequip_jewellery_effect(item_def &item, bool mesg, bool meld,
         break;
     }
 
-    if (is_artefact(item))
+    if (is_artefact(item) || item.cursed())
         _unequip_artefact_effect(item, &mesg, meld, slot, false);
 
     // Must occur after ring is removed. -- bwr
