@@ -655,10 +655,10 @@ tileidx_t tileidx_feature(const coord_def &gc)
     }
 }
 
-static tileidx_t _mon_random(tileidx_t tile)
+static tileidx_t _mon_random(tileidx_t tile, int mon_id)
 {
     int count = tile_player_count(tile);
-    return tile + ui_random(count);
+    return tile + hash_with_seed(count, mon_id, you.frame_no);
 }
 
 #ifdef USE_TILE
@@ -756,7 +756,7 @@ tileidx_t tileidx_tentacle(const monster_info& mon)
             }
 
             bool vary = !(mon.props.exists("fake") && mon.props["fake"].get_bool());
-            return vary ? _mon_random(tile) : tile;
+            return vary ? _mon_random(tile, t_pos.y*GXM + t_pos.x) : tile;
         }
 
         // Different handling according to relative positions.
@@ -961,7 +961,7 @@ void tileidx_out_of_los(tileidx_t *fg, tileidx_t *bg, tileidx_t *cloud, const co
     if (env.map_knowledge(gc).detected_monster())
     {
         ASSERT(cell.monster() == MONS_SENSED);
-        *fg = tileidx_monster_base(cell.monsterinfo()->base_type);
+        *fg = tileidx_monster_base(cell.monsterinfo()->base_type, 0);
     }
     else if (env.map_knowledge(gc).detected_item())
         *fg = tileidx_item(*cell.item());
@@ -1453,8 +1453,8 @@ static tileidx_t _modrng(int mod, tileidx_t first, tileidx_t last)
 // To avoid needless duplication of a cases in tileidx_monster, some
 // extra parameters that have reasonable defaults for monsters where
 // only the type is known are pushed here.
-tileidx_t tileidx_monster_base(int type, bool in_water, int colour, int number,
-                               int tile_num_prop, bool vary)
+tileidx_t tileidx_monster_base(int type, int mon_id, bool in_water, int colour,
+                               int number, int tile_num_prop, bool vary)
 {
     switch (type)
     {
@@ -1514,7 +1514,7 @@ tileidx_t tileidx_monster_base(int type, bool in_water, int colour, int number,
     case TVARY_CYCLE:
         return _mon_cycle(base_tile, tile_num_prop);
     case TVARY_RANDOM:
-        return _mon_random(base_tile);
+        return _mon_random(base_tile, mon_id);
     case TVARY_WATER:
         return base_tile + (in_water ? 1 : 0);
     case TVARY_SPECIES:
@@ -1732,8 +1732,9 @@ static tileidx_t _tileidx_monster_no_props(const monster_info& mon)
         tile_num = mon.props[TILE_NUM_KEY].get_short();
 
     bool vary = !(mon.props.exists("fake") && mon.props["fake"].get_bool());
-    const tileidx_t base = tileidx_monster_base(mon.type, in_water,
-                                                mon.colour(true),
+    const tileidx_t base = tileidx_monster_base(mon.type,
+                                                mon.pos.y*GXM + mon.pos.x,
+                                                in_water, mon.colour(true),
                                                 mon.number, tile_num, vary);
 
     switch (mon.type)
@@ -2124,7 +2125,7 @@ tileidx_t tileidx_player_mons()
     case MONS_CENTAUR_WARRIOR: return TILEP_MONS_CENTAUR_WARRIOR_MELEE;
     case MONS_YAKTAUR:         return TILEP_MONS_YAKTAUR_MELEE;
     case MONS_YAKTAUR_CAPTAIN: return TILEP_MONS_YAKTAUR_CAPTAIN_MELEE;
-    default:                   return tileidx_monster_base(mons);
+    default:                   return tileidx_monster_base(mons, 0);
     }
 }
 
@@ -3087,8 +3088,9 @@ tileidx_t tileidx_cloud(const cloud_info &cl)
                                           tile_main_count(tile_info.base) - 1);
                 break;
             case CTVARY_RANDOM:
-                ch = tile_info.base
-                     + ui_random(tile_main_count(tile_info.base));
+                ch = tile_info.base + hash_with_seed(
+                        tile_main_count(tile_info.base),
+                        cl.pos.y * GXM + cl.pos.x, you.frame_no);
                 break;
         }
 
