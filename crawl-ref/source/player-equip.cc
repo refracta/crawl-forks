@@ -412,27 +412,12 @@ static void _equip_use_warning(const item_def& item)
 #endif
 }
 
-static void _wield_cursed(item_def& item, bool known_cursed, bool unmeld)
+static void _wield_cursed(item_def& item, bool unmeld)
 {
-    if (!item.cursed() || unmeld)
+    // BCADNOTE: the setup for the soulbinding XP goes here.
+    if (!item.soul_bound() || unmeld)
         return;
-    else if (you.get_mutation_level(MUT_GHOST) == 1) {
-        mprf("Your %s temporarily phases out of reality as it tries to stick to you.", you.hand_name(false).c_str());
-        return;
-    }
-    mprf("It sticks to your %s!", you.hand_name(false).c_str());
-    int amusement = 16;
-    if (!known_cursed)
-    {
-        amusement *= 2;
-        if (origin_as_god_gift(item) == GOD_XOM)
-            amusement *= 2;
-    }
-    const int wpn_skill = item_attack_skill(item.base_type, item.sub_type);
-    if (wpn_skill != SK_FIGHTING && you.skills[wpn_skill] == 0)
-        amusement *= 2;
-
-    xom_is_stimulated(amusement);
+    mpr("It binds to your soul!");
 }
 
 // Provide a function for handling initial wielding of 'special'
@@ -457,7 +442,7 @@ static void _equip_weapon_effect(item_def& item, bool showMsgs, bool unmeld, equ
             calc_mp();
         }
 
-        _wield_cursed(item, known_cursed, unmeld);
+        _wield_cursed(item, unmeld);
     }
 
     else if ((item.base_type == OBJ_SHIELDS && is_hybrid(item.sub_type)) || item.base_type == OBJ_WEAPONS)
@@ -646,7 +631,7 @@ static void _equip_weapon_effect(item_def& item, bool showMsgs, bool unmeld, equ
                 break;
             }
         }
-        _wield_cursed(item, known_cursed || known_recurser, unmeld);
+        _wield_cursed(item, unmeld);
     }
 }
 
@@ -1052,27 +1037,8 @@ static void _equip_armour_effect(item_def& arm, bool unmeld,
         _equip_artefact_effect(arm, &show_msgs, unmeld, slot);
     }
 
-    if (arm.cursed() && !unmeld)
-    {
-        if (you.get_mutation_level(MUT_GHOST) == 0)
-        {
-            mpr("Oops, that feels deathly cold.");
-            learned_something_new(HINT_YOU_CURSED);
-        
-            if (!known_cursed)
-            {
-                int amusement = 64;
-
-                if (origin_as_god_gift(arm) == GOD_XOM)
-                    amusement *= 2;
-
-                xom_is_stimulated(amusement);
-            }
-        
-        }
-        else
-            mpr("You feel a curse try and fail to bind to your spectral form.");
-    }
+    if (arm.soul_bound() && !unmeld)
+        _wield_cursed(arm, false);
 
     you.redraw_armour_class = true;
     you.redraw_evasion = true;
@@ -1459,30 +1425,8 @@ static void _equip_jewellery_effect(item_def &item, bool unmeld,
         set_ident_flags(item, ISFLAG_IDENT_MASK);
     }
 
-    if (item.cursed() && !unmeld)
-    {
-        if (you.get_mutation_level(MUT_GHOST) == 0)
-        {
-            mprf("Oops, that %s feels deathly cold.",
-                jewellery_is_amulet(item) ? "amulet" : "ring");
-            learned_something_new(HINT_YOU_CURSED);
-
-            int amusement = 32;
-            if (!known_cursed && !known_bad)
-            {
-                amusement *= 2;
-
-                if (origin_as_god_gift(item) == GOD_XOM)
-                    amusement *= 2;
-            }
-            xom_is_stimulated(amusement);
-        }
-        else
-            mpr("You feel a curse try and fail to bind to your spectral form.");
-    }
-
-    // Cursed or not, we know that since we've put the ring on.
-    set_ident_flags(item, ISFLAG_KNOW_CURSE);
+    if (item.soul_bound() && !unmeld)
+        _wield_cursed(item, unmeld);
 
     if (!unmeld)
         mprf_nocap("%s", item.name(DESC_INVENTORY_EQUIP).c_str());

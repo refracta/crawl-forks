@@ -347,8 +347,7 @@ bool can_wield(const item_def *weapon, bool say_reason,
     if (!ignore_temporary_disability
         && you.weapon(0)
         && (you.hands_reqd(*you.weapon(0)) == HANDS_TWO)
-        && you.weapon(0)->cursed()
-        && you.get_mutation_level(MUT_GHOST) == 0)
+        && you.weapon(0)->soul_bound())
     {
         SAY(mprf("You can't unwield your %s%s!",
                 you.weapon(0)->base_type == OBJ_SHIELDS ? "shield" : "weapon",
@@ -359,8 +358,7 @@ bool can_wield(const item_def *weapon, bool say_reason,
     if (!ignore_temporary_disability
         && you.weapon(1)
         && (you.hands_reqd(*you.weapon(1)) == HANDS_TWO)
-        && you.weapon(1)->cursed()
-        && you.get_mutation_level(MUT_GHOST) == 0)
+        && you.weapon(1)->soul_bound())
     {
         SAY(mprf("You can't unwield your %s%s!",
             you.weapon(1)->base_type == OBJ_SHIELDS ? "shield" : "weapon",
@@ -371,11 +369,10 @@ bool can_wield(const item_def *weapon, bool say_reason,
     if (!ignore_temporary_disability
         && you.weapon(0)
         && you.weapon(1)
-        && you.weapon(0)->cursed()
-        && you.weapon(1)->cursed()
-        && you.get_mutation_level(MUT_GHOST) == 0)
+        && you.weapon(0)->soul_bound()
+        && you.weapon(1)->soul_bound())
     {
-        SAY(mprf("You're wielding two cursed items!"));
+        SAY(mprf("You're soul bound to two items!"));
         return false;
     }
 
@@ -608,10 +605,10 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
         }
         else
         {
-            if (((you.weapon(0) && you.inv[you.equip[EQ_WEAPON0]].cursed()) || (you.weapon(1) && you.inv[you.equip[EQ_WEAPON1]].cursed()))
-                && you.get_mutation_level(MUT_GHOST) == 0)
+            if ((you.weapon(0) && you.inv[you.equip[EQ_WEAPON0]].soul_bound()) 
+                || (you.weapon(1) && you.inv[you.equip[EQ_WEAPON1]].soul_bound()))
             {
-                mpr("You can't swap weapons while either is cursed.");
+                mpr("You can't swap weapons while either is bound to your soul.");
                 return false;
             }
             if (you.weapon(0) && is_range_weapon(*you.weapon(0)))
@@ -681,9 +678,9 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
             if (you.weapon(1))
             {
 
-                if (you.weapon(1)->cursed() && you.get_mutation_level(MUT_GHOST) == 0)
+                if (you.weapon(1)->soul_bound())
                     wpn = you.weapon(0);
-                else if (you.weapon(0)->cursed() && you.get_mutation_level(MUT_GHOST) == 0)
+                else if (you.weapon(0)->soul_bound())
                     wpn = you.weapon(1);
                 else if (auto_wield)
                 {
@@ -743,7 +740,7 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
         if (!_safe_to_remove_or_wear(*wpn, true))
             return false;
 
-        if (wpn->cursed() && you.get_mutation_level(MUT_GHOST) == 0)
+        if (wpn->soul_bound())
         {
             mprf("You can't unwield your %s.", wpn->base_type == OBJ_SHIELDS ? "shield" : "weapon");
             return false;
@@ -828,12 +825,12 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
     {
         if (you.weapon(0))
         {
-            if (you.weapon(0)->cursed() && you.get_mutation_level(MUT_GHOST) == 0)
+            if (you.weapon(0)->soul_bound())
             {
                 mpr("You can't unwield what's in your right hand.");
                 return false;
             }
-            if (you.weapon(1) && you.weapon(1)->cursed() && you.get_mutation_level(MUT_GHOST) == 0)
+            if (you.weapon(1) && you.weapon(1)->soul_bound())
             {
                 mpr("You can't unwield what's in your left hand.");
                 return false;
@@ -848,7 +845,7 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
         }
         if (you.weapon(1))
         {
-            if (you.weapon(1)->cursed() && you.get_mutation_level(MUT_GHOST) == 0)
+            if (you.weapon(1)->soul_bound())
             {
                 mpr("You can't unwield what's in your left hand.");
                 return false;
@@ -866,7 +863,7 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
 
     else if (is_range_weapon(new_wpn))
     {
-        if (you.weapon(0) && you.weapon(0)->cursed() && you.get_mutation_level(MUT_GHOST) == 0)
+        if (you.weapon(0) && you.weapon(0)->soul_bound())
         
         {
             mpr("You can't unwield what's in your right hand.");
@@ -889,7 +886,7 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
 
     else if (new_wpn.base_type == OBJ_STAVES && you.weapon(0) && you.weapon(0)->base_type == OBJ_STAVES)
     {
-        if (you.weapon(0)->cursed() && you.get_mutation_level(MUT_GHOST) == 0)
+        if (you.weapon(0)->soul_bound())
         {
             mpr("You can't unwield your magical staff to draw a new one.");
             return false;
@@ -906,7 +903,7 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
 
     else if (new_wpn.base_type == OBJ_STAVES && you.weapon(1) && you.weapon(1)->base_type == OBJ_STAVES)
     {
-        if (you.weapon(1)->cursed() && you.get_mutation_level(MUT_GHOST) == 0)
+        if (you.weapon(1)->soul_bound())
 
         {
             mpr("You can't unwield your magical staff to draw a new one.");
@@ -942,7 +939,7 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
             equip_item(EQ_WEAPON1, item_slot, show_weff_messages);
     }
 
-    else if (you.weapon(0)->cursed() && you.get_mutation_level(MUT_GHOST) == 0)
+    else if (you.weapon(0)->soul_bound())
     {
 
         if (!_handle_warning(*you.weapon(1)))
@@ -951,7 +948,7 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
             equip_item(EQ_WEAPON1, item_slot, show_weff_messages);
     }
 
-    else if (you.weapon(1)->cursed() && you.get_mutation_level(MUT_GHOST) == 0)
+    else if (you.weapon(1)->soul_bound())
     {
         if (!_handle_warning(*you.weapon(0)))
             return false;
@@ -1097,11 +1094,10 @@ bool armour_prompt(const string & mesg, int *index, operation_types oper)
 // swap if they don't fit the function's requirements.
 bool double_swap()
 {
-    if (you.get_mutation_level(MUT_GHOST) == 0 && 
-        ((you.weapon(0) && you.weapon(0)->cursed()) ||
-        (you.weapon(1) && you.weapon(1)->cursed())))
+    if ((you.weapon(0) && you.weapon(0)->soul_bound()) ||
+        (you.weapon(1) && you.weapon(1)->soul_bound()))
     {
-        mpr("You can't dualswap while wielding a cursed weapon!");
+        mpr("You can't dualswap while would bound to a weapon!");
         return false;
     }
 
@@ -1662,7 +1658,7 @@ static bool _can_takeoff_armour(int item)
     }
 
     // If we get here, we're wearing the item.
-    if (invitem.cursed() && you.get_mutation_level(MUT_GHOST) == 0)
+    if (invitem.soul_bound())
     {
         mprf("%s is stuck to your body!", invitem.name(DESC_YOUR).c_str());
         return false;
@@ -2071,7 +2067,7 @@ static bool _swap_rings(int ring_slot)
                 }
             }
 
-            if (ring->cursed() && you.get_mutation_level(MUT_GHOST) == 0)
+            if (ring->soul_bound())
                 cursed++;
             else if (strstr(ring->inscription.c_str(), "=R"))
             {
@@ -2237,9 +2233,9 @@ static bool _can_puton_jewellery(int item_slot)
     if (is_amulet)
     {
         int existing = you.equip[EQ_AMULET];
-        if (existing != -1 && you.inv[existing].cursed() && you.get_mutation_level(MUT_GHOST) == 0)
+        if (existing != -1 && you.inv[existing].soul_bound())
         {
-            mprf("%s is stuck to you!",
+            mprf("%s is bound to your soul!",
                  you.inv[existing].name(DESC_YOUR).c_str());
             return false;
         }
@@ -2260,7 +2256,7 @@ static bool _can_puton_jewellery(int item_slot)
                 continue;
             }
             int existing = you.equip[eq];
-            if (existing != -1 && you.inv[existing].cursed() && you.get_mutation_level(MUT_GHOST) == 0)
+            if (existing != -1 && you.inv[existing].soul_bound())
                 cursed++;
             else
                 // We found an available slot. We're done.
@@ -2270,7 +2266,7 @@ static bool _can_puton_jewellery(int item_slot)
         if (melded == (int)slots.size())
             mpr("You can't wear that in your present form.");
         else
-            mprf("You're already wearing %s cursed ring%s!%s",
+            mprf("You're already soul bound to %s ring%s!%s",
                  number_in_words(cursed).c_str(),
                  (cursed == 1 ? "" : "s"),
                  (cursed > 2 ? " Isn't that enough for you?" : ""));
@@ -2547,15 +2543,15 @@ bool remove_ring(int slot, bool announce)
         return false;
     }
 
-    if (you.inv[you.equip[hand_used]].cursed() && you.get_mutation_level(MUT_GHOST) == 0)
+    if (you.inv[you.equip[hand_used]].soul_bound())
     {
         if (announce)
         {
-            mprf("%s is stuck to you!",
+            mprf("%s is bound to to your soul!",
                  you.inv[you.equip[hand_used]].name(DESC_YOUR).c_str());
         }
         else
-            mpr("It's stuck to you!");
+            mpr("It's bound to your soul!");
 
         set_ident_flags(you.inv[you.equip[hand_used]], ISFLAG_KNOW_CURSE);
         return false;

@@ -2575,9 +2575,9 @@ bool drop_item(int item_dropped, int quant_drop)
     }
 
     if ((item_dropped == you.equip[EQ_WEAPON0] || item_dropped == you.equip[EQ_WEAPON1])
-        && item.cursed() && you.get_mutation_level(MUT_GHOST) == 0)
+        && item.soul_bound())
     {
-        mprf("%s is stuck to you!", item.name(DESC_THE).c_str());
+        mprf("%s is bound to your soul!", item.name(DESC_THE).c_str());
         return false;
     }
 
@@ -2609,12 +2609,9 @@ bool drop_item(int item_dropped, int quant_drop)
     // like temporary brands. -- bwr
     if ((item_dropped == you.equip[EQ_WEAPON0])  && quant_drop >= item.quantity)
     {
-        if (you.get_mutation_level(MUT_GHOST) == 0 && you.weapon(0)->cursed())
+        if (you.weapon(0)->soul_bound())
         {
-            if (you.hands_reqd(*you.weapon(0)) == HANDS_TWO)
-                mprf("%s is stuck to your %s", you.weapon(0)->name(DESC_THE).c_str(), you.hand_name(true).c_str());
-            else
-                mprf("%s is stuck to your right %s", you.weapon(0)->name(DESC_THE).c_str(), you.hand_name(false).c_str());
+            mprf("%s is bound to your soul!", you.weapon(0)->name(DESC_THE).c_str());
             return false;
         }
         if (!unwield_item(true, true))
@@ -2627,9 +2624,9 @@ bool drop_item(int item_dropped, int quant_drop)
 
     if ((item_dropped == you.equip[EQ_WEAPON1]) && quant_drop >= item.quantity)
     {
-        if (you.get_mutation_level(MUT_GHOST) == 0 && you.weapon(1)->cursed())
+        if (you.weapon(1)->soul_bound())
         {
-            mprf("%s is stuck to your left %s", you.weapon(1)->name(DESC_THE).c_str(), you.hand_name(false).c_str());
+            mprf("%s is bound to your soul!", you.weapon(1)->name(DESC_THE).c_str());
             return false;
         }
         if (!unwield_item(false, true))
@@ -3443,6 +3440,12 @@ bool item_def::has_spells() const
 bool item_def::cursed() const
 {
     return flags & ISFLAG_CURSED;
+}
+
+bool item_def::soul_bound() const
+{
+    // BCADDO: Actual function here.
+    return false;
 }
 
 bool item_def::launched_by(const item_def &launcher) const

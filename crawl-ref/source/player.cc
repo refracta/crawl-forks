@@ -8527,11 +8527,11 @@ bool player::immune_to_hex(const spell_type hex) const
     switch (hex)
     {
     case SPELL_PETRIFY:
+    case SPELL_PETRIFICATION_GAZE:
     {
         if (you.get_mutation_level(MUT_GHOST) > 0)
             return true;
     }   // fallthrough
-    case SPELL_PETRIFICATION_GAZE:
     case SPELL_PARALYSE:
     case SPELL_SLOW:
         return stasis();

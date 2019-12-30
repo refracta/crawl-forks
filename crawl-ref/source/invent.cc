@@ -1153,12 +1153,13 @@ bool item_is_selected(const item_def &i, int selector)
     case OSEL_CURSABLE:
         return item_is_cursable(i);
 
+    // BCADNOTE: These are probably for Ashenzari.
     case OSEL_UNCURSED_WORN_RINGS:
-        return (!i.cursed() || (you.get_mutation_level(MUT_GHOST) > 0)) && item_is_equipped(i) 
+        return !i.cursed() && item_is_equipped(i) 
             && itype == OBJ_JEWELLERY && !jewellery_is_amulet(i);
 
     case OSEL_UNCURSED_WIELDED_WEAPONS:
-            return (!i.cursed() || (you.get_mutation_level(MUT_GHOST) > 0)) && item_is_equipped(i)
+            return !i.cursed() && item_is_equipped(i)
             && (itype == OBJ_WEAPONS || itype == OBJ_STAVES || itype == OBJ_SHIELDS);
 
     default:
@@ -1658,14 +1659,6 @@ bool needs_handle_warning(const item_def &item, operation_types oper,
         return false;
     if (_has_warning_inscription(item, oper))
         return true;
-
-    // Curses first.
-    if (item_known_cursed(item)
-        && ((oper == OPER_WIELD && is_weapon(item) && !_is_wielded(item)
-            || oper == OPER_PUTON || oper == OPER_WEAR)) && you.get_mutation_level(MUT_GHOST) == 0)
-    {
-        return true;
-    }
 
     // The consequences of evokables are generally known unless it's a deck
     // and you don't know what kind of a deck it is.
