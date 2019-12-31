@@ -909,11 +909,8 @@ static void _get_randart_properties(const item_def &item,
     for (int i = 0; i < ARTP_NUM_PROPERTIES; ++i)
     {
         if (curse)
-        {
             art_prop_weights.emplace_back(static_cast<artefact_prop_type>(i),
                 artp_data[i].curse_weight);
-            mprf("%d, %d", artp_data[i].curse_weight, artp_data[i].weight);
-        }
         else
             art_prop_weights.emplace_back(static_cast<artefact_prop_type>(i),
                                           artp_data[i].weight);
@@ -1087,16 +1084,26 @@ void artefact_properties(const item_def &item,
 }
 
 int artefact_property(const item_def &item, artefact_prop_type prop,
-                      bool &_known)
+    bool &_known)
 {
     artefact_properties_t  proprt;
     artefact_known_props_t known;
     proprt.init(0);
     known.init(0);
 
-    artefact_properties(item, proprt, known);
-
-    _known = known[prop];
+    if (is_artefact(item))
+    {
+        artefact_properties(item, proprt, known);
+        _known = known[prop];
+        if (proprt[prop] != 0)
+            return proprt[prop];
+    }
+    if (item.cursed())
+    {
+        curse_desc_properties(item, proprt);
+        if (proprt[prop] != 0)
+            _known = true;
+    }
 
     return proprt[prop];
 }

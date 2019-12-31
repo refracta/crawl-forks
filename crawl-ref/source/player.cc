@@ -3806,11 +3806,7 @@ int player::scan_artefacts(artefact_prop_type which_property,
 
         const int eq = equip[i];
 
-        // Only weapons give their effects when in our hands.
-        if (i == EQ_WEAPON0 && inv[ eq ].base_type != OBJ_WEAPONS)
-            continue;
-
-        if (!is_artefact(inv[ eq ]))
+        if (!is_artefact(inv[ eq ]) && !inv[ eq ].cursed())
             continue;
 
         bool known;

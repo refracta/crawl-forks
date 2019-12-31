@@ -298,14 +298,7 @@ static void _unequip_fragile_artefact(item_def& item, bool meld)
 {
     ASSERT(is_artefact(item) || item.cursed());
 
-    artefact_properties_t proprt;
-    artefact_known_props_t known;
-    if (is_artefact(item))
-        artefact_properties(item, proprt, known);
-    if (item.cursed())
-        curse_desc_properties(item, proprt);
-
-    if (proprt[ARTP_FRAGILE] && !meld)
+    if (artefact_property(item, ARTP_FRAGILE) && !meld)
     {
         mprf("%s crumbles to dust!", item.name(DESC_THE).c_str());
         dec_inv_item_quantity(item.link, 1);
@@ -769,7 +762,7 @@ static void _unequip_weapon_effect(item_def& real_item, bool showMsgs,
         canned_msg(MSG_MANA_DECREASE);
     }
 
-    if (is_artefact(item))
+    if (is_artefact(item) || item.cursed())
         _unequip_fragile_artefact(item, meld);
 
     // Unwielding dismisses an active spectral weapon
