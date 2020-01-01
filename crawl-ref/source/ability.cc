@@ -1228,6 +1228,8 @@ static bool _check_ability_possible(const ability_def& abil, bool quiet = false)
     // dangerous.)
     if (abil.ability == ABIL_STOP_FLYING)
     {
+        if (quiet)
+            return false;
         if (is_feat_dangerous(grd(you.pos()), false, true))
         {
             local_prompt = make_stringf("Stopping flight right now would cause you to %s! Are you sure you want to stop flying?",
@@ -1238,6 +1240,8 @@ static bool _check_ability_possible(const ability_def& abil, bool quiet = false)
     }
     else if (abil.ability == ABIL_END_TRANSFORMATION)
     {
+        if (quiet)
+            return false;
         if (feat_dangerous_for_form(transformation::none, env.grid(you.pos())))
         {
             local_prompt = make_stringf("Turning back now would cause you to %s! Are you sure you want end your transformation?",
