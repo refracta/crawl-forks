@@ -195,7 +195,7 @@ static void _equip_artefact_effect(item_def &item, bool *show_msgs, bool unmeld,
 {
 #define unknown_proprt(prop) (proprt[(prop)] && !known[(prop)])
 
-    ASSERT(is_artefact(item));
+    ASSERT(is_artefact(item) || item.cursed());
 
     // Call unrandart equip function first, so that it can modify the
     // artefact's properties before they're applied.
@@ -216,7 +216,18 @@ static void _equip_artefact_effect(item_def &item, bool *show_msgs, bool unmeld,
 
     artefact_properties_t  proprt;
     artefact_known_props_t known;
-    artefact_properties(item, proprt, known);
+    artefact_properties_t curses;
+    if (is_artefact(item))
+        artefact_properties(item, proprt, known);
+    if (item.cursed())
+    {
+        curse_desc_properties(item, curses);
+        if (is_artefact(item))
+            for (unsigned int i = 0; i < ART_PROPERTIES; ++i)
+                proprt[i] |= curses[i];
+        else
+            proprt = curses;
+    }
 
     if (proprt[ARTP_AC] || proprt[ARTP_SHIELDING])
         you.redraw_armour_class = true;
@@ -324,11 +335,16 @@ static void _unequip_artefact_effect(item_def &item,
     if (is_artefact(item))
         artefact_properties(item, proprt, known);
     if (item.cursed())
+    {
         curse_desc_properties(item, curse);
+        if (is_artefact(item))
+            for (unsigned int i = 0; i < ART_PROPERTIES; ++i)
+                proprt[i] |= curse[i];
+        else
+            proprt = curse;
+    }
+
     const bool msg = !show_msgs || *show_msgs;
-    
-    for (unsigned int i = 0; i < ART_PROPERTIES; ++i)
-        proprt[i] |= curse[i];
 
     if (proprt[ARTP_AC] || proprt[ARTP_SHIELDING])
         you.redraw_armour_class = true;
@@ -441,7 +457,7 @@ static void _equip_weapon_effect(item_def& item, bool showMsgs, bool unmeld, equ
     {
         // Note that if the unrand equip prints a message, it will
         // generally set showMsgs to false.
-        if (artefact)
+        if (artefact || item.cursed())
             _equip_artefact_effect(item, &showMsgs, unmeld, slot);
 
         const bool was_known = item_type_known(item);
@@ -1019,7 +1035,7 @@ static void _equip_armour_effect(item_def& arm, bool unmeld,
         }
     }
 
-    if (is_artefact(arm))
+    if (is_artefact(arm) || arm.cursed())
     {
         bool show_msgs = true;
         _equip_artefact_effect(arm, &show_msgs, unmeld, slot);
@@ -1397,7 +1413,7 @@ static void _equip_jewellery_effect(item_def &item, bool unmeld,
     bool new_ident = false;
     // Artefacts have completely different appearance than base types
     // so we don't allow them to make the base types known.
-    if (artefact)
+    if (artefact || item.cursed())
     {
         bool show_msgs = true;
         _equip_artefact_effect(item, &show_msgs, unmeld, slot);
