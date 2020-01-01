@@ -735,23 +735,23 @@ string ash_describe_bondage(int flags, bool level)
             const string verb = make_stringf("are%s",
                                              you.bondage[ET_RIGHT] ? ""
                                                                     : " not");
-            desc = you.hands_act(verb, "bound.\n");
+            desc = you.hands_act(verb, "liberated.\n");
         }
         else
         {
             // FIXME: what if you sacrificed a hand?
-            desc = make_stringf("One of your hands is bound, but not the other.\n");
+            desc = make_stringf("One of your hands is liberated, but not the other.\n");
         }
     }
     else if (flags & ETF_RIGHT && you.bondage[ET_RIGHT] != -1)
     {
-        desc = make_stringf("Your right %s is %sbound.\n",
+        desc = make_stringf("Your right %s is %liberated.\n",
                             you.hand_name(false).c_str(),
                             you.bondage[ET_RIGHT] ? "" : "not ");
     }
     else if (flags & ETF_LEFT && you.bondage[ET_LEFT] != -1)
     {
-        desc = make_stringf("Your left %s is %sbound.\n",
+        desc = make_stringf("Your left %s is %liberated.\n",
                             you.hand_name(false).c_str(),
                             you.bondage[ET_LEFT] ? "" : "not ");
     }
@@ -760,7 +760,7 @@ string ash_describe_bondage(int flags, bool level)
         && you.bondage[ET_ARMOUR] == you.bondage[ET_JEWELS]
         && you.bondage[ET_ARMOUR] != -1)
     {
-        desc += make_stringf("You are %s bound in armour %s jewellery.\n",
+        desc += make_stringf("You are %s liberated in armour %s jewellery.\n",
                              you.bondage[ET_ARMOUR] == 0 ? "not" :
                              you.bondage[ET_ARMOUR] == 1 ? "partially"
                                                          : "fully",
@@ -770,7 +770,7 @@ string ash_describe_bondage(int flags, bool level)
     {
         if (flags & ETF_ARMOUR && you.bondage[ET_ARMOUR] != -1)
         {
-            desc += make_stringf("You are %s bound in armour.\n",
+            desc += make_stringf("You are %s liberated in armour.\n",
                                  you.bondage[ET_ARMOUR] == 0 ? "not" :
                                  you.bondage[ET_ARMOUR] == 1 ? "partially"
                                                              : "fully");
@@ -778,7 +778,7 @@ string ash_describe_bondage(int flags, bool level)
 
         if (flags & ETF_JEWELS && you.bondage[ET_JEWELS] != -1)
         {
-            desc += make_stringf("You are %s bound in jewellery.\n",
+            desc += make_stringf("You are %s liberated in jewellery.\n",
                                  you.bondage[ET_JEWELS] == 0 ? "not" :
                                  you.bondage[ET_JEWELS] == 1 ? "partially"
                                                              : "fully");
@@ -787,7 +787,7 @@ string ash_describe_bondage(int flags, bool level)
 
     if (level)
     {
-        desc += make_stringf("You are %s bound.",
+        desc += make_stringf("You are %s liberated.",
                              you.bondage_level == 0 ? "not" :
                              you.bondage_level == 1 ? "slightly" :
                              you.bondage_level == 2 ? "moderately" :
