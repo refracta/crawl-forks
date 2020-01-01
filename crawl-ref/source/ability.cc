@@ -504,8 +504,6 @@ static const ability_def Ability_List[] =
     // Ashenzari
     { ABIL_ASHENZARI_CURSE, "Curse Item",
       0, 0, 0, 0, {fail_basis::invo}, abflag::none },
-    { ABIL_ASHENZARI_SCRYING, "Scrying",
-      4, 0, 0, 3, {fail_basis::invo}, abflag::instant },
     { ABIL_ASHENZARI_TRANSFER_KNOWLEDGE, "Transfer Knowledge",
       0, 0, 0, 15, {fail_basis::invo}, abflag::none },
     { ABIL_ASHENZARI_END_TRANSFER, "End Transfer Knowledge",
@@ -2802,17 +2800,6 @@ static spret _do_ability(const ability_def& abil, bool fail)
             return spret::abort;
         break;
     }
-
-    case ABIL_ASHENZARI_SCRYING:
-        fail_check();
-        you.duration[DUR_SCRYING] = apply_invo_enhancer(100 + random2avg(you.piety * 2, 2),true);
-        if (you.duration[DUR_SCRYING])
-            mpr("You extend your astral sight.");
-        else
-            mpr("You gain astral sight.");
-        you.xray_vision = true;
-        viewwindow(true);
-        break;
 
     case ABIL_ASHENZARI_TRANSFER_KNOWLEDGE:
         fail_check();

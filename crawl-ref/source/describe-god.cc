@@ -272,8 +272,8 @@ static string _describe_ash_skill_boost()
 {
     if (!you.bondage_level)
     {
-        return "Ashenzari won't support your skills until you bind yourself "
-               "with cursed items.";
+        return "Ashenzari won't support your skills until you accept your "
+               "impermanence by using fragile items.";
     }
 
     static const char* bondage_parts[NUM_ET] = { "Right hand", "Left hand",
@@ -615,7 +615,7 @@ static formatted_string _god_extra_description(god_type which_god)
         case GOD_ASHENZARI:
             if (have_passive(passive_t::bondage_skill_boost))
             {
-                _add_par(desc, "Ashenzari supports the following skills because of your curses:");
+                _add_par(desc, "Ashenzari supports the following skills because of your fragility:");
                 _add_par(desc,  _describe_ash_skill_boost());
             }
             break;

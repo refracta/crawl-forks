@@ -985,11 +985,14 @@ bool item_is_cursable(const item_def &item, bool ignore_holy_wrath)
         && item.base_type == OBJ_WEAPONS
         && (get_weapon_brand(item) == SPWPN_HOLY_WRATH
             || you.duration[DUR_EXCRUCIATING_WOUNDS]
-               && item_is_equipped(item)
-               && you.props[ORIGINAL_BRAND_KEY].get_int() == SPWPN_HOLY_WRATH))
+            && item_is_equipped(item)
+            && you.props[ORIGINAL_BRAND_KEY].get_int() == SPWPN_HOLY_WRATH))
     {
         return false;
     }
+
+    if ((is_artefact(item) || item.cursed()) && artefact_property(item, ARTP_FRAGILE))
+        return false;
     return true;
 }
 

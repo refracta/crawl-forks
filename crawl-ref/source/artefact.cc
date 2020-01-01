@@ -21,6 +21,7 @@
 #include "coordit.h"
 #include "database.h"
 #include "god-item.h"
+#include "invent.h"
 #include "item-name.h"
 #include "item-prop.h"
 #include "item-status-flag-type.h"
@@ -1754,6 +1755,9 @@ bool apply_curse(item_def &item, artefact_prop_type prop)
     }
 
     item.flags |= ISFLAG_CURSED;
+
+    if (in_inventory(item))
+    ash_check_bondage();
 
     return true;
 }

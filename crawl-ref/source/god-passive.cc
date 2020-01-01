@@ -346,12 +346,12 @@ static const vector<god_passive> god_passives[] =
         {  0, passive_t::auto_map, "have improved mapping abilities" },
         {  0, passive_t::detect_montier, "sense threats" },
         {  0, passive_t::detect_items, "sense items" },
-        {  0, passive_t::search_traps,
-              "are NOW better at searching for traps" },
         {  2, passive_t::bondage_skill_boost,
               "get a skill boost from cursed items" },
         {  3, passive_t::sinv, "are NOW clear of vision" },
         {  4, passive_t::clarity, "are NOW clear of mind" },
+        {  5, passive_t::xray_vision,
+              "can NOW peer through the very fabric of reality" },
     },
 
     // Dithmenos
@@ -582,6 +582,13 @@ static bool _two_handed()
     return wep_type == HANDS_TWO;
 }
 
+static bool _is_item_cursed(item_def &item)
+{
+    if ((item.cursed() || is_artefact(item)) && artefact_property(item, ARTP_FRAGILE))
+        return true;
+    return false;
+}
+
 void ash_check_bondage(bool msg)
 {
     if (!will_have_passive(passive_t::bondage_skill_boost))
@@ -634,8 +641,7 @@ void ash_check_bondage(bool msg)
             slots[s]++;
             if (you.equip[i] != -1)
             {
-                const item_def& item = you.inv[you.equip[i]];
-                if (item.cursed())
+                if (_is_item_cursed(you.inv[you.equip[i]]))
                 {
                     if (s == ET_RIGHT
                         && (_two_handed()
@@ -646,7 +652,7 @@ void ash_check_bondage(bool msg)
                     else
                     {
                         cursed[s]++;
-                        if (i == EQ_BODY_ARMOUR && is_unrandom_artefact(item, UNRAND_LEAR))
+                        if (i == EQ_BODY_ARMOUR && is_unrandom_artefact(you.inv[you.equip[i]], UNRAND_LEAR))
                             cursed[s] += 3;
                     }
                 }
@@ -676,7 +682,7 @@ void ash_check_bondage(bool msg)
     if (you.species == SP_FELID)
     {
         for (int i = EQ_LEFT_RING; i <= EQ_AMULET; ++i)
-            if (you.equip[i] != -1 && you.inv[you.equip[i]].cursed())
+            if (you.equip[i] != -1 && _is_item_cursed(you.inv[you.equip[i]]))
                 ++you.bondage_level;
 
         // Allow full bondage when all available slots are cursed.
@@ -734,7 +740,7 @@ string ash_describe_bondage(int flags, bool level)
         else
         {
             // FIXME: what if you sacrificed a hand?
-            desc = make_stringf("One of your hands is bound, but not the other.");
+            desc = make_stringf("One of your hands is bound, but not the other.\n");
         }
     }
     else if (flags & ETF_RIGHT && you.bondage[ET_RIGHT] != -1)
@@ -792,17 +798,6 @@ string ash_describe_bondage(int flags, bool level)
 
     return trim_string(desc);
 }
-
-/* Unused function preserved for possible help during Ash/Curse Rework.
-static bool _is_slot_cursed(equipment_type eq)
-{
-    const item_def *worn = you.slot_item(eq, true);
-    if (!worn || !worn->cursed())
-        return false;
-
-    return true;
-}
-*/
 
 bool passive_id_item(item_def& item, bool silent)
 {
@@ -1059,8 +1054,9 @@ bool ash_has_skill_boost(skill_type sk)
 unsigned int ash_skill_point_boost(skill_type sk, int scaled_skill)
 {
     unsigned int skill_points = 0;
+    int piety = div_round_up((3 * piety_rank() + 3), 2);
 
-    skill_points += apply_pity((you.skill_boost[sk] * 2 + 1) * (piety_rank() + 1)
+    skill_points += apply_pity((you.skill_boost[sk] * 2 + 1) * piety
                     * max(scaled_skill, 1) * species_apt_factor(sk));
     return skill_points;
 }

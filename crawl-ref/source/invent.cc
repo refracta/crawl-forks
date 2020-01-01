@@ -524,7 +524,7 @@ string no_selectables_message(int item_selector)
     case OSEL_BEOGH_GIFT:
         return "You aren't carrying anything you can give to a follower.";
     case OSEL_CURSABLE:
-        return "You don't have any cursable items.";
+        return "All of your items are already fragile.";
     case OSEL_UNCURSED_WORN_RINGS:
         return "You aren't wearing any uncursed rings.";
     }

@@ -287,19 +287,21 @@ const vector<god_power> god_powers[NUM_GODS] =
 
     // Ashenzari
     { { 0, ABIL_ASHENZARI_CURSE, "curse your items" },
-      { 1, ABIL_ASHENZARI_SCRYING, "scry through walls" },
-      { 2, "The more cursed you are, the more Ashenzari will now support your skills.",
+      { 1, "Ashenzari will now support your skills based on the fragility of your equipment.",
            "Ashenzari will no longer support your skills.",
-           "The more cursed you are, the more Ashenzari supports your skills." },
-      { 3, "Ashenzari will now reveal the unseen.",
+           "The more you accept your fragility, the more Ashenzari supports your skills." },
+      { 2, "Ashenzari will now reveal the unseen.",
            "Ashenzari will no longer reveal the unseen.",
            "Ashenzari reveals the unseen." },
-      { 4, "Ashenzari will now keep your mind clear.",
+      { 3, "Ashenzari will now keep your mind clear.",
            "Ashenzari will no longer keep your mind clear.",
            "Ashenzari keeps your mind clear." },
-      { 5, ABIL_ASHENZARI_TRANSFER_KNOWLEDGE,
+      { 4, ABIL_ASHENZARI_TRANSFER_KNOWLEDGE,
            "Ashenzari will help you to reconsider your skills.",
            "Ashenzari will no longer help you to reconsider your skills." },
+      { 5, "Ashenzari allows you to see through the fabric of reality.",
+           "Ashenzari no longer allows you to see through walls.",
+           "Ashenzari lets you see through the fabric of reality."}
     },
 
     // Dithmenos
@@ -2593,6 +2595,9 @@ bool gain_piety(int original_gain, int denominator, bool should_scale_piety)
         }
         you.piety_max[you.religion] = you.piety;
     }
+
+    if (have_passive(passive_t::xray_vision))
+        you.xray_vision = true;
     return true;
 }
 
@@ -2695,6 +2700,9 @@ void lose_piety(int pgn)
         // Piety change affects halo / umbra radius.
         invalidate_agrid(true);
     }
+
+    if (!have_passive(passive_t::xray_vision))
+        you.xray_vision = false;
 }
 
 // Fedhas worshipers are on the hook for most plants and fungi

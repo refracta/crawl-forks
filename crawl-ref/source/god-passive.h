@@ -39,7 +39,7 @@ enum class passive_t
     detect_items,
 
     /// You are better at searching for traps.
-    search_traps,
+    xray_vision,
 
     /// You have innate see invisible.
     sinv,
