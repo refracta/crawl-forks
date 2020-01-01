@@ -221,25 +221,17 @@ static bool _try_make_weapon_artefact(item_def& item, int force_type,
         item.plus -= biased_random2(7,2);
 
         bool cursed = false;
-        if (one_chance_in(5))
-        {
+        if (one_chance_in(4))
             cursed = true;
-            item.plus = 3 - random2(6);
-        }
-        else if (item.plus < 0 && !one_chance_in(3))
+        else if (item.plus > 8 && !one_chance_in(3))
             cursed = true;
-
-        // On weapons, an enchantment of less than 0 is never viable.
-        item.plus = max(static_cast<int>(item.plus), random2(2));
 
         // The rest are normal randarts.
         make_item_randart(item);
 
-        if (cursed)
+        if (cursed && get_weapon_brand(item) != SPWPN_HOLY_WRATH)
             do_curse_item(item);
 
-        if (get_weapon_brand(item) == SPWPN_HOLY_WRATH)
-            item.flags &= (~ISFLAG_CURSED);
         return true;
     }
 
@@ -268,12 +260,9 @@ static bool _try_make_shield_artefact(item_def& item, int force_type,
         item.plus = 12 - biased_random2(7,2) - biased_random2(7,2) - biased_random2(7,2);
 
         bool cursed = false;
-        if (one_chance_in(5))
-        {
+        if (one_chance_in(4))
             cursed = true;
-            item.plus = 3 - random2(6);
-        }
-        else if (item.plus < 0 && !one_chance_in(3))
+        else if (item.plus > 8 && !one_chance_in(3))
             cursed = true;
 
         // On weapons, an enchantment of less than 0 is never viable.
@@ -282,11 +271,9 @@ static bool _try_make_shield_artefact(item_def& item, int force_type,
         // The rest are normal randarts.
         make_item_randart(item);
 
-        if (cursed)
+        if (!(is_hybrid(item.sub_type) && get_weapon_brand(item) == SPWPN_HOLY_WRATH)
+            && cursed)
             do_curse_item(item);
-
-        if (is_hybrid(item.sub_type) && get_weapon_brand(item) == SPWPN_HOLY_WRATH)
-            item.flags &= (~ISFLAG_CURSED);
         return true;
     }
 
@@ -548,17 +535,21 @@ static void _generate_weapon_item(item_def& item, bool allow_uniques,
 
         item.plus += determine_nice_weapon_plusses(item_level);
 
+        if (one_chance_in(4))
+            do_curse_item(item);
+        else if (item.plus > 6 && !one_chance_in(3))
+            do_curse_item(item);
+
         // squash boring items.
         if (!force_good && item.brand == SPWPN_NORMAL && item.plus < 3)
             item.plus = 0;
     }
     else
     {
-        if (one_chance_in(12))
+        if (one_chance_in(6))
         {
-            // Make a cursed item.
-            do_curse_item(item);
-            item.plus  -= random2(4);
+            // Make a boring item.
+            item.plus = 0;
             set_item_ego_type(item, OBJ_WEAPONS, SPWPN_NORMAL);
         }
     }
@@ -667,17 +658,21 @@ static void _generate_shield_item(item_def& item, bool allow_uniques,
 
         item.plus += determine_nice_weapon_plusses(item_level);
 
+        if (one_chance_in(4))
+            do_curse_item(item);
+        else if (item.plus > 5 && !one_chance_in(3))
+            do_curse_item(item);
+
         // squash boring items.
         if (!force_good && item.brand == SPWPN_NORMAL && item.plus < 3)
             item.plus = 0;
     }
     else
     {
-        if (one_chance_in(12))
+        if (one_chance_in(6))
         {
-            // Make a cursed item.
-            do_curse_item(item);
-            item.plus -= random2(4);
+            // Make a boring item.
+            item.plus = 0;
             set_item_ego_type(item, OBJ_SHIELDS, SPWPN_NORMAL);
         }
     }
@@ -914,10 +909,7 @@ static bool _try_make_armour_artefact(item_def& item, int force_type,
 
         // Determine enchantment and cursedness.
         if (one_chance_in(5))
-        {
-            do_curse_item(item);
             item.plus = 0;
-        }
         else
         {
             int max_plus = armour_max_enchant(item);
@@ -929,7 +921,9 @@ static bool _try_make_armour_artefact(item_def& item, int force_type,
             if (one_chance_in(6))
                 item.plus -= random2(max_plus + 6);
 
-            if (item.plus < 0 && !one_chance_in(3))
+            if (item.plus > 5 && !one_chance_in(3))
+                do_curse_item(item);
+            else if (one_chance_in(4))
                 do_curse_item(item);
         }
 
@@ -1749,8 +1743,7 @@ static void _generate_staff_item(item_def& item, bool allow_uniques,
     else
         item.sub_type = force_type;
 
-    if (one_chance_in(16))
-        do_curse_item(item);
+    // BCADDO: Curses for Staves (Would have to come with artefact staves).
 }
 
 static void _generate_rune_item(item_def& item, int force_type)
@@ -1826,18 +1819,22 @@ static void _generate_jewellery_item(item_def& item, bool allow_uniques,
     // All jewellery base types should now work. - bwr
     if (item_level == ISPEC_RANDART
         || allow_uniques && item_level > 2
-           && x_chance_in_y(101 + item_level * 3, 4000))
+        && x_chance_in_y(101 + item_level * 3, 4000))
     {
         make_item_randart(item);
+        if (coinflip())
+            do_curse_item(item);
     }
     else if (item.sub_type == RING_ATTENTION
-             || item.sub_type == RING_TELEPORTATION
-             || item.sub_type == AMU_INACCURACY
-             || one_chance_in(50))
+        || item.sub_type == RING_TELEPORTATION
+        || item.sub_type == AMU_INACCURACY
+        || one_chance_in(50))
     {
         // Bad jewellery is always cursed {dlb}:
         do_curse_item(item);
     }
+    else if (one_chance_in(3))
+        do_curse_item(item);
 }
 
 static void _generate_misc_item(item_def& item, int force_type, int force_ego)
