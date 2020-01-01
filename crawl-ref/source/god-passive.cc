@@ -745,13 +745,13 @@ string ash_describe_bondage(int flags, bool level)
     }
     else if (flags & ETF_RIGHT && you.bondage[ET_RIGHT] != -1)
     {
-        desc = make_stringf("Your right %s is %liberated.\n",
+        desc = make_stringf("Your right %s is %sliberated.\n",
                             you.hand_name(false).c_str(),
                             you.bondage[ET_RIGHT] ? "" : "not ");
     }
     else if (flags & ETF_LEFT && you.bondage[ET_LEFT] != -1)
     {
-        desc = make_stringf("Your left %s is %liberated.\n",
+        desc = make_stringf("Your left %s is %sliberated.\n",
                             you.hand_name(false).c_str(),
                             you.bondage[ET_LEFT] ? "" : "not ");
     }
