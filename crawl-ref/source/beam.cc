@@ -5700,7 +5700,8 @@ bool ench_flavour_affects_monster(beam_type flavour, const monster* mon,
 
     case BEAM_ENTROPIC_BURST:
     case BEAM_INNER_FLAME:
-        rc = !(mon->is_summoned() || mon->has_ench(ENCH_INNER_FLAME) || mon->has_ench(ENCH_ENTROPIC_BURST));
+        rc = !(mon->is_summoned() && !mon->is_illusion() || mon->has_ench(ENCH_INNER_FLAME) 
+                                  || mon->has_ench(ENCH_ENTROPIC_BURST));
         break;
 
     case BEAM_INFESTATION:
@@ -6109,7 +6110,7 @@ mon_resist_type bolt::apply_enchantment_to_monster(monster* mon)
 
     case BEAM_INNER_FLAME:
         if (!mon->has_ench(ENCH_INNER_FLAME)
-            && !mon->is_summoned()
+            && (!mon->is_summoned() || mon->is_illusion())
             && mon->add_ench(mon_enchant(ENCH_INNER_FLAME, 0, agent())))
         {
             if (simple_monster_message(*mon,
