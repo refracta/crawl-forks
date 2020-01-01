@@ -1058,30 +1058,16 @@ void do_curse_item(item_def &item, bool quiet)
                && you.props[ORIGINAL_BRAND_KEY].get_int() == SPWPN_HOLY_WRATH))
     {
         if (!quiet)
-        {
             mprf("Your %s glows black briefly, but repels the curse.",
                  item.name(DESC_PLAIN).c_str());
-            if (is_artefact(item))
-                artefact_learn_prop(item, ARTP_BRAND);
-            else
-                set_ident_flags(item, ISFLAG_KNOW_TYPE);
-
-            if (!item_brand_known(item))
-                mprf_nocap("%s", item.name(DESC_INVENTORY_EQUIP).c_str());
-        }
         return;
     }
 
     if (!quiet)
-    {
         mprf("Your %s glows black for a moment.",
              item.name(DESC_PLAIN).c_str());
 
-        // If we get the message, we know the item is cursed now.
-        item.flags |= ISFLAG_KNOW_CURSE;
-    }
-
-    item.flags |= ISFLAG_CURSED;
+    curse_item(item);
 
     // Xom is amused by the player's items being cursed, especially if
     // they're worn/equipped.
@@ -1117,12 +1103,6 @@ void do_curse_item(item_def &item, bool quiet)
 void do_uncurse_item(item_def &item, bool check_bondage)
 {
     const bool in_inv = in_inventory(item);
-    if (!item.cursed())
-    {
-        if (in_inv)
-            item.flags |= ISFLAG_KNOW_CURSE;
-        return;
-    }
 
     if (in_inv)
     {
@@ -1133,7 +1113,7 @@ void do_uncurse_item(item_def &item, bool check_bondage)
         }
         item.flags |= ISFLAG_KNOW_CURSE;
     }
-    item.flags &= (~ISFLAG_CURSED);
+    uncurse_item(item);
 
     if (check_bondage && in_inv)
         ash_check_bondage();

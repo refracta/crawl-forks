@@ -3667,7 +3667,7 @@ bool ashenzari_curse_item(int num_rc)
     }
 
 //    do_curse_item(item, false);
-//    curse_item(item); //BCADDO: Change this to fragile curse.
+//    curse_item(item);
     apply_curse(item, ARTP_FRAGILE);
     learned_something_new(HINT_YOU_CURSED);
     return true;

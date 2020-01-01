@@ -1719,14 +1719,14 @@ bool needs_handle_warning(const item_def &item, operation_types oper,
             return true;
         }
 
-        if (is_artefact(item) && artefact_property(item, ARTP_CONTAM) && (!you.wearing_ego(EQ_GLOVES, SPARM_WIELDING) || wielding_pass))
+        if ((is_artefact(item) || item.cursed()) && artefact_property(item, ARTP_CONTAM) && (!you.wearing_ego(EQ_GLOVES, SPARM_WIELDING) || wielding_pass))
         {
             if (_is_wielded(item) && you_worship(GOD_ZIN))
                 penance = true;
             return true;
         }
 
-        if (is_artefact(item) && ((artefact_property(item, ARTP_DRAIN) && (!you.wearing_ego(EQ_GLOVES, SPARM_WIELDING) || wielding_pass))
+        if ((is_artefact(item) || item.cursed()) && ((artefact_property(item, ARTP_DRAIN) && (!you.wearing_ego(EQ_GLOVES, SPARM_WIELDING) || wielding_pass))
                                   || (artefact_property(item, ARTP_FRAGILE) && !wielding_pass)))
         {
             return true;

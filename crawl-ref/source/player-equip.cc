@@ -315,11 +315,15 @@ static void _unequip_artefact_effect(item_def &item,
 
     artefact_properties_t proprt;
     artefact_known_props_t known;
+    artefact_properties_t curse;
     if (is_artefact(item))
         artefact_properties(item, proprt, known);
     if (item.cursed())
-        curse_desc_properties(item, proprt);
+        curse_desc_properties(item, curse);
     const bool msg = !show_msgs || *show_msgs;
+    
+    for (unsigned int i = 0; i < ART_PROPERTIES; ++i)
+        proprt[i] |= curse[i];
 
     if (proprt[ARTP_AC] || proprt[ARTP_SHIELDING])
         you.redraw_armour_class = true;

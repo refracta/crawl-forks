@@ -556,7 +556,7 @@ static void _add_randart_weapon_brand(const item_def &item,
  *                      false otherwise.
  */
 static bool _artp_can_go_on_item(artefact_prop_type prop, const item_def &item,
-                                 const artefact_properties_t &extant_props)
+                                 const artefact_properties_t &extant_props, bool curse = false)
 {
     artefact_properties_t intrinsic_proprt;
     intrinsic_proprt.init(0);
@@ -564,6 +564,9 @@ static bool _artp_can_go_on_item(artefact_prop_type prop, const item_def &item,
     _populate_item_intrinsic_artps(item, intrinsic_proprt, _);
     if (intrinsic_proprt[prop])
         return false; // don't duplicate intrinsic props
+
+    if (curse && is_artefact(item) && artefact_property(item, prop))
+        return false; // don't duplicate or contradict base props with curses.
 
     const object_class_type item_class = item.base_type;
 
@@ -932,7 +935,7 @@ static void _get_randart_properties(const item_def &item,
                 (int) art_prop_weights.size());
         const artefact_prop_type prop = *prop_ptr;
 
-        if (!_artp_can_go_on_item(prop, item, item_props)) // BCADDO: Check base set here; unless rF+ on base artefact + rF- on curse is fine?
+        if (!_artp_can_go_on_item(prop, item, item_props, curse))
             continue;
 
         // should we try to generate a good or bad version of the prop?
@@ -1667,6 +1670,15 @@ static void _artefact_setup_prop_vectors(item_def &item, bool curse = false)
         for (vec_size i = 0; i < ART_PROPERTIES; i++)
             known[i] = static_cast<bool>(false);
     }
+}
+
+bool uncurse_item(item_def &item)
+{
+    item.flags &= (~ISFLAG_CURSED);
+    if (item.props.exists(CURSE_PROPS_KEY))
+        item.props.erase(CURSE_PROPS_KEY);
+
+    return true;
 }
 
 bool curse_item(item_def &item)
