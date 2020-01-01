@@ -981,8 +981,6 @@ bool item_is_cursable(const item_def &item, bool ignore_holy_wrath)
 {
     if (!item_type_has_curses(item.base_type))
         return false;
-    if (item_known_cursed(item))
-        return false;
     if (!ignore_holy_wrath
         && item.base_type == OBJ_WEAPONS
         && (get_weapon_brand(item) == SPWPN_HOLY_WRATH

@@ -1015,14 +1015,7 @@ static bool _init_artefact_properties(item_def &item)
     _get_randart_properties(item, prop);
 
     for (int i = 0; i < ART_PROPERTIES; i++)
-    {
-        if (i == ARTP_CURSE && prop[i])
-        {
-            do_curse_item(item);
-            continue;
-        }
         rap[i] = static_cast<short>(prop[i]);
-    }
 
     return true;
 }
@@ -1709,6 +1702,49 @@ bool curse_item(item_def &item)
 
 bool apply_curse(item_def &item, artefact_prop_type prop)
 {
+    bool already_cursed = (item.flags & ISFLAG_CURSED);
+
+    if (item.base_type != OBJ_WEAPONS
+        && item.base_type != OBJ_ARMOURS
+        && item.base_type != OBJ_JEWELLERY
+        && item.base_type != OBJ_SHIELDS
+        && item.base_type != OBJ_STAVES)
+    {
+        return false;
+    }
+
+    if (!already_cursed)
+        _artefact_setup_prop_vectors(item, true);
+
+    CrawlVector &rap = item.props[CURSE_PROPS_KEY].get_vector();
+
+    if (!artp_potentially_bad(prop))
+    {
+        mpr("Failed. Trying to curse an item with a positive property.");
+        return false;
+    }
+
+    for (int i = 0; i < ART_PROPERTIES; i++)
+    {
+        if (i == prop)
+        {
+            if (rap[i].get_short() > 0)
+            {
+                mprf("%s was already cursed with %s.", item.name(DESC_YOUR).c_str(), artp_data[i].name);
+                return false;
+            }
+            else
+            {
+                rap[i] = static_cast<short>(artp_data[i].gen_bad_value());
+                mprf("%s glows black for a second.", item.name(DESC_YOUR).c_str());
+            }
+        }
+        else if (!already_cursed)
+            rap[i] = static_cast<short>(0);
+    }
+
+    item.flags |= ISFLAG_CURSED;
+
     return true;
 }
 
