@@ -2713,6 +2713,28 @@ static void _handle_temp_mutation(int exp)
         temp_mutation_wanes();
 }
 
+static void _reduce_soul_bonds(int exp)
+{
+    for (int i = EQ_FIRST_EQUIP; i < NUM_EQUIP; ++i)
+    {
+        if (you.equip[i] == -1)
+            continue;
+
+        const int eq = you.equip[i];
+        item_def &item = you.inv[eq];
+
+        if (item.soul_bind_xp > 0)
+        {
+            item.soul_bind_xp -= exp;
+            if (item.soul_bind_xp <= 0)
+            {
+                mprf(MSGCH_DURATION, "%s is no longer bound to you. You can unequip it when you wish.", item.name(DESC_YOUR).c_str());
+                item.soul_bind_xp = 0;
+            }
+        }
+    }
+}
+
 /// update stat loss
 static void _handle_stat_loss(int exp)
 {
@@ -2779,6 +2801,7 @@ void gain_exp(unsigned int exp_gained, unsigned int* actual_gain)
     _handle_xp_penance(exp_gained);
     _handle_god_wrath(exp_gained);
     _transfer_knowledge(exp_gained);
+    _reduce_soul_bonds(exp_gained);
 
     // evolution mutation timer
     you.attribute[ATTR_EVOL_XP] += exp_gained;

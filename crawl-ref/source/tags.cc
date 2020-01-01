@@ -4577,9 +4577,15 @@ void unmarshallItem(reader &th, item_def &item)
 
     if (th.getMinorVersion() < TAG_MINOR_CURSE_REWORK)
     {
-        // BCADDO: FIXME.
         if (item.cursed() && !item.props.exists(CURSE_PROPS_KEY))
-            curse_item(item);
+        {
+            uncurse_item(item);
+
+            if (you.religion == GOD_ASHENZARI)
+                apply_curse(item, ARTP_FRAGILE);
+            else
+               curse_item(item);
+        }
 
         if (item.base_type == OBJ_SCROLLS && item.sub_type == SCR_REMOVE_CURSE)
         {
@@ -4591,8 +4597,6 @@ void unmarshallItem(reader &th, item_def &item)
             else
                 item.quantity = div_rand_round(item.quantity, 5);
         }
-
-        // BCADDO: Ashenzari Case here.
     }
 
     if (th.getMinorVersion() < TAG_MINOR_REMOVE_ITEM_COLOUR)

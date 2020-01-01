@@ -3444,7 +3444,8 @@ bool item_def::cursed() const
 
 bool item_def::soul_bound() const
 {
-    // BCADDO: Actual function here.
+    if (soul_bind_xp > 0)
+        return true;
     return false;
 }
 

@@ -570,7 +570,7 @@ static string _randart_descrip(const item_def &item, bool curse = false)
         { ARTP_PREVENT_TELEPORTATION, "It prevents most forms of teleportation.",
           false},
         { ARTP_ANGRY,  "It may make you go berserk in combat.", false},
-        { ARTP_CURSE, "It curses itself when equipped.", false},
+        { ARTP_CURSE, "When equipped, it binds to the wielder's soul until they gain enough experience to unwield again.", false},
         { ARTP_CLARITY, "It protects you against confusion.", false},
         { ARTP_CONTAM, "It causes magical contamination when unequipped.", false},
         { ARTP_RMSL, "It protects you from missiles.", false},

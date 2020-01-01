@@ -79,8 +79,7 @@ static bool _god_fits_artefact(const god_type which_god, const item_def &item,
                  || brand == SPWPN_VAMPIRISM
                  || brand == SPWPN_REAPING
                  || brand == SPWPN_CHAOS
-                 || is_demonic(item)
-                 || artefact_property(item, ARTP_CURSE)))
+                 || is_demonic(item)))
     {
         return false;
     }
@@ -725,7 +724,7 @@ static const artefact_prop_data artp_data[] =
     { "Slay", ARTP_VAL_ANY, 30, 40,     // ARTP_SLAYING,
       []() { return 2 + random2(2); },
       []() { return -(2 + random2(5)); }, 3, 2 },
-    { "*Curse", ARTP_VAL_POS, 0, 0, nullptr, nullptr, 0 }, // ARTP_CURSE,
+    { "Soulbond", ARTP_VAL_POS, 0, 5, nullptr, []() { return 1; }, 0 }, // ARTP_CURSE,
     { "Stlth", ARTP_VAL_ANY, 40, 15,    // ARTP_STEALTH,
         _gen_good_res_artp, _gen_bad_res_artp, 0, 0 },
     { "MP", ARTP_VAL_ANY, 15, 10,       // ARTP_MAGICAL_POWER,
@@ -1569,8 +1568,7 @@ static bool _randart_is_conflicting(const item_def &item,
 {
     if (item.base_type == OBJ_WEAPONS
         && get_weapon_brand(item) == SPWPN_HOLY_WRATH
-        && (is_demonic(item)
-            || proprt[ARTP_CURSE]))
+        && is_demonic(item))
     {
         return true;
     }
@@ -1903,9 +1901,6 @@ bool make_item_unrandart(item_def &item, int unrand_index)
     item.flags |= ISFLAG_UNRANDART;
     _artefact_setup_prop_vectors(item);
     _init_artefact_properties(item);
-
-    if (unrand->prpty[ARTP_CURSE])
-        do_curse_item(item);
 
     // get artefact appearance
     ASSERT(!item.props.exists(ARTEFACT_APPEAR_KEY));

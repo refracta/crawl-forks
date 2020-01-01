@@ -137,8 +137,6 @@ spret cast_summon_small_mammal(int pow, god_type god, bool fail)
 
 spret cast_sticks_to_snakes(int pow, god_type god, bool fail)
 {
-    // BCADDO: Give this spell a normal summon cap.
-
     if (otr_stop_summoning_prompt("create snakes"))
         return spret::abort;
 
