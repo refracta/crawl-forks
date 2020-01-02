@@ -2596,8 +2596,6 @@ bool gain_piety(int original_gain, int denominator, bool should_scale_piety)
         you.piety_max[you.religion] = you.piety;
     }
 
-    if (have_passive(passive_t::xray_vision))
-        you.xray_vision = true;
     return true;
 }
 
@@ -2700,9 +2698,6 @@ void lose_piety(int pgn)
         // Piety change affects halo / umbra radius.
         invalidate_agrid(true);
     }
-
-    if (!have_passive(passive_t::xray_vision))
-        you.xray_vision = false;
 }
 
 // Fedhas worshipers are on the hook for most plants and fungi

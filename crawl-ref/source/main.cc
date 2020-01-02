@@ -1646,6 +1646,13 @@ void process_command(command_type cmd)
 {
     you.apply_berserk_penalty = true;
 
+    // BCADNOTE: Weird position for this; but it was the only place I could be
+    // certain it'd always be set.
+    if (have_passive(passive_t::xray_vision))
+        you.xray_vision = true;
+    else
+        you.xray_vision = false;
+
     switch (cmd)
     {
 #ifdef USE_TILE
