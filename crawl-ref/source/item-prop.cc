@@ -1043,7 +1043,7 @@ void auto_id_inventory()
 void do_curse_item(item_def &item, bool quiet)
 {
     // Already cursed?
-    if (item.flags & ISFLAG_CURSED && item.props.exists(CURSE_PROPS_KEY))
+    if (bool(item.flags & ISFLAG_CURSED) && item.props.exists(CURSE_PROPS_KEY))
         return;
 
     if (!is_weapon(item) && item.base_type != OBJ_ARMOURS
