@@ -1719,7 +1719,22 @@ static string _describe_shield(const item_def &item, bool verbose)
 
         // Can't happen, right? (XXX)
         if (!item_ident(item, ISFLAG_KNOW_PROPERTIES) && item_type_known(item))
-            description += "\nThis armour may have some hidden properties.";
+            description += "\nThis shield may have some hidden properties.";
+    }
+
+    if (!is_artefact(item))
+    {
+        int max_ench = MAX_WPN_ENCHANT;
+        if (!is_weapon(item))
+            max_ench = property(item, PSHD_SH);
+
+        if (item_ident(item, ISFLAG_KNOW_PLUSES) && item.plus >= max_ench)
+            description += "\n\nIt cannot be enchanted further.";
+        else
+        {
+            description += "\n\nIt can be maximally enchanted to +"
+                + to_string(max_ench) + ".";
+        }
     }
 
     return description;
