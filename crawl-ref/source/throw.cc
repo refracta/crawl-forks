@@ -782,45 +782,50 @@ bool throw_it(bolt &pbolt, int throw_2, dist *target)
     if (teleport)
         returning = false;
 
-    if (ammo_type_damage(wepType) == 2)
-        you.time_taken = 5;
-    else if (thrown->base_type != OBJ_MISSILES)
+    bool is_missile = (thrown->base_type == OBJ_MISSILES);
+
+    if (!is_missile)
         you.time_taken = 10;
+    else if (ammo_type_damage(wepType) == 2)
+        you.time_taken = 5;
     else
         you.time_taken = you.attack_delay(thrown).roll();
 
     string prefix = "";
 
-    if (wepType == MI_SNOWBALL)
-        prefix += "ball up some snow and ";
-    else if (wepType == MI_OOZE)
-        prefix += "ball up the remains of a slime creature and ";
-    else if (wepType == MI_ABYSS)
-        prefix += "make a ball from the fabric of the abyss and ";
-    else if (wepType == MI_BLADE)
-        prefix += "pick up a piece of a broken weapon and ";
-    else if (wepType == MI_ROOT)
-        prefix += "rip up a gnarled root and ";
-    else if (wepType == MI_BANDAGE)
-        prefix += "mangle together a loose clump of bandages and embalming tools and ";
-    else if (wepType == MI_PANDEMONIUM)
-        prefix += "rip off a chunk of the weird stuff that makes up pandemonium and ";
-
-    else if (ammo_type_damage(wepType) == 2)
+    if (is_missile)
     {
-        prefix += "pick up ";
-        prefix += thrown->name(DESC_A, false, false, false);
-        prefix += " and ";
+        if (wepType == MI_SNOWBALL)
+            prefix += "ball up some snow and ";
+        else if (wepType == MI_OOZE)
+            prefix += "ball up the remains of a slime creature and ";
+        else if (wepType == MI_ABYSS)
+            prefix += "make a ball from the fabric of the abyss and ";
+        else if (wepType == MI_BLADE)
+            prefix += "pick up a piece of a broken weapon and ";
+        else if (wepType == MI_ROOT)
+            prefix += "rip up a gnarled root and ";
+        else if (wepType == MI_BANDAGE)
+            prefix += "mangle together a loose clump of bandages and embalming tools and ";
+        else if (wepType == MI_PANDEMONIUM)
+            prefix += "rip off a chunk of the weird stuff that makes up pandemonium and ";
+
+        else if (ammo_type_damage(wepType) == 2)
+        {
+            prefix += "pick up ";
+            prefix += thrown->name(DESC_A, false, false, false);
+            prefix += " and ";
+        }
     }
 
     // Create message.
     mprf("You %s%s%s %s.",
           prefix.c_str(),
           teleport ? "magically " : "",
-          (wepType == MI_LARGE_ROCK ? "hurl" :
+          ((is_missile && wepType == MI_LARGE_ROCK) ? "hurl" :
            projected == launch_retval::FUMBLED ? "toss away" :
            projected == launch_retval::LAUNCHED ? "shoot" : "throw"),
-          (ammo_type_damage(wepType) == 2) ? "it" : ammo_name.c_str());
+          ((is_missile && ammo_type_damage(wepType) == 2)) ? "it" : ammo_name.c_str());
 
     // Ensure we're firing a 'missile'-type beam.
     pbolt.pierce    = false;

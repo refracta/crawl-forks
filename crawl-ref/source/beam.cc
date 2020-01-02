@@ -2663,11 +2663,17 @@ void bolt::drop_object()
                     copy_item_to_grid(*item, pos(), 1);
                     return;
                 }
+                else
+                    item_was_destroyed(*item);
             }
+            else
+                item_was_destroyed(*item);
         }
-
+        else
+            copy_item_to_grid(*item, pos(), 1);
     }
-    item_was_destroyed(*item);
+    else 
+        item_was_destroyed(*item);
 }
 
 // Returns true if the beam hits the player, fuzzing the beam if necessary
