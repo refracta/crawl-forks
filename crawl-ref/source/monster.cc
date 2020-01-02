@@ -761,9 +761,7 @@ bool monster::likes_wand(const item_def &item) const
 
 void monster::equip_weapon_message(item_def &item)
 {
-    const string str = " wields " +
-                       item.name(DESC_A, false, false, true, false,
-                                 ISFLAG_CURSED) + ".";
+    const string str = " wields " + item.name(DESC_A) + ".";
     simple_monster_message(*this, str.c_str());
 
     if (item.base_type == OBJ_SHIELDS && !is_hybrid(item.sub_type) 
@@ -892,9 +890,7 @@ void monster::unequip_weapon(item_def &item, bool msg)
 {
     if (msg)
     {
-        const string str = " unwields " +
-                           item.name(DESC_A, false, false, true, false,
-                                     ISFLAG_CURSED) + ".";
+        const string str = " unwields " + item.name(DESC_A) + ".";
         msg = simple_monster_message(*this, str.c_str());
     }
 
