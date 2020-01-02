@@ -4878,9 +4878,6 @@ item_info get_item_info(const item_def& item)
         break;
     }
 
-    if (item_ident(item, ISFLAG_KNOW_CURSE))
-        ii.flags |= (item.flags & ISFLAG_CURSED);
-
     if (item_type_known(item))
     {
         ii.flags |= ISFLAG_KNOW_TYPE;
