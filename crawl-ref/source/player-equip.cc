@@ -255,12 +255,17 @@ static void _equip_artefact_effect(item_def &item, bool *show_msgs, bool unmeld,
     if (unknown_proprt(ARTP_CONTAM) && msg)
         mpr("You feel a build-up of mutagenic energy.");
 
-    if (!unmeld && proprt[ARTP_CURSE])
+    if (!unmeld)
     {
-        item.soul_bind_xp = exp_needed(min<int>(you.max_level, 27) + 2)
-            - exp_needed(min<int>(you.max_level, 27));
+        if (proprt[ARTP_CURSE])
+        {
+            item.soul_bind_xp = exp_needed(min<int>(you.max_level, 27) + 2)
+                - exp_needed(min<int>(you.max_level, 27));
 
-        mpr("It binds to your soul!");
+            mpr("It binds to your soul!");
+        }
+        else
+            item.soul_bind_xp = 0; // Should be superfluous, but may squash a bug.
     }
 
     if (!alreadyknown && dangerous)
@@ -438,7 +443,6 @@ static void _equip_weapon_effect(item_def& item, bool showMsgs, bool unmeld, equ
     int special = 0;
 
     const bool artefact     = is_artefact(item);
-    const bool known_cursed = item_known_cursed(item);
 
     // And here we finally get to the special effects of wielding. {dlb}
     if (item.base_type == OBJ_STAVES)
@@ -459,6 +463,8 @@ static void _equip_weapon_effect(item_def& item, bool showMsgs, bool unmeld, equ
         // generally set showMsgs to false.
         if (artefact || item.cursed())
             _equip_artefact_effect(item, &showMsgs, unmeld, slot);
+        else
+            item.soul_bind_xp = 0; // Should be superfluous but may squash a bug.
 
         const bool was_known = item_type_known(item);
 
@@ -913,7 +919,6 @@ static void _spirit_shield_message(bool unmeld)
 static void _equip_armour_effect(item_def& arm, bool unmeld,
                                  equipment_type slot)
 {
-    const bool known_cursed = item_known_cursed(arm);
     int ego = get_armour_ego_type(arm);
     if (ego != SPARM_NORMAL)
     {
@@ -1040,6 +1045,8 @@ static void _equip_armour_effect(item_def& arm, bool unmeld,
         bool show_msgs = true;
         _equip_artefact_effect(arm, &show_msgs, unmeld, slot);
     }
+    else
+        arm.soul_bind_xp = 0; // Should be superfluous but may squash a bug.
 
     you.redraw_armour_class = true;
     you.redraw_evasion = true;
@@ -1301,9 +1308,6 @@ static void _equip_jewellery_effect(item_def &item, bool unmeld,
                                     equipment_type slot)
 {
     const bool artefact     = is_artefact(item);
-    const bool known_cursed = item_known_cursed(item);
-    const bool known_bad    = (item_type_known(item)
-                               && item_value(item) <= 2);
 
     switch (item.sub_type)
     {
@@ -1422,6 +1426,7 @@ static void _equip_jewellery_effect(item_def &item, bool unmeld,
     }
     else
     {
+        item.soul_bind_xp = 0; // Should be superfluous but may squash a bug.
         new_ident = set_ident_type(item, true);
         set_ident_flags(item, ISFLAG_IDENT_MASK);
     }

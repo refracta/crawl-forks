@@ -1677,6 +1677,12 @@ bool uncurse_item(item_def &item)
     if (item.props.exists(CURSE_PROPS_KEY))
         item.props.erase(CURSE_PROPS_KEY);
 
+    if (!artefact_property(item, ARTP_CURSE) && item.soul_bound())
+    {
+        item.soul_bind_xp = 0;
+        mpr("The binds on your soul fade away.");
+    }
+
     return true;
 }
 
