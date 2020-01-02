@@ -5635,8 +5635,7 @@ bool player::can_swim(bool permanently) const
     // stat-boosting boots or heavy armour.
     return (species_can_swim(species)
             || body_size(PSIZE_BODY) >= SIZE_GIANT
-            || !permanently)
-                && form_can_swim();
+            || (!permanently && form_can_swim()));
 }
 
 /// Can the player do a passing imitation of a notorious Palestinian?
