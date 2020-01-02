@@ -845,6 +845,8 @@ void cloud_strike(actor * caster, actor * foe, int damage)
 {
     if (!cloud_at(foe->pos()))
         return;
+    if (foe->cloud_immune())
+        return;
     cloud_type cloud = cloud_at(foe->pos())->type;
 
     if (cloud == CLOUD_CHAOS)
