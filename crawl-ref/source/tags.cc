@@ -4521,11 +4521,11 @@ static void _fixup_dragon_artefact_name(item_def &item, string name_key)
 
 void unmarshallItem(reader &th, item_def &item)
 {
-    item.base_type   = static_cast<object_class_type>(unmarshallByte(th));
+    item.base_type = static_cast<object_class_type>(unmarshallByte(th));
     if (item.base_type == OBJ_UNASSIGNED)
         return;
-    item.sub_type    = unmarshallUByte(th);
-    item.plus        = unmarshallShort(th);
+    item.sub_type = unmarshallUByte(th);
+    item.plus = unmarshallShort(th);
 #if TAG_MAJOR_VERSION == 34
     if (th.getMinorVersion() < TAG_MINOR_RUNE_TYPE
         && item.is_type(OBJ_MISCELLANY, MISC_RUNE_OF_ZOT))
@@ -4541,9 +4541,9 @@ void unmarshallItem(reader &th, item_def &item)
         item.sub_type = MISC_PHANTOM_MIRROR;
     }
 #endif
-    item.plus2       = unmarshallShort(th);
-    item.special     = unmarshallInt(th);
-    item.quantity    = unmarshallShort(th);
+    item.plus2 = unmarshallShort(th);
+    item.special = unmarshallInt(th);
+    item.quantity = unmarshallShort(th);
 #if TAG_MAJOR_VERSION == 34
     // These used to come in stacks in monster inventory as throwing weapons.
     // Replace said stacks (but not single items) with tomahawks.
@@ -4573,6 +4573,11 @@ void unmarshallItem(reader &th, item_def &item)
             item.plus = item.plus2 = 0;
             item.brand = SPMSL_NORMAL;
         }
+    }
+
+    if (item.soul_bound() && !artefact_property(item, ARTP_CURSE))
+    {
+        item.soul_bind_xp = 0;
     }
 
     if (th.getMinorVersion() < TAG_MINOR_CURSE_REWORK)
