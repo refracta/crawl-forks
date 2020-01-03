@@ -188,13 +188,6 @@ bool monster::add_ench(const mon_enchant &ench)
     if (new_enchantment)
         add_enchantment_effect(ench);
 
-    if (ench.ench == ENCH_CHARM
-        || ench.ench == ENCH_NEUTRAL_BRIBED
-        || ench.ench == ENCH_FRIENDLY_BRIBED
-        || ench.ench == ENCH_HEXED)
-    {
-        align_summons(true);
-    }
     return true;
 }
 
@@ -621,7 +614,6 @@ void monster::remove_enchantment_effect(const mon_enchant &me, bool quiet)
                                         ? " is no longer hexed."
                                         : " is no longer bribed.");
             }
-
         }
 
         if (you.can_see(*this))

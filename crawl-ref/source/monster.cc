@@ -6625,8 +6625,7 @@ void monster::note_spell_cast(spell_type spell)
 
 void monster::align_summons(bool force_friendly)
 {
-    mon_attitude_type new_att = (force_friendly ? ATT_FRIENDLY
-                                   : attitude);
+    mon_attitude_type new_att = temp_attitude();
 
     bool destroy_avatars = false;
     bool avatar_gone = false;
@@ -6673,14 +6672,21 @@ void monster::align_summons(bool force_friendly)
     for (monster_iterator mi; mi; ++mi)
     {
         int sumtype = 0;
+        monster mon = **mi;
+        string summstring = make_stringf(" follows %s's orders.", name(DESC_THE).c_str());
 
-        if (attitude != new_att
-            && mi->summoner == mid
-            && (mi->is_summoned(nullptr, &sumtype)
+        if (mon.attitude != new_att
+            && mon.summoner == mid
+            && (mon.is_summoned(nullptr, &sumtype)
                 || sumtype == MON_SUMM_CLONE))
         {
+            if (destroy_avatars)
+            {
+                mi->lose_ench_duration(ENCH_ABJ, INFINITE_DURATION);
+                simple_monster_message(mon, " is dismissed.");
+            }
             mi->attitude = new_att;
-            mi->reset();
+            simple_monster_message(mon, summstring.c_str());
         }
     }
 }
