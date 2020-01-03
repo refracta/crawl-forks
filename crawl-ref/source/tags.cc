@@ -4577,7 +4577,7 @@ void unmarshallItem(reader &th, item_def &item)
 
     if (th.getMinorVersion() < TAG_MINOR_CURSE_REWORK)
     {
-        if (item.cursed() && !item.props.exists(CURSE_PROPS_KEY))
+        if (item.cursed())
         {
             uncurse_item(item);
 
