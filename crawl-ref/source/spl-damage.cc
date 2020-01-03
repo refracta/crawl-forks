@@ -2112,6 +2112,18 @@ static int _ignite_poison_monsters(coord_def where, beam_type damtype, int pow, 
     if (damage <= 0)
         return 0;
 
+    if (agent && agent->deity() == GOD_FEDHAS && fedhas_protects(mon))
+    {
+        if (!tracer)
+        {
+            simple_god_message(
+                        make_stringf(" protects %s plant from harm.",
+                            agent->is_player() ? "your" : "a").c_str(),
+                        GOD_FEDHAS);
+        }
+        return 0;
+    }
+
     mon->expose_to_element(damtype, damage);
 
     if (tracer)
