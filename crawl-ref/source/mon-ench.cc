@@ -297,6 +297,7 @@ void monster::add_enchantment_effect(const mon_enchant &ench, bool quiet)
         invalidate_agrid(true);
         break;
 
+    case ENCH_ROLLING:
     case ENCH_FROZEN:
         calc_speed();
         break;
@@ -776,6 +777,12 @@ void monster::remove_enchantment_effect(const mon_enchant &me, bool quiet)
     case ENCH_INNER_FLAME:
         if (!quiet && alive())
             simple_monster_message(*this, "'s inner flame fades away.");
+        break;
+
+    case ENCH_ROLLING:
+        calc_speed();
+        if (!quiet && alive())
+            simple_monster_message(*this, " stops rolling.");
         break;
 
     //The following should never happen, but just in case...
@@ -2143,10 +2150,10 @@ static const char *enchant_names[] =
 #endif
     "breath timer",
 #if TAG_MAJOR_VERSION == 34
-    "deaths_door", "rolling",
+    "deaths_door", 
 #endif
-    "ozocubus_armour", "wretched", "screamed", "rune_of_recall", "injury bond",
-    "drowning", "flayed", "haunting",
+    "rolling", "ozocubus_armour", "wretched", "screamed", 
+    "rune_of_recall", "injury bond", "drowning", "flayed", "haunting",
 #if TAG_MAJOR_VERSION == 34
     "retching",
 #endif

@@ -25,7 +25,12 @@ bat CORPSE_BAT
 caustic_shrike CORPSE_CAUSTIC_SHRIKE
 shard_shrike CORPSE_SHARD_SHRIKE
 
+## Beetles ('B')
+%back blood_green blood_green1 blood_green2 blood_green3 blood_green4
+boulder_beetle CORPSE_BOULDER_BEETLE
+
 ## Hounds and hogs ('h')
+%back blood_puddle_red blood_puddle_red1 blood_puddle_red2 blood_puddle_red3 blood_puddle_red4
 jackal CORPSE_JACKAL
 hound CORPSE_HOUND
 howler CORPSE_HOWLER_MONKEY
