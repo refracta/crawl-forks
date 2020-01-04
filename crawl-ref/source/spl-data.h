@@ -2010,6 +2010,17 @@ static const struct spell_desc spelldata[] =
 },
 
 {
+    SPELL_ROLLOUT, "Rollout",
+    spschool::translocation | spschool::earth,
+    spflag::target | spflag::needs_tracer | spflag::selfench | spflag::monster,
+    6,
+    0,
+    LOS_RADIUS, LOS_RADIUS,
+    6, 0,
+    TILEG_GENERIC_MONSTER_SPELL,
+},
+
+{
     SPELL_SUMMON_MUSHROOMS, "Summon Mushrooms",
     spschool::summoning,
     spflag::monster | spflag::selfench | spflag::mons_abjure,

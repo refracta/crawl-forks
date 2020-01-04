@@ -230,6 +230,15 @@ static void _iood_stop(monster& mon, bool msg = true)
     if (!mon.alive())
         return;
 
+    if (mon.has_ench(ENCH_ROLLING))
+    {
+        // Deduct the energy first - the move they made that just stopped
+        // them was a speed 14 move.
+        mon.lose_energy(EUT_MOVE);
+        mon.del_ench(ENCH_ROLLING, !msg);
+        return;
+    }
+
     if (msg)
         simple_monster_message(mon, " falls apart.");
     dprf("iood: dissipating");
@@ -276,8 +285,30 @@ static bool _iood_shielded(monster& mon, actor &victim)
     return pro_block >= con_block;
 }
 
+static bool _boulder_hit(monster& mon, const coord_def &pos)
+{
+    actor *victim = actor_at(pos);
+    if (victim)
+    {
+        simple_monster_message(mon, (string(" smashes into ")
+            + victim->name(DESC_THE) + "!").c_str());
+
+        int dam = victim->apply_ac(roll_dice(3, 20));
+        if (victim->is_player())
+            ouch(dam, KILLED_BY_ROLLING, mon.mindex());
+        else
+            victim->hurt(&mon, dam);
+    }
+
+    noisy(5, pos);
+    return victim && victim->alive();
+}
+
 static bool _iood_hit(monster& mon, const coord_def &pos, bool big_boom = false)
 {
+    if (mon.has_ench(ENCH_ROLLING))
+        return _boulder_hit(mon, pos);
+
     bolt beam;
     beam.name = "icy sphere";
     beam.flavour = BEAM_DEVASTATION;
@@ -341,7 +372,8 @@ static bool _iood_hit(monster& mon, const coord_def &pos, bool big_boom = false)
 // returns true if the orb is gone
 bool iood_act(monster& mon, bool no_trail)
 {
-    ASSERT(mons_is_projectile(mon.type));
+    bool iood = mons_is_projectile(mon.type);
+    ASSERT(iood || mon.has_ench(ENCH_ROLLING));
 
     float x = mon.props[IOOD_X];
     float y = mon.props[IOOD_Y];
@@ -427,7 +459,7 @@ move_again:
         return true;
     }
 
-    if (mon.props.exists(IOOD_FLAWED))
+    if (iood && mon.props.exists(IOOD_FLAWED))
     {
         const actor *caster = actor_by_mid(mon.summoner);
         if (!caster || caster->pos().origin() ||
@@ -442,7 +474,7 @@ move_again:
         return false;
 
     if (!no_trail)
-        place_cloud(CLOUD_COLD, starting_pos, 2 + random2(3), &mon);
+        place_cloud(iood ? CLOUD_COLD : CLOUD_DUST, starting_pos, 2 + random2(3), &mon);
 
     actor *victim = actor_at(pos);
     if (cell_is_solid(pos) || victim)
@@ -453,12 +485,19 @@ move_again:
         {
             mprf("%s hits %s", mon.name(DESC_THE, true).c_str(),
                  feature_description_at(pos, false, DESC_A).c_str());
+
+            if (!iood) // boulders need to stop now
+            {
+                _iood_stop(mon);
+                // Can't hurt rock worms anyway.
+                return true;
+            }
         }
 
         monster* mons = (victim && victim->is_monster()) ?
             (monster*) victim : 0;
 
-        if (mons && mons_is_projectile(victim->type))
+        if (mons && iood && mons_is_projectile(victim->type))
         {
             // Weak orbs just fizzle instead of exploding.
             if (mons->props[IOOD_DIST].get_int() < 2
@@ -492,6 +531,24 @@ move_again:
                 place_cloud(CLOUD_COLD, pos, 3, &mon);
                 return true;
             }
+        }
+
+        if (mons && mon.has_ench(ENCH_ROLLING) && mons->has_ench(ENCH_ROLLING))
+        {
+            if (mon.observable())
+                mpr("The boulders collide with a stupendous crash!");
+            else
+                mpr("You hear a loud crashing sound!");
+            noisy(20, pos);
+
+            // Remove ROLLING and add DAZED
+            _iood_stop(mon);
+            _iood_stop(*mons);
+            if (!mon.check_clarity(false))
+                mon.add_ench(ENCH_CONFUSION);
+            if (!mons->check_clarity(false))
+                mons->add_ench(ENCH_CONFUSION);
+            return true;
         }
 
         if (mons && (mons->submerged() || mons->type == MONS_BATTLESPHERE))
@@ -589,7 +646,21 @@ move_again:
         }
 
         if (_iood_hit(mon, pos))
+        {
+            if (!iood)
+                _iood_stop(mon);
             return true;
+        }
+    }
+
+    // Boulders stop at lava/water to prevent unusual behaviour;
+    // skimming across the water like a pebble could be justifiable, but
+    // it raises too many questions.
+    if (!iood && (!feat_has_solid_floor(grd(pos)) || feat_is_water(grd(pos))))
+    {
+        mprf("%s screeches to a halt.", mon.name(DESC_THE, true).c_str());
+        _iood_stop(mon, false);
+        return true;
     }
 
     if (!mon.move_to_pos(pos))
@@ -647,6 +718,14 @@ static bool _iood_catchup_move(monster& mon)
         return true;
     }
 
+    // Boulder doesn't travel over water/lava.
+    if (mon.has_ench(ENCH_ROLLING)
+        && (!feat_has_solid_floor(grd(pos)) || feat_is_water(grd(pos))))
+    {
+        _iood_stop(mon, false);
+        return true;
+    }
+
     if (!mon.move_to_pos(pos))
     {
         _iood_stop(mon);
@@ -687,4 +766,18 @@ void iood_catchup(monster* mons, int pturns)
     for (int i = 0; i < moves; ++i)
         if (_iood_catchup_move(mon))
             return;
+}
+
+void boulder_start(monster *mon, bolt *beam)
+{
+    mon->add_ench(ENCH_ROLLING);
+    // Work out x/y/vx/vy from beam
+    beam->choose_ray();
+    mon->props["iood_x"].get_float() = beam->ray.r.start.x - 0.5;
+    mon->props["iood_y"].get_float() = beam->ray.r.start.y - 0.5;
+    mon->props["iood_vx"].get_float() = mons_is_fleeing(*mon) ?
+        -beam->ray.r.dir.x : beam->ray.r.dir.x;
+    mon->props["iood_vy"].get_float() = mons_is_fleeing(*mon) ?
+        -beam->ray.r.dir.y : beam->ray.r.dir.y;
+    iood_act(*mon);
 }

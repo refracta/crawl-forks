@@ -96,6 +96,7 @@ static int  _mons_mesmerise(monster* mons, bool actual = true);
 static int  _mons_cause_fear(monster* mons, bool actual = true);
 static int  _mons_mass_confuse(monster* mons, bool actual = true);
 static coord_def _mons_fragment_target(const monster &mons);
+static coord_def _mons_move_target(const monster &mon);
 static coord_def _mons_conjure_flame_pos(const monster &mon);
 static coord_def _mons_awaken_earth_target(const monster& mon);
 static void _maybe_throw_ally(const monster &mons);
@@ -193,6 +194,25 @@ static const map<spell_type, mons_spell_logic> spell_to_logic = {
         _should_selfench(ENCH_HASTE),
         _fire_simple_beam,
         _selfench_beam_setup(BEAM_HASTE),
+    } },
+    { SPELL_ROLLOUT, {
+        [](const monster &caster) {
+            if (caster.has_ench(ENCH_ROLLING))
+                return false;
+            if (mons_is_fleeing(caster) && coinflip())
+                return true;
+            if (!adjacent(caster.pos(), caster.target) && coinflip())
+                return true;
+            return false;
+        },
+        [](monster &caster, mon_spell_slot, bolt pbolt) {
+            if (mons_is_fleeing(caster))
+                simple_monster_message(caster, " curls into a ball and rolls away!");
+            else
+                simple_monster_message(caster, " curls into a ball and starts rolling!");
+            boulder_start(&caster, &pbolt);
+        },
+        _target_beam_setup(_mons_move_target),
     } },
     { SPELL_MINOR_HEALING, {
         [](const monster &caster) {
@@ -4904,6 +4924,11 @@ static int _mons_mass_confuse(monster* mons, bool actual)
     }
 
     return retval;
+}
+
+static coord_def _mons_move_target(const monster &mon)
+{
+    return mon.target;
 }
 
 static coord_def _mons_fragment_target(const monster &mon)

@@ -94,6 +94,13 @@ static const mon_spellbook mspell_list[] =
       }
     },
 
+    // ('B') Beetles
+    {  MST_BOULDER_BEETLE,
+      {
+       { SPELL_ROLLOUT, 80, MON_SPELL_NATURAL },
+      }
+    },
+
     // ('c') Centaurs and such.
     {  MST_FAUN_I,
       {

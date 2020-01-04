@@ -44,7 +44,6 @@ giant_cockroach MONS_GIANT_COCKROACH
 worker_ant MONS_WORKER_ANT
 soldier_ant MONS_SOLDIER_ANT
 queen_ant MONS_QUEEN_ANT
-boulder_beetle MONS_BOULDER_BEETLE
 
 ## Batty monsters ('b')
 %rim 1
@@ -73,6 +72,13 @@ megabat MONS_MEGABAT
 gigabat MONS_GIGABAT
 phase_bat MONS_PHASE_BAT
 %sdir mon/animals
+
+## Beetles ('B')
+boulder_beetle MONS_BOULDER_BEETLE
+boulder_beetle_rolling0 MONS_BOULDER_BEETLE_ROLLING
+boulder_beetle_rolling1
+boulder_beetle_rolling2
+boulder_beetle_rolling3
 
 ## Hounds and hogs ('h')
 %rim 0

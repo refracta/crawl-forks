@@ -311,6 +311,7 @@ static bool _mons_can_follow_player_from(const monster &mons,
     if (!mons.alive()
         || mons.speed_increment < 50
         || mons.incapacitated()
+        || mons.has_ench(ENCH_ROLLING)
         || mons.is_stationary())
     {
         return false;

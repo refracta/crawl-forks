@@ -1619,7 +1619,7 @@ void handle_monster_move(monster* mons)
     }
 #endif
 
-    if (mons_is_projectile(*mons))
+    if (mons_is_projectile(*mons) || mons->has_ench(ENCH_ROLLING))
     {
         if (iood_act(*mons))
             return;

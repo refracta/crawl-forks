@@ -223,6 +223,10 @@ void mons_relocated(monster* mons)
         monster_die(*tentacle, KILL_RESET, -1, true, false);
     }
 
+    // Make boulders stop rolling.
+    if (mons->has_ench(ENCH_ROLLING))
+        mons->del_ench(ENCH_ROLLING, false);
+
     mons->clear_clinging();
 }
 

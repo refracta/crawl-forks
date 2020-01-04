@@ -48,6 +48,7 @@
 /// Simple 1:1 mappings between monster enchantments & info flags.
 static map<enchant_type, monster_info_flags> trivial_ench_mb_mappings = {
     { ENCH_BERSERK,         MB_BERSERK },
+    { ENCH_ROLLING,         MB_ROLLING },
     { ENCH_POISON,          MB_POISONED },
     { ENCH_MAGIC_CANDLE,    MB_GLOWING },
     { ENCH_SILVER_CANDLE,   MB_GLOWING },

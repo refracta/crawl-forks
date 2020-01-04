@@ -3021,6 +3021,8 @@ bool monster::strict_neutral() const
 
 bool monster::wont_attack() const
 {
+    if (has_ench(ENCH_ROLLING))
+        return true;
     return friendly() || good_neutral() || strict_neutral();
 }
 
@@ -5005,6 +5007,8 @@ void monster::calc_speed()
 {
     speed = mons_base_speed(*this);
 
+    if (has_ench(ENCH_ROLLING))
+        speed = 2 * speed;
     if (has_ench(ENCH_BERSERK))
         speed = berserk_mul(speed);
     else if (has_ench(ENCH_HASTE))
