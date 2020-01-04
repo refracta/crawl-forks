@@ -79,6 +79,8 @@ boulder_beetle_rolling0 MONS_BOULDER_BEETLE_ROLLING
 boulder_beetle_rolling1
 boulder_beetle_rolling2
 boulder_beetle_rolling3
+boring_beetle MONS_BORING_BEETLE
+giant_mite MONS_GIANT_MITE
 
 ## Hounds and hogs ('h')
 %rim 0
@@ -87,6 +89,7 @@ jackal MONS_JACKAL
 hound MONS_HOUND
 howler MONS_HOWLER_MONKEY
 warg MONS_WARG
+war_dog MONS_WAR_DOG
 wolf MONS_WOLF
 raiju MONS_RAIJU
 hell_hound MONS_HELL_HOUND
@@ -164,11 +167,13 @@ ghost_crab MONS_GHOST_CRAB
 %rim 0
 swamp_worm MONS_SWAMP_WORM
 swamp_worm_water
+lava_worm MONS_LAVA_WORM
 %rim 1
 %sdir mon/animals
 worm MONS_WORM
 tyrant_leech MONS_TYRANT_LEECH
 dart_slug MONS_DART_SLUG
+rock_worm MONS_ROCK_WORM
 %rim 0
 torpor_snail MONS_TORPOR_SNAIL
 %rim 1
@@ -179,11 +184,15 @@ hornet MONS_HORNET
 spark_wasp MONS_SPARK_WASP
 ghost_moth MONS_GHOST_MOTH
 moth_of_wrath MONS_MOTH_OF_WRATH
+giant_firefly MONS_GIANT_FIREFLY
 %rim 0
 
 ## Aquatics (';')
 %sdir mon/aquatic
 electric_eel MONS_ELECTRIC_EEL
+shark MONS_SHARK
+jellyfish MONS_JELLYFISH
+giant_goldfish MONS_GIANT_GOLDFISH
 %rim 1
 
 %include dc-tentacles.txt
@@ -302,6 +311,7 @@ green_death MONS_GREEN_DEATH
 ice_fiend MONS_ICE_FIEND
 hell_sentinel MONS_HELL_SENTINEL
 tzitzimitl MONS_TZITZIMITL
+tzitzimitl_new MONS_SHADOW_FIEND
 %sdir mon/unique
 ignacio MONS_IGNACIO
 %sdir mon/demons
@@ -597,6 +607,7 @@ demigod MONS_DEMIGOD
 angel MONS_ANGEL
 daeva MONS_DAEVA
 cherub MONS_CHERUB
+silver_star MONS_SILVER_STAR
 %sdir mon/undead
 profane_servitor MONS_PROFANE_SERVITOR
 %sdir mon/unique
@@ -678,6 +689,7 @@ ophan MONS_OPHAN
 ## Hybrids ('H')
 %sdir mon/animals
 hippogriff MONS_HIPPOGRIFF
+griffon MONS_GRYPHON
 manticore MONS_MANTICORE
 %sdir mon/demihumanoids
 harpy MONS_HARPY
@@ -1050,6 +1062,8 @@ deformed_orc MONS_DEFORMED_ORC
 %rim 0
 shadow MONS_SHADOW /*' '*/
 phantom MONS_PHANTOM
+fire_spirit MONS_FIRE_SPIRIT
+flayed_figure MONS_FLAYED_FIGURE
 ## Ghosts of AXED_MONs
 missing_ghost MONS_GHOST
 ## used for Detect Creatures
