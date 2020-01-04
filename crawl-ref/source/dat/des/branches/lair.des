@@ -30,7 +30,7 @@ function wad_woods_setup(e, uniq, weight, mist, delaynum, sizenum, spreadnum)
         end
     else
         if you.absdepth() >= 12 then
-            e.mons("centaur warrior / two-headed ogre")
+            e.mons("centaur warrior / boulder beetle")
             e.mons("hell rat")
         elseif you.absdepth() >= 8 then
             e.mons("centaur / troll")
@@ -75,7 +75,7 @@ function beast_lair_populate_mons_large(e)
     elseif set == 3 then
         e.mons("elephant")
         e.mons("elephant")
-        e.mons("elephant / dire elephant w:1")
+        e.mons("boulder beetle / dire elephant")
     elseif set == 4 then
         e.mons("yak")
         e.mons("yak / death yak w:6")
@@ -100,7 +100,7 @@ function beast_lair_populate_mons_small(e)
         else
             monster_list = { "yak", "yak", "polar bear", "death yak",
                              "elephant", "spiny frog", "komodo dragon",
-                             "wyvern" }
+                             "wyvern" , "boulder beetle" }
         end
         e.mons(plant)
         e.mons(monster_list[crawl.random2(#monster_list) + 1])
@@ -208,7 +208,7 @@ TAGS:    ruin lair_entry transparent
 ORIENT:  float
 MONS:    yak, death yak
 MONS:    iguana w:20 / crocodile w:20 / komodo dragon / basilisk w:5
-MONS:    river rat / porcupine / hell rat / quokka / rat
+MONS:    river rat / porcupine / hell rat / boulder beetle
 MONS:    bullfrog w:40 / blink frog / spiny frog
 SHUFFLE: 1345
 NSUBST:  1 = 2:11112 / * = 1..
@@ -312,7 +312,7 @@ ENDMAP
 NAME:   erik_lair_island
 TAGS:   lair_entry transparent
 ORIENT: float
-MONS:   troll, hound w:15 / wolf
+MONS:   boulder beetle, hound w:15 / wolf
 KFEAT:  O = enter_lair
 SUBST:  - = w., 2 = 2:5 .:1
 MAP
@@ -381,7 +381,7 @@ ENDMAP
 NAME:   due_lair_maze_entry_diamond
 TAGS:   lair_entry transparent
 ORIENT: float
-MONS:   porcupine w:50 / scorpion / bullfrog w:30 / \
+MONS:   porcupine w:50 / boulder beetle w:10 / bullfrog w:30 / \
         black bear w:25 / crocodile w:15 / yak
 KMONS:  P = plant / fungus
 KFEAT:  O = enter_lair
@@ -1183,7 +1183,7 @@ ENDMAP
 NAME:   forest_entry_grove
 DEPTH:  Lair:2-, !Lair:$
 MONS:   centaur w:4 / spriggan
-MONS:   wolf, black bear, polar bear
+MONS:   wolf, black bear, polar bear w:4 / boulder beetle
 KMONS:  P = plant / bush
 NSUBST: Q = 2:1 / *:.
 NSUBST: R = 3:2 / 1:3 / 1:4 / *:.
@@ -1229,7 +1229,7 @@ NAME:    grunt_forest_large_clearings
 TAGS:    transparent no_pool_fixup
 DEPTH:   Lair
 WEIGHT:  15
-MONS:    wolf, black bear / polar bear, spriggan / centaur w:4
+MONS:    wolf, black bear w:2 / polar bear w:6 / boulder beetle w:1, spriggan / centaur w:4
 KMONS:   9 = 9
 KMONS:   * = spriggan rider / faun w:4
 KMONS:   P = plant / bush
@@ -1878,7 +1878,7 @@ ORIENT:  float
 DEPTH:   Lair:3-, !Lair:$
 MONS:    necromancer, elephant zombie
 MONS:    crocodile zombie / basilisk zombie / \
-         komodo dragon zombie w:4
+         komodo dragon zombie w:4 / boulder beetle zombie
 SHUFFLE: 23
 NSUBST:  2 = 1:2 / * = 2., 3 = 1:3 / * = 3.
 SUBST:   % = %%%%%$$$**|
@@ -1908,7 +1908,7 @@ NAME:   bobbens_ice_dragon_lair
 TAGS:   no_monster_gen
 DEPTH:  Lair:4-
 MONS:   ice dragon
-MONS:   white imp
+MONS:   white imp w:4 / ice devil w:1
 SUBST:  $ = $:3 *:2, _ = %:1 `:3
 SUBST:  3 = 2:9 .:1
 SUBST:  ' = w:15 x:12 `:1, ; = x:2 .:3, G = G:1 .:3
@@ -2022,7 +2022,7 @@ NAME:   hibernation_bobbens
 DEPTH:  Lair
 TAGS:   no_monster_gen no_item_gen
 MONS:   ice dragon / fire dragon / swamp dragon / anaconda w:5
-MONS:   swamp dragon / hydra / catoblepas
+MONS:   swamp dragon / hydra / catoblepas / boulder beetle
 MONS:   swamp drake / w:20 spiny frog / w:20 komodo dragon /\
         w:20 basilisk / w:20 black mamba
 KMONS:  P = plant
@@ -2048,7 +2048,7 @@ ENDMAP
 NAME: lookout_lair_type
 TAGS: extra no_pool_fixup transparent
 DEPTH: Lair:4-
-MONS: w:1 generate_awake patrolling catoblepas / w:4 nothing
+MONS: generate_awake patrolling catoblepas
 SUBST: a = w W .
 SUBST: ' = W .
 MAP
@@ -2138,7 +2138,7 @@ ENDMAP
 NAME:   kennysheep_catoblepas_arena
 TAGS:   no_monster_gen ruin
 DEPTH:  Lair:3-, !Lair:$
-MONS:   catoblepas
+MONS:   catoblepas / boulder beetle
 NSUBST: d = 4=%* / 3:0 / *:.
 MAP
 xxxxxxxxxxxxxxxxxxx
@@ -2233,7 +2233,7 @@ DEPTH:  Lair
 ORIENT: north
 KMONS:  pq = plant / fungus / toadstool
 KMONS:  1 = electric eel / rime drake / elephant / wyvern
-KMONS:  2 = lindwurm / dire elephant / catoblepas
+KMONS:  2 = lindwurm / dire elephant / catoblepas / boulder beetle
 KITEM:  2 = * / |
 KFEAT:  q = W
 KFEAT:  1 = w
@@ -2309,7 +2309,7 @@ ENDMAP
 NAME:   pf_torpor_hydra
 TAGS:   no_monster_gen no_item_gen
 DEPTH:  Lair:3-, !Lair:$
-MONS:   torpor snail, hydra
+MONS:   torpor snail, hydra / boulder_beetle
 # A decent item visible from the door, a superb item not visible,
 # and a couple of floor items anywhere
 NSUBST: . = * / ., - = | / ., . = 2=% / .
@@ -2512,7 +2512,7 @@ NAME:    wormcave
 TAGS:    no_wall_fixup no_monster_gen no_rotate
 PLACE:   Lair:$
 ORIENT:  southeast
-MONS:    torpor snail, tyrant leech, lindwurm, hornet
+MONS:    torpor snail, tyrant leech, lindwurm, boulder beetle, hornet
 MONS:    fire dragon / ice dragon
 KMONS:   p = plant
 SHUFFLE: ABC
@@ -2656,7 +2656,7 @@ MONS:    hippogriff, manticore, catoblepas
 KMONS:   8 = water moccasin
 KMONS:   9 : spiny frog w:90 / hornet
 KMONS:   0 : black mamba w:90 / wolf spider
-KMONS:   A = elephant
+KMONS:   A = elephant / boulder beetle
 KMONS:   B = death yak
 KMONS:   C = dream sheep
 KMONS:   D = hydra / torpor snail w:6 / dire elephant w:6
@@ -2694,7 +2694,7 @@ ENDMAP
 NAME:    hangedman_lair_tendril_chambers
 PLACE:   Lair:$
 ORIENT:  float
-MONS:    water moccasin / wyvern, hornet, spiny frog
+MONS:    water moccasin / wyvern, hornet, spiny frog w:4 / boulder beetle
 MONS:    black mamba, redback, wolf spider, guardian serpent
 KMONS:   f = fungus
 KMONS:   P = plant
@@ -2970,7 +2970,7 @@ TAGS:   no_monster_gen no_rotate no_item_gen
 PLACE:  Lair:$
 ORIENT: northwest
 ITEM:   any good_item
-MONS:   yak, death yak, manticore
+MONS:   yak, death yak, manticore w:4 / boulder beetle w:1
 KMONS:  4C = patrolling catoblepas
 # These are still living plants for all intents and purposes...
 KMONS:  P = plant perm_ench:petrified dbname:petrified_plant \
@@ -3029,7 +3029,7 @@ PLACE:   Lair:$
 ORIENT:  northeast
 MONS:    deep troll shaman, dire elephant / hydra / lindwurm
 MONS:    catoblepas, death yak band
-MONS:    elephant, wolf, black bear / polar bear
+MONS:    elephant w:3 / boulder beetle w:1, wolf, black bear / polar bear
 KMONS:   P = plant / fungus w:2 / bush w:1
 SHUFFLE: 567
 SUBST:   C = cx.., P = P .:9 t:1
