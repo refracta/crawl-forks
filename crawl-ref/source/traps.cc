@@ -312,7 +312,7 @@ bool monster_caught_in_net(monster* mon, actor* agent)
         return false;
     }
 
-    if (mon->is_insubstantial())
+    if (mon->is_insubstantial() || mons_genus(mon->type) == MONS_JELLY)
     {
         if (you.can_see(*mon))
         {
