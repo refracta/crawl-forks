@@ -4459,12 +4459,16 @@ void marshallItem(writer &th, const item_def &item, bool iinfo)
 #if TAG_MAJOR_VERSION == 34
     if (!item.is_valid(iinfo))
     {
+        return;
+
+        /*
         string name;
         item_def dummy = item;
         if (!item.quantity)
             name = "(quantity: 0) ", dummy.quantity = 1;
         name += dummy.name(DESC_PLAIN, true);
         die("Invalid item: %s", name.c_str());
+        */
     }
 #endif
     ASSERT(item.is_valid(iinfo));
