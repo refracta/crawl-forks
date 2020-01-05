@@ -102,6 +102,35 @@ int ranged_attack::calc_to_hit(bool random, bool player_aux)
             hit = (hit - 1) / (2 * defl);
     }
 
+    int blockers = 0;
+
+    for (rectangle_iterator ri(attacker->pos(), 1, true); ri; ++ri)
+    {
+        monster * mon = monster_at(*ri);
+        if (mon && !mon->incapacitated()
+            && !mons_is_firewood(*mon))
+        {
+            if (attacker->is_player() && !mon->friendly())
+                blockers++;
+            if (attacker->is_monster() && attacker->temp_attitude() != mon->temp_attitude())
+                blockers++;
+            if (!blocker.compare(""))
+                blocker = mon->name(DESC_THE);
+            else if (coinflip())
+                blocker = mon->name(DESC_THE);
+        }
+    }
+
+    if (blockers == 1)
+        hit *= 0.7;
+    else if (blockers < 7)
+    {
+        blockers--;
+        hit *= (1 - 0.3 - 0.1 * blockers);
+    }
+    else if (blockers != 0)
+        hit *= 0.2;
+
     return rand_round(hit);
 }
 
@@ -329,7 +358,8 @@ bool ranged_attack::handle_phase_dodged()
     const int orig_ev_margin =
         test_hit(orig_to_hit, ev, !attacker->is_player());
 
-    if (defender->missile_deflection() && orig_ev_margin >= 0)
+    if (defender->missile_deflection() && orig_ev_margin >= 0
+        && (!blocker.compare("") || coinflip()))
     {
         if (needs_message && defender_visible)
         {
@@ -350,6 +380,19 @@ bool ranged_attack::handle_phase_dodged()
             count_action(CACT_DODGE, DODGE_DEFLECT);
 
         return true;
+    }
+    else if (orig_ev_margin >= 0)
+    {
+        if (needs_message)
+        {
+            if (attacker->is_player())
+                mprf("%s makes you miss your attack.", blocker.c_str());
+            else if (attacker->as_monster()->friendly())
+                mprf("%s makes %s miss their attack.",
+                    blocker.c_str(),
+                    attacker->as_monster()->name(DESC_THE).c_str());
+            needs_message = false;
+        }
     }
 
     if (defender->is_player())

@@ -728,25 +728,6 @@ bool throw_it(bolt &pbolt, int throw_2, dist *target)
                           : SPWPN_NORMAL;
     const int ammo_brand = get_ammo_brand(*thrown);
 
-    for (rectangle_iterator ri(you.pos(), 1, true); ri; ++ri)
-    {
-        monster * mon = monster_at(*ri);
-        if (mon && !mon->friendly() && !mon->incapacitated() 
-            && !mons_is_firewood(*mon)
-            && projected == launch_retval::LAUNCHED && coinflip())
-        {
-            you.time_taken = 10;
-            mprf(MSGCH_WARN,
-                "%s strikes at your weapon causing you to fumble your attack!",
-                mon->name(DESC_THE).c_str());
-            mon->lose_energy(EUT_ATTACK, 2);
-            you.turn_is_over = true;
-            if (throw_2 == -1)
-                destroy_item(t);
-            return false;
-        }
-    }
-
     switch (projected)
     {
     case launch_retval::LAUNCHED:

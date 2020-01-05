@@ -33,6 +33,7 @@ private:
     bool ignores_shield(bool verbose) override;
 
     bolt the_path;
+    string blocker = "";
 
     /* Combat Calculations */
     bool using_weapon() const override;
