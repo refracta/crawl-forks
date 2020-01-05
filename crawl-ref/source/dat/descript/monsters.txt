@@ -2724,6 +2724,11 @@ bog mummy
 An undead figure preserved by the brackish waters of a bog. It has begun to
 decay heavily, and looks fragile.
 %%%%
+boulder beetle
+
+A huge grey beetle with an almost impenetrable rocky carapace, capable of
+rolling at its foes at high speed.
+%%%%
 captured wizard
 
 A wild-eyed wizard whose tongue has been cut out, frantically mumbling and
@@ -2895,6 +2900,10 @@ pristine statue
 
 An immaculately sculpted porphyry statue of an archer poised to release a bolt,
 with a full quiver at the hip.
+%%%%
+rock worm
+
+A large worm which moves through rock as if it were air.
 %%%%
 rotten bat
 

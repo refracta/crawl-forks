@@ -2512,7 +2512,7 @@ NAME:    wormcave
 TAGS:    no_wall_fixup no_monster_gen no_rotate
 PLACE:   Lair:$
 ORIENT:  southeast
-MONS:    torpor snail, tyrant leech, lindwurm, boulder beetle, hornet
+MONS:    torpor snail, tyrant leech, lindwurm / rock worm, boulder beetle / hornet
 MONS:    fire dragon / ice dragon
 KMONS:   p = plant
 SHUFFLE: ABC

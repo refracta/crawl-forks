@@ -57,6 +57,30 @@ opacity_type opacity_no_trans::operator()(const coord_def& p) const
     return OPC_CLEAR;
 }
 
+opacity_type opacity_rocky::operator()(const coord_def& p) const
+{
+    dungeon_feature_type f = grd(p);
+    if (f == DNGN_ROCK_WALL || f == DNGN_CLEAR_ROCK_WALL || f == DNGN_SLIMY_WALL)
+        return OPC_CLEAR;
+    if (feat_is_wall(f) || feat_is_closed_door(f))
+        return OPC_OPAQUE;
+    else if (is_opaque_cloud(cloud_type_at(p)))
+        return OPC_HALF;
+    else if (const monster *mon = monster_at(p))
+        return mons_opacity(mon, LOS_NO_TRANS);
+    return OPC_CLEAR;
+}
+
+opacity_type opacity_steel::operator()(const coord_def& p) const
+{
+    dungeon_feature_type f = grd(p);
+    if (is_opaque_cloud(cloud_type_at(p)))
+        return OPC_HALF;
+    if (const monster *mon = monster_at(p))
+        return mons_opacity(mon, LOS_NO_TRANS);
+    return OPC_CLEAR;
+}
+
 opacity_type opacity_fully_no_trans::operator()(const coord_def& p) const
 {
     dungeon_feature_type f = grd(p);

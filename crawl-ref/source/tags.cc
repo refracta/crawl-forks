@@ -1211,10 +1211,11 @@ static void _shunt_monsters_out_of_walls()
             for (distance_iterator di(m.pos()); di; ++di)
                 if (!actor_at(*di) && !cell_is_solid(*di))
                 {
-#if TAG_MAJOR_VERSION == 34
-                    // Could have been a rock worm or a dryad.
-                    if (m.type != MONS_GHOST)
-#endif
+                    if (mons_primary_habitat(m) == HT_ROCK ||
+                        mons_primary_habitat(m) == HT_INCORPOREAL ||
+                        mons_primary_habitat(m) == HT_STEEL)
+                        break;
+
                     mprf(MSGCH_ERROR, "Error: monster %s in %s at (%d,%d)",
                          m.name(DESC_PLAIN, true).c_str(),
                          dungeon_feature_name(grd(m.pos())),

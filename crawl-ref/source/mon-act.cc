@@ -3449,6 +3449,7 @@ static bool _monster_move(monster* mons)
 
     const habitat_type habitat = mons_primary_habitat(*mons);
     bool deep_water_available = false;
+    bool solid_available = false;
 
     // Berserking monsters make a lot of racket.
     if (mons->berserk_or_insane())
@@ -3540,6 +3541,9 @@ static bool _monster_move(monster* mons)
             if (target_grid == DNGN_DEEP_WATER)
                 deep_water_available = true;
 
+            if (feat_is_solid(target_grid))
+                solid_available = true;
+
             good_move[count_x][count_y] =
                 mon_can_move_to_pos(mons, coord_def(count_x-1, count_y-1));
         }
@@ -3575,6 +3579,28 @@ static bool _monster_move(monster* mons)
                 }
             }
     }
+
+    // Yay for duplicated logic!
+    if ((habitat == HT_ROCK || habitat == HT_STEEL)
+        && solid_available
+        && !feat_is_solid(grd(mons->pos()))
+        && !feat_is_solid(grd(newpos))
+        && newpos != you.pos())
+    {
+        for (int cx = 0; cx < 3; cx++)
+            for (int cy = 0; cy < 3; cy++)
+            {
+                if (good_move[cx][cy]
+                    && feat_is_solid(grd[mons->pos().x + cx - 1][mons->pos().y + cy - 1])
+                    && (grid_distance(mons->target, coord_def(mons->pos().x + cx - 1,mons->pos().y + cy - 1)) <
+                        grid_distance(mons->target, mons->pos())))
+                {
+                    mmov.x = cx - 1;
+                    mmov.y = cy - 1;
+                }
+            }
+    }
+
 
     // Now, if a monster can't move in its intended direction, try
     // either side. If they're both good, move in whichever dir

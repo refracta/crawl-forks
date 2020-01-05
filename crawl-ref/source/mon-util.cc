@@ -3426,6 +3426,14 @@ bool mons_wall_shielded(const monster& m)
     return false;
 }
 
+bool mi_wall_shielded(const monster_info& m)
+{
+    habitat_type hab = mons_class_primary_habitat(m.type);
+    if (hab == HT_ROCK || hab == HT_STEEL)
+        return true;
+    return false;
+}
+
 habitat_type mons_primary_habitat(const monster& mon)
 {
     return mons_class_primary_habitat(mons_base_type(mon));

@@ -1060,10 +1060,23 @@ bool can_go_straight(const monster* mon, const coord_def& p1,
     if (grid_distance(p1, p2) > get_los_radius())
         return false;
 
-    // XXX: Hack to improve results for now. See FIXME above.
     ray_def ray;
-    if (!find_ray(p1, p2, ray, opacity_mons_immob(mon)))
-        return false;
+    if (mons_class_primary_habitat(mon->type) == HT_ROCK)
+    {
+        if (!find_ray(p1, p2, ray, opacity_rocky()))
+            return false;
+    }
+    else if (mons_class_primary_habitat (mon->type) == HT_STEEL
+          || mons_class_primary_habitat(mon->type) == HT_INCORPOREAL)
+    {
+        if (!find_ray(p1, p2, ray, opacity_steel()))
+            return false;
+    }
+    else
+    {
+        if (!find_ray(p1, p2, ray, opacity_mons_immob(mon)))
+            return false;
+    }
 
     while (ray.advance() && ray.pos() != p2)
         if (!_can_safely_go_through(mon, ray.pos()))

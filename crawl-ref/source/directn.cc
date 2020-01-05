@@ -3135,6 +3135,9 @@ static vector<string> _get_monster_desc_vector(const monster_info& mi)
     if (mi.is(MB_CLINGING))
         descs.emplace_back("clinging");
 
+    if (cell_is_solid(mi.pos) && mi_wall_shielded(mi))
+        descs.emplace_back("wall shielded");
+
     if (mi.is(MB_MESMERIZING))
         descs.emplace_back("mesmerising");
 
@@ -3204,6 +3207,12 @@ static string _get_monster_desc(const monster_info& mi)
     {
         text += pronoun + " " + conjugate_verb("are", mi.pronoun_plurality())
                 + " clinging to the wall.\n";
+    }
+
+    if (cell_is_solid(mi.pos) && mi_wall_shielded(mi))
+    {
+        text += pronoun + " " + conjugate_verb("are", mi.pronoun_plurality())
+                + " hiding in the wall.\n";
     }
 
     if (mi.is(MB_MESMERIZING))
