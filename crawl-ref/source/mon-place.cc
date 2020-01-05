@@ -105,7 +105,10 @@ static bool _feat_compatible(dungeon_feature_type wanted_feat,
 {
     return wanted_feat == actual_feat
            || wanted_feat == DNGN_DEEP_WATER && feat_is_watery(actual_feat)
-           || wanted_feat == DNGN_FLOOR && feat_has_solid_floor(actual_feat);
+           || wanted_feat == DNGN_FLOOR && feat_has_solid_floor(actual_feat)
+           || wanted_feat == DNGN_ROCK_WALL && (actual_feat == DNGN_SLIMY_WALL 
+                                             || actual_feat == DNGN_CLEAR_ROCK_WALL)
+           || wanted_feat == DNGN_METAL_WALL && actual_feat == DNGN_SILVER_WALL;
 }
 
 /**

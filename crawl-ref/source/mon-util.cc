@@ -117,6 +117,13 @@ static habitat_type _grid2habitat(dungeon_feature_type grid)
     {
     case DNGN_LAVA:
         return HT_LAVA;
+    case DNGN_ROCK_WALL:
+    case DNGN_SLIMY_WALL:
+    case DNGN_CLEAR_ROCK_WALL:
+        return HT_ROCK;
+    case DNGN_METAL_WALL:
+    case DNGN_SILVER_WALL:
+        return HT_STEEL;
     case DNGN_FLOOR:
     default:
         return HT_LAND;
@@ -131,6 +138,11 @@ dungeon_feature_type habitat2grid(habitat_type ht)
         return DNGN_DEEP_WATER;
     case HT_LAVA:
         return DNGN_LAVA;
+    case HT_ROCK:
+        return DNGN_ROCK_WALL;
+    case HT_STEEL:
+        return DNGN_METAL_WALL;
+    case HT_INCORPOREAL:
     case HT_LAND:
     case HT_AMPHIBIOUS:
     case HT_AMPHIBIOUS_LAVA:
@@ -3406,6 +3418,14 @@ habitat_type mons_class_primary_habitat(monster_type mc)
     return ht;
 }
 
+bool mons_wall_shielded(const monster& m)
+{
+    habitat_type hab = mons_class_primary_habitat(mons_base_type(m));
+    if (hab == HT_ROCK || hab == HT_STEEL)
+        return true;
+    return false;
+}
+
 habitat_type mons_primary_habitat(const monster& mon)
 {
     return mons_class_primary_habitat(mons_base_type(mon));
@@ -3414,11 +3434,20 @@ habitat_type mons_primary_habitat(const monster& mon)
 habitat_type mons_class_secondary_habitat(monster_type mc)
 {
     habitat_type ht = _mons_class_habitat(mc);
-    if (ht == HT_AMPHIBIOUS)
-        ht = HT_WATER;
-    if (ht == HT_AMPHIBIOUS_LAVA)
-        ht = HT_LAVA;
-    return ht;
+    switch (ht)
+    {
+        case HT_AMPHIBIOUS:
+            return HT_WATER;
+        case HT_AMPHIBIOUS_LAVA:
+            return HT_LAVA;
+        case HT_ROCK:
+        case HT_STEEL:
+            return HT_LAND;
+        case HT_INCORPOREAL:
+            return HT_ROCK;
+        default:
+            return ht;
+    }
 }
 
 habitat_type mons_secondary_habitat(const monster& mon)
@@ -4145,6 +4174,9 @@ bool mons_class_can_pass(monster_type mc, const dungeon_feature_type grid)
         return mc == MONS_ELDRITCH_TENTACLE
                || mc == MONS_ELDRITCH_TENTACLE_SEGMENT;
     }
+    if (mons_class_primary_habitat(mc) == HT_INCORPOREAL)
+        return true;
+
 
     return !feat_is_solid(grid);
 }

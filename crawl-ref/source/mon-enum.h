@@ -175,6 +175,9 @@ enum habitat_type
     HT_WATER,            // Water critters
     HT_LAVA,             // Lava critters
     HT_AMPHIBIOUS_LAVA,  // Amphibious w/ lava (salamanders)
+    HT_ROCK,             // Rock critters
+    HT_STEEL,            // Metal critters
+    HT_INCORPOREAL,      // Incorporeal critters
 
     NUM_HABITATS
 };

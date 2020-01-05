@@ -21,6 +21,7 @@
 #include "cloud.h"
 #include "coordit.h"
 #include "delay.h"
+#include "directn.h"
 #include "english.h"
 #include "env.h"
 #include "exercise.h"
@@ -110,6 +111,19 @@ bool melee_attack::handle_phase_attempted()
 
     if (attacker->is_player() && defender && defender->is_monster())
     {
+        // Don't waste a turn hitting a rock worm when you know it
+        // will do nothing.
+        if (cell_is_solid(defender->pos())
+                 && mons_wall_shielded(*defender->as_monster())
+                 && you.can_see(*defender)
+                 && !you.confused())
+        {
+            mprf("The %s protects %s from harm.",
+                 raw_feature_description(defender->pos()).c_str(),
+                 defender->name(DESC_THE).c_str());
+            cancel_attack = true;
+            return false;
+        }
         // Unrands with secondary effects that can harm nearby friendlies.
         // Don't prompt for confirmation (and leak information about the
         // monster's position) if the player can't see the monster.
@@ -261,6 +275,40 @@ bool melee_attack::handle_phase_attempted()
     // Non-fumbled self-attacks due to confusion are still pretty funny, though.
     else if (attacker == defender && attacker->confused())
         xom_is_stimulated(100);
+
+    if (defender->is_monster() && cell_is_solid(defender->pos())
+        && mons_wall_shielded(*defender->as_monster()))
+    {
+        string feat_name = raw_feature_description(defender->pos());
+
+        if (attacker->is_player())
+        {
+            if (you.can_see(*defender))
+            {
+                mprf("The %s protects %s from harm.",
+                    feat_name.c_str(),
+                    defender->name(DESC_THE).c_str());
+            }
+            else
+                mprf("You hit the %s.", feat_name.c_str());
+        }
+        else
+        {
+            if (!you.can_see(*defender))
+            {
+                simple_monster_message(*attacker->as_monster(),
+                    " hits something.");
+            }
+            else if (you.can_see(*attacker))
+            {
+                mprf("%s tries to hit %s, but is blocked by the %s.",
+                    attacker->name(DESC_THE).c_str(),
+                    defender->name(DESC_THE).c_str(),
+                    feat_name.c_str());
+            }
+        }
+        return false;
+    }
 
     // Any attack against a monster we're afraid of has a chance to fail
     if (attacker->is_player() && defender &&
@@ -3334,6 +3382,8 @@ void melee_attack::emit_foul_stench()
 
 void melee_attack::do_minotaur_retaliation()
 {
+    if (attacker->is_monster() && mons_wall_shielded(*attacker->as_monster()))
+        return;
     if (!defender->is_player())
     {
         // monsters have no STR or DEX

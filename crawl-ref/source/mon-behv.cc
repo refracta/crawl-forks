@@ -315,6 +315,16 @@ void handle_behaviour(monster* mon)
         return;
     }
 
+    if (mons_wall_shielded(*mon) && cell_is_solid(mon->pos()))
+    {
+        // Monster is safe, so its behaviour can be simplified to fleeing.
+        if (mon->behaviour == BEH_CORNERED || mon->behaviour == BEH_PANIC
+            || isScared)
+        {
+            mon->behaviour = BEH_FLEE;
+        }
+    }
+
     // Make sure monsters are not targeting the player in arena mode.
     ASSERT(!crawl_state.game_is_arena() || mon->foe != MHITYOU);
 
