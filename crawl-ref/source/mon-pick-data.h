@@ -1454,13 +1454,15 @@ static const pop_entry pop_lava_depths[] =
   {  1,  6,   11, FALL, MONS_MOLTEN_GARGOYLE },
   {  1,  6,  100, FLAT, MONS_SALAMANDER },
   {  1,  8,   85, SEMI, MONS_SALAMANDER_MYSTIC },
+  {  1,  6,   22, RISE, MONS_LAVA_WORM },
   { 0,0,0,FLAT,MONS_0 }
 };
 
 static const pop_entry pop_lava_hell[] =
 { // Hell branch lava monsters
-  {  1,  8,   300, FALL, MONS_FIRE_ELEMENTAL },
+  {  1,  8,   150, FALL, MONS_FIRE_ELEMENTAL },
   {  1,  6,    25, FALL, MONS_MOLTEN_GARGOYLE },
+  {  1,  8,   300, RISE, MONS_LAVA_WORM },
   {  1,  7,    25, FLAT, MONS_SMOKE_DEMON },
   { 0,0,0,FLAT,MONS_0 }
 };
@@ -1495,7 +1497,7 @@ static const population_list population_lava[] =
     POP(lava_hell), // Geh
     POP(lava_hell), // Coc
     POP(lava_hell), // Tar
-    POP(lava_generic), // Zot
+    POP(lava_depths), // Zot
 #if TAG_MAJOR_VERSION == 34
     POP(lava_generic), // Forest
 #endif
