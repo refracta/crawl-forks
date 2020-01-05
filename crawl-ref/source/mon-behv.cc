@@ -149,6 +149,10 @@ static void _set_firing_pos(monster* mon, coord_def target)
 
 static bool _should_keep_range(monster* mon)
 {
+    if (coinflip() && you.where_are_you == BRANCH_DUNGEON && you.depth < 10)
+        return false;
+    if (coinflip() && you.where_are_you == BRANCH_SEWER)
+        return false;
     if (mons_class_flag(mon->type, M_MAINTAIN_RANGE))
         return true;
     if (mons_class_flag(mon->type, M_FIGHTER))
