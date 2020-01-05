@@ -2512,9 +2512,10 @@ NAME:    wormcave
 TAGS:    no_wall_fixup no_monster_gen no_rotate
 PLACE:   Lair:$
 ORIENT:  southeast
-MONS:    torpor snail, tyrant leech, lindwurm / rock worm, boulder beetle / hornet
+MONS:    torpor snail, tyrant leech, lindwurm, boulder beetle / hornet
 MONS:    fire dragon / ice dragon
 KMONS:   p = plant
+KMONS:   9 = generate_awake patrolling rock worm w:1 / nothing w:2
 SHUFFLE: ABC
 NSUBST:  1 = 1:1 / *:., 4 = 3:4 / *:.
 NSUBST:  A = 3:4 / 1:23 / * = ....4
@@ -2527,26 +2528,26 @@ KMASK:   $5 = no_trap_gen
 : lair_small_ending(_G)
 MAP
             zzzzzxxzzxxzzxxxxzzxxxzzzxxx
- @........@xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
- ..PP.XX..Px..xxxxxxxxxxxxxxxxxXAxxxxxxx
+ @........@xxxxxxxxx9xxxxxxxxxxxxxxxxxxx
+ ..PP.XX..Px..x9xxxxxxxxxxxxxxxXAxx9xxxx
  ..PP.XX..PPxxxxxxxxXXBBXxxxxxA*..xxxxxx
  ...x.....PPP.xxxxxP4B.1BXxxxXAA.%Xxxxxx
  ..XxX..X.....xxxxxXB....Bxxx4AA..xxxxxx
- .Pxxxxx.x...xxxxxxx%...*XxxxxX.p..xxxxx
- xxccccxx..XPPxxxxxPpp.XPxxxxxxxXP.xxxxx
-zxcc$$ccxxXxx..xxxxxXp..xXxxxxXxx.pxxxxx
-zxc$$$$ccxxx...Xxxxxxx...x.xxxx...xxxxxx
+ .Pxxxxx.x...xxxxxxx%...*Xx9xxX.p..xxxxx
+ xxccccxx..XPPxxxxxPpp.XPxxxxx9xXP.x9xxx
+zxcc$$cc9xXxx..xxxxxXp..xXxxxxXxx.pxxxxx
+zxc$$$$ccxxx...Xxx9xxx...xx9xxx...x9xxxx
 xxc$$$$$cxxx..xxxxxxxXx...xXxx...xxxxxxx
-xxcc$5$$cxx..xxxxxxxxxxx.P..X.0.xXxxxxxx
-xxxcc$$ccxX..XxxxxxxxXx......4xxxxxxxxxx
-xxxxccc=c"..xxxxxxxxXx....P.xXxxCCCxxxxx
-xxxxxxxcp".xxxxxxxxXx....XxxXxx4CCC1xxxx
-xxxxxxx"""xxXxxxXxx.....xxxxxxx*...xxxxx
-xxxxxxxxX.0.xxxxx.....x..xxxxxxxx..xxxxx
+xxcc$5$$cxx..xx9xxxxx9xx.P..X.0.xXxxxxxx
+xxxcc$$ccxX..XxxxxxxxXx......4xxxx9xxxxx
+xxxxccc=c"..xxxxxxx9Xx....P9xXxxCCCxxxxx
+xxxxxxxcp".xx9xxxxxXx....XxxXxx4CCC1xxxx
+xxxxxxx"""xxXxxxXxx.....xx9xxxx*...xxxxx
+xxxxxxxxX.0.xx9xx.....x..xxxx9xxx..xxxxx
 xxxxxxxxxX...xXx....Xxx....pxxxX..%xxxxx
-xxxxxxxxxxx.......Xxxxxx..........xxxxxx
-xxxxxxxxxxXxx.p.xxXxxxxxxxxx....xxxxxxxx
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxx9xxx.......Xxxxxx..........xxxxxx
+xxxxxxxxxxXxx.p.xxXx9x9xxxxx....xxx9xxxx
+xxxxxxxxxxx9xxxxx9xxxxxxxx9xxxxxxxxxxxxx
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ENDMAP
 
@@ -2656,6 +2657,7 @@ MONS:    hippogriff, manticore, catoblepas
 KMONS:   8 = water moccasin
 KMONS:   9 : spiny frog w:90 / hornet
 KMONS:   0 : black mamba w:90 / wolf spider
+KMONS:   F = generate_awake patrolling rock worm w:2 / nothing w:1
 KMONS:   A = elephant / boulder beetle
 KMONS:   B = death yak
 KMONS:   C = dream sheep
@@ -2670,9 +2672,9 @@ SUBST:   X = xx..., P = PP., defghijkl = ., E = 44700C
 MAP
      xxx  xx  xxxx   xxxx  xx  xxx
      xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    xxxxx.P.xxxxxxxxxxxxxxx.P.xxxxx
+    xxFxx.P.xxxxFxxxxxFxxxx.P.xxFxx
   xxxXXP.....PXXxxxxxxxXXP.....PXXxxx
- xxxXX.........XXxxxxxXX.........XXxxx
+ xxxXX.........XXxxFxxXX.........XXxxx
  xXX....xJxJx....XxxxX....xLxLx....XXx
 xxX.....x...J.....XxX.....L...x.....Xxx
 xxX....Xxdgjx.X..PxxxP..X.xfilxX....Xxx
@@ -2682,8 +2684,8 @@ xx..c..1.ExxP..X.xehkx.X..Pxx.|...c..xx
 xx........xx.....K.D.K.....xx*~$....xxx
 @..x.....1xxX....xxxxx....Xxx.%.E..xxx
   x.......XxxXX.........XXxxX..9D3xxx
-   .xx...PxxxxXXP.....PXXxxxxP..6xxx
-   @xxxxxxxxxxxxxx.P.xxxxxxxxxxxxxxx
+   .xx...PxxxxXXP.....PXXFxxxP..6xxx
+   @xxxxxxxFxxxxxx.P.xxxxxxFxxxxxxxx
        xxxxxxxxxxxxxxxxxxxxxxxxxxx
            xxx  xxx xxx  xxx
 ENDMAP
