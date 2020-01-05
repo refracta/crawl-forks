@@ -353,8 +353,21 @@ string direction_chooser::build_targeting_hint_string() const
 
 void direction_chooser::print_top_prompt() const
 {
-    if (!top_prompt.empty())
+    if (!show_distance && !top_prompt.empty())
         mprf(MSGCH_PROMPT, "%s", top_prompt.c_str());
+    else if (show_distance) // This probably should be in behavior organization-wise; 
+        //but I couldn't access target() from outside of direction_chooser itself so 
+        //encapsulation-wise it needs to be here, unless adding an accessor just for this purpose.
+    {
+        int loc_ran = grid_distance(you.pos(), target());
+        int dam = 120;
+        if (loc_ran > 4)
+            dam -= ((loc_ran-4) * 30);
+        else if (loc_ran < 4)
+            dam -= ((4-loc_ran) * 30);
+        dam = max(30, dam); // Bu special case
+        mprf(MSGCH_PROMPT, "%s, Range: %d (%d%%)", top_prompt.c_str(), loc_ran, dam);
+    }
 }
 
 void direction_chooser::print_key_hints() const
@@ -516,6 +529,7 @@ direction_chooser::direction_chooser(dist& moves_,
     behaviour(args.behaviour),
     show_floor_desc(args.show_floor_desc),
     show_boring_feats(args.show_boring_feats),
+    show_distance (args.show_distance),
     hitfunc(args.hitfunc),
     default_place(args.default_place),
     unrestricted(args.unrestricted),

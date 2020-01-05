@@ -151,7 +151,11 @@ static bool _fire_choose_target(int slot, dist& target,
 
     direction_chooser_args args;
     args.mode = TARG_HOSTILE;
+    args.self = confirm_prompt_type::cancel;
     args.needs_path = !teleport;
+    args.top_prompt = make_stringf("Aiming: <white>%s</white>", you.weapon(0) 
+        ? you.weapon(0)->name(DESC_INVENTORY).c_str() : "Throw Junk");
+    args.show_distance = true;
 
     direction(target, args);
 

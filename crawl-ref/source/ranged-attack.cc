@@ -388,7 +388,7 @@ bool ranged_attack::handle_phase_dodged()
             if (attacker->is_player())
                 mprf("%s makes you miss your attack.", blocker.c_str());
             else if (attacker->as_monster()->friendly())
-                mprf("%s makes %s miss their attack.",
+                mprf("%s makes %s miss their attack.", // BCADDO: Make this use his/her on appropriate uniques.
                     blocker.c_str(),
                     attacker->as_monster()->name(DESC_THE).c_str());
             needs_message = false;
@@ -437,8 +437,22 @@ bool ranged_attack::handle_phase_hit()
         for (attack_count; attack_count > 0; --attack_count)
         {
             damage_done = calc_damage();
+
             if (damage_done > 0)
             {
+                if (attacker->is_player())
+                {
+                    // Sweetspotting!
+                    int lrange = grid_distance(attacker->pos(), defender->pos());
+                    int multiplier = 10;
+                    if (lrange >= 8)
+                        multiplier = 3;
+                    else if (lrange > 4)
+                        multiplier = 10 - (3 * (lrange - 4));
+                    else if (lrange < 4)
+                        multiplier = 10 - (3 * (4 - lrange));
+                    damage_done = div_rand_round(damage_done * multiplier, 10);
+                }
                 if (!handle_phase_damaged())
                     return false;
             }

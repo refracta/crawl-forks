@@ -95,6 +95,7 @@ struct direction_chooser_args
     targeting_behaviour *behaviour;
     bool show_floor_desc;
     bool show_boring_feats;
+    bool show_distance;
     desc_filter get_desc_func;
     coord_def default_place;
 
@@ -111,6 +112,7 @@ struct direction_chooser_args
         behaviour(nullptr),
         show_floor_desc(false),
         show_boring_feats(true),
+        show_distance(false),
         get_desc_func(nullptr),
         default_place(0, 0) {}
 };
@@ -254,6 +256,7 @@ private:
     targeting_behaviour *behaviour; // Can be nullptr for default
     bool show_floor_desc;       // Describe the floor of the current target
     bool show_boring_feats;
+    bool show_distance;         // Describe how far away the target is.
     targeter *hitfunc;         // Determine what would be hit.
     coord_def default_place;    // Start somewhere other than you.pos()?
 
