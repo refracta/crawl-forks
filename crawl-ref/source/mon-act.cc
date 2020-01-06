@@ -2922,6 +2922,7 @@ bool mon_can_move_to_pos(const monster* mons, const coord_def& delta,
         || (mons_class_primary_habitat(mons->type) == HT_INCORPOREAL 
             || mons_class_primary_habitat(mons->type) == HT_STEEL)
             && !feat_is_permarock(target_grid) && !feat_is_endless(target_grid)
+            && !cell_is_runed(targ)
         || feat_is_tree(target_grid) && mons_flattens_trees(*mons)
         || target_grid == DNGN_GRATE && digs)
     {
