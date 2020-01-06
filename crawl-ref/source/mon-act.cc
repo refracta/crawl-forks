@@ -436,11 +436,6 @@ static bool _mons_can_cast_dig(const monster* mons, bool random)
             && !(mons->is_silenced() && flags & MON_SPELL_SILENCE_MASK);
 }
 
-static bool _mons_can_zap_dig(const monster* mons)
-{
-    return false;
-}
-
 static void _set_mons_move_dir(const monster* mons,
                                coord_def* dir, coord_def* delta)
 {
@@ -2910,8 +2905,7 @@ bool mon_can_move_to_pos(const monster* mons, const coord_def& delta,
     if (env.level_state & LSTATE_SLIMY_WALL && _check_slime_walls(mons, targ))
         return false;
 
-    const bool digs = _mons_can_cast_dig(mons, false)
-                      || _mons_can_zap_dig(mons);
+    const bool digs = _mons_can_cast_dig(mons, false);
     if ((target_grid == DNGN_ROCK_WALL || target_grid == DNGN_CLEAR_ROCK_WALL
         || target_grid == DNGN_SLIMY_WALL)
            && (mons_class_flag(mons->type, M_BURROWS) || digs 
@@ -3629,8 +3623,7 @@ static bool _monster_move(monster* mons)
 
     const bool burrows = mons_class_flag(mons->type, M_BURROWS);
     const bool flattens_trees = mons_flattens_trees(*mons);
-    const bool digs = _mons_can_cast_dig(mons, false)
-                      || _mons_can_zap_dig(mons);
+    const bool digs = _mons_can_cast_dig(mons, false);
     // Take care of Dissolution burrowing, lerny, etc
     if (burrows || flattens_trees || digs)
     {
