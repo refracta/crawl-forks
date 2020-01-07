@@ -104,7 +104,7 @@ static const struct spell_desc spelldata[] =
     spschool::earth,
     spflag::dir_or_target | spflag::not_self | spflag::neutral
         | spflag::utility,
-    8,
+    6,
     200,
     LOS_RADIUS, LOS_RADIUS,
     3, 0,
