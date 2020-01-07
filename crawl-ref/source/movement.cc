@@ -590,7 +590,7 @@ void move_player_action(coord_def move)
             you.digging = false;
             canned_msg(MSG_TOO_HUNGRY);
         }
-        else if (feat_is_diggable(grd(targ)))
+        else if (feat_is_diggable(grd(targ), true))
             targ_pass = true;
         else // moving or attacking ends dig
         {
