@@ -3009,6 +3009,7 @@ void excommunication(bool voluntary, god_type new_god)
     case GOD_ASHENZARI:
         if (you.transfer_skill_points > 0)
             ashenzari_end_transfer(false, true);
+        you.attribute[ATTR_SCRYING] = false;
         you.xray_vision = false;
         you.exp_docked[old_god] = exp_needed(min<int>(you.max_level, 27) + 1)
                                   - exp_needed(min<int>(you.max_level, 27));

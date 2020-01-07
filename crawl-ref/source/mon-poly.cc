@@ -9,6 +9,7 @@
 
 #include "artefact.h"
 #include "attitude-change.h"
+#include "coordit.h"
 #include "delay.h"
 #include "describe.h"
 #include "dgn-overview.h"
@@ -57,6 +58,26 @@ void monster_drop_things(monster* mons,
                           bool mark_item_origins,
                           bool (*suitable)(const item_def& item))
 {
+    coord_def position = mons->pos();
+    const coord_def oripos = position;
+
+    if (cell_is_solid(position))
+    {
+        for (rectangle_iterator ri(oripos, 1); ri; ++ri)
+        {
+            if (!cell_is_solid(*ri) && ((oripos == position) || one_chance_in(3)))
+            {
+                coord_def cp(*ri);
+                position = cp;
+            }
+        }
+        if (oripos == position)
+        {
+            mprf("Items carried by %s were lost in the wall.", mons->name(DESC_THE).c_str());
+            return;
+        }
+    }
+
     // Drop weapons and missiles last (i.e., on top), so others pick up.
     for (int i = NUM_MONSTER_SLOTS - 1; i >= 0; --i)
     {
@@ -92,7 +113,7 @@ void monster_drop_things(monster* mons,
 
                 // If a monster is swimming, the items are ALREADY
                 // underwater.
-                move_item_to_grid(&item, mons->pos(), mons->swimming());
+                move_item_to_grid(&item, position, mons->swimming());
             }
 
             mons->inv[i] = NON_ITEM;

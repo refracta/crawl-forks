@@ -23,6 +23,7 @@
 #include "database.h"
 #include "delay.h"
 #include "describe.h"
+#include "directn.h"
 #include "dgn-overview.h"
 #include "english.h"
 #include "env.h"
@@ -535,10 +536,6 @@ item_def* place_monster_corpse(const monster& mons, bool silent, bool force)
     if (!in_bounds(mons.pos()) && !force)
         return nullptr;
 
-    // Don't attempt to place corpses within walls, either.
-    if (feat_is_solid(grd(mons.pos())) && !force)
-        return nullptr;
-
     // If we were told not to leave a corpse, don't.
     if (mons.props.exists(NEVER_CORPSE_KEY))
         return nullptr;
@@ -553,7 +550,7 @@ item_def* place_monster_corpse(const monster& mons, bool silent, bool force)
     {
         _gold_pile(corpse, mons_species(mons.type));
         // If gold would be destroyed, give it directly to the player instead.
-        if (feat_eliminates_items(grd(mons.pos())))
+        if (feat_eliminates_items(grd(mons.pos()))|| feat_is_solid(grd(mons.pos())))
         {
             get_gold(corpse, corpse.quantity, false);
             destroy_item(corpse, true);
@@ -564,6 +561,14 @@ item_def* place_monster_corpse(const monster& mons, bool silent, bool force)
     {
         int i = items(false, OBJ_WEAPONS, WPN_CLUB, 1, SPWPN_NORMAL);
         corpse = mitm[i];
+    }
+    // Don't attempt to place corpses within walls, either.
+    else if (feat_is_solid(grd(mons.pos())) && !force)
+    {
+        if (mons_class_can_leave_corpse(mons.type))
+            mprf("The body of %s is too mixed with the %s to be recognizable.", 
+                  mons.name(DESC_THE).c_str(), raw_feature_description(mons.pos()).c_str());
+        return nullptr;
     }
     else if (!_fill_out_corpse(mons, corpse))
         return nullptr;
