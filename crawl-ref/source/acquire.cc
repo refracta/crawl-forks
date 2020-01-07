@@ -1562,11 +1562,7 @@ AcquireMenu::AcquireMenu(CrawlVector &aitems)
 
     set_tag("acquirement");
 
-<<<<<<< HEAD
-    bad_class.set(OBJ_FOOD, you_foodless(false) && !you_worship(GOD_FEDHAS));
-=======
     init_entries();
->>>>>>> 148af02efd... Rework the scroll of acquirement
 
     update_help();
 
@@ -1578,31 +1574,12 @@ void AcquireMenu::init_entries()
     menu_letter ckey = 'a';
     for (item_def& item : acq_items)
     {
-<<<<<<< HEAD
-        { OBJ_WEAPONS,    "Weapon" },
-        { OBJ_SHIELDS,    "Shield" },
-        { OBJ_ARMOURS,    "Armour" },
-        { OBJ_JEWELLERY,  "Jewellery" },
-        { OBJ_BOOKS,      "Book" },
-        { OBJ_STAVES,     "Staff " },
-        { OBJ_MISCELLANY, "Evocable" },
-        { OBJ_FOOD,       0 }, // amended below
-        { OBJ_GOLD,       0 },
-    };
-    ASSERT(acq_classes[7].type == OBJ_FOOD);
-    acq_classes[7].name = you.species == SP_VAMPIRE ? "Blood":
-                                                      "Food";
-    string gold_text = make_stringf("Gold (you have $%d)", you.gold);
-    ASSERT(acq_classes[8].type == OBJ_GOLD);
-    acq_classes[8].name = gold_text.c_str();
-=======
         auto newentry = make_unique<AcquireEntry>(item, *this);
         newentry->hotkeys.clear();
         newentry->add_hotkey(ckey++);
         add_entry(move(newentry));
     }
 }
->>>>>>> 148af02efd... Rework the scroll of acquirement
 
 static string _hyphenated_letters(int how_many, char first)
 {
@@ -1729,7 +1706,7 @@ static void _make_acquirement_items()
     if (you.species != SP_FELID)
     {
         rand_acq_classes.emplace_back(OBJ_WEAPONS);
-        rand_acq_classes.emplace_back(OBJ_ARMOUR);
+        rand_acq_classes.emplace_back(OBJ_ARMOURS);
         rand_acq_classes.emplace_back(OBJ_STAVES);
     }
 
