@@ -3704,8 +3704,7 @@ static void _place_aquatic_monsters()
     // threatening ones are distracting from their sets.
     // Random liquid monster placement is too vicious before D:6.
     //
-    if (player_in_branch(BRANCH_SHOALS)
-        || player_in_branch(BRANCH_ABYSS)
+    if (player_in_branch(BRANCH_ABYSS)
         || player_in_branch(BRANCH_PANDEMONIUM)
         || player_in_branch(BRANCH_ZOT)
         || player_in_branch(BRANCH_DUNGEON) && you.depth < 6)

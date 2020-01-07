@@ -2578,6 +2578,9 @@ bool melee_attack::mons_do_poison()
     if (!defender->poison(attacker, amount))
         return false;
 
+    if (attk_flavour == AF_POISON_STR && one_chance_in(3))
+        defender->drain_stat(STAT_STR, 1);
+
     if (needs_message)
     {
         mprf("%s poisons %s!",
@@ -2783,6 +2786,7 @@ void melee_attack::mons_apply_attack_flavour()
     case AF_POISON:
     case AF_POISON_STRONG:
     case AF_REACH_STING:
+    case AF_POISON_STR:
         if (one_chance_in(3))
             mons_do_poison();
         break;

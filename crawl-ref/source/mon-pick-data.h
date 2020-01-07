@@ -1311,6 +1311,12 @@ static const pop_entry pop_water_generic[] =
   { 0,0,0,FLAT,MONS_0 }
 };
 
+static const pop_entry pop_water_shoals[] =
+{ // Shoals water monsters
+  { 1, 4, 1000, FLAT, MONS_JELLYFISH },
+  { 0,0,0,FLAT,MONS_0 }
+};
+
 static const pop_entry pop_water_d[] =
 { // Dungeon water monsters
   {  5,  16,   60, FLAT, MONS_ELECTRIC_EEL },
@@ -1367,7 +1373,7 @@ static const population_list population_water[] =
 #endif
     POP(water_generic), // Lair
     POP(water_swamp),
-    POP(water_generic), // Shoals
+    POP(water_shoals), // Shoals
     POP(water_snake),
     POP(water_generic), // Spider
     POP(water_generic), // Slime

@@ -3946,6 +3946,8 @@ static string _flavour_base_desc(attack_flavour flavour)
         { AF_MUTATE,            "cause mutations" },
         { AF_POISON_PETRIFY,    "poison and cause petrification" },
         { AF_POISON,            "cause poisoning" },
+        { AF_POISON_STR,        "cause poison, which drains strength" },
+        { AF_POISON_STAT,       "cause poison, which drains a random stat"},
         { AF_POISON_STRONG,     "cause strong poisoning" },
         { AF_ROT,               "cause rotting" },
         { AF_VAMPIRIC,          "drain health from the living" },
