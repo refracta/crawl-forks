@@ -311,13 +311,6 @@ static const duration_def duration_data[] =
       "injury mirror", "mirror damage",
       "You mirror injuries.", D_NO_FLAGS,
       {{ "Your dark mirror aura disappears." }}},
-    { DUR_SCRYING,
-      WHITE, "Scry",
-      "scrying", "",
-      "Your astral vision lets you see through walls.", D_NO_FLAGS,
-      {{ "Your astral sight fades away.", []() {
-          you.xray_vision = false;
-      }}}},
     { DUR_TORNADO,
       LIGHTGREY, "Tornado",
       "tornado", "",
@@ -635,6 +628,7 @@ static const duration_def duration_data[] =
     { DUR_BARGAIN, 0, "", "", "old bargain", "", D_NO_FLAGS},
     { DUR_SLAYING, 0, "", "", "old slaying", "", D_NO_FLAGS},
     { DUR_MISLED, 0, "", "", "old misled", "", D_NO_FLAGS},
+    { DUR_SCRYING, 0, "", "", "old scrying", "", D_NO_FLAGS },
     { DUR_NAUSEA, 0, "", "", "old nausea", "", D_NO_FLAGS},
     { DUR_TEMP_MUTATIONS, 0, "", "", "old temporary mutations", "", D_NO_FLAGS},
     { DUR_BATTLESPHERE, 0, "", "", "old battlesphere", "", D_NO_FLAGS},

@@ -350,8 +350,6 @@ static const vector<god_passive> god_passives[] =
               "get a skill boost from cursed items" },
         {  3, passive_t::sinv, "are NOW clear of vision" },
         {  4, passive_t::clarity, "are NOW clear of mind" },
-        {  5, passive_t::xray_vision,
-              "can NOW peer through the very fabric of reality" },
     },
 
     // Dithmenos

@@ -504,6 +504,8 @@ static const ability_def Ability_List[] =
     // Ashenzari
     { ABIL_ASHENZARI_CURSE, "Curse Item",
       0, 0, 0, 0, {fail_basis::invo}, abflag::none },
+    { ABIL_ASHENZARI_SCRYING, "Scrying",
+      0, 0, 0, 0,{ fail_basis::invo }, abflag::instant },
     { ABIL_ASHENZARI_TRANSFER_KNOWLEDGE, "Transfer Knowledge",
       0, 0, 0, 15, {fail_basis::invo}, abflag::none },
     { ABIL_ASHENZARI_END_TRANSFER, "End Transfer Knowledge",
@@ -2803,6 +2805,22 @@ static spret _do_ability(const ability_def& abil, bool fail)
             return spret::abort;
         break;
     }
+
+    case ABIL_ASHENZARI_SCRYING:
+        fail_check();
+        you.attribute[ATTR_SCRYING] = !you.attribute[ATTR_SCRYING];
+        if (you.attribute[ATTR_SCRYING])
+        {
+            mpr("You peer through the fabric of reality.");
+            you.xray_vision = true;
+        }
+        else
+        {
+            mpr("You limit yourself to natural vision.");
+            you.xray_vision = false;
+        }
+        viewwindow(true);
+        break;
 
     case ABIL_ASHENZARI_TRANSFER_KNOWLEDGE:
         fail_check();

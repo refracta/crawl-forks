@@ -293,15 +293,13 @@ const vector<god_power> god_powers[NUM_GODS] =
       { 2, "Ashenzari will now reveal the unseen.",
            "Ashenzari will no longer reveal the unseen.",
            "Ashenzari reveals the unseen." },
-      { 3, "Ashenzari will now keep your mind clear.",
+      { 3, ABIL_ASHENZARI_SCRYING, "scry through walls" },
+      { 4, "Ashenzari will now keep your mind clear.",
            "Ashenzari will no longer keep your mind clear.",
            "Ashenzari keeps your mind clear." },
-      { 4, ABIL_ASHENZARI_TRANSFER_KNOWLEDGE,
+      { 5, ABIL_ASHENZARI_TRANSFER_KNOWLEDGE,
            "Ashenzari will help you to reconsider your skills.",
            "Ashenzari will no longer help you to reconsider your skills." },
-      { 5, "Ashenzari allows you to see through the fabric of reality.",
-           "Ashenzari no longer allows you to see through walls.",
-           "Ashenzari lets you see through the fabric of reality."}
     },
 
     // Dithmenos
@@ -3011,7 +3009,6 @@ void excommunication(bool voluntary, god_type new_god)
     case GOD_ASHENZARI:
         if (you.transfer_skill_points > 0)
             ashenzari_end_transfer(false, true);
-        you.duration[DUR_SCRYING] = 0;
         you.xray_vision = false;
         you.exp_docked[old_god] = exp_needed(min<int>(you.max_level, 27) + 1)
                                   - exp_needed(min<int>(you.max_level, 27));

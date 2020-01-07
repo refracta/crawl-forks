@@ -98,5 +98,6 @@ enum attribute_type
     ATTR_WALL_JUMP_READY,      // Ready to perform a wall jump.
     ATTR_ROOTED,               // Lignifite Roots are in the ground.
     ATTR_DEATHS_DOOR_HP,       // How much HP we should have under Death's Door
+    ATTR_SCRYING,              // Do we have X-Ray Vision?
     NUM_ATTRIBUTES
 };

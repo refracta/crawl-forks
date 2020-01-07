@@ -569,7 +569,8 @@ Removes a randomly selected bad mutation.
 # Ashenzari
 Scrying ability
 
-Provides astral sight, allowing you to see through walls.
+Toggles your astral sight; instantly switching between able to see through
+walls and limited to your natural vision.
 %%%%
 Transfer Knowledge ability
 

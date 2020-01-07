@@ -194,7 +194,7 @@ vector<monster* > get_nearby_monsters(bool want_move,
     vector<monster* > mons;
 
     // Sweep every visible square within range.
-    for (radius_iterator ri(you.pos(), range, C_SQUARE, you.xray_vision ? LOS_NONE : LOS_DEFAULT); ri; ++ri)
+    for (radius_iterator ri(you.pos(), range, C_SQUARE, LOS_DEFAULT); ri; ++ri)
     {
         if (monster* mon = monster_at(*ri))
         {
@@ -451,8 +451,6 @@ void revive()
     you.attribute[ATTR_WALL_JUMP_READY] = 0;
     you.los_noise_level = 0;
     you.los_noise_last_turn = 0; // silence in death
-    if (you.duration[DUR_SCRYING])
-        you.xray_vision = false;
 
     for (int dur = 0; dur < NUM_DURATIONS; dur++)
         if (dur != DUR_GOURMAND && dur != DUR_PIETY_POOL)
