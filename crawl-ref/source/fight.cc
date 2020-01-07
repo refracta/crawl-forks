@@ -791,7 +791,11 @@ void attack_cleave_targets(actor &attacker, list<actor*> &targets,
     {
         actor* def = targets.front();
 
-        if (def && def->alive() && !_dont_harm(attacker, *def) && (grid_distance(attacker.pos(), def->pos()) <= range))
+        if (cell_is_solid(def->pos()) && def->is_monster() && mons_wall_shielded(*def->as_monster()))
+            mprf("%s clang%s %s on the wall.", attacker.is_player() ? "You" : attacker.name(DESC_THE).c_str(), 
+                 attacker.is_player() ? "" : "s",wpn->name(DESC_A).c_str());
+        else if (def && def->alive() && !_dont_harm(attacker, *def) && 
+                (grid_distance(attacker.pos(), def->pos()) <= range))
         {
             melee_attack attck(&attacker, def, attack_number,
                                ++effective_attack_number, true);
