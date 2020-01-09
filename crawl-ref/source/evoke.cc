@@ -1597,42 +1597,7 @@ bool evoke_item(int slot, bool check_range)
 
     case OBJ_STAVES:
         ASSERT(wielded);
-        if (item.sub_type != STAFF_ENERGY)
-        {
-            unevokable = true;
-            break;
-        }
-
-        if (you.confused())
-        {
-            canned_msg(MSG_TOO_CONFUSED);
-            return false;
-        }
-
-        if (apply_starvation_penalties())
-        {
-            canned_msg(MSG_TOO_HUNGRY);
-            return false;
-        }
-        else if (you.magic_points >= you.max_magic_points)
-        {
-            canned_msg(MSG_FULL_MAGIC);
-            return false;
-        }
-        else if (x_chance_in_y(apply_enhancement(
-                                   you.skill(SK_EVOCATIONS, 100) + 1100,
-                                   you.spec_evoke()),
-                               4000))
-        {
-            mpr("You channel some magical energy.");
-            inc_mp(1 + random2(3));
-            make_hungry(50, false, true);
-            did_work = true;
-            practise_evoking(1);
-            count_action(CACT_EVOKE, STAFF_ENERGY, OBJ_STAVES);
-
-            did_god_conduct(DID_CHANNEL, 1, true);
-        }
+        unevokable = true;
         break;
 
     case OBJ_MISCELLANY:

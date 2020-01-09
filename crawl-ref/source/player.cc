@@ -1910,12 +1910,7 @@ int player_spec_invo()
 
 int player_energy()
 {
-    int pe = 0;
-
-    // Staves
-    pe += you.wearing(EQ_STAFF, STAFF_ENERGY);
-
-    return pe;
+    return 0;
 }
 
 // If temp is set to false, temporary sources of resistance won't be
@@ -2422,8 +2417,7 @@ int player_armour_shield_spell_penalty()
  */
 int player_wizardry(spell_type spell)
 {
-    return you.wearing(EQ_RINGS, RING_WIZARDRY)
-           + you.wearing(EQ_STAFF, STAFF_WIZARDRY);
+    return you.wearing(EQ_RINGS, RING_WIZARDRY);
 }
 
 /**
@@ -4198,9 +4192,6 @@ int get_real_mp(bool include_items)
     {
         enp +=  9 * you.wearing(EQ_RINGS, RING_MAGICAL_POWER);
         enp +=      you.scan_artefacts(ARTP_MAGICAL_POWER);
-
-        if (you.wearing(EQ_STAFF, STAFF_POWER))
-            enp += 15;
     }
 
     if (include_items && you.wearing_ego(EQ_WEAPON0, SPWPN_ANTIMAGIC) && !you.wearing_ego(EQ_GLOVES, SPARM_WIELDING))

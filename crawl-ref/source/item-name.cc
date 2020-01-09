@@ -1201,20 +1201,20 @@ static const char* staff_type_name(int stafftype)
 {
     switch ((stave_type)stafftype)
     {
-    case STAFF_WIZARDRY:    return "wizardry";
-    case STAFF_POWER:       return "power";
     case STAFF_FIRE:        return "fire";
     case STAFF_COLD:        return "cold";
     case STAFF_POISON:      return "poison";
-    case STAFF_ENERGY:      return "energy";
     case STAFF_DEATH:       return "death";
-#if TAG_MAJOR_VERSION == 34
-    case STAFF_CONJURATION: return "conjuration";
-    case STAFF_ENCHANTMENT: return "enchantment";
-#endif
     case STAFF_AIR:         return "air";
     case STAFF_EARTH:       return "earth";
     case STAFF_SUMMONING:   return "summoning";
+#if TAG_MAJOR_VERSION == 34
+    case STAFF_POWER:       return "removedness";
+    case STAFF_ENERGY:      return "removedness";
+    case STAFF_WIZARDRY:    return "removedness";
+    case STAFF_CONJURATION: return "removedness";
+    case STAFF_ENCHANTMENT: return "removedness";
+#endif
     default:                return "bugginess";
     }
 }
@@ -3816,12 +3816,8 @@ bool is_useless_item(const item_def &item, bool temp)
         if (!item_type_known(item))
             return false;
 
-        switch (item.sub_type)
-        {
-        case STAFF_WIZARDRY:
-        case STAFF_SUMMONING:
-            return you_worship(GOD_TROG);
-        }
+        if (you_worship(GOD_TROG))
+            return true;
 
         return false;
 

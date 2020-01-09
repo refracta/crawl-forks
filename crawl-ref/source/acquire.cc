@@ -581,12 +581,16 @@ static int _acquirement_staff_subtype(bool /*divine*/, int & /*quantity*/)
     if (one_chance_in(found_enhancer ? 2 : 3))
         return result;
 
-    // Otherwise pick a non-enhancer staff.
-    switch (random2(5))
+    // Otherwise pick a random staff.
+    switch (random2(7))
     {
-    case 0: case 1: result = STAFF_WIZARDRY;   break;
-    case 2: case 3: result = STAFF_ENERGY;     break;
-    case 4: result = STAFF_POWER;              break;
+    case 0: result = STAFF_FIRE;       break;
+    case 1: result = STAFF_COLD;       break;
+    case 2: result = STAFF_AIR;        break;
+    case 3: result = STAFF_EARTH;      break;
+    case 4: result = STAFF_POISON;     break;
+    case 5: result = STAFF_DEATH;      break;
+    case 6: result = STAFF_SUMMONING;  break;
     }
     return result;
 }

@@ -1734,11 +1734,6 @@ static void _generate_staff_item(item_def& item, bool allow_uniques,
             item.sub_type = random2(NUM_STAVES);
         }
         while (item_type_removed(OBJ_STAVES, item.sub_type));
-
-        // staves of energy are 25% less common, wizardry/power
-        // are more common
-        if (item.sub_type == STAFF_ENERGY && one_chance_in(4))
-            item.sub_type = random_choose(STAFF_WIZARDRY, STAFF_POWER);
     }
     else
         item.sub_type = force_type;
@@ -1938,7 +1933,7 @@ static void _setup_fallback_randart(const int unrand_id,
     {
         item.base_type = OBJ_STAVES;
         if (unrand_id == UNRAND_WUCAD_MU)
-            force_type = STAFF_ENERGY;
+            force_type = STAFF_EARTH;
         else if (unrand_id == UNRAND_OLGREB)
             force_type = STAFF_POISON;
         else
