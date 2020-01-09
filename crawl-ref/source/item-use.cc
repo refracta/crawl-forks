@@ -3240,7 +3240,7 @@ string cannot_read_item_reason(const item_def &item)
 
 #if TAG_MAJOR_VERSION == 34
         case SCR_ENCHANT_WEAPON:
-            return _no_items_reason(OSEL_ENCHANTABLE_WEAPON, true);
+            return "Sorry this item is removed.";
 #endif
 
         case SCR_REMOVE_CURSE:

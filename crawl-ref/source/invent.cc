@@ -519,8 +519,6 @@ string no_selectables_message(int item_selector)
 #endif
     case OSEL_BRANDABLE_WEAPON:
         return "You aren't carrying any weapons that can be branded.";
-    case OSEL_ENCHANTABLE_WEAPON:
-        return "You aren't carrying any weapons that can be enchanted.";
     case OSEL_BEOGH_GIFT:
         return "You aren't carrying anything you can give to a follower.";
     case OSEL_CURSABLE:
@@ -1128,14 +1126,6 @@ bool item_is_selected(const item_def &i, int selector)
 
     case OSEL_BRANDABLE_WEAPON:
         return is_brandable_weapon(i, true);
-
-#if TAG_MAJOR_VERSION == 34
-    case OSEL_ENCHANTABLE_WEAPON:
-        return itype == OBJ_WEAPONS
-               && !is_artefact(i)
-               && (!item_ident(i, ISFLAG_KNOW_PLUSES)
-                   || i.plus < MAX_WPN_ENCHANT);
-#endif
 
     case OSEL_BLESSABLE_WEAPON:
         return is_brandable_weapon(i, you_worship(GOD_SHINING_ONE), true);

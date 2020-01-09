@@ -36,9 +36,7 @@ enum object_selector
     OSEL_UNCURSED_WORN_JEWELLERY = -13,
 #endif
     OSEL_BRANDABLE_WEAPON        = -14,
-#if TAG_MAJOR_VERSION == 34
-    OSEL_ENCHANTABLE_WEAPON      = -15,
-#endif
+    // Unused                    = -15, // Was OSEL_ENCHANTABLE_WEAPON
     OSEL_BLESSABLE_WEAPON        = -16,
     OSEL_CURSABLE                = -17, // Items that are cursable and not
                                         // known-cursed. Unknown-cursed items
