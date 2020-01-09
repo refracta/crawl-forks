@@ -73,7 +73,6 @@ opacity_type opacity_rocky::operator()(const coord_def& p) const
 
 opacity_type opacity_steel::operator()(const coord_def& p) const
 {
-    dungeon_feature_type f = grd(p);
     if (cell_is_runed(p))
         return OPC_OPAQUE;
     if (is_opaque_cloud(cloud_type_at(p)))
