@@ -1596,7 +1596,6 @@ bool evoke_item(int slot, bool check_range)
         break;
 
     case OBJ_STAVES:
-        ASSERT(wielded);
         unevokable = true;
         break;
 
