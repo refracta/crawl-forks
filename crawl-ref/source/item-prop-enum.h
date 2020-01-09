@@ -133,6 +133,22 @@ const int SP_FORBID_EGO   = -1;
 const int SP_FORBID_BRAND = -1;
 const int SP_UNKNOWN_BRAND = 31; // seen_weapon/armour is a 32-bit bitfield
 
+enum facet_type // item_def.special
+{
+    SPSTF_FORBID_FACET = 1, // Not sure I need this for anything but to match the others.
+    SPSTF_SHIELD,
+    SPSTF_FLAY,
+    SPSTF_WARP,
+    SPSTF_ENERGY,
+    SPSTF_REAVER,
+    SPSTF_WIZARD,
+    SPSTF_SCOPED,
+    SPSTF_MENACE,
+    SPSTF_ACCURACY,
+    SPSTF_CHAOS,
+    NUM_SPECIAL_STAVES,
+};
+
 // Be sure to update _debug_acquirement_stats and _str_to_ego to match.
 enum brand_type // item_def.special
 {

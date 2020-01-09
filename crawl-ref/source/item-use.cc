@@ -3243,7 +3243,6 @@ string cannot_read_item_reason(const item_def &item)
             return _no_items_reason(OSEL_ENCHANTABLE_WEAPON, true);
 #endif
 
-
         case SCR_REMOVE_CURSE:
             return _no_items_reason(OSEL_CURSED_WORN);
 
