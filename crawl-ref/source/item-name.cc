@@ -2160,12 +2160,10 @@ string item_def::name_aux(description_level_type desc, bool terse, bool ident,
         {
             if (cursed())
                 buff << "cursed ";
-            else if (desc != DESC_PLAIN
-                     && (!know_type || !is_artefact(*this)))
-            {
-                buff << "uncursed ";
-            }
         }
+
+        if (know_pluses)
+            buff << make_stringf("%+d ", plus);
 
         if (!know_type)
         {

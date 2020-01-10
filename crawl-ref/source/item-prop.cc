@@ -1769,7 +1769,7 @@ bool is_enchantable_item(const item_def &item)
             return false;
         return true;
     }
-    if (item.base_type == OBJ_WEAPONS)
+    if (item.base_type == OBJ_WEAPONS || item.base_type == OBJ_STAVES)
     {
         if (item.plus >= MAX_WPN_ENCHANT)
             return false;

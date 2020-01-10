@@ -1738,6 +1738,9 @@ static void _generate_staff_item(item_def& item, bool allow_uniques,
     else
         item.sub_type = force_type;
 
+    item.plus = -6;
+    item.plus += roll_dice(2, 4);
+
     // BCADDO: Curses for Staves (Would have to come with artefact staves).
 }
 

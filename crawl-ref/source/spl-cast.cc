@@ -83,6 +83,7 @@
 #include "viewchar.h" // stringize_glyph
 
 static int _spell_enhancement(spell_type spell);
+static int _additive_power(spell_type spell);
 static string _spell_failure_rate_description(spell_type spell);
 
 #if TAG_MAJOR_VERSION == 34
@@ -483,6 +484,7 @@ int calc_spell_power(spell_type spell, bool apply_intel, bool fail_rate_check,
         // at this point, `power` is assumed to be basically in centis.
         // apply a stepdown, and scale.
         power = stepdown_spellpower(power, scale);
+        power += _additive_power(spell);
     }
 
     const int cap = spell_power_cap(spell);
@@ -490,6 +492,56 @@ int calc_spell_power(spell_type spell, bool apply_intel, bool fail_rate_check,
         power = min(power, cap * scale);
 
     return power;
+}
+
+static int _additive_power(spell_type spell)
+{
+    item_def * staff;
+    if (you.weapon(0)->base_type == OBJ_STAVES)
+        staff = you.weapon(0);
+    else if (you.weapon(1)->base_type == OBJ_STAVES)
+        staff = you.weapon(1);
+    else
+        return 0;
+
+    const spschools_type typeflags = get_spell_disciplines(spell);
+    bool enhanced = false;
+
+    if (bool(typeflags & spschool::charms) && staff->brand == SPSTF_SHIELD)
+        enhanced = true;
+
+    if (bool(typeflags & spschool::hexes) && staff->brand == SPSTF_FLAY)
+        enhanced = true;
+
+    if (bool(typeflags & spschool::hexes) && staff->brand == SPSTF_WARP)
+        enhanced = true;
+
+    if (bool(typeflags & spschool::fire) && staff->sub_type == STAFF_FIRE)
+        enhanced = true;
+
+    if (bool(typeflags & spschool::ice) && staff->sub_type == STAFF_COLD)
+        enhanced = true;
+
+    if (bool(typeflags & spschool::air) && staff->sub_type == STAFF_AIR)
+        enhanced = true;
+
+    if (bool(typeflags & spschool::earth) && staff->sub_type == STAFF_EARTH)
+        enhanced = true;
+
+    if (bool(typeflags & spschool::poison) && staff->sub_type == STAFF_POISON)
+        enhanced = true;
+
+    if (bool(typeflags & spschool::necromancy) && staff->sub_type == STAFF_DEATH)
+        enhanced = true;
+
+    if (bool(typeflags & spschool::summoning) && staff->sub_type == STAFF_SUMMONING)
+        enhanced = true;
+
+    // BCADDO: Transmutations go here if we decide to add that staff type.
+
+    if (enhanced)
+        return (3 * staff->plus);
+    return 0;
 }
 
 static int _spell_enhancement(spell_type spell)
