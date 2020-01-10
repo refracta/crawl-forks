@@ -4718,6 +4718,32 @@ void unmarshallItem(reader &th, item_def &item)
     if (item.is_type(OBJ_STAVES, STAFF_CHANNELING))
         item.sub_type = STAFF_ENERGY;
 
+    if (item.is_type(OBJ_STAVES, STAFF_POWER))
+        item.sub_type = STAFF_ENERGY;
+
+    if (item.is_type(OBJ_STAVES, STAFF_ENERGY))
+        item.brand = SPSTF_ENERGY;
+
+    if (item.is_type(OBJ_STAVES, STAFF_WIZARDRY))
+    {
+        item.sub_type = STAFF_ENERGY;
+        item.brand = SPSTF_WIZARD;
+    }
+
+    if (item.is_type(OBJ_STAVES, STAFF_ENERGY))
+    {
+        switch (random2(7))
+        {
+        case 0: item.sub_type = STAFF_FIRE;
+        case 1: item.sub_type = STAFF_COLD;
+        case 2: item.sub_type = STAFF_AIR;
+        case 3: item.sub_type = STAFF_EARTH;
+        case 4: item.sub_type = STAFF_DEATH;
+        case 5: item.sub_type = STAFF_SUMMONING;
+        case 6: item.sub_type = STAFF_POISON;
+        }
+    }
+
     if (th.getMinorVersion() < TAG_MINOR_GOD_GIFT)
     {
         _trim_god_gift_inscrip(item);
