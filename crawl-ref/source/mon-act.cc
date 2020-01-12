@@ -1164,73 +1164,78 @@ bool handle_throw(monster* mons, bolt & beem, spell_type call_spell, bool check_
     int m;
     item_def *missile; 
 
-    if (call_spell == SPELL_THROW_BLOWGUN)
+    switch (call_spell)
+    {
+    case SPELL_THROW_BLOWGUN:
     {
         m = items(false, OBJ_MISSILES, MI_NEEDLE, 1);
         missile = &mitm[m];
         if (x_chance_in_y(mons->get_experience_level(), 25))
         {
             missile->brand = random_choose_weighted(60, SPMSL_CURARE,
-                                                     5, SPMSL_PETRIFICATION,
-                                                     5, SPMSL_SLEEP,
-                                                     5, SPMSL_FRENZY,
-                                                     5, SPMSL_CONFUSION);
+                5, SPMSL_PETRIFICATION,
+                5, SPMSL_SLEEP,
+                5, SPMSL_FRENZY,
+                5, SPMSL_CONFUSION);
         }
         else missile->brand = SPMSL_POISONED;
     }
-    if (call_spell == SPELL_THROW_CURARE)
+    break;
+    case SPELL_THROW_CURARE:
     {
         m = items(false, OBJ_MISSILES, MI_NEEDLE, 1);
         missile = &mitm[m];
         if (x_chance_in_y(mons->get_experience_level(), 25))
         {
             missile->brand = random_choose_weighted(5, SPMSL_PETRIFICATION,
-                                                    5, SPMSL_SLEEP,
-                                                    5, SPMSL_FRENZY,
-                                                    5, SPMSL_CONFUSION);
+                5, SPMSL_SLEEP,
+                5, SPMSL_FRENZY,
+                5, SPMSL_CONFUSION);
         }
         else missile->brand = SPMSL_CURARE;
     }
-    if (call_spell == SPELL_THROW_JAVELIN)
+    break;
+    case SPELL_THROW_JAVELIN:
     {
         m = items(false, OBJ_MISSILES, MI_JAVELIN, 1);
         missile = &mitm[m];
         if (x_chance_in_y(mons->get_experience_level(), 25))
         {
             missile->brand = random_choose_weighted(52, SPMSL_PENETRATION,
-                                                    32, SPMSL_POISONED,
-                                                    21, SPMSL_STEEL,
-                                                    20, SPMSL_SILVER,
-                                                    20, SPMSL_CHAOS);
+                32, SPMSL_POISONED,
+                21, SPMSL_STEEL,
+                20, SPMSL_SILVER,
+                20, SPMSL_CHAOS);
         }
         else missile->brand = SPMSL_NORMAL;
     }
-    if (call_spell == SPELL_THROW_TOMAHAWK)
+    break;
+    case SPELL_THROW_TOMAHAWK:
     {
         m = items(false, OBJ_MISSILES, MI_TOMAHAWK, 1);
         missile = &mitm[m];
         if (x_chance_in_y(mons->get_experience_level(), 25))
         {
             missile->brand = random_choose_weighted(15, SPMSL_POISONED,
-                                                    10, SPMSL_SILVER,
-                                                    10, SPMSL_STEEL,
-                                                    12, SPMSL_DISPERSAL,
-                                                    15, SPMSL_EXPLODING,
-                                                    10, SPMSL_CHAOS);
+                10, SPMSL_SILVER,
+                10, SPMSL_STEEL,
+                12, SPMSL_DISPERSAL,
+                15, SPMSL_EXPLODING,
+                10, SPMSL_CHAOS);
         }
         else missile->brand = SPMSL_NORMAL;
     }
-    if (call_spell == SPELL_THROW_DISPERSAL)
+    break;
+    case SPELL_THROW_DISPERSAL:
     {
         m = items(false, OBJ_MISSILES, MI_TOMAHAWK, 1);
         missile = &mitm[m];
         missile->brand = SPMSL_DISPERSAL;
     }
-
-    const actor *act = actor_at(beem.target);
-
-    if (call_spell == SPELL_THROW_NET)
+    break;
+    case SPELL_THROW_NET:
     {
+        const actor *act = actor_at(beem.target);
         if (act)
         {
             // Throwing a net at a target that is already caught would be
@@ -1246,20 +1251,25 @@ bool handle_throw(monster* mons, bolt & beem, spell_type call_spell, bool check_
         missile = &mitm[m];
         missile->brand = SPMSL_NORMAL;
     }
-    if (call_spell == SPELL_THROW_ROCK)
+    break;
+    case SPELL_THROW_ROCK:
     {
         int stone = random_stone();
         m = items(false, OBJ_MISSILES, stone, 1);
         missile = &mitm[m];
         missile->brand = SPMSL_NORMAL;
     }
-    if (call_spell == SPELL_NO_SPELL)
+    break;
+    case SPELL_NO_SPELL:
+    default:
     {
         if (!launcher)
             return false;
         m = items(false, OBJ_MISSILES, fires_ammo_type(*launcher), 1);
         missile = &mitm[m];
         missile->brand = SPMSL_NORMAL;
+    }
+    break;
     }
 
     missile->quantity = 1;
