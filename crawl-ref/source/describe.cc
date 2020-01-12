@@ -1994,18 +1994,10 @@ static string _describe_ammo(const item_def &item)
     if (dam)
     {
         const int throw_delay = (10 + dam / 2);
-        const int target_skill = _item_training_target(item);
-        const bool could_set_target = _could_set_training_target(item, true);
 
         description += make_stringf(
-            "\nBase damage: %d  Base attack delay: %.1f"
-            "\nThis projectile's minimum attack delay (%.1f) "
-                "is reached at skill level %d.",
-            dam,
-            (float) throw_delay / 10,
-            (float) FASTEST_PLAYER_THROWING_SPEED / 10,
-            target_skill / 10
-        );
+            "\nBase damage: %d  Base attack delay: %.1f",
+            dam, (float) throw_delay / 10);
     }
 
     return description;
