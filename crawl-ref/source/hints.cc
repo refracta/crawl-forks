@@ -2984,33 +2984,6 @@ static string _hints_abilities(const item_def& item)
     return str;
 }
 
-static string _hints_throw_stuff(const item_def &item)
-{
-    string result;
-
-    result  = "To do this, type <w>%</w> to fire, then ";
-    if (item.slot)
-    {
-        result += "<w>";
-        result += item.slot;
-        result += "</w> for";
-    }
-    else
-    {
-        // you don't have this/these stuff(s) at present
-        result += "select ";
-    }
-    result += (item.quantity > 1 ? "these" : "this");
-    result += " ";
-    result += item_base_name(item);
-    result += (item.quantity > 1? "s" : "");
-    result += ". You'll ";
-    result += _hints_target_mode();
-
-    insert_commands(result, { CMD_FIRE });
-    return result;
-}
-
 // num_old_talents describes the number of activatable abilities you had
 // before putting on this item.
 void check_item_hint(const item_def &item, unsigned int num_old_talents)
