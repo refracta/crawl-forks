@@ -747,6 +747,17 @@ static special_missile_type _determine_missile_brand(const item_def& item,
     return rc;
 }
 
+bool is_staff_brand_ok(int type, int brand, bool strict)
+{
+    // Mostly using the same variables to fit template
+    // There are no actual restrictions right now except that it must 
+    // actually be a valid brand.
+
+    if (brand >= NUM_SPECIAL_STAVES || brand < 0)
+        return false;
+    return true;
+}
+
 bool is_missile_brand_ok(int type, int brand, bool strict)
 {
     // Launcher ammo can never be branded.
@@ -1063,6 +1074,36 @@ static special_armour_type _generate_armour_ego(const item_def& item,
     return SPARM_NORMAL;
 }
 
+/**
+* Generate an appropriate facet for a magical staff.
+*
+* @param item          The item in question.
+* @param item_level    A 'level' of item to generate.
+* @return              The item's current ego, if it already has one;
+*                      otherwise, an ego appropriate to the item.
+*                      May be SPSTF_NORMAL.
+*/
+static facet_type _generate_staff_facet(const item_def& item,
+    int item_level)
+{
+    if (item.brand != SPSTF_NORMAL)
+        return static_cast<facet_type>(item.brand);
+
+    if (x_chance_in_y(500 - item_level, 500))
+        return SPSTF_NORMAL;
+
+        // Total Weight: 58 (Arbitrary).
+    return random_choose_weighted(15, SPSTF_SHIELD,
+                                  15, SPSTF_FLAY,
+                                   6, SPSTF_MENACE,
+                                   6, SPSTF_ACCURACY,
+                                   4, SPSTF_SCOPED,
+                                   4, SPSTF_WIZARD,
+                                   4, SPSTF_REAVER,
+                                   3, SPSTF_ENERGY,
+                                   1, SPSTF_CHAOS);
+}
+
 bool is_armour_brand_ok(int type, int brand, bool strict)
 {
     equipment_type slot = get_armour_slot((armour_type)type);
@@ -1287,7 +1328,6 @@ static void _generate_armour_item(item_def& item, bool allow_uniques,
                 break;
         }
     }
-
 
     // Fall back to an ordinary item if artefacts not allowed for this type.
     if (item_level == ISPEC_RANDART && _armour_disallows_randart(item.sub_type))
@@ -1712,7 +1752,7 @@ static void _generate_book_item(item_def& item, bool allow_uniques,
 }
 
 static void _generate_staff_item(item_def& item, bool allow_uniques,
-                                 int force_type, int item_level, int agent)
+                                 int force_type, int item_level, int agent, int force_ego)
 {
     // If we make the unique roll, no further generation necessary.
     // Copied unrand code from _try_make_weapon_artefact since randart enhancer staves
@@ -1740,6 +1780,11 @@ static void _generate_staff_item(item_def& item, bool allow_uniques,
 
     item.plus = -6;
     item.plus += roll_dice(2, 4);
+
+    if (!is_random_artefact(item) && force_ego <= 0)
+        item.brand = _generate_staff_facet(item, item_level);
+    else
+        item.brand = force_ego;
 
     // BCADDO: Curses for Staves (Would have to come with artefact staves).
 }
@@ -2148,7 +2193,7 @@ int items(bool allow_uniques,
     case OBJ_STAVES:
         // Don't generate unrand staves this way except through acquirement,
         // since they also generate as OBJ_WEAPONS.
-        _generate_staff_item(item, (agent != NO_AGENT), force_type, item_level, agent);
+        _generate_staff_item(item, (agent != NO_AGENT), force_type, item_level, agent, force_ego);
         break;
 
     case OBJ_ORBS:              // always forced in current setup {dlb}
@@ -2178,7 +2223,9 @@ int items(bool allow_uniques,
         || item.base_type == OBJ_ARMOURS
           && !is_armour_brand_ok(item.sub_type, get_armour_ego_type(item), false)
         || item.base_type == OBJ_MISSILES
-          && !is_missile_brand_ok(item.sub_type, item.brand, false))
+          && !is_missile_brand_ok(item.sub_type, item.brand, false)
+        || item.base_type == OBJ_STAVES
+          && !is_staff_brand_ok(item.sub_type, item.brand, false))
     {
         mprf(MSGCH_ERROR, "Invalid brand on item %s, annulling.",
             item.name(DESC_PLAIN, false, true, false, false, ISFLAG_KNOW_PLUSES
@@ -2219,6 +2266,8 @@ void reroll_brand(item_def &item, int item_level)
     case OBJ_ARMOURS:
         item.brand = _generate_armour_ego(item, item_level);
         break;
+    case OBJ_STAVES:
+        item.brand = _generate_staff_facet(item, item_level);
     default:
         die("can't reroll brands of this type");
     }

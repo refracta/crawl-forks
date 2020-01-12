@@ -4542,6 +4542,7 @@ bool get_item_by_name(item_def *item, const char* specs,
     case OBJ_WEAPONS:
     case OBJ_SHIELDS:
     case OBJ_ARMOURS:
+    case OBJ_STAVES:
     {
         char buf[80];
         msgwin_get_line_autohist("What ego type? ", buf, sizeof(buf));

@@ -497,51 +497,55 @@ int calc_spell_power(spell_type spell, bool apply_intel, bool fail_rate_check,
 static int _additive_power(spell_type spell)
 {
     item_def * staff;
-    if (you.weapon(0)->base_type == OBJ_STAVES)
+    if (you.weapon(0) && you.weapon(0)->base_type == OBJ_STAVES)
         staff = you.weapon(0);
-    else if (you.weapon(1)->base_type == OBJ_STAVES)
+    else if (you.weapon(1) && you.weapon(1)->base_type == OBJ_STAVES)
         staff = you.weapon(1);
     else
         return 0;
 
+    if (staff_enhances_spell(staff, spell))
+        return (3 * staff->plus);
+    return 0;
+}
+
+bool staff_enhances_spell(item_def * staff, spell_type spell)
+{
     const spschools_type typeflags = get_spell_disciplines(spell);
-    bool enhanced = false;
 
     if (bool(typeflags & spschool::charms) && staff->brand == SPSTF_SHIELD)
-        enhanced = true;
+        return true;
 
     if (bool(typeflags & spschool::hexes) && staff->brand == SPSTF_FLAY)
-        enhanced = true;
+        return true;
 
     if (bool(typeflags & spschool::hexes) && staff->brand == SPSTF_WARP)
-        enhanced = true;
+        return true;
 
     if (bool(typeflags & spschool::fire) && staff->sub_type == STAFF_FIRE)
-        enhanced = true;
+        return true;
 
     if (bool(typeflags & spschool::ice) && staff->sub_type == STAFF_COLD)
-        enhanced = true;
+        return true;
 
     if (bool(typeflags & spschool::air) && staff->sub_type == STAFF_AIR)
-        enhanced = true;
+        return true;
 
     if (bool(typeflags & spschool::earth) && staff->sub_type == STAFF_EARTH)
-        enhanced = true;
+        return true;
 
     if (bool(typeflags & spschool::poison) && staff->sub_type == STAFF_POISON)
-        enhanced = true;
+        return true;
 
     if (bool(typeflags & spschool::necromancy) && staff->sub_type == STAFF_DEATH)
-        enhanced = true;
+        return true;
 
     if (bool(typeflags & spschool::summoning) && staff->sub_type == STAFF_SUMMONING)
-        enhanced = true;
+        return true;
 
     // BCADDO: Transmutations go here if we decide to add that staff type.
 
-    if (enhanced)
-        return (3 * staff->plus);
-    return 0;
+    return false;
 }
 
 static int _spell_enhancement(spell_type spell)
@@ -549,6 +553,10 @@ static int _spell_enhancement(spell_type spell)
     const spschools_type typeflags = get_spell_disciplines(spell);
     int enhanced = 0;
 
+    if (you.weapon(0) && you.weapon(0)->base_type == OBJ_STAVES && staff_enhances_spell(you.weapon(0), spell))
+        enhanced++;
+    else if (you.weapon(1) && you.weapon(1)->base_type == OBJ_STAVES && staff_enhances_spell(you.weapon(1), spell))
+        enhanced++;
 
     if (typeflags & spschool::hexes)
         enhanced += player_spec_hex();

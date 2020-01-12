@@ -4744,6 +4744,9 @@ void unmarshallItem(reader &th, item_def &item)
         }
     }
 
+    if (item.base_type == OBJ_STAVES && item.brand >= NUM_SPECIAL_STAVES)
+        item.brand = 0;
+
     if (th.getMinorVersion() < TAG_MINOR_GOD_GIFT)
     {
         _trim_god_gift_inscrip(item);

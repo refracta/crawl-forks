@@ -1219,6 +1219,25 @@ static const char* staff_type_name(int stafftype)
     }
 }
 
+static const char* staff_facet_name(int stafftype)
+{
+    switch ((facet_type)stafftype)
+    {
+    case SPSTF_NORMAL:      return "";
+    case SPSTF_SHIELD:      return "shielded ";
+    case SPSTF_FLAY:        return "flayed ";
+    case SPSTF_WARP:        return "warped ";
+    case SPSTF_ENERGY:      return "energetic ";
+    case SPSTF_REAVER:      return "Reaver's ";
+    case SPSTF_WIZARD:      return "Wizard's ";
+    case SPSTF_SCOPED:      return "scoped ";
+    case SPSTF_MENACE:      return "menacing ";
+    case SPSTF_ACCURACY:    return "accurate ";
+    case SPSTF_CHAOS:       return "chaotic ";
+    default:                return "buggy ";
+    }
+}
+
 const char *base_type_string(const item_def &item)
 {
     return base_type_string(item.base_type);
@@ -2164,6 +2183,11 @@ string item_def::name_aux(description_level_type desc, bool terse, bool ident,
 
         if (know_pluses)
             buff << make_stringf("%+d ", plus);
+
+        if (know_ego)
+        {
+            buff << staff_facet_name(this->brand);
+        }
 
         if (!know_type)
         {

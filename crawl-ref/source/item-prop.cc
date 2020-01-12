@@ -33,6 +33,7 @@
 #include "religion.h"
 #include "shopping.h"
 #include "skills.h"
+#include "spl-util.h"
 #include "spl-wpnench.h"
 #include "stringutil.h"
 #include "terrain.h"
@@ -2096,21 +2097,10 @@ bool staff_uses_evocations(const item_def &item)
         return true;
     }
 
-    if (!item_type_known(item) || item.base_type != OBJ_STAVES)
+    if (item.base_type != OBJ_STAVES)
         return false;
 
-    switch (item.sub_type)
-    {
-    case STAFF_FIRE:
-    case STAFF_COLD:
-    case STAFF_POISON:
-    case STAFF_DEATH:
-    case STAFF_AIR:
-    case STAFF_EARTH:
-        return true;
-    default:
-        return false;
-    }
+    return true;
 }
 
 bool item_skills(const item_def &item, set<skill_type> &skills)

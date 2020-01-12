@@ -135,7 +135,8 @@ const int SP_UNKNOWN_BRAND = 31; // seen_weapon/armour is a 32-bit bitfield
 
 enum facet_type // item_def.special
 {
-    SPSTF_FORBID_FACET = 1, // Not sure I need this for anything but to match the others.
+    SPSTF_FORBID_FACET = -1, // Not sure I need this for anything but to match the others.
+    SPSTF_NORMAL,
     SPSTF_SHIELD,
     SPSTF_FLAY,
     SPSTF_WARP,

@@ -1085,7 +1085,6 @@ static bool _brand_already_seen(const item_def &item)
     }
 }
 
-// ugh
 #define ITEM_LEVEL (divine ? ISPEC_GIFT : ISPEC_GOOD_ITEM)
 
 /**
@@ -1102,7 +1101,8 @@ static bool _brand_already_seen(const item_def &item)
  */
 static void _adjust_brand(item_def &item, bool divine)
 {
-    if (item.base_type != OBJ_WEAPONS && item.base_type != OBJ_ARMOURS)
+    if (item.base_type != OBJ_WEAPONS && item.base_type != OBJ_ARMOURS
+        && item.base_type != OBJ_STAVES)
         return; // don't reroll missile brands, I guess
 
     if (is_artefact(item))
@@ -1116,6 +1116,21 @@ static void _adjust_brand(item_def &item, bool divine)
         {
             reroll_brand(item, ITEM_LEVEL);
         }
+    }
+
+    if (item.base_type == OBJ_STAVES)
+    {
+        skill_type best_spell_skill = best_skill(SK_FIRST_MAGIC_SCHOOL,
+            SK_LAST_MAGIC);
+        if (best_spell_skill == SK_CHARMS && !one_chance_in(3))
+            item.brand = SPSTF_SHIELD;
+        if (best_spell_skill == SK_HEXES && !one_chance_in(3))
+            item.brand = SPSTF_FLAY;
+        if (best_spell_skill == SK_TRANSLOCATIONS && !one_chance_in(3))
+            item.brand = SPSTF_WARP;
+        else
+            reroll_brand(item, ITEM_LEVEL);
+        return;
     }
 
     // Try to not generate brands that were already seen, although unlike

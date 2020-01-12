@@ -1799,9 +1799,6 @@ int player_spec_death()
 {
     int sd = 0;
 
-    // Staves
-    sd += you.wearing(EQ_STAFF, STAFF_DEATH);
-
     // species:
     sd += you.get_mutation_level(MUT_NECRO_ENHANCER);
 
@@ -1815,10 +1812,6 @@ int player_spec_death()
 int player_spec_fire()
 {
     int sf = 0;
-
-    // staves:
-    sf += you.wearing(EQ_STAFF, STAFF_FIRE);
-
     // rings of fire:
     sf += you.wearing(EQ_RINGS, RING_FIRE);
 
@@ -1830,35 +1823,17 @@ int player_spec_fire()
 
 int player_spec_cold()
 {
-    int sc = 0;
-
-    // staves:
-    sc += you.wearing(EQ_STAFF, STAFF_COLD);
-
-    // rings of ice:
-    sc += you.wearing(EQ_RINGS, RING_ICE);
-
-    return sc;
+    return you.wearing(EQ_RINGS, RING_ICE);
 }
 
 int player_spec_earth()
 {
-    int se = 0;
-
-    // Staves
-    se += you.wearing(EQ_STAFF, STAFF_EARTH);
-
-    return se;
+    return 0;
 }
 
 int player_spec_air()
 {
-    int sa = 0;
-
-    // Staves
-    sa += you.wearing(EQ_STAFF, STAFF_AIR);
-
-    return sa;
+    return 0;
 }
 
 int player_spec_hex()
@@ -1876,20 +1851,12 @@ int player_spec_charm()
 
 int player_spec_summ()
 {
-    int ss = 0;
-
-    // Staves
-    ss += you.wearing(EQ_STAFF, STAFF_SUMMONING);
-
-    return ss;
+    return 0;
 }
 
 int player_spec_poison()
 {
     int sp = 0;
-
-    // Staves
-    sp += you.wearing(EQ_STAFF, STAFF_POISON);
 
     if (player_equip_unrand(UNRAND_OLGREB))
         sp++;
@@ -2417,7 +2384,22 @@ int player_armour_shield_spell_penalty()
  */
 int player_wizardry(spell_type spell)
 {
-    return you.wearing(EQ_RINGS, RING_WIZARDRY);
+    int wiz = 0;
+
+    wiz += you.wearing(EQ_RINGS, RING_WIZARDRY);
+
+    item_def * staff;
+
+    if (you.weapon(0) && you.weapon(0)->base_type == OBJ_STAVES)
+        staff = you.weapon(0);
+    else if (you.weapon(1) && you.weapon(1)->base_type == OBJ_STAVES)
+        staff = you.weapon(1);
+    else
+        return wiz;
+
+    if (staff->brand == SPSTF_WIZARD && staff_enhances_spell(staff, spell))
+        wiz++;
+    return wiz;
 }
 
 /**
@@ -6170,6 +6152,7 @@ int player::base_ac(int scale) const
     }
 
     AC += wearing(EQ_RINGS, RING_PROTECTION) * 500;
+    AC += wearing(EQ_STAFF, STAFF_EARTH) * 500;
 
     if (you.weapon(0) && you.weapon(0)->base_type == OBJ_SHIELDS && !is_hybrid(you.weapon(0)->sub_type)
         && get_armour_ego_type(*you.weapon(0)) == SPARM_PROTECTION)
