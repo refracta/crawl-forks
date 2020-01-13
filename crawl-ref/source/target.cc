@@ -1439,7 +1439,7 @@ aff_type targeter_cone::is_affected(coord_def loc)
 }
 
 targeter_shotgun::targeter_shotgun(const actor* act, size_t beam_count,
-                                     int r)
+                                     int r, bool clouds)
 {
     ASSERT(act);
     agent = act;
@@ -1448,6 +1448,7 @@ targeter_shotgun::targeter_shotgun(const actor* act, size_t beam_count,
     for (size_t i = 0; i < num_beams; i++)
         rays.emplace_back();
     range = r;
+    uses_clouds = clouds;
 }
 
 bool targeter_shotgun::valid_aim(coord_def a)
@@ -1503,8 +1504,11 @@ bool targeter_shotgun::set_aim(coord_def a)
         while ((origin - (p = tempray.pos())).rdist() <= range
                && map_bounds(p) && opc_solid_see(p) < OPC_OPAQUE)
         {
-            if (p != origin)
+            if (p != origin
+                && (!uses_clouds || !cloud_at(p) && !is_sanctuary(p)))
+            {
                 zapped[p] = zapped[p] + 1;
+            }
             tempray.advance();
         }
     }
@@ -1515,8 +1519,11 @@ bool targeter_shotgun::set_aim(coord_def a)
 
 aff_type targeter_shotgun::is_affected(coord_def loc)
 {
-    if ((loc - origin).rdist() > range)
+    if ((loc - origin).rdist() > range
+         || uses_clouds && (cloud_at(loc) || is_sanctuary(loc)))
+    {
         return AFF_NO;
+    }
 
     return (zapped[loc] >= num_beams) ? AFF_YES :
            (zapped[loc] > 0)          ? AFF_MAYBE
