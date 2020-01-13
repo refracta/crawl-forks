@@ -1086,13 +1086,22 @@ static special_armour_type _generate_armour_ego(const item_def& item,
 static facet_type _generate_staff_facet(const item_def& item,
     int item_level)
 {
-    if (item.brand != SPSTF_NORMAL)
+    if (item.brand != SPSTF_NORMAL && item.brand < NUM_SPECIAL_STAVES)
         return static_cast<facet_type>(item.brand);
 
     if (x_chance_in_y(500 - item_level, 500))
-        return SPSTF_NORMAL;
+        return static_cast<facet_type>(SPSTF_NORMAL);
 
-        // Total Weight: 58 (Arbitrary).
+    if (item.sub_type == STAFF_SUMMONING)
+    {
+            // Total Weight: 26 (Arbitrary).
+        return random_choose_weighted(15, SPSTF_SHIELD,
+                                       4, SPSTF_WIZARD,
+                                       4, SPSTF_REAVER,
+                                       3, SPSTF_ENERGY);
+    }
+
+        // Total Weight: 61 (Arbitrary).
     return random_choose_weighted(15, SPSTF_SHIELD,
                                   15, SPSTF_FLAY,
                                    6, SPSTF_MENACE,
@@ -1101,6 +1110,7 @@ static facet_type _generate_staff_facet(const item_def& item,
                                    4, SPSTF_WIZARD,
                                    4, SPSTF_REAVER,
                                    3, SPSTF_ENERGY,
+                                   3, SPSTF_WARP,
                                    1, SPSTF_CHAOS);
 }
 
@@ -1780,11 +1790,15 @@ static void _generate_staff_item(item_def& item, bool allow_uniques,
 
     item.plus = -6;
     item.plus += roll_dice(2, 4);
+    if (item_level >= ISPEC_GIFT)
+        item.plus += roll_dice(2, 4);
 
     if (!is_random_artefact(item) && force_ego <= 0)
         item.brand = _generate_staff_facet(item, item_level);
     else
         item.brand = force_ego;
+
+    item.special = item.brand;
 
     // BCADDO: Curses for Staves (Would have to come with artefact staves).
 }
@@ -2255,6 +2269,7 @@ int items(bool allow_uniques,
 void reroll_brand(item_def &item, int item_level)
 {
     ASSERT(!is_artefact(item));
+    mprf("%d", item.base_type);
     switch (item.base_type)
     {
     case OBJ_WEAPONS:
@@ -2268,6 +2283,7 @@ void reroll_brand(item_def &item, int item_level)
         break;
     case OBJ_STAVES:
         item.brand = _generate_staff_facet(item, item_level);
+        break;
     default:
         die("can't reroll brands of this type");
     }
