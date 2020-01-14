@@ -886,9 +886,15 @@ int player::wearing(equipment_type slot, int sub_type, bool calc_unid) const
 
     case EQ_STAFF:
         // Like above, but must be magical staff.
-        if (weapon()
-            && weapon()->is_type(OBJ_STAVES, sub_type)
-            && (calc_unid || item_type_known(*weapon())))
+        if (weapon(0)
+            && weapon(0)->is_type(OBJ_STAVES, sub_type)
+            && (calc_unid || item_type_known(*weapon(0))))
+        {
+            ret++;
+        }
+        if (weapon(1)
+            && weapon(1)->is_type(OBJ_STAVES, sub_type)
+            && (calc_unid || item_type_known(*weapon(1))))
         {
             ret++;
         }
@@ -1844,14 +1850,40 @@ int player_spec_air()
 
 int player_spec_hex()
 {
+    int sh = 0;
+
     if (player_equip_unrand(UNRAND_BOTONO))
-        return 1;
-    return 0;
+        sh++;
+
+    item_def * staff;
+
+    if (you.weapon(0) && you.weapon(0)->base_type == OBJ_STAVES)
+        staff = you.weapon(0);
+    else if (you.weapon(1) && you.weapon(1)->base_type == OBJ_STAVES)
+        staff = you.weapon(1);
+    else
+        return sh;
+
+    if (staff->brand == SPSTF_FLAY)
+        sh++;
+
+    return sh;
 }
 
 int player_spec_charm()
 {
-    // Nothing, for the moment.
+    item_def * staff;
+
+    if (you.weapon(0) && you.weapon(0)->base_type == OBJ_STAVES)
+        staff = you.weapon(0);
+    else if (you.weapon(1) && you.weapon(1)->base_type == OBJ_STAVES)
+        staff = you.weapon(1);
+    else
+        return 0;
+
+    if (staff->brand == SPSTF_SHIELD)
+        return 1;
+
     return 0;
 }
 
@@ -1868,6 +1900,23 @@ int player_spec_poison()
         sp++;
 
     return sp;
+}
+
+int player_spec_translo()
+{
+    item_def * staff;
+
+    if (you.weapon(0) && you.weapon(0)->base_type == OBJ_STAVES)
+        staff = you.weapon(0);
+    else if (you.weapon(1) && you.weapon(1)->base_type == OBJ_STAVES)
+        staff = you.weapon(1);
+    else
+        return 0;
+
+    if (staff->brand == SPSTF_WARP)
+        return 1;
+
+    return 0;
 }
 
 int player_spec_invo()

@@ -100,6 +100,9 @@ static bool _handle_player_attack(actor * defender, bool simu, int atk_num,
     if (did_hit)
         *did_hit = attk.did_hit;
 
+    if (attk.cancel_remaining)
+        return true;
+
     // A spectral weapon attacks whenever the player does
     if (!simu && you.props.exists("spectral_weapon"))
         trigger_spectral_weapon(&you, defender);
@@ -181,7 +184,8 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
                     local_time = _handle_player_attack(defender, simu, 0, 0, did_hit, wu, wu_num);
                     if (!defender->alive()
                         || defender->pos() != pos
-                        || defender->is_banished())
+                        || defender->is_banished()
+                        || defender->wont_attack())
                         return local_time;
                     else
                         return _handle_player_attack(defender, simu, 1, 1, did_hit, wu, wu_num) || local_time;

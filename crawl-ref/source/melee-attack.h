@@ -34,8 +34,9 @@ public:
     int       effective_attack_number;
 
     list<actor*> cleave_targets;
-    bool         cleaving;        // additional attack from cleaving
-    bool         is_riposte;      // long blade retaliation attack
+    bool         cleaving;          // additional attack from cleaving
+    bool         is_riposte;        // long blade retaliation attack
+    bool         cancel_remaining;  // if we enslave a target or attack with a non-attack cancel any auxillaries.
     wu_jian_attack_type wu_jian_attack;
     int wu_jian_number_of_targets;
     coord_def attack_position;

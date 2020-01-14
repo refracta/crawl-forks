@@ -567,6 +567,9 @@ static int _spell_enhancement(spell_type spell)
     if (typeflags & spschool::summoning)
         enhanced += player_spec_summ();
 
+    if (typeflags & spschool::translocation)
+        enhanced += player_spec_translo();
+
     if (typeflags & spschool::poison)
         enhanced += player_spec_poison();
 

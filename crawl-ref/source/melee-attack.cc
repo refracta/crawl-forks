@@ -478,6 +478,7 @@ void melee_attack::apply_black_mark_effects()
  */
 bool melee_attack::handle_phase_hit()
 {
+    cancel_remaining = false;
     did_hit = true;
     perceived_attack = true;
     bool hit_woke_orc = false;
@@ -596,7 +597,7 @@ bool melee_attack::handle_phase_hit()
     if (damage_done > 0)
         apply_black_mark_effects();
 
-    if (attacker->is_player())
+    if (attacker->is_player() && !cancel_remaining)
     {
         // Always upset monster regardless of damage.
         // However, successful stabs inhibit shouting.
@@ -1001,7 +1002,8 @@ bool melee_attack::attack()
     if (!defender->alive())
         handle_phase_killed();
 
-    handle_phase_aux();
+    if (!cancel_remaining)
+        handle_phase_aux();
 
     handle_phase_end();
 
@@ -2527,21 +2529,57 @@ void melee_attack::apply_staff_damage()
     }
 
     case STAFF_DEATH:
-        special_damage =
-            resist_adjust_damage(defender,
-                                 BEAM_NEG,
-                                 staff_damage(SK_NECROMANCY));
-
-        if (special_damage)
+        if (defender->holiness() == MH_UNDEAD)
         {
-            special_damage_message =
-                make_stringf(
-                    "%s %s in agony%s",
-                    defender->name(DESC_THE).c_str(),
-                    defender->conj_verb("writhe").c_str(),
-                    attack_strength_punctuation(special_damage).c_str());
+            if (staff_damage(SK_NECROMANCY) > div_rand_round(defender->res_magic(), 4))
+            {
+                if (defender->is_monster())
+                {
+                    int enslave_dur;
+                    if (attacker->is_player())
+                    {
+                        enslave_dur = you.skill(SK_NECROMANCY) + random2(you.skill(SK_NECROMANCY));
+                        int x = div_rand_round(you.skill(SK_EVOCATIONS), 5);
+                        enslave_dur += roll_dice(2, x);
+                    }
+                    else
+                        enslave_dur = attacker->get_experience_level() + random2(attacker->get_experience_level());
+                    defender->as_monster()->add_ench(
+                        mon_enchant((attacker->wont_attack()) ? ENCH_CHARM
+                                                              : ENCH_HEXED, 1, attacker,
+                                                                enslave_dur * BASELINE_DELAY));
+                    if (attacker->is_player())
+                        special_damage_message = make_stringf("Your mastery of death asserts control over %s.",
+                                                     defender->name(DESC_THE).c_str());
+                    else
+                        special_damage_message = make_stringf("%s mastery of death asserts control over %s.", 
+                                                     attacker->name(DESC_ITS).c_str(), defender->name(DESC_THE).c_str());
+                    cancel_remaining = true;
+                }
+                else
+                {
+                    you.increase_duration(DUR_CONF, flay_dur, 50);
+                    special_damage_message = make_stringf("%s mastery of death overwhelms your will!", 
+                                                 attacker->name(DESC_ITS).c_str());
+                }
+                attacker->god_conduct(DID_EVIL, 4);
+            }
+            else
+            {
+                special_damage = staff_damage(SK_NECROMANCY);
 
-            attacker->god_conduct(DID_EVIL, 4);
+                if (special_damage)
+                {
+                    special_damage_message =
+                        make_stringf(
+                            "%s %s%s",
+                            defender->name(DESC_THE).c_str(),
+                            defender->conj_verb("convulse").c_str(),
+                            attack_strength_punctuation(special_damage).c_str());
+
+                    attacker->god_conduct(DID_EVIL, 4);
+                }
+            }
         }
         break;
 
