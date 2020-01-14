@@ -881,6 +881,21 @@ void monster::remove_enchantment_effect(const mon_enchant &me, bool quiet)
             simple_monster_message(*this, " is no longer more vulnerable to fire.");
         break;
 
+    case ENCH_COLD_VULN:
+        if (!quiet)
+            simple_monster_message(*this, " is no longer more vulnerable to cold.");
+        break;
+
+    case ENCH_ELEC_VULN:
+        if (!quiet)
+            simple_monster_message(*this, " is no longer more vulnerable to electric shocks.");
+        break;
+
+    case ENCH_PHYS_VULN:
+        if (!quiet)
+            simple_monster_message(*this, " is no longer physically vulnerable.");
+        break;
+
     case ENCH_MERFOLK_AVATAR_SONG:
         props.erase("merfolk_avatar_call");
         break;
@@ -1474,6 +1489,9 @@ void monster::apply_enchantment(const mon_enchant &me)
     case ENCH_RING_OF_THUNDER:
     case ENCH_WHIRLWIND_PINNED:
     case ENCH_VILE_CLUTCH:
+    case ENCH_COLD_VULN:
+    case ENCH_ELEC_VULN:
+    case ENCH_PHYS_VULN:
         decay_enchantment(en);
         break;
 
@@ -2195,6 +2213,7 @@ static const char *enchant_names[] =
     "idealised", "bound_soul", "infestation",
     "stilling the winds", "thunder_ringed", "pinned_by_whirlwind",
     "vortex", "vortex_cooldown", "vile_clutch", "trapped_in_lava", "stick",
+    "elec_vuln", "cold_vuln", "phys_vuln",
     "buggy",
 };
 

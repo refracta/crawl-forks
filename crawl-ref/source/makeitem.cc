@@ -1789,7 +1789,7 @@ static void _generate_staff_item(item_def& item, bool allow_uniques,
         item.sub_type = force_type;
 
     item.plus = -6;
-    item.plus += roll_dice(2, 4);
+    item.plus += roll_dice(2, 5);
     if (item_level >= ISPEC_GIFT)
         item.plus += roll_dice(2, 4);
 

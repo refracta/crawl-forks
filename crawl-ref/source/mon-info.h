@@ -176,6 +176,9 @@ enum monster_info_flags
     MB_PINNED,
     MB_VILE_CLUTCH,
     MB_HIGHLIGHTED_SUMMONER,
+    MB_COLD_VULN,
+    MB_ELEC_VULN,
+    MB_PHYS_VULN,
     NUM_MB_FLAGS
 };
 

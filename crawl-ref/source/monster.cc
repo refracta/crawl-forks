@@ -3289,6 +3289,9 @@ int monster::armour_class(bool calc_unid) const
     if (has_ench(ENCH_CORROSION))
         ac -= 8;
 
+    if (has_ench(ENCH_PHYS_VULN))
+        ac = div_round_up(2 * ac, 3);
+
     return max(ac, 0);
 }
 
@@ -3730,6 +3733,9 @@ int monster::res_cold() const
             u++;
     }
 
+    if (has_ench(ENCH_COLD_VULN))
+        u--;
+
     if (has_ench(ENCH_RESISTANCE))
         u++;
 
@@ -3769,6 +3775,9 @@ int monster::res_elec() const
         if (w && w->is_type(OBJ_STAVES, STAFF_AIR))
             u++;
     }
+
+    if (has_ench(ENCH_ELEC_VULN))
+        u--;
 
     if (has_ench(ENCH_RESISTANCE))
         u++;

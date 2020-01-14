@@ -91,6 +91,9 @@ static map<enchant_type, monster_info_flags> trivial_ench_mb_mappings = {
     { ENCH_TOXIC_RADIANCE,  MB_TOXIC_RADIANCE },
     { ENCH_GRASPING_ROOTS,  MB_GRASPING_ROOTS },
     { ENCH_FIRE_VULN,       MB_FIRE_VULN },
+    { ENCH_COLD_VULN,       MB_COLD_VULN },
+    { ENCH_ELEC_VULN,       MB_ELEC_VULN },
+    { ENCH_PHYS_VULN,       MB_PHYS_VULN },
     { ENCH_TORNADO,         MB_TORNADO },
     { ENCH_TORNADO_COOLDOWN, MB_TORNADO_COOLDOWN },
     { ENCH_BARBS,           MB_BARBS },
@@ -1480,6 +1483,12 @@ vector<string> monster_info::attributes() const
         v.emplace_back("movement impaired by roots");
     if (is(MB_FIRE_VULN))
         v.emplace_back("more vulnerable to fire");
+    if (is(MB_COLD_VULN))
+        v.emplace_back("more vulnerable to cold");
+    if (is(MB_ELEC_VULN))
+        v.emplace_back("more vulnerable to electric shocks");
+    if (is(MB_PHYS_VULN))
+        v.emplace_back("more vulnerable to physical attacks");
     if (is(MB_TORNADO))
         v.emplace_back("surrounded by raging winds");
     if (is(MB_TORNADO_COOLDOWN))

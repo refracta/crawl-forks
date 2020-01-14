@@ -1517,6 +1517,9 @@ int player_res_cold(bool calc_unid, bool temp, bool items)
         if (you.duration[DUR_QAZLAL_COLD_RES])
             rc++;
 
+        if (you.duration[DUR_COLD_VULN])
+            rc--;
+
         rc += get_form()->res_cold();
 
         if (you.species == SP_VAMPIRE)
@@ -1638,6 +1641,9 @@ int player_res_electricity(bool calc_unid, bool temp, bool items)
         // transformations:
         if (get_form()->res_elec())
             re++;
+
+        if (you.duration[DUR_ELEC_VULN])
+            re--;
     }
 
     if (re > 1)
@@ -6245,6 +6251,9 @@ int player::armour_class(bool /*calc_unid*/) const
         AC -= 400 * you.props["corrosion_amount"].get_int();
 
     AC += sanguine_armour_bonus();
+
+    if (duration[DUR_PHYS_VULN])
+        AC = div_round_up(AC * 2, 3);
 
     return AC / scale;
 }

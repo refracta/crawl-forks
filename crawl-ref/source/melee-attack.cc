@@ -2313,6 +2313,31 @@ void melee_attack::apply_staff_damage()
     if (weapon->base_type != OBJ_STAVES)
         return;
 
+    bool flay_resist = false;
+    int flay_dur = 0;
+
+    if (weapon->brand == SPSTF_FLAY)
+    {
+        int flay_power;
+        if (attacker->is_player())
+        {
+            flay_power = 3 + you.skill(SK_HEXES);
+            flay_dur = div_rand_round(you.skill(SK_EVOCATIONS), 2);
+        }
+        else
+        {
+            // BCADNOTE: Boost this for spellcasters?
+            flay_power = div_rand_round(6 + attacker->get_hit_dice(), 2);
+            flay_dur = div_rand_round(flay_power, 2);
+        }
+        flay_power = random2(flay_power);
+
+        int hd = defender->get_experience_level();
+
+        if (flay_power > (hd/2 + random2(hd)))
+            flay_resist = true;
+    }
+
     switch (weapon->sub_type)
     {
     case STAFF_AIR:
@@ -2324,10 +2349,30 @@ void melee_attack::apply_staff_damage()
         if (special_damage)
         {
             special_damage_message =
-                make_stringf("%s %s electrocuted!",
+                make_stringf("%s %s electrocuted%s",
                              defender->name(DESC_THE).c_str(),
-                             defender->conj_verb("are").c_str());
+                             defender->conj_verb("are").c_str(),
+                             attack_strength_punctuation(special_damage).c_str());
             special_damage_flavour = BEAM_ELECTRICITY;
+        }
+
+        if (flay_resist)
+        {
+            if (defender->is_player() && !you.duration[DUR_ELEC_VULN])
+            {
+                special_damage_message +=
+                    " A harsh wind strips away your insulation.";
+                you.increase_duration(DUR_ELEC_VULN, flay_dur, 50);
+            }
+            else if (!defender->as_monster()->has_ench(ENCH_ELEC_VULN))
+            {
+                special_damage_message +=
+                    make_stringf(" A harsh wind strips away %s insulation.",
+                        defender->name(DESC_ITS).c_str());
+                defender->as_monster()->add_ench(
+                    mon_enchant(ENCH_ELEC_VULN, 1, attacker,
+                    (flay_dur) * BASELINE_DELAY));
+            }
         }
 
         break;
@@ -2342,12 +2387,33 @@ void melee_attack::apply_staff_damage()
         {
             special_damage_message =
                 make_stringf(
-                    "%s freeze%s %s!",
+                    "%s freeze%s %s%s",
                     attacker->name(DESC_THE).c_str(),
                     attacker->is_player() ? "" : "s",
-                    defender->name(DESC_THE).c_str());
+                    defender->name(DESC_THE).c_str(),
+                    attack_strength_punctuation(special_damage).c_str());
             special_damage_flavour = BEAM_COLD;
         }
+
+        if (flay_resist)
+        {
+            if (defender->is_player() && !you.duration[DUR_COLD_VULN])
+            {
+                special_damage_message +=
+                    " An accursed chill freezes away your cold resistance.";
+                you.increase_duration(DUR_COLD_VULN, flay_dur, 50);
+            }
+            else if (!defender->as_monster()->has_ench(ENCH_COLD_VULN))
+            {
+                special_damage_message +=
+                    make_stringf(" An accursed chill freezes away %s cold resistance.",
+                        defender->name(DESC_ITS).c_str());
+                defender->as_monster()->add_ench(
+                    mon_enchant(ENCH_COLD_VULN, 1, attacker,
+                    (flay_dur)* BASELINE_DELAY));
+            }
+        }
+
         break;
 
     case STAFF_EARTH:
@@ -2358,11 +2424,32 @@ void melee_attack::apply_staff_damage()
         {
             special_damage_message =
                 make_stringf(
-                    "%s crush%s %s!",
+                    "%s crush%s %s%s",
                     attacker->name(DESC_THE).c_str(),
                     attacker->is_player() ? "" : "es",
-                    defender->name(DESC_THE).c_str());
+                    defender->name(DESC_THE).c_str(),
+                    attack_strength_punctuation(special_damage).c_str());
         }
+
+        if (flay_resist)
+        {
+            if (defender->is_player() && !you.duration[DUR_PHYS_VULN])
+            {
+                special_damage_message +=
+                    " A vexing blast shreds away your protection.";
+                you.increase_duration(DUR_PHYS_VULN, flay_dur, 50);
+            }
+            else if (!defender->as_monster()->has_ench(ENCH_PHYS_VULN))
+            {
+                special_damage_message +=
+                    make_stringf(" A vexing blast shreds away %s protection.",
+                        defender->name(DESC_ITS).c_str());
+                defender->as_monster()->add_ench(
+                    mon_enchant(ENCH_PHYS_VULN, 1, attacker,
+                    (flay_dur)* BASELINE_DELAY));
+            }
+        }
+
         break;
 
     case STAFF_FIRE:
@@ -2375,15 +2462,36 @@ void melee_attack::apply_staff_damage()
         {
             special_damage_message =
                 make_stringf(
-                    "%s burn%s %s!",
+                    "%s burn%s %s%s",
                     attacker->name(DESC_THE).c_str(),
                     attacker->is_player() ? "" : "s",
-                    defender->name(DESC_THE).c_str());
+                    defender->name(DESC_THE).c_str(),
+                    attack_strength_punctuation(special_damage).c_str());
             special_damage_flavour = BEAM_FIRE;
 
             if (defender->is_player())
                 maybe_melt_player_enchantments(BEAM_FIRE, special_damage);
         }
+
+        if (flay_resist)
+        {
+            if (defender->is_player() && !you.duration[DUR_FIRE_VULN])
+            {
+                special_damage_message +=
+                    " A demonic flame burns away your fire resistance.";
+                you.increase_duration(DUR_FIRE_VULN, flay_dur, 50);
+            }
+            else if (!defender->as_monster()->has_ench(ENCH_FIRE_VULN))
+            {
+                special_damage_message +=
+                    make_stringf(" A demonic flame burns away %s fire resistance.",
+                        defender->name(DESC_ITS).c_str());
+                defender->as_monster()->add_ench(
+                    mon_enchant(ENCH_FIRE_VULN, 1, attacker,
+                    (flay_dur)* BASELINE_DELAY));
+            }
+        }
+
         break;
 
     case STAFF_POISON:
@@ -2393,7 +2501,28 @@ void melee_attack::apply_staff_damage()
 
         // Base chance at 50% -- like mundane weapons.
         if (x_chance_in_y(80 + attacker->skill(SK_POISON_MAGIC, 10), 160))
+        {
             defender->poison(attacker, 2);
+
+            if (flay_resist)
+            {
+                if (defender->is_player() && !you.duration[DUR_POISON_VULN])
+                {
+                    special_damage_message +=
+                        " A hellish bile dissolves your poison resistance.";
+                    you.increase_duration(DUR_POISON_VULN, flay_dur, 50);
+                }
+                else if (!defender->as_monster()->has_ench(ENCH_POISON_VULN))
+                {
+                    special_damage_message +=
+                        make_stringf(" A hellish bile dissolves %s poison resistance.",
+                            defender->name(DESC_ITS).c_str());
+                    defender->as_monster()->add_ench(
+                        mon_enchant(ENCH_POISON_VULN, 1, attacker,
+                        (flay_dur)* BASELINE_DELAY));
+                }
+            }
+        }
         break;
     }
 
@@ -2407,9 +2536,10 @@ void melee_attack::apply_staff_damage()
         {
             special_damage_message =
                 make_stringf(
-                    "%s %s in agony!",
+                    "%s %s in agony%s",
                     defender->name(DESC_THE).c_str(),
-                    defender->conj_verb("writhe").c_str());
+                    defender->conj_verb("writhe").c_str(),
+                    attack_strength_punctuation(special_damage).c_str());
 
             attacker->god_conduct(DID_EVIL, 4);
         }
