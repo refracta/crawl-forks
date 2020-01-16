@@ -185,7 +185,7 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
                     if (!defender->alive()
                         || defender->pos() != pos
                         || defender->is_banished()
-                        || defender->wont_attack())
+                        || defender->temp_attitude())
                         return local_time;
                     else
                         return _handle_player_attack(defender, simu, 1, 1, did_hit, wu, wu_num) || local_time;

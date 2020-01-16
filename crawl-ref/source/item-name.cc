@@ -1207,7 +1207,7 @@ static const char* staff_type_name(int stafftype)
     case STAFF_DEATH:       return "death";
     case STAFF_AIR:         return "air";
     case STAFF_EARTH:       return "earth";
-    case STAFF_SUMMONING:   return "summoning";
+    case STAFF_SUMMONING:   return "life";
 #if TAG_MAJOR_VERSION == 34
     case STAFF_POWER:       return "removedness";
     case STAFF_ENERGY:      return "removedness";

@@ -539,18 +539,8 @@ bool melee_attack::handle_phase_hit()
     // will be checked early in player_monattack_hit_effects
     damage_done += calc_damage();
 
-    bool stop_hit = false;
-    // Check if some hit-effect killed the monster.
-    if (attacker->is_player())
-        stop_hit = !player_monattk_hit_effects();
-
-    // check_unrand_effects is safe to call with a dead defender, so always
-    // call it, even if the hit effects said to stop.
-    if (stop_hit)
-    {
-        check_unrand_effects();
-        return false;
-    }
+    if (weapon->base_type == OBJ_STAVES && weapon->sub_type == STAFF_SUMMONING)
+        damage_done = 0;
 
     if (damage_done > 0 || flavour_triggers_damageless(attk_flavour))
     {
@@ -577,6 +567,19 @@ bool melee_attack::handle_phase_hit()
              attack_verb.c_str(),
              defender_name(true).c_str(),
              attacker->is_player() ? "do" : "does");
+    }
+
+    bool stop_hit = false;
+    // Check if some hit-effect killed the monster.
+    if (attacker->is_player() && defender->alive())
+        stop_hit = !player_monattk_hit_effects();
+
+    // check_unrand_effects is safe to call with a dead defender, so always
+    // call it, even if the hit effects said to stop.
+    if (stop_hit)
+    {
+        check_unrand_effects();
+        return false;
     }
 
     // Check for weapon brand & inflict that damage too
@@ -1682,7 +1685,14 @@ void melee_attack::set_attack_verb(int damage)
     if (!weapon)
         weap_type = WPN_UNARMED;
     else if (weapon->base_type == OBJ_STAVES)
+    {
+        if (weapon->sub_type == STAFF_SUMMONING)
+        {
+            attack_verb = "lightly tap";
+            return;
+        }
         weap_type = WPN_STAFF;
+    }
     else if (weapon->base_type == OBJ_WEAPONS
              && !is_range_weapon(*weapon))
     {
@@ -2588,11 +2598,14 @@ void melee_attack::apply_staff_damage()
     {
         monster * mons;
         mons = defender->as_monster();
+        cancel_remaining = true;
         int heal = staff_damage(SK_SUMMONINGS);
         if (attacker->is_player())
         {
+            if (!mons->temp_attitude())
+                behaviour_event(mons, ME_WHACK, attacker, coord_def(), !stab_attempt);
             if (!mons->wont_attack() && !mons->neutral() && you.religion == GOD_ELYVILON)
-                try_to_pacify(*mons, 0, heal * 2);
+                try_to_pacify(*mons, heal, heal * 2);
             else
                 heal_monster(*mons, heal);
         }
