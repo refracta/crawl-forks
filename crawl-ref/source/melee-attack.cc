@@ -43,6 +43,7 @@
 #include "religion.h"
 #include "shout.h"
 #include "spl-damage.h"
+#include "spl-goditem.h"
 #include "spl-summoning.h"
 #include "state.h"
 #include "stepdown.h"
@@ -2584,6 +2585,25 @@ void melee_attack::apply_staff_damage()
         break;
 
     case STAFF_SUMMONING:
+    {
+        monster * mons;
+        mons = defender->as_monster();
+        int heal = staff_damage(SK_SUMMONINGS);
+        if (attacker->is_player())
+        {
+            if (!mons->wont_attack() && !mons->neutral() && you.religion == GOD_ELYVILON)
+                try_to_pacify(*mons, 0, heal * 2);
+            else
+                heal_monster(*mons, heal);
+        }
+        else
+        {
+            if (you.can_see(*mons) && mons->hit_points < mons->max_hit_points)
+                simple_monster_message(*mons, " wounds heal themselves!");
+            mons->heal(heal);
+        }
+    }
+        break;
 #if TAG_MAJOR_VERSION == 34
     case STAFF_POWER:
     case STAFF_CONJURATION:
