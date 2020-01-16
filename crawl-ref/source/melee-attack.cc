@@ -561,12 +561,21 @@ bool melee_attack::handle_phase_hit()
                       ? attack_verb
                       : attacker->conj_verb(mons_attack_verb());
 
+        if (attacker->is_player() && weapon->base_type == OBJ_STAVES && weapon->sub_type == STAFF_SUMMONING)
+        {
+
+            mprf("You lightly tap %s.",
+                defender_name(true).c_str());
+        }
         // TODO: Clean this up if possible, checking atype for do / does is ugly
-        mprf("%s %s %s but %s no damage.",
-             attacker->name(DESC_THE).c_str(),
-             attack_verb.c_str(),
-             defender_name(true).c_str(),
-             attacker->is_player() ? "do" : "does");
+        else
+        {
+            mprf("%s %s %s but %s no damage.",
+                attacker->name(DESC_THE).c_str(),
+                attack_verb.c_str(),
+                defender_name(true).c_str(),
+                attacker->is_player() ? "do" : "does");
+        }
     }
 
     bool stop_hit = false;
