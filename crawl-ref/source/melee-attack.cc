@@ -539,7 +539,8 @@ bool melee_attack::handle_phase_hit()
     // will be checked early in player_monattack_hit_effects
     damage_done += calc_damage();
 
-    if (weapon->base_type == OBJ_STAVES && weapon->sub_type == STAFF_SUMMONING)
+    if (weapon && weapon->base_type == OBJ_STAVES 
+               && weapon->sub_type == STAFF_SUMMONING)
         damage_done = 0;
 
     if (damage_done > 0 || flavour_triggers_damageless(attk_flavour))
@@ -563,7 +564,6 @@ bool melee_attack::handle_phase_hit()
 
         if (attacker->is_player() && weapon->base_type == OBJ_STAVES && weapon->sub_type == STAFF_SUMMONING)
         {
-
             mprf("You lightly tap %s.",
                 defender_name(true).c_str());
         }
