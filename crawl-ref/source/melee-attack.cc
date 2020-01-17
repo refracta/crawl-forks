@@ -27,6 +27,7 @@
 #include "exercise.h"
 #include "fineff.h"
 #include "food.h"
+#include "god-blessing.h"
 #include "god-conduct.h"
 #include "god-item.h"
 #include "god-abil.h"
@@ -935,7 +936,8 @@ bool melee_attack::attack()
     if (attacker->is_player() && attacker != defender)
     {
         set_attack_conducts(conducts, *defender->as_monster(),
-                            you.can_see(*defender));
+                            you.can_see(*defender), 
+            (weapon && weapon->base_type == OBJ_STAVES && weapon->sub_type == STAFF_SUMMONING));
 
         if (player_under_penance(GOD_ELYVILON)
             && god_hates_your_god(GOD_ELYVILON)
@@ -2614,9 +2616,22 @@ void melee_attack::apply_staff_damage()
             if (!mons->temp_attitude())
                 behaviour_event(mons, ME_WHACK, attacker, coord_def(), !stab_attempt);
             if (!mons->wont_attack() && !mons->neutral() && you.religion == GOD_ELYVILON)
-                try_to_pacify(*mons, heal, heal * 2);
+            {
+                int pacify_amount = staff_damage(SK_SUMMONINGS);
+                pacify_amount += staff_damage(SK_SUMMONINGS);
+                pacify_amount += staff_damage(SK_SUMMONINGS);
+                pacify_amount += staff_damage(SK_SUMMONINGS);
+                pacify_amount /= 2; 
+                // Awkward, but roughly what we want; multiple lines because breaks for RNG rules.
+                try_to_pacify(*mons, heal, pacify_amount);
+            }
             else
                 heal_monster(*mons, heal);
+            if (heal && mons->friendly() && mons->has_ench(ENCH_ABJ))
+            {
+                if (increase_ench_duration(mons, mons->get_ench(ENCH_ABJ), heal * BASELINE_DELAY))
+                    mprf("You increase %s time in this world.", mons->name(DESC_ITS).c_str());
+            }
         }
         else
         {

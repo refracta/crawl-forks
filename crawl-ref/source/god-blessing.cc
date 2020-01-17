@@ -467,14 +467,12 @@ static bool _blessing_healing(monster* mon)
     return false;
 }
 
-static bool _increase_ench_duration(monster* mon,
-                                    mon_enchant ench,
-                                    const int increase)
+bool increase_ench_duration(monster* mon, mon_enchant ench, const int increase)
 {
     // Durations are saved as 16-bit signed ints, so clamp at the largest such.
-    const int MARSHALL_MAX = (1 << 15) - 1;
+    const int cap = (1 << 15) - 1;
 
-    const int newdur = min(ench.duration + increase, MARSHALL_MAX);
+    const int newdur = min(ench.duration + increase, cap);
     if (ench.duration >= newdur)
         return false;
 
@@ -495,9 +493,9 @@ static bool _tso_blessing_extend_stay(monster* mon)
     // much bigger boost than random beasties, which get at most double
     // their current summon duration.
     if (mon->is_holy())
-        return _increase_ench_duration(mon, abj, apply_pity(1100 + random2(1100)));
+        return increase_ench_duration(mon, abj, apply_pity(1100 + random2(1100)));
     else
-        return _increase_ench_duration(mon, abj, apply_pity(min(abj.duration,
+        return increase_ench_duration(mon, abj, apply_pity(min(abj.duration,
                                                      500 + random2(500))));
 }
 
@@ -508,7 +506,7 @@ static bool _tso_blessing_friendliness(monster* mon)
 
     // [ds] Just increase charm duration, no permanent friendliness.
     const int base_increase = 700;
-    return _increase_ench_duration(mon, mon->get_ench(ENCH_CHARM),
+    return increase_ench_duration(mon, mon->get_ench(ENCH_CHARM),
                                    base_increase + random2(base_increase));
 }
 

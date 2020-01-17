@@ -1040,6 +1040,10 @@ void attack::stab_message()
 {
     defender->props["helpless"] = true;
 
+    if (weapon && weapon->base_type == OBJ_STAVES 
+               && weapon->sub_type == STAFF_SUMMONING)
+        return;
+
     switch (stab_bonus)
     {
     case 6:     // big melee, monster surrounded/not paying attention

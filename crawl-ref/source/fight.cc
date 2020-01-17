@@ -185,7 +185,7 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
                     if (!defender->alive()
                         || defender->pos() != pos
                         || defender->is_banished()
-                        || defender->temp_attitude())
+                        || defender->temp_attitude()) // If it's not hostile the melee attack charmed or pacified it.
                         return local_time;
                     else
                         return _handle_player_attack(defender, simu, 1, 1, did_hit, wu, wu_num) || local_time;
@@ -938,6 +938,15 @@ bool bad_attack(const monster *mon, string& adj, string& suffix,
     ASSERT(!crawl_state.game_is_arena());
 
     if (!you.can_see(*mon))
+        return false;
+
+    if (you.weapon(0) && you.weapon(0)->base_type == OBJ_STAVES
+                      && you.weapon(0)->sub_type == STAFF_SUMMONING)
+        return false;
+
+    if (you.weapon(0) && is_range_weapon(*you.weapon(0)) && 
+        you.weapon(1) && you.weapon(1)->base_type == OBJ_STAVES
+                      && you.weapon(1)->sub_type == STAFF_SUMMONING)
         return false;
 
     if (attack_pos == coord_def(0, 0))

@@ -1064,30 +1064,33 @@ void god_conduct_turn_start()
 }
 
 void set_attack_conducts(god_conduct_trigger conduct[3], const monster &mon,
-                         bool known)
+    bool known, bool good)
 {
     // We need to examine the monster before it has been reset.
     ASSERT(mon.alive());
 
     const mid_t mid = mon.mid;
 
-    if (mon.friendly())
+    if (!good)
     {
-        if (_first_attack_conduct.find(mid) == _first_attack_conduct.end()
-            || _first_attack_was_friendly.find(mid)
-               != _first_attack_was_friendly.end())
+        if (mon.friendly())
         {
-            conduct[0].set(DID_ATTACK_FRIEND, 5, known, &mon);
-            _first_attack_was_friendly.insert(mid);
+            if (_first_attack_conduct.find(mid) == _first_attack_conduct.end()
+                || _first_attack_was_friendly.find(mid)
+                != _first_attack_was_friendly.end())
+            {
+                conduct[0].set(DID_ATTACK_FRIEND, 5, known, &mon);
+                _first_attack_was_friendly.insert(mid);
+            }
         }
-    }
-    else if (mon.neutral())
-        conduct[0].set(DID_ATTACK_NEUTRAL, 5, known, &mon);
+        else if (mon.neutral())
+            conduct[0].set(DID_ATTACK_NEUTRAL, 5, known, &mon);
 
-    if (mon.is_holy() && !mon.is_illusion())
-    {
-        conduct[2].set(DID_ATTACK_HOLY, mon.get_experience_level(), known,
-                       &mon);
+        if (mon.is_holy() && !mon.is_illusion())
+        {
+            conduct[2].set(DID_ATTACK_HOLY, mon.get_experience_level(), known,
+                &mon);
+        }
     }
 
     _first_attack_conduct.insert(mid);
