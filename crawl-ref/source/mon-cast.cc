@@ -1211,11 +1211,6 @@ static int _ench_power(spell_type spell, const monster &mons)
     return min(cap, _mons_spellpower(spell, mons) / ENCH_POW_FACTOR);
 }
 
-static int _mons_spell_range(spell_type spell, const monster &mons)
-{
-    return mons_spell_range(spell, _mons_spellpower(spell, mons));
-}
-
 /**
  * How much range does a monster of the given spell HD have with the given
  * spell?
@@ -1224,8 +1219,9 @@ static int _mons_spell_range(spell_type spell, const monster &mons)
  * @param hd        The monster's effective HD for spellcasting purposes.
  * @return          -1 if the spell has an undefined range; else its range.
  */
-int mons_spell_range(spell_type spell, int hd)
+int mons_spell_range(spell_type spell, const monster * mons)
 {
+    int hd = mons->spell_hd();
     switch (spell)
     {
         case SPELL_FLAME_TONGUE:
@@ -1237,7 +1233,14 @@ int mons_spell_range(spell_type spell, int hd)
     }
 
     const int power = mons_power_for_hd(spell, hd);
-    return spell_range(spell, power, false);
+    int retval = spell_range(spell, power, false);
+
+    if (retval > 1 && mons->weapon() 
+                   && mons->weapon()->base_type == OBJ_STAVES 
+                   && mons->weapon()->brand == SPSTF_SCOPED
+                   && staff_enhances_spell(mons->weapon(), spell))
+        retval++;
+    return retval;
 }
 
 /**
@@ -1316,7 +1319,7 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
     beam.is_explosion = false;
     beam.attitude     = mons_attitude(*mons);
 
-    beam.range = _mons_spell_range(spell_cast, *mons);
+    beam.range = mons_spell_range(spell_cast, mons);
 
     spell_type real_spell = spell_cast;
 
@@ -3493,7 +3496,7 @@ static coord_def _mons_conjure_flame_pos(const monster &mons)
     const coord_def a = foe_pos - mon->pos();
     vector<coord_def> targets;
 
-    const int range = _mons_spell_range(SPELL_CONJURE_FLAME, *mon);
+    const int range = mons_spell_range(SPELL_CONJURE_FLAME, mon);
     for (distance_iterator di(mon->pos(), true, true, range); di; ++di)
     {
         // Our target needs to be in LOS, and we can't have a creature or
@@ -4950,7 +4953,7 @@ static coord_def _mons_fragment_target(const monster &mon)
         return mons->target;
     }
 
-    const int range = _mons_spell_range(SPELL_LRD, *mons);
+    const int range = mons_spell_range(SPELL_LRD, mons);
     int maxpower = 0;
     for (distance_iterator di(mons->pos(), true, true, range); di; ++di)
     {

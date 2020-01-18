@@ -2269,7 +2269,6 @@ int items(bool allow_uniques,
 void reroll_brand(item_def &item, int item_level)
 {
     ASSERT(!is_artefact(item));
-    mprf("%d", item.base_type);
     switch (item.base_type)
     {
     case OBJ_WEAPONS:

@@ -511,6 +511,9 @@ static int _additive_power(spell_type spell)
 
 bool staff_enhances_spell(item_def * staff, spell_type spell)
 {
+    if (!staff)
+        return false; 
+
     const spschools_type typeflags = get_spell_disciplines(spell);
 
     if (bool(typeflags & spschool::charms) && staff->brand == SPSTF_SHIELD)

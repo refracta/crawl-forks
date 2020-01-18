@@ -6183,6 +6183,15 @@ int player::racial_ac(bool temp) const
     return 0;
 }
 
+item_def * player::staff() const
+{
+    if (weapon(0) && weapon(0)->base_type == OBJ_STAVES)
+        return weapon(0);
+    else if (weapon(1) && weapon(1)->base_type == OBJ_STAVES)
+        return weapon(1);
+    return nullptr;
+}
+
 /**
  * The player's "base" armour class, before transitory buffs are applied.
  *

@@ -982,6 +982,16 @@ int spell_range(spell_type spell, int pow, bool allow_bonus)
         minrange++;
     }
 
+    if (allow_bonus
+        && you.staff()
+        && staff_enhances_spell(you.staff(), spell)
+        && maxrange > 1
+        && you.staff()->brand == SPSTF_SCOPED)
+    {
+        maxrange++;
+        minrange++;
+    }
+
     if (minrange == maxrange)
         return min(minrange, (int)you.current_vision);
 
