@@ -2784,7 +2784,9 @@ bool setup_fragmentation_beam(bolt &beam, int pow, const actor *caster,
             return _finish_LRD_setup(beam, caster);
         }
     }
-    else if (mon && (caster->is_monster() || (you.can_see(*mon))))
+    else if (mon
+             && mon->alive()
+             && (caster->is_monster() || (you.can_see(*mon))))
     {
         switch (mon->type)
         {
@@ -3052,8 +3054,8 @@ spret cast_fragmentation(int pow, const actor *caster,
     }
     else // Monster explodes.
     {
-        // Checks by setup_fragmentation_beam() must guarantee that we have a
-        // monster.
+        // Checks by setup_fragmentation_beam() must guarantee that we have an
+        // alive monster.
         monster* mon = monster_at(target);
         ASSERT(mon);
 
