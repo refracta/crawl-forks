@@ -1201,21 +1201,21 @@ static const char* staff_type_name(int stafftype)
 {
     switch ((stave_type)stafftype)
     {
-    case STAFF_FIRE:        return "fire";
-    case STAFF_COLD:        return "cold";
-    case STAFF_POISON:      return "poison";
-    case STAFF_DEATH:       return "death";
-    case STAFF_AIR:         return "air";
-    case STAFF_EARTH:       return "earth";
-    case STAFF_SUMMONING:   return "life";
+    case STAFF_FIRE:           return "fire";
+    case STAFF_COLD:           return "cold";
+    case STAFF_POISON:         return "poison";
+    case STAFF_DEATH:          return "death";
+    case STAFF_AIR:            return "air";
+    case STAFF_EARTH:          return "earth";
+    case STAFF_SUMMONING:      return "life";
+    case STAFF_TRANSMUTATION:  return "transmutation";
 #if TAG_MAJOR_VERSION == 34
-    case STAFF_POWER:       return "removedness";
-    case STAFF_ENERGY:      return "removedness";
-    case STAFF_WIZARDRY:    return "removedness";
-    case STAFF_CONJURATION: return "removedness";
-    case STAFF_ENCHANTMENT: return "removedness";
+    case STAFF_ENERGY:         return "removedness";
+    case STAFF_WIZARDRY:       return "removedness";
+    case STAFF_CONJURATION:    return "removedness";
+    case STAFF_ENCHANTMENT:    return "removedness";
 #endif
-    default:                return "bugginess";
+    default:                   return "bugginess";
     }
 }
 

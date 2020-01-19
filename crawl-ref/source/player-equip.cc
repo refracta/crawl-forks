@@ -779,6 +779,27 @@ static void _unequip_weapon_effect(item_def& real_item, bool showMsgs,
              meld ? "your weapon melds" : "you unwield");
         end_spectral_weapon(spectral_weapon, false, true);
     }
+
+    if (item.base_type == OBJ_STAVES && item.sub_type == STAFF_TRANSMUTATION && you.constricting)
+    {
+        bool stopped = true;
+        for (const auto &entry : *you.constricting)
+        {
+            monster *whom = monster_by_mid(entry.first);
+            int dur = entry.second;
+
+            if (!whom)
+                continue;
+            if (!whom->is_directly_constricted())
+                continue;
+            if (whom->body_size() > you.body_size() || (you.species != SP_OCTOPODE && you.species != SP_NAGA))
+            {
+                you.stop_constricting(entry.first, true, true);
+                mprf("The constricting tendrils return into %s as you unwield.", item.name(DESC_YOUR).c_str());
+                return;
+            }
+        }
+    }
 }
 
 static void _wielding_wear_effects(bool unwield, bool unmeld)

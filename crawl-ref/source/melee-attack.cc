@@ -1129,6 +1129,27 @@ public:
     : AuxAttackType(0, "grab") { };
 };
 
+class AuxStaff : public AuxAttackType
+{
+public:
+    AuxStaff()
+        : AuxAttackType(0, "s") { }; // Hacky but sue me.
+};
+
+class AuxStaffSlap : public AuxAttackType
+{
+public:
+    AuxStaffSlap()
+        : AuxAttackType(0, "t") { }; // Still Hacky.
+
+    int get_damage() const override
+    {
+        int dam = random2(you.skill(SK_TRANSMUTATIONS));
+        dam = div_rand_round(2 * dam, 3);
+        return 1 + dam; // Breaks for RNG.
+    }
+};
+
 class AuxKick: public AuxAttackType
 {
 public:
@@ -1321,6 +1342,8 @@ public:
 };
 
 static const AuxConstrict   AUX_CONSTRICT = AuxConstrict();
+static const AuxStaff       AUX_STAFF = AuxStaff();
+static const AuxStaffSlap   AUX_STAFFSLAP = AuxStaffSlap();
 static const AuxKick        AUX_KICK = AuxKick();
 static const AuxPeck        AUX_PECK = AuxPeck();
 static const AuxHeadbutt    AUX_HEADBUTT = AuxHeadbutt();
@@ -1336,6 +1359,8 @@ static const AuxTentacles4  AUX_TENTACLES4 = AuxTentacles4();
 static const AuxAttackType* const aux_attack_types[] =
 {
     &AUX_CONSTRICT,
+    &AUX_STAFF,
+    &AUX_STAFFSLAP,
     &AUX_KICK,
     &AUX_HEADBUTT,
     &AUX_PECK,
@@ -1445,6 +1470,26 @@ bool melee_attack::player_aux_unarmed()
         if (atk == UNAT_CONSTRICT && !attacker->can_constrict(defender, true))
             continue;
 
+        if (atk == UNAT_STAFF)
+        {
+            if (you.is_constricting())
+                continue;
+            if (defender->is_constricted())
+                continue;
+            if (defender->res_constrict() >= 3)
+                continue;
+            int sk = you.skill(SK_TRANSMUTATIONS);
+            int size = defender->body_size();
+            if (sk < 5 && size > SIZE_TINY)
+                continue;
+            if (sk < 9 && size > SIZE_SMALL)
+                continue;
+            if (sk < 17 && size > SIZE_MEDIUM)
+                continue;
+            if (sk < 25 && size > SIZE_LARGE)
+                continue;
+        }
+
         to_hit = calc_to_hit(true,true);
 
         handle_noise(defender->pos());
@@ -1477,6 +1522,26 @@ bool melee_attack::player_aux_unarmed()
     return false;
 }
 
+static string _tverb()
+{
+    switch (random2(5))
+    {
+    case 0:
+        return "bites";
+    case 1:
+        return "kicks";
+    case 2:
+        return "punches";
+    case 3:
+        return "slaps";
+    case 4:
+        return "pecks";
+    case 5:
+    default:
+        return "claws";
+    }
+}
+
 bool melee_attack::player_aux_apply(unarmed_attack_type atk)
 {
     did_hit = true;
@@ -1495,7 +1560,7 @@ bool melee_attack::player_aux_apply(unarmed_attack_type atk)
 
     aux_damage  = player_apply_final_multipliers(aux_damage);
 
-    if (atk == UNAT_CONSTRICT)
+    if (atk == UNAT_CONSTRICT || atk == UNAT_STAFF)
         aux_damage = 0;
     else
         aux_damage = apply_defender_ac(aux_damage);
@@ -1505,10 +1570,10 @@ bool melee_attack::player_aux_apply(unarmed_attack_type atk)
 
     if (defender->alive())
     {
-        if (atk == UNAT_CONSTRICT)
+        if (atk == UNAT_CONSTRICT || atk == UNAT_STAFF)
             attacker->start_constricting(*defender);
 
-        if (damage_done > 0 || atk == UNAT_CONSTRICT)
+        if (damage_done > 0 || atk == UNAT_CONSTRICT || atk == UNAT_STAFF)
         {
             player_announce_aux_hit();
 
@@ -1561,10 +1626,21 @@ bool melee_attack::player_aux_apply(unarmed_attack_type atk)
         }
         else // no damage was done
         {
-            mprf("You %s %s%s.",
-                 aux_verb.c_str(),
-                 defender->name(DESC_THE).c_str(),
-                 you.can_see(*defender) ? ", but do no damage" : "");
+            if (!aux_verb.compare("t"))
+            {
+                mprf("%s %s %s%s.",
+                    you.staff()->name(DESC_YOUR).c_str(),
+                    _tverb().c_str(),
+                    defender->name(DESC_THE).c_str(),
+                    you.can_see(*defender) ? ", but does no damage" : "");
+            }
+            else
+            {
+                mprf("You %s %s%s.",
+                    aux_verb.c_str(),
+                    defender->name(DESC_THE).c_str(),
+                    you.can_see(*defender) ? ", but do no damage" : "");
+            }
         }
     }
     else // defender was just alive, so this call should be ok?
@@ -1581,11 +1657,34 @@ bool melee_attack::player_aux_apply(unarmed_attack_type atk)
 
 void melee_attack::player_announce_aux_hit()
 {
-    mprf("You %s %s%s%s",
-         aux_verb.c_str(),
-         defender->name(DESC_THE).c_str(),
-         debug_damage_number().c_str(),
-         attack_strength_punctuation(damage_done).c_str());
+    if (!aux_verb.compare("s"))
+    {
+        int sk = you.skill(SK_TRANSMUTATIONS);
+        mprf("A %s tentacle from %s grabs %s.",
+            sk < 4 ? "tiny" :
+            sk < 8 ? "small" :
+            sk < 16 ? "" :
+            sk < 24 ? "huge" 
+                    : "massive",
+            you.staff()->name(DESC_YOUR).c_str(),
+            defender->name(DESC_THE).c_str());
+    }
+    else if (!aux_verb.compare("t"))
+    {
+        mprf("%s %s %s%s",
+            you.staff()->name(DESC_YOUR).c_str(),
+            _tverb().c_str(),
+            defender->name(DESC_THE).c_str(),
+            attack_strength_punctuation(damage_done).c_str());
+    }
+    else
+    {
+        mprf("You %s %s%s%s",
+            aux_verb.c_str(),
+            defender->name(DESC_THE).c_str(),
+            debug_damage_number().c_str(),
+            attack_strength_punctuation(damage_done).c_str());
+    }
 }
 
 string melee_attack::player_why_missed()
@@ -2641,8 +2740,8 @@ void melee_attack::apply_staff_damage()
         }
     }
         break;
+    case STAFF_TRANSMUTATION:
 #if TAG_MAJOR_VERSION == 34
-    case STAFF_POWER:
     case STAFF_CONJURATION:
     case STAFF_ENCHANTMENT:
     case STAFF_ENERGY:
@@ -3828,7 +3927,7 @@ void melee_attack::chaos_affect_actor(actor *victim)
  */
 bool melee_attack::_extra_aux_attack(unarmed_attack_type atk)
 {
-    if (atk != UNAT_CONSTRICT
+    if (atk != UNAT_CONSTRICT && atk != UNAT_STAFF && atk != UNAT_STAFF_SLAP
         && you.strength() + you.dex() <= random2(50))
     {
         return false;
@@ -3876,6 +3975,12 @@ bool melee_attack::_extra_aux_attack(unarmed_attack_type atk)
         
     case UNAT_TENTACLES4:
         return you.has_usable_tentacles() && (you.strength() + you.dex() >= random2(80));
+
+    case UNAT_STAFF:
+        return you.staff() && you.staff()->sub_type == STAFF_TRANSMUTATION && staff_damage(SK_TRANSMUTATIONS);
+
+    case UNAT_STAFF_SLAP:
+        return you.staff() && you.staff()->sub_type == STAFF_TRANSMUTATION && staff_damage(SK_TRANSMUTATIONS);
 
     case UNAT_BITE:
         return you.get_mutation_level(MUT_ANTIMAGIC_BITE)

@@ -579,8 +579,8 @@ enum stave_type
 {
 #if TAG_MAJOR_VERSION == 34
     STAFF_WIZARDRY,
-    STAFF_POWER,
 #endif
+    STAFF_TRANSMUTATION,
     STAFF_FIRE,
     STAFF_COLD,
     STAFF_POISON,

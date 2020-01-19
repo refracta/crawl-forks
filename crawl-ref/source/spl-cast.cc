@@ -546,7 +546,8 @@ bool staff_enhances_spell(item_def * staff, spell_type spell)
     if (bool(typeflags & spschool::summoning) && staff->sub_type == STAFF_SUMMONING)
         return true;
 
-    // BCADDO: Transmutations go here if we decide to add that staff type.
+    if (bool(typeflags & spschool::transmutation) && staff->sub_type == STAFF_TRANSMUTATION)
+        return true;
 
     return false;
 }

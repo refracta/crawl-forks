@@ -4718,9 +4718,6 @@ void unmarshallItem(reader &th, item_def &item)
     if (item.is_type(OBJ_STAVES, STAFF_CHANNELING))
         item.sub_type = STAFF_ENERGY;
 
-    if (item.is_type(OBJ_STAVES, STAFF_POWER))
-        item.sub_type = STAFF_ENERGY;
-
     if (item.is_type(OBJ_STAVES, STAFF_ENERGY))
         item.brand = SPSTF_ENERGY;
 
