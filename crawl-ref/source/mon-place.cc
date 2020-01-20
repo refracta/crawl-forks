@@ -3021,6 +3021,9 @@ bool find_habitable_spot_near(const coord_def& where, monster_type mon_type,
     {
         bool success = false;
 
+        if (!in_bounds(*ri))
+            continue;
+
         if (actor_at(*ri))
             continue;
 
