@@ -610,6 +610,8 @@ static const duration_def duration_data[] =
     { DUR_TIME_STEP, 0, "", "", "time step", "", D_NO_FLAGS},
     { DUR_ICEMAIL_DEPLETED, 0, "", "", "icemail depleted", "", D_NO_FLAGS,
       {{ "Your icy envelope is restored.", _redraw_armour }}},
+    { DUR_STFSHIELD_COOLDOWN, 0, "", "", "dispelled shield", "", D_NO_FLAGS,
+      {{ "", _redraw_armour }}},
     { DUR_PARALYSIS_IMMUNITY, 0, "", "", "paralysis immunity", "", D_NO_FLAGS},
     { DUR_VEHUMET_GIFT, 0, "", "", "vehumet gift", "", D_NO_FLAGS, {{""}}},
     { DUR_SICKENING, 0, "", "", "sickening", "", D_DISPELLABLE, {{""}}},

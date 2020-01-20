@@ -206,5 +206,6 @@ enum duration_type
     DUR_COLD_VULN,
     DUR_ELEC_VULN,
     DUR_PHYS_VULN,
+    DUR_STFSHIELD_COOLDOWN,
     NUM_DURATIONS
 };
