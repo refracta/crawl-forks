@@ -57,11 +57,9 @@ static int  _get_blowgun_chance(const int hd);
 bool is_penetrating_attack(const actor& attacker, const item_def* weapon,
                            const item_def& projectile)
 {
-    return is_launched(&attacker, weapon, weapon, projectile) != launch_retval::FUMBLED
-            && projectile.base_type == OBJ_MISSILES
+    return projectile.base_type == OBJ_MISSILES
             && (get_ammo_brand(projectile) == SPMSL_PENETRATION || projectile.sub_type == MI_BOLT)
-           || weapon
-              && is_launched(&attacker, weapon, weapon, projectile) == launch_retval::LAUNCHED
+           || weapon && projectile.base_type == OBJ_MISSILES && ammo_type_damage(projectile.sub_type) == 0
               && (get_weapon_brand(*weapon) == SPWPN_PENETRATION
                   || is_unrandom_artefact(*weapon, UNRAND_STORM_BOW));
 }
