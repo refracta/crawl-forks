@@ -91,6 +91,8 @@ bool drain_player(int power = 25, bool announce_full = true,
 void expose_player_to_element(beam_type flavour, int strength = 0,
                               bool slow_cold_blooded = true);
 
+void lose_staff_shield(beam_type flavour, int strength);
+
 int timescale_damage(const actor *act, int damage);
 bool can_shave_damage();
 int do_shave_damage(int dam);

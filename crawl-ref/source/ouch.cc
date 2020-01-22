@@ -301,6 +301,14 @@ int check_your_resists(int hurted, beam_type flavour, string source,
     return hurted;
 }
 
+static bool _maybe_unravel (int strength)
+{
+    int sk_boost = div_rand_round(you.skill(SK_CHARMS),3);
+    if (x_chance_in_y(strength, 3 + sk_boost))
+        return true;
+    return false;
+}
+
 /**
  * Handle side-effects for exposure to element other than damage.
  * Historically this handled item destruction, and melting meltable enchantments. Now it takes care of 3 things:
@@ -325,7 +333,7 @@ void expose_player_to_element(beam_type flavour, int strength, bool slow_cold_bl
     dprf("expose_player_to_element, strength %i, flavor %i, slow_cold_blooded is %i", strength, flavour, slow_cold_blooded);
     qazlal_element_adapt(flavour, strength);
 
-    if (flavour == BEAM_COLD && slow_cold_blooded
+    if (( flavour == BEAM_COLD || flavour == BEAM_FREEZE) && slow_cold_blooded
         && you.get_mutation_level(MUT_COLD_BLOODED)
         && you.res_cold() <= 0 && coinflip())
     {
@@ -338,6 +346,76 @@ void expose_player_to_element(beam_type flavour, int strength, bool slow_cold_bl
         you.duration[DUR_LIQUID_FLAMES] = 0;
         you.props.erase("sticky_flame_source");
         you.props.erase("sticky_flame_aux");
+    }
+
+    lose_staff_shield(flavour, strength);
+}
+
+void lose_staff_shield(beam_type flavour, int strength)
+{
+    if (player_staff_shielding())
+    {
+        bool remove = false;
+        ASSERT(you.staff());
+        switch (you.staff()->sub_type)
+        {
+        case STAFF_FIRE:
+            if ((flavour == BEAM_COLD || flavour == BEAM_FREEZE) && _maybe_unravel(strength))
+            {
+                mprf(MSGCH_WARN, "The cold freezes and breaks your ball of floating magma.");
+                remove = true;
+            }
+            if (flavour == BEAM_WATER && _maybe_unravel(strength))
+            {
+                mprf(MSGCH_WARN, "The water puts out and breaks your ball of floating magma.");
+                remove = true;
+            }
+            break;
+        case STAFF_COLD:
+            if ((flavour == BEAM_FIRE || flavour == BEAM_STICKY_FLAME || flavour == BEAM_LAVA
+                || flavour == BEAM_STEAM) && _maybe_unravel(strength))
+            {
+                mprf(MSGCH_WARN, "The heat melts your disk of icy vapour.");
+                remove = true;
+            }
+            break;
+        case STAFF_EARTH:
+            if (flavour == BEAM_ELECTRICITY && _maybe_unravel(strength))
+            {
+                mprf(MSGCH_WARN, "The electricity magnitizes and disperses your curtain of metal fragments.");
+                remove = true;
+            }
+            break;
+        case STAFF_AIR:
+            remove = false;
+            break;
+        case STAFF_TRANSMUTATION:
+            if (flavour == BEAM_ACID && _maybe_unravel(strength * 2))
+            {
+                mprf(MSGCH_WARN, "The acid dissolves your mass of fleshy tendrils.");
+                remove = true;
+            }
+            if ((flavour == BEAM_POISON || flavour == BEAM_POISON_ARROW) && _maybe_unravel(strength))
+            {
+                mprf(MSGCH_WARN, "The poison shrinks your mass of fleshy tendrils away.");
+                remove = true;
+            }
+            if (flavour == BEAM_MIASMA && _maybe_unravel(strength))
+            {
+                mprf(MSGCH_WARN, "Your mass of fleshy tendrils rot away.");
+                remove = true;
+            }
+            break;
+        case STAFF_POISON:
+        case STAFF_DEATH:
+        default:
+            break;
+        }
+        if (remove)
+        {
+            you.increase_duration(DUR_STFSHIELD_COOLDOWN, 5 + strength, 50);
+            you.redraw_armour_class = true;
+        }
     }
 }
 

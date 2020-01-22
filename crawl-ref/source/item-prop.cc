@@ -2049,6 +2049,32 @@ bool is_brandable_weapon(const item_def &wpn, bool allow_ranged, bool divine)
     return false;
 }
 
+
+skill_type staff_magic_skill(const item_def &item)
+{
+    switch (item.sub_type)
+    {
+    case STAFF_FIRE:
+        return SK_FIRE_MAGIC;
+    case STAFF_COLD:
+        return SK_ICE_MAGIC;
+    case STAFF_AIR:
+        return SK_AIR_MAGIC;
+    case STAFF_DEATH:
+        return SK_NECROMANCY;
+    case STAFF_EARTH:
+        return SK_EARTH_MAGIC;
+    case STAFF_POISON:
+        return SK_POISON_MAGIC;
+    case STAFF_SUMMONING:
+        return SK_SUMMONINGS;
+    case STAFF_TRANSMUTATION:
+        return SK_TRANSMUTATIONS;
+    default:
+        return SK_EVOCATIONS;
+    }
+}
+
 /**
  * Returns the skill used by the given item to attack.
  *

@@ -2457,6 +2457,30 @@ int player_wizardry(spell_type spell)
     return wiz;
 }
 
+int player_staff_shielding()
+{
+    if (you.duration[DUR_STFSHIELD_COOLDOWN])
+        return 0;
+
+    if (you.staff() && you.staff()->brand == SPSTF_SHIELD)
+    {
+        int shielding = 1;
+        shielding += div_round_up(you.skill(SK_CHARMS) + 1, 3);
+        switch (you.staff()->base_type)
+        {
+        case STAFF_FIRE:
+        case STAFF_AIR:
+            shielding += div_round_up(you.skill(staff_magic_skill(*you.staff())) + 1, 3);
+            break;
+        default:
+            shielding += div_round_up(2 * you.skill(staff_magic_skill(*you.staff())) + 1, 3);
+            break;
+        }
+        return shielding;
+    }
+    return 0;
+}
+
 /**
  * Calculate the SH value used internally.
  *
@@ -2514,6 +2538,7 @@ int player_shield_class()
 
     shield += you.branch_SH(true) * 200;
     shield += qazlal_sh_boost() * 100;
+    shield += player_staff_shielding() * 200;
     shield += tso_sh_boost() * 100;
     shield += you.wearing(EQ_AMULET, AMU_REFLECTION) * 1000;
     shield += you.scan_artefacts(ARTP_SHIELDING) * 200;
@@ -7246,13 +7271,17 @@ int player::usable_tentacles() const
 
     int free_tentacles = numtentacle - num_constricting();
 
-    if (shield())
-        free_tentacles -= 2;
-
-    const item_def* wp = slot_item(EQ_WEAPON0);
-    if (wp)
+    const item_def* wp0 = slot_item(EQ_WEAPON0);
+    if (wp0)
     {
-        hands_reqd_type hands_req = hands_reqd(*wp);
+        hands_reqd_type hands_req = hands_reqd(*wp0);
+        free_tentacles -= 2 * hands_req + 2;
+    }
+
+    const item_def* wp1 = slot_item(EQ_WEAPON1);
+    if (wp1)
+    {
+        hands_reqd_type hands_req = hands_reqd(*wp1);
         free_tentacles -= 2 * hands_req + 2;
     }
 

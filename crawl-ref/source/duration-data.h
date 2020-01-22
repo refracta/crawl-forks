@@ -32,6 +32,40 @@ static void _redraw_armour()
     you.redraw_armour_class = true;
 }
 
+static void _restore_shield()
+{
+    if (!you.staff())
+        return;
+
+    you.redraw_armour_class = true;
+    string shtype;
+
+    switch (you.staff()->sub_type)
+    {
+    case STAFF_FIRE:
+        shtype = "molten ball of magma";
+        break;
+    case STAFF_COLD:
+        shtype = "crackling disk of icy vapour";
+        break;
+    case STAFF_AIR:
+        shtype = "whirling sphere of harsh winds";
+        break;
+    case STAFF_EARTH:
+        shtype = "sparkling curtain of metal fragments";
+        break;
+    case STAFF_TRANSMUTATION:
+        shtype = "pulsing mass of fleshy tendrils";
+        break;
+    default:
+        shtype = "swarm of software bugs";
+        break;
+    }
+
+    mprf(MSGCH_DURATION, "%s exudes a %s, shielding you from harm.",
+        you.staff()->name(DESC_YOUR).c_str(), shtype.c_str());
+}
+
 // properties of the duration.
 enum duration_flags : uint32_t
 {
@@ -611,7 +645,7 @@ static const duration_def duration_data[] =
     { DUR_ICEMAIL_DEPLETED, 0, "", "", "icemail depleted", "", D_NO_FLAGS,
       {{ "Your icy envelope is restored.", _redraw_armour }}},
     { DUR_STFSHIELD_COOLDOWN, 0, "", "", "dispelled shield", "", D_NO_FLAGS,
-      {{ "", _redraw_armour }}},
+      {{ "", _restore_shield }}},
     { DUR_PARALYSIS_IMMUNITY, 0, "", "", "paralysis immunity", "", D_NO_FLAGS},
     { DUR_VEHUMET_GIFT, 0, "", "", "vehumet gift", "", D_NO_FLAGS, {{""}}},
     { DUR_SICKENING, 0, "", "", "sickening", "", D_DISPELLABLE, {{""}}},

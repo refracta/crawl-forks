@@ -81,6 +81,63 @@ bool attack::handle_phase_attempted()
 bool attack::handle_phase_blocked()
 {
     damage_done = 0;
+
+    if (defender->is_player())
+    {
+        if (weapon)
+        {
+            if (weapon->base_type == OBJ_STAVES)
+            {
+                switch (weapon->sub_type)
+                {
+                case STAFF_FIRE:
+                    lose_staff_shield(BEAM_FIRE, 1);
+                    break;
+                case STAFF_COLD:
+                    lose_staff_shield(BEAM_COLD, 1);
+                    break;
+                case STAFF_AIR:
+                    lose_staff_shield(BEAM_ELECTRICITY, 1);
+                    break;
+                case STAFF_POISON:
+                    lose_staff_shield(BEAM_POISON, 1);
+                    break;
+                default:
+                    break;
+                }
+            }
+            else
+            {
+                switch (weapon->brand)
+                {
+                case SPWPN_ACID:
+                    lose_staff_shield(BEAM_ACID, 1);
+                    break;
+                case SPWPN_CHAOS:
+                    switch (random2(3))
+                    {
+                    case 0: lose_staff_shield(BEAM_FIRE, 1); break;
+                    case 1: lose_staff_shield(BEAM_COLD, 1); break;
+                    case 2: lose_staff_shield(BEAM_ELECTRICITY, 1); break;
+                    case 3: lose_staff_shield(BEAM_POISON, 1); break;
+                    }
+                    break;
+                case SPWPN_ELECTROCUTION:
+                    lose_staff_shield(BEAM_ELECTRICITY, 1);
+                    break;
+                case SPWPN_FREEZING:
+                    lose_staff_shield(BEAM_COLD, 1);
+                    break;
+                case SPWPN_MOLTEN:
+                    lose_staff_shield(BEAM_FIRE, 1);
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+    }
+
     return true;
 }
 

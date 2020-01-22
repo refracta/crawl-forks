@@ -63,6 +63,7 @@ private:
     bool handle_phase_dodged() override;
     bool handle_phase_hit() override;
     bool handle_phase_damaged() override;
+    bool handle_phase_blocked() override;
     bool handle_phase_aux(); // specific to melee attacks
     bool handle_phase_killed() override;
     bool handle_phase_end() override;
