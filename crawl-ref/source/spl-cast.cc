@@ -329,8 +329,12 @@ int raw_spell_fail(spell_type spell)
     chance -= calc_spell_power(spell, false, true, false, 6);
     chance -= (you.intel() * 2); // realistic range: -2 to -70
 
-    const int armour_shield_penalty = player_armour_shield_spell_penalty();
+    int armour_shield_penalty = player_armour_shield_spell_penalty();
     dprf("Armour+Shield spell failure penalty: %d", armour_shield_penalty);
+
+    if (you.staff() && you.staff()->brand == SPSTF_REAVER && staff_enhances_spell(you.staff(), spell))
+        armour_shield_penalty /= 2;
+
     chance += armour_shield_penalty; // range: 0 to 500 in extreme cases.
                                      // A midlevel melee character in plate
                                      // might have 40 or 50, and a caster in a

@@ -52,6 +52,7 @@
 #include "mon-util.h"
 #include "mutation.h"
 #include "nearby-danger.h"
+#include "ouch.h"
 #include "player-stats.h"
 #include "potion.h"
 #include "prompt.h"
@@ -3380,6 +3381,8 @@ bool bolt::misses_player()
                                         name;
 
             const item_def *shield = you.shield();
+            lose_staff_shield(flavour, 2);
+
             if (is_reflectable(you))
             {
                 if (shield && shield_reflects(*shield))
@@ -4978,6 +4981,7 @@ bool bolt::attempt_block(monster* mon)
         finish_beam();
     }
 
+    mon_lose_staff_shield(*mon, flavour, 2);
     mon->shield_block_succeeded(agent());
     return true;
 }
