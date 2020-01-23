@@ -199,6 +199,7 @@ resists_t get_mons_class_resists(monster_type mc) IMMUTABLE;
 resists_t get_mons_resists(const monster& mon);
 int get_mons_resist(const monster& mon, mon_resist_flags res);
 const bool monster_resists_this_poison(const monster& mons, bool force = false);
+void mon_lose_staff_shield(monster & mon, beam_type flavour, int strength);
 
 void xom_insult_name();
 

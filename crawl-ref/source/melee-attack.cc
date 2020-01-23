@@ -40,6 +40,7 @@
 #include "mon-behv.h"
 #include "mon-poly.h"
 #include "mon-tentacle.h"
+#include "mon-util.h"
 #include "prompt.h"
 #include "religion.h"
 #include "shout.h"
@@ -687,122 +688,141 @@ bool melee_attack::handle_phase_damaged()
     return true;
 }
 
+static void _handle_staff_shield(beam_type flavour, int str, bool player, monster * mon)
+{
+    if (player)
+        lose_staff_shield(flavour, str);
+    else
+        mon_lose_staff_shield(*mon, flavour, str);
+}
+
 bool melee_attack::handle_phase_blocked()
 {
-    if (defender->is_player() && player_staff_shielding())
-    {
-        if (you.staff()->sub_type == STAFF_FIRE
+    if (defender->is_player() && player_staff_shielding() && you.staff()->sub_type == STAFF_FIRE
             && x_chance_in_y(you.skill(SK_FIRE_MAGIC), 18))
+    {
+        int orig = 1 + random2(you.skill(SK_FIRE_MAGIC));
+        int dam = resist_adjust_damage(attacker, BEAM_FIRE, orig);
+        mprf("A bit of lava splashes out of your protective magma ball and hits %s%s",
+            attacker->name(DESC_THE).c_str(), attack_strength_punctuation(dam).c_str());
+        if (dam > orig)
+            mprf("The lava burns %s terribly.", attacker->pronoun(PRONOUN_OBJECTIVE).c_str());
+        else if (!dam)
+            mprf("%s completely resists.", attacker->pronoun(PRONOUN_SUBJECTIVE).c_str());
+        else if (orig > dam)
+            mprf("%s resists.", attacker->pronoun(PRONOUN_SUBJECTIVE).c_str());
+    }
+
+    bool vamp_tendril = false;
+    attack_flavour flavour = attk_flavour;
+
+    switch (flavour)
+    {
+    case AF_POISON:
+    case AF_POISON_STRONG:
+    case AF_REACH_STING:
+    case AF_POISON_PETRIFY:
+    case AF_POISON_STR:
+        _handle_staff_shield(BEAM_POISON, 1, defender->is_player(), defender->as_monster());
+        break;
+
+    case AF_ROT:
+        _handle_staff_shield(BEAM_MIASMA, 1, defender->is_player(), defender->as_monster());
+        break;
+
+    case AF_FIRE:
+    case AF_STICKY_FLAME:
+    case AF_PURE_FIRE:
+        _handle_staff_shield(BEAM_FIRE, 1, defender->is_player(), defender->as_monster());
+        break;
+
+    case AF_COLD:
+        _handle_staff_shield(BEAM_COLD, 1, defender->is_player(), defender->as_monster());
+        break;
+
+    case AF_ELEC:
+        _handle_staff_shield(BEAM_ELECTRICITY, 1, defender->is_player(), defender->as_monster());
+        break;
+
+    case AF_SCARAB:
+    case AF_VAMPIRIC:
+        vamp_tendril = true;
+        break;
+
+    case AF_ACID:
+    case AF_CORRODE:
+        _handle_staff_shield(BEAM_ACID, 1, defender->is_player(), defender->as_monster());
+        break;
+
+    case AF_CHAOTIC:
+        switch (random2(3))
         {
-            int orig = 1 + random2(you.skill(SK_FIRE_MAGIC));
-            int dam = resist_adjust_damage(attacker, BEAM_FIRE, orig);
-            mprf("A bit of lava splashes out of your protective magma ball and hits %s%s",
-                attacker->name(DESC_THE).c_str(), attack_strength_punctuation(dam).c_str());
-            if (dam > orig)
-                mprf("The lava burns %s terribly.", attacker->pronoun(PRONOUN_OBJECTIVE).c_str());
-            else if (!dam)
-                mprf("%s completely resists.", attacker->pronoun(PRONOUN_SUBJECTIVE).c_str());
-            else if (orig > dam)
-                mprf("%s resists.", attacker->pronoun(PRONOUN_SUBJECTIVE).c_str());
+        case 0: _handle_staff_shield(BEAM_FIRE, 1, defender->is_player(), defender->as_monster()); break;
+        case 1: _handle_staff_shield(BEAM_COLD, 1, defender->is_player(), defender->as_monster()); break;
+        case 2: _handle_staff_shield(BEAM_ELECTRICITY, 1, defender->is_player(), defender->as_monster()); break;
+        case 3: _handle_staff_shield(BEAM_POISON, 1, defender->is_player(), defender->as_monster()); break;
+        }
+        break;
+
+    case AF_ENGULF:
+    case AF_DROWN:
+        _handle_staff_shield(BEAM_WATER, 1, defender->is_player(), defender->as_monster());
+        break;
+
+    case AF_DRAIN_STR:
+    case AF_DRAIN_INT:
+    case AF_DRAIN_DEX:
+    case AF_HUNGER:
+    case AF_BLINK:
+    case AF_CONFUSE:
+    case AF_DRAIN_XP:
+    case AF_STEAL:
+    case AF_MUTATE:
+    case AF_DISTORT:
+    case AF_RAGE:
+    case AF_HOLY:
+    case AF_ANTIMAGIC:
+    case AF_PAIN:
+    case AF_ENSNARE:
+    case AF_CRUSH:
+    case AF_DRAIN_SPEED:
+    case AF_VULN:
+    case AF_SHADOWSTAB:
+    case AF_WEAKNESS:
+    default:
+        break;
+    }
+
+    if (weapon && weapon->sub_type != OBJ_STAVES && weapon->brand == SPWPN_VAMPIRISM)
+        vamp_tendril = true;
+
+    if (vamp_tendril)
+    {
+        bool heal = false;
+
+        if (defender->is_player())
+        {
+            if (you.staff() && you.staff()->sub_type == STAFF_TRANSMUTATION)
+                heal = true;
+        }
+        else
+        {
+            item_def * staff = defender->as_monster()->mslot_item(MSLOT_WEAPON);
+            if (staff && staff->base_type == OBJ_STAVES && staff->sub_type == STAFF_TRANSMUTATION)
+                heal = true;
         }
 
-        bool vamp_tendril = false;
-        attack_flavour flavour = attk_flavour;
-
-        switch (flavour)
+        if (heal && attacker->stat_hp() < attacker->stat_maxhp())
         {
-        case AF_POISON:
-        case AF_POISON_STRONG:
-        case AF_REACH_STING:
-        case AF_POISON_PETRIFY:
-        case AF_POISON_STR:
-            lose_staff_shield(BEAM_POISON, 1);
-            break;
-
-        case AF_ROT:
-            lose_staff_shield(BEAM_MIASMA, 1);
-            break;
-
-        case AF_FIRE:
-        case AF_STICKY_FLAME:
-        case AF_PURE_FIRE:
-            lose_staff_shield(BEAM_FIRE, 1);
-            break;
-
-        case AF_COLD:
-            lose_staff_shield(BEAM_COLD, 1);
-            break;
-
-        case AF_ELEC:
-            lose_staff_shield(BEAM_ELECTRICITY, 1);
-            break;
-
-        case AF_SCARAB:
-        case AF_VAMPIRIC:
-            vamp_tendril = true;
-            break;
-
-        case AF_ACID:
-        case AF_CORRODE:
-            lose_staff_shield(BEAM_ACID, 1);
-            break;
-
-        case AF_CHAOTIC:
-            switch (random2(3))
+            int healed = resist_adjust_damage(defender, BEAM_NEG,
+                1 + random2(18));
+            if (healed)
             {
-            case 0: lose_staff_shield(BEAM_FIRE, 1); break;
-            case 1: lose_staff_shield(BEAM_COLD, 1); break;
-            case 2: lose_staff_shield(BEAM_ELECTRICITY, 1); break;
-            case 3: lose_staff_shield(BEAM_POISON, 1); break;
-            }
-            break;
-
-        case AF_ENGULF:
-        case AF_DROWN:
-            lose_staff_shield(BEAM_WATER, 1);
-            break;
-
-        case AF_DRAIN_STR:
-        case AF_DRAIN_INT:
-        case AF_DRAIN_DEX:
-        case AF_HUNGER:
-        case AF_BLINK:
-        case AF_CONFUSE:
-        case AF_DRAIN_XP:
-        case AF_STEAL:
-        case AF_MUTATE:
-        case AF_DISTORT:
-        case AF_RAGE:
-        case AF_HOLY:
-        case AF_ANTIMAGIC:
-        case AF_PAIN:
-        case AF_ENSNARE:
-        case AF_CRUSH:
-        case AF_DRAIN_SPEED:
-        case AF_VULN:
-        case AF_SHADOWSTAB:
-        case AF_WEAKNESS:
-        default:
-            break;
-        }
-
-        if (weapon && weapon->sub_type != OBJ_STAVES && weapon->brand == SPWPN_VAMPIRISM)
-            vamp_tendril = true;
-
-        if (vamp_tendril && you.staff()->sub_type == STAFF_TRANSMUTATION)
-        {
-            if (defender->stat_hp() < defender->stat_maxhp())
-            {
-                int healed = resist_adjust_damage(defender, BEAM_NEG,
-                    1 + random2(18));
-                if (healed)
-                {
-                    attacker->heal(healed);
-                    mprf("%s %s strength from %s tendrils!",
-                        atk_name(DESC_THE).c_str(),
-                        attacker->conj_verb("draw").c_str(),
-                        you.staff()->name(DESC_ITS).c_str());
-                }
+                attacker->heal(healed);
+                mprf("%s %s strength from %s tendrils!",
+                    atk_name(DESC_THE).c_str(),
+                    attacker->conj_verb("draw").c_str(),
+                    you.staff()->name(DESC_ITS).c_str());
             }
         }
     }
