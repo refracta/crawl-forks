@@ -6651,10 +6651,10 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
                 mons->name(DESC_THE).c_str());
         }
         const int power = (mons->spell_hd(spell_cast) * 15) / 10;
+        int deg = 20 + random2(power);
+        deg += random2(power); // Split for RNG.
         mons->add_ench(mon_enchant(ENCH_CONDENSATION_SHIELD,
-            20 + random2(power) + random2(power),
-            mons));
-
+            deg, mons));
         return;
     }
 

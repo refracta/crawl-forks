@@ -2717,6 +2717,75 @@ bool monster::go_berserk(bool intentional, bool /* potion */)
     return true;
 }
 
+static void _lose_staff_shield(monster & mon, beam_type flavour, int strength)
+{
+    item_def * staff = mon.mslot_item(MSLOT_WEAPON);
+
+    if (!staff || staff->base_type != OBJ_STAVES || staff->brand != SPSTF_SHIELD)
+        return;
+
+    int hd = mon.get_experience_level();
+    bool remove = false;
+
+    switch (staff->sub_type)
+    {
+    case STAFF_FIRE:
+        if ((flavour == BEAM_COLD || flavour == BEAM_FREEZE) && x_chance_in_y(strength, hd))
+        {
+            mprf("The cold freezes and breaks %s ball of floating magma.", mon.name(DESC_ITS).c_str());
+            remove = true;
+        }
+        if (flavour == BEAM_WATER && x_chance_in_y(strength, hd))
+        {
+            mprf("The water puts out and breaks %s ball of floating magma.", mon.name(DESC_ITS).c_str());
+            remove = true;
+        }
+        break;
+    case STAFF_COLD:
+        if ((flavour == BEAM_FIRE || flavour == BEAM_STICKY_FLAME || flavour == BEAM_LAVA
+            || flavour == BEAM_STEAM) && x_chance_in_y(strength, hd))
+        {
+            mprf("The heat melts %s disk of icy vapour.", mon.name(DESC_ITS).c_str());
+            remove = true;
+        }
+        break;
+    case STAFF_EARTH:
+        if (flavour == BEAM_ELECTRICITY && x_chance_in_y(strength, hd))
+        {
+            mprf("The electricity magnitizes and disperses %s curtain of metal fragments.", mon.name(DESC_ITS).c_str());
+            remove = true;
+        }
+        break;
+    case STAFF_AIR:
+        remove = false;
+        break;
+    case STAFF_TRANSMUTATION:
+        if (flavour == BEAM_ACID && x_chance_in_y(strength * 2, hd))
+        {
+            mprf("The acid dissolves %s mass of fleshy tendrils.", mon.name(DESC_ITS).c_str());
+            remove = true;
+        }
+        if ((flavour == BEAM_POISON || flavour == BEAM_POISON_ARROW) && x_chance_in_y(strength, hd))
+        {
+            mprf("The poison shrinks %s mass of fleshy tendrils away.", mon.name(DESC_ITS).c_str());
+            remove = true;
+        }
+        if (flavour == BEAM_MIASMA && x_chance_in_y(strength, hd))
+        {
+            mprf("%s mass of fleshy tendrils rot away.", mon.name(DESC_ITS).c_str());
+            remove = true;
+        }
+        break;
+    case STAFF_POISON:
+    case STAFF_DEATH:
+    default:
+        break;
+    }
+    if (remove)
+        mon.add_ench(mon_enchant(ENCH_STFSHIELD_COOLDOWN, 1, 0, 20 + random2(20)));
+}
+
+
 void monster::expose_to_element(beam_type flavour, int strength,
                                 bool slow_cold_blood)
 {
@@ -2764,6 +2833,7 @@ void monster::expose_to_element(beam_type flavour, int strength,
     default:
         break;
     }
+    _lose_staff_shield(*this, flavour, strength);
 }
 
 void monster::banish(actor *agent, const string &, const int, bool force)
@@ -3060,6 +3130,14 @@ int monster::shield_bonus() const
     // Condensation Shield
     else if (has_ench(ENCH_CONDENSATION_SHIELD))
         sh += spell_hd(SPELL_CONDENSATION_SHIELD);
+
+    item_def * weap = mslot_item(MSLOT_WEAPON);
+
+    if (!has_ench(ENCH_STFSHIELD_COOLDOWN) && weap && 
+        weap->base_type == OBJ_STAVES && weap->brand == SPSTF_SHIELD)
+    {
+        sh += spell_hd(SPELL_INFUSION);
+    }
 
     // shielding from jewellery
     const item_def *amulet = mslot_item(MSLOT_JEWELLERY);

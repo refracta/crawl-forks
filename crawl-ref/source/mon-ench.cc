@@ -896,6 +896,42 @@ void monster::remove_enchantment_effect(const mon_enchant &me, bool quiet)
             simple_monster_message(*this, " is no longer physically vulnerable.");
         break;
 
+    case ENCH_STFSHIELD_COOLDOWN:
+        if (!quiet)
+        {
+            item_def * staff = mslot_item(MSLOT_WEAPON);
+            if (!staff || staff->base_type != OBJ_STAVES || staff->brand != SPSTF_SHIELD)
+                return;
+
+            string shtype;
+
+            switch (staff->sub_type)
+            {
+            case STAFF_FIRE:
+                shtype = "molten ball of magma";
+                break;
+            case STAFF_COLD:
+                shtype = "crackling disk of icy vapour";
+                break;
+            case STAFF_AIR:
+                shtype = "whirling sphere of harsh winds";
+                break;
+            case STAFF_EARTH:
+                shtype = "sparkling curtain of metal fragments";
+                break;
+            case STAFF_TRANSMUTATION:
+                shtype = "pulsing mass of fleshy tendrils";
+                break;
+            default:
+                shtype = "swarm of software bugs";
+                break;
+            }
+
+            mprf("%s exudes a %s, shielding %s from harm.",
+                staff->name(DESC_THE).c_str(), shtype.c_str(), name(DESC_THE).c_str());
+        }
+        break;
+
     case ENCH_MERFOLK_AVATAR_SONG:
         props.erase("merfolk_avatar_call");
         break;
@@ -1492,6 +1528,7 @@ void monster::apply_enchantment(const mon_enchant &me)
     case ENCH_COLD_VULN:
     case ENCH_ELEC_VULN:
     case ENCH_PHYS_VULN:
+    case ENCH_STFSHIELD_COOLDOWN:
         decay_enchantment(en);
         break;
 
@@ -2213,7 +2250,7 @@ static const char *enchant_names[] =
     "idealised", "bound_soul", "infestation",
     "stilling the winds", "thunder_ringed", "pinned_by_whirlwind",
     "vortex", "vortex_cooldown", "vile_clutch", "trapped_in_lava", "stick",
-    "elec_vuln", "cold_vuln", "phys_vuln",
+    "elec_vuln", "cold_vuln", "phys_vuln", "staff_shield_down",
     "buggy",
 };
 
