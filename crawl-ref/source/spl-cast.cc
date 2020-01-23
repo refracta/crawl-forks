@@ -866,6 +866,10 @@ bool cast_a_spell(bool check_range, spell_type spell)
     }
 
     int cost = spell_mana(spell);
+
+    if (you.staff() && you.staff()->brand == SPSTF_ENERGY && staff_enhances_spell(you.staff(), spell))
+        cost--;
+
     int sifcast_amount = 0;
     if (!enough_mp(cost, true))
     {
