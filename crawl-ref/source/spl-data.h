@@ -181,7 +181,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_WAND_POLYMORPH, "Polymorph Wand",
-    spschool::transmutation | spschool::hexes,
+    spschool::transmutation | spschool::hexes | spschool::evocation,
     spflag::dir_or_target | spflag::chaotic | spflag::monster
         | spflag::needs_tracer | spflag::MR_check,
     4,
@@ -215,7 +215,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_WAND_HASTING, "Haste Other Wand",
-    spschool::charms,
+    spschool::charms | spschool::evocation,
     spflag::dir_or_target | spflag::not_self | spflag::helpful
         | spflag::hasty | spflag::needs_tracer | spflag::utility,
     6,
@@ -272,7 +272,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_WAND_FLAME, "Flame Wand",
-    spschool::fire,
+    spschool::fire | spschool::evocation,
     spflag::dir_or_target | spflag::needs_tracer,
     3,
     50,
@@ -545,7 +545,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_CALL_DOWN_DAMNATION, "Hellfire Smite",
-    spschool::fire,
+    spschool::fire | spschool::evocation,
     spflag::target | spflag::area | spflag::unholy | spflag::needs_tracer,
     9,
     200,
@@ -646,7 +646,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_ENSLAVEMENT, "Enslavement Wand",
-    spschool::hexes,
+    spschool::hexes | spschool::evocation,
     spflag::dir_or_target | spflag::not_self | spflag::needs_tracer
         | spflag::monster | spflag::MR_check,
     4,
@@ -1127,9 +1127,7 @@ static const struct spell_desc spelldata[] =
     3, 0,
     TILEG_ERROR,
 },
-#endif
 
-#if TAG_MAJOR_VERSION == 34
 {
     SPELL_CURE_POISON, "Cure Poison",
     spschool::poison,
@@ -1140,9 +1138,7 @@ static const struct spell_desc spelldata[] =
     1, 0,
     TILEG_ERROR,
 },
-#endif
 
-#if TAG_MAJOR_VERSION == 34
 {
     SPELL_CONTROL_TELEPORT, "Control Teleport",
     spschool::charms | spschool::translocation,
@@ -1213,7 +1209,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_DISINTEGRATE, "Disintegrate Wand",
-    spschool::hexes,
+    spschool::hexes | spschool::evocation,
     spflag::dir_or_target | spflag::not_self | spflag::needs_tracer
         | spflag::MR_check,
     6,
@@ -1803,7 +1799,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_HURL_DAMNATION, "Hellfire Blast",
-    spschool::fire,
+    spschool::fire | spschool::evocation,
     spflag::dir_or_target | spflag::unholy | spflag::monster
         | spflag::needs_tracer,
     // plus DS ability, staff of Dispater & Sceptre of Asmodeus
@@ -1887,7 +1883,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_SUMMON_HELL_BEAST, "Summon Hell Beast",
-    spschool::summoning,
+    spschool::summoning | spschool::evocation,
     spflag::unholy | spflag::monster | spflag::selfench,
     4,
     0,
@@ -2175,7 +2171,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_TOMB_OF_DOROKLOHE, "Tomb of Doroklohe",
-    spschool::earth,
+    spschool::earth | spschool::evocation,
     spflag::monster | spflag::emergency,
     5,
     0,
@@ -2313,7 +2309,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_PRIMAL_WAVE, "Primal Wave",
-    spschool::fire | spschool::ice,
+    spschool::fire | spschool::ice | spschool::evocation,
     spflag::dir_or_target | spflag::needs_tracer,
     6,
     200,
@@ -2484,7 +2480,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_WAND_HEALING, "Wand Healing",
-    spschool::necromancy,
+    spschool::necromancy | spschool::evocation,
     spflag::dir_or_target | spflag::selfench | spflag::helpful
         | spflag::needs_tracer | spflag::utility | spflag::not_evil,
     6,
@@ -2531,7 +2527,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_DRAIN_LIFE, "Drain Life",
-    spschool::necromancy,
+    spschool::necromancy | spschool::evocation,
     // n.b. marked as spflag::monster for wizmode purposes, but this spell is
     // called by the yred ability.
     spflag::area | spflag::emergency | spflag::monster,
@@ -2681,7 +2677,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_WAND_ENSNARE, "Web Wand",
-    spschool::earth | spschool::hexes,
+    spschool::earth | spschool::hexes | spschool::evocation,
     spflag::dir_or_target | spflag::needs_tracer,
     6,
     200,
@@ -2692,7 +2688,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_THUNDERBOLT, "Thunderbolt",
-    spschool::air,
+    spschool::air | spschool::evocation,
     spflag::dir_or_target | spflag::not_self,
     2, // 2-5, sort of
     200,
@@ -2725,7 +2721,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_MALMUTATE, "Malmutate",
-    spschool::transmutation | spschool::hexes,
+    spschool::transmutation | spschool::hexes | spschool::evocation,
     spflag::dir_or_target | spflag::not_self | spflag::chaotic
         | spflag::needs_tracer,
     6,
@@ -2945,7 +2941,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_WIND_BLAST, "Wind Blast",
-    spschool::air | spschool::translocation,
+    spschool::air | spschool::translocation | spschool::evocation,
     spflag::area,
     3,
     200,
@@ -3013,7 +3009,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_SUMMON_VERMIN, "Summon Vermin",
-    spschool::summoning,
+    spschool::summoning | spschool::evocation,
     spflag::monster | spflag::unholy | spflag::selfench | spflag::mons_abjure,
     5,
     0,
@@ -3470,7 +3466,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_WAND_ACID, "Acid Wand",
-    spschool::poison,
+    spschool::poison | spschool::evocation,
     spflag::dir_or_target | spflag::needs_tracer,
     6,
     200,
@@ -3755,7 +3751,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_SCATTERSHOT, "Scattershot Wand", // If a Mon gets it as a non-wand spell; duplicate.
-    spschool::earth,
+    spschool::earth | spschool::evocation,
     spflag::dir_or_target | spflag::not_self,
     6,
     200,
@@ -3906,7 +3902,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_ICEBLAST, "Iceblast Wand", // If a Mon gets it as a non-wand spell; duplicate.
-    spschool::ice,
+    spschool::ice | spschool::evocation,
     spflag::dir_or_target | spflag::needs_tracer,
     5,
     200,
@@ -4039,7 +4035,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_RANDOM_EFFECTS, "Random Effects Wand",
-    spschool::random,
+    spschool::random | spschool::evocation,
     spflag::dir_or_target | spflag::needs_tracer,
     4,
     200,

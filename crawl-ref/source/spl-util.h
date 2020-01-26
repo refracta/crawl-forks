@@ -24,10 +24,11 @@ enum class spschool
   poison         = 1<<8,
   earth          = 1<<9,
   air            = 1<<10,
-  LAST_SCHOOL    = spschool::air,
+  evocation      = 1<<11,
+  LAST_SCHOOL    = spschool::evocation,
   random         = spschool::LAST_SCHOOL << 1,
 };
-DEF_BITFIELD(spschools_type, spschool, 10);
+DEF_BITFIELD(spschools_type, spschool, 11);
 const int SPSCHOOL_LAST_EXPONENT = spschools_type::last_exponent;
 COMPILE_CHECK(spschools_type::exponent(SPSCHOOL_LAST_EXPONENT)
               == spschool::LAST_SCHOOL);

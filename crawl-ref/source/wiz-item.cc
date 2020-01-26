@@ -1236,6 +1236,7 @@ static void _debug_acquirement_stats(FILE *ostat)
                 "poison magic",
                 "earth magic",
                 "air magic",
+                "evocation",
             };
             COMPILE_CHECK(ARRAYSZ(names) == SPSCHOOL_LAST_EXPONENT + 1);
 
