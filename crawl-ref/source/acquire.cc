@@ -1129,7 +1129,8 @@ static void _adjust_brand(item_def &item, bool divine)
         if (best_spell_skill == SK_TRANSLOCATIONS && !one_chance_in(3))
             item.brand = SPSTF_WARP;
         else
-            reroll_brand(item, ITEM_LEVEL);
+            item.brand = SPSTF_CHAOS;
+            //reroll_brand(item, ITEM_LEVEL);
         return;
     }
 

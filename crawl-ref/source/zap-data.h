@@ -256,21 +256,21 @@ static const zap_info zap_data[] =
 },
 
 {
-ZAP_BOLT_OF_COLD,
-"bolt of cold",
-200,
-new calcdice_calculator<6, 18, 2, 3>,
-new tohit_calculator<10, 1, 25>,
-new dicedef_calculator<3, 8, 1, 11>,
-new tohit_calculator<17, 1, 25>,
-WHITE,
-false,
-BEAM_COLD,
-DCHAR_FIRED_ZAP,
-true,
-true,
-false,
-6
+    ZAP_BOLT_OF_COLD,
+    "bolt of cold",
+    200,
+    new calcdice_calculator<6, 18, 2, 3>,
+    new tohit_calculator<10, 1, 25>,
+    new dicedef_calculator<3, 8, 1, 11>,
+    new tohit_calculator<17, 1, 25>,
+    WHITE,
+    false,
+    BEAM_COLD,
+    DCHAR_FIRED_ZAP,
+    true,
+    true,
+    false,
+    6
 },
 
 { // Used only by phial of floods

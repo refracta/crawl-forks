@@ -42,7 +42,7 @@ function callback.tgw_lugonu_bribe_lugonu_item (data, triggerable,
          Jiyva="scroll of random uselessness q:10-20 / gold q:100-200",
          Kikubaaqudgha="randbook owner:Lugonu spells:dispel_undead \
                        numspells:1 / rat corpse w:5 / kobold corpse w:5",
-         Pakellas="staff of energy / crystal ball of energy w:5",
+         Pakellas="crystal ball of energy",
          ["the Shining One"]="Young Poisoner's Handbook /\
               potion of invisibility ident:type q:3-6",
          Trog="manual of Spellcasting / manual of Air Magic w:5 /\

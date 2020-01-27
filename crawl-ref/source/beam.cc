@@ -514,6 +514,18 @@ void zappy(zap_type z_type, int power, bool is_monster, bolt &pbolt)
     if (pbolt.origin_spell == SPELL_NO_SPELL)
         pbolt.origin_spell = zap_to_spell(z_type);
 
+    if (you.staff() && staff_enhances_spell(you.staff(), pbolt.origin_spell))
+    {
+        if (you.staff()->brand == SPSTF_CHAOS)
+        {
+            pbolt.real_flavour = BEAM_CHAOTIC;
+            pbolt.flavour = BEAM_CHAOTIC;
+            pbolt.colour = ETC_JEWEL;
+        }
+        if (you.staff()->brand == SPSTF_ACCURACY)
+            pbolt.hit = AUTOMATIC_HIT;
+    }
+
     if (z_type == ZAP_BREATHE_FIRE && you.species == SP_RED_DRACONIAN
         && !is_monster)
     {
@@ -816,6 +828,95 @@ void bolt::fake_flavour()
         flavour = static_cast<beam_type>(random_range(BEAM_FIRE, BEAM_ACID));
     else if (real_flavour == BEAM_CHAOS)
         flavour = _chaos_beam_flavour(this);
+    else if (real_flavour == BEAM_CHAOTIC)
+    {
+        name = pierce ? "chaotic beam of " : is_explosion ? "chaotic blast of " : "chaotic shard of ";
+        switch (random2(12))
+        {
+        case 0:
+            flavour = BEAM_FIRE;
+            colour = RED;
+            name += "fire";
+            break;
+        case 1:
+            flavour = BEAM_COLD;
+            colour = WHITE;
+            name += "cold";
+            break;
+        case 2:
+            flavour = BEAM_ELECTRICITY;
+            colour = LIGHTCYAN;
+            name += "lightning";
+            break;
+        case 3:
+            if (one_chance_in(4))
+            {
+                flavour = BEAM_MIASMA;
+                colour = BLACK;
+                name += "miasma";
+            }
+            else if (one_chance_in(3))
+            {
+                flavour = BEAM_POISON_ARROW;
+                colour = LIGHTGREEN;
+                name += "strong poison";
+            }
+            else
+            {
+                flavour = BEAM_POISON;
+                colour = LIGHTGREEN;
+                name += "venom";
+            }
+            break;
+        case 4:
+            flavour = BEAM_NEG;
+            colour = DARKGREY;
+            name += "negative energy";
+            break;
+        case 5:
+            flavour = BEAM_ACID;
+            colour = YELLOW;
+            name += "acid";
+            break;
+        case 6:
+            flavour = BEAM_WATER;
+            colour = LIGHTBLUE;
+            name += "water";
+            break;
+        case 7:
+            flavour = BEAM_DAMNATION;
+            colour = LIGHTRED;
+            name += "hellfire";
+            break;
+        case 8:
+            flavour = BEAM_HOLY;
+            colour = ETC_HOLY;
+            name += "blessed fire";
+            break;
+        case 9:
+            flavour = BEAM_SILVER_FRAG;
+            colour = LIGHTGRAY;
+            name += "silver fragments";
+            break;
+        case 10:
+            flavour = BEAM_LAVA;
+            colour = RED;
+            name += "magma";
+            break;
+        case 11:
+            flavour = BEAM_FREEZE;
+            colour = WHITE;
+            name += "ice";
+            break;
+        case 12:
+            flavour = BEAM_DEVASTATION;
+            colour = LIGHTMAGENTA;
+            name += "seething chaos";
+            break;
+        default:
+            break;
+        }
+    }
     else if (real_flavour == BEAM_CRYSTAL && flavour == BEAM_CRYSTAL)
     {
         flavour = random_choose(BEAM_FIRE, BEAM_COLD);
@@ -2747,6 +2848,7 @@ bool bolt::is_fiery() const
 bool bolt::can_burn_trees() const
 {
     // XXX: rethink this
+    // BCADDO: Change this; since it makes little sense with chaos staff.
     return origin_spell == SPELL_LIGHTNING_BOLT
            || origin_spell == SPELL_BOLT_OF_FIRE
            || origin_spell == SPELL_BOLT_OF_MAGMA
@@ -6774,6 +6876,7 @@ static string _beam_type_name(beam_type type)
     case BEAM_FREEZE:                return "ice";
     case BEAM_DEVASTATION:           return "devastation";
     case BEAM_RANDOM:                return "random";
+    case BEAM_CHAOTIC:               // fallthrough
     case BEAM_CHAOS:                 return "chaos";
     case BEAM_SLOW:                  return "slow";
     case BEAM_HASTE:                 return "haste";

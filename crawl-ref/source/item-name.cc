@@ -1228,8 +1228,8 @@ static const char* staff_facet_name(int stafftype)
     case SPSTF_FLAY:        return "flayed ";
     case SPSTF_WARP:        return "warped ";
     case SPSTF_ENERGY:      return "energetic ";
-    case SPSTF_REAVER:      return "Reaver's ";
-    case SPSTF_WIZARD:      return "Wizard's ";
+    case SPSTF_REAVER:      return "reaver's ";
+    case SPSTF_WIZARD:      return "wizard's ";
     case SPSTF_SCOPED:      return "scoped ";
     case SPSTF_MENACE:      return "menacing ";
     case SPSTF_ACCURACY:    return "accurate ";

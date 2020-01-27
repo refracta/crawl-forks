@@ -1086,32 +1086,29 @@ static special_armour_type _generate_armour_ego(const item_def& item,
 static facet_type _generate_staff_facet(const item_def& item,
     int item_level)
 {
-    if (item.brand != SPSTF_NORMAL && item.brand < NUM_SPECIAL_STAVES)
-        return static_cast<facet_type>(item.brand);
-
     if (x_chance_in_y(500 - item_level, 500))
         return static_cast<facet_type>(SPSTF_NORMAL);
 
     if (item.sub_type == STAFF_SUMMONING)
     {
-            // Total Weight: 26 (Arbitrary).
-        return random_choose_weighted(15, SPSTF_SHIELD,
+            // Total Weight: 17 (Arbitrary).
+        return random_choose_weighted( 6, SPSTF_SHIELD,
                                        4, SPSTF_WIZARD,
                                        4, SPSTF_REAVER,
                                        3, SPSTF_ENERGY);
     }
 
-        // Total Weight: 61 (Arbitrary).
-    return random_choose_weighted(15, SPSTF_SHIELD,
-                                  15, SPSTF_FLAY,
-                                   6, SPSTF_MENACE,
-                                   6, SPSTF_ACCURACY,
+        // Total Weight: 42 (Arbitrary).
+    return random_choose_weighted( 8, SPSTF_MENACE,
+                                   6, SPSTF_SHIELD,
+                                   6, SPSTF_FLAY,
                                    4, SPSTF_SCOPED,
                                    4, SPSTF_WIZARD,
                                    4, SPSTF_REAVER,
                                    3, SPSTF_ENERGY,
-                                   3, SPSTF_WARP,
-                                   1, SPSTF_CHAOS);
+                                   3, SPSTF_ACCURACY,
+                                   2, SPSTF_WARP,
+                                   2, SPSTF_CHAOS);
 }
 
 bool is_armour_brand_ok(int type, int brand, bool strict)

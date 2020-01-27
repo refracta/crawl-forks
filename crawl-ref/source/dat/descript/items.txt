@@ -1086,11 +1086,12 @@ A staff that increases the power of earth spells cast by its wielder. If the
 wielder is skilled in Evocations and Earth magic, they can crush those struck
 by it.
 %%%%
-staff of energy
+staff of transmutation
 
-A staff that allows its wielder to control magical energy. It allows the
-wielder to cast spells without gaining hunger, and to channel ambient magical
-energy to restore their reserves of magic.
+A staff that increases the power of transmutation spells cast by its wielder.
+If the wielder is skilled in Evocations and Transmutation Magic, the staff can
+come alive with tendrils striking and constricting enemies after the user's 
+melee.
 %%%%
 staff of fire
 
@@ -1109,9 +1110,11 @@ staff of power
 
 A staff that provides an increased reservoir of magical power to its wielder.
 %%%%
-staff of summoning
+staff of life
 
-A staff that increases the power of summonings cast by its wielder.
+A staff that increases the power of summonings cast by its wielder; those touched
+by the end of the staff by a sufficiently skilled wielder will be healed and if
+summoned, have their time on this plane extended.
 %%%%
 staff of wizardry
 

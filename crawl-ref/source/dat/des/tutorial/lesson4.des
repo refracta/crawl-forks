@@ -34,9 +34,9 @@ ORIENT:  encompass
 KFEAT:   ABCDEF = .
 COLOUR:  ABCDEFdefg = lightblue
 FTILE:   ABCDEFdefg = tutorial_pad
-ITEM:    randbook numspells:2 spells:magic_dart&mephitic_cloud title:Introduction_to_Spellcasting owner:player
+ITEM:    randbook numspells:2 spells:sting&mephitic_cloud title:Introduction_to_Spellcasting owner:player
 ITEM:    ring of magical power not_cursed
-ITEM:    staff of wizardry not_cursed
+ITEM:    staff of poison not_cursed
 ITEM:    ration
 MONS:    training dummy
 MONS:    bat skeleton, goblin skeleton

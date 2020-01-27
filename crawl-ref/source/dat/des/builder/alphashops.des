@@ -88,7 +88,7 @@
        "eveningstar", "ring of evasion", "executioner's axe",
        "potion of experience q:1", "scroll of enchantment", "staff of earth",
        "wand of enslavement", "book of the earth",
-       "manual of earth magic", "staff of energy" }
+       "manual of earth magic" }
 
       elseif s == "F" then i = { "book of fire", "book of flames", "flail",
        "book of frost", "falchion", "fan of gales", "fire dragon scales",
@@ -117,7 +117,7 @@
       elseif s == "K" then i = { "any" }
 
       elseif s == "L" then i = { "lamp of fire", "manual of long blades",
-       "leather armour", "long sword",
+       "leather armour", "long sword", "staff of life",
        "potion of lignification", "lajatang", "longbow", "lightning rod" }
 
       elseif s == "M" then i = { "book of minor magic", "book of misfortune",
@@ -134,8 +134,7 @@
        "pearl dragon scales", "phantom mirror", "phial of floods",
        "plate armour", "ring of poison resistance", "manual of polearms",
        "wand of polymorph", "ring of positive energy", "ring of protection",
-       "manual of poison magic", "staff of power",
-       "ring of protection from magic",
+       "manual of poison magic", "ring of protection from magic",
        "staff of poison" }
 
       elseif s == "Q" then i = { "quarterstaff", "quicksilver dragon scales",
@@ -155,7 +154,7 @@
        "scroll of summoning", "scythe", "book of spatial translocations",
        "scroll of silence", "scutum", "shortbow", "steam dragon scales",
 	   "shadow dragon scales", "storm dragon scales", "swamp dragon scales",
-	   "manual of short blades", "staff of summoning", "manual of slings",
+	   "manual of short blades", "manual of slings",
 	   "manual of shields", "manual of spellcasting", "manual of summonings",
 	   "wand of scattershot" }
 
@@ -163,14 +162,14 @@
        "book of transfigurations", "ring of teleportation",
        "scroll of teleportation", "triple sword", "triple crossbow",
        "troll leather", "manual of translocations",
-	   "manual of transmutations", "trident" }
+	   "manual of transmutations", "trident" , "staff of transmutation"}
 
       elseif s == "U" then i = { "book of unlife", "manual of unarmed combat" }
 
       elseif s == "V" then i = { "scroll of vulnerability" }
 
       elseif s == "W" then i = { "ring of wizardry", "book of the warp", "whip",
-       "war axe", "staff of wizardry", "manual of whips and flails" }
+       "war axe", "manual of whips and flails" }
 
       elseif s == "X" then i = { "any" }
 
