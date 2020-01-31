@@ -686,6 +686,7 @@ struct chaos_effect
     function<bool(attack &attack)> misc_effect;
 };
 
+// Total Weight: 69 (Arbitrary)
 static const vector<chaos_effect> chaos_effects = {
     {
         "clone", 1, [](const actor &d) {

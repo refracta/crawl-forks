@@ -1124,13 +1124,12 @@ static void _adjust_brand(item_def &item, bool divine)
             SK_LAST_MAGIC);
         if (best_spell_skill == SK_CHARMS && !one_chance_in(3))
             item.brand = SPSTF_SHIELD;
-        if (best_spell_skill == SK_HEXES && !one_chance_in(3))
+        else if (best_spell_skill == SK_HEXES && !one_chance_in(3))
             item.brand = SPSTF_FLAY;
-        if (best_spell_skill == SK_TRANSLOCATIONS && !one_chance_in(3))
+        else if (best_spell_skill == SK_TRANSLOCATIONS && !one_chance_in(3))
             item.brand = SPSTF_WARP;
         else
-            item.brand = SPSTF_CHAOS;
-            //reroll_brand(item, ITEM_LEVEL);
+            reroll_brand(item, ITEM_LEVEL);
         return;
     }
 

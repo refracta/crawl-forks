@@ -46,7 +46,10 @@
 #include "message.h"
 #include "misc.h"
 #include "mon-behv.h"
+#include "mon-cast.h"
+#include "mon-clone.h"
 #include "mon-death.h"
+#include "mon-ench.h"
 #include "mon-place.h"
 #include "mon-poly.h"
 #include "mon-util.h"
@@ -62,6 +65,7 @@
 #include "spl-clouds.h"
 #include "spl-damage.h"
 #include "spl-goditem.h"
+#include "spl-miscast.h"
 #include "spl-monench.h"
 #include "spl-other.h"
 #include "spl-summoning.h"
@@ -514,9 +518,9 @@ void zappy(zap_type z_type, int power, bool is_monster, bolt &pbolt)
     if (pbolt.origin_spell == SPELL_NO_SPELL)
         pbolt.origin_spell = zap_to_spell(z_type);
 
-    if (you.staff() && staff_enhances_spell(you.staff(), pbolt.origin_spell))
+    if (!is_monster && you.staff() && staff_enhances_spell(you.staff(), pbolt.origin_spell))
     {
-        if (you.staff()->brand == SPSTF_CHAOS)
+        if (you.staff()->brand == SPSTF_CHAOS && !one_chance_in(3))
         {
             pbolt.real_flavour = BEAM_CHAOTIC;
             pbolt.flavour = BEAM_CHAOTIC;
@@ -524,6 +528,8 @@ void zappy(zap_type z_type, int power, bool is_monster, bolt &pbolt)
         }
         if (you.staff()->brand == SPSTF_ACCURACY)
             pbolt.hit = AUTOMATIC_HIT;
+        if (you.staff()->brand == SPSTF_MENACE)
+            pbolt.damage.num *= 1.5;
     }
 
     if (z_type == ZAP_BREATHE_FIRE && you.species == SP_RED_DRACONIAN
@@ -834,14 +840,32 @@ void bolt::fake_flavour()
         switch (random2(12))
         {
         case 0:
-            flavour = BEAM_FIRE;
-            colour = RED;
-            name += "fire";
+            if (coinflip())
+            {
+                flavour = BEAM_FIRE;
+                colour = RED;
+                name += "fire";
+            }
+            else
+            {
+                flavour = BEAM_LAVA;
+                colour = RED;
+                name += "magma";
+            }
             break;
         case 1:
-            flavour = BEAM_COLD;
-            colour = WHITE;
-            name += "cold";
+            if (coinflip())
+            {
+                flavour = BEAM_COLD;
+                colour = WHITE;
+                name += "cold";
+            }
+            else
+            {
+                flavour = BEAM_FREEZE;
+                colour = WHITE;
+                name += "ice";
+            }
             break;
         case 2:
             flavour = BEAM_ELECTRICITY;
@@ -849,7 +873,7 @@ void bolt::fake_flavour()
             name += "lightning";
             break;
         case 3:
-            if (one_chance_in(4))
+            if (one_chance_in(4) && !is_good_god(you.religion))
             {
                 flavour = BEAM_MIASMA;
                 colour = BLACK;
@@ -871,12 +895,15 @@ void bolt::fake_flavour()
         case 4:
             flavour = BEAM_NEG;
             colour = DARKGREY;
-            name += "negative energy";
-            break;
+            if (!is_good_god(you.religion))
+            {
+                name += "negative energy";
+                break; // Fallthrough if you're with a good god.
+            }
         case 5:
-            flavour = BEAM_ACID;
-            colour = YELLOW;
-            name += "acid";
+            flavour = BEAM_SILVER_FRAG;
+            colour = LIGHTGRAY;
+            name += "silver fragments";
             break;
         case 6:
             flavour = BEAM_WATER;
@@ -886,34 +913,31 @@ void bolt::fake_flavour()
         case 7:
             flavour = BEAM_DAMNATION;
             colour = LIGHTRED;
-            name += "hellfire";
-            break;
+            if (!is_good_god(you.religion))
+            {
+                name += "hellfire";
+                break; // Fallthrough if you're with a good god.
+            }
         case 8:
             flavour = BEAM_HOLY;
             colour = ETC_HOLY;
             name += "blessed fire";
             break;
         case 9:
-            flavour = BEAM_SILVER_FRAG;
-            colour = LIGHTGRAY;
-            name += "silver fragments";
+            flavour = BEAM_ACID;
+            colour = YELLOW;
+            name += "acid";
             break;
         case 10:
-            flavour = BEAM_LAVA;
-            colour = RED;
-            name += "magma";
-            break;
-        case 11:
-            flavour = BEAM_FREEZE;
-            colour = WHITE;
-            name += "ice";
-            break;
-        case 12:
+        default:
             flavour = BEAM_DEVASTATION;
             colour = LIGHTMAGENTA;
-            name += "seething chaos";
+            name += "destruction";
             break;
-        default:
+        case 11:
+            flavour = BEAM_WAND_HEALING;
+            colour = ETC_HEAL;
+            name += "healing mist";
             break;
         }
     }
@@ -2627,6 +2651,24 @@ void bolt::affect_endpoint()
         return;
     }
 
+    if (real_flavour == BEAM_CHAOTIC)
+    {
+        if (flavour == BEAM_WATER || flavour == BEAM_LAVA)
+        {
+            bool lava = (flavour == BEAM_LAVA);
+            int dur = damage.roll();
+            if (grd(pos()) == DNGN_FLOOR)
+                temp_change_terrain(pos(), lava ? DNGN_LAVA : DNGN_SHALLOW_WATER,
+                    random_range(dur * 2, dur * 3), TERRAIN_CHANGE_FLOOD);
+            for (rectangle_iterator ri(pos(), lava ? 1 : 2); ri; ++ri)
+            {
+                if ((grd(*ri) == DNGN_FLOOR) && ((lava && one_chance_in(3)) || !lava && !one_chance_in(3)))
+                    temp_change_terrain(*ri, lava ? DNGN_LAVA : DNGN_SHALLOW_WATER,
+                        random_range(dur * 2, dur * 3), TERRAIN_CHANGE_FLOOD);
+            }
+        }
+    }
+
     if (!is_explosion && !noise_generated && loudness)
     {
         // Digging can target squares on the map boundary, though it
@@ -2847,16 +2889,13 @@ bool bolt::is_fiery() const
 /// Can this bolt burn trees it hits?
 bool bolt::can_burn_trees() const
 {
-    // XXX: rethink this
-    // BCADDO: Change this; since it makes little sense with chaos staff.
-    return origin_spell == SPELL_LIGHTNING_BOLT
-           || origin_spell == SPELL_BOLT_OF_FIRE
-           || origin_spell == SPELL_BOLT_OF_MAGMA
-           || origin_spell == SPELL_FIREBALL
-           || origin_spell == SPELL_INNER_FLAME
-           || origin_spell == SPELL_IGNITION
-           || origin_spell == SPELL_FIRE_STORM
-           || origin_spell == SPELL_CONJURE_BALL_LIGHTNING;
+    bool flavour_match = (flavour == BEAM_FIRE);
+    flavour_match |= (flavour == BEAM_ELECTRICITY);
+    flavour_match |= (flavour == BEAM_LAVA);
+
+    bool enough_dam = (damage.size * damage.num) > 30;
+
+    return flavour_match && enough_dam;
 }
 
 bool bolt::can_affect_wall(const coord_def& p, bool map_knowledge) const
@@ -4057,6 +4096,298 @@ static pie_effect _random_pie_effect(const actor &defender)
     return *random_choose_weighted(weights);
 }
 
+enum chaotic_buff_type
+{
+    CB_CLONE      = 0x0001,
+    CB_HASTE      = 0x0002,
+    CB_POLY       = 0x0004,
+    CB_MIGHT      = 0x0008,
+    CB_AGIL       = 0x0010,
+    CB_BRILL      = 0x0020,
+    CB_INVIS      = 0x0040,
+    CB_SHAPESHIFT = 0x0080,
+    CB_ICE_ARMOUR = 0x0100,
+    CB_SWIFT      = 0x0200,
+    CB_REGEN      = 0x0400,
+    CB_BERSERK    = 0x0800,
+};
+
+enum chaotic_debuff_type
+{
+    CD_PETRIFY    = 0x00001,
+    CD_MISCAST    = 0x00002,
+    CD_POLY       = 0x00004,
+    CD_STICKY     = 0x00008,
+    CD_FROZEN     = 0x00010,
+    CD_SLOW       = 0x00020,
+    CD_CONFUSE    = 0x00040,
+    CD_FEAR       = 0x00080,
+    CD_MUTE       = 0x00100,
+    CD_BANISH     = 0x00200,
+    CD_BLINK      = 0x00400,
+    CD_ENSNARE    = 0x00800,
+    CD_VULN       = 0x01000,
+    CD_FLAY       = 0x02000,
+    CD_STAT_DRAIN = 0x04000,
+    CD_WRETCHED   = 0x08000,
+    CD_BLIND      = 0x10000,
+    CD_BARBS      = 0x20000,
+};
+
+static void _chaotic_buff(actor* act, int dur, actor * attacker)
+{
+    // Total Weight: 118 (Arbitrary)
+    chaotic_buff_type buff = random_choose_weighted(
+         1,  CB_CLONE,
+        20,  CB_HASTE,
+         8,  CB_POLY,
+        10,  CB_MIGHT,
+        10,  CB_AGIL,
+        10,  CB_BRILL,
+        20,  CB_INVIS,
+         4,  CB_SHAPESHIFT,
+        12,  CB_ICE_ARMOUR,
+        10,  CB_SWIFT,
+         8,  CB_REGEN,
+         5,  CB_BERSERK);
+
+    switch (buff)
+    {
+    case CB_CLONE:
+        if (!act->is_player())
+        {
+            monster * clone = clone_mons(act->as_monster(), true);
+            if (clone)
+            {
+                if (attacker->is_player())
+                    mprf("You duplicate %s.", act->name(DESC_THE).c_str());
+                else
+                    mprf("%s duplicates %s.", attacker->name(DESC_THE).c_str(), act->name(DESC_THE).c_str());
+                xom_is_stimulated(clone->friendly() ? 12 : 25);
+                // Monsters being cloned is interesting.
+            }
+        }
+        break;
+    case CB_HASTE:
+        if (act->is_player())
+            you.increase_duration(DUR_HASTE, dur);
+        else
+            act->as_monster()->add_ench(mon_enchant(ENCH_HASTE, 0, attacker, dur * BASELINE_DELAY));
+        break;
+    case CB_AGIL:
+        if (act->is_player())
+            you.increase_duration(DUR_AGILITY, dur);
+        else
+            act->as_monster()->add_ench(mon_enchant(ENCH_AGILE, 0, attacker, dur * BASELINE_DELAY));
+        break;
+    case CB_BRILL:
+        if (act->is_player())
+            you.increase_duration(DUR_BRILLIANCE, dur);
+        else
+            act->as_monster()->add_ench(mon_enchant(ENCH_EMPOWERED_SPELLS, 0, attacker, dur * BASELINE_DELAY));
+        break;
+    case CB_ICE_ARMOUR:
+        if (act->is_player())
+            you.increase_duration(DUR_ICY_ARMOUR, dur);
+        else
+            act->as_monster()->add_ench(mon_enchant(ENCH_OZOCUBUS_ARMOUR, dur / 3, attacker, dur * BASELINE_DELAY));
+        break;
+    case CB_INVIS:
+        if (act->is_player())
+            you.increase_duration(DUR_INVIS, dur);
+        else
+            act->as_monster()->add_ench(mon_enchant(ENCH_INVIS, 0, attacker, dur * BASELINE_DELAY));
+        break;
+    case CB_MIGHT:
+        if (act->is_player())
+            you.increase_duration(DUR_MIGHT, dur);
+        else
+            act->as_monster()->add_ench(mon_enchant(ENCH_MIGHT, 0, attacker, dur * BASELINE_DELAY));
+        break;
+    case CB_POLY:
+        act->polymorph(dur * 2, false);
+        break;
+    case CB_REGEN:
+        if (act->is_player())
+            you.increase_duration(DUR_REGENERATION, dur);
+        else
+            act->as_monster()->add_ench(mon_enchant(ENCH_REGENERATION, 0, attacker, dur * BASELINE_DELAY));
+        break;
+    case CB_SHAPESHIFT:
+        if (act->is_player())
+            you.malmutate("chaos magic");
+        else
+            act->as_monster()->add_ench(mon_enchant(dur > 30 ? ENCH_GLOWING_SHAPESHIFTER : ENCH_SHAPESHIFTER, 0, attacker, 1));
+        act->polymorph(dur * 3, false);
+        break;
+    case CB_SWIFT:
+        if (act->is_player())
+            you.increase_duration(DUR_SWIFTNESS, dur);
+        else
+            act->as_monster()->add_ench(mon_enchant(ENCH_SWIFT, 0, attacker, dur * BASELINE_DELAY));
+        break;
+    case CB_BERSERK:
+        if (act->is_player())
+            you.go_berserk(false, false);
+        else
+            act->as_monster()->go_berserk(false, false);
+        break;
+    }
+}
+
+static void _chaotic_debuff(actor* act, int dur, actor * attacker)
+{
+    chaotic_debuff_type debuff = random_choose_weighted(
+        10,  CD_PETRIFY,
+        60,  CD_MISCAST,
+         4,  CD_POLY,
+        16,  CD_STICKY,
+         8,  CD_FROZEN,
+        16,  CD_SLOW,
+        16,  CD_CONFUSE,
+         8,  CD_FEAR,
+         8,  CD_MUTE,
+         6,  CD_BANISH,
+        18,  CD_BLINK,
+         8,  CD_ENSNARE,
+        24,  CD_VULN,
+        18,  CD_FLAY,
+        12,  CD_STAT_DRAIN,
+        12,  CD_WRETCHED,
+         8,  CD_BLIND,
+        16,  CD_BARBS);
+
+    switch (debuff)
+    {
+    case CD_BANISH:
+        act->banish(attacker, "", 0, true);
+        break;
+    case CD_BARBS:
+        if (act->is_player())
+            you.increase_duration(DUR_BARBS, dur);
+        else
+            act->as_monster()->add_ench(mon_enchant(ENCH_BARBS, 0, attacker, dur * BASELINE_DELAY));
+        break;
+    case CD_BLIND:
+        if (!act->is_player())
+            act->as_monster()->add_ench(mon_enchant(ENCH_BLIND, 0, attacker, dur * BASELINE_DELAY));
+        // BCADDO: If player blind is added put here.
+        break;
+    case CD_BLINK:
+        act->blink();
+        break;
+    case CD_CONFUSE:
+        if (act->is_player())
+            you.increase_duration(DUR_CONF, dur);
+        else
+            act->as_monster()->add_ench(mon_enchant(ENCH_CONFUSION, 0, attacker, dur * BASELINE_DELAY));
+        break;
+    case CD_ENSNARE:
+        ensnare(act);
+        break;
+    case CD_FEAR:
+        if (!attacker->is_player())
+            attacker->as_monster()->add_ench(ENCH_FEAR_INSPIRING);
+        if (act->is_player())
+            you.increase_duration(DUR_AFRAID, dur);
+        else
+            act->as_monster()->add_ench(mon_enchant(ENCH_FEAR, 0, attacker, dur * BASELINE_DELAY));
+        break;
+    case CD_FLAY:
+        dur = div_rand_round(dur, 2);
+        flay(*attacker->as_monster(), *act, dur);
+        break;
+    case CD_FROZEN:
+        if (act->is_player())
+            you.increase_duration(DUR_FROZEN, dur);
+        else
+            act->as_monster()->add_ench(mon_enchant(ENCH_FROZEN, 0, attacker, dur * BASELINE_DELAY));
+        break;
+    case CD_MISCAST:
+        MiscastEffect(act, attacker, { miscast_source::spell },
+            spschool::random, max(1, min(div_rand_round(dur, 10), 3)), "chaos magic",
+            nothing_happens::NEVER, 0, "", false);
+        break;
+    case CD_MUTE:
+        if (act->is_player())
+            you.increase_duration(DUR_SILENCE, dur);
+        else
+        {
+            if (one_chance_in(3))
+                act->as_monster()->add_ench(mon_enchant(ENCH_SILENCE, 0, attacker, dur * BASELINE_DELAY));
+            else
+                act->as_monster()->add_ench(mon_enchant(ENCH_MUTE, 0, attacker, dur * BASELINE_DELAY));
+        }
+        invalidate_los();
+        break;
+    case CD_PETRIFY:
+        if (act->is_player())
+            you.increase_duration(DUR_PETRIFYING, 3 + random2(5));
+        else
+            act->as_monster()->add_ench(mon_enchant(ENCH_PETRIFYING, 0, attacker, 30 + random2(50)));
+        break;
+    case CD_POLY:
+        act->polymorph(dur * 2, false);
+        break;
+    case CD_SLOW:
+        if (act->is_player())
+            you.increase_duration(DUR_SLOW, dur);
+        else
+            act->as_monster()->add_ench(mon_enchant(ENCH_SLOW, 0, attacker, dur * BASELINE_DELAY));
+        break;
+    case CD_STAT_DRAIN:
+        if (act->is_player())
+            you.drain_stat(STAT_RANDOM, 1 + random2(2));
+        else
+            act->as_monster()->drain_exp(attacker, false, div_rand_round(dur, 8));
+        break;
+    case CD_STICKY:
+        if (act->is_player())
+            you.increase_duration(DUR_LIQUID_FLAMES, dur);
+        else
+            act->as_monster()->add_ench(mon_enchant(ENCH_STICKY_FLAME, 0, attacker, dur * BASELINE_DELAY));
+        break;
+    case CD_VULN:
+        if (act->is_player())
+        {
+            duration_type vuln_type;
+            switch (random2(3))
+            {
+            case 0: vuln_type = DUR_FIRE_VULN;
+            case 1: vuln_type = DUR_COLD_VULN;
+            case 2: vuln_type = DUR_ELEC_VULN;
+            case 3: vuln_type = DUR_POISON_VULN;
+            case 4: vuln_type = DUR_PHYS_VULN;
+            }
+            you.increase_duration(vuln_type, dur);
+        }
+        else
+        {
+            enchant_type vuln_type;
+            switch (random2(3))
+            {
+            case 0: vuln_type = ENCH_FIRE_VULN;
+            case 1: vuln_type = ENCH_COLD_VULN;
+            case 2: vuln_type = ENCH_ELEC_VULN;
+            case 3: vuln_type = ENCH_POISON_VULN;
+            case 4: vuln_type = ENCH_PHYS_VULN;
+            }
+            act->as_monster()->add_ench(mon_enchant(vuln_type, 0, attacker, dur * BASELINE_DELAY));
+        }
+        break;
+    case CD_WRETCHED:
+        if (act->is_player())
+        {
+            int num_mutations = 1 + random2(3);
+            for (int i = 0; i < num_mutations; ++i)
+                temp_mutate(RANDOM_CORRUPT_MUTATION, "chaos magic");
+        }
+        else
+            act->as_monster()->add_ench(mon_enchant(ENCH_WRETCHED, 0, attacker, dur * BASELINE_DELAY));
+        break;
+    }
+}
+
 void bolt::affect_player()
 {
     hit_count[MID_PLAYER]++;
@@ -4078,6 +4409,16 @@ void bolt::affect_player()
     {
         tracer_affect_player();
         return;
+    }
+
+    if (real_flavour == BEAM_CHAOTIC && one_chance_in(3))
+    {
+        int dur = damage.roll();
+        dur += damage.size;
+        if (coinflip())
+            _chaotic_buff(&you, dur, actor_by_mid(source_id));
+        else
+            _chaotic_debuff(&you, dur, actor_by_mid(source_id));
     }
 
     // Trigger an interrupt, so travel will stop on misses which
@@ -5190,6 +5531,18 @@ void bolt::affect_monster(monster* mon)
         enchantment_affect_monster(mon);
         return;
     }
+
+    if (real_flavour == BEAM_CHAOTIC) //&& one_chance_in(3))
+    {
+        int dur = damage.roll();
+        dur *= 7 + random2(8);
+
+        /*if (coinflip())
+            _chaotic_buff(mon, dur, actor_by_mid(source_id));
+        else*/
+            _chaotic_debuff(mon, dur, actor_by_mid(source_id));
+    }
+        
 
     if (is_explosion && !in_explosion_phase)
     {

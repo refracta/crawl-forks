@@ -3122,6 +3122,8 @@ tileidx_t tileidx_bolt(const bolt &bolt)
     const coord_def diff = bolt.target - bolt.source;
     const int dir = _tile_bolt_dir(diff.x, diff.y);
 
+    // BCADDO: Chaos Shard variations here.
+
     switch (col)
     {
     case WHITE:

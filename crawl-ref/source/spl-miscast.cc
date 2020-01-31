@@ -259,8 +259,11 @@ void MiscastEffect::do_miscast()
     {
         sp_type = school;
         if (sp_type == spschool::random)
-            sp_type = spschools_type::exponent(random2(SPSCHOOL_LAST_EXPONENT + 1));
+            sp_type = spschools_type::exponent(random2(SPSCHOOL_LAST_EXPONENT));
     }
+
+    if (sp_type == spschool::evocation)
+        sp_type = spschool::charms; // Should never happen, but just in case.
 
     if (level != -1)
         severity = level;
