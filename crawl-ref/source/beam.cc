@@ -4299,7 +4299,7 @@ static void _chaotic_debuff(actor* act, int dur, actor * attacker)
     switch (debuff)
     {
     case CD_BANISH:
-        act->banish(attacker, "", 0, true);
+        act->banish(attacker);
         break;
     case CD_BARBS:
         if (player && !you.get_mutation_level(MUT_GHOST))
@@ -4372,7 +4372,7 @@ static void _chaotic_debuff(actor* act, int dur, actor * attacker)
         mprf(player ? MSGCH_WARN : MSGCH_MONSTER_DAMAGE, "Chaotic magic lashes out at %s.",
             player ? "you" : act->name(DESC_THE).c_str());
         MiscastEffect(act, attacker, { miscast_source::spell },
-            spschool::random, max(1, min(div_rand_round(dur, 10), 3)), "chaotic magic",
+            spschool::random, max(1, min(div_rand_round(dur, 100), 3)), "chaotic magic",
             nothing_happens::NEVER, 0, "", false);
         break;
     case CD_MUTE:
@@ -4507,16 +4507,6 @@ void bolt::affect_player()
     {
         tracer_affect_player();
         return;
-    }
-
-    if (real_flavour == BEAM_CHAOTIC && one_chance_in(3))
-    {
-        int dur = damage.roll();
-        dur += damage.size;
-        if (coinflip())
-            _chaotic_buff(&you, dur, actor_by_mid(source_id));
-        else
-            _chaotic_debuff(&you, dur, actor_by_mid(source_id));
     }
 
     // Trigger an interrupt, so travel will stop on misses which
@@ -4697,6 +4687,15 @@ void bolt::affect_player()
     // what about acid?
     you.expose_to_element(flavour, 2, false);
 
+    if (real_flavour == BEAM_CHAOTIC && one_chance_in(3))
+    {
+        int dur = damage.roll();
+        dur += damage.size;
+        if (coinflip())
+            _chaotic_buff(&you, dur, actor_by_mid(source_id));
+        else
+            _chaotic_debuff(&you, dur, actor_by_mid(source_id));
+    }
 
     // Manticore spikes
     if (origin_spell == SPELL_THROW_BARBS && final_dam > 0)
@@ -5628,19 +5627,7 @@ void bolt::affect_monster(monster* mon)
         // no to-hit check
         enchantment_affect_monster(mon);
         return;
-    }
-
-    if (real_flavour == BEAM_CHAOTIC) //&& one_chance_in(3))
-    {
-        int dur = damage.roll();
-        dur *= 7 + random2(8);
-
-        /*if (coinflip())
-            _chaotic_buff(mon, dur, actor_by_mid(source_id));
-        else*/
-            _chaotic_debuff(mon, dur, actor_by_mid(source_id));
-    }
-        
+    }    
 
     if (is_explosion && !in_explosion_phase)
     {
@@ -5813,6 +5800,18 @@ void bolt::affect_monster(monster* mon)
 
     // Apply flavoured specials.
     mons_adjust_flavoured(mon, *this, postac, true);
+
+    // Apply chaos effects.
+    if (mon->alive() && real_flavour == BEAM_CHAOTIC && one_chance_in(3))
+    {
+        int dur = damage.roll();
+        dur *= 7 + random2(8);
+
+        if (coinflip())
+            _chaotic_buff(mon, dur, actor_by_mid(source_id));
+        else
+            _chaotic_debuff(mon, dur, actor_by_mid(source_id));
+    }
 
     // mons_adjust_flavoured may kill the monster directly.
     if (mon->alive())
