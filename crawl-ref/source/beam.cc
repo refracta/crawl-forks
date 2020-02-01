@@ -4150,11 +4150,13 @@ static void _chaotic_buff(actor* act, int dur, actor * attacker)
         10,  CB_SWIFT,
          8,  CB_REGEN,
          5,  CB_BERSERK);
+    
+    bool player = act->is_player();
 
     switch (buff)
     {
     case CB_CLONE:
-        if (!act->is_player())
+        if (!player)
         {
             monster * clone = clone_mons(act->as_monster(), true);
             if (clone)
@@ -4169,65 +4171,100 @@ static void _chaotic_buff(actor* act, int dur, actor * attacker)
         }
         break;
     case CB_HASTE:
-        if (act->is_player())
+        mprf(player ? MSGCH_DURATION : MSGCH_MONSTER_ENCHANT, "A spark of chaos speeds %s up.", player ? "you" : act->name(DESC_THE).c_str());
+        if (player)
             you.increase_duration(DUR_HASTE, dur);
         else
             act->as_monster()->add_ench(mon_enchant(ENCH_HASTE, 0, attacker, dur * BASELINE_DELAY));
         break;
     case CB_AGIL:
-        if (act->is_player())
+        mprf(player ? MSGCH_DURATION : MSGCH_MONSTER_ENCHANT, "A spark of chaos increases %s%s.",
+            player ? "your agility" : "the reflexes of ", player ? "" : act->name(DESC_THE).c_str());
+        if (player)
             you.increase_duration(DUR_AGILITY, dur);
         else
             act->as_monster()->add_ench(mon_enchant(ENCH_AGILE, 0, attacker, dur * BASELINE_DELAY));
         break;
     case CB_BRILL:
-        if (act->is_player())
+        if (player)
+        {
+            mprf(MSGCH_DURATION, "A spark of chaos makes you feel quite brilliant.");
             you.increase_duration(DUR_BRILLIANCE, dur);
+        }
         else
+        {
+            mprf("The chaos empowers the spells of %s.", act->name(DESC_THE).c_str());
             act->as_monster()->add_ench(mon_enchant(ENCH_EMPOWERED_SPELLS, 0, attacker, dur * BASELINE_DELAY));
+        }
         break;
     case CB_ICE_ARMOUR:
-        if (act->is_player())
+        mprf(player ? MSGCH_DURATION : MSGCH_MONSTER_ENCHANT, "A chaotic chill coats %s in an icy armour.",
+             player ? "you" : act->name(DESC_THE).c_str());
+        if (player)
             you.increase_duration(DUR_ICY_ARMOUR, dur);
         else
             act->as_monster()->add_ench(mon_enchant(ENCH_OZOCUBUS_ARMOUR, dur / 3, attacker, dur * BASELINE_DELAY));
         break;
     case CB_INVIS:
-        if (act->is_player())
+        if (player)
+        {
+            mprf(MSGCH_DURATION, "A chaotic spark makes you fade into invisibility.");
             you.increase_duration(DUR_INVIS, dur);
+        }
         else
+        {
+            mprf("As it is struck, %s flickers %s.", act->name(DESC_THE).c_str(), 
+                 you.can_see_invisible() ? "slightly." : "and vanishes.");
             act->as_monster()->add_ench(mon_enchant(ENCH_INVIS, 0, attacker, dur * BASELINE_DELAY));
+        }
         break;
     case CB_MIGHT:
-        if (act->is_player())
+        if (player)
+        {
+            mprf(MSGCH_DURATION, "You feel mighty as the magic touches you.");
             you.increase_duration(DUR_MIGHT, dur);
+        }
         else
+        {
+            mprf("%s becomes stronger as the magic touches it.", act->name(DESC_THE).c_str());
             act->as_monster()->add_ench(mon_enchant(ENCH_MIGHT, 0, attacker, dur * BASELINE_DELAY));
+        }
         break;
     case CB_POLY:
         act->polymorph(dur * 2, false);
         break;
     case CB_REGEN:
-        if (act->is_player())
+        if (player)
+        {
+            mprf(MSGCH_DURATION, "A lively spark makes your skin crawl.");
             you.increase_duration(DUR_REGENERATION, dur);
+        }
         else
+        {
+            mprf("%s starts to regenerate quickly as life sparks into it.", act->name(DESC_THE).c_str());
             act->as_monster()->add_ench(mon_enchant(ENCH_REGENERATION, 0, attacker, dur * BASELINE_DELAY));
+        }
         break;
     case CB_SHAPESHIFT:
-        if (act->is_player())
+        if (player)
             you.malmutate("chaos magic");
         else
+        {
+            mprf("%s begins to change shapes rapidly.", act->name(DESC_THE).c_str());
             act->as_monster()->add_ench(mon_enchant(dur > 30 ? ENCH_GLOWING_SHAPESHIFTER : ENCH_SHAPESHIFTER, 0, attacker, 1));
+        }
         act->polymorph(dur * 3, false);
         break;
     case CB_SWIFT:
-        if (act->is_player())
+        mprf(player ? MSGCH_DURATION : MSGCH_MONSTER_ENCHANT, "Magical energy makes %s cover ground more quickly.",
+            player ? "you" : act->name(DESC_THE).c_str());
+        if (player)
             you.increase_duration(DUR_SWIFTNESS, dur);
         else
             act->as_monster()->add_ench(mon_enchant(ENCH_SWIFT, 0, attacker, dur * BASELINE_DELAY));
         break;
     case CB_BERSERK:
-        if (act->is_player())
+        if (player)
             you.go_berserk(false, false);
         else
             act->as_monster()->go_berserk(false, false);
@@ -4257,20 +4294,31 @@ static void _chaotic_debuff(actor* act, int dur, actor * attacker)
          8,  CD_BLIND,
         16,  CD_BARBS);
 
+    bool player = act->is_player();
+
     switch (debuff)
     {
     case CD_BANISH:
         act->banish(attacker, "", 0, true);
         break;
     case CD_BARBS:
-        if (act->is_player())
+        if (player && !you.get_mutation_level(MUT_GHOST))
+        {
+            mprf(MSGCH_WARN, "The chaotic magic splinters into barbs that impale your flesh.");
             you.increase_duration(DUR_BARBS, dur);
-        else
+        }
+        else if (!player && !act->as_monster()->is_insubstantial())
+        {
+            mprf("The chaotic magic splinters into barbs that impale %s.", act->name(DESC_THE).c_str());
             act->as_monster()->add_ench(mon_enchant(ENCH_BARBS, 0, attacker, dur * BASELINE_DELAY));
+        }
         break;
     case CD_BLIND:
-        if (!act->is_player())
+        if (!player)
+        {
+            mprf("The scintillating magical residue splatters into the eyes of %s.", act->name(DESC_THE).c_str());
             act->as_monster()->add_ench(mon_enchant(ENCH_BLIND, 0, attacker, dur * BASELINE_DELAY));
+        }
         // BCADDO: If player blind is added put here.
         break;
     case CD_BLINK:
@@ -4278,50 +4326,80 @@ static void _chaotic_debuff(actor* act, int dur, actor * attacker)
         break;
     case CD_CONFUSE:
         if (act->is_player())
+        {
+            mprf(MSGCH_WARN, "Magic seeps into your mind confuses you.");
             you.increase_duration(DUR_CONF, dur);
+        }
         else
+        {
+            mprf("Chaotic magical radiation drives %s to madness.", act->name(DESC_THE).c_str());
             act->as_monster()->add_ench(mon_enchant(ENCH_CONFUSION, 0, attacker, dur * BASELINE_DELAY));
+        }
         break;
     case CD_ENSNARE:
         ensnare(act);
         break;
     case CD_FEAR:
+        if (attacker == act)
+            break; // Afraid of yourself? O_O;
         if (!attacker->is_player())
             attacker->as_monster()->add_ench(ENCH_FEAR_INSPIRING);
         if (act->is_player())
+        {
+            mprf(MSGCH_WARN, "A magical surge fills you with panic, you fear the %s.", attacker->name(DESC_THE).c_str());
             you.increase_duration(DUR_AFRAID, dur);
+        }
         else
+        {
+            mprf("%s cries out in fear of your magic.", act->name(DESC_THE).c_str());
+            noisy(20, act->pos(), act->mid);
             act->as_monster()->add_ench(mon_enchant(ENCH_FEAR, 0, attacker, dur * BASELINE_DELAY));
+        }
         break;
     case CD_FLAY:
         dur = div_rand_round(dur, 2);
         flay(*attacker->as_monster(), *act, dur);
         break;
     case CD_FROZEN:
+        mprf(player ? MSGCH_WARN : MSGCH_MONSTER_ENCHANT, "A chaotic chill freezes %s in place, making %s cover ground more slowly.",
+             player ? "you" : act->name(DESC_THE).c_str(), player ? "you" : act->pronoun(PRONOUN_OBJECTIVE).c_str());
         if (act->is_player())
             you.increase_duration(DUR_FROZEN, dur);
         else
             act->as_monster()->add_ench(mon_enchant(ENCH_FROZEN, 0, attacker, dur * BASELINE_DELAY));
         break;
     case CD_MISCAST:
+        mprf(player ? MSGCH_WARN : MSGCH_MONSTER_DAMAGE, "Chaotic magic lashes out at %s.",
+            player ? "you" : act->name(DESC_THE).c_str());
         MiscastEffect(act, attacker, { miscast_source::spell },
-            spschool::random, max(1, min(div_rand_round(dur, 10), 3)), "chaos magic",
+            spschool::random, max(1, min(div_rand_round(dur, 10), 3)), "chaotic magic",
             nothing_happens::NEVER, 0, "", false);
         break;
     case CD_MUTE:
-        if (act->is_player())
+        if (player)
+        {
+            mpr("You are engulfed in a profound silence.");
             you.increase_duration(DUR_SILENCE, dur);
+        }
         else
         {
             if (one_chance_in(3))
+            {
+                mprf("Glittering chaos makes %s begin to radiant silence.", act->name(DESC_THE).c_str());
                 act->as_monster()->add_ench(mon_enchant(ENCH_SILENCE, 0, attacker, dur * BASELINE_DELAY));
+            }
             else
+            {
+                mprf("Chaos steals away with %s voice.", act->name(DESC_ITS).c_str());
                 act->as_monster()->add_ench(mon_enchant(ENCH_MUTE, 0, attacker, dur * BASELINE_DELAY));
+            }
         }
         invalidate_los();
         break;
     case CD_PETRIFY:
-        if (act->is_player())
+        mprf(player ? MSGCH_DANGER : MSGCH_MONSTER_DAMAGE, "Earth magic residue begins to slowly turns %s to stone.",
+            player ? "you" : act->name(DESC_THE).c_str());
+        if (player)
             you.increase_duration(DUR_PETRIFYING, 3 + random2(5));
         else
             act->as_monster()->add_ench(mon_enchant(ENCH_PETRIFYING, 0, attacker, 30 + random2(50)));
@@ -4330,60 +4408,80 @@ static void _chaotic_debuff(actor* act, int dur, actor * attacker)
         act->polymorph(dur * 2, false);
         break;
     case CD_SLOW:
-        if (act->is_player())
+        if (player)
+        {
+            mprf(MSGCH_WARN, "You feel yourself slow down as chaos touches upon you.");
             you.increase_duration(DUR_SLOW, dur);
+        }
         else
+        {
+            mprf("Chaos touches upon %s, slowing it down.", act->name(DESC_THE).c_str());
             act->as_monster()->add_ench(mon_enchant(ENCH_SLOW, 0, attacker, dur * BASELINE_DELAY));
+        }
         break;
     case CD_STAT_DRAIN:
-        if (act->is_player())
+        if (player)
             you.drain_stat(STAT_RANDOM, 1 + random2(2));
         else
             act->as_monster()->drain_exp(attacker, false, div_rand_round(dur, 8));
         break;
     case CD_STICKY:
-        if (act->is_player())
+        if (player && !you.get_mutation_level(MUT_GHOST))
+        {
+            mprf(MSGCH_WARN, "The chaos reforms as liquid flames that stick to you!");
             you.increase_duration(DUR_LIQUID_FLAMES, dur);
-        else
+        }
+        else if (!player && !act->as_monster()->res_sticky_flame())
+        {
+            mprf(MSGCH_MONSTER_DAMAGE, "The chaos reforms as liquid flames that stick to %s!", act->name(DESC_THE).c_str());
             act->as_monster()->add_ench(mon_enchant(ENCH_STICKY_FLAME, 0, attacker, dur * BASELINE_DELAY));
+        }
         break;
     case CD_VULN:
         if (act->is_player())
         {
-            duration_type vuln_type;
+            duration_type vuln_type = DUR_FIRE_VULN; // Set on initialization to avoid compiler warnings.
             switch (random2(3))
             {
-            case 0: vuln_type = DUR_FIRE_VULN;
-            case 1: vuln_type = DUR_COLD_VULN;
-            case 2: vuln_type = DUR_ELEC_VULN;
-            case 3: vuln_type = DUR_POISON_VULN;
-            case 4: vuln_type = DUR_PHYS_VULN;
+            case 0:                            mprf(MSGCH_WARN, "You feel more vulnerable to fire."); break;
+            case 1: vuln_type = DUR_COLD_VULN; mprf(MSGCH_WARN, "You feel more vulnerable to cold."); break;
+            case 2: vuln_type = DUR_ELEC_VULN; mprf(MSGCH_WARN, "You feel more vulnerable to electric shocks."); break;
+            case 3: if (you.get_mutation_level(MUT_POISON_RESISTANCE) >= 3)
+                         {                              mprf(MSGCH_WARN, "You feel more vulnerable to fire."); }
+                    else { vuln_type = DUR_POISON_VULN; mprf(MSGCH_WARN, "You feel more vulnerable to poison."); } break;
+            case 4: vuln_type = DUR_PHYS_VULN; mprf(MSGCH_WARN, "You feel more vulnerable to physical attacks."); break;
             }
             you.increase_duration(vuln_type, dur);
         }
         else
         {
-            enchant_type vuln_type;
+            enchant_type vuln_type = ENCH_FIRE_VULN; // Set on initialization to avoid compiler warnings.
             switch (random2(3))
             {
-            case 0: vuln_type = ENCH_FIRE_VULN;
-            case 1: vuln_type = ENCH_COLD_VULN;
-            case 2: vuln_type = ENCH_ELEC_VULN;
-            case 3: vuln_type = ENCH_POISON_VULN;
-            case 4: vuln_type = ENCH_PHYS_VULN;
+            case 0:                             mprf(MSGCH_MONSTER_ENCHANT, "%s appears more vulnerable to fire.", act->name(DESC_THE).c_str()); break;
+            case 1: vuln_type = ENCH_COLD_VULN; mprf(MSGCH_MONSTER_ENCHANT, "%s appears more vulnerable to cold.", act->name(DESC_THE).c_str()); break;
+            case 2: vuln_type = ENCH_ELEC_VULN; mprf(MSGCH_MONSTER_ENCHANT, "%s appears more vulnerable to electrical shocks.", act->name(DESC_THE).c_str()); break;
+            case 3: if (act->as_monster()->holiness() & (MH_UNDEAD | MH_NONLIVING))
+                         {                               mprf(MSGCH_MONSTER_ENCHANT, "%s appears more vulnerable to fire.", act->name(DESC_THE).c_str()); }
+                    else { vuln_type = ENCH_POISON_VULN; mprf(MSGCH_MONSTER_ENCHANT, "%s appears more vulnerable to poison.", act->name(DESC_THE).c_str()); } break;
+            case 4: vuln_type = ENCH_PHYS_VULN; mprf(MSGCH_MONSTER_ENCHANT, "%s appears more vulnerable to physical attacks.", act->name(DESC_THE).c_str()); break;
             }
             act->as_monster()->add_ench(mon_enchant(vuln_type, 0, attacker, dur * BASELINE_DELAY));
         }
         break;
     case CD_WRETCHED:
-        if (act->is_player())
+        if (player)
         {
+            mprf(MSGCH_MUTATION, "The chaos corrupts your form!");
             int num_mutations = 1 + random2(3);
             for (int i = 0; i < num_mutations; ++i)
                 temp_mutate(RANDOM_CORRUPT_MUTATION, "chaos magic");
         }
         else
+        {
+            mprf(MSGCH_MONSTER_ENCHANT, "The chaos corrupts %s form.", act->name(DESC_ITS).c_str());
             act->as_monster()->add_ench(mon_enchant(ENCH_WRETCHED, 0, attacker, dur * BASELINE_DELAY));
+        }
         break;
     }
 }
