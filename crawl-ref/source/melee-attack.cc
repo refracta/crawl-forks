@@ -754,6 +754,7 @@ bool melee_attack::handle_phase_blocked()
         _handle_staff_shield(BEAM_ACID, 1, defender->is_player(), defender->as_monster());
         break;
 
+    case AF_PURE_CHAOS:
     case AF_CHAOTIC:
         switch (random2(3))
         {
@@ -3226,7 +3227,7 @@ void melee_attack::mons_apply_attack_flavour()
     // Most of this is from BWR 4.1.2.
 
     attack_flavour flavour = attk_flavour;
-    if (flavour == AF_CHAOTIC)
+    if (flavour == AF_CHAOTIC || flavour == AF_PURE_CHAOS)
         flavour = random_chaos_attack_flavour();
 
     const int base_damage = flavour_damage(flavour, attacker->get_hit_dice());
@@ -3473,6 +3474,9 @@ void melee_attack::mons_apply_attack_flavour()
         mons_do_napalm();
         break;
 
+    case AF_PURE_CHAOS:
+        if (attacker->type == MONS_CHAOS_VORTEX)
+            attacker->as_monster()->suicide(-10);
     case AF_CHAOTIC:
         chaos_affects_defender();
         break;

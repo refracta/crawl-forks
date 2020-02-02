@@ -76,10 +76,12 @@ spret cast_fire_storm(int pow, bolt &beam, bool fail)
         return spret::abort;
     }
 
-    if (cell_is_solid(beam.target) && !feat_is_tree(grd(beam.target)) && !feat_is_door(grd(beam.target)))
+    if (cell_is_solid(beam.target))
     {
         const char *feat = feat_type_name(grd(beam.target));
         mprf("You can't place the storm on %s.", article_a(feat).c_str());
+        if (feat_is_tree(grd(beam.target)) && feat_is_door(grd(beam.target)))
+            mpr("Place your storm next to the wood you want to burn.");
         return spret::abort;
     }
 
@@ -149,6 +151,9 @@ spret cast_chain_spell(spell_type spell_cast, int pow,
 {
     fail_check();
     bolt beam;
+
+    if (determine_chaos(caster, spell_cast))
+        spell_cast = SPELL_CHAIN_OF_CHAOS;
 
     // initialise beam structure
     switch (spell_cast)
@@ -467,8 +472,9 @@ static int _los_spell_damage_player(const actor* agent, bolt &beam,
             actual && beam.origin_spell != SPELL_DRAIN_LIFE);
     if (actual && hurted > 0)
     {
+        bool chaos = beam.real_flavour == BEAM_CHAOTIC;
         if (beam.origin_spell == SPELL_OZOCUBUS_REFRIGERATION)
-            mpr("You feel very cold.");
+            mprf("You feel very %s.", chaos ? "spastic" : "cold");
 
         if (agent && !agent->is_player())
         {
@@ -482,7 +488,10 @@ static int _los_spell_damage_player(const actor* agent, bolt &beam,
         {
             ouch(hurted, KILLED_BY_FREEZING);
             you.expose_to_element(beam.flavour, 5);
-            you.increase_duration(DUR_NO_POTIONS, 7 + random2(9), 15);
+            if (chaos)
+                temp_mutate(RANDOM_CORRUPT_MUTATION, "chaos magic");
+            else
+                you.increase_duration(DUR_NO_POTIONS, 7 + random2(9), 15);
         }
     }
 
@@ -503,6 +512,10 @@ static int _los_spell_damage_monster(const actor* agent, monster &target,
     if (YOU_KILL(beam.thrower))
         set_attack_conducts(conducts, target, you.can_see(target));
 
+    beam.fake_flavour();
+    if (beam.flavour == BEAM_WAND_HEALING)
+        beam.flavour = BEAM_FIRE;
+
     int hurted = actual ? beam.damage.roll()
                         // Monsters use the average for foe calculations.
                         : (1 + beam.damage.num * beam.damage.size) / 2;
@@ -519,9 +532,9 @@ static int _los_spell_damage_monster(const actor* agent, monster &target,
             target.hurt(agent, hurted, beam.flavour);
 
         // Cold-blooded creatures can be slowed.
-        if (beam.origin_spell == SPELL_OZOCUBUS_REFRIGERATION
-            && target.alive())
+        if (target.alive())
         {
+            beam.chaos_effect(&target);
             target.expose_to_element(beam.flavour, 5);
         }
     }
@@ -549,6 +562,7 @@ static spret _cast_los_attack_spell(spell_type spell, int pow,
     zappy(zap, pow, mons, beam);
     beam.source_id = agent ? agent->mid : MID_NOBODY;
     beam.foe_ratio = 80;
+    bool chaos = beam.real_flavour == BEAM_CHAOTIC;
 
     const char *player_msg = nullptr, *global_msg = nullptr,
                *mons_vis_msg = nullptr, *mons_invis_msg = nullptr,
@@ -558,18 +572,40 @@ static spret _cast_los_attack_spell(spell_type spell, int pow,
     switch (spell)
     {
         case SPELL_OZOCUBUS_REFRIGERATION:
-            player_msg = "The heat is drained from your surroundings.";
-            global_msg = "Something drains the heat from around you.";
-            mons_vis_msg = " drains the heat from the surrounding"
-                           " environment!";
-            mons_invis_msg = "The ambient heat is drained!";
-            verb = "frozen";
-            prompt_verb = "refrigerate";
-            vulnerable = [](const actor *caster, const actor *act) {
-                return act->is_player() || act->res_cold() < 3
-                       && !(caster->deity() == GOD_FEDHAS
+            if (chaos)
+            {
+                player_msg = "The order of the universe unravels around you.";
+                global_msg = "Something unravels the area into chaos.";
+                mons_vis_msg = " unravels the surrounding area into chaos!";
+                mons_invis_msg = "Chaos unravels!";
+                verb = "chaotically stricken";
+            }
+            else
+            {
+                player_msg = "The heat is drained from your surroundings.";
+                global_msg = "Something drains the heat from around you.";
+                mons_vis_msg = " drains the heat from the surrounding"
+                    " environment!";
+                mons_invis_msg = "The ambient heat is drained!";
+                verb = "frozen";
+            }
+            if (you.staff() && you.staff()->brand == SPSTF_CHAOS && staff_enhances_spell(you.staff(), SPELL_OZOCUBUS_REFRIGERATION))
+            {
+                prompt_verb = "refrigerate or chaotically strike";
+                vulnerable = [](const actor *caster, const actor *act) {
+                    return !(caster->deity() == GOD_FEDHAS
                             && fedhas_protects(*act->as_monster()));
-            };
+                };
+            }
+            else
+            {
+                prompt_verb = "refrigerate";
+                vulnerable = [](const actor *caster, const actor *act) {
+                    return act->is_player() || act->res_cold() < 3
+                        && !(caster->deity() == GOD_FEDHAS
+                            && fedhas_protects(*act->as_monster()));
+                };
+            }
             break;
 
         case SPELL_DRAIN_LIFE:
@@ -727,6 +763,21 @@ spret fire_los_attack_spell(spell_type spell, int pow, const actor* agent,
                                   damage_done);
 }
 
+beam_type _chaos_damage_type(bool player)
+{
+    beam_type retval;
+    retval =  random_choose_weighted(4, BEAM_FIRE,
+                                     4, BEAM_COLD,
+                                     4, BEAM_NEG,
+                                     4, BEAM_ACID,
+                                     1, BEAM_DAMNATION,
+                                     6, BEAM_DEVASTATION,
+                                     3, BEAM_ELECTRICITY);
+    if (player && is_good_god(you.religion) && (retval == BEAM_NEG || retval == BEAM_DAMNATION))
+        return BEAM_HOLY;
+    return retval;
+}
+
 spret vampiric_drain(int pow, monster* mons, bool fail)
 {
     if (you.hp == you.hp_max)
@@ -775,7 +826,12 @@ spret vampiric_drain(int pow, monster* mons, bool fail)
     hp_gain = min(mons->hit_points, hp_gain);
     hp_gain = min(you.hp_max - you.hp, hp_gain);
 
-    hp_gain = resist_adjust_damage(mons, BEAM_NEG, hp_gain);
+    beam_type beam = BEAM_NEG;
+
+    if (determine_chaos(&you, SPELL_VAMPIRIC_DRAINING))
+        beam = _chaos_damage_type(false);
+
+    hp_gain = resist_adjust_damage(mons, beam, hp_gain);
 
     if (!hp_gain)
     {
@@ -783,7 +839,7 @@ spret vampiric_drain(int pow, monster* mons, bool fail)
         return spret::success;
     }
 
-    _player_hurt_monster(*mons, hp_gain, BEAM_NEG);
+    _player_hurt_monster(*mons, hp_gain, beam);
 
     hp_gain = div_rand_round(hp_gain, 2);
 
@@ -817,18 +873,42 @@ spret cast_freeze(int pow, monster* mons, bool fail)
 
     fail_check();
 
+    beam_type damtype = BEAM_COLD;
+
+    bool chaos = determine_chaos(&you, SPELL_FREEZE);
+
+    if (chaos)
+        damtype = _chaos_damage_type(true);
+
     // Set conducts here. The monster needs to be alive when this is done, and
     // mons_adjust_flavoured() could kill it.
     god_conduct_trigger conducts[3];
     set_attack_conducts(conducts, *mons);
 
     bolt beam;
-    beam.flavour = BEAM_COLD;
+    beam.flavour = damtype;
     beam.thrower = KILL_YOU;
+
+    string dam_verb = "freeze";
+    if (chaos)
+    {
+        switch (damtype)
+        {
+        case BEAM_FIRE: dam_verb = "burn"; break;
+        case BEAM_ELECTRICITY: dam_verb = "shock"; break;
+        case BEAM_NEG: dam_verb = "drain"; break;
+        case BEAM_ACID: dam_verb = "dissolve"; break;
+        case BEAM_DAMNATION: dam_verb = "sear"; break;
+        case BEAM_HOLY: dam_verb = "smite"; break;
+        default:
+        case BEAM_DEVASTATION: dam_verb = "discombobulate"; break;
+        }
+    }
 
     const int orig_hurted = roll_dice(1, 3 + pow / 3);
     int hurted = mons_adjust_flavoured(mons, beam, orig_hurted);
-    mprf("You freeze %s%s%s",
+    mprf("You %s %s%s%s",
+         dam_verb.c_str(),
          mons->name(DESC_THE).c_str(),
          hurted ? "" : " but do no damage",
          attack_strength_punctuation(hurted).c_str());
@@ -836,7 +916,7 @@ spret cast_freeze(int pow, monster* mons, bool fail)
     _player_hurt_monster(*mons, hurted, beam.flavour, false);
 
     if (mons->alive())
-        mons->expose_to_element(BEAM_COLD, orig_hurted);
+        mons->expose_to_element(damtype, orig_hurted);
 
     return spret::success;
 }
@@ -1112,19 +1192,28 @@ spret cast_airstrike(int pow, const dist &beam, bool fail)
 
     noisy(spell_effect_noise(SPELL_AIRSTRIKE), beam.target);
 
+    bool chaos = determine_chaos(&you, SPELL_AIRSTRIKE);
+    beam_type damtype = BEAM_AIR;
+
+    if (chaos)
+        damtype = _chaos_damage_type(true);
+
     bolt pbeam;
-    pbeam.flavour = BEAM_AIR;
+    pbeam.flavour = damtype;
 
     int dam = 8 + random2avg(2 + div_rand_round(pow, 7), 3);
     int hurted = mons->apply_ac(mons->beam_resists(pbeam, dam, false));
     dprf("preac: %d, postac: %d", dam, hurted);
 
-    mprf("The air twists around and %sstrikes %s%s%s",
+    mprf("The air %stwists around and %sstrikes %s%s%s",
+        chaos ? "chaotically " : "",
         mons->airborne() ? "violently " : "",
         mons->name(DESC_THE).c_str(),
         hurted ? "" : " but does no damage",
         attack_strength_punctuation(hurted).c_str());
     _player_hurt_monster(*mons, hurted, pbeam.flavour);
+
+    mons->expose_to_element(damtype, 2);
 
     if (mons->alive())
         cloud_strike(&you, mons, dam);

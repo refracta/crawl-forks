@@ -32,6 +32,7 @@
 #include "prompt.h"
 #include "religion.h"
 #include "spl-book.h"
+#include "spl-clouds.h"
 #include "spl-damage.h"
 #include "spl-summoning.h"
 #include "spl-zap.h"
@@ -750,9 +751,13 @@ void apply_area_cloud(cloud_func func, const coord_def& where,
         q[el] = q[q.size() - 1];
         q.pop_back();
 
+        cloud_type dtype = ctype;
+        if (dtype == CLOUD_CHAOS)
+            dtype = chaos_cloud();
+
         if (place.seen[c] <= 0 || cell_is_solid(c))
             continue;
-        func(c, pow, spread_rate, ctype, agent, excl_rad);
+        func(c, pow, spread_rate, dtype, agent, excl_rad);
         number--;
     }
 }

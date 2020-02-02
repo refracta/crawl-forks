@@ -1116,6 +1116,10 @@ fire vortex
 
 A swirling cloud of flame. After striking a foe, it disintegrates.
 %%%%
+chaos vortex
+
+A swirling cloud of chaos. After striking a foe, it disintegrates.
+%%%%
 flayed ghost
 
 A hideous floating undead creature, the anguished spirit of a tortured victim,

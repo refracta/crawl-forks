@@ -5,6 +5,8 @@
 struct bolt;
 class dist;
 
+cloud_type chaos_cloud();
+
 spret conjure_flame(const actor *agent, int pow, const coord_def& where,
                          bool fail);
 

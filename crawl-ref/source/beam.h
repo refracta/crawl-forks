@@ -206,6 +206,7 @@ public:
 
     // Setup.
     void fake_flavour();
+    void chaos_effect(actor * act);
 private:
     void do_fire();
     void initialise_fire();

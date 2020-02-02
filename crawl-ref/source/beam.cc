@@ -3124,19 +3124,22 @@ void bolt::affect_place_explosion_clouds()
         place_cloud(CLOUD_FIRE, p, 2 + random2(5), agent());
     }
 
-    if (flavour == BEAM_MEPHITIC)
+    if (flavour == BEAM_MEPHITIC || origin_spell == SPELL_MEPHITIC_CLOUD)
     {
+        bool chaos = real_flavour == BEAM_CHAOTIC;
         const coord_def center = (aimed_at_feet ? source : ray.pos());
         if (p == center || x_chance_in_y(125 + ench_power, 225))
         {
-            place_cloud(CLOUD_MEPHITIC, p, roll_dice(2, 3 + ench_power / 20),
+            place_cloud(chaos ? chaos_cloud() : CLOUD_MEPHITIC, p, roll_dice(2, 3 + ench_power / 20),
                         agent());
         }
     }
 
     if (origin_spell == SPELL_FIRE_STORM)
     {
-        place_cloud(CLOUD_FIRE, p, 2 + random2avg(5,2), agent());
+        bool chaos = real_flavour == BEAM_CHAOTIC;
+
+        place_cloud(chaos ? chaos_cloud() : CLOUD_FIRE, p, 2 + random2avg(5,2), agent());
 
         // XXX: affect other open spaces?
         if (grd(p) == DNGN_FLOOR && !monster_at(p) && one_chance_in(4))
@@ -3148,7 +3151,7 @@ void bolt::affect_place_explosion_clouds()
                 (whose_kill() == KC_OTHER ? BEH_HOSTILE : BEH_FRIENDLY);
 
             actor* summ = agent();
-            mgen_data mg(MONS_FIRE_VORTEX, att, p, MHITNOT, MG_NONE, god);
+            mgen_data mg(chaos ? MONS_CHAOS_VORTEX : MONS_FIRE_VORTEX, att, p, MHITNOT, MG_NONE, god);
             mg.set_summoned(summ, 1, SPELL_FIRE_STORM);
 
             // Spell-summoned monsters need to have a live summoner.
@@ -4514,6 +4517,19 @@ static void _chaotic_debuff(actor* act, int dur, actor * attacker)
     }
 }
 
+void bolt::chaos_effect(actor * act)
+{
+    if (real_flavour == BEAM_CHAOTIC && one_chance_in(3))
+    {
+        int dur = damage.roll();
+        dur += damage.size;
+        if (coinflip())
+            _chaotic_buff(act, dur, actor_by_mid(source_id));
+        else
+            _chaotic_debuff(act, dur, actor_by_mid(source_id));
+    }
+}
+
 void bolt::affect_player()
 {
     hit_count[MID_PLAYER]++;
@@ -4536,6 +4552,8 @@ void bolt::affect_player()
         tracer_affect_player();
         return;
     }
+
+    chaos_effect(&you);
 
     // Trigger an interrupt, so travel will stop on misses which
     // generate smoke.
@@ -4714,16 +4732,6 @@ void bolt::affect_player()
     // Right now just ignore the physical component.
     // what about acid?
     you.expose_to_element(flavour, 2, false);
-
-    if (real_flavour == BEAM_CHAOTIC && one_chance_in(3))
-    {
-        int dur = damage.roll();
-        dur += damage.size;
-        if (coinflip())
-            _chaotic_buff(&you, dur, actor_by_mid(source_id));
-        else
-            _chaotic_debuff(&you, dur, actor_by_mid(source_id));
-    }
 
     // Manticore spikes
     if (origin_spell == SPELL_THROW_BARBS && final_dam > 0)
@@ -5656,6 +5664,8 @@ void bolt::affect_monster(monster* mon)
         enchantment_affect_monster(mon);
         return;
     }    
+
+    chaos_effect(mon);
 
     if (is_explosion && !in_explosion_phase)
     {
@@ -6746,6 +6756,15 @@ void bolt::refine_for_explosion()
         {
             seeMsg = explosion->seeMsg;
             hearMsg = make_stringf("You hear %s!", explosion->sound);
+            if (real_flavour == BEAM_CHAOTIC)
+            {
+                if (origin_spell == SPELL_FIRE_STORM)
+                    seeMsg = "A raging storm of chaos appears!";
+                if (origin_spell == SPELL_FIREBALL)
+                    seeMsg = "The chaotic sphere explodes!";
+                if (origin_spell == SPELL_MEPHITIC_CLOUD)
+                    seeMsg = "The ball explodes into a scintillating random clouds!";
+            }
         }
         else
         {

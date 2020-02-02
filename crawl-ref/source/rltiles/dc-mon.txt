@@ -257,6 +257,10 @@ spatial_vortex1 MONS_SPATIAL_VORTEX /*'v'*/
 spatial_vortex2
 spatial_vortex3
 spatial_vortex4
+chaotic_vortex1 MONS_CHAOS_VORTEX /*'v'*/
+chaotic_vortex2
+chaotic_vortex3
+chaotic_vortex4
 maelstrom1 MONS_SPATIAL_MAELSTROM /*'v'*/
 maelstrom2
 maelstrom3

@@ -27,11 +27,40 @@
 #include "ouch.h"
 #include "prompt.h"
 #include "random-pick.h"
+#include "religion.h"
 #include "shout.h"
+#include "spl-cast.h"
 #include "spl-util.h"
 #include "target.h"
 #include "terrain.h"
 #include "viewchar.h"
+
+// Random Cloud type to be created by a chaos magic tick.
+cloud_type chaos_cloud()
+{
+    if (one_chance_in(3))
+        return CLOUD_CHAOS;
+
+    cloud_type retval;
+
+    retval = random_choose_weighted(30, CLOUD_FIRE,
+                                     8, CLOUD_MEPHITIC,
+                                    30, CLOUD_COLD,
+                                    10, CLOUD_POISON,
+                                     6, CLOUD_PETRIFY,
+                                    15, CLOUD_HOLY,
+                                     4, CLOUD_RAIN,
+                                    18, CLOUD_MUTAGENIC,
+                                    20, CLOUD_ACID,
+                                    20, CLOUD_STORM);
+
+    if (!is_good_god(you.religion) && retval == CLOUD_HOLY)
+        retval = random_choose_weighted(20, CLOUD_NEGATIVE_ENERGY,
+                                        10, CLOUD_SPECTRAL,
+                                         5, CLOUD_HOLY,
+                                         5, CLOUD_MIASMA);
+    return retval;
+}
 
 spret conjure_flame(const actor *agent, int pow, const coord_def& where,
                          bool fail)
@@ -100,8 +129,9 @@ spret conjure_flame(const actor *agent, int pow, const coord_def& where,
     }
     else
     {
+        bool chaos = determine_chaos(agent, SPELL_CONJURE_FLAME);
         const int durat = min(5 + (random2(pow)/2) + (random2(pow)/2), 23);
-        place_cloud(CLOUD_FIRE, where, durat, agent);
+        place_cloud(chaos ? chaos_cloud() : CLOUD_FIRE, where, durat, agent);
         if (you.see_cell(where))
         {
             if (agent->is_player())
@@ -161,8 +191,10 @@ spret cast_poisonous_vapours(int pow, const dist &beam, bool fail)
     }
     else
     {
-        place_cloud(CLOUD_POISON, beam.target, cloud_duration, &you);
-        mprf("Poisonous vapours surround %s!", mons->name(DESC_THE).c_str());
+        bool chaos = determine_chaos(&you, SPELL_POISONOUS_VAPOURS);
+
+        place_cloud(chaos ? chaos_cloud() : CLOUD_POISON, beam.target, cloud_duration, &you);
+        mprf("%s vapours surround %s!", chaos ? "Random" : "Poisonous", mons->name(DESC_THE).c_str());
     }
 
     behaviour_event(mons, ME_WHACK, &you);
@@ -209,6 +241,13 @@ spret cast_big_c(int pow, spell_type spl, const actor *caster, bolt &beam,
         default:
             mpr("That kind of cloud doesn't exist!");
             return spret::abort;
+    }
+
+    if (determine_chaos(caster, spl))
+    {
+        beam.flavour = BEAM_CHAOTIC;
+        beam.name = "chaotic burst";
+        cty = CLOUD_CHAOS;
     }
 
     beam.thrower           = KILL_YOU;
@@ -264,14 +303,16 @@ void manage_fire_shield(int delay)
     // Melt ice armour entirely.
     maybe_melt_player_enchantments(BEAM_FIRE, 100);
 
+    bool chaos = determine_chaos(&you, SPELL_RING_OF_FLAMES);
+
     // Remove fire clouds on top of you
-    if (cloud_at(you.pos()) && cloud_at(you.pos())->type == CLOUD_FIRE)
+    if (cloud_at(you.pos()) && (cloud_at(you.pos())->type == CLOUD_FIRE || chaos))
         delete_cloud(you.pos());
 
     // Place fire clouds all around you
     for (adjacent_iterator ai(you.pos()); ai; ++ai)
         if (!cell_is_solid(*ai) && !cloud_at(*ai))
-            place_cloud(CLOUD_FIRE, *ai, 1 + random2(6), &you);
+            place_cloud((chaos && coinflip()) ? chaos_cloud() : CLOUD_FIRE, *ai, 1 + random2(6), &you);
 }
 
 spret cast_corpse_rot(bool fail)

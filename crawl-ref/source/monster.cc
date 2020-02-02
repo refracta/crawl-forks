@@ -3617,7 +3617,8 @@ int monster::known_chaos(bool check_spells_god) const
     }
 
     if (has_attack_flavour(AF_MUTATE)
-        || has_attack_flavour(AF_CHAOTIC))
+        || has_attack_flavour(AF_CHAOTIC)
+        || has_attack_flavour(AF_PURE_CHAOS))
     {
         chaotic++;
     }
@@ -6585,7 +6586,7 @@ bool monster::cloud_immune(bool calc_unid, bool items) const
 {
     // Cloud Mage is also checked for in (so stay in sync with)
     // monster_info::monster_info(monster_type, monster_type).
-    return type == MONS_CLOUD_MAGE || actor::cloud_immune(calc_unid, items);
+    return type == MONS_CLOUD_MAGE || type == MONS_CHAOS_VORTEX || actor::cloud_immune(calc_unid, items);
 }
 
 bool monster::is_illusion() const

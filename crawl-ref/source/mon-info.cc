@@ -407,7 +407,7 @@ monster_info::monster_info(monster_type p_type, monster_type p_base_type)
 
     props.clear();
     // Change this in sync with monster::cloud_immune()
-    if (type == MONS_CLOUD_MAGE)
+    if (type == MONS_CLOUD_MAGE || type == MONS_CHAOS_VORTEX)
         props[CLOUD_IMMUNE_MB_KEY] = true;
 
     // At least enough to keep from crashing. TODO: allow specifying these?

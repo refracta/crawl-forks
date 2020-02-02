@@ -513,6 +513,22 @@ static int _additive_power(spell_type spell)
     return 0;
 }
 
+bool determine_chaos(const actor *agent, spell_type spell)
+{
+    if (one_chance_in(3))
+        return false;
+
+    if (agent->is_player())
+        return (you.staff() && you.staff()->brand == SPSTF_CHAOS &&
+            staff_enhances_spell(you.staff(), spell));
+    else
+        return (agent->weapon() && agent->weapon()->base_type == OBJ_STAVES
+            && agent->weapon()->brand == SPSTF_CHAOS &&
+            staff_enhances_spell(agent->weapon(), spell));
+
+    return false;
+}
+
 bool staff_enhances_spell(item_def * staff, spell_type spell)
 {
     if (!staff)
