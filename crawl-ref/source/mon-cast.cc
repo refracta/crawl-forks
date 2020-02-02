@@ -1813,6 +1813,35 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
         beam.name = "";
     }
 
+    item_def * staff = mons->weapon();
+
+    if (staff && staff->base_type == OBJ_STAVES && staff_enhances_spell(staff, real_spell))
+    {
+        if (beam.is_enchantment() && staff->brand == SPSTF_CHAOS && one_chance_in(4))
+        {
+            beam.real_flavour = BEAM_CHAOS_ENCHANTMENT;
+            beam.flavour = BEAM_CHAOS_ENCHANTMENT;
+            beam.colour = ETC_JEWEL;
+        }
+        else if (!beam.is_enchantment())
+        {
+            if (staff->brand == SPSTF_CHAOS && !one_chance_in(3))
+            {
+                beam.real_flavour = BEAM_CHAOTIC;
+                beam.flavour = BEAM_CHAOTIC;
+                beam.colour = ETC_JEWEL;
+            }
+            if (staff->brand == SPSTF_ACCURACY)
+                beam.hit = AUTOMATIC_HIT;
+            if (staff->brand == SPSTF_MENACE)
+            {
+                if (beam.damage.num > 6)
+                    beam.damage.num++;
+                beam.damage.num++;
+            }
+        }
+    }
+
     return beam;
 }
 
