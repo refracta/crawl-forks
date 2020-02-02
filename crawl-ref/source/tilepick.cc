@@ -4069,6 +4069,12 @@ tileidx_t tileidx_known_brand(const item_def &item)
         if (brand != SPARM_NORMAL)
             return TILE_BRAND_ARM_FIRST + get_armour_ego_type(item) - 1;
     }
+    else if (item.base_type == OBJ_STAVES)
+    {
+        const int brand = item.brand;
+        if (brand != SPSTF_NORMAL)
+            return TILE_FACET_STAFF_FIRST + brand - 1;
+    }
     else if (item.base_type == OBJ_MISSILES)
     {
         switch (get_ammo_brand(item))

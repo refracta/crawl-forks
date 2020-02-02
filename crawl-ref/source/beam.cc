@@ -520,16 +520,29 @@ void zappy(zap_type z_type, int power, bool is_monster, bolt &pbolt)
 
     if (!is_monster && you.staff() && staff_enhances_spell(you.staff(), pbolt.origin_spell))
     {
-        if (you.staff()->brand == SPSTF_CHAOS && !one_chance_in(3))
+        if (pbolt.is_enchantment() && you.staff()->brand == SPSTF_CHAOS && one_chance_in(4))
         {
-            pbolt.real_flavour = BEAM_CHAOTIC;
-            pbolt.flavour = BEAM_CHAOTIC;
+            pbolt.real_flavour = BEAM_CHAOS_ENCHANTMENT;
+            pbolt.flavour = BEAM_CHAOS_ENCHANTMENT;
             pbolt.colour = ETC_JEWEL;
         }
-        if (you.staff()->brand == SPSTF_ACCURACY)
-            pbolt.hit = AUTOMATIC_HIT;
-        if (you.staff()->brand == SPSTF_MENACE)
-            pbolt.damage.num *= 1.5;
+        else if (!pbolt.is_enchantment())
+        {
+            if (you.staff()->brand == SPSTF_CHAOS && !one_chance_in(3))
+            {
+                pbolt.real_flavour = BEAM_CHAOTIC;
+                pbolt.flavour = BEAM_CHAOTIC;
+                pbolt.colour = ETC_JEWEL;
+            }
+            if (you.staff()->brand == SPSTF_ACCURACY)
+                pbolt.hit = AUTOMATIC_HIT;
+            if (you.staff()->brand == SPSTF_MENACE)
+            {
+                if (pbolt.damage.num > 6)
+                    pbolt.damage.num++;
+                pbolt.damage.num++;
+            }
+        }
     }
 
     if (z_type == ZAP_BREATHE_FIRE && you.species == SP_RED_DRACONIAN
@@ -563,6 +576,42 @@ bool bolt::can_affect_actor(const actor *act) const
     return !act->submerged();
 }
 
+static beam_type _chaos_enchant_type()
+{
+    beam_type ret_val;
+    ret_val = random_choose_weighted(
+        14, BEAM_CONFUSION,
+        // We don't have a distortion beam, so choose from the three effects
+        // we can use, based on the lower weight distortion has.
+        5, BEAM_BANISH,
+        5, BEAM_BLINK,
+        5, BEAM_TELEPORT,
+        // From here are beam effects analogous to effects that happen when
+        // SPWPN_CHAOS chooses itself again as the ego (roughly 1/7 chance).
+        // Weights similar to those from chaos_effects in attack.cc
+        10, BEAM_SLOW,
+        10, BEAM_HASTE,
+        10, BEAM_INVISIBILITY,
+        10, BEAM_PETRIFY,
+        5, BEAM_BERSERK,
+        // Combined weight for poly, clone, and "shapeshifter" effects.
+        5, BEAM_POLYMORPH,
+        // Seen through miscast effects.
+        5, BEAM_ACID,
+        5, BEAM_DAMNATION,
+        5, BEAM_STICKY_FLAME,
+        5, BEAM_DISINTEGRATION,
+        // These are not actualy used by SPWPN_CHAOS, but are here to augment
+        // the list of effects, since not every SPWN_CHAOS effect has an
+        // analogous BEAM_ type.
+        4, BEAM_MIGHT,
+        4, BEAM_HEALING,
+        4, BEAM_AGILITY,
+        4, BEAM_ENSNARE);
+    return ret_val;
+    // I guess these line splits are for the RNG?
+}
+
 // Choose the beam effect for BEAM_CHAOS that's analogous to the effect used by
 // SPWPN_CHAOS, with weightings similar to those use by that brand. XXX: Rework
 // this and SPWPN_CHAOS to use the same tables.
@@ -570,43 +619,20 @@ static beam_type _chaos_beam_flavour(bolt* beam)
 {
     beam_type flavour;
     flavour = random_choose_weighted(
-         // SPWPN_CHAOS randomizes to brands analogous to these beam effects
-         // with similar weights.
-         70, BEAM_FIRE,
-         70, BEAM_COLD,
-         70, BEAM_ELECTRICITY,
-         70, BEAM_POISON,
-         // Combined weight from drain + vamp.
-         70, BEAM_NEG,
-         35, BEAM_HOLY,
-         14, BEAM_CONFUSION,
-         // We don't have a distortion beam, so choose from the three effects
-         // we can use, based on the lower weight distortion has.
-          5, BEAM_BANISH,
-          5, BEAM_BLINK,
-          5, BEAM_TELEPORT,
-         // From here are beam effects analogous to effects that happen when
-         // SPWPN_CHAOS chooses itself again as the ego (roughly 1/7 chance).
-         // Weights similar to those from chaos_effects in attack.cc
-         10, BEAM_SLOW,
-         10, BEAM_HASTE,
-         10, BEAM_INVISIBILITY,
-         10, BEAM_PETRIFY,
-          5, BEAM_BERSERK,
-         // Combined weight for poly, clone, and "shapeshifter" effects.
-          5, BEAM_POLYMORPH,
-         // Seen through miscast effects.
-          5, BEAM_ACID,
-          5, BEAM_DAMNATION,
-          5, BEAM_STICKY_FLAME,
-          5, BEAM_DISINTEGRATION,
-         // These are not actualy used by SPWPN_CHAOS, but are here to augment
-         // the list of effects, since not every SPWN_CHAOS effect has an
-         // analogous BEAM_ type.
-          4, BEAM_MIGHT,
-          4, BEAM_HEALING,
-          4, BEAM_AGILITY,
-          4, BEAM_ENSNARE);
+        // SPWPN_CHAOS randomizes to brands analogous to these beam effects
+        // with similar weights.
+        70, BEAM_FIRE,
+        70, BEAM_COLD,
+        70, BEAM_ELECTRICITY,
+        70, BEAM_POISON,
+        // Combined weight from drain + vamp.
+        70, BEAM_NEG,
+        35, BEAM_HOLY,
+       115, BEAM_CHAOS_ENCHANTMENT);
+        
+        // SPLIT.
+    if (flavour == BEAM_CHAOS_ENCHANTMENT)
+        flavour = _chaos_enchant_type();
 
     return flavour;
 }
@@ -834,6 +860,8 @@ void bolt::fake_flavour()
         flavour = static_cast<beam_type>(random_range(BEAM_FIRE, BEAM_ACID));
     else if (real_flavour == BEAM_CHAOS)
         flavour = _chaos_beam_flavour(this);
+    else if (real_flavour == BEAM_CHAOS_ENCHANTMENT)
+        flavour = _chaos_enchant_type();
     else if (real_flavour == BEAM_CHAOTIC)
     {
         name = pierce ? "chaotic beam of " : is_explosion ? "chaotic blast of " : "chaotic shard of ";
@@ -2662,7 +2690,7 @@ void bolt::affect_endpoint()
                     random_range(dur * 2, dur * 3), TERRAIN_CHANGE_FLOOD);
             for (rectangle_iterator ri(pos(), lava ? 1 : 2); ri; ++ri)
             {
-                if ((grd(*ri) == DNGN_FLOOR) && ((lava && one_chance_in(3)) || !lava && !one_chance_in(3)))
+                if ((grd(*ri) == DNGN_FLOOR) && ((lava && one_chance_in(4)) || !lava && !one_chance_in(3)))
                     temp_change_terrain(*ri, lava ? DNGN_LAVA : DNGN_SHALLOW_WATER,
                         random_range(dur * 2, dur * 3), TERRAIN_CHANGE_FLOOD);
             }
@@ -4372,7 +4400,7 @@ static void _chaotic_debuff(actor* act, int dur, actor * attacker)
         mprf(player ? MSGCH_WARN : MSGCH_MONSTER_DAMAGE, "Chaotic magic lashes out at %s.",
             player ? "you" : act->name(DESC_THE).c_str());
         MiscastEffect(act, attacker, { miscast_source::spell },
-            spschool::random, max(1, min(div_rand_round(dur, 100), 3)), "chaotic magic",
+            spschool::random, max(1, min(div_rand_round(dur, 10), 3)), "chaotic magic",
             nothing_happens::NEVER, 0, "", false);
         break;
     case CD_MUTE:
@@ -5806,6 +5834,7 @@ void bolt::affect_monster(monster* mon)
     {
         int dur = damage.roll();
         dur *= 7 + random2(8);
+        dur = div_rand_round(dur, 10);
 
         if (coinflip())
             _chaotic_buff(mon, dur, actor_by_mid(source_id));
@@ -7328,6 +7357,7 @@ static string _beam_type_name(beam_type type)
     case BEAM_RANDOM:                return "random";
     case BEAM_CHAOTIC:               // fallthrough
     case BEAM_CHAOS:                 return "chaos";
+    case BEAM_CHAOS_ENCHANTMENT:     return "chaotic enchantment";
     case BEAM_SLOW:                  return "slow";
     case BEAM_HASTE:                 return "haste";
     case BEAM_MIGHT:                 return "might";

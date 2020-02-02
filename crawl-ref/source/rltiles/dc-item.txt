@@ -1029,6 +1029,17 @@ i-staff_earth STAFF_EARTH
 %rim 0
 i-staff_channeling STAFF_CHANNELING STAFF_ID_LAST
 
+i-staff_shielding SPSTF_SHIELDING FACET_STAFF_FIRST
+i-staff_flayed SPSTF_FLAY
+i-staff_warped SPSTF_WARP
+i-staff_energy SPSTF_ENERGY
+i-staff_reaver SPSTF_REAVER
+i-staff_wizardry SPSTF_WIZARD
+i-staff_scoped SPSTF_SCOPED
+i-staff_menacing SPSTF_MENACE
+i-staff_accurate SPSTF_ACCURACY
+i-staff_chaos SPSTF_CHAOS FACET_STAFF_LAST
+
 # Remove rods TAG_MAJOR_VERSION > 34
 %sdir item/rod
 rod00 ROD
