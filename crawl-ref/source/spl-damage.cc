@@ -16,6 +16,7 @@
 #include "attack.h"
 #include "beam.h"
 #include "butcher.h"
+#include "chaos.h"
 #include "cloud.h"
 #include "colour.h"
 #include "coordit.h"
@@ -535,7 +536,9 @@ static int _los_spell_damage_monster(const actor* agent, monster &target,
         // Cold-blooded creatures can be slowed.
         if (target.alive())
         {
-            beam.chaos_effect(&target);
+
+            if (beam.real_flavour == BEAM_CHAOTIC)
+                chaotic_status(&target, 3 + hurted + random2(hurted), agent);
             target.expose_to_element(beam.flavour, 5);
         }
     }
@@ -3021,6 +3024,7 @@ static bool _toxic_can_affect(const actor *act)
 
 spret cast_toxic_radiance(actor *agent, int pow, bool fail, bool mon_tracer)
 {
+    bool chaos = determine_chaos(agent, SPELL_OLGREBS_TOXIC_RADIANCE);
     if (agent->is_player())
     {
         targeter_los hitfunc(&you, LOS_NO_TRANS);
@@ -3038,7 +3042,7 @@ spret cast_toxic_radiance(actor *agent, int pow, bool fail, bool mon_tracer)
         you.increase_duration(DUR_TOXIC_RADIANCE, 2 + random2(pow/20), 15);
         toxic_radiance_effect(&you, 10, true);
 
-        flash_view_delay(UA_PLAYER, GREEN, 300, &hitfunc);
+        flash_view_delay(UA_PLAYER, chaos ? ETC_SLIME : GREEN, 300, &hitfunc);
 
         return spret::success;
     }
@@ -3066,7 +3070,7 @@ spret cast_toxic_radiance(actor *agent, int pow, bool fail, bool mon_tracer)
         toxic_radiance_effect(agent, 10);
 
         targeter_los hitfunc(mon_agent, LOS_NO_TRANS);
-        flash_view_delay(UA_MONSTER, GREEN, 300, &hitfunc);
+        flash_view_delay(UA_MONSTER, chaos ? ETC_SLIME : GREEN, 300, &hitfunc);
 
         return spret::success;
     }
@@ -3085,8 +3089,10 @@ spret cast_toxic_radiance(actor *agent, int pow, bool fail, bool mon_tracer)
  *                the player being accidentally put under penance.
  *                Defaults to false.
  */
-void toxic_radiance_effect(actor* agent, int mult, bool on_cast)
+void toxic_radiance_effect(actor* agent, int mult, bool on_cast, bool chaos)
 {
+    if (!chaos)
+        chaos = determine_chaos(agent, SPELL_OLGREBS_TOXIC_RADIANCE);
     int pow;
     if (agent->is_player())
         pow = calc_spell_power(SPELL_OLGREBS_TOXIC_RADIANCE, true);
@@ -3097,15 +3103,20 @@ void toxic_radiance_effect(actor* agent, int mult, bool on_cast)
 
     for (actor_near_iterator ai(agent->pos(), LOS_NO_TRANS); ai; ++ai)
     {
-        if (!_toxic_can_affect(*ai))
+        if (!chaos && !_toxic_can_affect(*ai))
             continue;
 
         // Monsters can skip hurting friendlies
         if (agent->is_monster() && mons_aligned(agent, *ai))
             continue;
 
+        beam_type damtype = BEAM_POISON;
+
+        if (chaos)
+            damtype = _chaos_damage_type(agent->is_player());
+
         int dam = roll_dice(1, 1 + pow / 20) * div_rand_round(mult, BASELINE_DELAY);
-        dam = resist_adjust_damage(*ai, BEAM_POISON, dam);
+        dam = resist_adjust_damage(*ai, damtype, dam);
 
         if (ai->is_player())
         {
@@ -3134,17 +3145,20 @@ void toxic_radiance_effect(actor* agent, int mult, bool on_cast)
                     break_sanctuary = true;
             }
 
-            ai->hurt(agent, dam, BEAM_POISON);
+            ai->hurt(agent, dam, damtype);
 
             if (ai->alive())
             {
                 behaviour_event(ai->as_monster(), ME_ANNOY, agent,
                                 agent->pos());
+                ai->expose_to_element(damtype, 1);
                 int q = mult / BASELINE_DELAY;
                 int levels = roll_dice(q, 2) - q + (roll_dice(1, 20) <= (mult % BASELINE_DELAY));
                 if (!ai->as_monster()->has_ench(ENCH_POISON)) // Always apply poison to an unpoisoned enemy
                     levels = max(levels, 1);
                 poison_monster(ai->as_monster(), agent, levels);
+                if (chaos && (on_cast || one_chance_in(5)))
+                    chaotic_debuff(*ai, 5 + random2(15), agent);
             }
         }
     }

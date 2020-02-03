@@ -17,6 +17,7 @@ bitary.o \
 branch.o \
 butcher.o \
 bloodspatter.o \
+chaos.o \
 chardump.o \
 cio.o \
 cloud.o \

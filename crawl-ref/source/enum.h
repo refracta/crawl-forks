@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief Global (ick) enums.
+ * @brief Global enums.
 **/
 
 #pragma once
