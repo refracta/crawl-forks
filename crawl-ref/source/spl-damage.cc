@@ -43,6 +43,7 @@
 #include "prompt.h"
 #include "religion.h"
 #include "shout.h"
+#include "spl-clouds.h"
 #include "spl-summoning.h"
 #include "spl-util.h"
 #include "spl-zap.h"
@@ -825,13 +826,7 @@ spret vampiric_drain(int pow, monster* mons, bool fail)
 
     hp_gain = min(mons->hit_points, hp_gain);
     hp_gain = min(you.hp_max - you.hp, hp_gain);
-
-    beam_type beam = BEAM_NEG;
-
-    if (determine_chaos(&you, SPELL_VAMPIRIC_DRAINING))
-        beam = _chaos_damage_type(false);
-
-    hp_gain = resist_adjust_damage(mons, beam, hp_gain);
+    hp_gain = resist_adjust_damage(mons, BEAM_NEG, hp_gain);
 
     if (!hp_gain)
     {
@@ -839,7 +834,7 @@ spret vampiric_drain(int pow, monster* mons, bool fail)
         return spret::success;
     }
 
-    _player_hurt_monster(*mons, hp_gain, beam);
+    _player_hurt_monster(*mons, hp_gain, BEAM_NEG);
 
     hp_gain = div_rand_round(hp_gain, 2);
 
@@ -3202,7 +3197,7 @@ void handle_searing_ray()
     bolt beam;
     beam.thrower = KILL_YOU_MISSILE;
     beam.range   = calc_spell_range(SPELL_SEARING_RAY, pow);
-    beam.flavour = BEAM_FIRE;
+    beam.flavour = BEAM_LAVA;
     beam.source  = you.pos();
     beam.target  = you.props["searing_ray_target"].get_coord();
     beam.aimed_at_spot = you.props["searing_ray_aimed_at_spot"].get_bool();
@@ -3216,6 +3211,9 @@ void handle_searing_ray()
     }
 
     zappy(zap, pow, false, beam);
+
+    if (determine_chaos(&you, SPELL_SEARING_RAY))
+        beam.flavour = beam.real_flavour = BEAM_CHAOTIC;
 
     aim_battlesphere(&you, SPELL_SEARING_RAY, pow, beam);
     beam.fire();
@@ -3270,14 +3268,28 @@ spret cast_glaciate(actor *caster, int pow, coord_def aim, bool fail)
         return spret::abort;
     }
 
+    bool chaos = determine_chaos(caster, SPELL_GLACIATE);
+
     fail_check();
 
     bolt beam;
-    beam.name              = "great icy blast";
-    beam.aux_source        = "great icy blast";
-    beam.flavour           = BEAM_FREEZE;
+    if (chaos)
+    {
+        beam.name = "cone of craziness";
+        beam.aux_source = "great chaos burst";
+        beam.real_flavour = BEAM_CHAOTIC;
+        beam.flavour = BEAM_CHAOTIC;
+        beam.colour = LIGHTCYAN;
+    }
+    else
+    {
+        beam.name = "great icy blast";
+        beam.aux_source = "great icy blast";
+        beam.real_flavour = BEAM_FREEZE;
+        beam.flavour = BEAM_FREEZE;
+        beam.colour = WHITE;
+    }
     beam.glyph             = dchar_glyph(DCHAR_EXPLOSION);
-    beam.colour            = WHITE;
     beam.range             = 1;
     beam.hit               = AUTOMATIC_HIT;
     beam.source_id         = caster->mid;
@@ -3305,9 +3317,14 @@ spret cast_glaciate(actor *caster, int pow, coord_def aim, bool fail)
 
     if (you.can_see(*caster) || caster->is_player())
     {
-        mprf("%s %s a mighty blast of ice!",
-             caster->name(DESC_THE).c_str(),
-             caster->conj_verb("conjure").c_str());
+        if (!chaos)
+            mprf("%s %s a mighty blast of ice!",
+                 caster->name(DESC_THE).c_str(),
+                 caster->conj_verb("conjure").c_str());
+        else
+            mprf("%s %s a grandiose cone of craziness!",
+                caster->name(DESC_THE).c_str(),
+                caster->conj_verb("exude").c_str());
     }
 
     beam.glyph = 0;
@@ -3328,12 +3345,14 @@ spret cast_glaciate(actor *caster, int pow, coord_def aim, bool fail)
                     ? calc_dice(7, (66 + 3 * pow) / eff_range)
                     : calc_dice(10, (54 + 3 * pow / 2) / eff_range);
 
+            beam.fake_flavour();
+
             beam.source = beam.target = entry.first;
             beam.source.x -= sgn(beam.source.x - hitfunc.origin.x);
             beam.source.y -= sgn(beam.source.y - hitfunc.origin.y);
             beam.fire();
             
-            place_cloud(CLOUD_COLD, entry.first,
+            place_cloud(chaos ? chaos_cloud() : CLOUD_COLD, entry.first,
                         (18 + random2avg(45,2)) / eff_range, caster);
         }
     }

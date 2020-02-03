@@ -5204,8 +5204,24 @@ static bool _dazzle_monster(monster* mons, actor* act)
     return false;
 }
 
+static monster_type _chaos_pillar()
+{
+    return random_choose_weighted(
+        4, MONS_JELLY,
+        3, MONS_CHAOS_SPAWN,
+        2, MONS_CRAWLING_CORPSE,
+        5, MONS_DEMONIC_PLANT,
+        1, MONS_GOLDEN_EYE,
+        1, MONS_INSUBSTANTIAL_WISP,
+        1, MONS_CHAOS_VORTEX,
+        1, MONS_SPATIAL_MAELSTROM,
+        1, MONS_SKY_BEAST,
+        1, MONS_STARCURSED_MASS);
+    // BCADDO: Add Pulsating Lumps here.
+}
+
 static void _glaciate_freeze(monster* mon, killer_type englaciator,
-                             int kindex)
+                             int kindex, bool chaos)
 {
     const coord_def where = mon->pos();
     const monster_type pillar_type =
@@ -5213,7 +5229,17 @@ static void _glaciate_freeze(monster* mon, killer_type englaciator,
                                 : mons_species(mon->type);
     const int hd = mon->get_experience_level();
 
-    simple_monster_message(*mon, " is frozen into a solid block of ice!");
+    if (!chaos)
+        simple_monster_message(*mon, " is frozen into a solid block of ice!");
+    else
+        mprf("The very fabric of %s comes apart.", mon->name(DESC_THE).c_str());
+
+    if (chaos && one_chance_in(3))
+    {
+        mon->flags |= MF_EXPLODE_KILL;
+        if (place_monster_corpse(*mon, false))
+            return;
+    }
 
     // If the monster leaves a corpse when it dies, destroy the corpse.
     item_def* corpse = monster_die(*mon, englaciator, kindex);
@@ -5221,7 +5247,7 @@ static void _glaciate_freeze(monster* mon, killer_type englaciator,
         destroy_item(corpse->index());
 
     if (monster *pillar = create_monster(
-                        mgen_data(MONS_BLOCK_OF_ICE,
+                        mgen_data(chaos ? _chaos_pillar() : MONS_BLOCK_OF_ICE,
                                   BEH_HOSTILE,
                                   where,
                                   MHITNOT,
@@ -5232,6 +5258,15 @@ static void _glaciate_freeze(monster* mon, killer_type englaciator,
         int time_left = (random2(8) + hd) * BASELINE_DELAY;
         mon_enchant temp_en(ENCH_SLOWLY_DYING, 1, 0, time_left);
         pillar->update_ench(temp_en);
+        if (chaos)
+        {
+            if (!pillar->is_stationary())
+            {
+                pillar->behaviour = BEH_NEUTRAL;
+                pillar->add_ench(mon_enchant(ENCH_CONFUSION, 1, 0, INFINITE_DURATION));
+            }
+            pillar->flags |= MF_CLOUD_IMMUNE;
+        }
     }
 }
 
@@ -5340,7 +5375,9 @@ void bolt::monster_post_hit(monster* mon, int dmg)
              || name == "blast of ice"
              || origin_spell == SPELL_GLACIATE && !is_explosion)
     {
-        if (mon->has_ench(ENCH_FROZEN))
+        if (origin_spell == SPELL_GLACIATE && real_flavour != BEAM_FREEZE)
+            _chaotic_debuff(mon, 30, agent());
+        else if (mon->has_ench(ENCH_FROZEN))
         {
             if (origin_spell == SPELL_FLASH_FREEZE)
                 simple_monster_message(*mon, " is unaffected.");
@@ -5663,9 +5700,7 @@ void bolt::affect_monster(monster* mon)
         // no to-hit check
         enchantment_affect_monster(mon);
         return;
-    }    
-
-    chaos_effect(mon);
+    }
 
     if (is_explosion && !in_explosion_phase)
     {
@@ -5840,17 +5875,8 @@ void bolt::affect_monster(monster* mon)
     mons_adjust_flavoured(mon, *this, postac, true);
 
     // Apply chaos effects.
-    if (mon->alive() && real_flavour == BEAM_CHAOTIC && one_chance_in(3))
-    {
-        int dur = damage.roll();
-        dur *= 7 + random2(8);
-        dur = div_rand_round(dur, 10);
-
-        if (coinflip())
-            _chaotic_buff(mon, dur, actor_by_mid(source_id));
-        else
-            _chaotic_debuff(mon, dur, actor_by_mid(source_id));
-    }
+    if (mon->alive())
+        chaos_effect(mon);
 
     // mons_adjust_flavoured may kill the monster directly.
     if (mon->alive())
@@ -5888,7 +5914,7 @@ void bolt::affect_monster(monster* mon)
             && x_chance_in_y(3, 5))
         {
             // Includes monster_die as part of converting to block of ice.
-            _glaciate_freeze(mon, thrower, kindex);
+            _glaciate_freeze(mon, thrower, kindex, (real_flavour != BEAM_FREEZE));
         }
         // Prevent spore explosions killing plants from being registered
         // as a Fedhas misconduct. Deaths can trigger the ally dying or

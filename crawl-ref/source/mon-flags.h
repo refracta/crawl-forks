@@ -241,7 +241,7 @@ enum monster_flag_type : uint64_t
 
                           //BIT(23),
                           //BIT(24),
-                          //BIT(25),
+    MF_CLOUD_IMMUNE       = BIT(25),
 
     /// This monster cannot regenerate.
     MF_NO_REGEN           = BIT(26),
