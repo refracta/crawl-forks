@@ -1771,6 +1771,7 @@ static int _irradiate_cell(coord_def where, int pow, actor *agent)
     if (!act || !act->alive())
         return 0; // XXX: handle damaging the player for mons casts...?
 
+    bool chaos = determine_chaos(agent, SPELL_IRRADIATE);
     const int dice = 6;
     const int max_dam = 30 + div_rand_round(pow, 2);
     const dice_def dam_dice = calc_dice(dice, max_dam);
@@ -1796,9 +1797,12 @@ static int _irradiate_cell(coord_def where, int pow, actor *agent)
     }
 
     if (agent->is_player())
-        _player_hurt_monster(*mons, dam, BEAM_MMISSILE);
+        _player_hurt_monster(*mons, dam, chaos ? BEAM_DEVASTATION : BEAM_MMISSILE);
     else if (dam)
-        act->hurt(agent, dam, BEAM_MMISSILE);
+        act->hurt(agent, dam, chaos ? BEAM_DEVASTATION : BEAM_MMISSILE);
+
+    if (act->alive() && chaos)
+        chaotic_debuff(act, dam, agent);
 
     if (act->alive())
         act->malmutate("magical radiation");
