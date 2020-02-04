@@ -95,6 +95,7 @@ static void _fire_direct_explosion(monster &caster, mon_spell_slot, bolt &beam);
 static int  _mons_mesmerise(monster* mons, bool actual = true);
 static int  _mons_cause_fear(monster* mons, bool actual = true);
 static int  _mons_mass_confuse(monster* mons, bool actual = true);
+static bool _mons_irradiate(monster* mons);
 static coord_def _mons_fragment_target(const monster &mons);
 static coord_def _mons_move_target(const monster &mon);
 static coord_def _mons_conjure_flame_pos(const monster &mon);
@@ -2034,6 +2035,7 @@ bool setup_mons_cast(const monster* mons, bolt &pbolt, spell_type spell_cast,
     case SPELL_GREATER_SERVANT_MAKHLEB:
     case SPELL_BIND_SOULS:
     case SPELL_DREAM_DUST:
+    case SPELL_IRRADIATE:
         pbolt.range = 0;
         pbolt.glyph = 0;
         return true;
@@ -4796,6 +4798,31 @@ static int _mons_mesmerise(monster* mons, bool actual)
     return 1;
 }
 
+static bool _mons_irradiate(monster *mons)
+{
+    if (mons->friendly() && adjacent(you.pos(), mons->pos()))
+        return false;
+    int logic = 0;
+    int hd = mons->spell_hd();
+    
+    for (adjacent_iterator ai(mons->pos()); ai; ++ai)
+    {
+        if (actor * act = actor_at(*ai))
+        {
+            if (act->is_player())
+                logic += hd * 3;
+            else if (mons->temp_attitude() == act->as_monster()->temp_attitude())
+                logic -= act->get_hit_dice();
+            else
+                logic += act->get_hit_dice();
+        }
+    }
+
+    if (logic > 0)
+        return false;
+    return true;
+}
+
 // Check whether targets might be scared.
 // Returns 0, if targets can be scared but the attempt failed or wasn't made.
 // Returns 1, if targets are scared.
@@ -6351,6 +6378,10 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
 
     case SPELL_OLGREBS_TOXIC_RADIANCE:
         cast_toxic_radiance(mons, splpow);
+        return;
+
+    case SPELL_IRRADIATE:
+        cast_irradiate(splpow, mons, false);
         return;
 
     case SPELL_SHATTER:
@@ -8196,6 +8227,9 @@ static bool _ms_waste_of_time(monster* mon, mon_spell_slot slot)
 
     case SPELL_SHATTER:
         return friendly || !mons_shatter(mon, false);
+
+    case SPELL_IRRADIATE:
+        return _mons_irradiate(mon);
 
     case SPELL_SYMBOL_OF_TORMENT:
         return !_trace_los(mon, _torment_vulnerable)

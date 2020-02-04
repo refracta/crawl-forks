@@ -1767,18 +1767,24 @@ static bool _irradiate_is_safe()
  */
 static int _irradiate_cell(coord_def where, int pow, actor *agent)
 {
-    monster *mons = monster_at(where);
-    if (!mons || !mons->alive())
+    actor *act = actor_at(where);
+    if (!act || !act->alive())
         return 0; // XXX: handle damaging the player for mons casts...?
 
     const int dice = 6;
     const int max_dam = 30 + div_rand_round(pow, 2);
     const dice_def dam_dice = calc_dice(dice, max_dam);
     const int dam = dam_dice.roll();
-    mprf("%s is blasted with magical radiation%s",
-         mons->name(DESC_THE).c_str(),
-         attack_strength_punctuation(dam).c_str());
+    if (act->is_player())
+        mprf("You are blasted with magical radiation%s",
+            attack_strength_punctuation(dam).c_str());
+    else
+        mprf("%s is blasted with magical radiation%s",
+             act->name(DESC_THE).c_str(),
+             attack_strength_punctuation(dam).c_str());
     dprf("irr for %d (%d pow, max %d)", dam, pow, max_dam);
+
+    monster * mons = act->as_monster();
 
     if (agent->deity() == GOD_FEDHAS && fedhas_protects(*mons))
     {
@@ -1792,10 +1798,10 @@ static int _irradiate_cell(coord_def where, int pow, actor *agent)
     if (agent->is_player())
         _player_hurt_monster(*mons, dam, BEAM_MMISSILE);
     else if (dam)
-        mons->hurt(agent, dam, BEAM_MMISSILE);
+        act->hurt(agent, dam, BEAM_MMISSILE);
 
-    if (mons->alive())
-        mons->malmutate("");
+    if (act->alive())
+        act->malmutate("magical radiation");
 
     return dam;
 }
@@ -1830,15 +1836,15 @@ spret cast_irradiate(int powc, actor* who, bool fail)
     bolt beam;
     beam.name = "irradiate";
     beam.flavour = BEAM_VISUAL;
-    beam.set_agent(&you);
+    beam.set_agent(who);
     beam.colour = ETC_MUTAGENIC;
     beam.glyph = dchar_glyph(DCHAR_EXPLOSION);
     beam.range = 1;
     beam.ex_size = 1;
     beam.is_explosion = true;
     beam.explode_delay = beam.explode_delay * 3 / 2;
-    beam.source = you.pos();
-    beam.target = you.pos();
+    beam.source = who->pos();
+    beam.target = who->pos();
     beam.hit = AUTOMATIC_HIT;
     beam.loudness = 0;
     beam.explode(true, true);
