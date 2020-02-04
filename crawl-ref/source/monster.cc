@@ -2767,7 +2767,7 @@ void monster::expose_to_element(beam_type flavour, int strength,
     mon_lose_staff_shield(*this, flavour, strength);
 }
 
-void monster::banish(actor *agent, const string &, const int, bool force)
+void monster::banish(const actor *agent, const string &, const int, bool force)
 {
     coord_def old_pos = pos();
 

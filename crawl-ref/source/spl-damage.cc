@@ -463,7 +463,7 @@ static void _los_spell_pre_damage_monsters(const actor* agent,
     }
 }
 
-static int _los_spell_damage_player(const actor* agent, bolt &beam,
+static int _los_spell_damage_player(actor* agent, bolt &beam,
                                     bool actual)
 {
     int hurted = actual ? beam.damage.roll()
@@ -500,7 +500,7 @@ static int _los_spell_damage_player(const actor* agent, bolt &beam,
     return hurted;
 }
 
-static int _los_spell_damage_monster(const actor* agent, monster &target,
+static int _los_spell_damage_monster(actor* agent, monster &target,
                                      bolt &beam, bool actual, bool wounds)
 {
 
@@ -536,7 +536,6 @@ static int _los_spell_damage_monster(const actor* agent, monster &target,
         // Cold-blooded creatures can be slowed.
         if (target.alive())
         {
-
             if (beam.real_flavour == BEAM_CHAOTIC)
                 chaotic_status(&target, 3 + hurted + random2(hurted), agent);
             target.expose_to_element(beam.flavour, 5);
@@ -552,7 +551,7 @@ static int _los_spell_damage_monster(const actor* agent, monster &target,
 
 
 static spret _cast_los_attack_spell(spell_type spell, int pow,
-                                         const actor* agent, actor* defender,
+                                         actor* agent, actor* defender,
                                          bool actual, bool fail,
                                          int* damage_done)
 {
@@ -756,11 +755,17 @@ static spret _cast_los_attack_spell(spell_type spell, int pow,
 
 spret trace_los_attack_spell(spell_type spell, int pow, const actor* agent)
 {
-    return _cast_los_attack_spell(spell, pow, agent, nullptr, false, false,
+    // This is a bad practice; but it works so sue me. 
+    // (The proper practice would take redoing the entirety of mon-cast logic
+    //  or duplicating a lot of the code.) ~Bcadren.
+
+    actor * bad_agent = actor_by_mid(agent->mid);
+
+    return _cast_los_attack_spell(spell, pow, bad_agent, nullptr, false, false,
                                   nullptr);
 }
 
-spret fire_los_attack_spell(spell_type spell, int pow, const actor* agent,
+spret fire_los_attack_spell(spell_type spell, int pow, actor* agent,
                                  actor *defender, bool fail, int* damage_done)
 {
     return _cast_los_attack_spell(spell, pow, agent, defender, true, fail,

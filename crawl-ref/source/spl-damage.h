@@ -15,7 +15,7 @@ spret cast_chain_spell(spell_type spell_cast, int pow,
 
 spret trace_los_attack_spell(spell_type spell, int pow,
                                   const actor* agent);
-spret fire_los_attack_spell(spell_type spell, int pow, const actor* agent,
+spret fire_los_attack_spell(spell_type spell, int pow, actor* agent,
                                  actor* defender = nullptr,
                                  bool fail = false,
                                  int* damage_done = nullptr);
