@@ -387,6 +387,61 @@ _mon_hex_zap(ZAP_CONFUSE, BEAM_CONFUSION),
 },
 
 {
+    ZAP_CHAOS_ERUPTION,
+    "eruption",
+    200,
+    new calcdice_calculator<3, 5, 2, 3>,
+    new tohit_calculator<40>,
+    new dicedef_calculator<3, 4, 1, 10>,
+    new tohit_calculator<40>,
+    RED,
+    false,
+    BEAM_LAVA,
+    DCHAR_FIRED_ZAP,
+    false,
+    false,
+    true,
+    0 // Noise comes from explosion
+},
+
+{
+    ZAP_CHAOS_ICEFALL,
+    "icy stalactite",
+    200,
+    new calcdice_calculator<4, 8, 1, 3>,
+    new tohit_calculator<40>,
+    new dicedef_calculator<4, 5, 1, 10>,
+    new tohit_calculator<40>,
+    WHITE,
+    false,
+    BEAM_FREEZE,
+    DCHAR_FIRED_ZAP,
+    false,
+    false,
+    true,
+    0 // Noise comes from explosion
+},
+
+
+{
+    ZAP_CHAOS_STALACTITE,
+    "stalactite",
+    200,
+    new calcdice_calculator<3, 8, 2, 3>,
+    new tohit_calculator<40>,
+    new dicedef_calculator<3, 5, 1, 8>,
+    new tohit_calculator<40>,
+    BROWN,
+    false,
+    BEAM_FRAG,
+    DCHAR_FIRED_ZAP,
+    false,
+    false,
+    true,
+    0 // Noise comes from explosion
+},
+
+{
     ZAP_TELEPORT_OTHER,
     "",
     100,

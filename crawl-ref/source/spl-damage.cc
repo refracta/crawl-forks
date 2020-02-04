@@ -21,6 +21,7 @@
 #include "colour.h"
 #include "coordit.h"
 #include "directn.h"
+#include "dungeon.h"
 #include "english.h"
 #include "env.h"
 #include "fight.h"
@@ -39,6 +40,7 @@
 #include "mon-behv.h"
 #include "mon-death.h"
 #include "mon-tentacle.h"
+#include "mon-place.h"
 #include "mutation.h"
 #include "ouch.h"
 #include "prompt.h"
@@ -53,6 +55,7 @@
 #include "target.h"
 #include "terrain.h"
 #include "transform.h"
+#include "traps.h"
 #include "unicode.h"
 #include "viewchar.h"
 #include "view.h"
@@ -1224,7 +1227,6 @@ spret cast_airstrike(int pow, const dist &beam, bool fail)
     return spret::success;
 }
 
-// Here begin the actual spells:
 static int _shatter_mon_dice(const monster *mon)
 {
     if (!mon)
@@ -1268,7 +1270,7 @@ static int _shatter_mon_dice(const monster *mon)
     }
 }
 
-static int _shatter_monsters(coord_def where, int pow, actor *agent)
+static int _shatter_monsters(coord_def where, int pow, actor *agent, bool chaos)
 {
     dice_def dam_dice(0, 5 + pow / 3); // Number of dice set below.
     monster* mon = monster_at(where);
@@ -1283,6 +1285,9 @@ static int _shatter_monsters(coord_def where, int pow, actor *agent)
         _player_hurt_monster(*mon, damage, BEAM_MMISSILE);
     else if (damage)
         mon->hurt(agent, damage);
+
+    if (chaos && mon->alive() && one_chance_in(5))
+        chaotic_status(mon, div_rand_round(damage, 3), agent);
 
     return damage;
 }
@@ -1392,6 +1397,159 @@ static bool _shatterable(const actor *act)
     return !act->is_insubstantial();
 }
 
+enum shatter_event_type
+{
+    SE_ERUPTION,
+    SE_ICEFALL,
+    SE_STALACTITE,
+    SE_ANNOYED_DEMON,
+    SE_STATUE,
+    SE_CAVEIN
+};
+
+static void _shatter_chaos(actor * agent, int pow)
+{
+    int eruptions = 0;
+    int icefalls = 0;
+    int stalactites = 0;
+    int annoyed_demons = 0;
+    int statues = 0;
+    bool cavein = false;
+
+    for (rectangle_iterator ri(agent->pos(), LOS_RADIUS, true); ri; ++ri)
+    {
+        if (!feat_is_solid(grd(*ri)) && agent->see_cell_no_trans(*ri) && one_chance_in(40))
+        {
+            bolt beam;
+            beam.set_agent(agent);
+            beam.apply_beam_conducts();
+            beam.target = *ri;
+            beam.ex_size = 1;
+            shatter_event_type happening = random_choose_weighted(10, SE_ERUPTION,
+                4, SE_ICEFALL,
+                4, SE_STALACTITE,
+                3, SE_STATUE,
+                10, SE_CAVEIN,
+                6, SE_ANNOYED_DEMON);
+            switch (happening)
+            {
+            case SE_ERUPTION:
+                zappy(ZAP_CHAOS_ERUPTION, pow, false, beam);
+                beam.explode();
+                eruptions++;
+                if (!feat_is_critical(grd(*ri)))
+                    temp_change_terrain(*ri, DNGN_LAVA, pow, TERRAIN_CHANGE_GENERIC);
+                for (rectangle_iterator sri(*ri, 1); sri; ++sri)
+                    if (!feat_is_critical(grd(*sri)) && x_chance_in_y(2, 3))
+                        dungeon_terrain_changed(*sri, feat_is_water(grd(*sri)) ? DNGN_OBSIDIAN : DNGN_LAVA);
+                break;
+            case SE_ICEFALL:
+                zappy(ZAP_CHAOS_ICEFALL, pow, false, beam);
+                beam.explode();
+                icefalls++;
+                break;
+            case SE_STALACTITE:
+                zappy(ZAP_CHAOS_STALACTITE, pow, false, beam);
+                beam.explode();
+                stalactites++;
+                if (!feat_is_critical(grd(*ri)) && !(grd(*ri) == DNGN_FLOOR))
+                    dungeon_terrain_changed(*ri, DNGN_FLOOR, false, true, false, false);
+                break;
+            case SE_ANNOYED_DEMON:
+            {
+                monster * m = create_monster(mgen_data(RANDOM_DEMON_GREATER, BEH_HOSTILE, *ri, MHITYOU, MG_FORBID_BANDS, GOD_MAKHLEB));
+                if (m)
+                {
+                    beam.flavour = BEAM_VISUAL;
+                    beam.colour = LIGHTMAGENTA;
+                    beam.ex_size = 0;
+                    beam.explode();
+
+                    m->go_frenzy(agent);
+                    m->flags |= MF_NO_REWARD;
+                    m->add_ench(mon_enchant(ENCH_FAKE_ABJURATION, 2));
+
+                    if (is_valid_shaft_level())
+                        place_specific_trap(*ri, TRAP_SHAFT);
+
+                    annoyed_demons++;
+                }
+                break;
+            }
+            case SE_STATUE:
+                beam.flavour = BEAM_VISUAL;
+                /* BCADDO: Golden statue chance?
+                if (one_chance_in(4))
+                beam.colour = YELLOW;
+                */
+                beam.colour = DARKGREY;
+                beam.explode();
+                dungeon_terrain_changed(*ri, DNGN_GRANITE_STATUE, false, true, false, false);
+                statues++;
+                break;
+            case SE_CAVEIN:
+                if (!actor_at(*ri) && !feat_is_critical(grd(*ri)))
+                {
+                    beam.flavour = BEAM_VISUAL;
+                    beam.colour = BROWN;
+                    beam.explode();
+                    dungeon_terrain_changed(*ri, you.where_are_you == BRANCH_SLIME ? DNGN_SLIMY_WALL : DNGN_ROCK_WALL, true, true, false, false);
+                    cavein = true;
+                    for (rectangle_iterator tri(*ri, 1); tri; ++tri)
+                        if (!feat_is_critical(grd(*tri)) && x_chance_in_y(3, 4))
+                            dungeon_terrain_changed(*tri, you.where_are_you == BRANCH_SLIME ? DNGN_SLIMY_WALL : DNGN_ROCK_WALL, true, true, false, false);
+                }
+                break;
+            }
+        }
+    }
+
+    if (eruptions)
+        mprf("The earthquake triggers %s.", eruptions > 1 ? "some eruptions" : "an eruption");
+
+    if (statues)
+        mprf("The chaotic vibrations somehow carve %s.", statues > 1 ? "some statues" : "a perfect statue");
+
+    if (cavein)
+        mpr("Part of the ceiling caves in.");
+
+    if (icefalls || stalactites)
+    {
+        string local;
+        if (icefalls)
+        {
+            if (icefalls > 1)
+                local = "Some ice chunks";
+            else
+                local = "A chunk of ice";
+            if (stalactites)
+            {
+                local += " and ";
+                if (stalactites > 1)
+                    local += "stone stalactites";
+                else
+                    local += "a stalactite";
+            }
+        }
+        else
+        {
+            if (stalactites > 1)
+                local += "stone stalactites";
+            else
+                local += "a stalactite";
+        }
+        bool plural = false;
+        if (icefalls && stalactites || icefalls > 1 || stalactites > 1)
+            plural = true;
+
+        mprf("%s crash%s down from the ceiling.", local.c_str(), plural ? "es" : "");
+    }
+
+    if (annoyed_demons)
+        mprf("%s appear%s, cursing about the noise.", annoyed_demons < 2 ? "An annoyed demon" : "Some annoyed demons"
+                                                    , annoyed_demons > 1 ? "" : "s");
+}
+
 spret cast_shatter(int pow, bool fail)
 {
     targeter_los hitfunc(&you, LOS_ARENA);
@@ -1409,6 +1567,8 @@ spret cast_shatter(int pow, bool fail)
         mprf(MSGCH_SOUND, "The dungeon rumbles!");
     }
 
+    bool chaos = determine_chaos(&you, SPELL_SHATTER);
+
     run_animation(ANIMATION_SHAKE_VIEWPORT, UA_PLAYER);
 
     int dest = 0;
@@ -1418,12 +1578,15 @@ spret cast_shatter(int pow, bool fail)
         if (!cell_see_cell(you.pos(), *di, LOS_SOLID))
             continue;
 
-        _shatter_monsters(*di, pow, &you);
+        _shatter_monsters(*di, pow, &you, chaos);
         dest += _shatter_walls(*di, pow, &you);
     }
 
-    if (dest && !silence)
+    if (!silence && dest)
         mprf(MSGCH_SOUND, "Ka-crash!");
+
+    if (chaos)
+        _shatter_chaos(&you, pow);
 
     return spret::success;
 }
@@ -1456,6 +1619,9 @@ bool mons_shatter(monster* caster, bool actual)
     const bool silence = silenced(caster->pos());
     int foes = 0;
 
+    bool chaos = determine_chaos(caster, SPELL_SHATTER);
+    chaos &= actual;
+
     if (actual)
     {
         if (silence)
@@ -1482,7 +1648,7 @@ bool mons_shatter(monster* caster, bool actual)
 
         if (actual)
         {
-            _shatter_monsters(*di, pow, caster);
+            _shatter_monsters(*di, pow, caster, chaos);
             if (*di == you.pos())
                 _shatter_player(pow, caster);
             dest += _shatter_walls(*di, pow, caster);
@@ -1502,6 +1668,9 @@ bool mons_shatter(monster* caster, bool actual)
 
     if (dest && !silence)
         mprf(MSGCH_SOUND, "Ka-crash!");
+
+    if (chaos)
+        _shatter_chaos(caster, pow);
 
     if (actual)
         run_animation(ANIMATION_SHAKE_VIEWPORT, UA_MONSTER);
@@ -1558,7 +1727,7 @@ void shillelagh(actor *wielder, coord_def where, int pow)
 
     // need to do this again to do the actual damage
     for (adjacent_iterator ai(where, false); ai; ++ai)
-        _shatter_monsters(*ai, pow * 3 / 2, wielder);
+        _shatter_monsters(*ai, pow * 3 / 2, wielder, false);
 
     if ((you.pos() - wielder->pos()).rdist() <= 1 && in_bounds(you.pos()))
         _shatter_player(pow, wielder, true);

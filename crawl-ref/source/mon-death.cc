@@ -2397,6 +2397,13 @@ item_def* monster_die(monster& mons, killer_type killer,
                     {
                         simple_monster_message(mons, " crumbles into dust!");
                     }
+                    else if (mons.holiness() == MH_DEMONIC)
+                    {
+                        if (player_in_hell(true))
+                            simple_monster_message(mons, " burrows itself back to abaddon.");
+                        else
+                            simple_monster_message(mons, " burrows itself back to hell.");
+                    }
                     else
                     {
                         string msg = " " + summoned_poof_msg(&mons) + "!";
