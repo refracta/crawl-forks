@@ -543,6 +543,15 @@ void init_element_colours()
                               {15,  LIGHTRED},
                               {15,  RED},
                             }));
+    add_element_colour(new random_element_colour_calc(
+                            ETC_CHAOS, "chaos",
+                            { {30,  RED},
+                              {15,  LIGHTRED},
+                              {30,  MAGENTA},
+                              {15,  LIGHTMAGENTA},
+                              {15,  LIGHTCYAN},
+                              {10,  YELLOW},
+                            }));
     add_element_colour(new element_colour_calc(
                             ETC_FLOOR, "floor", _etc_floor
                        ));

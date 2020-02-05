@@ -1931,7 +1931,7 @@ static int _ignite_tracer_cloud_value(coord_def where, actor *agent)
  *                  If it's not a tracer, return 1 if a flame cloud is created
  *                  and 0 otherwise.
  */
-static int _ignite_poison_clouds(coord_def where, int pow, actor *agent)
+static int _ignite_poison_clouds(coord_def where, beam_type damtype, int pow, actor *agent)
 {
     const bool tracer = (pow == -1);  // Only testing damage, not dealing it
 
@@ -1949,11 +1949,23 @@ static int _ignite_poison_clouds(coord_def where, int pow, actor *agent)
         return agent && agent->is_player() ? sgn(value) : value;
     }
 
-    cloud->type = CLOUD_FIRE;
+    switch (damtype)
+    {
+    case BEAM_HOLY: cloud->type = CLOUD_HOLY;   break;
+    case BEAM_COLD: cloud->type = CLOUD_COLD;   break;
+    case BEAM_ACID: cloud->type = CLOUD_ACID;   break;
+    case BEAM_NEG:  cloud->type = CLOUD_MIASMA; break;
+    default:        cloud->type = CLOUD_FIRE;   break;
+    }
+
     cloud->decay = 30 + random2(20 + pow); // from 3-5 turns to 3-15 turns
     cloud->whose = agent->kill_alignment();
     cloud->killer = agent->is_player() ? KILL_YOU_MISSILE : KILL_MON_MISSILE;
     cloud->source = agent->mid;
+
+    if (damtype == BEAM_DEVASTATION)
+        cloud->decay = 1;
+
     return true;
 }
 
@@ -1971,14 +1983,26 @@ static int _ignite_poison_clouds(coord_def where, int pow, actor *agent)
  *                  If it's not a tracer, return 1 if damage is caused & 0
  *                  otherwise.
  */
-static int _ignite_poison_monsters(coord_def where, int pow, actor *agent)
+static int _ignite_poison_monsters(coord_def where, beam_type damtype, int pow, actor *agent)
 {
     bolt beam;
-    beam.flavour = BEAM_FIRE;   // This is dumb, only used for adjust!
+    beam.flavour = damtype;   // This is dumb, only used for adjust!
 
     const bool tracer = (pow == -1);  // Only testing damage, not dealing it
     if (tracer)                       // Give some fake damage to test resists
         pow = 100;
+
+    string verb;
+
+    switch (damtype)
+    {
+    default:               verb = "burn";     break;
+    case BEAM_COLD:        verb = "freeze";   break;
+    case BEAM_NEG:         verb = "rot";      break;
+    case BEAM_HOLY:        verb = "collapse"; break;
+    case BEAM_ACID:        verb = "dissolve"; break;
+    case BEAM_DEVASTATION: verb = "explode";  break;
+    }
 
     // If a monster casts Ignite Poison, it can't hit itself.
     // This doesn't apply to the other functions: it can ignite
@@ -1997,11 +2021,13 @@ static int _ignite_poison_monsters(coord_def where, int pow, actor *agent)
     const dice_def dam_dice(pois_str * 2, 12 + div_rand_round(pow * 6, 100));
 
     const int base_dam = dam_dice.roll();
-    const int damage = mons_adjust_flavoured(mon, beam, base_dam, false);
+    int damage = mons_adjust_flavoured(mon, beam, base_dam, false);
+    if (damtype == BEAM_ACID || damtype == BEAM_NEG)
+        damage = div_rand_round(2 * damage, 3);
     if (damage <= 0)
         return 0;
 
-    mon->expose_to_element(BEAM_FIRE, damage);
+    mon->expose_to_element(damtype, damage);
 
     if (tracer)
     {
@@ -2013,14 +2039,15 @@ static int _ignite_poison_monsters(coord_def where, int pow, actor *agent)
 
     if (you.see_cell(mon->pos()))
     {
-        mprf("%s seems to burn from within%s",
+        mprf("%s seems to %s from within%s",
              mon->name(DESC_THE).c_str(),
+             verb.c_str(),
              attack_strength_punctuation(damage).c_str());
     }
 
     dprf("Dice: %dd%d; Damage: %d", dam_dice.num, dam_dice.size, damage);
 
-    mon->hurt(agent, damage);
+    mon->hurt(agent, damage, damtype);
 
     if (mon->alive())
     {
@@ -2028,6 +2055,10 @@ static int _ignite_poison_monsters(coord_def where, int pow, actor *agent)
 
         // Monster survived, remove any poison.
         mon->del_ench(ENCH_POISON, true); // suppress spam
+        if (damtype == BEAM_ACID)
+            mon->add_ench(mon_enchant(ENCH_CORROSION, 2, agent));
+        if (damtype == BEAM_NEG)
+            mon->drain_exp(agent, true);
         print_wounds(*mon);
     }
 
@@ -2049,7 +2080,7 @@ static int _ignite_poison_monsters(coord_def where, int pow, actor *agent)
  *                  otherwise.
  */
 
-static int _ignite_poison_player(coord_def where, int pow, actor *agent)
+static int _ignite_poison_player(coord_def where, beam_type damtype, int pow, actor *agent)
 {
     if (agent->is_player() || where != you.pos())
         return 0;
@@ -2065,24 +2096,35 @@ static int _ignite_poison_player(coord_def where, int pow, actor *agent)
         return 0;
 
     const int base_dam = roll_dice(pois_str, 5 + pow/7);
-    const int damage = resist_adjust_damage(&you, BEAM_FIRE, base_dam);
+    const int damage = resist_adjust_damage(&you, damtype, base_dam);
 
     if (tracer)
         return mons_aligned(&you, agent) ? -1 * damage : damage;
 
-    const int resist = player_res_fire();
-    if (resist > 0)
-        mpr("You feel like your blood is boiling!");
-    else if (resist < 0)
-        mpr("The poison in your system burns terribly!");
+    if (damtype == BEAM_FIRE)
+    {
+        const int resist = player_res_fire();
+        if (resist > 0)
+            mpr("You feel like your blood is boiling!");
+        else if (resist < 0)
+            mpr("The poison in your system burns terribly!");
+        else
+            mpr("The poison in your system burns!");
+    }
     else
-        mpr("The poison in your system burns!");
+        mpr("The poison in your blood reacts to the chaos!");
 
     ouch(damage, KILLED_BY_BEAM, agent->mid,
-         "by burning poison", you.can_see(*agent),
-         agent->as_monster()->name(DESC_A, true).c_str());
+         (damtype == BEAM_FIRE) ? "by burning poison" : "by chaotically catalyzed poison", 
+         you.can_see(*agent), agent->as_monster()->name(DESC_A, true).c_str());
     if (damage > 0)
-        you.expose_to_element(BEAM_FIRE, 2);
+    {
+        you.expose_to_element(damtype, 2);
+        if (damtype == BEAM_ACID)
+            you.corrode_equipment("acidified poison", div_round_up(damage, 10));
+        if (damtype == BEAM_NEG)
+            drain_player();
+    }
 
     mprf(MSGCH_RECOVERY, "You are no longer poisoned.");
     you.duration[DUR_POISONING] = 0;
@@ -2104,8 +2146,8 @@ static int _ignite_ally_harm(const coord_def &where)
     // (prevents issues with duplicate prompts when standing in an igniteable
     // cloud)
 
-    return (_ignite_poison_clouds(where, -1, &you) < 0)   ? 1 :
-           (_ignite_poison_monsters(where, -1, &you) < 0) ? 1 :
+    return (_ignite_poison_clouds(where, BEAM_FIRE, -1, &you) < 0)   ? 1 :
+           (_ignite_poison_monsters(where, BEAM_FIRE, -1, &you) < 0) ? 1 :
             0;
 }
 
@@ -2179,9 +2221,9 @@ spret cast_ignite_poison(actor* agent, int pow, bool fail, bool tracer)
     {
         // Estimate how much useful effect we'd get if we cast the spell now
         const int work = apply_area_visible([agent] (coord_def where) {
-            return _ignite_poison_clouds(where, -1, agent)
-                 + _ignite_poison_monsters(where, -1, agent)
-                 + _ignite_poison_player(where, -1, agent);
+            return _ignite_poison_clouds(where, BEAM_FIRE, -1, agent)
+                 + _ignite_poison_monsters(where, BEAM_FIRE, -1, agent)
+                 + _ignite_poison_player(where, BEAM_FIRE, -1, agent);
         }, agent->pos());
 
         return work > 0 ? spret::success : spret::abort;
@@ -2197,25 +2239,47 @@ spret cast_ignite_poison(actor* agent, int pow, bool fail, bool tracer)
         fail_check();
     }
 
+    bool chaos = determine_chaos(agent, SPELL_IGNITE_POISON);
+
+    beam_type dam_type = BEAM_FIRE;
+    colour_t tyr;
     targeter_los hitfunc(agent, LOS_NO_TRANS);
-    flash_view_delay(
-        agent->is_player()
-            ? UA_PLAYER
-            : UA_MONSTER,
-        RED, 100, &hitfunc);
+    string verb = "";
+
+    if (chaos)
+        dam_type = random_choose_weighted(3, BEAM_COLD, 
+                                          5, BEAM_ACID, 
+                                          4, is_good_god(you.religion) ? BEAM_NEG : BEAM_HOLY,
+                                          1, BEAM_HOLY, 
+                                          6, BEAM_DEVASTATION);
+
+    switch (dam_type)
+    {
+    default:
+    case BEAM_FIRE:        verb = "ignite";  tyr = RED;       break;
+    case BEAM_COLD:        verb = "freeze";  tyr = LIGHTCYAN; break;
+    case BEAM_NEG:         verb = "rot";     tyr = BROWN;     break;
+    case BEAM_HOLY:        verb = "bless";   tyr = ETC_HOLY;  break;
+    case BEAM_ACID:        verb = "acidify"; tyr = YELLOW;    break;
+    case BEAM_DEVASTATION: verb = "explode"; tyr = MAGENTA;   break;
+    }
+
+    flash_view_delay(agent->is_player() ? UA_PLAYER
+                                        : UA_MONSTER,
+                     tyr, 100, &hitfunc);
 
     mprf("%s %s the poison in %s surroundings!", agent->name(DESC_THE).c_str(),
-         agent->conj_verb("ignite").c_str(),
+         agent->conj_verb(verb).c_str(),
          agent->pronoun(PRONOUN_POSSESSIVE).c_str());
 
     // this could conceivably cause crashes if the player dies midway through
     // maybe split it up...?
-    apply_area_visible([pow, agent] (coord_def where) {
-        _ignite_poison_clouds(where, pow, agent);
-        _ignite_poison_monsters(where, pow, agent);
+    apply_area_visible([dam_type, pow, agent] (coord_def where) {
+        _ignite_poison_clouds(where, dam_type, pow, agent);
+        _ignite_poison_monsters(where, dam_type, pow, agent);
         // Only relevant if a monster is casting this spell
         // (never hurts the caster)
-        _ignite_poison_player(where, pow, agent);
+        _ignite_poison_player(where, dam_type, pow, agent);
         return 0; // ignored
     }, agent->pos());
 
