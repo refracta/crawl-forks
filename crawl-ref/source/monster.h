@@ -450,6 +450,7 @@ public:
 
     bool has_attack_flavour(int flavour) const;
     bool has_damage_type(int dam_type);
+    bool immune_to_flavour(beam_type flavour);
     int constriction_damage(bool direct) const override;
     bool constriction_does_damage(bool direct) const override;
 

@@ -2302,6 +2302,8 @@ spret cast_ignition(const actor *agent, int pow, bool fail)
 
     fail_check();
 
+    bool chaos = determine_chaos(agent, SPELL_IGNITION);
+
     targeter_los hitfunc(agent, LOS_NO_TRANS);
 
     // Ignition affects squares that had hostile monsters on them at the time
@@ -2325,7 +2327,10 @@ spret cast_ignition(const actor *agent, int pow, bool fail)
         canned_msg(MSG_NOTHING_HAPPENS);
     else
     {
-        mpr("The air bursts into flame!");
+        if (!chaos)
+            mpr("The air bursts into flame!");
+        else
+            mpr("Entropy unravels around your enemies!");
 
         vector<coord_def> blast_adjacents;
 
@@ -2334,22 +2339,37 @@ spret cast_ignition(const actor *agent, int pow, bool fail)
         beam_visual.set_agent(agent);
         beam_visual.flavour       = BEAM_VISUAL;
         beam_visual.glyph         = dchar_glyph(DCHAR_FIRED_BURST);
-        beam_visual.colour        = RED;
         beam_visual.ex_size       = 1;
         beam_visual.is_explosion  = true;
 
         // Used to deal damage; invisible
         bolt beam_actual;
         beam_actual.set_agent(agent);
-        beam_actual.flavour       = BEAM_FIRE;
-        beam_actual.real_flavour  = BEAM_FIRE;
         beam_actual.glyph         = 0;
         beam_actual.damage        = calc_dice(3, 10 + pow/3); // less than fireball
-        beam_actual.name          = "fireball";
-        beam_actual.colour        = RED;
         beam_actual.ex_size       = 0;
         beam_actual.is_explosion  = true;
         beam_actual.loudness      = 0;
+
+        beam_type flavour = BEAM_FIRE;
+
+        if (chaos)
+        {
+            beam_visual.colour = ETC_CHAOS;
+            flavour = BEAM_CHAOTIC;
+            beam_actual.colour = ETC_CHAOS;
+            beam_actual.name = "entropic burst";
+        }
+        else
+        {
+            beam_visual.colour = RED;
+            beam_actual.colour = RED;
+            beam_actual.name = "fireball";
+        }
+
+        beam_actual.flavour = flavour;
+        beam_actual.real_flavour = flavour;
+
         beam_actual.apply_beam_conducts();
 
 #ifdef DEBUG_DIAGNOSTICS
@@ -2364,7 +2384,7 @@ spret cast_ignition(const actor *agent, int pow, bool fail)
             {
                 if (cell_is_solid(*ai))
                 {
-                    if (feat_is_tree(grd(*ai)) || feat_is_door(grd(*ai)))
+                    if (flavour == BEAM_FIRE && (feat_is_tree(grd(*ai)) || feat_is_door(grd(*ai))))
                     {
                         if (feat_is_tree(grd(*ai)) && agent->is_player())
                             did_god_conduct(DID_KILL_PLANT, 1, true);
@@ -2431,9 +2451,19 @@ static int _discharge_monsters(const coord_def &where, int pow,
                                                   + (random2(pow) / 10));
 
     bolt beam;
-    beam.flavour    = BEAM_ELECTRICITY; // used for mons_adjust_flavoured
-    beam.glyph      = dchar_glyph(DCHAR_FIRED_ZAP);
-    beam.colour     = LIGHTBLUE;
+    bool chaos = determine_chaos(&agent, SPELL_DISCHARGE);
+    beam_type flavour = BEAM_ELECTRICITY;
+    beam.glyph = dchar_glyph(DCHAR_FIRED_ZAP);
+    beam.colour = LIGHTBLUE;
+
+    if (chaos)
+    {
+        flavour = BEAM_CHAOTIC;
+        beam.colour = ETC_CHAOS;
+    }
+    beam.flavour = flavour;
+    beam.real_flavour = flavour;
+
 #ifdef USE_TILE
     beam.tile_beam  = -1;
 #endif
@@ -2449,15 +2479,16 @@ static int _discharge_monsters(const coord_def &where, int pow,
         dprf("You: static discharge damage: %d", damage);
         damage = check_your_resists(damage, BEAM_ELECTRICITY,
                                     "static discharge");
-        mprf("You are struck by an arc of lightning%s",
+        mprf("You are struck by an arc of %s%s",
+             chaos ? "chaos" : "electricity",
              attack_strength_punctuation(damage).c_str());
-        ouch(damage, KILLED_BY_BEAM, agent.mid, "by static electricity", true,
+        ouch(damage, KILLED_BY_BEAM, agent.mid, chaos ? "by chaotic static" : "by static electricity", true,
              agent.is_player() ? "you" : agent.name(DESC_A).c_str());
         if (damage > 0)
             victim->expose_to_element(BEAM_ELECTRICITY, 2);
     }
     // rEelec monsters don't allow arcs to continue.
-    else if (victim->res_elec() > 0)
+    else if (victim->as_monster()->immune_to_flavour(flavour))
         return 0;
     else if (agent.deity() == GOD_FEDHAS
              && fedhas_protects(*victim->as_monster()))
@@ -2480,8 +2511,9 @@ static int _discharge_monsters(const coord_def &where, int pow,
         dprf("%s: static discharge damage: %d",
              mons->name(DESC_PLAIN, true).c_str(), damage);
         damage = mons_adjust_flavoured(mons, beam, damage);
-        mprf("%s is struck by an arc of lightning%s",
+        mprf("%s is struck by an arc of %s%s",
                 mons->name(DESC_THE).c_str(),
+                chaos ? "chaos" : "lightning",
                 attack_strength_punctuation(damage).c_str());
 
         if (agent.is_player())
@@ -2503,7 +2535,10 @@ static int _discharge_monsters(const coord_def &where, int pow,
     {
         // Only printed if we did damage, so that the messages in
         // cast_discharge() are clean. -- bwr
-        mpr("The lightning grounds out.");
+        if (chaos)
+            mpr("The chaos dissipates.");
+        else
+            mpr("The lightning grounds out.");
     }
 
     return damage;

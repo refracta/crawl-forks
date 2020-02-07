@@ -2865,6 +2865,11 @@ bool monster::has_attack_flavour(int flavour) const
     return false;
 }
 
+bool monster::immune_to_flavour(beam_type flavour)
+{
+    return (resist_adjust_damage(this, flavour, 1000) == 0);
+}
+
 bool monster::has_damage_type(int dam_type)
 {
     for (int i = 0; i < 4; ++i)
