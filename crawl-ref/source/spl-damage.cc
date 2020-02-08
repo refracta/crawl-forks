@@ -2454,7 +2454,7 @@ spret cast_ignition(const actor *agent, int pow, bool fail)
 }
 
 static int _discharge_monsters(const coord_def &where, int pow,
-                               const actor &agent)
+                               const actor &agent, const bool chaos)
 {
     actor* victim = actor_at(where);
 
@@ -2466,7 +2466,6 @@ static int _discharge_monsters(const coord_def &where, int pow,
                                                   + (random2(pow) / 10));
 
     bolt beam;
-    bool chaos = determine_chaos(&agent, SPELL_DISCHARGE);
     beam_type flavour = BEAM_ELECTRICITY;
     beam.glyph = dchar_glyph(DCHAR_FIRED_ZAP);
     beam.colour = LIGHTBLUE;
@@ -2542,8 +2541,8 @@ static int _discharge_monsters(const coord_def &where, int pow,
     if ((pow >= 10 && !one_chance_in(4)) || (pow >= 3 && one_chance_in(10)))
     {
         pow /= random_range(2, 3);
-        damage += apply_random_around_square([pow, &agent] (coord_def where2) {
-            return _discharge_monsters(where2, pow, agent);
+        damage += apply_random_around_square([pow, &agent, chaos] (coord_def where2) {
+            return _discharge_monsters(where2, pow, agent, chaos);
         }, where, true, 1);
     }
     else if (damage > 0)
@@ -2601,10 +2600,11 @@ spret cast_discharge(int pow, const actor &agent, bool fail, bool prompt)
 
     fail_check();
 
+    bool chaos = determine_chaos(&agent, SPELL_DISCHARGE);
     const int num_targs = 1 + random2(random_range(1, 3) + pow / 20);
     const int dam =
-        apply_random_around_square([pow, &agent] (coord_def target) {
-            return _discharge_monsters(target, pow, agent);
+        apply_random_around_square([pow, &agent, chaos] (coord_def target) {
+            return _discharge_monsters(target, pow, agent, chaos);
         }, agent.pos(), true, num_targs);
 
     dprf("Arcs: %d Damage: %d", num_targs, dam);
@@ -2613,7 +2613,9 @@ spret cast_discharge(int pow, const actor &agent, bool fail, bool prompt)
         scaled_delay(100);
     else
     {
-        if (coinflip())
+        if (chaos)
+            mpr("Entropic static scintillates and crepitates around.");
+        else if (coinflip())
             mpr("The air crackles with electrical energy.");
         else
         {
@@ -2627,17 +2629,32 @@ spret cast_discharge(int pow, const actor &agent, bool fail, bool prompt)
     return spret::success;
 }
 
+static bool _finish_LRD_setup(bolt &beam, const actor *caster)
+{
+    if (determine_chaos(caster, SPELL_LRD))
+    {
+        beam.name = "an entropically infused " + beam.name;
+        beam.colour = ETC_JEWEL;
+        beam.real_flavour = beam.flavour = BEAM_CHAOTIC;
+    }
+
+    beam.aux_source = beam.name;
+
+    return true;
+}
+
 bool setup_fragmentation_beam(bolt &beam, int pow, const actor *caster,
                               const coord_def target, bool quiet,
                               const char **what, bool &hole, bool &destroy)
 {
-    beam.flavour     = BEAM_FRAG;
-    beam.glyph       = dchar_glyph(DCHAR_FIRED_BURST);
-    beam.source_id   = caster->mid;
-    beam.thrower     = caster->is_player() ? KILL_YOU : KILL_MON;
-    beam.ex_size     = 1;
-    beam.source      = you.pos();
-    beam.hit         = AUTOMATIC_HIT;
+    beam.flavour      = BEAM_FRAG;
+    beam.glyph        = dchar_glyph(DCHAR_FIRED_BURST);
+    beam.source_id    = caster->mid;
+    beam.thrower      = caster->is_player() ? KILL_YOU : KILL_MON;
+    beam.ex_size      = 1;
+    beam.source       = you.pos();
+    beam.hit          = AUTOMATIC_HIT;
+    beam.origin_spell = SPELL_LRD;
 
     beam.source_name = caster->name(DESC_PLAIN, true);
     beam.aux_source = "by Lee's Rapid Deconstruction"; // for direct attack
@@ -2661,14 +2678,14 @@ bool setup_fragmentation_beam(bolt &beam, int pow, const actor *caster,
             beam.name       = "blast of rock fragments";
             beam.colour     = BROWN;
             beam.damage.num = you.form == transformation::statue ? 3 : 2;
-            return true;
+            return _finish_LRD_setup(beam, caster);
         }
         else if (petrified)
         {
             beam.name       = "blast of petrified fragments";
             beam.colour     = mons_class_colour(player_mons(true));
             beam.damage.num = 3;
-            return true;
+            return _finish_LRD_setup(beam, caster);
         }
         else if (you.form == transformation::ice_beast) // blast of ice
         {
@@ -2676,7 +2693,7 @@ bool setup_fragmentation_beam(bolt &beam, int pow, const actor *caster,
             beam.colour     = WHITE;
             beam.damage.num = 3;
             beam.flavour    = BEAM_ICE;
-            return true;
+            return _finish_LRD_setup(beam, caster);
         }
     }
     else if (mon && (caster->is_monster() || (you.can_see(*mon))))
@@ -2771,11 +2788,9 @@ bool setup_fragmentation_beam(bolt &beam, int pow, const actor *caster,
             // Targeted monster not shatterable, try the terrain instead.
             goto do_terrain;
         }
-
-        beam.aux_source = beam.name;
-
+        
         // Got a target, let's blow it up.
-        return true;
+        return _finish_LRD_setup(beam, caster);
     }
 
   do_terrain:
@@ -2891,14 +2906,10 @@ bool setup_fragmentation_beam(bolt &beam, int pow, const actor *caster,
     if (env.grid_colours(target))
         beam.colour = env.grid_colours(target);
     else
-    {
         beam.colour = element_colour(get_feature_def(grid).colour(),
                                      false, target);
-    }
 
-    beam.aux_source = beam.name;
-
-    return true;
+    return _finish_LRD_setup(beam, caster);
 }
 
 spret cast_fragmentation(int pow, const actor *caster,

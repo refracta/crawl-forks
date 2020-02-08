@@ -2943,14 +2943,11 @@ bool bolt::can_affect_wall(const coord_def& p, bool map_knowledge) const
     if (flavour == BEAM_DIGGING && feat_is_diggable(wall))
         return true;
 
-    if (flavour == BEAM_ACID && wall == DNGN_GRATE)
-        return true;
-
     if (can_burn_trees())
         return (feat_is_tree(wall) || feat_is_door(wall));
 
     // Lee's Rapid Deconstruction
-    if (flavour == BEAM_FRAG || flavour == BEAM_SILVER_FRAG)
+    if (origin_spell == SPELL_LRD)
         return true; // smite targeting, we don't care
 
     return false;
