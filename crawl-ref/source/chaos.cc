@@ -51,6 +51,7 @@ enum chaotic_debuff_type
     CD_WRETCHED = 0x08000,
     CD_BLIND = 0x10000,
     CD_BARBS = 0x20000,
+    CD_INNER = 0x40000,
 };
 
 void chaotic_buff(actor* act, int dur, actor * attacker)
@@ -211,12 +212,18 @@ void chaotic_debuff(actor* act, int dur, actor * attacker)
         12, CD_STAT_DRAIN,
         12, CD_WRETCHED,
         8, CD_BLIND,
-        16, CD_BARBS);
+        16, CD_BARBS,
+        40, CD_INNER);
 
     bool player = act->is_player();
 
     switch (debuff)
     {
+    case CD_INNER:
+        if (act->is_player())
+            break;
+        act->as_monster()->add_ench(mon_enchant(ENCH_ENTROPIC_BURST, 0, attacker, dur * BASELINE_DELAY));
+        break;
     case CD_BANISH:
         act->banish(attacker);
         break;

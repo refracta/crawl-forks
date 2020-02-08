@@ -520,11 +520,20 @@ void zappy(zap_type z_type, int power, bool is_monster, bolt &pbolt)
 
     if (!is_monster && you.staff() && staff_enhances_spell(you.staff(), pbolt.origin_spell))
     {
-        if (pbolt.is_enchantment() && you.staff()->brand == SPSTF_CHAOS && one_chance_in(4))
+        if (pbolt.is_enchantment() && you.staff()->brand == SPSTF_CHAOS)
         {
-            pbolt.real_flavour = BEAM_CHAOS_ENCHANTMENT;
-            pbolt.flavour = BEAM_CHAOS_ENCHANTMENT;
-            pbolt.colour = ETC_JEWEL;
+            if (pbolt.origin_spell == SPELL_INNER_FLAME)
+            {
+                pbolt.real_flavour = BEAM_ENTROPIC_BURST;
+                pbolt.flavour      = BEAM_ENTROPIC_BURST;
+                pbolt.colour       = ETC_JEWEL;
+            }
+            if (one_chance_in(4))
+            {
+                pbolt.real_flavour = BEAM_CHAOS_ENCHANTMENT;
+                pbolt.flavour      = BEAM_CHAOS_ENCHANTMENT;
+                pbolt.colour       = ETC_JEWEL;
+            }
         }
         else if (!pbolt.is_enchantment())
         {
@@ -581,6 +590,7 @@ static beam_type _chaos_enchant_type()
     beam_type ret_val;
     ret_val = random_choose_weighted(
         14, BEAM_CONFUSION,
+        14, BEAM_ENTROPIC_BURST,
         // We don't have a distortion beam, so choose from the three effects
         // we can use, based on the lower weight distortion has.
         5, BEAM_BANISH,
@@ -5686,8 +5696,9 @@ bool ench_flavour_affects_monster(beam_type flavour, const monster* mon,
         rc = mon->antimagic_susceptible();
         break;
 
+    case BEAM_ENTROPIC_BURST:
     case BEAM_INNER_FLAME:
-        rc = !(mon->is_summoned() || mon->has_ench(ENCH_INNER_FLAME));
+        rc = !(mon->is_summoned() || mon->has_ench(ENCH_INNER_FLAME) || mon->has_ench(ENCH_ENTROPIC_BURST));
         break;
 
     case BEAM_INFESTATION:
@@ -6103,6 +6114,21 @@ mon_resist_type bolt::apply_enchantment_to_monster(monster* mon)
                                        (mon->body_size(PSIZE_BODY) > SIZE_BIG)
                                         ? " is filled with an intense inner flame!"
                                         : " is filled with an inner flame."))
+            {
+                obvious_effect = true;
+            }
+        }
+        return MON_AFFECTED;
+
+    case BEAM_ENTROPIC_BURST:
+        if (!mon->has_ench(ENCH_ENTROPIC_BURST)
+            && !mon->is_summoned()
+            && mon->add_ench(mon_enchant(ENCH_ENTROPIC_BURST, 0, agent())))
+        {
+            if (simple_monster_message(*mon,
+                (mon->body_size(PSIZE_BODY) > SIZE_BIG)
+                ? " seems to glow with intense scintillating chaos!"
+                : " seems to glow with chaos!"))
             {
                 obvious_effect = true;
             }
@@ -6767,6 +6793,7 @@ bool bolt::nasty_to(const monster* mon) const
         case BEAM_DIGGING:
             return false;
         case BEAM_INNER_FLAME:
+        case BEAM_ENTROPIC_BURST:
             // Co-aligned inner flame is fine.
             return !mons_aligned(mon, agent());
         case BEAM_TELEPORT:
@@ -7010,6 +7037,7 @@ static string _beam_type_name(beam_type type)
     case BEAM_CHAOTIC:               // fallthrough
     case BEAM_CHAOS:                 return "chaos";
     case BEAM_CHAOS_ENCHANTMENT:     return "chaotic enchantment";
+    case BEAM_ENTROPIC_BURST:        return "entropic burst";
     case BEAM_SLOW:                  return "slow";
     case BEAM_HASTE:                 return "haste";
     case BEAM_MIGHT:                 return "might";

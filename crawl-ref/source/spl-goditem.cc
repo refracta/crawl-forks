@@ -802,7 +802,7 @@ static bool _do_imprison(int pow, const coord_def& where, bool zin)
         if (!success)
         {
             mprf(none_vis ? "You briefly glimpse something next to %s."
-                        : "You need more space to imprison %s.",
+                          : "You need more space to imprison %s.",
                 targname.c_str());
             return false;
         }

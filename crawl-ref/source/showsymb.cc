@@ -203,6 +203,9 @@ static int _get_mons_colour(const monster_info& mi)
     if (mi.is(MB_INNER_FLAME))
         col = ETC_FIRE;
 
+    if (mi.is(MB_ENTROPIC_BURST))
+        col = ETC_JEWEL;
+
     if (mi.attitude == ATT_FRIENDLY)
         col |= COLFLAG_FRIENDLY_MONSTER;
     else if (mi.attitude != ATT_HOSTILE)

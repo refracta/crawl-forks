@@ -1925,7 +1925,7 @@ tileidx_t tileidx_monster(const monster_info& mons)
         ch |= TILE_FLAG_POISON;
     if (mons.is(MB_BURNING))
         ch |= TILE_FLAG_STICKY_FLAME;
-    if (mons.is(MB_INNER_FLAME))
+    if (mons.is(MB_INNER_FLAME) || mons.is(MB_ENTROPIC_BURST))
         ch |= TILE_FLAG_INNER_FLAME;
     if (!mons.constrictor_name.empty())
         ch |= TILE_FLAG_CONSTRICTED;

@@ -33,6 +33,7 @@ const enchant_type dispellable_enchantments[] =
     ENCH_REGENERATION,
     ENCH_TP,
     ENCH_INNER_FLAME,
+    ENCH_ENTROPIC_BURST,
     ENCH_OZOCUBUS_ARMOUR,
     ENCH_INJURY_BOND,
     ENCH_DIMENSION_ANCHOR,

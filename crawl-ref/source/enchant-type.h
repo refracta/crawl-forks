@@ -183,6 +183,7 @@ enum enchant_type
     ENCH_COLD_VULN,
     ENCH_PHYS_VULN,
     ENCH_STFSHIELD_COOLDOWN,
+    ENCH_ENTROPIC_BURST,
     // Update enchant_names[] in mon-ench.cc when adding or removing
     // enchantments.
     NUM_ENCHANTMENTS

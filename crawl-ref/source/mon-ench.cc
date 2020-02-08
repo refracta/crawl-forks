@@ -779,6 +779,11 @@ void monster::remove_enchantment_effect(const mon_enchant &me, bool quiet)
             simple_monster_message(*this, "'s inner flame fades away.");
         break;
 
+    case ENCH_ENTROPIC_BURST:
+        if (!quiet && alive())
+            mprf("The chaos built beneath %s's skin dies down.", name(DESC_THE).c_str());
+        break;
+
     case ENCH_ROLLING:
         calc_speed();
         if (!quiet && alive())
@@ -1495,6 +1500,7 @@ void monster::apply_enchantment(const mon_enchant &me)
     case ENCH_FAKE_ABJURATION:
     case ENCH_RECITE_TIMER:
     case ENCH_INNER_FLAME:
+    case ENCH_ENTROPIC_BURST:
     case ENCH_MUTE:
     case ENCH_BLIND:
     case ENCH_DUMB:
@@ -2250,7 +2256,7 @@ static const char *enchant_names[] =
     "idealised", "bound_soul", "infestation",
     "stilling the winds", "thunder_ringed", "pinned_by_whirlwind",
     "vortex", "vortex_cooldown", "vile_clutch", "trapped_in_lava", "stick",
-    "elec_vuln", "cold_vuln", "phys_vuln", "staff_shield_down",
+    "elec_vuln", "cold_vuln", "phys_vuln", "staff_shield_down", "entropic_burst",
     "buggy",
 };
 
@@ -2501,6 +2507,7 @@ int mon_enchant::calc_duration(const monster* mons,
     case ENCH_LIFE_TIMER:
         cturn = 20 * (4 + random2(4)) / _mod_speed(10, mons->speed);
         break;
+    case ENCH_ENTROPIC_BURST:
     case ENCH_INNER_FLAME:
         return random_range(25, 35) * 10;
     case ENCH_BERSERK:

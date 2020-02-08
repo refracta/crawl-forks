@@ -179,6 +179,7 @@ enum monster_info_flags
     MB_COLD_VULN,
     MB_ELEC_VULN,
     MB_PHYS_VULN,
+    MB_ENTROPIC_BURST,
     NUM_MB_FLAGS
 };
 

@@ -59,6 +59,7 @@
 #include "output.h"
 #include "religion.h"
 #include "rot.h"
+#include "spl-clouds.h"
 #include "spl-damage.h"
 #include "spl-goditem.h"
 #include "spl-miscast.h"
@@ -1242,19 +1243,19 @@ static void _setup_bennu_explosion(bolt& beam, const monster& origin)
 }
 
 static void _setup_inner_flame_explosion(bolt & beam, const monster& origin,
-                                         actor* agent)
+                                         actor* agent, bool chaos = false)
 {
     _setup_base_explosion(beam, origin);
     const int size   = origin.body_size(PSIZE_BODY);
-    beam.flavour     = BEAM_FIRE;
+    beam.flavour     = chaos ? BEAM_CHAOTIC : BEAM_FIRE;
     beam.damage      = (size > SIZE_BIG)  ? dice_def(3, 25) :
                        (size > SIZE_TINY) ? dice_def(3, 20) :
                                             dice_def(3, 15);
-    beam.name        = "fiery explosion";
-    beam.colour      = RED;
+    beam.name        = chaos ? "entropic burst" : "fiery explosion";
+    beam.colour      = chaos ? ETC_JEWEL : RED;
     beam.ex_size     = (size > SIZE_BIG) ? 2 : 1;
     beam.source_name = origin.name(DESC_A, true);
-    beam.origin_spell = SPELL_INNER_FLAME;
+    if (!chaos) { beam.origin_spell = SPELL_INNER_FLAME; }
     beam.thrower     = (agent && agent->is_player()) ? KILL_YOU_MISSILE
                                                      : KILL_MON_MISSILE;
 }
@@ -1298,6 +1299,23 @@ static bool _explode_monster(monster* mons, killer_type killer,
     {
         _setup_bennu_explosion(beam, *mons);
         sanct_msg = "By Zin's power, the bennu's fires are quelled.";
+    }
+    else if (mons->has_ench(ENCH_ENTROPIC_BURST))
+    {
+        mon_enchant i_f = mons->get_ench(ENCH_ENTROPIC_BURST);
+        ASSERT(i_f.ench == ENCH_ENTROPIC_BURST);
+        agent = actor_by_mid(i_f.source);
+        _setup_inner_flame_explosion(beam, *mons, agent, true);
+        // This might need to change if monsters ever get the ability to cast
+        // Inner Flame...
+        if (agent && agent->is_player())
+            mons_add_blame(mons, "hexed by the player character");
+        else if (agent)
+            mons_add_blame(mons, "hexed by " + agent->name(DESC_A, true));
+        mons->flags |= MF_EXPLODE_KILL;
+        sanct_msg = "By Zin's power, the chaotic explosion "
+            "is contained.";
+        beam.aux_source = "entropic burst";
     }
     else if (mons->has_ench(ENCH_INNER_FLAME))
     {
@@ -1363,12 +1381,12 @@ static bool _explode_monster(monster* mons, killer_type killer,
     // Explosion side-effects.
     if (type == MONS_LURKING_HORROR)
         torment(mons, TORMENT_LURKING_HORROR, mons->pos());
-    else if (mons->has_ench(ENCH_INNER_FLAME))
+    else if (mons->has_ench(ENCH_INNER_FLAME) || mons->has_ench(ENCH_ENTROPIC_BURST))
     {
         for (adjacent_iterator ai(mons->pos(), false); ai; ++ai)
         {
             if (!cell_is_solid(*ai) && !cloud_at(*ai) && !one_chance_in(5))
-                place_cloud(CLOUD_FIRE, *ai, 10 + random2(10), agent);
+                place_cloud(mons->has_ench(ENCH_INNER_FLAME) ? CLOUD_FIRE : chaos_cloud(), *ai, 10 + random2(10), agent);
         }
     }
 
@@ -2002,7 +2020,8 @@ item_def* monster_die(monster& mons, killer_type killer,
         || mons.type == MONS_LURKING_HORROR
         || (mons.type == MONS_FULMINANT_PRISM && mons.prism_charge > 0)
         || mons.type == MONS_BENNU
-        || mons.has_ench(ENCH_INNER_FLAME))
+        || mons.has_ench(ENCH_INNER_FLAME)
+        || mons.has_ench(ENCH_ENTROPIC_BURST))
     {
         did_death_message =
             _explode_monster(&mons, killer, killer_index, pet_kill, wizard);

@@ -1819,11 +1819,20 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
 
     if (staff && staff->base_type == OBJ_STAVES && staff_enhances_spell(staff, real_spell))
     {
-        if (beam.is_enchantment() && staff->brand == SPSTF_CHAOS && one_chance_in(4))
+        if (beam.is_enchantment() && staff->brand == SPSTF_CHAOS)
         {
-            beam.real_flavour = BEAM_CHAOS_ENCHANTMENT;
-            beam.flavour = BEAM_CHAOS_ENCHANTMENT;
-            beam.colour = ETC_JEWEL;
+            if (real_spell == SPELL_INNER_FLAME)
+            {
+                beam.flavour = BEAM_ENTROPIC_BURST;
+                beam.real_flavour = BEAM_ENTROPIC_BURST;
+                beam.colour = ETC_JEWEL;
+            }
+            if (one_chance_in(4))
+            {
+                beam.real_flavour = BEAM_CHAOS_ENCHANTMENT;
+                beam.flavour = BEAM_CHAOS_ENCHANTMENT;
+                beam.colour = ETC_JEWEL;
+            }
         }
         else if (!beam.is_enchantment())
         {
@@ -2361,12 +2370,12 @@ static bool _mons_call_of_chaos(const monster& mon, bool check_only = false)
                                                    150, BEAM_AGILITY,
                                                    150, BEAM_RESISTANCE,
                                                    150, BEAM_BLINK_CLOSE,
+                                                   200, BEAM_ENTROPIC_BURST,
                                                     15, BEAM_BLINK,
                                                     15, BEAM_SLOW,
                                                     15, BEAM_VULNERABILITY,
                                                     15, BEAM_MALMUTATE,
-                                                    15, BEAM_POLYMORPH,
-                                                    15, BEAM_INNER_FLAME);
+                                                    15, BEAM_POLYMORPH);
 
         enchant_actor_with_flavour(*mi,
                                    flavour == BEAM_BLINK_CLOSE

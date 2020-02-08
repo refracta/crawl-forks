@@ -78,6 +78,7 @@ static map<enchant_type, monster_info_flags> trivial_ench_mb_mappings = {
     { ENCH_DUMB,            MB_DUMB },
     { ENCH_MAD,             MB_MAD },
     { ENCH_INNER_FLAME,     MB_INNER_FLAME },
+    { ENCH_ENTROPIC_BURST,  MB_ENTROPIC_BURST },
     { ENCH_BREATH_WEAPON,   MB_BREATH_WEAPON },
     { ENCH_OZOCUBUS_ARMOUR, MB_OZOCUBUS_ARMOUR },
     { ENCH_CONDENSATION_SHIELD, MB_CONDENSATION_SHIELD},
@@ -1199,6 +1200,8 @@ static string _verbose_info0(const monster_info& mi)
         return "insane";
     if (mi.is(MB_INNER_FLAME))
         return "inner flame";
+    if (mi.is(MB_ENTROPIC_BURST))
+        return "inner chaos";
     if (mi.is(MB_DUMB))
         return "stupefied";
     if (mi.is(MB_PARALYSED))
