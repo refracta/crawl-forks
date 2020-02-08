@@ -865,6 +865,8 @@ void bolt::fake_flavour()
     else if (real_flavour == BEAM_CHAOTIC)
     {
         name = pierce ? "chaotic beam of " : is_explosion ? "chaotic blast of " : "chaotic shard of ";
+        if (origin_spell == SPELL_CHAIN_OF_CHAOS)
+            name = "arc of chaotic ";
         switch (random2(12))
         {
         case 0:

@@ -156,8 +156,11 @@ spret cast_chain_spell(spell_type spell_cast, int pow,
 {
     fail_check();
     bolt beam;
+    beam.real_flavour = BEAM_CHAOTIC;
+    beam.flavour = BEAM_CHAOTIC;
 
-    if (determine_chaos(caster, spell_cast))
+    bool chaos = determine_chaos(caster, spell_cast);
+    if (chaos)
         spell_cast = SPELL_CHAIN_OF_CHAOS;
 
     // initialise beam structure
@@ -167,13 +170,16 @@ spret cast_chain_spell(spell_type spell_cast, int pow,
             beam.name           = "lightning arc";
             beam.aux_source     = "chain lightning";
             beam.glyph          = dchar_glyph(DCHAR_FIRED_ZAP);
+            beam.real_flavour   = BEAM_ELECTRICITY;
             beam.flavour        = BEAM_ELECTRICITY;
             break;
+        case SPELL_LESSER_CHAOS_CHAIN:
+            beam.real_flavour   = BEAM_CHAOS;
+            beam.flavour        = BEAM_CHAOS;
         case SPELL_CHAIN_OF_CHAOS:
             beam.name           = "arc of chaos";
             beam.aux_source     = "chain of chaos";
             beam.glyph          = dchar_glyph(DCHAR_FIRED_ZAP);
-            beam.flavour        = BEAM_CHAOS;
             break;
         default:
             die("buggy chain spell %d cast", spell_cast);
@@ -325,6 +331,7 @@ spret cast_chain_spell(spell_type spell_cast, int pow,
 
         beam.source = source;
         beam.target = target;
+        beam.ench_power = pow;
         switch (spell_cast)
         {
             case SPELL_CHAIN_LIGHTNING:
@@ -333,12 +340,20 @@ spret cast_chain_spell(spell_type spell_cast, int pow,
                     ? calc_dice(5, 10 + pow * 2 / 3)
                     : calc_dice(5, 46 + pow / 6);
                 break;
-            case SPELL_CHAIN_OF_CHAOS:
-                beam.colour       = ETC_RANDOM;
-                beam.ench_power   = pow;
-                beam.damage       = calc_dice(3, 5 + pow / 6);
+            case SPELL_LESSER_CHAOS_CHAIN:
+                beam.colour = ETC_RANDOM;
                 beam.real_flavour = BEAM_CHAOS;
-                beam.flavour      = BEAM_CHAOS;
+                beam.flavour = BEAM_CHAOS;
+                beam.damage = calc_dice(3, 5 + pow / 6);
+                break;
+            case SPELL_CHAIN_OF_CHAOS:
+                beam.colour = ETC_JEWEL;
+                beam.real_flavour = BEAM_CHAOTIC;
+                beam.flavour = BEAM_CHAOTIC;
+                beam.damage = caster->is_player()
+                    ? calc_dice(5, 12 + pow)
+                    : calc_dice(5, 51 + pow / 3);
+                break;
             default:
                 break;
         }
@@ -348,7 +363,7 @@ spret cast_chain_spell(spell_type spell_cast, int pow,
         {
             // This should not hit the caster, too scary as a player effect and
             // too kind to the player as a monster effect.
-            if (spell_cast == SPELL_CHAIN_OF_CHAOS)
+            if (spell_cast == SPELL_LESSER_CHAOS_CHAIN)
             {
                 beam.real_flavour = BEAM_VISUAL;
                 beam.flavour      = BEAM_VISUAL;

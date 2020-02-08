@@ -116,6 +116,7 @@ static const vector<spell_type> _xom_random_spells =
     SPELL_SUMMON_HORRIBLE_THINGS,
     SPELL_SUMMON_DRAGON,
     SPELL_NECROMUTATION,
+    SPELL_LESSER_CHAOS_CHAIN,
     SPELL_CHAIN_OF_CHAOS
 };
 

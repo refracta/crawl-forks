@@ -1839,6 +1839,9 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
     case SPELL_CHAIN_OF_CHAOS:
         return cast_chain_spell(SPELL_CHAIN_OF_CHAOS, powc, &you, fail);
 
+    case SPELL_LESSER_CHAOS_CHAIN:
+        return cast_chain_spell(SPELL_CHAIN_OF_CHAOS, powc, &you, fail);
+
     case SPELL_CLOUD_CONE:
         return cast_cloud_cone(&you, powc, target, fail);
 

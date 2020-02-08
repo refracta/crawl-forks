@@ -3081,9 +3081,9 @@ static const struct spell_desc spelldata[] =
         | spflag::needs_tracer | spflag::MR_check,
     4,
     200,
-    LOS_RADIUS, LOS_RADIUS,
-    3, 0,
-    TILEG_ERROR,
+LOS_RADIUS, LOS_RADIUS,
+3, 0,
+TILEG_ERROR,
 },
 #endif
 
@@ -3179,6 +3179,16 @@ static const struct spell_desc spelldata[] =
     TILEG_GENERIC_MONSTER_SPELL,
 },
 
+{
+    SPELL_LESSER_CHAOS_CHAIN, "Chain of Chaos",
+    spschool::random | spschool::evocation ,
+    spflag::area | spflag::monster | spflag::chaotic,
+    4,
+    200,
+    -1, -1,
+    4, 0,
+    TILEG_GENERIC_MONSTER_SPELL,
+},
 {
     SPELL_CALL_OF_CHAOS, "Call of Chaos",
     spschool::charms,

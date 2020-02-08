@@ -1146,6 +1146,7 @@ static int _mons_power_hd_factor(spell_type spell)
 
         case SPELL_CHAIN_LIGHTNING:
         case SPELL_CHAIN_OF_CHAOS:
+        case SPELL_LESSER_CHAOS_CHAIN:
             return 4;
 
         default:
@@ -1928,6 +1929,8 @@ bool setup_mons_cast(const monster* mons, bolt &pbolt, spell_type spell_cast,
     case SPELL_BLINK_CLOSE:
     case SPELL_TOMB_OF_DOROKLOHE:
     case SPELL_CHAIN_LIGHTNING:    // the only user is reckless
+    case SPELL_CHAIN_OF_CHAOS:
+    case SPELL_LESSER_CHAOS_CHAIN:
     case SPELL_SUMMON_EYEBALLS:
     case SPELL_SUMMON_BUTTERFLIES:
 #if TAG_MAJOR_VERSION == 34
@@ -6587,6 +6590,8 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         return;
     }
 
+    case SPELL_LESSER_CHAOS_CHAIN:
+    case SPELL_CHAIN_OF_CHAOS:
     case SPELL_CHAIN_LIGHTNING:
         cast_chain_spell(spell_cast, splpow, mons);
         return;
@@ -8237,6 +8242,9 @@ static bool _ms_waste_of_time(monster* mon, mon_spell_slot slot)
                   && friendly
                   && !player_res_torment(false)
                   && !player_kiku_res_torment();
+    case SPELL_LESSER_CHAOS_CHAIN:
+    case SPELL_CHAIN_OF_CHAOS:
+        return !foe || you.visible_to(mon) && friendly; // don't zap player
     case SPELL_CHAIN_LIGHTNING:
         return !_trace_los(mon, _elec_vulnerable)
                 || you.visible_to(mon) && friendly; // don't zap player
