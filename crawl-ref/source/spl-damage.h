@@ -50,7 +50,7 @@ spret cast_thunderbolt(actor *caster, int pow, coord_def aim,
 actor* forest_near_enemy(const actor *mon);
 void forest_message(const coord_def pos, const string &msg,
                     msg_channel_type ch = MSGCH_PLAIN);
-void forest_damage(const actor *mon);
+void forest_damage(actor *mon);
 
 vector<bolt> get_spray_rays(const actor *caster, coord_def aim, int range,
                             int max_rays, int max_spacing = 3);

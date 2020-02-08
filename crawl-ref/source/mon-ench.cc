@@ -784,6 +784,11 @@ void monster::remove_enchantment_effect(const mon_enchant &me, bool quiet)
             mprf("The chaos built beneath %s's skin dies down.", name(DESC_THE).c_str());
         break;
 
+    case ENCH_CHAOTIC_INFUSION:
+        if (!quiet && alive())
+            simple_monster_message(*this, " is no longer infused with raw entropy.");
+        break;
+
     case ENCH_ROLLING:
         calc_speed();
         if (!quiet && alive())
@@ -1501,6 +1506,7 @@ void monster::apply_enchantment(const mon_enchant &me)
     case ENCH_RECITE_TIMER:
     case ENCH_INNER_FLAME:
     case ENCH_ENTROPIC_BURST:
+    case ENCH_CHAOTIC_INFUSION:
     case ENCH_MUTE:
     case ENCH_BLIND:
     case ENCH_DUMB:
@@ -2257,6 +2263,7 @@ static const char *enchant_names[] =
     "stilling the winds", "thunder_ringed", "pinned_by_whirlwind",
     "vortex", "vortex_cooldown", "vile_clutch", "trapped_in_lava", "stick",
     "elec_vuln", "cold_vuln", "phys_vuln", "staff_shield_down", "entropic_burst",
+    "chaotic_infusion",
     "buggy",
 };
 
@@ -2478,6 +2485,7 @@ int mon_enchant::calc_duration(const monster* mons,
         cturn = 30 * 10 / _mod_speed(10, mons->speed);
         break;
 
+    case ENCH_CHAOTIC_INFUSION:
     case ENCH_FAKE_ABJURATION:
     case ENCH_ABJ:
         // The duration is:

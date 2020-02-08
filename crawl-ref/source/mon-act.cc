@@ -1437,8 +1437,8 @@ static void _pre_monster_move(monster& mons)
 
     // Dissipate player ball lightnings that have left the player's sight
     // (monsters are allowed to 'cheat', as with orb of destruction)
-    if (mons.type == MONS_BALL_LIGHTNING && mons.summoner == MID_PLAYER
-        && !cell_see_cell(you.pos(), mons.pos(), LOS_SOLID))
+    if ((mons.type == MONS_BALL_LIGHTNING || mons.type == MONS_ENTROPIC_SPHERE) 
+        && mons.summoner == MID_PLAYER && !cell_see_cell(you.pos(), mons.pos(), LOS_SOLID))
     {
         monster_die(mons, KILL_RESET, NON_MONSTER);
         return;

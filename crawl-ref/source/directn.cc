@@ -3189,6 +3189,9 @@ static vector<string> _get_monster_desc_vector(const monster_info& mi)
     if (mi.is(MB_ENTROPIC_BURST))
         descs.emplace_back("inner chaos");
 
+    if (mi.is(MB_CHAOTIC_INFUSION))
+        descs.emplace_back("chaos-infused");
+
     if (mi.fire_blocker)
     {
         descs.push_back("fire blocked by " // FIXME, renamed features
@@ -3326,6 +3329,12 @@ static string _get_monster_desc(const monster_info& mi)
     {
         text += pronoun + " " + conjugate_verb("has", mi.pronoun_plurality())
             + " swirling chaos right below the skin, ready to burst.\n";
+    }
+
+    if (mi.is(MB_CHAOTIC_INFUSION))
+    {
+        text += pronoun + " " + conjugate_verb("is", mi.pronoun_plurality())
+            + " infused with raw chaos; buffing their spells and attacks.\n";
     }
 
     if (mi.fire_blocker)

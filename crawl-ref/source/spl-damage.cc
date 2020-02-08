@@ -790,21 +790,6 @@ spret fire_los_attack_spell(spell_type spell, int pow, actor* agent,
                                   damage_done);
 }
 
-beam_type _chaos_damage_type(bool player)
-{
-    beam_type retval;
-    retval =  random_choose_weighted(4, BEAM_FIRE,
-                                     4, BEAM_COLD,
-                                     4, BEAM_NEG,
-                                     4, BEAM_ACID,
-                                     1, BEAM_DAMNATION,
-                                     6, BEAM_DEVASTATION,
-                                     3, BEAM_ELECTRICITY);
-    if (player && is_good_god(you.religion) && (retval == BEAM_NEG || retval == BEAM_DAMNATION))
-        return BEAM_HOLY;
-    return retval;
-}
-
 spret vampiric_drain(int pow, monster* mons, bool fail)
 {
     if (you.hp == you.hp_max)
@@ -899,7 +884,7 @@ spret cast_freeze(int pow, monster* mons, bool fail)
     bool chaos = determine_chaos(&you, SPELL_FREEZE);
 
     if (chaos)
-        damtype = _chaos_damage_type(true);
+        damtype = chaos_damage_type(true);
 
     // Set conducts here. The monster needs to be alive when this is done, and
     // mons_adjust_flavoured() could kill it.
@@ -1217,7 +1202,7 @@ spret cast_airstrike(int pow, const dist &beam, bool fail)
     beam_type damtype = BEAM_AIR;
 
     if (chaos)
-        damtype = _chaos_damage_type(true);
+        damtype = chaos_damage_type(true);
 
     bolt pbeam;
     pbeam.flavour = damtype;
@@ -3112,7 +3097,7 @@ void forest_message(const coord_def pos, const string &msg, msg_channel_type ch)
         }
 }
 
-void forest_damage(const actor *mon)
+void forest_damage(actor *mon)
 {
     const coord_def pos = mon->pos();
     const int hd = mon->get_hit_dice();
@@ -3178,6 +3163,12 @@ void forest_damage(const actor *mon)
 
                 if (dmg <= 0)
                     break;
+
+                if (determine_chaos(mon, SPELL_AWAKEN_FOREST) && one_chance_in(3))
+                {
+                    mpr("Chaos arcs from the awakened trees.");
+                    chaotic_status(foe, 5 + random2(15), mon);
+                }
 
                 foe->hurt(mon, dmg, BEAM_MISSILE, KILLED_BY_BEAM, "",
                           "by angry trees");
@@ -3422,7 +3413,7 @@ void toxic_radiance_effect(actor* agent, int mult, bool on_cast, bool chaos)
         beam_type damtype = BEAM_POISON;
 
         if (chaos)
-            damtype = _chaos_damage_type(agent->is_player());
+            damtype = chaos_damage_type(agent->is_player());
 
         int dam = roll_dice(1, 1 + pow / 20) * div_rand_round(mult, BASELINE_DELAY);
         dam = resist_adjust_damage(*ai, damtype, dam);

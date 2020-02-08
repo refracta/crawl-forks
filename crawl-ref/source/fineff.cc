@@ -27,6 +27,7 @@
 #include "ouch.h"
 #include "religion.h"
 #include "spl-miscast.h"
+#include "spl-summoning.h"
 #include "state.h"
 #include "stringutil.h"
 #include "terrain.h"
@@ -543,6 +544,7 @@ void infestation_death_fineff::fire()
                                          false))
     {
         scarab->add_ench(mon_enchant(ENCH_FAKE_ABJURATION, 6));
+        chaos_summon(SPELL_INFESTATION, scarab, &you, false);
 
         if (you.see_cell(posn) || you.can_see(*scarab))
         {

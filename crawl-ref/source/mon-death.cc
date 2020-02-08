@@ -1204,14 +1204,24 @@ void setup_spore_explosion(bolt & beam, const monster& origin)
     beam.ex_size = 2;
 }
 
-static void _setup_lightning_explosion(bolt & beam, const monster& origin)
+static void _setup_lightning_explosion(bolt & beam, const monster& origin, bool chaos)
 {
     _setup_base_explosion(beam, origin);
-    beam.flavour   = BEAM_ELECTRICITY;
+    if (chaos)
+    {
+        beam.flavour = BEAM_CHAOTIC;
+        beam.name = "blast of pure entropy";
+        beam.explode_noise_msg = "You hear a bemusing cacophonous burst!";
+        beam.colour = ETC_JEWEL;
+    }
+    else
+    {
+        beam.flavour = BEAM_ELECTRICITY;
+        beam.name = "blast of lightning";
+        beam.explode_noise_msg = "You hear a clap of thunder!";
+        beam.colour = LIGHTCYAN;
+    }
     beam.damage    = dice_def(3, 5 + origin.get_hit_dice() * 5 / 4);
-    beam.name      = "blast of lightning";
-    beam.explode_noise_msg = "You hear a clap of thunder!";
-    beam.colour    = LIGHTCYAN;
     beam.origin_spell = SPELL_CONJURE_BALL_LIGHTNING;
     beam.ex_size   = x_chance_in_y(origin.get_hit_dice(), 24) ? 3 : 2;
     // Don't credit the player for ally-summoned ball lightning explosions.
@@ -1222,12 +1232,21 @@ static void _setup_lightning_explosion(bolt & beam, const monster& origin)
 static void _setup_prism_explosion(bolt& beam, const monster& origin)
 {
     _setup_base_explosion(beam, origin);
-    beam.flavour = BEAM_MMISSILE;
     beam.damage  = (origin.prism_charge == 2 ?
                         dice_def(3, 6 + origin.get_hit_dice() * 7 / 4)
                         : dice_def(2, 6 + origin.get_hit_dice() * 7 / 4));
-    beam.name    = "blast of energy";
-    beam.colour  = MAGENTA;
+    if (origin.has_ench(ENCH_CHAOTIC_INFUSION))
+    {
+        beam.flavour = BEAM_CHAOTIC;
+        beam.name = "chaotic blast";
+        beam.colour = ETC_JEWEL;
+    }
+    else
+    {
+        beam.flavour = BEAM_MMISSILE;
+        beam.name = "blast of energy";
+        beam.colour = MAGENTA;
+    }
     beam.ex_size = origin.prism_charge;
 }
 
@@ -1284,9 +1303,15 @@ static bool _explode_monster(monster* mons, killer_type killer,
     }
     else if (type == MONS_BALL_LIGHTNING)
     {
-        _setup_lightning_explosion(beam, *mons);
+        _setup_lightning_explosion(beam, *mons, false);
         sanct_msg    = "By Zin's power, the ball lightning's explosion "
                        "is contained.";
+    }
+    else if (type == MONS_ENTROPIC_SPHERE)
+    {
+        _setup_lightning_explosion(beam, *mons, true);
+        sanct_msg = "By Zin's power, the entropic burst "
+                    "is contained.";
     }
     else if (type == MONS_LURKING_HORROR)
         sanct_msg = "The lurking horror fades away harmlessly.";

@@ -1050,6 +1050,7 @@ enum monster_type                      // menv[].type
     MONS_GAMMAFUNK,
     MONS_ORC_CLERIC,
     MONS_CHAOS_VORTEX,
+    MONS_ENTROPIC_SPHERE,
     MONS_TEST_STATUE,
 #endif
 

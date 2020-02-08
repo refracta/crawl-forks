@@ -17,6 +17,7 @@
 #include "attack.h"
 #include "bloodspatter.h"
 #include "branch.h"
+#include "chaos.h"
 #include "cleansing-flame-source-type.h"
 #include "cloud.h"
 #include "colour.h"
@@ -1819,7 +1820,19 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
 
     if (staff && staff->base_type == OBJ_STAVES && staff_enhances_spell(staff, real_spell))
     {
-        if (beam.is_enchantment() && staff->brand == SPSTF_CHAOS)
+        if (staff->brand == SPSTF_ACCURACY)
+            beam.hit = AUTOMATIC_HIT;
+        if (staff->brand == SPSTF_MENACE)
+        {
+            if (beam.damage.num > 6)
+                beam.damage.num++;
+            beam.damage.num++;
+        }
+    }
+
+    if (determine_chaos(mons, real_spell))
+    {
+        if (beam.is_enchantment())
         {
             if (real_spell == SPELL_INNER_FLAME)
             {
@@ -1834,22 +1847,11 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
                 beam.colour = ETC_JEWEL;
             }
         }
-        else if (!beam.is_enchantment())
+        else
         {
-            if (staff->brand == SPSTF_CHAOS && !one_chance_in(3))
-            {
-                beam.real_flavour = BEAM_CHAOTIC;
-                beam.flavour = BEAM_CHAOTIC;
-                beam.colour = ETC_JEWEL;
-            }
-            if (staff->brand == SPSTF_ACCURACY)
-                beam.hit = AUTOMATIC_HIT;
-            if (staff->brand == SPSTF_MENACE)
-            {
-                if (beam.damage.num > 6)
-                    beam.damage.num++;
-                beam.damage.num++;
-            }
+            beam.real_flavour = BEAM_CHAOTIC;
+            beam.flavour = BEAM_CHAOTIC;
+            beam.colour = ETC_JEWEL;
         }
     }
 
@@ -2371,6 +2373,7 @@ static bool _mons_call_of_chaos(const monster& mon, bool check_only = false)
                                                    150, BEAM_RESISTANCE,
                                                    150, BEAM_BLINK_CLOSE,
                                                    200, BEAM_ENTROPIC_BURST,
+                                                   // BCADDO: Add a Chaotic Infusion chance here?
                                                     15, BEAM_BLINK,
                                                     15, BEAM_SLOW,
                                                     15, BEAM_VULNERABILITY,
@@ -3394,7 +3397,14 @@ static void _cast_black_mark(monster* agent)
             continue;
         monster* mon = ai->as_monster();
 
-        if (!mon->has_ench(ENCH_BLACK_MARK)
+        if (determine_chaos(agent, SPELL_BLACK_MARK) && one_chance_in(3))
+        {
+            if (one_chance_in(4))
+                chaotic_debuff(mon, 5 + random2(20), agent);
+            else
+                chaotic_buff(mon, 5 + random2(20), agent);
+        }
+        else if (!mon->has_ench(ENCH_BLACK_MARK)
             && mons_has_attacks(*mon))
         {
             mon->add_ench(ENCH_BLACK_MARK);
@@ -4520,6 +4530,7 @@ static void _do_high_level_summon(monster* mons, spell_type spell_cast,
             mgen_data(which_mons, SAME_ATTITUDE(mons),
                       target ? *target : mons->pos(), mons->foe)
             .set_summoned(mons, duration, spell_cast, god));
+        chaos_summon(spell_cast, summon, mons);
         if (summon && post_hook)
             post_hook(summon, target ? *target : mons->pos());
     }
@@ -4598,6 +4609,8 @@ static void _mons_cast_spectral_orcs(monster* mons)
                 orc->mname = mons_type_name(mon, DESC_PLAIN);
                 orc->flags |= MF_NAME_REPLACE | MF_NAME_DESCRIPTOR;
             }
+
+            chaos_summon(SPELL_SUMMON_SPECTRAL_ORCS, orc, mons);
 
             // give gear using the base type
             const int lvl = env.absdepth0;
@@ -4687,30 +4700,56 @@ static bool _mons_cast_freeze(monster* mons)
         return false;
 
     const int pow = _mons_spellpower(SPELL_FREEZE, *mons);
+    beam_type flavour = BEAM_COLD;
+
+    bool chaos = determine_chaos(mons, SPELL_FREEZE);
+    if (chaos)
+        flavour = chaos_damage_type();
 
     const int base_damage = roll_dice(1, 3 + pow / 6);
     int damage = 0;
 
     if (target->is_player())
-        damage = resist_adjust_damage(&you, BEAM_COLD, base_damage);
+        damage = resist_adjust_damage(&you, flavour, base_damage);
     else
     {
         bolt beam;
-        beam.flavour = BEAM_COLD;
+        beam.flavour = flavour;
         damage = mons_adjust_flavoured(target->as_monster(), beam, base_damage);
+    }
+
+    string dam_verb = "frozen";
+
+    if (chaos)
+    {
+        switch (flavour)
+        {
+        case BEAM_FIRE: dam_verb = "burned"; break;
+        case BEAM_ELECTRICITY: dam_verb = "shocked"; break;
+        case BEAM_NEG: dam_verb = "drained"; break;
+        case BEAM_ACID: dam_verb = "dissolved"; break;
+        case BEAM_DAMNATION: dam_verb = "scorched"; break;
+        case BEAM_HOLY: dam_verb = "smitten"; break;
+        default:
+        case BEAM_DEVASTATION: dam_verb = "ruptured"; break;
+        }
     }
 
     if (you.can_see(*target))
     {
-        mprf("%s %s frozen.", target->name(DESC_THE).c_str(),
-                              target->conj_verb("are").c_str());
+        mprf("%s %s %s.", target->name(DESC_THE).c_str(),
+                          target->conj_verb("are").c_str(),
+                          dam_verb.c_str());
     }
 
-    target->hurt(mons, damage, BEAM_COLD, KILLED_BY_BEAM, "", "by Freeze");
+    target->hurt(mons, damage, flavour, KILLED_BY_BEAM, "", "by Freeze");
 
+
+    if (target->alive() && chaos)
+        chaotic_status(target, damage, mons);
     if (target->alive())
     {
-        target->expose_to_element(BEAM_COLD, damage);
+        target->expose_to_element(flavour, damage);
 
         if (target->is_monster() && target->res_cold() <= 0)
         {
@@ -4956,6 +4995,13 @@ static int _mons_mass_confuse(monster* mons, bool actual)
                 mprf("You%s", you.resist_margin_phrase(res_magic).c_str());
             else
             {
+                if (determine_chaos(mons, SPELL_MASS_CONFUSION))
+                {
+                    if (one_chance_in(4))
+                        chaotic_buff(&you, roll_dice(3, 5), mons);
+                    else
+                        chaotic_debuff(&you, roll_dice(3, 5), mons);
+                }
                 you.confuse(mons, 5 + random2(3));
                 retval = 1;
             }
@@ -4990,6 +5036,15 @@ static int _mons_mass_confuse(monster* mons, bool actual)
         if (actual)
         {
             retval = 1;
+
+            if (determine_chaos(mons, SPELL_MASS_CONFUSION))
+            {
+                if (one_chance_in(4))
+                    chaotic_buff(*mi, roll_dice(3, 5), mons);
+                else
+                    chaotic_debuff(*mi, roll_dice(3, 5), mons);
+            }
+
             mi->confuse(mons, 5 + random2(3));
         }
     }
@@ -5365,7 +5420,8 @@ static void _branch_summon_helper(monster* mons, spell_type spell_cast)
         mg.set_summoned(mons, 1, spell_cast);
         if (type == MONS_SLIME_CREATURE)
             mg.props[MGEN_BLOB_SIZE] = 5;
-        create_monster(mg);
+        monster * x = create_monster(mg);
+        chaos_summon(spell_cast, x, mons);
     }
 }
 
@@ -5959,6 +6015,8 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
     const god_type god = _find_god(*mons, slot_flags);
     const int splpow = evoke ? mons->get_hit_dice() * 1.5 // Didn't I already change this?
                              : _mons_spellpower(spell_cast, *mons);
+    const bool chaos = determine_chaos(mons, spell_cast);
+    monster * x;
 
     switch (spell_cast)
     {
@@ -5989,6 +6047,9 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
     {
         pbolt.flavour = BEAM_AIR;
 
+        if (chaos)
+            pbolt.flavour = chaos_damage_type();
+
         int damage_taken = 10 + 2 * mons->get_hit_dice();
         damage_taken = foe->beam_resists(pbolt, damage_taken, false);
 
@@ -5999,15 +6060,18 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
 
         if (you.can_see(*foe))
         {
-                mprf("The air twists around and %sstrikes %s%s%s",
+                mprf("The air %s twists around and %sstrikes %s%s%s",
+                        chaos ? "chaotically" : "",
                         foe->airborne() ? "violently " : "",
                         foe->name(DESC_THE).c_str(),
                         foe->airborne() ? " in flight" : "",
                         attack_strength_punctuation(damage_taken).c_str());
         }
 
-        foe->hurt(mons, damage_taken, BEAM_MISSILE, KILLED_BY_BEAM,
+        foe->hurt(mons, damage_taken, pbolt.flavour, KILLED_BY_BEAM,
                   "", "by the air");
+        if (foe->alive() && chaos)
+            chaotic_status(foe, dam, mons);
         if (foe->alive())
             cloud_strike(mons, foe, dam);
         return;
@@ -6016,6 +6080,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
     case SPELL_HOLY_FLAMES:
         holy_flames(mons, foe);
         return;
+
     case SPELL_BRAIN_FEED:
         if (one_chance_in(3)
             && lose_stat(STAT_INT, 1 + random2(3)))
@@ -6062,7 +6127,15 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
             return;
         }
 
-        foe->confuse(mons, 5 + random2(3));
+        if (chaos && one_chance_in(4))
+        {
+            if (one_chance_in(3))
+                chaotic_buff(foe, splpow / 5, mons);
+            else
+                chaotic_debuff(foe, splpow / 5, mons);
+        }
+        else
+            foe->confuse(mons, 5 + random2(3));
         return;
     }
 
@@ -6131,9 +6204,10 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
 
             const monster_type mon = (one_chance_in(3) ? MONS_BAT
                                                        : RANDOM_ELEMENT(rats));
-            create_monster(
+             x = create_monster(
                 mgen_data(mon, SAME_ATTITUDE(mons), mons->pos(), mons->foe)
                 .set_summoned(mons, 5, spell_cast, god));
+            chaos_summon(spell_cast, x, mons);
         }
         return;
 
@@ -6153,10 +6227,11 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
             else
                 sum = MONS_BALL_PYTHON;
 
-            if (create_monster(
+            if (x = create_monster(
                     mgen_data(sum, SAME_ATTITUDE(mons), mons->pos(), mons->foe)
                     .set_summoned(mons, 5, spell_cast, god)))
             {
+                chaos_summon(spell_cast, x, mons);
                 i++;
             }
         }
@@ -6171,11 +6246,13 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
 
         for (sumcount = 0; sumcount < sumcount2; ++sumcount)
         {
-            create_monster(
+            x = create_monster(
                 mgen_data(RANDOM_MOBILE_MONSTER, SAME_ATTITUDE(mons),
                           mons->pos(), mons->foe)
                           .set_summoned(mons, 5, spell_cast, god)
                           .set_place(place));
+
+            chaos_summon(spell_cast, x, mons);
         }
         return;
     }
@@ -6215,10 +6292,12 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         duration  = min(2 + mons->spell_hd(spell_cast) / 10, 6);
         for (sumcount = 0; sumcount < sumcount2; sumcount++)
         {
-            create_monster(
+            x = create_monster(
                 mgen_data(summon_any_demon(RANDOM_DEMON_COMMON, true),
                           SAME_ATTITUDE(mons), mons->pos(), mons->foe)
                 .set_summoned(mons, duration, spell_cast, god));
+
+            chaos_summon(spell_cast, x, mons);
         }
         return;
 
@@ -6235,7 +6314,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
 
     case SPELL_CALL_IMP:
         duration  = min(2 + mons->spell_hd(spell_cast) / 5, 6);
-        create_monster(
+        x = create_monster(
             mgen_data(random_choose_weighted(
                         1, MONS_IRON_IMP,
                         2, MONS_SHADOW_IMP,
@@ -6243,6 +6322,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
                         4, MONS_CRIMSON_IMP),
                       SAME_ATTITUDE(mons), mons->pos(), mons->foe)
             .set_summoned(mons, duration, spell_cast, god));
+        chaos_summon(spell_cast, x, mons);
         return;
 
     case SPELL_SUMMON_MINOR_DEMON: // class 5 demons
@@ -6251,10 +6331,11 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         duration  = min(2 + mons->spell_hd(spell_cast) / 5, 6);
         for (sumcount = 0; sumcount < sumcount2; ++sumcount)
         {
-            create_monster(
+            x = create_monster(
                 mgen_data(summon_any_demon(RANDOM_DEMON_LESSER, true),
                           SAME_ATTITUDE(mons), mons->pos(), mons->foe)
                 .set_summoned(mons, duration, spell_cast, god));
+            chaos_summon(spell_cast, x, mons);
         }
         return;
 
@@ -6265,10 +6346,11 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
 
         for (sumcount = 0; sumcount < sumcount2; ++sumcount)
         {
-            create_monster(
+            x = create_monster(
                 mgen_data(MONS_UFETUBUS, SAME_ATTITUDE(mons), mons->pos(),
                           mons->foe)
                 .set_summoned(mons, duration, spell_cast, god));
+            chaos_summon(spell_cast, x, mons);
         }
         return;
 
@@ -6279,7 +6361,8 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         return;
 
     case SPELL_SUMMON_ICE_BEAST:
-        _summon(*mons, MONS_ICE_BEAST, 5, slot);
+        x = _summon(*mons, MONS_ICE_BEAST, 5, slot);
+        chaos_summon(spell_cast, x, mons);
         return;
 
     case SPELL_SUMMON_MUSHROOMS:   // Summon a ring of icky crawling fungi.
@@ -6302,11 +6385,12 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
             if (empty.origin())
                 return;
 
-            create_monster(
+            x = create_monster(
                 mgen_data(one_chance_in(3) ? MONS_DEATHCAP
                                            : MONS_WANDERING_MUSHROOM,
                           SAME_ATTITUDE(mons), empty, mons->foe, MG_FORCE_PLACE)
                 .set_summoned(mons, duration, spell_cast, god));
+            chaos_summon(spell_cast, x, mons);
         }
         return;
 
@@ -6331,7 +6415,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         for (int i = 0; i < n; ++i)
         {
             if (monster *ball = create_monster(
-                    mgen_data(MONS_BALL_LIGHTNING, SAME_ATTITUDE(mons),
+                    mgen_data(chaos ? MONS_ENTROPIC_SPHERE : MONS_BALL_LIGHTNING, SAME_ATTITUDE(mons),
                               mons->pos(), mons->foe)
                     .set_summoned(mons, 0, spell_cast, god)))
             {
@@ -6407,10 +6491,11 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
     case SPELL_SUMMON_GREATER_DEMON:
         duration  = min(2 + mons->spell_hd(spell_cast) / 10, 6);
 
-        create_monster(
+        x = create_monster(
             mgen_data(summon_any_demon(RANDOM_DEMON_GREATER, true),
                       SAME_ATTITUDE(mons), mons->pos(), mons->foe)
             .set_summoned(mons, duration, spell_cast, god));
+        chaos_summon(spell_cast, x, mons);
         return;
 
     // Journey -- Added in Summon Lizards
@@ -6430,10 +6515,11 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
 
             for (monster_type type : monsters)
             {
-                create_monster(
+                x = create_monster(
                     mgen_data(type, SAME_ATTITUDE(mons), mons->pos(),
                               mons->foe)
                     .set_summoned(mons, duration, spell_cast, god));
+                chaos_summon(spell_cast, x, mons);
             }
         }
         return;
@@ -6620,9 +6706,10 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
                                         20, MONS_GREAT_ORB_OF_EYES,
                                         10, MONS_EYE_OF_DEVASTATION);
 
-            create_monster(
+            x = create_monster(
                 mgen_data(mon, SAME_ATTITUDE(mons), mons->pos(), mons->foe)
                 .set_summoned(mons, duration, spell_cast, god));
+            chaos_summon(spell_cast, x, mons);
         }
         return;
 
@@ -6684,9 +6771,11 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
                                        2, MONS_HELLION,
                                        1, MONS_BRIMSTONE_FIEND);
 
-            create_monster(
+            x = create_monster(
                 mgen_data(mon, SAME_ATTITUDE(mons), mons->pos(), mons->foe)
                 .set_summoned(mons, duration, spell_cast, god));
+
+            chaos_summon(spell_cast, x, mons);
         }
         return;
 
@@ -6956,7 +7045,10 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
     {
         const int num_vipers = 1 + random2(mons->spell_hd(spell_cast) / 5 + 1);
         for (int i = 0; i < num_vipers; ++i)
-            _summon(*mons, MONS_MANA_VIPER, 2, slot);
+        {
+            x = _summon(*mons, MONS_MANA_VIPER, 2, slot);
+            chaos_summon(spell_cast, x, mons);
+        }
         return;
     }
 
@@ -6964,7 +7056,10 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
     {
         const int num_scorps = 1 + random2(mons->spell_hd(spell_cast) / 5 + 1);
         for (int i = 0; i < num_scorps; ++i)
-            _summon(*mons, MONS_EMPEROR_SCORPION, 5, slot);
+        {
+            x = _summon(*mons, MONS_EMPEROR_SCORPION, 5, slot);
+            chaos_summon(spell_cast, x, mons);
+        }
         return;
     }
 
@@ -6987,7 +7082,10 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
     {
         monster* servitor = _summon(*mons, MONS_SPELLFORGED_SERVITOR, 4, slot);
         if (servitor)
+        {
             init_servitor(servitor, mons);
+            chaos_summon(spell_cast, servitor, mons);
+        }
         else if (you.can_see(*mons))
             canned_msg(MSG_NOTHING_HAPPENS);
         return;
@@ -7023,7 +7121,10 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
     {
         const int num_scarabs = 1 + random2(mons->spell_hd(spell_cast) / 5 + 1);
         for (int i = 0; i < num_scarabs; ++i)
-            _summon(*mons, MONS_DEATH_SCARAB, 2, slot);
+        {
+            x = _summon(*mons, MONS_DEATH_SCARAB, 2, slot);
+            chaos_summon(spell_cast, x, mons);
+        }
         return;
     }
 
@@ -7045,6 +7146,13 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         return;
 
     case SPELL_ENTROPIC_WEAVE:
+        if (chaos && one_chance_in(3))
+        {
+            if (one_chance_in(4))
+                chaotic_buff(foe, roll_dice(3, 4), mons);
+            else
+                chaotic_debuff(foe, roll_dice(3, 4), mons);
+        }
         foe->corrode_equipment("the entropic weave");
         return;
 
@@ -7053,7 +7161,10 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         const int num_exec = 1 + random2(mons->spell_hd(spell_cast) / 5 + 1);
         duration = min(2 + mons->spell_hd(spell_cast) / 10, 6);
         for (int i = 0; i < num_exec; ++i)
-            _summon(*mons, MONS_EXECUTIONER, duration, slot);
+        {
+            x = _summon(*mons, MONS_EXECUTIONER, duration, slot);
+            chaos_summon(spell_cast, x, mons);
+        }
         return;
     }
 

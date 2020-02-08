@@ -3227,7 +3227,8 @@ void melee_attack::mons_apply_attack_flavour()
     // Most of this is from BWR 4.1.2.
 
     attack_flavour flavour = attk_flavour;
-    if (flavour == AF_CHAOTIC || flavour == AF_PURE_CHAOS)
+
+    if ((attacker->as_monster()->has_ench(ENCH_CHAOTIC_INFUSION) && attack_number == 0) || flavour == AF_CHAOTIC || flavour == AF_PURE_CHAOS)
         flavour = random_chaos_attack_flavour();
 
     const int base_damage = flavour_damage(flavour, attacker->get_hit_dice());

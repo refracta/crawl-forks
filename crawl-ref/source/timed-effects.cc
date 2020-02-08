@@ -832,6 +832,7 @@ void monster::timeout_enchantments(int levels)
         case ENCH_ROLLING:
         case ENCH_INNER_FLAME:
         case ENCH_ENTROPIC_BURST:
+        case ENCH_CHAOTIC_INFUSION:
         case ENCH_MERFOLK_AVATAR_SONG:
         case ENCH_INFESTATION:
             del_ench(entry.first);

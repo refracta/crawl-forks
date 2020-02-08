@@ -392,6 +392,7 @@ void handle_behaviour(monster* mon)
         && mon->behaviour != BEH_WITHDRAW
         && mon->type != MONS_BALLISTOMYCETE_SPORE
         && mon->type != MONS_BALL_LIGHTNING
+        && mon->type != MONS_ENTROPIC_SPHERE
         && !mons_is_avatar(mon->type))
     {
         if (you.pet_target != MHITNOT)
@@ -405,7 +406,8 @@ void handle_behaviour(monster* mon)
         && (mon->has_ench(ENCH_INSANE)
             || ((mon->berserk()
                  || mon->type == MONS_BALLISTOMYCETE_SPORE
-                 || mon->type == MONS_BALL_LIGHTNING)
+                 || mon->type == MONS_BALL_LIGHTNING
+                 || mon->type == MONS_ENTROPIC_SPHERE)
                 && (mon->foe == MHITNOT
                     || isFriendly && mon->foe == MHITYOU))))
     {
@@ -527,7 +529,8 @@ void handle_behaviour(monster* mon)
                     || isNeutral && !mon->has_ench(ENCH_INSANE)
                     || patrolling
                     || mon->type == MONS_BALLISTOMYCETE_SPORE
-                    || mon->type == MONS_BALL_LIGHTNING)
+                    || mon->type == MONS_BALL_LIGHTNING
+                    || mon->type == MONS_ENTROPIC_SPHERE)
                 {
                     new_beh = BEH_WANDER;
                 }
@@ -1205,7 +1208,8 @@ void behaviour_event(monster* mon, mon_event_type event, const actor *src,
         // Avoid moving friendly explodey things out of BEH_WANDER.
         if (mon->friendly()
             && (mon->type == MONS_BALLISTOMYCETE_SPORE
-                || mon->type == MONS_BALL_LIGHTNING))
+                || mon->type == MONS_BALL_LIGHTNING
+                || mon->type == MONS_ENTROPIC_SPHERE))
         {
             break;
         }

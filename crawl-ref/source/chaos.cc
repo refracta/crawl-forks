@@ -10,10 +10,26 @@
 #include "mpr.h"
 #include "mutation.h"
 #include "random.h"
+#include "religion.h"
 #include "shout.h"
 #include "spl-miscast.h"
 #include "traps.h"
 #include "xom.h"
+
+beam_type chaos_damage_type(bool player)
+{
+    beam_type retval;
+    retval = random_choose_weighted(4, BEAM_FIRE,
+        4, BEAM_COLD,
+        4, BEAM_NEG,
+        4, BEAM_ACID,
+        1, BEAM_DAMNATION,
+        6, BEAM_DEVASTATION,
+        3, BEAM_ELECTRICITY);
+    if (player && is_good_god(you.religion) && (retval == BEAM_NEG || retval == BEAM_DAMNATION))
+        return BEAM_HOLY;
+    return retval;
+}
 
 enum chaotic_buff_type
 {
@@ -273,6 +289,7 @@ void chaotic_debuff(actor* act, int dur, actor * attacker)
         if (act->is_player())
         {
             mprf(MSGCH_WARN, "A magical surge fills you with panic, you fear the %s.", attacker->name(DESC_THE).c_str());
+            you.add_fearmonger(attacker->as_monster());
             you.increase_duration(DUR_AFRAID, dur);
         }
         else

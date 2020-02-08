@@ -1040,6 +1040,7 @@ bool mon_special_ability(monster* mons)
             return true;
         break;
 
+    case MONS_ENTROPIC_SPHERE:
     case MONS_BALL_LIGHTNING:
         if (is_sanctuary(mons->pos()))
             break;

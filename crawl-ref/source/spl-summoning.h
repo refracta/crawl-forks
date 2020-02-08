@@ -23,6 +23,8 @@
 // How many aut until the next doom hound pops out of doom howl?
 #define NEXT_DOOM_HOUND_KEY "next_doom_hound"
 
+void chaos_summon(spell_type spell, monster * mon, actor * caster, bool summoned = true);
+
 spret cast_summon_butterflies(int pow, god_type god = GOD_NO_GOD,
                                    bool fail = false);
 spret cast_summon_small_mammal(int pow, god_type god, bool fail);
