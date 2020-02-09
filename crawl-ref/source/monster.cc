@@ -3958,6 +3958,7 @@ bool monster::res_torment() const
 bool monster::res_tornado() const
 {
     return has_ench(ENCH_TORNADO)
+           || has_ench(ENCH_CHAOSNADO)
            || has_ench(ENCH_VORTEX)
            || get_mons_resist(*this, MR_RES_TORNADO) > 0;
 }

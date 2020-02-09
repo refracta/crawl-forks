@@ -56,7 +56,6 @@ static const vector<spell_type> spellbook_templates[] =
 
 {   // Book of Ice
     SPELL_ICE_FORM,
-    SPELL_ENGLACIATION,
     SPELL_OZOCUBUS_REFRIGERATION,
     SPELL_BOLT_OF_COLD,
     SPELL_FREEZING_CLOUD,
@@ -110,7 +109,6 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_CONFUSE,
     SPELL_GRAVITAS,
     SPELL_PETRIFY,
-    SPELL_ENGLACIATION,
     SPELL_VIOLENT_UNRAVELLING,
 },
 
@@ -224,7 +222,7 @@ static const vector<spell_type> spellbook_templates[] =
 
 #if TAG_MAJOR_VERSION == 34
 {   // Book of Control
-    SPELL_ENGLACIATION,
+    SPELL_ANIMATE_SKELETON
 },
 
 {   // Book of Battle

@@ -502,6 +502,8 @@ static int _los_spell_damage_player(actor* agent, bolt &beam,
                  make_stringf("by %s", beam.name.c_str()).c_str(), true,
                  agent->as_monster()->name(DESC_A).c_str());
             you.expose_to_element(beam.flavour, 5);
+            if (beam.origin_spell == SPELL_OZOCUBUS_REFRIGERATION)
+                slow_player(hurted);
         }
         // -harm from player casting Ozo's Refridge.
         else if (beam.origin_spell == SPELL_OZOCUBUS_REFRIGERATION)
@@ -556,6 +558,8 @@ static int _los_spell_damage_monster(actor* agent, monster &target,
         {
             if (beam.real_flavour == BEAM_CHAOTIC)
                 chaotic_status(&target, 3 + hurted + random2(hurted), agent);
+            else if (beam.origin_spell == SPELL_OZOCUBUS_REFRIGERATION)
+                target.slow_down(agent, hurted / 10);
             target.expose_to_element(beam.flavour, 5);
         }
     }
