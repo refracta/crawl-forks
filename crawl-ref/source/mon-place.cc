@@ -1236,7 +1236,10 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
     if (mg.cls == MONS_TWISTER || mg.cls == MONS_DIAMOND_OBELISK)
     {
         mon->props["tornado_since"].get_int() = you.elapsed_time;
-        mon->add_ench(mon_enchant(ENCH_TORNADO, 0, 0, INFINITE_DURATION));
+        if (one_chance_in(12))
+            mon->add_ench(mon_enchant(ENCH_CHAOSNADO, 0, 0, INFINITE_DURATION));
+        else
+            mon->add_ench(mon_enchant(ENCH_TORNADO, 0, 0, INFINITE_DURATION));
     }
 
     // this MUST follow hd initialization!

@@ -711,6 +711,16 @@ static void _decrement_durations()
         }
     }
 
+    if (you.duration[DUR_CHAOSNADO])
+    {
+        tornado_damage(&you, min(delay, you.duration[DUR_CHAOSNADO]));
+        if (_decrement_a_duration(DUR_CHAOSNADO, delay,
+            "The winds around you start to calm down."))
+        {
+            you.duration[DUR_TORNADO_COOLDOWN] = random_range(35, 45);
+        }
+    }
+
     if (you.duration[DUR_FLIGHT])
     {
         if (!you.permanent_flight())

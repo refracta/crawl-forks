@@ -5860,7 +5860,8 @@ static void _mons_tornado(monster *mons, bool is_vortex = false)
     const int dur = is_vortex ? 30 : 60;
     const string desc = is_vortex ? "vortex" : "great vortex";
     const string prop = is_vortex ? "vortex_since" : "tornado_since";
-    const enchant_type ench = is_vortex ? ENCH_VORTEX : ENCH_TORNADO;
+    const bool chaos = determine_chaos(mons, SPELL_TORNADO);
+    const enchant_type ench = is_vortex ? ENCH_VORTEX : chaos ? ENCH_CHAOSNADO : ENCH_TORNADO;
 
     if (you.can_see(*mons))
     {
@@ -8122,6 +8123,7 @@ static bool _ms_waste_of_time(monster* mon, mon_spell_slot slot)
         // Prefer to keep a tornado going rather than blink.
         return mon->no_tele(true, false)
                || mon->has_ench(ENCH_TORNADO)
+               || mon->has_ench(ENCH_CHAOSNADO)
                || mon->has_ench(ENCH_VORTEX);
 
     case SPELL_BLINK_OTHER:
@@ -8374,6 +8376,7 @@ static bool _ms_waste_of_time(monster* mon, mon_spell_slot slot)
                   && friendly;
     case SPELL_TORNADO:
         return mon->has_ench(ENCH_TORNADO)
+               || mon->has_ench(ENCH_CHAOSNADO)
                || mon->has_ench(ENCH_TORNADO_COOLDOWN)
                || !_trace_los(mon, _tornado_vulnerable)
                || you.visible_to(mon) && friendly // don't cast near the player

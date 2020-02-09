@@ -185,6 +185,7 @@ enum enchant_type
     ENCH_STFSHIELD_COOLDOWN,
     ENCH_ENTROPIC_BURST,
     ENCH_CHAOTIC_INFUSION,
+    ENCH_CHAOSNADO,
     // Update enchant_names[] in mon-ench.cc when adding or removing
     // enchantments.
     NUM_ENCHANTMENTS

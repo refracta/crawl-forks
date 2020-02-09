@@ -1875,6 +1875,7 @@ void monster::apply_enchantment(const mon_enchant &me)
         decay_enchantment(en);
         break;
 
+    case ENCH_CHAOSNADO:
     case ENCH_TORNADO:
         tornado_damage(this, speed_to_duration(speed));
         if (decay_enchantment(en))
@@ -2263,7 +2264,7 @@ static const char *enchant_names[] =
     "stilling the winds", "thunder_ringed", "pinned_by_whirlwind",
     "vortex", "vortex_cooldown", "vile_clutch", "trapped_in_lava", "stick",
     "elec_vuln", "cold_vuln", "phys_vuln", "staff_shield_down", "entropic_burst",
-    "chaotic_infusion",
+    "chaotic_infusion", "chaosnado",
     "buggy",
 };
 

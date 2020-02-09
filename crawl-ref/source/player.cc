@@ -6604,7 +6604,7 @@ bool player::res_torment() const
 bool player::res_tornado() const
 {
     // Full control of the winds around you can negate a hostile tornado.
-    return duration[DUR_TORNADO] ? 1 : 0;
+    return (duration[DUR_TORNADO] || duration[DUR_CHAOSNADO]) ? 1 : 0;
 }
 
 bool player::res_petrify(bool temp) const

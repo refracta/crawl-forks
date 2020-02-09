@@ -1290,7 +1290,7 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
         break;
 
     case SPELL_TORNADO:
-        if (temp && (you.duration[DUR_TORNADO]
+        if (temp && (you.duration[DUR_TORNADO] || you.duration[DUR_CHAOSNADO]
                      || you.duration[DUR_TORNADO_COOLDOWN]))
         {
             return "you need to wait for the winds to calm down.";

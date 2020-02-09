@@ -6,6 +6,7 @@
 #include <cmath>
 
 #include "areas.h"
+#include "chaos.h"
 #include "cloud.h"
 #include "coord.h"
 #include "coordit.h"
@@ -104,10 +105,13 @@ bool WindSystem::has_wind(coord_def c)
     return wind(c - org);
 }
 
-static void _set_tornado_durations(int powc)
+static void _set_tornado_durations(int powc, bool chaos)
 {
     int dur = 60;
-    you.duration[DUR_TORNADO] = dur;
+    if (chaos)
+        you.duration[DUR_CHAOSNADO] = dur;
+    else
+        you.duration[DUR_TORNADO] = dur;
     if (!get_form()->forbids_flight())
     {
         you.duration[DUR_FLIGHT] = max(dur, you.duration[DUR_FLIGHT]);
@@ -149,7 +153,7 @@ spret cast_tornado(int powc, bool fail)
         merfolk_stop_swimming();
 
     you.props["tornado_since"].get_int() = you.elapsed_time;
-    _set_tornado_durations(powc);
+    _set_tornado_durations(powc, determine_chaos(&you, SPELL_TORNADO));
     if (you.species == SP_TENGU)
         you.redraw_evasion = true;
 
@@ -257,16 +261,23 @@ void tornado_damage(actor *caster, int dur, bool is_vortex)
     if (!dur)
         return;
 
+    bool chaos = false;
     int pow;
     const int max_radius = is_vortex ? VORTEX_RADIUS : TORNADO_RADIUS;
 
     // Not stored so unwielding that staff will reduce damage.
     if (caster->is_player())
+    {
         pow = calc_spell_power(SPELL_TORNADO, true);
+        chaos = you.duration[DUR_CHAOSNADO] > 0;
+    }
     else
+    {
         // Note that this spellpower multiplier for Vortex is based on Air
         // Elementals, which have low HD.
         pow = caster->as_monster()->get_hit_dice() * (is_vortex ? 12 : 4);
+        chaos = !is_vortex && caster->as_monster()->has_ench(ENCH_CHAOSNADO);
+    }
     dprf("Doing tornado, dur %d, effective power %d", dur, pow);
     const coord_def org = caster->pos();
     int noise = 0;
@@ -384,12 +395,30 @@ void tornado_damage(actor *caster, int dur, bool is_vortex)
 
                     if (dur > 0)
                     {
+                        int cfac = 0;
+                        beam_type cflav = BEAM_AIR;
+                        if (chaos)
+                        {
+                            cfac = div_rand_round(rpow, 4);
+                            cflav = chaos_damage_type(caster->is_player());
+                        }
                         int dmg = victim->apply_ac(
-                                    div_rand_round(roll_dice(9, rpow), 15),
+                                    div_rand_round(roll_dice(9, rpow + cfac), 15),
                                     0, ac_type::proportional);
+                        if (chaos)
+                        {
+                            bolt beam;
+                            beam.flavour = cflav;
+                            dmg = victim->beam_resists(beam, dmg, true, "typhonic chaos");
+                        }
                         dprf("damage done: %d", dmg);
                         victim->hurt(caster, dmg, BEAM_AIR, KILLED_BY_BEAM,
                                      "", "tornado");
+                        if (victim->alive() && chaos)
+                        {
+                            victim->expose_to_element(cflav, dmg);
+                            chaotic_status(victim, dmg, caster);
+                        }
 
                         if (caster->is_player()
                             && (is_sanctuary(you.pos())
@@ -407,10 +436,10 @@ void tornado_damage(actor *caster, int dur, bool is_vortex)
             if (cell_is_solid(*dam_i))
                 continue;
 
-            if ((!cloud_at(*dam_i) || cloud_at(*dam_i)->type == CLOUD_TORNADO)
+            if ((!cloud_at(*dam_i) || cloud_at(*dam_i)->type == (chaos ? CLOUD_CHAOSNADO : CLOUD_TORNADO))
                 && x_chance_in_y(rpow, 20))
             {
-                place_cloud(CLOUD_TORNADO, *dam_i, 2 + random2(2), caster);
+                place_cloud(chaos ? CLOUD_CHAOSNADO : CLOUD_TORNADO, *dam_i, 2 + random2(2), caster);
             }
             clouds.push_back(*dam_i);
             swap_clouds(clouds[random2(clouds.size())], *dam_i);
@@ -483,11 +512,12 @@ void tornado_damage(actor *caster, int dur, bool is_vortex)
 
 void cancel_tornado(bool tloc)
 {
-    if (!you.duration[DUR_TORNADO])
+    if (!you.duration[DUR_TORNADO] && !you.duration[DUR_CHAOSNADO])
         return;
 
     dprf("Aborting tornado.");
-    if (you.duration[DUR_TORNADO] == you.duration[DUR_FLIGHT])
+    if (you.duration[DUR_TORNADO] == you.duration[DUR_FLIGHT] || 
+        you.duration[DUR_CHAOSNADO] == you.duration[DUR_FLIGHT])
     {
         if (tloc)
         {
@@ -508,13 +538,14 @@ void cancel_tornado(bool tloc)
             // kill you.
         }
     }
+    you.duration[DUR_CHAOSNADO] = 0;
     you.duration[DUR_TORNADO] = 0;
     you.duration[DUR_TORNADO_COOLDOWN] = 0;
 }
 
 void tornado_move(const coord_def &p)
 {
-    if (!you.duration[DUR_TORNADO] && !you.duration[DUR_TORNADO_COOLDOWN])
+    if (!you.duration[DUR_TORNADO] && !you.duration[DUR_CHAOSNADO] && !you.duration[DUR_TORNADO_COOLDOWN])
         return;
 
     int age = _tornado_age(&you);
@@ -522,7 +553,7 @@ void tornado_move(const coord_def &p)
     if (dist <= 1)
         return;
 
-    if (!you.duration[DUR_TORNADO])
+    if (!you.duration[DUR_TORNADO] && !you.duration[DUR_CHAOSNADO])
     {
         if (age < _age_needed(dist - TORNADO_RADIUS))
             you.duration[DUR_TORNADO_COOLDOWN] = 0;
@@ -537,8 +568,13 @@ void tornado_move(const coord_def &p)
         {
             // blinking/cTele inside an already windy area
             dprf("Tloc penalty: reducing tornado by %d turns", dist - 1);
-            you.duration[DUR_TORNADO] = max(1,
-                         you.duration[DUR_TORNADO] - (dist - 1) * 10);
+            if (you.duration[DUR_TORNADO])
+                you.duration[DUR_TORNADO] = max(1,
+                             you.duration[DUR_TORNADO] - (dist - 1) * 10);
+
+            if (you.duration[DUR_CHAOSNADO])
+                you.duration[DUR_CHAOSNADO] = max(1,
+                    you.duration[DUR_CHAOSNADO] - (dist - 1) * 10);
             return;
         }
     }

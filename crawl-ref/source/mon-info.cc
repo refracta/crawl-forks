@@ -97,6 +97,7 @@ static map<enchant_type, monster_info_flags> trivial_ench_mb_mappings = {
     { ENCH_ELEC_VULN,       MB_ELEC_VULN },
     { ENCH_PHYS_VULN,       MB_PHYS_VULN },
     { ENCH_TORNADO,         MB_TORNADO },
+    { ENCH_CHAOSNADO,       MB_CHAOSNADO },
     { ENCH_TORNADO_COOLDOWN, MB_TORNADO_COOLDOWN },
     { ENCH_BARBS,           MB_BARBS },
     { ENCH_POISON_VULN,     MB_POISON_VULN },
@@ -1498,6 +1499,8 @@ vector<string> monster_info::attributes() const
         v.emplace_back("more vulnerable to physical attacks");
     if (is(MB_TORNADO))
         v.emplace_back("surrounded by raging winds");
+    if (is(MB_CHAOSNADO))
+        v.emplace_back("surrounded by cyclonic chaos");
     if (is(MB_TORNADO_COOLDOWN))
         v.emplace_back("surrounded by restless winds");
     if (is(MB_BARBS))

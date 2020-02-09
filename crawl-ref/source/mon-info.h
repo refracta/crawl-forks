@@ -181,6 +181,7 @@ enum monster_info_flags
     MB_PHYS_VULN,
     MB_ENTROPIC_BURST,
     MB_CHAOTIC_INFUSION,
+    MB_CHAOSNADO,
     NUM_MB_FLAGS
 };
 

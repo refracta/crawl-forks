@@ -289,6 +289,11 @@ static const cloud_data clouds[] = {
       BEAM_NONE, {},                              // beam & damage
       true,                                       // opacity
     },
+    // CLOUD_CHAOSNADO
+    { "chaotic gusts",  nullptr,                  // terse, verbose name
+      ETC_JEWEL,                                  // colour
+      { TILE_CLOUD_CHAOSNADO, CTVARY_RANDOM },    // tile
+    },
 };
 COMPILE_CHECK(ARRAYSZ(clouds) == NUM_CLOUD_TYPES);
 
@@ -1338,6 +1343,9 @@ bool is_damaging_cloud(cloud_type type, bool accept_temp_resistances, bool yours
     // A nasty hack; map_knowledge doesn't preserve whom the cloud belongs to.
     if (type == CLOUD_TORNADO)
         return !you.duration[DUR_TORNADO] && !you.duration[DUR_TORNADO_COOLDOWN];
+
+    if (type == CLOUD_CHAOSNADO)
+        return !you.duration[DUR_CHAOSNADO] && !you.duration[DUR_TORNADO_COOLDOWN];
 
     if (accept_temp_resistances)
     {

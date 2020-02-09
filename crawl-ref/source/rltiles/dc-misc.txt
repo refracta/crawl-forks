@@ -181,6 +181,16 @@ cloud_chaos5
 tornado1 CLOUD_RAGING_WINDS_0
 tornado2 CLOUD_RAGING_WINDS_1
 
+chaosnado1 CLOUD_CHAOSNADO
+chaosnado2
+chaosnado3
+chaosnado4
+chaosnado5
+chaosnado6
+chaosnado7
+chaosnado8
+chaosnado9
+
 cloud_calc_dust0 CLOUD_PETRIFY
 cloud_calc_dust1
 cloud_calc_dust2
