@@ -32,6 +32,8 @@ enum beam_type                  // bolt::flavour
     BEAM_RANDOM,                  // currently translates into FIRE..ACID
     BEAM_CHAOS,
     BEAM_CHAOTIC,
+    BEAM_ICY_DEVASTATION,
+    BEAM_CHAOTIC_DEVASTATION,
     BEAM_UNRAVELLED_MAGIC,
 
     // Enchantments

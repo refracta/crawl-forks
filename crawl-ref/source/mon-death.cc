@@ -2753,6 +2753,8 @@ item_def* monster_die(monster& mons, killer_type killer,
         arena_monster_died(&mons, killer, killer_index, silent, corpse);
 
     const coord_def mwhere = mons.pos();
+    if (mons.type == MONS_ORB_OF_DESTRUCTION || mons.type == MONS_ORB_OF_CHAOS)
+        drop_items = false;
     if (drop_items)
     {
         // monster_drop_things may lead to a level excursion (via

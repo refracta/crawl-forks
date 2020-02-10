@@ -15,6 +15,7 @@
 #include "act-iter.h"
 #include "areas.h"
 #include "cloud.h"
+#include "colour.h"
 #include "directn.h"
 #include "env.h"
 #include "item-prop.h"
@@ -42,7 +43,8 @@ spret cast_iood(actor *caster, int pow, bolt *beam, float vx, float vy,
     int mtarg = !beam ? MHITNOT :
                 beam->target == you.pos() ? MHITYOU : mgrd(beam->target);
 
-    monster *mon = place_monster(mgen_data(MONS_ORB_OF_DESTRUCTION,
+    monster *mon = place_monster(mgen_data(
+                determine_chaos(caster, SPELL_IOOD) ? MONS_ORB_OF_CHAOS : MONS_ORB_OF_DESTRUCTION,
                 (is_player) ? BEH_FRIENDLY :
                     ((monster*)caster)->friendly() ? BEH_FRIENDLY : BEH_HOSTILE,
                 coord_def(),
@@ -309,9 +311,24 @@ static bool _iood_hit(monster& mon, const coord_def &pos, bool big_boom = false)
     if (mon.has_ench(ENCH_ROLLING))
         return _boulder_hit(mon, pos);
 
+    bool chaos = (mon.type == MONS_ORB_OF_CHAOS);
+
     bolt beam;
-    beam.name = "icy sphere";
-    beam.flavour = BEAM_DEVASTATION;
+    if (chaos)
+    {
+        beam.name = "entropic orb";
+        beam.real_flavour = BEAM_CHAOTIC_DEVASTATION;
+        beam.flavour = BEAM_CHAOTIC_DEVASTATION;
+        beam.fake_flavour();
+        beam.colour = ETC_CHAOS;
+    }
+    else
+    {
+        beam.name = "icy sphere";
+        beam.real_flavour = BEAM_ICY_DEVASTATION;
+        beam.flavour = BEAM_ICY_DEVASTATION;
+        beam.colour = WHITE;
+    }
     beam.attitude = mon.attitude;
 
     actor *caster = actor_by_mid(mon.summoner);
@@ -333,7 +350,6 @@ static bool _iood_hit(monster& mon, const coord_def &pos, bool big_boom = false)
             beam.reflector = rmon ? refl_mid : caster->mid;
         }
     }
-    beam.colour = WHITE;
     beam.glyph = dchar_glyph(DCHAR_FIRED_BURST);
     beam.range = 1;
     beam.source = pos;
@@ -473,8 +489,10 @@ move_again:
     if (pos == mon.pos())
         return false;
 
+    bool chaos = mon.type == MONS_ORB_OF_CHAOS;
+
     if (!no_trail)
-        place_cloud(iood ? CLOUD_COLD : CLOUD_DUST, starting_pos, 2 + random2(3), &mon);
+        place_cloud(iood ? chaos ? CLOUD_CHAOS : CLOUD_COLD : CLOUD_DUST, starting_pos, 2 + random2(3), &mon);
 
     actor *victim = actor_at(pos);
     if (cell_is_solid(pos) || victim)

@@ -4441,7 +4441,8 @@ int monster::hurt(const actor *agent, int amount, beam_type flavour,
         }
 
         if (flavour == BEAM_DEVASTATION || flavour == BEAM_DISINTEGRATION
-            || flavour == BEAM_ENERGY)
+            || flavour == BEAM_ENERGY || flavour == BEAM_ICY_DEVASTATION
+            || flavour == BEAM_CHAOTIC_DEVASTATION)
         {
             if (can_bleed())
                 blood_spray(pos(), type, amount / 5);

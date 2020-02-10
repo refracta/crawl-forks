@@ -6908,7 +6908,9 @@ int player::hurt(const actor *agent, int amount, beam_type flavour,
     }
 
     if ((flavour == BEAM_DEVASTATION || flavour == BEAM_DISINTEGRATION 
-        || flavour == BEAM_ENERGY)
+        || flavour == BEAM_ENERGY || flavour == BEAM_ICY_DEVASTATION
+        || flavour == BEAM_CHAOTIC_DEVASTATION)
+        // BCADNOTE: Chaotic Devastation is probably pointless here as it should be a real_flavour instead of a flavour. Need to figure out how to circuit this.
         && can_bleed())
     {
         blood_spray(pos(), type, amount / 5);

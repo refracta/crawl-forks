@@ -3584,6 +3584,7 @@ bool mons_self_destructs(const monster& m)
         || m.type == MONS_BALL_LIGHTNING
         || m.type == MONS_LURKING_HORROR
         || m.type == MONS_ORB_OF_DESTRUCTION
+        || m.type == MONS_ORB_OF_CHAOS
         || m.type == MONS_FULMINANT_PRISM;
 }
 

@@ -698,8 +698,6 @@ void bolt::initialise_fire()
             (item ? item->name(DESC_PLAIN, false, true) : "none").c_str());
     ASSERT(!aimed_at_feet || source == target);
 
-    real_flavour = flavour;
-
     message_cache.clear();
 
     // seen might be set by caller to suppress this.
@@ -872,11 +870,13 @@ void bolt::fake_flavour()
         flavour = _chaos_beam_flavour(this);
     else if (real_flavour == BEAM_CHAOS_ENCHANTMENT)
         flavour = _chaos_enchant_type();
-    else if (real_flavour == BEAM_CHAOTIC)
+    else if (real_flavour == BEAM_CHAOTIC || real_flavour == BEAM_CHAOTIC_DEVASTATION)
     {
         name = pierce ? "chaotic beam of " : is_explosion ? "chaotic blast of " : "chaotic shard of ";
         if (origin_spell == SPELL_CHAIN_OF_CHAOS)
             name = "arc of chaotic ";
+        if (real_flavour == BEAM_CHAOTIC_DEVASTATION)
+            name = "chaotic blast of ";
         switch (random2(12))
         {
         case 0:
@@ -2691,7 +2691,7 @@ void bolt::affect_endpoint()
         return;
     }
 
-    if (real_flavour == BEAM_CHAOTIC)
+    if (real_flavour == BEAM_CHAOTIC || real_flavour == BEAM_CHAOTIC_DEVASTATION)
     {
         if (flavour == BEAM_WATER || flavour == BEAM_LAVA)
         {
@@ -3208,7 +3208,8 @@ void bolt::internal_ouch(int dam)
              source_name.empty() ? nullptr : source_name.c_str());
     }
     else if (flavour == BEAM_DISINTEGRATION || flavour == BEAM_DEVASTATION
-        || flavour == BEAM_ENERGY)
+        || flavour == BEAM_ENERGY || flavour == BEAM_ICY_DEVASTATION
+        || flavour == BEAM_CHAOTIC_DEVASTATION)
     {
         ouch(dam, KILLED_BY_DISINT, source_id, what, true,
              source_name.empty() ? nullptr : source_name.c_str());
@@ -4160,14 +4161,6 @@ void bolt::affect_player()
         return;
     }
 
-    if (real_flavour == BEAM_CHAOTIC)
-    {
-        int dur = damage.roll();
-        dur += damage.size;
-
-        chaotic_status(&you, dur, actor_by_mid(source_id));
-    }
-
     // Trigger an interrupt, so travel will stop on misses which
     // generate smoke.
     if (!YOU_KILL(thrower))
@@ -4198,6 +4191,17 @@ void bolt::affect_player()
 
     if (misses_player())
         return;
+
+    if (real_flavour == BEAM_CHAOTIC)
+    {
+        int dur = damage.roll();
+        dur += damage.size;
+
+        chaotic_status(&you, dur, actor_by_mid(source_id));
+    }
+
+    if (real_flavour == BEAM_CHAOTIC_DEVASTATION)
+        chaotic_status(&you, roll_dice(5,20), actor_by_mid(source_id));
 
     const bool engulfs = is_explosion || is_big_cloud();
 
@@ -4278,7 +4282,8 @@ void bolt::affect_player()
     if (flavour == BEAM_MIASMA && final_dam > 0)
         was_affected = miasma_player(agent(), name);
 
-    if (flavour == BEAM_DEVASTATION || flavour == BEAM_ENERGY) // DISINTEGRATION already handled
+    if (flavour == BEAM_DEVASTATION || flavour == BEAM_ENERGY
+        || flavour == BEAM_ICY_DEVASTATION || real_flavour == BEAM_CHAOTIC_DEVASTATION) // DISINTEGRATION already handled
         blood_spray(you.pos(), MONS_PLAYER, final_dam / 5);
 
     // Confusion effect for spore explosions
@@ -5488,7 +5493,7 @@ void bolt::affect_monster(monster* mon)
     mons_adjust_flavoured(mon, *this, postac, true);
 
     // Apply chaos effects.
-    if (mon->alive() && real_flavour == BEAM_CHAOTIC)
+    if (mon->alive() && (real_flavour == BEAM_CHAOTIC || real_flavour == BEAM_CHAOTIC_DEVASTATION))
     {
         int dur = damage.roll();
         dur += damage.size;
@@ -5511,7 +5516,10 @@ void bolt::affect_monster(monster* mon)
             bleed_onto_floor(mon->pos(), mon->type, blood, true);
         }
         // Now hurt monster.
-        mon->hurt(agent(), final, flavour, KILLED_BY_BEAM, "", "", false);
+        if (real_flavour == BEAM_CHAOTIC_DEVASTATION)
+            mon->hurt(agent(), final, real_flavour, KILLED_BY_BEAM, "", "", false);
+        else
+            mon->hurt(agent(), final, flavour, KILLED_BY_BEAM, "", "", false);
     }
 
     if (mon->alive())
@@ -5556,6 +5564,8 @@ void bolt::affect_monster(monster* mon)
                 ref_killer = KILL_YOU_MISSILE;
                 kindex = YOU_FAULTLESS;
             }
+            if (real_flavour == BEAM_CHAOTIC_DEVASTATION)
+                mon->flags |= MF_EXPLODE_KILL;
             monster_die(*mon, ref_killer, kindex);
         }
     }
@@ -6512,8 +6522,6 @@ bool bolt::explode(bool show_more, bool hole_in_the_middle)
     {
         flavour = real_flavour;
     }
-    else
-        real_flavour = flavour;
 
     const int r = min(ex_size, MAX_EXPLOSION_RADIUS);
     in_explosion_phase = true;
@@ -6666,7 +6674,6 @@ void bolt::explosion_affect_cell(const coord_def& p)
     fake_flavour();
     target = p;
     affect_cell();
-    flavour = real_flavour;
 
     target = orig_pos;
 }
@@ -6778,8 +6785,9 @@ bool bolt::nasty_to(const monster* mon) const
     // The orbs are made of pure disintegration energy. This also has the side
     // effect of not stopping us from firing further orbs when the previous one
     // is still flying.
-    if (flavour == BEAM_DISINTEGRATION || flavour == BEAM_DEVASTATION)
-        return mon->type != MONS_ORB_OF_DESTRUCTION;
+    if (flavour == BEAM_DISINTEGRATION || flavour == BEAM_DEVASTATION
+        || flavour == BEAM_ICY_DEVASTATION || flavour == BEAM_CHAOTIC_DEVASTATION)
+        return mon->type != MONS_ORB_OF_DESTRUCTION && mon->type != MONS_ORB_OF_CHAOS;
 
     // Take care of other non-enchantments.
     if (!is_enchantment())
@@ -7033,6 +7041,8 @@ static string _beam_type_name(beam_type type)
     case BEAM_LAVA:                  return "magma";
     case BEAM_ICE:                   // fallthrough
     case BEAM_FREEZE:                return "ice";
+    case BEAM_ICY_DEVASTATION:       // fallthrough
+    case BEAM_CHAOTIC_DEVASTATION:   // fallthrough
     case BEAM_DEVASTATION:           return "devastation";
     case BEAM_RANDOM:                return "random";
     case BEAM_CHAOTIC:               // fallthrough

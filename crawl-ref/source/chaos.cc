@@ -72,6 +72,9 @@ enum chaotic_debuff_type
 
 void chaotic_buff(actor* act, int dur, actor * attacker)
 {
+    if (!act->alive())
+        return;
+
     // Total Weight: 118 (Arbitrary)
     chaotic_buff_type buff = random_choose_weighted(
         1, CB_CLONE,
@@ -210,6 +213,9 @@ void chaotic_buff(actor* act, int dur, actor * attacker)
 
 void chaotic_debuff(actor* act, int dur, actor * attacker)
 {
+    if (!act->alive())
+        return;
+
     chaotic_debuff_type debuff = random_choose_weighted(
         10, CD_PETRIFY,
         60, CD_MISCAST,
@@ -435,7 +441,7 @@ void chaotic_debuff(actor* act, int dur, actor * attacker)
 
 void chaotic_status(actor * victim, int dur, actor * source)
 {
-    if (one_chance_in(3))
+    if (!victim->alive() || one_chance_in(3))
         return;
     if (coinflip())
         chaotic_buff(victim, dur, source);
