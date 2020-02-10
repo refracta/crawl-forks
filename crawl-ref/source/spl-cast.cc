@@ -1160,7 +1160,7 @@ static void _try_monster_cast(spell_type spell, int powc,
 #endif // WIZARD
 
 static spret _do_cast(spell_type spell, int powc, const dist& spd,
-                           bolt& beam, god_type god, bool fail);
+                           bolt& beam, god_type god, bool fail, bool warped);
 
 /**
  * Should this spell be aborted before casting properly starts, either because
@@ -1245,8 +1245,12 @@ static bool _spellcasting_aborted(spell_type spell, bool fake_spell)
 }
 
 static unique_ptr<targeter> _spell_targeter(spell_type spell, int pow,
-                                              int range)
+                                              int range, bool warped)
 {
+    if (warped)
+        return make_unique<targeter_smite>(&you, range, spell == SPELL_FIREBALL ? 1 : 0,
+                                                        spell == SPELL_FIREBALL ? 1 : 0, false);
+
     switch (spell)
     {
     case SPELL_FIREBALL:
@@ -1264,7 +1268,7 @@ static unique_ptr<targeter> _spell_targeter(spell_type spell, int pow,
     case SPELL_THROW_ICICLE:
         return make_unique<targeter_imb>(&you, pow, range);
     case SPELL_FIRE_STORM:
-        return make_unique<targeter_smite>(&you, range, 2, pow > 76 ? 3 : 2, true);
+        return make_unique<targeter_smite>(&you, range, 2, pow > 76 ? 3 : 2, false);
     case SPELL_FREEZING_CLOUD:
     case SPELL_POISONOUS_CLOUD:
     case SPELL_HOLY_BREATH:
@@ -1436,6 +1440,9 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
     bolt beam;
     beam.origin_spell = spell;
 
+    bool warped = you.staff() && staff_enhances_spell(you.staff(), spell) 
+                              && you.staff()->brand == SPSTF_WARP && !evoked_item;
+
     // [dshaligram] Any action that depends on the spellcasting attempt to have
     // succeeded must be performed after the switch.
     if (!wiz_cast && _spellcasting_aborted(spell, !allow_fail))
@@ -1477,7 +1484,7 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
 
         const int range = calc_spell_range(spell, powc, allow_fail);
 
-        unique_ptr<targeter> hitfunc = _spell_targeter(spell, powc, range);
+        unique_ptr<targeter> hitfunc = _spell_targeter(spell, powc, range, warped);
 
         // Add success chance to targeted spells checking monster MR
         const bool mr_check = testbits(flags, spflag::MR_check)
@@ -1538,6 +1545,9 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
             return spret::abort;
 
         beam.range = range;
+
+        if (warped)
+            beam.aimed_at_spot = true;
 
         if (testbits(flags, spflag::not_self) && spd.isMe())
         {
@@ -1661,7 +1671,7 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
 
     const bool old_target = actor_at(beam.target);
 
-    spret cast_result = _do_cast(spell, powc, spd, beam, god, fail);
+    spret cast_result = _do_cast(spell, powc, spd, beam, god, fail, warped);
 
     switch (cast_result)
     {
@@ -1750,7 +1760,7 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
 // Returns spret::success, spret::abort, spret::fail
 // or spret::none (not a player spell).
 static spret _do_cast(spell_type spell, int powc, const dist& spd,
-                           bolt& beam, god_type god, bool fail)
+                           bolt& beam, god_type god, bool fail, bool warped)
 {
     const coord_def target = spd.isTarget ? beam.target : you.pos() + spd.delta;
     if (spell == SPELL_FREEZE || spell == SPELL_VAMPIRIC_DRAINING)
@@ -2102,6 +2112,8 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
     zap_type zap = spell_to_zap(spell);
     if (zap != NUM_ZAPS)
     {
+        if (warped && !fail)
+            return warped_cast(zap, spell_zap_power(spell, powc), beam, &you);
         return zapping(zap, spell_zap_power(spell, powc), beam, true, nullptr,
                        fail);
     }

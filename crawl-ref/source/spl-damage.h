@@ -3,6 +3,7 @@
 #include "enum.h"
 #include "mpr.h"
 #include "spl-cast.h"
+#include "zap-type.h"
 
 struct bolt;
 class dist;
@@ -40,6 +41,7 @@ bool setup_fragmentation_beam(bolt &beam, int pow, const actor *caster,
 spret cast_fragmentation(int powc, const actor *caster,
                               const coord_def target, bool fail);
 spret cast_tornado(int powc, bool fail);
+spret warped_cast(zap_type zap, int pow, bolt target, actor * caster);
 void tornado_damage(actor *caster, int dur, bool is_vortex = false);
 void cancel_tornado(bool tloc = false);
 void tornado_move(const coord_def &pos);

@@ -5908,7 +5908,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
     // sputtercasting monsters have one charge status and use it for all of
     // their spells.
     if (max_mons_charge(mons->type) > 0 && !_spell_charged(mons))
-        return;
+        return;                                 
 
     if (!mons->is_unbreathing() && (mons->res_poison() < 2) && cloud_at(mons->pos())
         && cloud_at(mons->pos())->type == CLOUD_MEPHITIC

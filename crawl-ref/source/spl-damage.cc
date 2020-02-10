@@ -1198,6 +1198,33 @@ void cloud_strike(actor * caster, actor * foe, int damage)
     return;
 }
 
+spret warped_cast(zap_type zap, int pow, bolt target, actor * caster)
+{
+    if (cell_is_solid(target.target))
+    {
+        canned_msg(MSG_UNTHINKING_ACT);
+        return spret::abort;
+    }
+
+    bolt beam;
+    zappy(zap, pow, !caster->is_player(), beam);
+
+    beam.ex_size = 0;
+
+    if (zap == ZAP_FIREBALL)
+        beam.ex_size = 1;
+
+    beam.hit *= 3;
+    beam.hit /= 2;
+    beam.ench_power *= 5;
+    beam.ench_power /= 4;
+    beam.aimed_at_spot = true;
+    beam.source = beam.target = target.target;
+    beam.fire();
+
+    return spret::success;
+}
+
 spret cast_airstrike(int pow, const dist &beam, bool fail)
 {
     if (cell_is_solid(beam.target))
