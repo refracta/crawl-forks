@@ -42,9 +42,12 @@ spret cast_iood(actor *caster, int pow, bolt *beam, float vx, float vy,
 
     int mtarg = !beam ? MHITNOT :
                 beam->target == you.pos() ? MHITYOU : mgrd(beam->target);
+    bool chaos = determine_chaos(caster, SPELL_IOOD);
+    bool menace = (caster->staff() && staff_enhances_spell(caster->staff(), SPELL_IOOD) 
+                                   && caster->staff()->brand == SPSTF_MENACE);
 
     monster *mon = place_monster(mgen_data(
-                determine_chaos(caster, SPELL_IOOD) ? MONS_ORB_OF_CHAOS : MONS_ORB_OF_DESTRUCTION,
+                chaos ? MONS_ORB_OF_CHAOS : MONS_ORB_OF_DESTRUCTION,
                 (is_player) ? BEH_FRIENDLY :
                     ((monster*)caster)->friendly() ? BEH_FRIENDLY : BEH_HOSTILE,
                 coord_def(),
@@ -84,7 +87,7 @@ spret cast_iood(actor *caster, int pow, bolt *beam, float vx, float vy,
 
     mon->props[IOOD_KC].get_byte() = (is_player) ? KC_YOU :
         ((monster*)caster)->friendly() ? KC_FRIENDLY : KC_OTHER;
-    mon->props[IOOD_POW].get_short() = pow;
+    mon->props[IOOD_POW].get_short() = chaos ? pow * 1.25 : menace ? pow * 1.5 : pow;
     mon->flags &= ~MF_JUST_SUMMONED;
     mon->props[IOOD_CASTER].get_string() = caster->as_monster()
         ? caster->name(DESC_A, true)

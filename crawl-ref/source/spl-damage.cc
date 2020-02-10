@@ -150,6 +150,14 @@ bool cast_smitey_damnation(int pow, bolt &beam)
     return true;
 }
 
+static bool _is_menacing(const actor * caster, spell_type spell)
+{
+    item_def * staff = caster->staff();
+    if (staff && staff->brand == SPSTF_MENACE)
+        return true;
+    return false;
+}
+
 // XXX no friendly check
 spret cast_chain_spell(spell_type spell_cast, int pow,
                             const actor *caster, bool fail)
@@ -160,7 +168,7 @@ spret cast_chain_spell(spell_type spell_cast, int pow,
     beam.flavour = BEAM_CHAOTIC;
 
     bool chaos = determine_chaos(caster, spell_cast);
-    if (chaos)
+    if (chaos && spell_cast == SPELL_CHAIN_LIGHTNING)
         spell_cast = SPELL_CHAIN_OF_CHAOS;
 
     // initialise beam structure
@@ -357,6 +365,9 @@ spret cast_chain_spell(spell_type spell_cast, int pow,
             default:
                 break;
         }
+
+        if (_is_menacing(caster, spell_cast))
+            beam.damage.num += 2;
 
         // Be kinder to the caster.
         if (target == caster->pos())
@@ -559,7 +570,7 @@ static int _los_spell_damage_monster(actor* agent, monster &target,
             if (beam.real_flavour == BEAM_CHAOTIC)
                 chaotic_status(&target, 3 + hurted + random2(hurted), agent);
             else if (beam.origin_spell == SPELL_OZOCUBUS_REFRIGERATION)
-                target.slow_down(agent, hurted / 10);
+                target.slow_down(agent, hurted);
             target.expose_to_element(beam.flavour, 5);
         }
     }
@@ -838,6 +849,8 @@ spret vampiric_drain(int pow, monster* mons, bool fail)
 
     // The practical maximum of this is about 25 (pow @ 100). - bwr
     int hp_gain = 3 + random2avg(9, 2) + random2(pow) / 7;
+    if (_is_menacing(&you, SPELL_VAMPIRIC_DRAINING))
+        hp_gain *= div_rand_round(3 * hp_gain, 2);
 
     hp_gain = min(mons->hit_points, hp_gain);
     hp_gain = min(you.hp_max - you.hp, hp_gain);
@@ -915,7 +928,15 @@ spret cast_freeze(int pow, monster* mons, bool fail)
         }
     }
 
-    const int orig_hurted = roll_dice(1, 3 + pow / 3);
+    int orig_hurted = 0;
+
+    if (you.staff() && staff_enhances_spell(you.staff(), SPELL_FREEZE)
+                    && you.staff()->brand == SPSTF_MENACE)
+        orig_hurted = roll_dice(2, 3 + pow / 3);
+    else
+        orig_hurted = roll_dice(1, 3 + pow / 3);
+    if (chaos)
+        orig_hurted *= div_rand_round(orig_hurted * 5, 4);
     int hurted = mons_adjust_flavoured(mons, beam, orig_hurted);
     mprf("You %s %s%s%s",
          dam_verb.c_str(),
@@ -1212,6 +1233,10 @@ spret cast_airstrike(int pow, const dist &beam, bool fail)
     pbeam.flavour = damtype;
 
     int dam = 8 + random2avg(2 + div_rand_round(pow, 7), 3);
+    if (chaos)
+        dam = div_rand_round(5 * dam, 4);
+    if (_is_menacing(&you, SPELL_AIRSTRIKE))
+        dam = div_rand_round(3 * dam, 2);
     int hurted = mons->apply_ac(mons->beam_resists(pbeam, dam, false));
     dprf("preac: %d, postac: %d", dam, hurted);
 
@@ -1283,6 +1308,8 @@ static int _shatter_monsters(coord_def where, int pow, actor *agent, bool chaos)
         return 0;
 
     dam_dice.num = _shatter_mon_dice(mon);
+    if (_is_menacing(agent, SPELL_SHATTER) && dam_dice.num != 0)
+        dam_dice.num++;
     int damage = max(0, dam_dice.roll() - random2(mon->armour_class()));
 
     if (agent->is_player())
@@ -1602,6 +1629,9 @@ static int _shatter_player(int pow, actor *wielder, bool devastator = false)
 
     dice_def dam_dice(_shatter_player_dice(), 5 + pow / 3);
 
+    if (!devastator && dam_dice.num > 0 && _is_menacing(wielder, SPELL_SHATTER))
+        dam_dice.num++;
+
     int damage = max(0, dam_dice.roll() - random2(you.armour_class()));
 
     if (damage > 0)
@@ -1776,8 +1806,10 @@ static int _irradiate_cell(coord_def where, int pow, actor *agent)
         return 0; // XXX: handle damaging the player for mons casts...?
 
     bool chaos = determine_chaos(agent, SPELL_IRRADIATE);
-    const int dice = 6;
-    const int max_dam = 30 + div_rand_round(pow, 2);
+    bool menace = _is_menacing(agent, SPELL_IRRADIATE);
+    const int dice = menace ? 8 : 6;
+    const int max_dam = chaos ? 40 + div_rand_round (5 * pow, 8) 
+                              : 30 + div_rand_round(pow, 2);
     const dice_def dam_dice = calc_dice(dice, max_dam);
     const int dam = dam_dice.roll();
     if (act->is_player())
@@ -2019,10 +2051,14 @@ static int _ignite_poison_monsters(coord_def where, beam_type damtype, int pow, 
     // how poisoned is the victim?
     const mon_enchant ench = mon->get_ench(ENCH_POISON);
     const int pois_str = ench.ench == ENCH_NONE ? 0 : ench.degree;
+    bool menacing = _is_menacing(agent, SPELL_IGNITE_POISON);
+    bool chaos = (damtype != BEAM_COLD);
 
     // poison currently does roughly 6 damage per degree (over its duration)
     // do roughly 2x to 3x that much, scaling with spellpower
-    const dice_def dam_dice(pois_str * 2, 12 + div_rand_round(pow * 6, 100));
+    const dice_def dam_dice(menacing ? div_rand_round(pois_str * 5, 2)
+                                     : pois_str * 2, chaos ? 15 + div_rand_round(pow * 3,  40)
+                                                           : 12 + div_rand_round(pow * 6, 100));
 
     const int base_dam = dam_dice.roll();
     int damage = mons_adjust_flavoured(mon, beam, base_dam, false);
@@ -2307,6 +2343,7 @@ spret cast_ignition(const actor *agent, int pow, bool fail)
     fail_check();
 
     bool chaos = determine_chaos(agent, SPELL_IGNITION);
+    bool menacing = _is_menacing(agent, SPELL_IGNITION);
 
     targeter_los hitfunc(agent, LOS_NO_TRANS);
 
@@ -2350,7 +2387,9 @@ spret cast_ignition(const actor *agent, int pow, bool fail)
         bolt beam_actual;
         beam_actual.set_agent(agent);
         beam_actual.glyph         = 0;
-        beam_actual.damage        = calc_dice(3, 10 + pow/3); // less than fireball
+        beam_actual.damage        = calc_dice(menacing ? 4 
+                                                       : 3, chaos ? 25 / 2 + pow * 5 / 12 
+                                                                  : 10 + pow/3); // less than fireball
         beam_actual.ex_size       = 0;
         beam_actual.is_explosion  = true;
         beam_actual.loudness      = 0;
@@ -2451,8 +2490,11 @@ static int _discharge_monsters(const coord_def &where, int pow,
         return 0;
 
     int damage = (&agent == victim) ? 1 + random2(3 + pow / 15)
-                                    : 3 + random2(5 + pow / 10
-                                                  + (random2(pow) / 10));
+                                    : 3 + random2(5 + pow / 10 
+                                        + (random2(pow) / 10));
+
+    if (_is_menacing(&agent, SPELL_DISCHARGE))
+        damage += random2(damage);
 
     bolt beam;
     beam_type flavour = BEAM_ELECTRICITY;
@@ -2625,7 +2667,10 @@ static bool _finish_LRD_setup(bolt &beam, const actor *caster)
         beam.name = "an entropically infused " + beam.name;
         beam.colour = ETC_JEWEL;
         beam.real_flavour = beam.flavour = BEAM_CHAOTIC;
+        beam.damage.size = div_rand_round(5 * beam.damage.size, 4);
     }
+    if (_is_menacing(caster, SPELL_LRD))
+        beam.damage.num++;
 
     beam.aux_source = beam.name;
 
@@ -3419,7 +3464,10 @@ void toxic_radiance_effect(actor* agent, int mult, bool on_cast, bool chaos)
         if (chaos)
             damtype = chaos_damage_type(agent->is_player());
 
-        int dam = roll_dice(1, 1 + pow / 20) * div_rand_round(mult, BASELINE_DELAY);
+        bool menace = _is_menacing(agent, SPELL_OLGREBS_TOXIC_RADIANCE);
+
+        int dam = roll_dice(menace ? 2 : 1, chaos ? 1 + pow/ 16 : 1 + pow / 20)
+                                            * div_rand_round(mult, BASELINE_DELAY);
         dam = resist_adjust_damage(*ai, damtype, dam);
 
         if (ai->is_player())
@@ -3662,6 +3710,11 @@ spret cast_glaciate(actor *caster, int pow, coord_def aim, bool fail)
                 caster->is_player()
                     ? calc_dice(7, (66 + 3 * pow) / eff_range)
                     : calc_dice(10, (54 + 3 * pow / 2) / eff_range);
+
+            if (chaos)
+                beam.damage.size = div_rand_round(5 * beam.damage.size, 4);
+            if (_is_menacing(caster, SPELL_GLACIATE))
+                beam.damage.num += 2;
 
             beam.fake_flavour();
 

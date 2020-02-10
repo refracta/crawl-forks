@@ -293,6 +293,7 @@ public:
     item_def *melee_weapon() const;
     item_def *missiles() const;
     item_def *shield() const override;
+    item_def *staff() const override;
 
     hands_reqd_type hands_reqd(const item_def &item,
                                bool base = false) const override;

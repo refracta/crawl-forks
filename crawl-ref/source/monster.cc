@@ -2089,6 +2089,21 @@ item_def *monster::shield() const
     return mslot_item(MSLOT_SHIELD);
 }
 
+item_def *monster::staff() const
+{
+    item_def * retval = mslot_item(MSLOT_WEAPON);
+
+    if (retval->base_type == OBJ_STAVES)
+        return retval;
+
+    retval = mslot_item(MSLOT_ALT_WEAPON);
+
+    if (retval->base_type == OBJ_STAVES)
+        return retval;
+    
+    return nullptr;
+}
+
 /**
  * Does this monster have a proper name?
  *

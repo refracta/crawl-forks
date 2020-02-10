@@ -539,6 +539,7 @@ void zappy(zap_type z_type, int power, bool is_monster, bolt &pbolt)
         {
             if (you.staff()->brand == SPSTF_CHAOS && !one_chance_in(3))
             {
+                pbolt.damage.size = div_rand_round(pbolt.damage.size * 5, 4);
                 pbolt.real_flavour = BEAM_CHAOTIC;
                 pbolt.flavour = BEAM_CHAOTIC;
                 pbolt.colour = ETC_JEWEL;
