@@ -2432,6 +2432,48 @@ string get_item_description(const item_def &item, bool verbose,
             _append_weapon_stats(stats, item);
             description << stats;
         }
+        switch (get_staff_facet(item))
+        {
+        case SPSTF_ACCURACY: 
+            description << "\n\nSpells enhanced by this staff never miss.";
+            break;
+        case SPSTF_CHAOS:
+            description << "\n\nSpells enhanced by this staff find their maximum damage significantly boosted, ";
+            description << "but their damage type scrambled completely randomly. Additionally they have random ";
+            description << "effects on those damaged by their magic, including debilitating hexes and powerful charms.";
+            break;
+        case SPSTF_ENERGY:
+            description << "\n\nSpells enhanced by this staff cost the caster one less mana to cast.";
+            break;
+        case SPSTF_FLAY:
+            description << "\n\nThose struck with this staff may have their resistance to the elemental damage of its spells reduced. ";
+            description << "The odds of this reduction depend on the wielder's skill with hexes. Additionally boosts the power of hexes spells.";
+            break;
+        case SPSTF_MENACE:
+            description << "\n\nThe minimum and maximum damage of damaging spells cast with this staff are significantly increased.";
+            break;
+        case SPSTF_REAVER:
+            description << "\n\nIncreases the wielders strength by five. Additionally they will find that their armour encumbers the spellcasting of ";
+            description << "spells enhanced by this staff less than other spells.";
+            break;
+        case SPSTF_SCOPED:
+            description << "\n\nMany spells enhanced by this staff can reach one tile farther away.";
+            break;
+        case SPSTF_SHIELD:
+            description << "\n\nExudes a magical forcefield from the head of the staff; granting some measure of shielding for the wielder. ";
+            description << "The strength of the forcefield depends on the wielder's skill in the staff's primary element and charms. ";
+            description << "Additional increases the spellpower of charms spells.";
+            break;
+        case SPSTF_WARP:
+            description << "\n\nA strange crooked staff. Spells that are enhanced by this staff, which normally take a beam trajectory will be ";
+            description << "teleported directly to their targets. Additionally enhances translocations spells.";
+            break;
+        case SPSTF_WIZARD:
+            description << "\n\nThis staff decreases the difficulty of casting the spells it enhances.";
+            break;
+        default:
+            break;
+        }
         description << "\n\nIt falls into the 'Staves' category. ";
         description << _handedness_string(item);
         break;
