@@ -1114,10 +1114,16 @@ Ring of Thunder spell
 
 Surrounds the caster with a mobile ring of highly-damaging thunderclouds.
 %%%%
+Rollout spell
+
+Natural ability of boulder beetles. Curls into a ball and propels itself forward, 
+doubling it's movement speed; but making it less about to control it's movement 
+direction. Does hefty collision damage if it hits a creature.
+%%%%
 Sandblast spell
 
-Consumes a stone to create a short blast of high-velocity rock shards. Its
-damage is strongly reduced by armour.
+Creates a short blast of high-velocity rock shards. Its damage is strongly 
+reduced by armour.
 %%%%
 Sap Magic spell
 
