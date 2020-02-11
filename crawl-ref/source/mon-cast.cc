@@ -33,6 +33,7 @@
 #include "fprop.h"
 #include "god-abil.h"
 #include "god-passive.h"
+#include "item-prop.h"
 #include "items.h"
 #include "level-state-type.h"
 #include "libutil.h"
@@ -1240,7 +1241,7 @@ int mons_spell_range(spell_type spell, const monster * mons)
 
     if (retval > 1 && mons->weapon() 
                    && mons->weapon()->base_type == OBJ_STAVES 
-                   && mons->weapon()->brand == SPSTF_SCOPED
+                   && get_staff_facet(*mons->weapon()) == SPSTF_SCOPED
                    && staff_enhances_spell(mons->weapon(), spell))
         retval++;
     return retval;
@@ -1820,9 +1821,9 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
 
     if (staff && staff->base_type == OBJ_STAVES && staff_enhances_spell(staff, real_spell))
     {
-        if (staff->brand == SPSTF_ACCURACY)
+        if (get_staff_facet(*staff) == SPSTF_ACCURACY)
             beam.hit = AUTOMATIC_HIT;
-        if (staff->brand == SPSTF_MENACE)
+        if (get_staff_facet(*staff) == SPSTF_MENACE)
         {
             if (beam.damage.num > 6)
                 beam.damage.num++;

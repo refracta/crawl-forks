@@ -24,6 +24,7 @@
 #include "hints.h"
 #include "item-status-flag-type.h"
 #include "items.h"
+#include "item-prop.h"
 #include "libutil.h"
 #include "losglobal.h"
 #include "message.h"
@@ -910,7 +911,7 @@ void monster::remove_enchantment_effect(const mon_enchant &me, bool quiet)
         if (!quiet)
         {
             item_def * staff = mslot_item(MSLOT_WEAPON);
-            if (!staff || staff->base_type != OBJ_STAVES || staff->brand != SPSTF_SHIELD)
+            if (!staff || staff->base_type != OBJ_STAVES || get_staff_facet(*staff) != SPSTF_SHIELD)
                 return;
 
             string shtype;

@@ -1174,6 +1174,27 @@ static coord_def _beckon_destination(const coord_def &origin, const actor &becko
     int distance = grid_distance(origin, beckoned.pos());
     distance -= div_rand_round(pow, 4);
     coord_def retval = beckoned.pos();
+    bool sniped = (path.source == path.target) && actor_by_mid(path.source_id);
+    ray_def ray;
+
+    if (sniped)
+    {
+        if (!find_ray(actor_by_mid(path.source_id)->pos(), beckoned.pos(), ray, opc_fully_no_trans, 8))
+            return beckoned.pos();
+
+        while (ray.advance())
+        {
+            coord_def pos = ray.pos();
+            if (actor_at(pos) || !beckoned.is_habitable(pos))
+                continue; // actor could be caster, or a bush
+
+            int x = grid_distance(pos, origin);
+
+            if (x >= distance && x < grid_distance(retval, origin))
+                retval = pos;
+        }
+        return retval;
+    }
 
     for (coord_def pos : path.path_taken)
     {

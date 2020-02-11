@@ -31,6 +31,7 @@
 #include "god-conduct.h"
 #include "invent.h"
 #include "item-name.h"
+#include "item-prop.h"
 #include "items.h"
 #include "los.h"
 #include "losglobal.h"
@@ -153,7 +154,7 @@ bool cast_smitey_damnation(int pow, bolt &beam)
 static bool _is_menacing(const actor * caster, spell_type spell)
 {
     item_def * staff = caster->staff();
-    if (staff && staff->brand == SPSTF_MENACE)
+    if (staff && get_staff_facet(*you.staff()))
         return true;
     return false;
 }
@@ -625,7 +626,7 @@ static spret _cast_los_attack_spell(spell_type spell, int pow,
                 mons_invis_msg = "The ambient heat is drained!";
                 verb = "frozen";
             }
-            if (you.staff() && you.staff()->brand == SPSTF_CHAOS && staff_enhances_spell(you.staff(), SPELL_OZOCUBUS_REFRIGERATION))
+            if (you.staff() && get_staff_facet(*you.staff()) && staff_enhances_spell(you.staff(), SPELL_OZOCUBUS_REFRIGERATION))
             {
                 prompt_verb = "refrigerate or chaotically strike";
                 vulnerable = [](const actor *caster, const actor *act) {
@@ -931,7 +932,7 @@ spret cast_freeze(int pow, monster* mons, bool fail)
     int orig_hurted = 0;
 
     if (you.staff() && staff_enhances_spell(you.staff(), SPELL_FREEZE)
-                    && you.staff()->brand == SPSTF_MENACE)
+                    && get_staff_facet(*you.staff()) == SPSTF_MENACE)
         orig_hurted = roll_dice(2, 3 + pow / 3);
     else
         orig_hurted = roll_dice(1, 3 + pow / 3);

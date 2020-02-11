@@ -1401,6 +1401,14 @@ brand_type get_weapon_brand(const item_def &item)
     return static_cast<brand_type>(item.brand);
 }
 
+facet_type get_staff_facet(const item_def &item)
+{
+    if (is_artefact(item))
+        return static_cast<facet_type>(artefact_property(item, ARTP_BRAND));
+
+    return static_cast<facet_type>(item.brand);
+}
+
 special_missile_type get_ammo_brand(const item_def &item)
 {
     // No artefact arrows yet. -- bwr

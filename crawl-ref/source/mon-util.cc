@@ -861,7 +861,7 @@ void mon_lose_staff_shield(monster & mon, beam_type flavour, int strength)
 {
     item_def * staff = mon.mslot_item(MSLOT_WEAPON);
 
-    if (!staff || staff->base_type != OBJ_STAVES || staff->brand != SPSTF_SHIELD)
+    if (!staff || staff->base_type != OBJ_STAVES || get_staff_facet(*staff) != SPSTF_SHIELD)
         return;
 
     int hd = mon.get_experience_level();

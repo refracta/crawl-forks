@@ -198,6 +198,49 @@ static bool _try_make_item_unrand(item_def& item, int force_type, int agent)
 }
 
 // Return whether we made an artefact.
+static bool _try_make_staff_artefact(item_def& item, int force_type,
+                                      int item_level, bool force_randart,
+                                      int agent)
+{
+    if (item_level > 2 && x_chance_in_y(101 + item_level * 3, 4000)
+        || force_randart)
+    {
+        // Make a randart or unrandart.
+
+        /* BCADDO: Uncomment this after fixing staff unrands as actual staves.
+        // 1 in 18 randarts are unrandarts.
+        if (one_chance_in(item_level == ISPEC_GOOD_ITEM ? 7 : 18)
+            && !force_randart)
+        {
+            if (_try_make_item_unrand(item, force_type, agent))
+                return true;
+        } */
+
+        // Mean enchantment +6.
+        item.plus = 12 - biased_random2(7,2);
+        item.plus -= biased_random2(7,2);
+        item.plus -= biased_random2(7,2);
+
+        bool cursed = false;
+        if (one_chance_in(4))
+            cursed = true;
+        else if (item.plus > 8 && !one_chance_in(3))
+            cursed = true;
+
+        // The rest are normal randarts.
+        make_item_randart(item);
+
+        if (cursed && get_weapon_brand(item) != SPWPN_HOLY_WRATH)
+            do_curse_item(item);
+
+        return true;
+    }
+
+    return false;
+}
+
+
+// Return whether we made an artefact.
 static bool _try_make_weapon_artefact(item_def& item, int force_type,
                                       int item_level, bool force_randart,
                                       int agent)
@@ -749,12 +792,30 @@ static special_missile_type _determine_missile_brand(const item_def& item,
 
 bool is_staff_brand_ok(int type, int brand, bool strict)
 {
-    // Mostly using the same variables to fit template
-    // There are no actual restrictions right now except that it must 
-    // actually be a valid brand.
+    switch (brand)
+    {
+    case SPSTF_FLAY:
+        if (type == STAFF_DEATH)
+            return false;
+        // fallthrough
+    case SPSTF_MENACE:
+    case SPSTF_SCOPED:
+    case SPSTF_ACCURACY:
+    case SPSTF_WARP:
+        if (type == STAFF_SUMMONING)
+            return false;
+        // fallthrough
+    case SPSTF_CHAOS:
+        if (type == STAFF_TRANSMUTATION)
+            return false;
+        // fallthrough
+    default:
+        break;
+    }
 
     if (brand >= NUM_SPECIAL_STAVES || brand < 0)
         return false;
+
     return true;
 }
 
@@ -1089,26 +1150,21 @@ static facet_type _generate_staff_facet(const item_def& item,
     if (x_chance_in_y(500 - item_level, 500))
         return static_cast<facet_type>(SPSTF_NORMAL);
 
-    if (item.sub_type == STAFF_SUMMONING)
-    {
-            // Total Weight: 17 (Arbitrary).
-        return random_choose_weighted( 6, SPSTF_SHIELD,
-                                       4, SPSTF_WIZARD,
-                                       4, SPSTF_REAVER,
-                                       3, SPSTF_ENERGY);
-    }
+    bool c = item.sub_type != STAFF_TRANSMUTATION;
+    bool m = item.sub_type != STAFF_SUMMONING && c;
+    bool f = item.sub_type != STAFF_DEATH && m;
 
         // Total Weight: 42 (Arbitrary).
-    return random_choose_weighted( 8, SPSTF_MENACE,
-                                   6, SPSTF_SHIELD,
-                                   6, SPSTF_FLAY,
-                                   4, SPSTF_SCOPED,
-                                   4, SPSTF_WIZARD,
-                                   4, SPSTF_REAVER,
-                                   3, SPSTF_ENERGY,
-                                   3, SPSTF_ACCURACY,
-                                   2, SPSTF_WARP,
-                                   2, SPSTF_CHAOS);
+    return random_choose_weighted( m ? 8 : 0, SPSTF_MENACE,
+                                           6, SPSTF_SHIELD,
+                                   f ? 6 : 0, SPSTF_FLAY,
+                                   m ? 4 : 0, SPSTF_SCOPED,
+                                           4, SPSTF_WIZARD,
+                                           4, SPSTF_REAVER,
+                                           3, SPSTF_ENERGY,
+                                   m ? 3 : 0, SPSTF_ACCURACY,
+                                   m ? 2 : 0, SPSTF_WARP,
+                                   c ? 2 : 0, SPSTF_CHAOS);
 }
 
 bool is_armour_brand_ok(int type, int brand, bool strict)
@@ -1764,6 +1820,7 @@ static void _generate_staff_item(item_def& item, bool allow_uniques,
     // If we make the unique roll, no further generation necessary.
     // Copied unrand code from _try_make_weapon_artefact since randart enhancer staves
     // can't happen.
+
     if (allow_uniques
         && one_chance_in(item_level == ISPEC_GOOD_ITEM ? 27 : 100))
     {
@@ -1785,8 +1842,20 @@ static void _generate_staff_item(item_def& item, bool allow_uniques,
     else
         item.sub_type = force_type;
 
+    if (item_level == ISPEC_RANDART || one_chance_in(5))
+    {
+        for (int i = 0; i < 100; ++i)
+            if (_try_make_staff_artefact(item, force_type, 0, true, agent)
+                && is_artefact(item))
+            {
+                return;
+            }
+        // fall back to an ordinary item
+        item_level = ISPEC_GOOD_ITEM;
+    }
+
     item.plus = -6;
-    item.plus += roll_dice(2, 5);
+    item.plus += roll_dice(2, 4);
     if (item_level >= ISPEC_GIFT)
         item.plus += roll_dice(2, 4);
 

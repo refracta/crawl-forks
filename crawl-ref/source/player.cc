@@ -1864,7 +1864,7 @@ int player_spec_hex()
     else
         return sh;
 
-    if (staff->brand == SPSTF_FLAY)
+    if (get_staff_facet(*staff) == SPSTF_FLAY)
         sh++;
 
     return sh;
@@ -1881,7 +1881,7 @@ int player_spec_charm()
     else
         return 0;
 
-    if (staff->brand == SPSTF_SHIELD)
+    if (get_staff_facet(*staff) == SPSTF_SHIELD)
         return 1;
 
     return 0;
@@ -2452,7 +2452,7 @@ int player_wizardry(spell_type spell)
     else
         return wiz;
 
-    if (staff->brand == SPSTF_WIZARD && staff_enhances_spell(staff, spell))
+    if (get_staff_facet(*staff) == SPSTF_WIZARD && staff_enhances_spell(staff, spell))
         wiz++;
     return wiz;
 }
@@ -2462,7 +2462,7 @@ int player_staff_shielding()
     if (you.duration[DUR_STFSHIELD_COOLDOWN])
         return 0;
 
-    if (you.staff() && you.staff()->brand == SPSTF_SHIELD)
+    if (you.staff() && get_staff_facet(*you.staff()) == SPSTF_SHIELD)
     {
         int shielding = 1;
         shielding += div_round_up(you.skill(SK_CHARMS) + 1, 3);

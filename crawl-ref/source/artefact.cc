@@ -135,6 +135,8 @@ static bool _god_fits_artefact(const god_type which_god, const item_def &item,
         // Anti-magic god: no spell use, no enhancing magic.
         if (brand == SPWPN_PAIN) // Pain involves necromantic spell use.
             return false;
+        if (item.base_type == OBJ_STAVES)
+            return true;
 
         if (artefact_property(item, ARTP_MAGICAL_POWER) > 0)
             return false;
@@ -419,6 +421,23 @@ static void _populate_jewel_intrinsic_artps(const item_def &item,
     }
 }
 
+static void _populate_staff_intrinsic_artps(stave_type staff, artefact_properties_t &proprt)
+{
+    switch (staff)
+    {
+    case STAFF_AIR: proprt[ARTP_ELECTRICITY]++; break;
+    case STAFF_COLD: proprt[ARTP_COLD]++; break;
+    case STAFF_DEATH: proprt[ARTP_NEGATIVE_ENERGY]++; break;
+    case STAFF_EARTH: proprt[ARTP_AC] += 5; break;
+    case STAFF_FIRE: proprt[ARTP_FIRE]++; break;
+    case STAFF_POISON: proprt[ARTP_POISON]++; break;
+    case STAFF_SUMMONING:
+    case STAFF_TRANSMUTATION:
+    default: // removed staff types.
+        break;
+    }
+}
+
 
 /**
  * Fill out the inherent ARTPs corresponding to a given item.
@@ -439,6 +458,9 @@ static void _populate_item_intrinsic_artps(const item_def &item,
             break;
         case OBJ_JEWELLERY:
             _populate_jewel_intrinsic_artps(item, proprt, known);
+            break;
+        case OBJ_STAVES:
+            _populate_staff_intrinsic_artps((stave_type)item.sub_type, proprt);
             break;
         default:
             break;
@@ -475,6 +497,28 @@ void curse_desc_properties(const item_def        &item,
             curse[i] = rap_vec[i].get_short();
     }
     return;
+}
+
+static void _add_randart_staff_facet(const item_def &item, artefact_properties_t &item_props)
+{
+    bool c = item.sub_type != STAFF_TRANSMUTATION;
+    bool m = item.sub_type != STAFF_SUMMONING && c;
+    bool f = item.sub_type != STAFF_DEATH && m;
+
+    item_props[ARTP_BRAND] = random_choose_weighted(   m ? 3 : 0, SPSTF_MENACE,
+                                                               6, SPSTF_SHIELD,
+                                                       f ? 6 : 0, SPSTF_FLAY,
+                                                       m ? 2 : 0, SPSTF_SCOPED,
+                                                               3, SPSTF_WIZARD,
+                                                               3, SPSTF_REAVER,
+                                                               5, SPSTF_ENERGY,
+                                                       m ? 3 : 0, SPSTF_ACCURACY,
+                                                       m ? 6 : 0, SPSTF_WARP,
+                                                       c ? 8 : 0, SPSTF_CHAOS);
+
+    // no brand = magic flag to reject and retry
+    if (!is_staff_brand_ok(item.sub_type, item_props[ARTP_BRAND], true))
+        item_props[ARTP_BRAND] = SPSTF_NORMAL;
 }
 
 static void _add_randart_weapon_brand(const item_def &item,
@@ -877,6 +921,8 @@ static void _get_randart_properties(const item_def &item,
 {
     const object_class_type item_class = item.base_type;
 
+    mprf("%d", item_class);
+
     // If we didn't receive a quality level, figure out how good we want the
     // artefact to be. The default calculation range is 1 to 7.
     if (quality < 1)
@@ -923,6 +969,9 @@ static void _get_randart_properties(const item_def &item,
     // make sure all weapons have a brand
     if (!curse && (item_class == OBJ_WEAPONS || (item_class == OBJ_SHIELDS && is_hybrid(item.sub_type))))
         _add_randart_weapon_brand(item, item_props);
+
+    if (!curse && item_class == OBJ_STAVES)
+        _add_randart_staff_facet(item, item_props);
 
     // randomly pick properties from the list, choose an appropriate value,
     // then subtract them from the good/bad/enhance count as needed
@@ -1171,6 +1220,8 @@ static string _get_artefact_type(const item_def &item, bool appear = false)
         return "armour";
     case OBJ_SHIELDS:
         return "shield";
+    case OBJ_STAVES:
+        return "staff";
     case OBJ_JEWELLERY:
         // Distinguish between amulets and rings only in appearance.
         if (!appear)
@@ -1221,7 +1272,7 @@ string make_artefact_name(const item_def &item, bool appearance)
            || item.base_type == OBJ_ARMOURS
            || item.base_type == OBJ_JEWELLERY
            || item.base_type == OBJ_BOOKS
-           || item.base_type == OBJ_SHIELDS);
+           || item.base_type == OBJ_STAVES);
 
     if (is_unrandom_artefact(item))
     {
@@ -1574,6 +1625,12 @@ static bool _randart_is_conflicting(const item_def &item,
         return true;
     }
 
+    if (item.base_type == OBJ_STAVES)
+    {
+        if (proprt[ARTP_INTELLIGENCE] < 0 || proprt[ARTP_PREVENT_SPELLCASTING] != 0)
+            return true;
+    }
+
     if (item.base_type != OBJ_JEWELLERY)
         return false;
 
@@ -1629,12 +1686,15 @@ bool randart_is_bad(const item_def &item, artefact_properties_t &proprt)
         return true;
 
     // Weapons must have a brand and at least one other property.
-    if ((item.base_type == OBJ_WEAPONS ||  (item.base_type == OBJ_SHIELDS && is_hybrid(item.sub_type)))
+    if ((item.base_type == OBJ_WEAPONS || (item.base_type == OBJ_SHIELDS && is_hybrid(item.sub_type)))
         && ((proprt[ARTP_BRAND] == SPWPN_NORMAL
             || _artefact_num_props(proprt) < 2)))
     {
         return true;
     }
+
+    if (item.base_type == OBJ_STAVES && (proprt[ARTP_BRAND] == SPSTF_NORMAL || proprt[ARTP_BRAND] > NUM_SPECIAL_STAVES))
+        return true;
 
     return _randart_is_redundant(item, proprt)
            || _randart_is_conflicting(item, proprt);
@@ -1775,7 +1835,8 @@ bool make_item_randart(item_def &item, bool force_mundane)
     if (item.base_type != OBJ_WEAPONS
         && item.base_type != OBJ_ARMOURS
         && item.base_type != OBJ_JEWELLERY
-        && item.base_type != OBJ_SHIELDS)
+        && item.base_type != OBJ_SHIELDS
+        && item.base_type != OBJ_STAVES)
     {
         return false;
     }

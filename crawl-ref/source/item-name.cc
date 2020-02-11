@@ -2186,7 +2186,7 @@ string item_def::name_aux(description_level_type desc, bool terse, bool ident,
 
         if (know_ego)
         {
-            buff << staff_facet_name(this->brand);
+            buff << staff_facet_name(get_staff_facet(*this));
         }
 
         if (!know_type)

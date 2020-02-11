@@ -2583,7 +2583,7 @@ void melee_attack::apply_staff_damage()
     bool flay_resist = false;
     int flay_dur = 0;
 
-    if (weapon->brand == SPSTF_FLAY)
+    if (get_staff_facet(*weapon) == SPSTF_FLAY)
     {
         int flay_power;
         if (attacker->is_player())

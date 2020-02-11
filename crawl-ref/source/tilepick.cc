@@ -4071,7 +4071,7 @@ tileidx_t tileidx_known_brand(const item_def &item)
     }
     else if (item.base_type == OBJ_STAVES)
     {
-        const int brand = item.brand;
+        const int brand = get_staff_facet(item);
         if (brand != SPSTF_NORMAL)
             return TILE_FACET_STAFF_FIRST + brand - 1;
     }

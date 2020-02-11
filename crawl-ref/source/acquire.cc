@@ -1130,6 +1130,17 @@ static void _adjust_brand(item_def &item, bool divine)
             item.brand = SPSTF_WARP;
         else
             reroll_brand(item, ITEM_LEVEL);
+        if (!is_staff_brand_ok(item.sub_type, item.brand, true))
+        {
+            switch (random2(3))
+            {
+            case 0: item.sub_type = STAFF_FIRE; break;
+            case 1: item.sub_type = STAFF_COLD; break;
+            case 2: item.sub_type = STAFF_AIR; break;
+            case 3: item.sub_type = STAFF_EARTH; break;
+            default: item.sub_type = STAFF_POISON; break;
+            }
+        }
         return;
     }
 

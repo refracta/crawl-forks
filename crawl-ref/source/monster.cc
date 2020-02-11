@@ -3085,7 +3085,7 @@ int monster::shield_bonus() const
     item_def * weap = mslot_item(MSLOT_WEAPON);
 
     if (!has_ench(ENCH_STFSHIELD_COOLDOWN) && weap && 
-        weap->base_type == OBJ_STAVES && weap->brand == SPSTF_SHIELD)
+        weap->base_type == OBJ_STAVES && get_staff_facet(*weap) == SPSTF_SHIELD)
     {
         sh += spell_hd(SPELL_INFUSION);
     }

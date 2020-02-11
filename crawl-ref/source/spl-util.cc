@@ -991,7 +991,7 @@ int spell_range(spell_type spell, int pow, bool allow_bonus)
         && you.staff()
         && staff_enhances_spell(you.staff(), spell)
         && maxrange > 1
-        && you.staff()->brand == SPSTF_SCOPED)
+        && get_staff_facet(*you.staff()) == SPSTF_SCOPED)
     {
         maxrange++;
         minrange++;

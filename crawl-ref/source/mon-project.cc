@@ -44,7 +44,7 @@ spret cast_iood(actor *caster, int pow, bolt *beam, float vx, float vy,
                 beam->target == you.pos() ? MHITYOU : mgrd(beam->target);
     bool chaos = determine_chaos(caster, SPELL_IOOD);
     bool menace = (caster->staff() && staff_enhances_spell(caster->staff(), SPELL_IOOD) 
-                                   && caster->staff()->brand == SPSTF_MENACE);
+                                   && get_staff_facet(*caster->staff()) == SPSTF_MENACE);
 
     monster *mon = place_monster(mgen_data(
                 chaos ? MONS_ORB_OF_CHAOS : MONS_ORB_OF_DESTRUCTION,

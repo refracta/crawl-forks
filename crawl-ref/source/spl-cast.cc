@@ -332,7 +332,7 @@ int raw_spell_fail(spell_type spell)
     int armour_shield_penalty = player_armour_shield_spell_penalty();
     dprf("Armour+Shield spell failure penalty: %d", armour_shield_penalty);
 
-    if (you.staff() && you.staff()->brand == SPSTF_REAVER && staff_enhances_spell(you.staff(), spell))
+    if (you.staff() && get_staff_facet(*you.staff()) == SPSTF_REAVER && staff_enhances_spell(you.staff(), spell))
         armour_shield_penalty /= 2;
 
     chance += armour_shield_penalty; // range: 0 to 500 in extreme cases.
@@ -525,10 +525,10 @@ bool determine_chaos(const actor *agent, spell_type spell)
         return false;
 
     if (agent->is_player())
-        return (you.staff() && you.staff()->brand == SPSTF_CHAOS &&
+        return (you.staff() && get_staff_facet(*you.staff()) == SPSTF_CHAOS &&
             staff_enhances_spell(you.staff(), spell));
     return (agent->weapon() && agent->weapon()->base_type == OBJ_STAVES
-        && agent->weapon()->brand == SPSTF_CHAOS &&
+        && get_staff_facet(*agent->weapon()) == SPSTF_CHAOS &&
         staff_enhances_spell(agent->weapon(), spell));
 }
 
@@ -542,13 +542,13 @@ bool staff_enhances_spell(item_def * staff, spell_type spell)
     if (bool(typeflags & spschool::evocation))
         return false;  // Spells that are only used via evocables cannot be enhanced.
 
-    if (bool(typeflags & spschool::charms) && staff->brand == SPSTF_SHIELD)
+    if (bool(typeflags & spschool::charms) && get_staff_facet(*staff) == SPSTF_SHIELD)
         return true;
 
-    if (bool(typeflags & spschool::hexes) && staff->brand == SPSTF_FLAY)
+    if (bool(typeflags & spschool::hexes) && get_staff_facet(*staff) == SPSTF_FLAY)
         return true;
 
-    if (bool(typeflags & spschool::hexes) && staff->brand == SPSTF_WARP)
+    if (bool(typeflags & spschool::translocation) && get_staff_facet(*staff) == SPSTF_WARP)
         return true;
 
     if (bool(typeflags & spschool::fire) && staff->sub_type == STAFF_FIRE)
@@ -889,7 +889,7 @@ bool cast_a_spell(bool check_range, spell_type spell)
 
     int cost = spell_mana(spell);
 
-    if (you.staff() && you.staff()->brand == SPSTF_ENERGY && staff_enhances_spell(you.staff(), spell))
+    if (you.staff() && get_staff_facet(*you.staff()) == SPSTF_ENERGY && staff_enhances_spell(you.staff(), spell))
         cost--;
 
     int sifcast_amount = 0;
@@ -1440,15 +1440,17 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
     bolt beam;
     beam.origin_spell = spell;
 
+    const spell_flags flags = get_spell_flags(spell);
+
     bool warped = you.staff() && staff_enhances_spell(you.staff(), spell) 
-                              && you.staff()->brand == SPSTF_WARP && !evoked_item;
+                            && get_staff_facet(*you.staff()) == SPSTF_WARP
+                            && bool(flags & spflag::needs_tracer)
+                            && spell != SPELL_FIRE_STORM; // Odd singular special case.
 
     // [dshaligram] Any action that depends on the spellcasting attempt to have
     // succeeded must be performed after the switch.
     if (!wiz_cast && _spellcasting_aborted(spell, !allow_fail))
         return spret::abort;
-
-    const spell_flags flags = get_spell_flags(spell);
 
     ASSERT(wiz_cast || !(flags & spflag::testing));
 

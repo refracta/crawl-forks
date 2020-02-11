@@ -520,7 +520,7 @@ void zappy(zap_type z_type, int power, bool is_monster, bolt &pbolt)
 
     if (!is_monster && you.staff() && staff_enhances_spell(you.staff(), pbolt.origin_spell))
     {
-        if (pbolt.is_enchantment() && you.staff()->brand == SPSTF_CHAOS)
+        if (pbolt.is_enchantment() && get_staff_facet(*you.staff()) == SPSTF_CHAOS)
         {
             if (pbolt.origin_spell == SPELL_INNER_FLAME)
             {
@@ -537,16 +537,16 @@ void zappy(zap_type z_type, int power, bool is_monster, bolt &pbolt)
         }
         else if (!pbolt.is_enchantment())
         {
-            if (you.staff()->brand == SPSTF_CHAOS && !one_chance_in(3))
+            if (get_staff_facet(*you.staff()) == SPSTF_CHAOS && !one_chance_in(3))
             {
                 pbolt.damage.size = div_rand_round(pbolt.damage.size * 5, 4);
                 pbolt.real_flavour = BEAM_CHAOTIC;
                 pbolt.flavour = BEAM_CHAOTIC;
                 pbolt.colour = ETC_JEWEL;
             }
-            if (you.staff()->brand == SPSTF_ACCURACY)
+            if (get_staff_facet(*you.staff()) == SPSTF_ACCURACY)
                 pbolt.hit = AUTOMATIC_HIT;
-            if (you.staff()->brand == SPSTF_MENACE)
+            if (get_staff_facet(*you.staff()) == SPSTF_MENACE)
             {
                 if (pbolt.damage.num > 6)
                     pbolt.damage.num++;
@@ -5039,6 +5039,12 @@ void bolt::knockback_actor(actor *act, int dam)
                      : 17;
     const int weight = max_corpse_chunks(act->is_monster() ? act->type :
                                    player_species_to_mons_species(you.species));
+
+    if (source == target && actor_by_mid(source_id))
+    {
+        if (!find_ray(actor_by_mid(source_id)->pos(), act->pos(), ray, opc_fullyopaque))
+            return;
+    }
 
     const coord_def oldpos = act->pos();
 
