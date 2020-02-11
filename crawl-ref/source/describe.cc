@@ -2886,7 +2886,7 @@ static vector<command_type> _allowed_actions(const item_def& item)
 {
     vector<command_type> actions;
     actions.push_back(CMD_ADJUST_INVENTORY);
-    if (item_equip_slot(item) == EQ_WEAPON0)
+    if (item_equip_slot(item) == EQ_WEAPON0 || item_equip_slot(item) == EQ_WEAPON1)
         actions.push_back(CMD_UNWIELD_WEAPON);
     switch (item.base_type)
     {
@@ -2897,19 +2897,12 @@ static vector<command_type> _allowed_actions(const item_def& item)
             actions.push_back(CMD_SET_SKILL_TARGET);
         // intentional fallthrough
     case OBJ_MISCELLANY:
-        if (!item_is_equipped(item))
-        {
-            if (item_is_wieldable(item))
-                actions.push_back(CMD_WIELD_WEAPON);
-            if (is_throwable(&you, item))
-                actions.push_back(CMD_QUIVER_ITEM);
-        }
+        if (!item_is_equipped(item) && item_is_wieldable(item))
+            actions.push_back(CMD_WIELD_WEAPON);
         break;
     case OBJ_MISSILES:
         if (_could_set_training_target(item, false))
             actions.push_back(CMD_SET_SKILL_TARGET);
-        if (you.species != SP_FELID)
-            actions.push_back(CMD_QUIVER_ITEM);
         break;
     case OBJ_ARMOURS:
         if (_could_set_training_target(item, false))
