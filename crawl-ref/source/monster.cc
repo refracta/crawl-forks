@@ -2093,6 +2093,9 @@ item_def *monster::staff() const
 {
     item_def * retval = mslot_item(MSLOT_WEAPON);
 
+    if (!retval)
+        return nullptr;
+
     if (retval->base_type == OBJ_STAVES)
         return retval;
 

@@ -1403,6 +1403,9 @@ brand_type get_weapon_brand(const item_def &item)
 
 facet_type get_staff_facet(const item_def &item)
 {
+    if (!item.defined() || item.base_type != OBJ_STAVES)
+        return SPSTF_NORMAL;
+
     if (is_artefact(item))
         return static_cast<facet_type>(artefact_property(item, ARTP_BRAND));
 
