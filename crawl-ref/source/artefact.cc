@@ -1740,7 +1740,8 @@ bool uncurse_item(item_def &item)
     if (!artefact_property(item, ARTP_CURSE) && item.soul_bound())
     {
         item.soul_bind_xp = 0;
-        mpr("The binds on your soul fade away.");
+        if (item_is_equipped(item, false))
+            mpr("The binds on your soul fade away.");
     }
 
     return true;

@@ -4580,10 +4580,8 @@ void unmarshallItem(reader &th, item_def &item)
         }
     }
 
-    if (item.soul_bound() && !artefact_property(item, ARTP_CURSE))
-    {
+    if (item.soul_bind_xp > 0 && !artefact_property(item, ARTP_CURSE))
         item.soul_bind_xp = 0;
-    }
 
     if (th.getMinorVersion() < TAG_MINOR_CURSE_REWORK)
     {

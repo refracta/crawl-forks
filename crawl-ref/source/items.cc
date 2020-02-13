@@ -3444,7 +3444,7 @@ bool item_def::cursed() const
 
 bool item_def::soul_bound() const
 {
-    if (soul_bind_xp > 0)
+    if (soul_bind_xp > 0 && is_artefact(*this) && artefact_property(*this, ARTP_CURSE))
         return true;
     return false;
 }

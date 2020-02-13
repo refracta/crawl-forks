@@ -2305,7 +2305,7 @@ int items(bool allow_uniques,
         || item.base_type == OBJ_MISSILES
           && !is_missile_brand_ok(item.sub_type, item.brand, false)
         || item.base_type == OBJ_STAVES
-          && !is_staff_brand_ok(item.sub_type, item.brand, false))
+          && !is_staff_brand_ok(item.sub_type, get_staff_facet(item), false))
     {
         mprf(MSGCH_ERROR, "Invalid brand on item %s, annulling.",
             item.name(DESC_PLAIN, false, true, false, false, ISFLAG_KNOW_PLUSES
