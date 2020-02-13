@@ -921,8 +921,6 @@ static void _get_randart_properties(const item_def &item,
 {
     const object_class_type item_class = item.base_type;
 
-    mprf("%d", item_class);
-
     // If we didn't receive a quality level, figure out how good we want the
     // artefact to be. The default calculation range is 1 to 7.
     if (quality < 1)

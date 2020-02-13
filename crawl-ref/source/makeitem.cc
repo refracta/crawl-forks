@@ -1842,7 +1842,7 @@ static void _generate_staff_item(item_def& item, bool allow_uniques,
     else
         item.sub_type = force_type;
 
-    if (item_level == ISPEC_RANDART || one_chance_in(5))
+    if (item_level == ISPEC_RANDART || (allow_uniques && one_chance_in(5)))
     {
         for (int i = 0; i < 100; ++i)
             if (_try_make_staff_artefact(item, force_type, 0, true, agent)
