@@ -623,7 +623,6 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
             }
             if (yesno("Switch to other hand?", true, false)) 
             {
-
                 int temp0 = you.equip[EQ_WEAPON0];
                 int temp1 = you.equip[EQ_WEAPON1];
                 if (you.weapon(0))
@@ -864,16 +863,13 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
     else if (is_range_weapon(new_wpn))
     {
         if (you.weapon(0) && you.weapon(0)->soul_bound())
-        
         {
             mpr("You can't unwield what's in your right hand.");
             return false;
         }
 
         if (!you.weapon(0))
-        {
             equip_item(EQ_WEAPON0, item_slot, show_weff_messages);
-        }
 
         if (!_handle_warning(*you.weapon(0)))
             return false;
@@ -967,15 +963,21 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
                 if (unwield_item(true, show_weff_messages))
                     equip_item(EQ_WEAPON0, item_slot, show_weff_messages);
             }
-            if (!_handle_warning(*you.weapon(1)))
-                return false;
-            else if (unwield_item(false, show_weff_messages))
-                equip_item(EQ_WEAPON1, item_slot, show_weff_messages);
+            else
+            {
+                if (!_handle_warning(*you.weapon(1)))
+                    return false;
+                else if (unwield_item(false, show_weff_messages))
+                    equip_item(EQ_WEAPON1, item_slot, show_weff_messages);
+            }
         }
-        if (!_handle_warning(*you.weapon(0)))
-            return false;
-        else if (unwield_item(true, show_weff_messages))
-            equip_item(EQ_WEAPON0, item_slot, show_weff_messages);
+        else
+        {
+            if (!_handle_warning(*you.weapon(0)))
+                return false;
+            else if (unwield_item(true, show_weff_messages))
+                equip_item(EQ_WEAPON0, item_slot, show_weff_messages);
+        }
     }
 
     else
