@@ -796,6 +796,9 @@ void CLua::init_libraries()
 {
     lua_stack_cleaner clean(state());
 
+    lua_pushcfunction(_state, lua_loadstring);
+    lua_setglobal(_state, "loadstring");
+
     // Open Crawl bindings
     cluaopen_kills(_state);
     cluaopen_you(_state);
