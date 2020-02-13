@@ -1080,7 +1080,7 @@ bool melee_attack::attack()
     {
         set_attack_conducts(conducts, *defender->as_monster(),
                             you.can_see(*defender), 
-            (weapon && weapon->is_type(OBJ_STAVES, STAFF_SUMMONING));
+            (weapon && weapon->is_type(OBJ_STAVES, STAFF_SUMMONING)));
 
         if (player_under_penance(GOD_ELYVILON)
             && god_hates_your_god(GOD_ELYVILON)

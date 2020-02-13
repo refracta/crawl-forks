@@ -1567,7 +1567,7 @@ static const mutation_type arcana_sacrifice_map [] = {
     MUT_NO_POISON_MAGIC,
     MUT_NO_EARTH_MAGIC,
     MUT_NO_AIR_MAGIC,
-    MUT_NON_MUTATION,
+    MUT_NO_ARTIFICE,
 };
 
 /**
