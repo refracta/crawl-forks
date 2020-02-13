@@ -859,9 +859,9 @@ bool mons_is_fiery(const monster& mon)
 
 void mon_lose_staff_shield(monster & mon, beam_type flavour, int strength)
 {
-    item_def * staff = mon.mslot_item(MSLOT_WEAPON);
+    item_def * staff = mon.staff();
 
-    if (!staff || staff->base_type != OBJ_STAVES || get_staff_facet(*staff) != SPSTF_SHIELD)
+    if (!staff || get_staff_facet(*staff) != SPSTF_SHIELD)
         return;
 
     int hd = mon.get_experience_level();

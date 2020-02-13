@@ -541,8 +541,7 @@ bool melee_attack::handle_phase_hit()
     // will be checked early in player_monattack_hit_effects
     damage_done += calc_damage();
 
-    if (weapon && weapon->base_type == OBJ_STAVES 
-               && weapon->sub_type == STAFF_SUMMONING)
+    if (weapon && weapon->is_type(OBJ_STAVES, STAFF_SUMMONING))
         damage_done = 0;
 
     if (damage_done > 0 || flavour_triggers_damageless(attk_flavour))
@@ -564,7 +563,7 @@ bool melee_attack::handle_phase_hit()
                       ? attack_verb
                       : attacker->conj_verb(mons_attack_verb());
 
-        if (attacker->is_player() && weapon->base_type == OBJ_STAVES && weapon->sub_type == STAFF_SUMMONING)
+        if (attacker->is_player() && weapon && weapon->is_type(OBJ_STAVES, STAFF_SUMMONING))
         {
             mprf("You lightly tap %s.",
                 defender_name(true).c_str());
@@ -1081,7 +1080,7 @@ bool melee_attack::attack()
     {
         set_attack_conducts(conducts, *defender->as_monster(),
                             you.can_see(*defender), 
-            (weapon && weapon->base_type == OBJ_STAVES && weapon->sub_type == STAFF_SUMMONING));
+            (weapon && weapon->is_type(OBJ_STAVES, STAFF_SUMMONING));
 
         if (player_under_penance(GOD_ELYVILON)
             && god_hates_your_god(GOD_ELYVILON)
