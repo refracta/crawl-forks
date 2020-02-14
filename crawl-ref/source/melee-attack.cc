@@ -793,7 +793,7 @@ bool melee_attack::handle_phase_blocked()
         break;
     }
 
-    if (weapon && weapon->sub_type != OBJ_STAVES && weapon->brand == SPWPN_VAMPIRISM)
+    if (weapon && weapon->sub_type != OBJ_STAVES && get_weapon_brand(*weapon) == SPWPN_VAMPIRISM)
         vamp_tendril = true;
 
     if (vamp_tendril)

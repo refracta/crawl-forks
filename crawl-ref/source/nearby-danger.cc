@@ -98,7 +98,8 @@ static bool _mons_explodes(const monster *mon)
 {
     return mon->type == MONS_BALLISTOMYCETE_SPORE
            || mon->type == MONS_BALL_LIGHTNING
-           || mon->type == MONS_FULMINANT_PRISM;
+           || mon->type == MONS_FULMINANT_PRISM
+           || mon->type == MONS_ENTROPIC_SPHERE;
 }
 
 bool mons_can_hurt_player(const monster* mon, const bool want_move)

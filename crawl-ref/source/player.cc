@@ -1913,7 +1913,7 @@ int player_spec_translo()
     else
         return 0;
 
-    if (staff->brand == SPSTF_WARP)
+    if (get_staff_facet(*staff) == SPSTF_WARP)
         return 1;
 
     return 0;

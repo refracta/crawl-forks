@@ -1724,7 +1724,7 @@ bool needs_handle_warning(const item_def &item, operation_types oper,
         }
     }
 
-    if ((oper == OPER_TAKEOFF || oper == OPER_WEAR) && item.base_type == OBJ_ARMOURS && item.brand == SPARM_WIELDING)
+    if ((oper == OPER_TAKEOFF || oper == OPER_WEAR) && item.base_type == OBJ_ARMOURS && get_armour_ego_type(*item) == SPARM_WIELDING)
     {
         if (you.weapon(0) && needs_handle_warning(*you.weapon(0), OPER_WIELD, penance, true))
             return true;

@@ -115,7 +115,7 @@ bool attack::handle_phase_blocked()
         }
         else
         {
-            switch (weapon->brand)
+            switch (get_weapon_brand(*weapon))
             {
             case SPWPN_ACID:
                 _handle_staff_shield(BEAM_ACID, 1, defender->is_player(), defender->as_monster());

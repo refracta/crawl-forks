@@ -847,7 +847,7 @@ bool mons_is_fiery(const monster& mon)
         return true;
     }
     if (mons_genus(mon.type) == MONS_DANCING_WEAPON
-        && mon.weapon() && mon.weapon()->brand == SPWPN_MOLTEN)
+        && mon.weapon() && get_weapon_brand(*mon.weapon()) == SPWPN_MOLTEN)
     {
         return true;
     }
