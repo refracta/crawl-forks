@@ -666,7 +666,7 @@ bool wielded_weapon_check(item_def *weapon)
     else if ((!you.weapon(0) && !you.weapon(1))
         || (!you.weapon(1) && you.weapon(0) && you.weapon(0)->base_type == OBJ_SHIELDS && !is_hybrid(you.weapon(0)->sub_type))
         || (!you.weapon(0) && you.weapon(1) && you.weapon(1)->base_type == OBJ_SHIELDS && !is_hybrid(you.weapon(1)->sub_type)))
-        prompt = "Really attack barehanded?";
+        prompt = "Really attack unarmed?";
     else
         return true;
     if (penance)
