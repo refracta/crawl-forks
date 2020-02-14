@@ -786,11 +786,9 @@ static void _unequip_weapon_effect(item_def& real_item, bool showMsgs,
 
     if (item.base_type == OBJ_STAVES && item.sub_type == STAFF_TRANSMUTATION && you.constricting)
     {
-        bool stopped = true;
         for (const auto &entry : *you.constricting)
         {
             monster *whom = monster_by_mid(entry.first);
-            int dur = entry.second;
 
             if (!whom)
                 continue;
