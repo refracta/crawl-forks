@@ -2091,6 +2091,9 @@ item_def *monster::shield() const
 
 item_def *monster::staff() const
 {
+    if (!bool(mons_itemuse(*this) & monuse_flags::MU_WEAPON_MELEE))
+        return nullptr;
+
     item_def * retval = mslot_item(MSLOT_WEAPON);
 
     if (!retval)
@@ -2098,6 +2101,9 @@ item_def *monster::staff() const
 
     if (retval->base_type == OBJ_STAVES)
         return retval;
+
+    // Staves can only be in primary weapon now; but monster dual wielding
+    // may come with time so future proofing...
 
     retval = mslot_item(MSLOT_ALT_WEAPON);
 
