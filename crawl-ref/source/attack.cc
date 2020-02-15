@@ -699,8 +699,10 @@ static const vector<chaos_effect> chaos_effects = {
             if (!clone)
                 return false;
 
-            const bool obvious_effect
-                = you.can_see(defender) && you.can_see(*clone);
+            const bool obvious_effect = you.can_see(defender) && you.can_see(*clone);
+
+            if (one_chance_in(3))
+                clone->attitude = coinflip() ? ATT_FRIENDLY : ATT_NEUTRAL;
 
             // The player shouldn't get new permanent followers from cloning.
             if (clone->attitude == ATT_FRIENDLY && !clone->is_summoned())
@@ -773,6 +775,9 @@ static const vector<chaos_effect> chaos_effects = {
     },
     { "hasting", 10, _is_chaos_slowable, BEAM_HASTE },
     { "invisible", 10, nullptr, BEAM_INVISIBILITY, },
+    { "mighting", 10, nullptr, BEAM_MIGHT, },
+    { "agility", 10, nullptr, BEAM_AGILITY, },
+    // BCADDO: Add chaotic infusion here.
     { "slowing", 10, _is_chaos_slowable, BEAM_SLOW },
     {
         "petrify", 10, [](const actor &defender) {
