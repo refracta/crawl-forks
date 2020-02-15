@@ -2096,7 +2096,7 @@ item_def *monster::staff() const
 
     item_def * retval = mslot_item(MSLOT_WEAPON);
 
-    if (retval && retval->base_type == OBJ_STAVES)
+    if (retval && (retval->base_type == OBJ_STAVES))
         return retval;
 
     // Staves can only be in primary weapon now; but monster dual wielding
@@ -2104,7 +2104,7 @@ item_def *monster::staff() const
 
     retval = mslot_item(MSLOT_ALT_WEAPON);
 
-    if (retval && retval->base_type == OBJ_STAVES)
+    if (retval && (retval->base_type == OBJ_STAVES))
         return retval;
     
     return nullptr;
