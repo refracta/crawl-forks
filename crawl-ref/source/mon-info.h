@@ -219,6 +219,8 @@ struct monster_info_base
     int ev;
     int base_ev;
     int mr;
+    int dur;
+    int xp_val;
     resists_t mresists;
     bool can_see_invis;
     monuse_flags mitemuse;

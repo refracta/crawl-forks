@@ -2646,7 +2646,7 @@ static void _recover_stat()
             restore_stat((stat_type) i, recovered_stats[i], false, true);
 }
 
-int get_exp_progress()
+int get_exp_progress(bool percent)
 {
     if (you.experience_level >= you.get_max_xl())
         return 0;
@@ -2655,7 +2655,10 @@ int get_exp_progress()
     const int next    = exp_needed(you.experience_level + 1);
     if (next == current)
         return 0;
-    return (you.experience - current) * 100 / (next - current);
+    if (percent)
+        return(you.experience - current) * 100 / (next - current);
+    else
+        return (next - you.experience);
 }
 
 static void _recharge_xp_evokers(int exp)

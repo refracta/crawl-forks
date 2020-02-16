@@ -4269,7 +4269,7 @@ static void _describe_monster_ac(const monster_info& mi, ostringstream &result)
 static void _describe_monster_ev(const monster_info& mi, ostringstream &result)
 {
     string msg = "";
-    if (mi.is(MB_SLEEPING) || mi.is(MB_PETRIFIED))
+    if (mi.is(MB_SLEEPING) || mi.is(MB_PETRIFIED) || mi.is(MB_PARALYSED))
         msg = " (incap)";
     result << "EV: " << mi.ev << msg << "\n";
 }
@@ -4288,6 +4288,20 @@ static void _describe_monster_mr(const monster_info& mi, ostringstream &result)
         return;
     }
     result << "MR: " << mi.res_magic() << "\n";
+}
+
+static void _describe_experience_value(const monster_info& mi, ostringstream &result)
+{
+    result << "XP Value: " << mi.xp_val << "\n";
+}
+
+static void _describe_summon_duration(const monster_info& mi, ostringstream &result)
+{
+    if (mi.dur > 0)
+    {
+        float dur = mi.dur / 10.0;
+        result << "\nRemaining Summon Duration: " << dur << " aut.\n";
+    }
 }
 
 // Size adjectives
@@ -4326,6 +4340,8 @@ static string _monster_stat_description(const monster_info& mi)
     _describe_monster_ac(mi, result);
     _describe_monster_ev(mi, result);
     _describe_monster_mr(mi, result);
+    _describe_experience_value(mi, result);
+    _describe_summon_duration(mi, result);
 
     result << "\n";
 

@@ -1368,9 +1368,9 @@ void print_stats()
         else
         {
             textcolour(Options.status_caption_colour);
-            CPRINTF("Next: ");
+            CPRINTF("^: ");
             textcolour(HUD_VALUE_COLOUR);
-            CPRINTF("%2d%% ", get_exp_progress());
+            CPRINTF("%2d ", get_exp_progress(false));
         }
         you.redraw_experience = false;
     }
@@ -2308,10 +2308,10 @@ static vector<formatted_string> _get_overview_stats()
     if (you.experience_level < you.get_max_xl())
     {
         entry.textcolour(HUD_CAPTION_COLOUR);
-        entry.cprintf("   Next: ");
+        entry.cprintf(" ^: ");
 
         entry.textcolour(HUD_VALUE_COLOUR);
-        entry.cprintf("%d%%", get_exp_progress());
+        entry.cprintf("%d", get_exp_progress(false));
     }
 
     cols.add_formatted(3, entry.to_colour_string(), false);

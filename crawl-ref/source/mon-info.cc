@@ -337,6 +337,9 @@ monster_info::monster_info(monster_type p_type, monster_type p_base_type)
     else
         number = 0;
 
+    dur = 0;
+    xp_val = approx_exper(*this);
+
     _colour = COLOUR_INHERIT;
 
     holi = mons_class_holiness(type);
@@ -497,6 +500,16 @@ monster_info::monster_info(const monster* m, int milev)
 
     if (m->has_ench(ENCH_SUMMON_CAPPED))
         mb.set(MB_SUMMONED_CAPPED);
+
+    dur = 0;
+
+    if (m->has_ench(ENCH_ABJ))
+        dur = m->get_ench(ENCH_ABJ).duration;
+
+    if (m->has_ench(ENCH_FAKE_ABJURATION))
+        dur = m->get_ench(ENCH_FAKE_ABJURATION).duration;
+
+    xp_val = exper_value(*m, false);
 
     if (mons_is_unique(type))
     {

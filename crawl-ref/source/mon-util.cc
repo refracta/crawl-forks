@@ -2443,6 +2443,55 @@ int mons_max_hp(monster_type mc, monster_type mbase_type)
     return me->avg_hp_10x * 133 / 1000;
 }
 
+int approx_exper (const monster_info& mi)
+{
+    coord_def place = coord_def(20, 20);
+    for (rectangle_iterator ri(you.pos(), LOS_RADIUS); ri; ++ri)
+    {
+        if (!cell_is_solid(*ri) && !actor_at(*ri))
+        {
+            place = *ri;
+            if (you.see_cell(*ri))
+                continue;
+        }
+    }
+
+    mons_spec t = mons_spec(mi.type, mi.base_type);
+
+    item_list u = item_list();
+    u.clear();
+
+    // Don't spawn with any items.
+    t.items = u;
+
+    monster* mp =
+        dgn_place_monster(t, place, true, false, false);
+    if (mp)
+    {
+        mp->behaviour = BEH_SEEK;
+        mp->foe = MHITYOU;
+        no_messages mx;
+        mp->del_ench(ENCH_SUBMERGED);
+    }
+    else
+    { return 0; }
+
+    int retval = exper_value(*mp, false);
+
+    // If it had any items; make sure they aren't listed
+    // as actually spawning.
+    for (int obj : mp->inv)
+        if (obj != NON_ITEM)
+            destroy_item(mitm[obj], true);
+
+    // Destroy the monster.
+    mp->reset();
+    if (mons_is_unique(mi.type))
+        you.unique_creatures.set(mi.type, false);
+
+    return retval;
+}
+
 int exper_value(const monster& mon, bool real)
 {
     int x_val = 0;

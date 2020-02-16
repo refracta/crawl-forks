@@ -1047,7 +1047,7 @@ void display_char_status();
 
 void forget_map(bool rot = false);
 
-int get_exp_progress();
+int get_exp_progress(bool percent = true);
 void gain_exp(unsigned int exp_gained, unsigned int* actual_gain = nullptr);
 
 int xp_to_level_diff(int xp, int scale=1);
