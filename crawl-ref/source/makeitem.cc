@@ -2315,9 +2315,6 @@ int items(bool allow_uniques,
             item.index(), item.quantity,
             (int)item.base_type, (int)item.sub_type, item.special,
             (int)item.get_colour(), (int)item.rnd);
-
-    if (item.base_type == OBJ_STAVES)
-        mprf("%d", item.special);
     return p;
 }
 
