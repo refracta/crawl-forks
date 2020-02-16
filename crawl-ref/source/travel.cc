@@ -437,7 +437,7 @@ static bool _is_travelsafe_square(const coord_def& c, bool ignore_hostile,
     // Only try pathing through temporary obstructions we remember, not
     // those we can actually see (since the latter are clearly still blockers)
     try_fallback = try_fallback
-                    && (!you.see_cell(c) || feat_is_runed(grid));
+                    && (!you.see_cell(c) || (feat_is_runed(grid) && feat_is_door(grid)));
 
     // Also make note of what's displayed on the level map for
     // plant/fungus checks.
@@ -480,7 +480,7 @@ static bool _is_travelsafe_square(const coord_def& c, bool ignore_hostile,
             return true;
     }
 
-    if (feat_is_runed(levelmap_cell.feat()) && !try_fallback)
+    if ((feat_is_runed(levelmap_cell.feat()) && feat_is_door(levelmap_cell.feat())) && !try_fallback)
         return false;
 
     return feat_is_traversable_now(grid, try_fallback);
@@ -4581,7 +4581,7 @@ void explore_discoveries::found_feature(const coord_def &pos,
         add_stair(portal);
         es_flags |= ES_PORTAL;
     }
-    else if (feat_is_runed(feat))
+    else if (feat_is_runed(feat) && feat_is_door(feat))
     {
         seen_tracked_feature(feat);
         if (ES_rdoor)

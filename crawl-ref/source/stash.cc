@@ -1764,7 +1764,7 @@ bool StashTracker::display_search_results(
             const tileidx_t idx = tileidx_trap(res.trap);
             me->add_tile(tile_def(idx, get_dngn_tex(idx)));
         }
-        else if (feat_is_runed(res.feat))
+        else if (feat_is_door(res.feat) && feat_is_runed(res.feat))
         {
             // Handle large doors and huge gates
             const tileidx_t idx = tileidx_feature_base(res.feat);

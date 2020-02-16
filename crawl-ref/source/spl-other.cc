@@ -495,6 +495,7 @@ spret cast_SMD(const coord_def& target, int pow, bool fail)
         // Stone
         case DNGN_STONE_WALL:
         case DNGN_CLEAR_STONE_WALL:
+        case DNGN_RUNED_CLEAR_STONE_WALL:
             delay = 8;
             break;
 

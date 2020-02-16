@@ -299,6 +299,8 @@ enum dungeon_feature_type
     DNGN_SEALED_CLEAR_DOOR,
 #endif
 
+    DNGN_RUNED_CLEAR_STONE_WALL,  // Probably the only necessary runed wall type; but just to be clear what it is in case of later additions.
+
     NUM_FEATURES,
 };
 COMPILE_CHECK(NUM_FEATURES <= 256);

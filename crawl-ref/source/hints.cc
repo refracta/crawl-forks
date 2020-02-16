@@ -3869,7 +3869,7 @@ void hints_observe_cell(const coord_def& gc)
         learned_something_new(HINT_SEEN_ALTAR, gc);
     else if (is_feature('^', gc))
         learned_something_new(HINT_SEEN_TRAP, gc);
-    else if (feat_is_runed(grd(gc)))
+    else if (feat_is_door(grd(gc)) && feat_is_runed(grd(gc)))
         learned_something_new(HINT_SEEN_RUNED_DOOR, gc);
     else if (feat_is_door(grd(gc)))
         learned_something_new(HINT_SEEN_DOOR, gc);

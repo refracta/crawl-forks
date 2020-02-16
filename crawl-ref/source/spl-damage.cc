@@ -1394,6 +1394,7 @@ static int _shatter_walls(coord_def where, int /*pow*/, actor *agent)
         chance = 15;
         break;
 
+    case DNGN_RUNED_CLEAR_STONE_WALL:
     case DNGN_CLEAR_STONE_WALL:
     case DNGN_STONE_WALL:
         chance = 25;
@@ -2885,6 +2886,7 @@ bool setup_fragmentation_beam(bolt &beam, int pow, const actor *caster,
         break;
     case DNGN_STONE_WALL:
     case DNGN_CLEAR_STONE_WALL:
+    case DNGN_RUNED_CLEAR_STONE_WALL:
         if (what && *what == nullptr)
             *what = "wall";
 

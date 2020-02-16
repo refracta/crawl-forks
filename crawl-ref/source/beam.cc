@@ -1006,7 +1006,7 @@ void bolt::digging_wall_effect()
         || (feat_is_metal(feat) && feat != DNGN_GRATE))
         stop_dig = true;
     else if (feat == DNGN_CLEAR_STONE_WALL || feat == DNGN_STONE_WALL
-             || feat == DNGN_CRYSTAL_WALL)
+             || feat == DNGN_CRYSTAL_WALL || feat == DNGN_RUNED_CLEAR_STONE_WALL)
         tunnelpower -= 50;
     else if (feat_is_solid(feat))
         tunnelpower -= 20;

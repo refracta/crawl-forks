@@ -174,6 +174,8 @@ tileidx_t tileidx_feature_base(dungeon_feature_type feat)
         return TILE_DNGN_TRANSPARENT_WALL;
     case DNGN_CLEAR_STONE_WALL:
         return TILE_DNGN_TRANSPARENT_STONE;
+    case DNGN_RUNED_CLEAR_STONE_WALL:
+        return TILE_DNGN_TRANSPARENT_RUNED_STONE;
     case DNGN_CLEAR_PERMAROCK_WALL:
         return TILE_WALL_PERMAROCK_CLEAR;
     case DNGN_STONE_WALL:

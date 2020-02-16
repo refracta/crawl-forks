@@ -1806,7 +1806,7 @@ static void _xom_pseudo_miscast(int /*sever*/)
         priority.emplace_back("The granite statue turns to stare at you.");
 
     if (in_view[DNGN_CLEAR_ROCK_WALL] || in_view[DNGN_CLEAR_STONE_WALL]
-        || in_view[DNGN_CLEAR_PERMAROCK_WALL])
+        || in_view[DNGN_CLEAR_PERMAROCK_WALL] || in_view[DNGN_RUNED_CLEAR_STONE_WALL])
     {
         messages.emplace_back("Dim shapes swim through the translucent wall.");
     }

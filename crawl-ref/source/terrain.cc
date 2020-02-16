@@ -415,7 +415,8 @@ bool feat_is_closed_door(dungeon_feature_type feat)
 {
     return feat == DNGN_CLOSED_DOOR
            || feat == DNGN_CLOSED_CLEAR_DOOR
-           || feat_is_runed(feat)
+           || feat == DNGN_RUNED_DOOR
+           || feat == DNGN_RUNED_CLEAR_DOOR
            || feat == DNGN_SEALED_DOOR
            || feat == DNGN_SEALED_CLEAR_DOOR;
 }
@@ -437,11 +438,11 @@ bool feat_is_sealed(dungeon_feature_type feat)
         || feat == DNGN_SEALED_CLEAR_DOOR;
 }
 
-/** Is this feature a type of runed door?
+/** Is this feature runed against monster crossing?
  */
 bool feat_is_runed(dungeon_feature_type feat)
 {
-    return feat == DNGN_RUNED_DOOR || feat == DNGN_RUNED_CLEAR_DOOR;
+    return feat == DNGN_RUNED_DOOR || feat == DNGN_RUNED_CLEAR_DOOR || feat == DNGN_RUNED_CLEAR_STONE_WALL;
 }
 
 /** Is the original feature at this position runed, as in a runed door?

@@ -142,6 +142,13 @@ static feature_def feat_defs[] =
 },
 
 {
+    DNGN_RUNED_CLEAR_STONE_WALL, "translucent runed stone wall", "clear_runed_stone_wall",
+    DCHAR_WALL, DCHAR_WALL_MAGIC,
+    COLOUR_IS(LIGHTCYAN),
+    FFT_WALL | FFT_SOLID, MF_WALL,
+},
+
+{
     DNGN_CLEAR_PERMAROCK_WALL, "translucent unnaturally hard rock wall", "clear_permarock_wall",
     DCHAR_PERMAWALL, DCHAR_WALL_MAGIC,
     COLOUR_IS(LIGHTCYAN),

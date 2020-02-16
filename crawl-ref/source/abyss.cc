@@ -1170,6 +1170,7 @@ static cloud_type _cloud_from_feat(const dungeon_feature_type &ft)
         case DNGN_CLEAR_ROCK_WALL:
         case DNGN_CLEAR_STONE_WALL:
         case DNGN_CLEAR_PERMAROCK_WALL:
+        case DNGN_RUNED_CLEAR_STONE_WALL:
         case DNGN_GRATE:
         case DNGN_CLOSED_CLEAR_DOOR:
         case DNGN_OPEN_CLEAR_DOOR:
@@ -1896,6 +1897,7 @@ static bool _is_grid_corruptible(const coord_def &c)
 
     case DNGN_METAL_WALL:
     case DNGN_CRYSTAL_WALL:
+    case DNGN_RUNED_CLEAR_STONE_WALL:
         return one_chance_in(4);
 
     case DNGN_STONE_WALL:

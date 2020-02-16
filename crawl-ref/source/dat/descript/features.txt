@@ -202,6 +202,12 @@ A translucent stone wall
 A harder obstacle than rock walls. Only the mightiest magic can shatter stone
 walls. It has been imbued with arcane magics which render it translucent.
 %%%%
+A translucent runed stone wall
+
+A harder obstacle than rock walls. Only the mightiest magic can shatter stone
+walls. It has been marked with runes that block creatures from crossing it and 
+been imbued with arcane magics which render it translucent.
+%%%%
 A translucent unnaturally hard rock wall
 
 A wall imbued with magic that not only makes it indestructible but also makes
