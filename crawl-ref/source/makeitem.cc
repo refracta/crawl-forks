@@ -418,6 +418,8 @@ bool is_weapon_brand_ok(int type, int brand, bool /*strict*/)
     case SPWPN_PENETRATION:
         if (!is_range_weapon(item))
             return false;
+        if (item_attack_skill(item) == SK_CROSSBOWS)
+            return false;
         break;
 
 #if TAG_MAJOR_VERSION == 34

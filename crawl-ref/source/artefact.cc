@@ -549,8 +549,6 @@ static void _add_randart_weapon_brand(const item_def &item,
             // crossbows. This may change in future.
             if (one_chance_in(5))
                 item_props[ARTP_BRAND] = SPWPN_ELECTROCUTION;
-            else if (one_chance_in(5))
-                item_props[ARTP_BRAND] = SPWPN_PENETRATION;
         }
     }
     else if (is_demonic(item) && x_chance_in_y(7, 9))

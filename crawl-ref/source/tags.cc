@@ -4786,6 +4786,15 @@ void unmarshallItem(reader &th, item_def &item)
         item.brand = SPWPN_NORMAL;
     }
 
+    if (item_attack_skill(item) == SK_CROSSBOWS
+        && get_weapon_brand(item) == SPWPN_PENETRATION)
+    {
+        if (is_artefact(item))
+            artefact_set_property(item, ARTP_BRAND, SPWPN_ELECTROCUTION);
+        else
+            item.brand = SPWPN_ELECTROCUTION;
+    }
+
     // Not putting these in a minor tag since it's possible for an old
     // random monster spawn list to place flame/frost weapons.
     if (item.base_type == OBJ_WEAPONS && get_weapon_brand(item) == SPWPN_FROST)
