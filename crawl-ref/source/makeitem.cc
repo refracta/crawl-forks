@@ -62,7 +62,7 @@ static map<object_class_type, item_description_type> _type_to_idesc = {
     {OBJ_POTIONS, IDESC_POTIONS},
     {OBJ_JEWELLERY, IDESC_RINGS},
     {OBJ_SCROLLS, IDESC_SCROLLS},
-    {OBJ_STAVES, IDESC_STAVES},
+//    {OBJ_STAVES, IDESC_STAVES}, BCADNOTE: Can't use this while they have brands.
 };
 
 /**
@@ -89,7 +89,7 @@ void item_colour(item_def &item)
                                          // since it might be the only set bit
     }
 
-    if (is_unrandom_artefact(item))
+    if (is_unrandom_artefact(item) || item.base_type == OBJ_STAVES)
         return; // don't stomp on item.special!
 
     // initialize item appearance.
@@ -229,9 +229,6 @@ static bool _try_make_staff_artefact(item_def& item, int force_type,
 
         // The rest are normal randarts.
         make_item_randart(item);
-
-        if (cursed && get_weapon_brand(item) != SPWPN_HOLY_WRATH)
-            do_curse_item(item);
 
         return true;
     }
@@ -1144,7 +1141,7 @@ static facet_type _generate_staff_facet(const item_def& item,
     int item_level)
 {
     if (x_chance_in_y(500 - item_level, 500))
-        return static_cast<facet_type>(SPSTF_NORMAL);
+        return SPSTF_NORMAL;
 
     bool c = item.sub_type != STAFF_TRANSMUTATION;
     bool m = item.sub_type != STAFF_SUMMONING && c;
@@ -1809,7 +1806,6 @@ static void _generate_staff_item(item_def& item, bool allow_uniques,
     // If we make the unique roll, no further generation necessary.
     // Copied unrand code from _try_make_weapon_artefact since randart enhancer staves
     // can't happen.
-
     if (allow_uniques
         && one_chance_in(item_level == ISPEC_GOOD_ITEM ? 27 : 100))
     {
@@ -1834,7 +1830,7 @@ static void _generate_staff_item(item_def& item, bool allow_uniques,
     if (item_level == ISPEC_RANDART || (allow_uniques && one_chance_in(5)))
     {
         for (int i = 0; i < 100; ++i)
-            if (_try_make_staff_artefact(item, force_type, 0, true, agent)
+            if (_try_make_staff_artefact(item, force_type, item_level, true, agent)
                 && is_artefact(item))
             {
                 return;
@@ -1843,17 +1839,18 @@ static void _generate_staff_item(item_def& item, bool allow_uniques,
         item_level = ISPEC_GOOD_ITEM;
     }
 
+    ASSERT(!is_artefact(item));
+
     item.plus = -6;
     item.plus += roll_dice(2, 4);
+
     if (item_level >= ISPEC_GIFT)
         item.plus += roll_dice(2, 4);
 
-    if (!is_random_artefact(item) && force_ego <= 0)
-        item.brand = _generate_staff_facet(item, item_level);
+    if (force_ego != 0)
+        set_item_ego_type(item, OBJ_STAVES, force_ego);
     else
-        item.brand = force_ego;
-
-    item.special = item.brand;
+        set_item_ego_type(item, OBJ_STAVES, _generate_staff_facet(item, item_level));
 
     // BCADDO: Curses for Staves (Would have to come with artefact staves).
 }
@@ -2318,6 +2315,9 @@ int items(bool allow_uniques,
             item.index(), item.quantity,
             (int)item.base_type, (int)item.sub_type, item.special,
             (int)item.get_colour(), (int)item.rnd);
+
+    if (item.base_type == OBJ_STAVES)
+        mprf("%d", item.special);
     return p;
 }
 
