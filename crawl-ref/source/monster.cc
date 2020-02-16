@@ -3048,8 +3048,6 @@ bool monster::strict_neutral() const
 
 bool monster::wont_attack() const
 {
-    if (has_ench(ENCH_ROLLING))
-        return true;
     return friendly() || good_neutral() || strict_neutral();
 }
 
