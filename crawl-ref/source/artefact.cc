@@ -1711,10 +1711,12 @@ static void _artefact_setup_prop_vectors(item_def &item, bool curse = false)
 bool uncurse_item(item_def &item)
 {
     item.flags &= (~ISFLAG_CURSED);
+    bool bound = item.soul_bound();
+
     if (item.props.exists(CURSE_PROPS_KEY))
         item.props.erase(CURSE_PROPS_KEY);
 
-    if (!artefact_property(item, ARTP_CURSE) && item.soul_bound())
+    if (bound && !item.soul_bound())
     {
         item.soul_bind_xp = 0;
         if (item_is_equipped(item, false))
