@@ -912,7 +912,8 @@ A solid gold statue of a saint.
 %%%%
 A silver wall
 
-A wall made of pure silver.
+A wall made of pure silver. Zin's power prevents monsters from passing through 
+pure silver.
 %%%%
 An obsidian
 

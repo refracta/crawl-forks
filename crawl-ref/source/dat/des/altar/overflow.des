@@ -1198,13 +1198,13 @@ MONS:  executioner / balrug / green death / cacodemon / blizzard demon
 MONS:  orange demon / ynoxinul / neqoxec / hellwing / smoke demon
 : interest_check(_G)
 MAP
-  ccc
-  c1c
-cccnccc
-c2n_n2c
-ccc.ccc
-  c.c
-  c@c
+  qqq
+  q1q
+qqqqqqq
+q2q_q2q
+qqq.qqq
+  q.q
+  q@q
 ENDMAP
 
 NAME:   makhleb_blood_cavern_becter
@@ -3096,9 +3096,9 @@ MAP
     x.@.x
   xxx...xxx
 xxxXXy+yCCxxx
-xccy--;__yCCx
-xc1nA-;_BN2Cx
-xccy--;__yCCx
+xyqy--;__yCCx
+xq1qA-;_BN2Cx
+xyqy--;__yCCx
 xxxXXy+yCCxxx
   xxx...xxx
     x.@.x

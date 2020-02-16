@@ -442,7 +442,8 @@ bool feat_is_sealed(dungeon_feature_type feat)
  */
 bool feat_is_runed(dungeon_feature_type feat)
 {
-    return feat == DNGN_RUNED_DOOR || feat == DNGN_RUNED_CLEAR_DOOR || feat == DNGN_RUNED_CLEAR_STONE_WALL;
+    return feat == DNGN_RUNED_DOOR || feat == DNGN_RUNED_CLEAR_DOOR 
+        || feat == DNGN_RUNED_CLEAR_STONE_WALL || feat == DNGN_SILVER_WALL;
 }
 
 /** Is the original feature at this position runed, as in a runed door?

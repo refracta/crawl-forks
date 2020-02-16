@@ -5002,7 +5002,8 @@ static dungeon_feature_type _glyph_to_feat(int glyph)
            (glyph == 'm') ? DNGN_CLEAR_ROCK_WALL :
            (glyph == 'n') ? DNGN_CLEAR_STONE_WALL :
            (glyph == 'o') ? DNGN_CLEAR_PERMAROCK_WALL :
-           (glyph == 'p') ? DNGN_RUNED_CLEAR_STONE_WALL :
+         //(glyph == 'p') is too commonly used to mean plant to use for a feature.
+           (glyph == 'q') ? DNGN_RUNED_CLEAR_STONE_WALL :
            (glyph == 't') ? DNGN_TREE :
            (glyph == '+') ? DNGN_CLOSED_DOOR :
            (glyph == '=') ? DNGN_RUNED_CLEAR_DOOR :
