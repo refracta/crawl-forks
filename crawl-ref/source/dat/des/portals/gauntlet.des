@@ -204,17 +204,17 @@ ENDMAP
 
 NAME:  gammafunk_gauntlet_arena_hedges
 TAGS:  gauntlet_arena_first gauntlet_arena_second
-SUBST: q = pp~, ~ = ^..
+SUBST: r = pp~, ~ = ^..
 : gauntlet_arena_setup(_G)
 MAP
 q3.3.3.3.3q
 q~nnn3nnn~q
-q3nxpppxn3q
+q3nxrrrxn3q
 q~nnn~nnn~q
-q3...P...3q
+q3..2P2..3q
 q.nnn~nnn~q
- 2nxpppxn2
- ^nn212nn^
+ 2nxrrrxn2
+ ^nnn1nnn^
  .2ddQdd2.
 ENDMAP
 
