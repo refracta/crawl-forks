@@ -1605,7 +1605,6 @@ bool attack::apply_damage_brand(const char *what)
         else
         {
             special_damage = roll_dice(2,4);
-            special_damage = 8 + random2(13);
             const string punctuation =
                     attack_strength_punctuation(special_damage);
             special_damage_message =
