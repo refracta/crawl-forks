@@ -192,6 +192,14 @@ giant_firefly MONS_GIANT_FIREFLY
 electric_eel MONS_ELECTRIC_EEL
 shark MONS_SHARK
 jellyfish MONS_JELLYFISH
+jellyfish0
+jellyfish1
+jellyfish2
+jellyfish3
+jellyfish4
+jellyfish5
+jellyfish6
+jellyfish7
 giant_goldfish MONS_GIANT_GOLDFISH
 %rim 1
 
