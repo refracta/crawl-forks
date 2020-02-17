@@ -813,7 +813,7 @@ int main(int argc, char* argv[])
     {
         monster* mp = &menv[index];
         const string mname = mp->name(DESC_PLAIN, true);
-        exper += exper_value(*mp);
+        exper += mon_exper_value(*mp);
         mac += mp->armour_class();
         mev += mp->evasion();
         set_min_max(mp->speed, speed_min, speed_max);

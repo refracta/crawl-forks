@@ -338,7 +338,6 @@ monster_info::monster_info(monster_type p_type, monster_type p_base_type)
         number = 0;
 
     dur = 0;
-    xp_val = approx_exper(*this);
 
     _colour = COLOUR_INHERIT;
 
@@ -417,6 +416,9 @@ monster_info::monster_info(monster_type p_type, monster_type p_base_type)
 
     for (int i = 0; i < MAX_NUM_ATTACKS; ++i)
         attack[i] = get_monster_data(type)->attack[i];
+
+    // This needs to stay near last so all the variables it needs are set.
+    xp_val = mi_exper_value(*this);
 
     props.clear();
     // Change this in sync with monster::cloud_immune()
@@ -509,7 +511,7 @@ monster_info::monster_info(const monster* m, int milev)
     if (m->has_ench(ENCH_FAKE_ABJURATION))
         dur = m->get_ench(ENCH_FAKE_ABJURATION).duration;
 
-    xp_val = exper_value(*m, false);
+    xp_val = mon_exper_value(*m);
 
     if (mons_is_unique(type))
     {

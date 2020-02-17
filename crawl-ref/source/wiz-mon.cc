@@ -257,7 +257,7 @@ void debug_list_monsters()
         count++;
         prev_name = name;
 
-        int exp = exper_value(*mi);
+        int exp = mon_exper_value(*mi);
         total_exp += exp;
         if (!mons_is_unique(mi->type))
             total_nonuniq_exp += exp;
@@ -438,7 +438,7 @@ void debug_stethoscope(int mon)
          mons.base_armour_class(), mons.armour_class(),
          mons.base_evasion(), mons.evasion(),
          mons.res_magic(),
-         exper_value(mons),
+         mon_exper_value(mons),
          mons.speed, mons.speed_increment,
          mons.base_monster != MONS_NO_MONSTER ? " base=" : "",
          mons.base_monster != MONS_NO_MONSTER ?

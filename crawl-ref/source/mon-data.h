@@ -46,7 +46,7 @@
        MH_EVIL       - inherently evil (and not MH_UNDEAD or MH_DEMONIC)
 
    exp_mod: multiplies xp value after most other calculations.
-            see exper_value() in mon-util.cc
+            see mi_exper_value() in mon-util.cc
 
    resist_magic: see mons_resist_magic() in mon-util.cc
    - If -x calculate (-x * hit dice * 4/3), else simply x.

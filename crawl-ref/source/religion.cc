@@ -4444,7 +4444,7 @@ int get_monster_tension(const monster& mons, god_type god)
     if (mons.cannot_act() || mons.asleep() || mons_is_fleeing(mons))
         return 0;
 
-    int exper = exper_value(mons);
+    int exper = mon_exper_value(mons);
     if (exper <= 0)
         return 0;
 
@@ -4599,7 +4599,7 @@ int get_tension(god_type god)
 int get_fuzzied_monster_difficulty(const monster& mons)
 {
     double factor = sqrt(exp_needed(you.experience_level) / 30.0);
-    int exp = exper_value(mons) * 100;
+    int exp = mon_exper_value(mons) * 100;
     exp = random2(exp) + random2(exp);
     return exp / (1 + factor);
 }

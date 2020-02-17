@@ -2443,59 +2443,24 @@ int mons_max_hp(monster_type mc, monster_type mbase_type)
     return me->avg_hp_10x * 133 / 1000;
 }
 
-int approx_exper (const monster_info& mi)
-{
-    // BCADDO: Redo this.
-
-    return 0;
-}
-
-int exper_value(const monster& mon, bool real)
+static _exper_value(const monster_type mc, const int hd, int maxhp, const int slimesize, 
+                    const bool berserk, const bool spellcaster, const monster_spells spells)
 {
     int x_val = 0;
 
-    // These four are the original arguments.
-    const monster_type mc = mon.type;
-    int hd                = mon.get_experience_level();
-    int maxhp             = mon.max_hit_points;
-
-    // pghosts and pillusions have no reasonable base values, and you can look
-    // up the exact value anyway. Especially for pillusions.
-    if (real || mon.type == MONS_PLAYER_GHOST || mon.type == MONS_PLAYER_ILLUSION)
-    {
-        // A berserking monster is much harder, but the xp value shouldn't
-        // depend on whether it was berserk at the moment of death.
-        if (mon.has_ench(ENCH_BERSERK))
-            maxhp = (maxhp * 2 + 1) / 3;
-    }
-    else
-    {
-        const monsterentry *m = get_monster_data(mons_base_type(mon));
-        ASSERT(m);
-
-        // Use real hd, zombies would use the basic species and lose
-        // information known to the player ("orc warrior zombie"). Monsters
-        // levelling up is visible (although it may happen off-screen), so
-        // this is hardly ever a leak. Only Pan lords are unknown in the
-        // general.
-        if (m->mc == MONS_PANDEMONIUM_LORD)
-            hd = m->HD;
-        maxhp = mons_max_hp(mc);
-    }
+    if (berserk)
+        maxhp = (maxhp * 2 + 1) / 3;
 
     // Hacks to make merged slime creatures not worth so much exp. We
     // will calculate the experience we would get for 1 blob, and then
     // just multiply it so that exp is linear with blobs merged. -cao
-    if (mon.type == MONS_SLIME_CREATURE && mon.blob_size > 1)
-        maxhp /= mon.blob_size;
+    if (mc == MONS_SLIME_CREATURE && slimesize > 1)
+        maxhp /= slimesize;
 
     // These are some values we care about.
-    const int speed       = mons_base_speed(mon);
-    const int modifier    = _mons_exp_mod(mc);
-    const monuse_flags item_usage  = mons_itemuse(mon);
-
-    // XXX: Shapeshifters can qualify here, even though they can't cast.
-    const bool spellcaster = mon.has_spells();
+    const int speed = mons_class_base_speed(mc);
+    const int modifier = _mons_exp_mod(mc);
+    const monuse_flags item_usage = mons_class_itemuse(mc);
 
     // Early out for no XP monsters.
     if (!mons_class_gives_xp(mc))
@@ -2509,7 +2474,7 @@ int exper_value(const monster& mon, bool real)
     // Let's look for big spells.
     if (spellcaster)
     {
-        for (const mon_spell_slot &slot : mon.spells)
+        for (const mon_spell_slot &slot : spells)
         {
             switch (slot.spell)
             {
@@ -2619,11 +2584,11 @@ int exper_value(const monster& mon, bool real)
     }
 
     // Scale starcursed mass exp by what percentage of the whole it represents
-    if (mon.type == MONS_STARCURSED_MASS)
-        x_val = (x_val * mon.blob_size) / 12;
+    if (mc == MONS_STARCURSED_MASS)
+        x_val = (x_val * slimesize) / 12;
 
     // Further reduce xp from zombies
-    if (mons_is_zombified(mon))
+    if (mons_class_is_zombified(mc))
         x_val /= 2;
 
     // Reductions for big values. - bwr
@@ -2636,14 +2601,26 @@ int exper_value(const monster& mon, bool real)
     // of blobs merged. -cao
     // Has to be after the stepdown to prevent issues with 4-5 merged slime
     // creatures. -pf
-    if (mon.type == MONS_SLIME_CREATURE && mon.blob_size > 1)
-        x_val *= mon.blob_size;
+    if (mc == MONS_SLIME_CREATURE && slimesize > 1)
+        x_val *= slimesize;
 
     // Guarantee the value is within limits.
     if (x_val <= 0)
         x_val = 1;
 
     return x_val;
+}
+
+int mi_exper_value(const monster_info& mi)
+{
+    return _exper_value(mi.type, mi.hd, mi.max_hp, mi.slime_size,
+                        mi.is(MB_BERSERK), mi.has_spells(), mi.spells);
+}
+
+int mon_exper_value(const monster& mon)
+{
+    return _exper_value(mon.type, mon.get_experience_level(), mon.stat_maxhp(), 
+                        mon.blob_size, mon.has_ench(ENCH_BERSERK), mon.has_spells(), mon.spells);
 }
 
 static monster_type _random_mons_between(monster_type min, monster_type max)
@@ -3745,7 +3722,7 @@ void mons_pacify(monster& mon, mon_attitude_type att, bool no_xp)
         && !testbits(mon.flags, MF_NO_REWARD))
     {
         // Give the player half of the monster's XP.
-        gain_exp((exper_value(mon) + 1) / 2);
+        gain_exp((mon_exper_value(mon) + 1) / 2);
     }
     mon.flags |= MF_PACIFIED;
 
@@ -5096,11 +5073,11 @@ const char* mons_class_name(monster_type mc)
     return get_monster_data(mc)->name;
 }
 
-mon_threat_level_type mons_threat_level(const monster &mon, bool real)
+mon_threat_level_type mons_threat_level(const monster &mon)
 {
     const monster& threat = get_tentacle_head(mon);
     const double factor = sqrt(exp_needed(you.experience_level) / 30.0);
-    const int tension = exper_value(threat, real) / (1 + factor);
+    const int tension = mon_exper_value(threat) / (1 + factor);
 
     if (tension <= 0)
     {

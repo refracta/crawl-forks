@@ -249,7 +249,7 @@ static bool _explode_corpse(item_def& corpse, const coord_def& where)
 static int _calc_monster_experience(monster* victim, killer_type killer,
                                     int killer_index)
 {
-    const int experience = exper_value(*victim);
+    const int experience = mon_exper_value(*victim);
 
     if (!experience || !MON_KILL(killer) || invalid_monster_index(killer_index))
         return 0;
@@ -304,7 +304,7 @@ static void _beogh_spread_experience(int exp)
 
 static int _calc_player_experience(const monster* mons)
 {
-    int experience = exper_value(*mons);
+    int experience = mon_exper_value(*mons);
     if (!experience)
         return 0;
 

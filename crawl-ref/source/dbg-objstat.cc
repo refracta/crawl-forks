@@ -777,18 +777,18 @@ void objstat_record_monster(const monster *mons)
 
     _record_monster_stat(lev, mons_ind, "NumForIter", 1);
 
-    _record_monster_stat(lev, mons_ind, "MonsXP", exper_value(*mons));
-    _record_monster_stat(lev, mons_ind, "TotalXP", exper_value(*mons));
+    _record_monster_stat(lev, mons_ind, "MonsXP", mon_exper_value(*mons));
+    _record_monster_stat(lev, mons_ind, "TotalXP", mon_exper_value(*mons));
 
     if (from_vault)
     {
         _record_monster_stat(lev, mons_ind, "TotalVaultXP",
-                exper_value(*mons));
+                mon_exper_value(*mons));
     }
     else
     {
         _record_monster_stat(lev, mons_ind, "TotalNonVaultXP",
-                exper_value(*mons));
+                mon_exper_value(*mons));
     }
 
     _record_monster_stat(lev, mons_ind, "MonsHP", mons->max_hit_points);

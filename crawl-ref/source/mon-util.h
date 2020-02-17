@@ -133,7 +133,7 @@ struct monsterentry
     monclass_flags_t bitfields;
     resists_t resists;
 
-    // Multiplier for calculated monster XP value; see exper_value() for use.
+    // Multiplier for calculated monster XP value; see mi_exper_value() for use.
     int8_t exp_mod;
 
     monster_type genus,         // "team" the monster plays for
@@ -240,8 +240,8 @@ int mutant_beast_tier(int xl);
 
 int mons_avg_hp(monster_type mc);
 int mons_max_hp(monster_type mc, monster_type mbase_typeg = MONS_NO_MONSTER);
-int approx_exper(const monster_info& mi);
-int exper_value(const monster& mon, bool real = true);
+int mi_exper_value(const monster_info& mi);
+int mon_exper_value(const monster& mon);
 
 int hit_points(int avg_hp, int scale = 10);
 
@@ -510,8 +510,7 @@ bool mons_is_recallable(const actor* caller, const monster& targ);
 void init_anon();
 actor *find_agent(mid_t m, kill_category kc);
 const char* mons_class_name(monster_type mc);
-mon_threat_level_type mons_threat_level(const monster &mon,
-                                        bool real = false);
+mon_threat_level_type mons_threat_level(const monster &mon);
 int count_monsters(monster_type mtyp, bool friendly_only);
 int count_allies();
 

@@ -352,7 +352,7 @@ static void _monster_threat_values(double *general, double *highest,
         if (mi->friendly())
             continue;
 
-        const int xp = exper_value(**mi);
+        const int xp = mon_exper_value(**mi);
         const double log_xp = log((double)xp);
         sum += log_xp;
         if (xp > highest_xp)

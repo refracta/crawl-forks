@@ -1100,7 +1100,6 @@ void torment_player(actor *attacker, torment_source_type taux)
 
     mpr("Your body is wracked with pain!");
 
-
     kill_method_type type = KILLED_BY_BEAM;
     if (crawl_state.is_god_acting())
         type = KILLED_BY_DIVINE_WRATH;
