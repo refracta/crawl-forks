@@ -880,6 +880,7 @@ skill_type spell_type2skill(spschool spelltype)
     case spschool::poison:         return SK_POISON_MAGIC;
     case spschool::earth:          return SK_EARTH_MAGIC;
     case spschool::air:            return SK_AIR_MAGIC;
+    case spschool::evocation:      return SK_EVOCATIONS; // Shouldn't do anything practically but this prevents a crash.
 
     default:
         dprf("spell_type2skill: called with unmapped spell school %u"
