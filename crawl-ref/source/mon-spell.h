@@ -97,7 +97,7 @@ static const mon_spellbook mspell_list[] =
     // ('B') Beetles
     {  MST_BOULDER_BEETLE,
       {
-       { SPELL_ROLLOUT, 80, MON_SPELL_NATURAL },
+       { SPELL_ROLLOUT, 120, MON_SPELL_NATURAL },
       }
     },
 
