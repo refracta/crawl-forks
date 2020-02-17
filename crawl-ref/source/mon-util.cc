@@ -2443,7 +2443,7 @@ int mons_max_hp(monster_type mc, monster_type mbase_type)
     return me->avg_hp_10x * 133 / 1000;
 }
 
-static _exper_value(const monster_type mc, const int hd, int maxhp, const int slimesize, 
+static int _exper_value(const monster_type mc, const int hd, int maxhp, const int slimesize, 
                     const bool berserk, const bool spellcaster, const monster_spells spells)
 {
     int x_val = 0;
