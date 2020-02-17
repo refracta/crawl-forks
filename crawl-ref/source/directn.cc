@@ -3473,9 +3473,9 @@ string get_monster_equipment_desc(const monster_info& mi,
         if (mon_has_wand)
         {
             if (weap.empty())
-                return desc + " brandishing " + mon_wnd->name(DESC_A);
+                return desc + " brandishing a " + mon_wnd->name(DESC_DBNAME);
             else
-                return desc + weap + " and brandishing " + mon_wnd->name(DESC_A);
+                return desc + weap + " and brandishing a " + mon_wnd->name(DESC_DBNAME);
         }
         else
             return desc + weap;
@@ -3527,11 +3527,13 @@ string get_monster_equipment_desc(const monster_info& mi,
         {
             carried_desc += mon_alt->name(DESC_A);
             if (mon_has_wand)
-                carried_desc += " and ";
+                carried_desc += " and a ";
         }
+        else
+            carried_desc += "a ";
 
         if (mon_has_wand)
-            carried_desc += mon_wnd->name(DESC_A);
+            carried_desc += mon_wnd->name(DESC_DBNAME);
 
         item_descriptions.push_back(carried_desc);
     }
