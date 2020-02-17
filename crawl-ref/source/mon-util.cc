@@ -2448,6 +2448,10 @@ static _exper_value(const monster_type mc, const int hd, int maxhp, const int sl
 {
     int x_val = 0;
 
+    // Short circuit this.
+    if (mons_class_flag(mc, M_CANT_SPAWN))
+        return 0;
+
     if (berserk)
         maxhp = (maxhp * 2 + 1) / 3;
 
