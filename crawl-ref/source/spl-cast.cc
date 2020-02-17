@@ -1481,11 +1481,7 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
         if (dir == DIR_DIR)
             mprf(MSGCH_PROMPT, "%s", prompt ? prompt : "Which direction?");
 
-        const bool needs_path = !testbits(flags, spflag::target)
-                                // Apportation must be spflag::target, since a
-                                // shift-direction makes no sense for it, but
-                                // it nevertheless requires line-of-fire.
-                                || spell == SPELL_APPORTATION;
+        const bool needs_path = !testbits(flags, spflag::target);
 
         const int range = calc_spell_range(spell, powc, allow_fail);
 
@@ -2058,7 +2054,7 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
         return cast_passwall(beam.target, powc, fail);
 
     case SPELL_APPORTATION:
-        return cast_apportation(powc, beam, fail);
+        return cast_apportation(powc, fail);
 
     case SPELL_RECALL:
         return cast_recall(fail);

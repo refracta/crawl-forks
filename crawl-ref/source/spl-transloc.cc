@@ -15,6 +15,7 @@
 #include "act-iter.h"
 #include "areas.h"
 #include "cloud.h"
+#include "colour.h"
 #include "coordit.h"
 #include "delay.h"
 #include "directn.h"
@@ -827,117 +828,156 @@ spret cast_portal_projectile(int pow, bool fail)
     return spret::success;
 }
 
-spret cast_apportation(int pow, bolt& beam, bool fail)
+spret cast_apportation(int pow, bool fail)
 {
-    const coord_def where = beam.target;
+    vector<int> items_to_apport;
 
-    if (!cell_see_cell(you.pos(), where, LOS_SOLID))
+    for (rectangle_iterator ri(you.pos(), LOS_RADIUS); ri; ++ri)
     {
-        canned_msg(MSG_SOMETHING_IN_WAY);
-        return spret::abort;
+        // It doesn't make sense to apport from your own feet.
+        if (*ri == you.pos())
+            continue;
+
+        // Can't apport from places we can't see.
+        if (!you.see_cell_no_trans(*ri))
+            continue;
+
+        // Let's look at the top item in that square...
+        // And don't allow apporting from shop inventories.
+        // Using visible_igrd takes care of deep water/lava where appropriate.
+        const int item_idx = you.visible_igrd(*ri);
+        if (item_idx == NON_ITEM || !in_bounds(*ri))
+            continue;
+
+        item_def& item = mitm[item_idx];
+
+        // Nets can be apported when they have a victim trapped.
+        if (item_is_stationary(item) && !item_is_stationary_net(item))
+            continue;
+
+        items_to_apport.push_back(item_idx);
     }
 
-    // Let's look at the top item in that square...
-    // And don't allow apporting from shop inventories.
-    // Using visible_igrd takes care of deep water/lava where appropriate.
-    const int item_idx = you.visible_igrd(where);
-    if (item_idx == NON_ITEM || !in_bounds(where))
+    if (items_to_apport.size() == 0)
     {
-        mpr("You don't see anything to apport there.");
-        return spret::abort;
-    }
-
-    item_def& item = mitm[item_idx];
-
-    // Nets can be apported when they have a victim trapped.
-    if (item_is_stationary(item) && !item_is_stationary_net(item))
-    {
-        mpr("You cannot apport that!");
+        mpr("There is nothing you can see to apport.");
         return spret::abort;
     }
 
     fail_check();
+    int items_prevented = 0;
 
-    // We need to modify the item *before* we move it, because
-    // move_top_item() might change the location, or merge
-    // with something at our position.
-    if (item_is_orb(item))
+    for (int x : items_to_apport)
     {
-        fake_noisy(30, where);
+        item_def& item = mitm[x];
+        coord_def where = item.pos;
 
-        // There's also a 1-in-3 flat chance of apport failing.
-        if (one_chance_in(3))
+        // We need to modify the item *before* we move it, because
+        // move_top_item() might change the location, or merge
+        // with something at our position.
+        if (item_is_orb(item))
         {
-            orb_pickup_noise(where, 30,
-                "The Orb shrieks and becomes a dead weight against your magic!",
-                "The Orb lets out a furious burst of light and becomes "
+            fake_noisy(30, where);
+
+            // There's also a 1-in-3 flat chance of apport failing.
+            if (one_chance_in(3))
+            {
+                orb_pickup_noise(where, 30,
+                    "The Orb shrieks and becomes a dead weight against your magic!",
+                    "The Orb lets out a furious burst of light and becomes "
                     "a dead weight against your magic!");
-            return spret::success;
+                return spret::success;
+            }
+            else // Otherwise it's just a noisy little shiny thing
+            {
+                orb_pickup_noise(where, 30,
+                    "The Orb shrieks as your magic touches it!",
+                    "The Orb lets out a furious burst of light as your magic touches it!");
+                start_orb_run(CHAPTER_ANGERED_PANDEMONIUM, "Now pick up the Orb and get out of here!");
+            }
         }
-        else // Otherwise it's just a noisy little shiny thing
+
+        // If we apport a net, free the monster under it.
+        if (item_is_stationary_net(item))
         {
-            orb_pickup_noise(where, 30,
-                "The Orb shrieks as your magic touches it!",
-                "The Orb lets out a furious burst of light as your magic touches it!");
-            start_orb_run(CHAPTER_ANGERED_PANDEMONIUM, "Now pick up the Orb and get out of here!");
+            free_stationary_net(x);
+            if (monster* mons = monster_at(where))
+                mons->del_ench(ENCH_HELD, true);
         }
+
+        bolt beam;
+        beam.source = you.pos();
+        beam.target = where;
+        beam.colour = ETC_WARP;
+        beam.range = LOS_RADIUS;
+
+        beam.is_tracer = true;
+        beam.aimed_at_spot = true;
+        beam.affects_nothing = true;
+        beam.fire();
+
+        // Pop the item's location off the end
+        beam.path_taken.pop_back();
+
+        // The actual number of squares it needs to traverse to get to you.
+        int dist = beam.path_taken.size();
+
+        // The maximum number of squares the item will actually move, always
+        // at least one square. Always has a chance to move the entirety of default
+        // LOS (7), but only becomes certain at max power (50).
+        int max_dist = max(1, min(LOS_RADIUS, random2(8) + div_rand_round(pow, 7)));
+
+        dprf("Apport dist=%d, max_dist=%d", dist, max_dist);
+
+        int location_on_path = max(-1, dist - max_dist);
+        coord_def new_spot;
+        if (location_on_path == -1)
+            new_spot = you.pos();
+        else
+            new_spot = beam.path_taken[location_on_path];
+        // Try to find safe terrain for the item.
+        while (location_on_path < dist)
+        {
+            if (!feat_eliminates_items(grd(new_spot)))
+                break;
+            location_on_path++;
+            new_spot = beam.path_taken[location_on_path];
+        }
+        if (location_on_path == dist)
+            items_prevented++;
+        dprf("Apport: new spot is %d/%d", new_spot.x, new_spot.y);
+
+        // Actually move the item.
+        if (where != new_spot)
+        {
+            move_top_item(where, new_spot);
+
+            // Effects!
+            beam.is_tracer = false;
+            beam.source = where;
+            beam.target = new_spot;
+            beam.seen = true;
+            beam.fire();
+        }
+
+        // Mark the item as found now.
+        origin_set(new_spot);
     }
 
-    // If we apport a net, free the monster under it.
-    if (item_is_stationary_net(item))
-    {
-        free_stationary_net(item_idx);
-        if (monster* mons = monster_at(where))
-            mons->del_ench(ENCH_HELD, true);
-    }
-
-    beam.is_tracer = true;
-    beam.aimed_at_spot = true;
-    beam.affects_nothing = true;
-    beam.fire();
-
-    // Pop the item's location off the end
-    beam.path_taken.pop_back();
-
-    // The actual number of squares it needs to traverse to get to you.
-    int dist = beam.path_taken.size();
-
-    // The maximum number of squares the item will actually move, always
-    // at least one square. Always has a chance to move the entirety of default
-    // LOS (7), but only becomes certain at max power (50).
-    int max_dist = max(1, min(LOS_RADIUS, random2(8) + div_rand_round(pow, 7)));
-
-    dprf("Apport dist=%d, max_dist=%d", dist, max_dist);
-
-    int location_on_path = max(-1, dist - max_dist);
-    coord_def new_spot;
-    if (location_on_path == -1)
-        new_spot = you.pos();
+    // Messaging.
+    int items_apported = (items_to_apport.size() - items_prevented);
+    if (!items_apported)
+        mpr("Unfortunately, you failed to move any items for fear they'd be lost to the hazardous terrain in the way.");
     else
-        new_spot = beam.path_taken[location_on_path];
-    // Try to find safe terrain for the item.
-    while (location_on_path < dist)
-    {
-        if (!feat_eliminates_items(grd(new_spot)))
-            break;
-        location_on_path++;
-        new_spot = beam.path_taken[location_on_path];
+    { 
+        mprf("Yoink! You pull %s item%s towards yourself.",
+             number_in_words(items_apported).c_str(),
+             (items_apported > 1) ? "s" : "");
+        if (items_prevented)
+            mprf("Unfortunately, %s item%s didn't move because of the hazardous terrain in the way.",
+                number_in_words(items_prevented).c_str(),
+                (items_prevented > 1) ? "s" : "");
     }
-    if (location_on_path == dist)
-    {
-        mpr("Not with that terrain in the way!");
-        return spret::success;
-    }
-    dprf("Apport: new spot is %d/%d", new_spot.x, new_spot.y);
-
-    // Actually move the item.
-    mprf("Yoink! You pull the item%s towards yourself.",
-         (item.quantity > 1) ? "s" : "");
-
-    move_top_item(where, new_spot);
-
-    // Mark the item as found now.
-    origin_set(new_spot);
 
     return spret::success;
 }

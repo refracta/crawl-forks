@@ -69,8 +69,8 @@ static const struct spell_desc spelldata[] =
 {
     SPELL_APPORTATION, "Apportation",
     spschool::translocation,
-    spflag::target | spflag::obj | spflag::not_self,
-    1,
+    spflag::area | spflag::utility,
+    3,
     50,
     LOS_RADIUS, LOS_RADIUS,
     1, 0,
