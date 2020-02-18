@@ -901,6 +901,7 @@ spret cast_apportation(int pow, bool fail)
         if (item_is_stationary_net(item))
         {
             free_stationary_net(x);
+            mpr("The net rips apart by the force of your magic!");
             if (monster* mons = monster_at(where))
                 mons->del_ench(ENCH_HELD, true);
         }
