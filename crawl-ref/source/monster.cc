@@ -512,7 +512,7 @@ hands_reqd_type monster::hands_reqd(const item_def &item, bool base) const
     return actor::hands_reqd(item, base);
 }
 
-bool monster::can_wield(const item_def& item, bool ignore_curse,
+bool monster::can_wield(const item_def& item, bool /*ignore_curse*/,
                          bool ignore_brand, bool ignore_shield,
                          bool ignore_transform) const
 {
@@ -569,20 +569,6 @@ bool monster::can_wield(const item_def& item, bool ignore_curse,
             return false;
 
         _shield = &mitm[inv[MSLOT_SHIELD]];
-    }
-
-    if (!ignore_curse)
-    {
-        int num_cursed = 0;
-        if (weap1 && weap1->cursed())
-            num_cursed++;
-        if (weap2 && weap2->cursed())
-            num_cursed++;
-        if (_shield && _shield->cursed())
-            num_cursed++;
-
-        if (two_handed && num_cursed > 0 || num_cursed >= avail_slots)
-            return false;
     }
 
     return could_wield(item, ignore_brand, ignore_transform);

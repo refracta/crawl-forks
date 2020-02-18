@@ -1377,19 +1377,29 @@ brand_type choose_weapon_brand(weapon_type wpn_type)
 // BCADNOTE: Call this more sparingly than mainline; we're allowing it to change artefact brands.
 void set_item_ego_type(item_def &item, int ego_type)
 {
-    if (item.base_type == OBJ_WEAPONS && ego_type != SPWPN_HOLY_WRATH 
-                                      && ego_type != SPWPN_SILVER)
+    if ((ego_type != SPWPN_HOLY_WRATH) && (ego_type != SPWPN_SILVER))
         convert2bad(item);
+    else
+        convert2good(item);
 
-    if (!is_artefact(item))
+    if (is_artefact(item))
     {
-        item.brand = ego_type;
-        return;
+        CrawlVector &rap = item.props[ARTEFACT_PROPS_KEY].get_vector();
+
+        if (rap[ARTP_BRAND].get_short() == (short)ego_type)
+            return;
+
+        rap[ARTP_BRAND] = (short)ego_type;
+
+        // We need to reroll it's name and looks in case the base type changed.
+        if (item.props.exists(ARTEFACT_APPEAR_KEY))
+            item.props.erase(ARTEFACT_APPEAR_KEY);
+
+        if (item.props.exists(ARTEFACT_NAME_KEY))
+            item.props.erase(ARTEFACT_NAME_KEY);
     }
-
-    CrawlVector &rap = item.props[ARTEFACT_PROPS_KEY].get_vector();
-
-    rap[ARTP_BRAND] = ego_type;
+    else
+        item.brand = ego_type;
 
     return;
 }
@@ -2048,13 +2058,11 @@ bool convert2bad(item_def &item)
 
 bool is_brandable_weapon(const item_def &wpn, bool allow_ranged, bool divine)
 {
-
-    if (is_artefact(wpn))
+    if (is_artefact(wpn) && !divine)
         return false;
 
     if (wpn.base_type == OBJ_WEAPONS)
     {
-
         if (!allow_ranged && is_range_weapon(wpn))
             return false;
 
@@ -2064,7 +2072,6 @@ bool is_brandable_weapon(const item_def &wpn, bool allow_ranged, bool divine)
             return false;
 
         return true;
-
     }
 
     if (wpn.base_type == OBJ_SHIELDS && is_hybrid(wpn.sub_type))
