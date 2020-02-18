@@ -161,6 +161,9 @@ bool bless_weapon(god_type god, brand_type brand, colour_t colour)
     if (!is_brandable_weapon(wpn, brand == SPWPN_HOLY_WRATH, true))
         return false;
 
+    if (get_weapon_brand(wpn) == brand)
+        return false;
+
     string prompt = "Do you wish to have " + wpn.name(DESC_YOUR)
                        + " ";
     if (brand == SPWPN_PAIN)
@@ -190,15 +193,8 @@ bool bless_weapon(god_type god, brand_type brand, colour_t colour)
     if (wpn.cursed())
         do_uncurse_item(wpn);
 
-    if (god == GOD_SHINING_ONE)
-    {
-        convert2good(wpn);
-
-        if (is_blessed_convertible(wpn))
-            origin_acquired(wpn, GOD_SHINING_ONE);
-    }
-    else if (is_evil_god(god))
-        convert2bad(wpn);
+    if (god == GOD_SHINING_ONE && is_blessed_convertible(wpn))
+        origin_acquired(wpn, GOD_SHINING_ONE);
 
     you.wield_change = true;
     you.one_time_ability_used.set(god);
