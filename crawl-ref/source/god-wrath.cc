@@ -837,7 +837,7 @@ static bool _beogh_retribution()
                 ASSERT(mon->weapon() != nullptr);
                 item_def& wpn(*mon->weapon());
 
-                set_item_ego_type(wpn, OBJ_WEAPONS, SPWPN_ELECTROCUTION);
+                set_item_ego_type(wpn, SPWPN_ELECTROCUTION);
 
                 wpn.plus  = random2(3);
                 wpn.sub_type = wpn_type;
@@ -1606,7 +1606,7 @@ static int _wu_jian_summon_weapons()
             ASSERT(mon->weapon() != nullptr);
             item_def& wpn(*mon->weapon());
 
-            set_item_ego_type(wpn, OBJ_WEAPONS, ego);
+            set_item_ego_type(wpn, ego);
 
             wpn.plus = random2(5);
             wpn.sub_type = subtype;

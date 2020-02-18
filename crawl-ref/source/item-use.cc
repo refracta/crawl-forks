@@ -468,7 +468,7 @@ static const char _weapon_slot_key(equipment_type slot)
     }
 }
 
-static int _prompt_weapon_to_unwield(int new_weapon)
+static int _prompt_weapon_to_unwield()
 {
     const vector<equipment_type> weapon_types = _current_weapon_types();
     vector<char> slot_chars;
@@ -695,7 +695,7 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
                 }
                 else
                 {
-                    unwanted = _prompt_weapon_to_unwield(SLOT_BARE_HANDS);
+                    unwanted = _prompt_weapon_to_unwield();
 
                     if (unwanted == EQ_NONE)
                     {
@@ -982,7 +982,7 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
 
     else
     {
-        unwanted = _prompt_weapon_to_unwield(SLOT_BARE_HANDS);
+        unwanted = _prompt_weapon_to_unwield();
 
         if (unwanted == EQ_NONE)
         {
@@ -1773,7 +1773,7 @@ static char _ring_slot_key(equipment_type slot)
 }
 
 
-static int _prompt_ring_to_remove(int new_ring)
+static int _prompt_ring_to_remove()
 {
     const vector<equipment_type> ring_types = _current_ring_types();
     vector<char> slot_chars;
@@ -2121,7 +2121,7 @@ static bool _swap_rings(int ring_slot)
     {
         // Don't prompt if all the rings are the same.
         if (!all_same || Options.jewellery_prompt)
-            unwanted = _prompt_ring_to_remove(ring_slot);
+            unwanted = _prompt_ring_to_remove();
 
         if (unwanted == EQ_NONE)
         {
@@ -2800,7 +2800,7 @@ static void _rebrand_weapon(item_def& wpn)
         }
     }
 
-    set_item_ego_type(wpn, wpn.base_type, new_brand);
+    wpn.brand = new_brand;
     convert2bad(wpn);
 }
 
@@ -2940,18 +2940,6 @@ static bool _handle_brand_weapon(bool alreadyknown, const string &pre_msg)
         return !alreadyknown;
 
     _brand_weapon(*weapon);
-    return true;
-}
-
-static bool _identify(bool alreadyknown, const string &pre_msg, int &link)
-{
-    mprf("Everything is identified. This scroll is removed.");
-    return true;
-}
-
-static bool _handle_enchant_weapon(bool alreadyknown, const string &pre_msg)
-{
-    mprf("Removed scroll crumbles to ashes uselessly.");
     return true;
 }
 
@@ -3243,11 +3231,6 @@ string cannot_read_item_reason(const item_def &item)
         case SCR_ENCHANT:
             return _no_items_reason(OSEL_ENCHANTABLE_ITEM, true);
 
-#if TAG_MAJOR_VERSION == 34
-        case SCR_ENCHANT_WEAPON:
-            return "Sorry this item is removed.";
-#endif
-
         case SCR_REMOVE_CURSE:
             return _no_items_reason(OSEL_CURSED_WORN);
 
@@ -3263,9 +3246,6 @@ string cannot_read_item_reason(const item_def &item)
             if (get_weapon_brand(*you.weapon()) == SPWPN_HOLY_WRATH)
                 return "Holy weapons cannot be cursed!";
             return "";
-
-        case SCR_IDENTIFY:
-            return _no_items_reason(OSEL_UNIDENT, true);
 
         case SCR_CURSE_ARMOUR:
             return _no_items_reason(OSEL_UNCURSED_WORN_ARMOUR);
@@ -3592,26 +3572,6 @@ void read_scroll(item_def& scroll)
         break;
     }
 
-#if TAG_MAJOR_VERSION == 34
-    case SCR_CURSE_WEAPON:
-    {
-        mpr("This item has been removed, sorry!");
-        cancel_scroll = true;
-        break;
-    }
-#endif
-
-    case SCR_ENCHANT_WEAPON:
-        if (!alreadyknown)
-        {
-            mpr(pre_succ_msg);
-            mpr("It is a scroll of enchantment.");
-            // included in default force_more_message (to show it before menu)
-        }
-
-        cancel_scroll = !_handle_enchant_weapon(alreadyknown, pre_succ_msg);
-        break;
-
     case SCR_BRAND_WEAPON:
         if (!alreadyknown)
         {
@@ -3637,29 +3597,15 @@ void read_scroll(item_def& scroll)
     // Should always be identified by Ashenzari.
     case SCR_CURSE_ARMOUR:
     case SCR_CURSE_JEWELLERY:
-    {
-        mpr("This item has been removed, sorry!");
-        cancel_scroll = true;
-        break;
-    }
-
     case SCR_RECHARGING:
+    case SCR_IDENTIFY:
+    case SCR_ENCHANT_WEAPON:
+    case SCR_CURSE_WEAPON:
     {
         mpr("This item has been removed, sorry!");
         cancel_scroll = true;
         break;
     }
-    case SCR_IDENTIFY:
-        if (!alreadyknown)
-        {
-            mpr(pre_succ_msg);
-            mpr("This item has been removed, sorry!");
-            // included in default force_more_message (to show it before menu)
-            // Do this here so it doesn't turn up in the ID menu.
-            set_ident_type(scroll, true);
-        }
-        cancel_scroll = !_identify(alreadyknown, pre_succ_msg, link);
-        break;
 #endif
 
     case SCR_HOLY_WORD:

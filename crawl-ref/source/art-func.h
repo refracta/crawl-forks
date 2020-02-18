@@ -566,7 +566,7 @@ static void _ZONGULDROK_melee_effects(item_def* /*weapon*/, actor* attacker,
 
 ///////////////////////////////////////////////////
 
-static void _STORM_BOW_world_reacts(item_def *item)
+static void _STORM_BOW_world_reacts(item_def */*item*/)
 {
     if (!one_chance_in(300))
         return;
@@ -595,7 +595,7 @@ static void _GONG_melee_effects(item_def* /*item*/, actor* wearer,
 
 ///////////////////////////////////////////////////
 
-static void _RCLOUDS_world_reacts(item_def *item)
+static void _RCLOUDS_world_reacts(item_def */*item*/)
 {
     cloud_type cloud;
     if (coinflip())
@@ -608,7 +608,7 @@ static void _RCLOUDS_world_reacts(item_def *item)
             place_cloud(cloud, *ri, random2(10), &you, 1);
 }
 
-static void _RCLOUDS_equip(item_def *item, bool *show_msgs, bool unmeld)
+static void _RCLOUDS_equip(item_def */*item*/, bool *show_msgs, bool /*unmeld*/)
 {
     _equip_mpr(show_msgs, "A thin mist springs up around you!");
 }

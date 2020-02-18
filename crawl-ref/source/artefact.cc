@@ -1801,7 +1801,7 @@ bool apply_curse(item_def &item, artefact_prop_type prop)
     item.flags |= ISFLAG_CURSED;
 
     if (in_inventory(item))
-    ash_check_bondage();
+        ash_check_bondage();
 
     return true;
 }

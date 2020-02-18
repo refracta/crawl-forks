@@ -1271,7 +1271,7 @@ static void _setup_inner_flame_explosion(bolt & beam, const monster& origin,
                        (size > SIZE_TINY) ? dice_def(3, 20) :
                                             dice_def(3, 15);
     beam.name        = chaos ? "entropic burst" : "fiery explosion";
-    beam.colour      = chaos ? ETC_JEWEL : RED;
+    beam.colour      = chaos ? ETC_JEWEL : ETC_FIRE;
     beam.ex_size     = (size > SIZE_BIG) ? 2 : 1;
     beam.source_name = origin.name(DESC_A, true);
     if (!chaos) { beam.origin_spell = SPELL_INNER_FLAME; }

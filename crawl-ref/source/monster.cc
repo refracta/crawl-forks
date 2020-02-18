@@ -4529,9 +4529,10 @@ void monster::confuse(actor *atk, int strength)
         enchant_actor_with_flavour(this, atk, BEAM_CONFUSION, strength);
 }
 
+// Called exactly once (By Starcursed Masses).
 void monster::paralyse(actor *atk, int strength, string /*cause*/)
 {
-    enchant_actor_with_flavour(this, atk, BEAM_PETRIFY);
+    add_ench(mon_enchant(ENCH_PARALYSIS, 1, atk, strength));
 }
 
 void monster::petrify(actor *atk, bool /*force*/)
@@ -5184,7 +5185,7 @@ bool monster::needs_berserk(bool check_spells, bool ignore_distance) const
  *                      considered?
  * @return              Whether the monster can see invisible things.
  */
-bool monster::can_see_invisible(bool calc_unid) const
+bool monster::can_see_invisible() const
 {
     if (mons_is_ghost_demon(type))
         return ghost->see_invis;
@@ -5192,9 +5193,6 @@ bool monster::can_see_invisible(bool calc_unid) const
         return true;
     else if (has_facet(BF_WEIRD))
         return true;
-
-    if (!calc_unid)
-        return false;
 
     if (scan_artefacts(ARTP_INACCURACY) > 0)
         return false;
@@ -5471,11 +5469,14 @@ void monster::apply_location_effects(const coord_def &oldpos,
     if (oldpos != pos())
         dungeon_events.fire_position_event(DET_MONSTER_MOVED, pos());
 
+    bool bad_move = false;
+
     if (alive()
         && (mons_habitat(*this) == HT_WATER)
         && !feat_is_watery(env.grid(pos()))
         && !has_ench(ENCH_AQUATIC_LAND))
     {
+        bad_move = true;
         // Elemental wellsprings always have water beneath them
         if (type == MONS_ELEMENTAL_WELLSPRING)
         {
@@ -5483,14 +5484,25 @@ void monster::apply_location_effects(const coord_def &oldpos,
                                 TERRAIN_CHANGE_FLOOD, this);
         }
         else
-            add_ench(ENCH_AQUATIC_LAND);
+            add_ench(mon_enchant(ENCH_AQUATIC_LAND, 1, 
+                                 killer == KILL_YOU ? &you 
+                                                    : actor_by_mid(killernum)));
     }
 
     if (alive()
         && (mons_habitat(*this) == HT_LAVA)
         && !feat_is_lava(env.grid(pos()))
         && !has_ench(ENCH_AQUATIC_LAND))
-            add_ench(ENCH_AQUATIC_LAND);
+    { 
+        bad_move = true;
+        add_ench(mon_enchant(ENCH_AQUATIC_LAND, 1, 
+                             killer== KILL_YOU ? &you 
+                                               : actor_by_mid(killernum)));
+    }
+
+    god_conduct_trigger conducts[3];
+    if (bad_move && (killer == KILL_YOU || killer == KILL_YOU_CONF))
+        set_attack_conducts(conducts, *this);
 
     if (alive() && has_ench(ENCH_AQUATIC_LAND))
     {
@@ -5530,7 +5542,7 @@ void monster::apply_location_effects(const coord_def &oldpos,
     {
         monster_type genus = mons_genus(type);
 
-        if (genus == MONS_JELLY || genus == MONS_ELEPHANT_SLUG)
+        if (genus == MONS_JELLY || genus == MONS_ELEPHANT_SLUG || type == MONS_WATER_ELEMENTAL)
         {
             prop &= ~FPROP_BLOODY;
             if (you.see_cell(pos()) && !visible_to(&you))
@@ -5870,7 +5882,7 @@ bool monster::should_drink_potion(potion_type ptype) const
         // We're being nice: friendlies won't go invisible if the player
         // won't be able to see them.
         return !has_ench(ENCH_INVIS)
-               && (you.can_see_invisible(false) || !friendly());
+               && (you.can_see_invisible() || !friendly());
     default:
         break;
     }
@@ -6674,7 +6686,7 @@ void monster::note_spell_cast(spell_type spell)
     props[SEEN_SPELLS_KEY].get_vector().push_back(spell);
 }
 
-void monster::align_summons(bool force_friendly)
+void monster::align_summons()
 {
     mon_attitude_type new_att = temp_attitude();
 

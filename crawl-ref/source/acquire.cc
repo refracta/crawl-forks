@@ -1318,7 +1318,7 @@ int acquirement_create_item(object_class_type class_wanted,
             && !is_unrandom_artefact(acq_item))
         {
             // ... but Trog loves the antimagic brand specially.
-            set_item_ego_type(acq_item, OBJ_WEAPONS, SPWPN_ANTIMAGIC);
+            acq_item.brand = SPWPN_ANTIMAGIC;
         }
 
         const string rejection_reason = _why_reject(acq_item, agent);

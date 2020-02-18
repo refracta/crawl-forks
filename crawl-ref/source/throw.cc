@@ -756,7 +756,6 @@ bool throw_it(bolt &pbolt, int throw_2, dist *target)
         break;
     }
     case launch_retval::THROWN:
-        practise_throwing((missile_type)wepType);
         count_action(CACT_THROW, wepType, OBJ_MISSILES);
         break;
     case launch_retval::FUMBLED:

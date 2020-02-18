@@ -198,9 +198,10 @@ static bool _try_make_item_unrand(item_def& item, int force_type, int agent)
 }
 
 // Return whether we made an artefact.
-static bool _try_make_staff_artefact(item_def& item, int force_type,
+// BCADDO: use the agent int; have some gods give staves (be a nice buff to Kiku, Xom or Veh).
+static bool _try_make_staff_artefact(item_def& item, int /*force_type*/,
                                       int item_level, bool force_randart,
-                                      int agent)
+                                      int /*agent*/)
 {
     if (item_level > 2 && x_chance_in_y(101 + item_level * 3, 4000)
         || force_randart)
@@ -229,6 +230,9 @@ static bool _try_make_staff_artefact(item_def& item, int force_type,
 
         // The rest are normal randarts.
         make_item_randart(item);
+
+        if (cursed)
+            curse_item(item);
 
         return true;
     }
@@ -538,7 +542,7 @@ static void _generate_weapon_item(item_def& item, bool allow_uniques,
     const bool no_brand   = item.brand == SPWPN_FORBID_BRAND;
 
     if (no_brand)
-        set_item_ego_type(item, OBJ_WEAPONS, SPWPN_NORMAL);
+        item.brand = SPWPN_NORMAL;
 
     // If it's forced to be a good item, reroll clubs.
     while (force_good && force_type == OBJ_RANDOM && item.sub_type == WPN_CLUB)
@@ -552,8 +556,7 @@ static void _generate_weapon_item(item_def& item, bool allow_uniques,
         if (!no_brand && (forced_ego || one_chance_in(4)))
         {
             // Brand is set as for "good" items.
-            set_item_ego_type(item, OBJ_WEAPONS,
-                determine_weapon_brand(item, 2 + 2 * env.absdepth0));
+            item.brand = determine_weapon_brand(item, 2 + 2 * env.absdepth0);
         }
         item.plus -= 1 + random2(3);
 
@@ -566,10 +569,7 @@ static void _generate_weapon_item(item_def& item, bool allow_uniques,
     {
         // Make a better item (possibly ego).
         if (!no_brand)
-        {
-            set_item_ego_type(item, OBJ_WEAPONS,
-                              determine_weapon_brand(item, item_level));
-        }
+            item.brand = determine_weapon_brand(item, item_level);
 
         // if acquired item still not ego... enchant it up a bit.
         if (force_good && item.brand == SPWPN_NORMAL)
@@ -592,7 +592,7 @@ static void _generate_weapon_item(item_def& item, bool allow_uniques,
         {
             // Make a boring item.
             item.plus = 0;
-            set_item_ego_type(item, OBJ_WEAPONS, SPWPN_NORMAL);
+            item.brand = SPWPN_NORMAL;
         }
     }
 }
@@ -661,7 +661,7 @@ static void _generate_shield_item(item_def& item, bool allow_uniques,
     const bool no_brand = item.brand == SPWPN_FORBID_BRAND;
 
     if (no_brand)
-        set_item_ego_type(item, OBJ_WEAPONS, SPWPN_NORMAL);
+        item.brand = SPWPN_NORMAL;
 
     item.plus = 0;
 
@@ -672,9 +672,9 @@ static void _generate_shield_item(item_def& item, bool allow_uniques,
         {
             // Brand is set as for "good" items.
             if (is_hybrid(item.sub_type))
-                set_item_ego_type(item, OBJ_WEAPONS, determine_weapon_brand(item, 2 + 2 * env.absdepth0));
+                item.brand = determine_weapon_brand(item, 2 + 2 * env.absdepth0);
             else
-                set_item_ego_type(item, OBJ_ARMOURS, _defensive_shield_brand());
+                item.brand = _defensive_shield_brand();
         }
         item.plus -= 1 + random2(3);
 
@@ -689,9 +689,9 @@ static void _generate_shield_item(item_def& item, bool allow_uniques,
         if (!no_brand)
         {
             if (is_hybrid(item.sub_type))
-                set_item_ego_type(item, OBJ_WEAPONS, determine_weapon_brand(item, item_level));
+                item.brand = determine_weapon_brand(item, item_level);
             else
-                set_item_ego_type(item, OBJ_ARMOURS, _defensive_shield_brand());
+                item.brand = _defensive_shield_brand();
         }
 
         // if acquired item still not ego... enchant it up a bit.
@@ -715,7 +715,7 @@ static void _generate_shield_item(item_def& item, bool allow_uniques,
         {
             // Make a boring item.
             item.plus = 0;
-            set_item_ego_type(item, OBJ_SHIELDS, SPWPN_NORMAL);
+            item.brand = SPWPN_NORMAL;
         }
     }
 }
@@ -789,7 +789,7 @@ static special_missile_type _determine_missile_brand(const item_def& item,
     return rc;
 }
 
-bool is_staff_brand_ok(int type, int brand, bool strict)
+bool is_staff_brand_ok(int type, int brand, bool /*strict*/)
 {
     switch (brand)
     {
@@ -936,11 +936,7 @@ static void _generate_missile_item(item_def& item, int force_type,
         return;
 
     if (!no_brand)
-    {
-        set_item_ego_type(item, OBJ_MISSILES,
-                           _determine_missile_brand(item, item_level));
-    }
-
+        item.brand = _determine_missile_brand(item, item_level);
 }
 
 static bool _armour_disallows_randart(int sub_type)
@@ -1443,7 +1439,7 @@ static void _generate_armour_item(item_def& item, bool allow_uniques,
     {
         // Thoroughly damaged, could have been good once.
         if (!no_ego && (forced_ego || one_chance_in(4)))
-            set_item_ego_type(item, OBJ_ARMOURS, _generate_armour_ego(item));
+            item.brand = _generate_armour_ego(item);
             // Brand is set as for "good" items.
 
         item.plus -= 1 + random2(3);
@@ -1453,7 +1449,7 @@ static void _generate_armour_item(item_def& item, bool allow_uniques,
     }
     // Scarves always get an ego.
     else if (item.sub_type == ARM_SCARF)
-        set_item_ego_type(item, OBJ_ARMOURS, _generate_armour_ego(item));
+        item.brand = _generate_armour_ego(item);
     else if ((forced_ego || item.sub_type == ARM_HAT
                     || x_chance_in_y(51 + item_level, 250))
                 && !item.is_mundane() || force_good)
@@ -1470,7 +1466,7 @@ static void _generate_armour_item(item_def& item, bool allow_uniques,
         if (!no_ego && x_chance_in_y(31 + item_level, 350))
         {
             // ...an ego item, in fact.
-            set_item_ego_type(item, OBJ_ARMOURS, _generate_armour_ego(item));
+            item.brand = _generate_armour_ego(item);
 
             if (get_armour_ego_type(item) == SPARM_PONDEROUSNESS)
                 item.plus += 3 + random2(8);
@@ -1484,7 +1480,7 @@ static void _generate_armour_item(item_def& item, bool allow_uniques,
         if (one_chance_in(5))
             item.plus -= random2(3);
 
-        set_item_ego_type(item, OBJ_ARMOURS, SPARM_NORMAL);
+        item.brand = SPARM_NORMAL;
     }
 
     // Don't overenchant items.
@@ -1497,7 +1493,7 @@ static void _generate_armour_item(item_def& item, bool allow_uniques,
 
     // Never give brands to scales or hides, in case of misbehaving vaults.
     if (armour_type_is_hide(static_cast<armour_type>(item.sub_type)))
-        set_item_ego_type(item, OBJ_ARMOURS, SPARM_NORMAL);
+        item.brand = SPARM_NORMAL;
 
     // squash boring items.
     if (!force_good && item.brand == SPARM_NORMAL && item.plus > 0
@@ -1848,11 +1844,9 @@ static void _generate_staff_item(item_def& item, bool allow_uniques,
         item.plus += roll_dice(2, 4);
 
     if (force_ego != 0)
-        set_item_ego_type(item, OBJ_STAVES, force_ego);
+        item.brand = force_ego;
     else
-        set_item_ego_type(item, OBJ_STAVES, _generate_staff_facet(item, item_level));
-
-    // BCADDO: Curses for Staves (Would have to come with artefact staves).
+        item.brand = _generate_staff_facet(item, item_level);
 }
 
 static void _generate_rune_item(item_def& item, int force_type)

@@ -171,7 +171,7 @@ public:
     virtual bool can_go_berserk() const = 0;
     virtual bool go_berserk(bool intentional, bool potion = false) = 0;
     virtual bool berserk() const = 0;
-    virtual bool can_see_invisible(bool calc_unid = true) const = 0;
+    virtual bool can_see_invisible() const = 0;
     virtual bool invisible() const = 0;
     virtual bool nightvision() const = 0;
     virtual reach_type reach_range() const = 0;

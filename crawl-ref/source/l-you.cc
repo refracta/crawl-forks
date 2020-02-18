@@ -263,7 +263,7 @@ LUARET1(you_res_mutation, number, you.rmut_from_item(false) ? 1 : 0)
  * @treturn boolean
  * @function see_invisible
  */
-LUARET1(you_see_invisible, boolean, you.can_see_invisible(false))
+LUARET1(you_see_invisible, boolean, you.can_see_invisible())
 /*** Guardian spirit.
  * Returns a number for backwards compatibility.
  * @treturn int

@@ -136,7 +136,7 @@ static void _assert_valid_slot(equipment_type eq, equipment_type slot)
 {
     if (eq == slot)
         return;
-    if (eq == EQ_RINGS); // all other slots are unique
+    if (eq == EQ_RINGS) // all other slots are unique
     {
         equipment_type r1 = EQ_LEFT_RING, r2 = EQ_RIGHT_RING;
         if (you.species == SP_OCTOPODE)
@@ -902,7 +902,7 @@ static void _wielding_wear_effects(bool unwield, bool unmeld)
             }
         }
         
-        bool * dummy;
+        bool * dummy = nullptr;
         if (you.weapon(0) && (is_artefact(*you.weapon(0)) || you.weapon(0)->cursed()))
             _unequip_artefact_effect(*you.weapon(0), dummy, false, EQ_WEAPON0, true, true);
         if (you.weapon(1) && (is_artefact(*you.weapon(1)) || you.weapon(1)->cursed()))

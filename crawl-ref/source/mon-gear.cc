@@ -278,13 +278,13 @@ static bool _apply_weapon_spec(const mon_weapon_spec &spec, item_def &item,
     {
         if (*brand != NUM_SPECIAL_WEAPONS)
         {
-            set_item_ego_type(item, OBJ_WEAPONS, *brand);
+            set_item_ego_type(item, *brand);
             force_item = true;
         }
     }
     else if (force_item) // normal brand
     {
-        set_item_ego_type(item, OBJ_WEAPONS,
+        set_item_ego_type(item,
                           determine_weapon_brand(item, level));
     }
 
@@ -1059,8 +1059,8 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
             force_item = true;
             item.plus += 1 + random2(3);
 
-            if (one_chance_in(5))
-                set_item_ego_type(item, OBJ_WEAPONS, SPWPN_FREEZING);
+            if (one_chance_in(4))
+                set_item_ego_type(item, SPWPN_FREEZING);
         }
 
         if (one_chance_in(3))
@@ -1081,12 +1081,13 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
         {
             item.base_type = OBJ_STAVES;
             item.sub_type = STAFF_EARTH;
+            item.brand = coinflip() ? SPSTF_FLAY : SPSTF_MENACE;
         }
         else
         {
             item.base_type = OBJ_WEAPONS;
             item.sub_type = WPN_QUARTERSTAFF;
-            set_item_ego_type(item, OBJ_WEAPONS, SPWPN_VORPAL);
+            set_item_ego_type(item, SPWPN_VORPAL);
         }
         item.flags |= ISFLAG_KNOW_TYPE;
         break;
@@ -1141,12 +1142,16 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
         {
             item.base_type = OBJ_STAVES;
             item.sub_type = STAFF_COLD;
+            if (one_chance_in(3))
+                item.brand = SPSTF_CHAOS;
+            else
+                item.brand = SPSTF_FLAY;
         }
         else
         {
             item.base_type = OBJ_WEAPONS;
             item.sub_type = WPN_QUARTERSTAFF;
-            set_item_ego_type(item, OBJ_WEAPONS, SPWPN_FREEZING);
+            set_item_ego_type(item, SPWPN_FREEZING);
         }
         item.flags |= ISFLAG_KNOW_TYPE;
         break;
@@ -1192,16 +1197,16 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
     case MONS_SALAMANDER:
         if (is_range_weapon(item))
         {
-            set_item_ego_type(item, OBJ_WEAPONS, SPWPN_MOLTEN);
+            set_item_ego_type(item, SPWPN_MOLTEN);
             force_item = true;
         }
         break;
 
     case MONS_THE_ENCHANTRESS:
-        if (one_chance_in(6))
+        if (one_chance_in(3))
         {
             force_item = true;
-            set_item_ego_type(item, OBJ_WEAPONS, SPWPN_DISTORTION);
+            set_item_ego_type(item, SPWPN_DISTORTION);
             item.plus  = random2(5);
         }
         break;
@@ -1461,7 +1466,7 @@ static void _give_shield(monster* mon, int level)
         {
             if (coinflip())
             {
-                set_item_ego_type(*shield, OBJ_SHIELDS, SPARM_REFLECTION);
+                set_item_ego_type(*shield, SPARM_REFLECTION);
                 set_equip_desc(*shield, ISFLAG_GLOWING);
             }
             if (!is_artefact(*shield))
@@ -1812,7 +1817,7 @@ int make_mons_armour(monster_type type, int level)
         item.base_type = OBJ_ARMOURS;
         item.sub_type  = ARM_ROBE;
         item.plus = 1 + coinflip();
-        set_item_ego_type(item, OBJ_ARMOURS, SPARM_COLD_RESISTANCE);
+        set_item_ego_type(item, SPARM_COLD_RESISTANCE);
         item.flags |= ISFLAG_KNOW_TYPE;
         break;
     }

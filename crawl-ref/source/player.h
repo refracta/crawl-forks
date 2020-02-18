@@ -508,7 +508,7 @@ public:
     bool is_web_immune() const override;
     bool cannot_speak() const;
     bool invisible() const override;
-    bool can_see_invisible(bool calc_unid = true) const override;
+    bool can_see_invisible() const override;
     int vision(bool calc_unid = true) const;
     int innate_vision() const;
     bool visible_to(const actor *looker) const override;

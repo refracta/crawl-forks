@@ -242,8 +242,8 @@ static const map<spell_type, mons_spell_logic> spell_to_logic = {
             }
             return false;
         },
-        [](monster &caster, mon_spell_slot slot, bolt& pbolt) {
-            const int splpow = _mons_spellpower(slot.spell, caster);
+        [](monster &caster, mon_spell_slot /*slot*/, bolt& /*pbolt*/) {
+            const int splpow = _mons_spellpower(SPELL_HEALING_BLAST, caster);
             cast_heal_blast(splpow, &caster, false);
         },
         nullptr,

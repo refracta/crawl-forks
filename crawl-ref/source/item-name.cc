@@ -1463,8 +1463,6 @@ static bool _know_ego(const item_def &item, description_level_type desc,
 static void _name_deck(const item_def &deck, description_level_type desc,
                        bool ident, ostringstream &buff)
 {
-    const bool know_type = ident || item_type_known(deck);
-
     const bool dbname   = desc == DESC_DBNAME;
     const bool basename = _use_basename(deck, desc, ident);
 

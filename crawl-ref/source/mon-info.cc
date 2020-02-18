@@ -583,7 +583,7 @@ monster_info::monster_info(const monster* m, int milev)
     ev = m->evasion(ev_ignore::unided);
     base_ev = m->base_evasion();
     mr = m->res_magic(false);
-    can_see_invis = m->can_see_invisible(false);
+    can_see_invis = m->can_see_invisible();
     mresists = get_mons_resists(*m);
     mitemuse = mons_itemuse(*m);
     mbase_speed = mons_base_speed(*m, true);

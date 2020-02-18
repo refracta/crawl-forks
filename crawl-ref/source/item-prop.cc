@@ -1374,16 +1374,24 @@ brand_type choose_weapon_brand(weapon_type wpn_type)
     return *brand;
 }
 
-bool set_item_ego_type(item_def &item, object_class_type item_type,
-                       int ego_type)
+// BCADNOTE: Call this more sparingly than mainline; we're allowing it to change artefact brands.
+void set_item_ego_type(item_def &item, int ego_type)
 {
+    if (item.base_type == OBJ_WEAPONS && ego_type != SPWPN_HOLY_WRATH 
+                                      && ego_type != SPWPN_SILVER)
+        convert2bad(item);
+
     if (!is_artefact(item))
     {
         item.brand = ego_type;
-        return true;
+        return;
     }
 
-    return false;
+    CrawlVector &rap = item.props[ARTEFACT_PROPS_KEY].get_vector();
+
+    rap[ARTP_BRAND] = ego_type;
+
+    return;
 }
 
 brand_type get_weapon_brand(const item_def &item)

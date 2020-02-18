@@ -7363,7 +7363,7 @@ bool player::sicken(int amount)
 }
 
 /// Can the player see invisible things?
-bool player::can_see_invisible(bool calc_unid) const
+bool player::can_see_invisible() const
 {
     return (vision() > 0);
 }

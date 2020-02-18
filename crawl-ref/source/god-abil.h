@@ -89,7 +89,7 @@ bool vehumet_supports_spell(spell_type spell);
 
 void sif_do_channel_energy(int pow);
 
-void trog_do_trogs_hand(int power);
+void trog_do_trogs_hand();
 void trog_remove_trogs_hand();
 
 bool jiyva_remove_bad_mutation();

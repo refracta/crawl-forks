@@ -406,7 +406,7 @@ public:
     bool is_banished() const override;
     bool is_web_immune() const override;
     bool invisible() const override;
-    bool can_see_invisible(bool calc_unid = true) const override;
+    bool can_see_invisible() const override;
     bool visible_to(const actor *looker) const override;
     bool near_foe() const;
     reach_type reach_range() const override;
@@ -560,7 +560,7 @@ public:
     bool is_jumpy() const;
 
     int  spell_hd(spell_type spell = SPELL_NO_SPELL) const;
-    void align_summons(bool force_friendly = false);
+    void align_summons();
     void note_spell_cast(spell_type spell);
 
     bool clear_far_engulf() override;

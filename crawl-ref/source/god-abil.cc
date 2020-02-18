@@ -184,7 +184,7 @@ bool bless_weapon(god_type god, brand_type brand, colour_t colour)
 
     string old_name = wpn.name(DESC_A);
     set_equip_desc(wpn, ISFLAG_GLOWING);
-    set_item_ego_type(wpn, wpn.base_type, brand);
+    set_item_ego_type(wpn, brand);
     enchant_item(wpn, true);
     enchant_item(wpn, true);
     if (wpn.cursed())
@@ -1505,7 +1505,7 @@ bool vehumet_supports_spell(spell_type spell)
     return false;
 }
 
-void trog_do_trogs_hand(int pow)
+void trog_do_trogs_hand()
 {
     if (you.duration[DUR_TROGS_HAND])
     {
@@ -1861,10 +1861,7 @@ void yred_make_enslaved_soul(monster* mon, bool force_hostile)
     {
         item_def *wpn = mon->mslot_item(static_cast<mon_inv_type>(slot));
         if (wpn && get_weapon_brand(*wpn) == SPWPN_HOLY_WRATH)
-        {
-            set_item_ego_type(*wpn, OBJ_WEAPONS, SPWPN_DRAINING);
-            convert2bad(*wpn);
-        }
+            set_item_ego_type(*wpn, SPWPN_DRAINING);
     }
     monster_drop_things(mon, false, [](const item_def& item)
                                     { return is_holy_item(item); });
@@ -4782,7 +4779,7 @@ spret qazlal_elemental_force(bool fail)
                                  apply_invo_enhancer (random2avg(you.skill(SK_INVOCATIONS), 2),true)));
     mgen_data mg;
     mg.summon_type = MON_SUMM_AID;
-    if (player_spec_invo > 0)
+    if (player_spec_invo() > 0)
         mg.abjuration_duration = 2;
     else
         mg.abjuration_duration = 1;
@@ -4864,7 +4861,7 @@ bool qazlal_disaster_area()
         return false;
     }
 
-    if (player_spec_invo > 0)
+    if (player_spec_invo() > 0)
         god_speaks(you.religion, "You feel a surge of divine energy.");
 
     mprf(MSGCH_GOD, "Nature churns violently around you!");

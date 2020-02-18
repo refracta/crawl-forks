@@ -1195,7 +1195,7 @@ static int _get_power_level(int power, deck_rarity_type rarity)
     return power_level;
 }
 
-static void _suppressed_card_message(god_type god, conduct_type done)
+static void _suppressed_card_message(conduct_type done)
 {
     string forbidden_act;
 
@@ -1276,7 +1276,7 @@ static void _velocity_card(int power, deck_rarity_type rarity)
                           else if (!(for_hostiles == ENCH_HASTE && haste_immune))
                           {
                               if (have_passive(passive_t::no_haste))
-                                  _suppressed_card_message(you.religion, DID_HASTY);
+                                  _suppressed_card_message(DID_HASTY);
                               else
                               {
                                   mon.add_ench(for_hostiles);
@@ -1301,7 +1301,7 @@ static void _velocity_card(int power, deck_rarity_type rarity)
                           else if (!(for_allies == ENCH_HASTE && haste_immune))
                           {
                               if (have_passive(passive_t::no_haste))
-                                  _suppressed_card_message(you.religion, DID_HASTY);
+                                  _suppressed_card_message(DID_HASTY);
                               else
                               {
                                   mon.add_ench(for_allies);
@@ -1481,7 +1481,7 @@ static void _damaging_card(card_type card, int power, deck_rarity_type rarity,
         {
             if (is_good_god(you.religion))
             {
-                _suppressed_card_message(you.religion, DID_EVIL);
+                _suppressed_card_message(DID_EVIL);
                 return;
             }
 
@@ -1520,7 +1520,7 @@ static void _damaging_card(card_type card, int power, deck_rarity_type rarity,
 
     if (card == CARD_PAIN && is_good_god(you.religion))
     {
-        _suppressed_card_message(you.religion, DID_EVIL);
+        _suppressed_card_message(DID_EVIL);
         return;
     }
 
@@ -1637,7 +1637,7 @@ static void _summon_demon_card(int power, deck_rarity_type rarity)
 
     if (is_good_god(you.religion))
     {
-        _suppressed_card_message(you.religion, DID_EVIL);
+        _suppressed_card_message(DID_EVIL);
         return;
     }
 
@@ -1714,9 +1714,7 @@ static void _summon_dancing_weapon(int power, deck_rarity_type rarity)
         // Wimpy, negative-enchantment weapon.
         wpn.plus = random2(3) - 2;
         wpn.sub_type = random_choose(WPN_QUARTERSTAFF, WPN_HAND_AXE);
-
-        set_item_ego_type(wpn, OBJ_WEAPONS,
-                          random_choose(SPWPN_VENOM, SPWPN_NORMAL));
+        wpn.brand = random_choose(SPWPN_VENOM, SPWPN_NORMAL);
         break;
     case 1:
         // This is getting good.
@@ -1724,20 +1722,15 @@ static void _summon_dancing_weapon(int power, deck_rarity_type rarity)
         wpn.sub_type = random_choose(WPN_LONG_SWORD, WPN_TRIDENT);
 
         if (coinflip())
-        {
-            set_item_ego_type(wpn, OBJ_WEAPONS,
-                              random_choose(SPWPN_MOLTEN, SPWPN_FREEZING));
-        }
+            wpn.brand = random_choose(SPWPN_MOLTEN, SPWPN_FREEZING);
         else
-            set_item_ego_type(wpn, OBJ_WEAPONS, SPWPN_NORMAL);
+            wpn.brand = SPWPN_NORMAL;
         break;
     default:
         // Rare and powerful.
         wpn.plus = random2(4) + 2;
         wpn.sub_type = random_choose(WPN_DEMON_TRIDENT, WPN_EXECUTIONERS_AXE);
-
-        set_item_ego_type(wpn, OBJ_WEAPONS,
-                          random_choose(SPWPN_SPEED, SPWPN_ELECTROCUTION));
+        wpn.brand = random_choose(SPWPN_SPEED, SPWPN_ELECTROCUTION);
     }
 
     item_colour(wpn); // this is probably not needed

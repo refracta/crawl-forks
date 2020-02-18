@@ -125,18 +125,6 @@ static bool _hab_requires_mon_flight(dungeon_feature_type g)
  *          regardless of whether it may be dangerous or harmful.
  */
 bool monster_habitable_grid(const monster* mon,
-                            dungeon_feature_type actual_grid)
-{
-    // Zombified monsters enjoy the same habitat as their original,
-    // except lava-based monsters.
-    const monster_type mt = fixup_zombie_type(mon->type,
-        mons_base_type(*mon));
-
-    return monster_habitable_grid(mt, actual_grid, DNGN_UNSEEN, true);
-}
-
-
-bool monster_habitable_grid(const monster* mon,
                             dungeon_feature_type actual_grid, bool ai_check)
 {
     // Zombified monsters enjoy the same habitat as their original,
@@ -159,7 +147,7 @@ bool monster_habitable_grid(const monster* mon,
  *                    survivable, if actual_grid isn't similar to wanted_grid.
  * @param flies if true, treat the monster as flying even if the monster class
  *              can't usually fly.
- * @param ai_check (new) If false it will allow monsters to go to deadly terrain
+ * @param ai_check If false it will allow monsters to go to deadly terrain
  *              (with damage); if true, it excludes deadly terrain.
  */
 bool monster_habitable_grid(monster_type mt,

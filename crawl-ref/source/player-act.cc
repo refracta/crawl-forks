@@ -249,7 +249,7 @@ random_var player::attack_delay(const item_def *projectile, bool rescale) const
     const int DELAY_SCALE = 20;
 
     // Old Version Applies when a Single Weapon is used (this Weap being that weapon).
-    item_def * weap;
+    item_def * weap = nullptr;
 
     // UC; now always 5.
     if (!projectile && !weap0 && !weap1)
@@ -394,19 +394,29 @@ hands_reqd_type player::hands_reqd(const item_def &item, bool base) const
 }
 
 bool player::can_wield(const item_def& item, bool ignore_curse,
-                       bool ignore_brand, bool ignore_shield,
+                       bool ignore_brand, bool /*ignore_shield*/,
                        bool ignore_transform) const
 {
+    int bound_hands = 0;
+
+    if (!ignore_curse)
+    {
+        if ((equip[EQ_WEAPON0] != -1) && inv[equip[EQ_WEAPON0]].soul_bound())
+            bound_hands++;
+
+        if ((equip[EQ_WEAPON1] != -1) && inv[equip[EQ_WEAPON1]].soul_bound())
+            bound_hands++;
+
+        if (bound_hands == 2)
+            return false;
+    }
+
     // Unassigned means unarmed combat.
     const bool two_handed = item.base_type == OBJ_UNASSIGNED
                             || hands_reqd(item) == HANDS_TWO;
 
-    if (two_handed && (
-        (!ignore_shield && shield())
-        || get_mutation_level(MUT_MISSING_HAND)))
-    {
+    if (two_handed && (get_mutation_level(MUT_MISSING_HAND) || bound_hands == 1))
         return false;
-    }
 
     return could_wield(item, ignore_brand, ignore_transform);
 }
