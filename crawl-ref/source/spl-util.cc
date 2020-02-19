@@ -496,7 +496,17 @@ int spell_levels_required(spell_type which_spell)
     {
         levels = 0;
     }
-    if (which_spell == SPELL_FORCE_LANCE
+    else if (which_spell == SPELL_STARBURST
+        && you.has_spell(SPELL_BOLT_OF_FIRE))
+    {
+        levels = 0;
+    }
+    else if (which_spell == SPELL_BOLT_OF_FIRE
+        && you.has_spell(SPELL_STARBURST))
+    {
+        levels = 0;
+    }
+    else if (which_spell == SPELL_FORCE_LANCE
         && you.has_spell(SPELL_BECKONING))
     {
         levels = 0;
@@ -506,6 +516,7 @@ int spell_levels_required(spell_type which_spell)
     {
         levels = 0;
     }
+    // BCADDO: This is getting long and repetitive, refactor into a map.
 
     return levels;
 }

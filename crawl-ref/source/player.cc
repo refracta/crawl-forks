@@ -1374,6 +1374,9 @@ int player_spell_levels()
     bool lasso = false;
     bool lance = false;
 
+    bool burst = false;
+    bool bolt = false;
+
     for (const spell_type spell : you.spells)
     {
         if (spell == SPELL_LRD)
@@ -1388,8 +1391,13 @@ int player_spell_levels()
             lance = true;
         if (spell == SPELL_BECKONING)
             lasso = true;
+        if (spell == SPELL_STARBURST)
+            burst = true;
+        if (spell == SPELL_BOLT_OF_FIRE)
+            bolt = true;
         if (spell != SPELL_NO_SPELL)
             sl -= spell_difficulty(spell);
+        // BCADDO: This is getting long and repetitive refactor into a map.
     }
 
     if (STS && S2S)
@@ -1400,6 +1408,9 @@ int player_spell_levels()
 
     if (lance && lasso)
         sl += spell_difficulty(SPELL_FORCE_LANCE);
+
+    if (bolt && burst)
+        sl += spell_difficulty(SPELL_BOLT_OF_FIRE);
 
     // Note: This can happen because of draining. -- bwr
     if (sl < 0)

@@ -4241,7 +4241,7 @@ TILEG_ERROR,
 
 {
     SPELL_STARBURST, "Starburst",
-    spschool::conjuration | spschool::fire,
+    spschool::fire,
     spflag::area,
     6,
     200,
