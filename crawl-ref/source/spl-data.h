@@ -4263,7 +4263,7 @@ TILEG_ERROR,
 
 {
     SPELL_HAILSTORM, "Hailstorm",
-    spschool::conjuration | spschool::ice,
+    spschool::ice,
     spflag::area,
     4,
     100,
