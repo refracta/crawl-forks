@@ -251,6 +251,12 @@ random_var player::attack_delay(const item_def *projectile, bool rescale) const
     // Old Version Applies when a Single Weapon is used (this Weap being that weapon).
     item_def * weap = nullptr;
 
+    if (weap0 && !is_weapon(*weap0))
+        weap0 = nullptr;
+
+    if (weap1 && !is_weapon(*weap1))
+        weap1 = nullptr;
+
     // UC; now always 5.
     if (!projectile && !weap0 && !weap1)
     {
