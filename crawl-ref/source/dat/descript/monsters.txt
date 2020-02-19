@@ -1894,7 +1894,7 @@ its path.
 %%%%
 plutonium crab
 
-A green, glowing, radioactive crab. You probably shouldn't touch it.
+A violet, glowing, radioactive crab. You probably shouldn't touch it.
 %%%%
 polar bear
 

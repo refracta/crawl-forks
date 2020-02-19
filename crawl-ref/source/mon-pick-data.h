@@ -672,6 +672,7 @@ static const pop_entry pop_zot[] =
 { // Zot
   {  1,  5,  970, FLAT, MONS_MOTH_OF_WRATH },
   {  1,  5,  192, RISE, MONS_GHOST_MOTH },
+  {  1,  5,  192, RISE, MONS_PLUTONIUM_CRAB },
   {  1,  5,  113, FLAT, MONS_BLACK_DRACONIAN },
   {  1,  5,  113, FLAT, MONS_YELLOW_DRACONIAN },
   {  1,  5,  113, FLAT, MONS_GREEN_DRACONIAN },
@@ -908,6 +909,7 @@ static const pop_entry pop_pan[] =
   {  1,  1,  335, FLAT, MONS_HELL_SENTINEL },
   {  1,  1,  335, FLAT, MONS_TZITZIMITL },
   {  1,  1,    8, FLAT, MONS_PROFANE_SERVITOR },
+  {  1,  1,  250, FLAT, MONS_PLUTONIUM_CRAB },
   {  1,  1,  250, FLAT, MONS_MONSTROUS_DEMONSPAWN },
   {  1,  1,  250, FLAT, MONS_GELID_DEMONSPAWN },
   {  1,  1,  250, FLAT, MONS_INFERNAL_DEMONSPAWN },
