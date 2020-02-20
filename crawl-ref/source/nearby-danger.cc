@@ -132,6 +132,7 @@ static bool _mons_is_always_safe(const monster *mon)
 {
     return (mon->wont_attack() && !_mons_explodes(mon))
            || mon->type == MONS_BUTTERFLY
+           || mon->type == MONS_JELLYFISH
            || (mon->type == MONS_BALLISTOMYCETE
                && !mons_is_active_ballisto(*mon));
 }

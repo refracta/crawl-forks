@@ -1222,6 +1222,7 @@ void timeout_terrain_changes(int duration, bool force)
                 else
                     statement = "You see some obsidian melting.";
             }
+        }
 
         monster* mon_src = monster_by_mid(marker->mon_num);
         if (marker->duration <= 0
