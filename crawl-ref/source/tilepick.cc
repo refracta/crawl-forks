@@ -1761,7 +1761,7 @@ static tileidx_t _tileidx_monster_no_props(const monster_info& mon)
 
         case MONS_BOULDER_BEETLE:
             return (mon.is(MB_ROLLING)
-                ? _mon_random(TILEP_MONS_BOULDER_BEETLE_ROLLING)
+                ? _mon_random(TILEP_MONS_BOULDER_BEETLE_ROLLING, mon.pos.x)
                 : TILEP_MONS_BOULDER_BEETLE);
 
         case MONS_ARACHNE:

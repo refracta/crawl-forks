@@ -2151,7 +2151,7 @@ kmons("s = big kobold; " .. disto_weapon("kobold",
 kmons("u = gnoll sergeant; " .. disto_weapon("sergeant",
                crawl.one_chance_in(3) and "randart" or "good_item") ..
       "    . leather armour good_item | ring mail good_item" ..
-      "    . buckler good_item | shield good_item w:5")
+      "    . buckler good_item | heater shield good_item w:5")
 kmons("y = orc warrior ; " .. disto_weapon("warrior",
                crawl.one_chance_in(3) and "randart" or "good_item") ..
       "    . chain mail good_item | plate armour good_item")
@@ -2250,7 +2250,7 @@ NSUBST: - = q / -
 {{
 kmons("q = naga warrior ; " .. disto_weapon("warrior", "randart") ..
       "    . nothing w:95 | robe good_item w:95 | naga barding good_item" ..
-      "    . nothing w:40 | shield good_item | large shield good_item")
+      "    . nothing w:40 | heater shield good_item | scutum good_item")
 kmons("r = nagaraja ; " .. disto_weapon("warrior", "randart") ..
       "    . robe good_item w:40 | naga barding good_item")
 }}
@@ -2320,7 +2320,7 @@ NSUBST: - = Hqr / 4=1 / 4=1. / 2=2 / 2=2. / 3 / 3. / 4 / 4. / .
 : elseif you.in_branch("Zot") then
 {{
 kmons("q = draconian knight; " .. disto_weapon("knight", "randart") ..
-      "    . cloak good_item . shield good_item | large shield good_item")
+      "    . cloak good_item . heater shield good_item | scutum good_item")
 kmons("r = killer klown; club ego:distortion plus:" ..
        tostring(8 + crawl.random2(5)))
 }}
