@@ -300,7 +300,7 @@ skin of Zhor
 
 La peau puante d'un animal étrange.
 %%%%
-salamander hide armour
+salamander hide
 
 Une armure de cuir confectionné avec la peau d'une salamandre.
 %%%%

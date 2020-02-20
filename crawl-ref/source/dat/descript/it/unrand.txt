@@ -178,7 +178,7 @@ skin of Zhor
 
 Una puzzolente pelliccia di un qualche strano animale.
 %%%%
-salamander hide armour
+salamander hide
 
 Un'armatura di cuoio fatta della pelle di salamandra.
 %%%%

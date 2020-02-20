@@ -220,7 +220,7 @@ skin of Zhor
 
 ある奇妙な動物の悪臭を放つ皮だ。
 %%%%
-salamander hide armour
+salamander hide
 
 サラマンダーの皮でできたレザーアーマーだ。
 %%%%

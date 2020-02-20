@@ -347,7 +347,7 @@ The {{
 }}skin of some strange animal, native to cold and distant lands. It radiates
 the chill of its native habitat, slowing creatures from warmer climes.
 %%%%
-salamander hide armour
+salamander hide
 
 Most salamanders' bodies are consigned to the fiery depths from which they
 sprang. Those that die on the surface leave hides that grant some protection

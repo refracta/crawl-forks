@@ -207,7 +207,7 @@ skin of Zhor
 
 Пахучая шкура загадочного животного.
 %%%%
-salamander hide armour
+salamander hide
 
 Кожаный доспех, сделанный из кожи саламандры.
 %%%%

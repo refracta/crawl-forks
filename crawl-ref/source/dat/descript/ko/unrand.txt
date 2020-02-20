@@ -227,7 +227,7 @@ skin of Zhor
 
 어떤 희귀한 동물의 가죽이다. 이상한 냄새가 나는 것 같다.
 %%%%
-salamander hide armour
+salamander hide
 
 용암에서 사는 포악한 동물, 살라만더의 가죽으로 만들어진 갑옷이다.
 %%%%
