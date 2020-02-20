@@ -476,9 +476,6 @@ static bool _check_buggy_deck(item_def& deck)
              << "A swarm of software bugs snatches the deck from you "
                 "and whisks it away." << endl;
 
-        if (deck.link == you.equip[EQ_WEAPON0])
-            unwield_item();
-
         dec_inv_item_quantity(deck.link, 1);
 
         return true;
@@ -531,9 +528,6 @@ static bool _check_buggy_deck(item_def& deck)
         strm << "Oops, all of the cards seem to be gone." << endl
              << "A swarm of software bugs snatches the deck from you "
                 "and whisks it away." << endl;
-
-        if (deck.link == you.equip[EQ_WEAPON0])
-            unwield_item();
 
         dec_inv_item_quantity(deck.link, 1);
 
@@ -717,9 +711,6 @@ bool deck_deal()
     if (deck.quantity > 0)
     {
         mpr(_empty_deck_msg(deck.deck_rarity));
-        if (slot == you.equip[EQ_WEAPON0])
-            unwield_item();
-
         dec_inv_item_quantity(slot, 1);
     }
 
@@ -1089,19 +1080,14 @@ bool draw_three(int slot)
 
     you.wield_change = true;
 
-    // Make deck disappear *before* the card effect, since we
-    // don't want to unwield an empty deck.
+    // Make deck disappear *before* the card effect.
     const deck_rarity_type rarity = deck.deck_rarity;
     if (cards_in_deck(deck) == 0)
     {
         mpr(_empty_deck_msg(deck.deck_rarity));
-        if (slot == you.equip[EQ_WEAPON0])
-            unwield_item();
-
         dec_inv_item_quantity(slot, 1);
     }
 
-    // Note that card_effect() might cause you to unwield the deck.
     card_effect(draws[selected], rarity,
                 flags[selected] | CFLAG_SEEN, false);
 
