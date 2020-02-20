@@ -3915,8 +3915,16 @@ bool gozag_setup_potion_petition(bool quiet)
     return true;
 }
 
+static int _gozag_potion_amount()
+{
+    if (apply_invo_enhancer(10, true) > 10) // Arbitrary numbers for messaging purposes.
+        return (GOZAG_MAX_POTIONS);
+    return GOZAG_MAX_POTIONS - 1;
+}
+
 bool gozag_potion_petition()
 {
+    const int amt = _gozag_potion_amount();
     CrawlVector *pots[GOZAG_MAX_POTIONS];
     int prices[GOZAG_MAX_POTIONS];
 
@@ -3929,10 +3937,14 @@ bool gozag_potion_petition()
         bool affordable_potions = false;
         while (!affordable_potions)
         {
-            for (int i = 0; i < GOZAG_MAX_POTIONS; i++)
+            for (int i = 0; i < amt; i++)
             {
                 prices[i] = 0;
-                int multiplier = random_range(20, 30); // arbitrary
+                int multiplier;
+                if (player_spec_invo() > 0)
+                    multiplier = random_range(15, 25);
+                else 
+                    multiplier = random_range(20, 30);
 
                 if (!you.attribute[ATTR_GOZAG_FIRST_POTION])
                     multiplier = 0;
@@ -3967,7 +3979,7 @@ bool gozag_potion_petition()
     }
     else
     {
-        for (int i = 0; i < GOZAG_MAX_POTIONS; i++)
+        for (int i = 0; i < amt; i++)
         {
             string key = make_stringf(GOZAG_POTIONS_KEY, i);
             pots[i] = &you.props[key].get_vector();
@@ -3984,7 +3996,7 @@ bool gozag_potion_petition()
             return false;
 
         clear_messages();
-        for (int i = 0; i < GOZAG_MAX_POTIONS; i++)
+        for (int i = 0; i < amt; i++)
         {
             string line = make_stringf("  [%c] - %d gold - ", i + 'a',
                                        prices[i]);
@@ -3996,7 +4008,7 @@ bool gozag_potion_petition()
         }
         mprf(MSGCH_PROMPT, "Purchase which effect?");
         keyin = toalower(get_ch()) - 'a';
-        if (keyin < 0 || keyin > GOZAG_MAX_POTIONS - 1)
+        if (keyin < 0 || keyin > amt - 1)
             continue;
 
         if (you.gold < prices[keyin])
@@ -4019,7 +4031,7 @@ bool gozag_potion_petition()
     if (!you.attribute[ATTR_GOZAG_FIRST_POTION])
         you.attribute[ATTR_GOZAG_FIRST_POTION] = 1;
 
-    for (int i = 0; i < GOZAG_MAX_POTIONS; i++)
+    for (int i = 0; i < amt; i++)
     {
         string key = make_stringf(GOZAG_POTIONS_KEY, i);
         you.props.erase(key);
@@ -4287,7 +4299,7 @@ static void _gozag_place_shop(int index)
     feature_spec feat = kmspec.get_feat();
     if (!feat.shop)
         die("Invalid shop spec?");
-    place_spec_shop(you.pos(), *feat.shop, apply_invo_enhancer(you.experience_level,true));
+    place_spec_shop(you.pos(), *feat.shop, apply_pity(you.experience_level));
 
     link_items();
     env.markers.add(new map_feature_marker(you.pos(), DNGN_ABANDONED_SHOP));
@@ -4418,7 +4430,7 @@ int gozag_type_bribable(monster_type type)
     if (!factor)
         return 0;
 
-    const int chance = max(mons_class_hit_dice(type) / *factor, 1);
+    const int chance = apply_pity(max(mons_class_hit_dice(type) / *factor, 1));
     dprf("%s, bribe chance: %d", mons_type_name(type, DESC_PLAIN).c_str(),
                                  chance);
 
@@ -4535,7 +4547,7 @@ bool gozag_bribe_branch()
     if (prompted || yesno(prompt.c_str(), true, 'n'))
     {
         you.del_gold(bribe_amount);
-        you.attribute[ATTR_GOZAG_GOLD_USED] += apply_invo_enhancer(bribe_amount,true);
+        you.attribute[ATTR_GOZAG_GOLD_USED] += bribe_amount;
         branch_bribe[branch] += bribe_amount;
         string msg = make_stringf(" spreads your bribe to %s!",
                                   branch == BRANCH_VESTIBULE ? "the Hells" :

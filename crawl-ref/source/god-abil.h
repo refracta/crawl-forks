@@ -47,7 +47,7 @@ const char * const GOZAG_SHOP_COST_KEY       = "gozag_shop_cost_%d";
 #define GOZAG_SHOP_MOD_MULTIPLIER 25
 #define GOZAG_BRIBE_AMOUNT 3000
 #define GOZAG_MAX_BRIBABILITY 8
-#define GOZAG_MAX_POTIONS 3
+#define GOZAG_MAX_POTIONS 4
 
 #define USKAYAW_AUDIENCE_TIMER "uskayaw_audience_timer"
 #define USKAYAW_BOND_TIMER "uskayaw_bond_timer"
