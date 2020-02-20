@@ -31,6 +31,7 @@
 #include "mon-cast.h"
 #include "mon-pick.h"
 #include "mon-place.h"
+#include "mon-tentacle.h"
 #include "mutation.h"
 #include "notes.h"
 #include "player-stats.h"
@@ -49,6 +50,7 @@
 #include "stringutil.h"
 #include "terrain.h"
 #include "transform.h"
+#include "unicode.h"
 #include "view.h"
 #include "xom.h"
 
@@ -1858,6 +1860,51 @@ void reduce_xp_penance(god_type god, int amount)
                 / you.exp_docked_total[god];
     if (new_pen < you.penance[god])
         dec_penance(god, you.penance[god] - new_pen);
+}
+
+/// Let Gozag's wrath buff newly-seen hostile monsters, maybe.
+void maybe_gozag_incite(vector<monster*> monsters)
+{
+    if (!player_under_penance(GOD_GOZAG))
+        return;
+
+    counted_monster_list mon_count;
+    vector<monster *> incited;
+    for (monster* mon : monsters)
+    {
+        // XXX: some of this is probably redundant with interrupt_activity
+        if (!mon->see_cell(you.pos()) // xray_vision
+            || mon->wont_attack()
+            || mon->is_stationary()
+            || mons_is_object(mon->type)
+            || mons_is_tentacle_or_tentacle_segment(mon->type))
+        {
+            continue;
+        }
+
+        if (coinflip()
+            && mon->get_experience_level() >= random2(you.experience_level))
+        {
+            mon_count.add(mon);
+            incited.push_back(mon);
+        }
+    }
+
+    if (incited.empty())
+        return;
+
+    string msg = make_stringf("%s incites %s against you.",
+        god_name(GOD_GOZAG).c_str(),
+        mon_count.describe().c_str());
+    if (strwidth(msg) >= get_number_of_cols() - 2)
+    {
+        msg = make_stringf("%s incites your enemies against you.",
+            god_name(GOD_GOZAG).c_str());
+    }
+    mprf(MSGCH_GOD, GOD_GOZAG, "%s", msg.c_str());
+
+    for (monster *mon : incited)
+        gozag_incite(mon);
 }
 
 void gozag_incite(monster *mon)

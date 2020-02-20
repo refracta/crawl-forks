@@ -305,27 +305,30 @@ static bool _is_mon_equipment_worth_listing(const monster_info &mi)
 }
 
 /// Return a warning for the player about newly-seen monsters, as appropriate.
-static string _monster_headsup(const vector<monster*> &monsters,
+static string _monster_headsup(vector<monster*> &monsters,
                                const map<monster_type, int> &types,
                                bool divine)
 {
     string warning_msg = "";
-    for (const monster* mon : monsters)
+    for (monster* mon : monsters)
     {
         monster_info mi(mon);
-        const bool zin_ided = mon->props.exists("zin_id");
-        const bool has_wand = mi.inv[MSLOT_WAND].get();
+        if (divine)
+        {
+            if (mon->has_ench(ENCH_SHAPESHIFTER) || mon->has_ench(ENCH_GLOWING_SHAPESHIFTER))
+            {
+                mon->props["zin_id"].get_bool() = true;
+                discover_shifter(*mon);
+            }
+            else
+                continue;
+        }
+
         const bool has_interesting_equipment
             = _is_mon_equipment_worth_listing(mi);
 
-        if ((divine && !zin_ided)
-            || (!divine && !has_interesting_equipment && !has_wand))
-        {
+        if (!divine && !has_interesting_equipment)
             continue;
-        }
-
-        if (!divine && monsters.size() == 1)
-            continue; // don't give redundant warnings for enemies
 
         if (warning_msg.size())
             warning_msg += " ";
@@ -347,14 +350,11 @@ static string _monster_headsup(const vector<monster*> &monsters,
         else
             warning_msg += "is";
 
-        mons_equip_desc_level_type level = mon->type != MONS_DANCING_WEAPON
-            ? DESC_IDENTIFIED : DESC_WEAPON_WARNING;
-
         if (!divine)
         {
-            if (mon->type != MONS_DANCING_WEAPON)
-                warning_msg += " ";
-            warning_msg += get_monster_equipment_desc(mi, level, DESC_NONE);
+            warning_msg += " ";
+            warning_msg += get_monster_equipment_desc(mi, DESC_IDENTIFIED,
+                                                      DESC_NONE);
             warning_msg += ".";
             continue;
         }
@@ -371,8 +371,19 @@ static string _monster_headsup(const vector<monster*> &monsters,
     return warning_msg;
 }
 
+static void _secular_headsup(vector<monster*> &monsters, 
+                             const map<monster_type, int> &types)
+{
+    const string warnings = _monster_headsup(monsters, types, false);
+    if (!warnings.size())
+        return;
+    const string warning_msg = warnings;
+    mpr(warning_msg);
+}
+
+
 /// Let Zin warn the player about newly-seen monsters, as appropriate.
-static void _divine_headsup(const vector<monster*> &monsters,
+static void _divine_headsup(vector<monster*> &monsters,
                             const map<monster_type, int> &types)
 {
     const string warnings = _monster_headsup(monsters, types, true);
@@ -426,7 +437,7 @@ string describe_monsters_condensed(const vector<monster*>& monsters)
  * @param monsters      A list of monsters that just became visible.
  */
 static void _handle_comes_into_view(const vector<string> &msgs,
-                                    const vector<monster*> monsters)
+                                    vector<monster*> monsters)
 {
     if (monsters.size() == 1)
         mprf(MSGCH_MONSTER_WARNING, "%s", msgs[0].c_str());
@@ -435,70 +446,9 @@ static void _handle_comes_into_view(const vector<string> &msgs,
              describe_monsters_condensed(monsters).c_str());
 
     const auto& types = _count_monster_types(monsters);
+    if (!you_worship(GOD_ZIN))
+        _secular_headsup(monsters, types);
     _divine_headsup(monsters, types);
-}
-
-/// If the player has the shout mutation, maybe shout at newly-seen monsters.
-static void _maybe_trigger_shoutitis(const vector<monster*> monsters)
-{
-    if (!you.get_mutation_level(MUT_SCREAM))
-        return;
-
-    for (const monster* mon : monsters)
-    {
-        if (!mons_is_tentacle_or_tentacle_segment(mon->type)
-            && !mons_is_conjured(mon->type)
-            && x_chance_in_y(3 + you.get_mutation_level(MUT_SCREAM) * 3, 100))
-        {
-            yell(mon);
-            return;
-        }
-    }
-}
-
-/// Let Gozag's wrath buff newly-seen hostile monsters, maybe.
-static void _maybe_gozag_incite(vector<monster*> monsters)
-{
-    if (!player_under_penance(GOD_GOZAG))
-        return;
-
-    counted_monster_list mon_count;
-    vector<monster *> incited;
-    for (monster* mon : monsters)
-    {
-        // XXX: some of this is probably redundant with interrupt_activity
-        if (!mon->see_cell(you.pos()) // xray_vision
-            || mon->wont_attack()
-            || mon->is_stationary()
-            || mons_is_object(mon->type)
-            || mons_is_tentacle_or_tentacle_segment(mon->type))
-        {
-            continue;
-        }
-
-        if (coinflip()
-            && mon->get_experience_level() >= random2(you.experience_level))
-        {
-            mon_count.add(mon);
-            incited.push_back(mon);
-        }
-    }
-
-    if (incited.empty())
-        return;
-
-    string msg = make_stringf("%s incites %s against you.",
-                              god_name(GOD_GOZAG).c_str(),
-                              mon_count.describe().c_str());
-    if (strwidth(msg) >= get_number_of_cols() - 2)
-    {
-        msg = make_stringf("%s incites your enemies against you.",
-                           god_name(GOD_GOZAG).c_str());
-    }
-    mprf(MSGCH_GOD, GOD_GOZAG, "%s", msg.c_str());
-
-    for (monster *mon : incited)
-        gozag_incite(mon);
 }
 
 void update_monsters_in_view()
@@ -552,8 +502,8 @@ void update_monsters_in_view()
         _handle_comes_into_view(msgs, monsters);
         // XXX: does interrupt_activity() add 'comes into view' messages to
         // 'msgs' in ALL cases we want shoutitis/gozag wrath to trigger?
-        _maybe_trigger_shoutitis(monsters);
-        _maybe_gozag_incite(monsters);
+        maybe_trigger_shoutitus(monsters);
+        maybe_gozag_incite(monsters);
     }
 
     // Xom thinks it's hilarious the way the player picks up an ever

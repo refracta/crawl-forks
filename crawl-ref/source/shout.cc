@@ -28,6 +28,7 @@
 #include "mon-behv.h"
 #include "mon-place.h"
 #include "mon-poly.h"
+#include "mon-tentacle.h"
 #include "prompt.h"
 #include "religion.h"
 #include "state.h"
@@ -708,6 +709,24 @@ void issue_orders()
         mpr("Attack!");
 }
 
+/// If the player has the shout mutation, maybe shout at newly-seen monsters.
+void maybe_trigger_shoutitus(const vector<monster*> monsters)
+{
+    if (!you.get_mutation_level(MUT_SCREAM))
+        return;
+
+    for (const monster* mon : monsters)
+    {
+        if (!mons_is_tentacle_or_tentacle_segment(mon->type)
+            && !mons_is_conjured(mon->type)
+            && x_chance_in_y(3 + you.get_mutation_level(MUT_SCREAM) * 3, 100))
+        {
+            yell(mon);
+            return;
+        }
+    }
+}
+
 /**
  * Make the player yell, either at a monster or at nothing in particular.
  *
@@ -715,6 +734,7 @@ void issue_orders()
  */
 void yell(const actor* mon)
 {
+    // BCADDO: You know what to do here.
     ASSERT(!crawl_state.game_is_arena());
 
     const string shout_verb = you.shout_verb(mon != nullptr);

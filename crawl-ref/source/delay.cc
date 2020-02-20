@@ -1206,7 +1206,7 @@ static inline bool _monster_warning(activity_interrupt ai,
     if (mon->is_summoned() && !delay)
         return false;
 
-    if (at.context == SC_ALREADY_SEEN || at.context == SC_UNCHARM)
+    if (at.context == SC_ALREADY_SEEN)
     {
         // Only say "comes into view" if the monster wasn't in view
         // during the previous turn.
@@ -1214,6 +1214,14 @@ static inline bool _monster_warning(activity_interrupt ai,
         {
             mprf(MSGCH_WARN, "%s is too close now for your liking.",
                  mon->name(DESC_THE).c_str());
+        }
+    }
+    else if (at.context == SC_UNCHARM)
+    {
+        if (testbits(mon->flags, MF_WAS_IN_VIEW) && delay)
+        {
+            mprf(MSGCH_WARN, "%s breaks free of your control.",
+                mon->name(DESC_THE).c_str());
         }
     }
     else if (mon->seen_context == SC_JUST_SEEN)
@@ -1267,84 +1275,18 @@ static inline bool _monster_warning(activity_interrupt ai,
         else
             text += " comes into view.";
 
-        bool ash_id = mon->props.exists("ash_id") && mon->props["ash_id"];
-        bool zin_id = false;
-        string god_warning;
-
-        if (have_passive(passive_t::warn_shapeshifter)
-            && mon->is_shapeshifter()
-            && !(mon->flags & MF_KNOWN_SHIFTER))
-        {
-            ASSERT(!ash_id);
-            zin_id = true;
-            mon->props["zin_id"] = true;
-            discover_shifter(*mon);
-            god_warning = uppercase_first(god_name(you.religion))
-                          + " warns you: "
-                          + uppercase_first(mon->pronoun(PRONOUN_SUBJECTIVE))
-                          + " "
-                          + conjugate_verb("are", mon->pronoun_plurality())
-                          + " a foul ";
-            if (mon->has_ench(ENCH_GLOWING_SHAPESHIFTER))
-                god_warning += "glowing ";
-            god_warning += "shapeshifter.";
-        }
-
-        monster_info mi(mon);
-
-        const string mweap = get_monster_equipment_desc(mi,
-                                                        ash_id ? DESC_IDENTIFIED
-                                                               : DESC_WEAPON,
-                                                        DESC_NONE);
-
-        if (!mweap.empty())
-        {
-            if (ash_id)
-            {
-                god_warning = uppercase_first(god_name(you.religion))
-                              + " warns you:";
-            }
-
-            (ash_id ? god_warning : text) +=
-                " " + uppercase_first(mon->pronoun(PRONOUN_SUBJECTIVE))
-                + " " + conjugate_verb("are", mi.pronoun_plurality())
-                + (mweap[0] != ' ' ? " " : "")
-                + mweap + ".";
-        }
+        mons_set_just_seen(mon);
 
         if (msgs_buf)
-            msgs_buf->push_back(text);
+            msgs_buf->emplace_back(text);
         else
         {
             mprf(MSGCH_MONSTER_WARNING, "%s", text.c_str());
-            if (ash_id || zin_id)
-                mprf(MSGCH_GOD, "%s", god_warning.c_str());
-#ifndef USE_TILE_LOCAL
-            if (zin_id)
-                update_monster_pane();
-#endif
-            if (player_under_penance(GOD_GOZAG)
-                && !mon->wont_attack()
-                && !mon->is_stationary()
-                && !mons_is_object(mon->type)
-                && !mons_is_tentacle_or_tentacle_segment(mon->type))
-            {
-                if (coinflip()
-                    && mon->get_experience_level() >=
-                       random2(you.experience_level))
-                {
-                    mprf(MSGCH_GOD, GOD_GOZAG, "Gozag incites %s against you.",
-                         mon->name(DESC_THE).c_str());
-                    gozag_incite(mon);
-                }
-            }
+            vector<monster*> m;
+            m.push_back(mon);
+            maybe_trigger_shoutitus(m);
+            maybe_gozag_incite(m);
         }
-        if (you.has_mutation(MUT_SCREAM)
-            && x_chance_in_y(3 + you.get_mutation_level(MUT_SCREAM) * 3, 100))
-        {
-            yell(mon);
-        }
-        mons_set_just_seen(mon);
     }
 
     if (crawl_state.game_is_hints())

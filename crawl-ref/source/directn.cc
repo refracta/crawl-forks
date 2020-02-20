@@ -3479,18 +3479,12 @@ string get_monster_equipment_desc(const monster_info& mi,
         mon_alt = 0;
 
     const bool mon_has_wand = mon_wnd;
-    const bool mon_carry = mon_alt || mon_has_wand;
 
     // Print the rest of the equipment only for full descriptions.
     if (level == DESC_WEAPON || level == DESC_WEAPON_WARNING)
     {
-        if (mon_has_wand)
-        {
-            if (weap.empty())
-                return desc + " brandishing a " + mon_wnd->name(DESC_DBNAME);
-            else
-                return desc + weap + " and brandishing a " + mon_wnd->name(DESC_DBNAME);
-        }
+        if (weap.empty())
+            return desc;
         else
             return desc + weap;
     }
@@ -3503,6 +3497,12 @@ string get_monster_equipment_desc(const monster_info& mi,
         && mi.type != MONS_DANCING_WEAPON && mi.type != MONS_SPECTRAL_WEAPON)
     {
         item_descriptions.push_back(weap.substr(1)); // strip leading space
+    }
+
+    if (mon_has_wand)
+    {
+        const string wnd_desc = "brandishing a " + mon_wnd->name(DESC_DBNAME);
+        item_descriptions.push_back(wnd_desc);
     }
 
     if (mon_arm)
@@ -3533,21 +3533,13 @@ string get_monster_equipment_desc(const monster_info& mi,
         item_descriptions.push_back(qvr_desc);
     }
 
-    if (mon_carry)
+    if (mon_alt)
     {
         string carried_desc = "carrying ";
 
-        if (mon_alt)
-        {
-            carried_desc += mon_alt->name(DESC_A);
-            if (mon_has_wand)
-                carried_desc += " and a ";
-        }
-        else
-            carried_desc += "a ";
-
+        carried_desc += mon_alt->name(DESC_A);
         if (mon_has_wand)
-            carried_desc += mon_wnd->name(DESC_DBNAME);
+            carried_desc += " and a ";
 
         item_descriptions.push_back(carried_desc);
     }
