@@ -4580,9 +4580,6 @@ void unmarshallItem(reader &th, item_def &item)
         }
     }
 
-    if (item.soul_bind_xp > 0 && !((is_artefact(item) || item.cursed()) && artefact_property(item, ARTP_CURSE)))
-        item.soul_bind_xp = 0;
-
     if (th.getMinorVersion() < TAG_MINOR_CURSE_REWORK)
     {
         if (item.cursed())
