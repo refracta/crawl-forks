@@ -15,6 +15,7 @@
 #include "env.h"
 #include "item-prop.h"
 #include "items.h"
+#include "god-conduct.h"
 #include "player-equip.h"
 #include "religion.h"
 #include "shopping.h"

@@ -8,6 +8,7 @@
 #include "colour.h"
 #include "coord.h"
 #include "coordit.h"
+#include "decks.h"
 #include "describe.h"
 #include "env.h"
 #include "files.h"

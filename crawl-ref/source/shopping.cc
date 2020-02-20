@@ -15,6 +15,7 @@
 #include "branch.h"
 #include "cio.h"
 #include "colour.h"
+#include "decks.h"
 #include "describe.h"
 #include "dgn-overview.h"
 #include "english.h"

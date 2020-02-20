@@ -45,6 +45,7 @@
 #include "cio.h"
 #include "cloud.h"
 #include "clua.h"
+#include "coordit.h"
 #include "colour.h"
 #include "command.h"
 #include "coord.h"

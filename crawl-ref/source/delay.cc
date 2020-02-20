@@ -13,6 +13,7 @@
 #include "ability.h"
 #include "areas.h"
 #include "artefact.h"
+#include "attitude-change.h"
 #include "bloodspatter.h"
 #include "butcher.h"
 #include "clua.h"
