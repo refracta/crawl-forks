@@ -47,7 +47,7 @@ static const struct spell_desc spelldata[] =
 {
     SPELL_MAGIC_DART, "Magic Dart",
     spschool::earth,
-    spflag::dir_or_target | spflag::needs_tracer,
+    spflag::dir_or_target | spflag::needs_tracer | spflag::no_ghost,
     1,
     25,
     LOS_RADIUS, LOS_RADIUS,
@@ -1059,8 +1059,8 @@ static const struct spell_desc spelldata[] =
     2, 0,
     TILEG_ERROR,
 },
-
 #endif
+
 {
     SPELL_IRON_SHOT, "Iron Shot",
     spschool::earth,
@@ -1160,8 +1160,8 @@ static const struct spell_desc spelldata[] =
     3, 0,
     TILEG_ERROR,
 },
-
 #endif
+
 {
     SPELL_DEBUGGING_RAY, "Debugging Ray",
     spschool::earth,
