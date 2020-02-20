@@ -3478,17 +3478,6 @@ string get_monster_equipment_desc(const monster_info& mi,
     if (mi.wields_two_weapons())
         mon_alt = 0;
 
-    const bool mon_has_wand = mon_wnd;
-
-    // Print the rest of the equipment only for full descriptions.
-    if (level == DESC_WEAPON || level == DESC_WEAPON_WARNING)
-    {
-        if (weap.empty())
-            return desc;
-        else
-            return desc + weap;
-    }
-
     vector<string> item_descriptions;
 
     // Dancing weapons have all their weapon information in their full_name, so
@@ -3499,9 +3488,10 @@ string get_monster_equipment_desc(const monster_info& mi,
         item_descriptions.push_back(weap.substr(1)); // strip leading space
     }
 
-    if (mon_has_wand)
+    if (mon_wnd)
     {
-        const string wnd_desc = "brandishing a " + mon_wnd->name(DESC_DBNAME);
+        const string wnd_desc = make_stringf("brandishing a %s",
+                                             mon_wnd->name(DESC_DBNAME).c_str());
         item_descriptions.push_back(wnd_desc);
     }
 
@@ -3535,12 +3525,8 @@ string get_monster_equipment_desc(const monster_info& mi,
 
     if (mon_alt)
     {
-        string carried_desc = "carrying ";
-
-        carried_desc += mon_alt->name(DESC_A);
-        if (mon_has_wand)
-            carried_desc += " and a ";
-
+        const string carried_desc = make_stringf("carrying %s", 
+                                                 mon_alt->name(DESC_A).c_str());
         item_descriptions.push_back(carried_desc);
     }
 
