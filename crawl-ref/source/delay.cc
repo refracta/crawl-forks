@@ -68,6 +68,7 @@
 #include "transform.h"
 #include "traps.h"
 #include "travel.h"
+#include "view.h"
 #include "xom.h"
 
 int interrupt_block::interrupts_blocked = 0;
