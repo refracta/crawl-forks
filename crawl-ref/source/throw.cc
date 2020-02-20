@@ -1017,7 +1017,8 @@ bool mons_throw(monster* mons, bolt &beam, int msl, bool teleport)
         mpr(msg);
     }
 
-    _throw_noise(mons, item, *mons->mslot_item(MSLOT_WEAPON));
+    if (mons->mslot_item(MSLOT_WEAPON))
+        _throw_noise(mons, item, *mons->mslot_item(MSLOT_WEAPON));
 
     beam.drop_item = !returning;
 
