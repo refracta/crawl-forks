@@ -43,6 +43,7 @@
 #include "terrain.h"
 #include "throw.h"
 #include "unwind.h"
+#include "view.h"
 
 // TODO: template out the differences between this and god_power.
 // TODO: use the display method rather than dummy powers in god_powers.

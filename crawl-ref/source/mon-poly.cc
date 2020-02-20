@@ -33,6 +33,7 @@
 #include "terrain.h"
 #include "traps.h"
 #include "xom.h"
+#include "view.h"
 
 bool feature_mimic_at(const coord_def &c)
 {

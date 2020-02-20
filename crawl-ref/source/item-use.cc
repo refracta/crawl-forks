@@ -2710,11 +2710,6 @@ void drink(item_def* potion)
         // a dangerous monster nearby...
         xom_is_stimulated(200);
     }
-    if (is_blood_potion(*potion))
-    {
-        // Always drink oldest potion.
-        remove_oldest_perishable_item(*potion);
-    }
 
     // We'll need this later, after destroying the item.
     const bool was_exp = potion->sub_type == POT_EXPERIENCE;

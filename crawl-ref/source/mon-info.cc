@@ -19,6 +19,7 @@
 #include "english.h"
 #include "env.h"
 #include "ghost.h"
+#include "item-name.h"
 #include "item-prop.h"
 #include "item-status-flag-type.h"
 #include "libutil.h"
