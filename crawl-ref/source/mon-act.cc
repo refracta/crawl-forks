@@ -1065,6 +1065,15 @@ static bool _handle_scroll(monster& mons)
             }
         }
         break;
+
+    case SCR_FEAR:
+        if (mons_cause_fear(&mons, false, true) == 0)
+        {
+            simple_monster_message(mons, " reads a scroll and assumes a fearsome visage.");
+            mons_cause_fear(&mons, true, true);
+            read = true;
+        }
+        break;
     }
 
     if (read)

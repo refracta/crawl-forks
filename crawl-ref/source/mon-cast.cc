@@ -92,7 +92,6 @@ static monster* _get_allied_target(const monster &caster, bolt &tracer);
 static void _fire_simple_beam(monster &caster, mon_spell_slot, bolt &beam);
 static void _fire_direct_explosion(monster &caster, mon_spell_slot, bolt &beam);
 static int  _mons_mesmerise(monster* mons, bool actual = true);
-static int  _mons_cause_fear(monster* mons, bool actual = true);
 static int  _mons_mass_confuse(monster* mons, bool actual = true);
 static bool _mons_irradiate(monster* mons);
 static coord_def _mons_fragment_target(const monster &mons);
@@ -4886,7 +4885,7 @@ static bool _mons_irradiate(monster *mons)
 // Returns 0, if targets can be scared but the attempt failed or wasn't made.
 // Returns 1, if targets are scared.
 // Returns -1, if targets can never be scared.
-static int _mons_cause_fear(monster* mons, bool actual)
+int mons_cause_fear(monster* mons, bool actual, bool scroll)
 {
     if (actual)
     {
@@ -4898,7 +4897,9 @@ static int _mons_cause_fear(monster* mons, bool actual)
 
     int retval = -1;
 
-    const int pow = _ench_power(SPELL_CAUSE_FEAR, *mons);
+    int pow = 150;
+    if (!scroll)
+        pow = _ench_power(SPELL_CAUSE_FEAR, *mons);
 
     if (mons->see_cell_no_trans(you.pos())
         && mons->can_see(you)
@@ -6478,7 +6479,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         return;
 
     case SPELL_CAUSE_FEAR:
-        _mons_cause_fear(mons);
+        mons_cause_fear(mons);
         return;
 
     case SPELL_OLGREBS_TOXIC_RADIANCE:
@@ -8346,7 +8347,7 @@ static bool _ms_waste_of_time(monster* mon, mon_spell_slot slot)
         return !_incite_monsters(mon, false);
 
     case SPELL_CAUSE_FEAR:
-        return _mons_cause_fear(mon, false) < 0;
+        return mons_cause_fear(mon, false) < 0;
 
     case SPELL_MASS_CONFUSION:
         return _mons_mass_confuse(mon, false) < 0;

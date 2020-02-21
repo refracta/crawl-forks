@@ -30,6 +30,7 @@ static const int ENCH_POW_FACTOR = 3;
 int mons_power_for_hd(spell_type spell, int hd);
 int mons_spell_range(spell_type spell, const monster* mon);
 int mons_evokepower(const monster &mons);
+int mons_cause_fear(monster* mons, bool actual = true, bool scroll = false);
 bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
                      bool check_validity = false);
 void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
