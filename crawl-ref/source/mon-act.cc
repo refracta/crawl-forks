@@ -1139,6 +1139,17 @@ static bool _handle_scroll(monster& mons)
         }
         break;
 
+    case SCR_NOISE:
+        if (!mons.wont_attack())
+        {
+            simple_monster_message(mons, " reads a scroll.");
+            mpr("You hear a loud clanging noise!");
+            noisy(30, mons.pos(), mons.mid);
+            you.sentinel_mark();
+            read = true;
+        }
+        break;
+
     case SCR_TORMENT:
         if (mons.can_see(you) && mons.res_torment())
         {
