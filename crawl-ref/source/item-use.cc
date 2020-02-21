@@ -2854,7 +2854,7 @@ void brand_weapon(item_def &wpn, bool player)
         break;
 
     case SPWPN_CHAOS:
-        flash_colour = random_colour();
+        flash_colour = ETC_JEWEL;
         mprf("%s erupts in a glittering mayhem of colour.", itname.c_str());
         break;
 
