@@ -2799,9 +2799,10 @@ static string _item_name(item_def &item)
     return item.name(in_inventory(item) ? DESC_YOUR : DESC_THE);
 }
 
-static void _brand_weapon(item_def &wpn)
+void brand_weapon(item_def &wpn, bool player)
 {
-    you.wield_change = true;
+    if (player)
+        you.wield_change = true;
 
     const string itname = _item_name(wpn);
 
@@ -2872,13 +2873,16 @@ static void _brand_weapon(item_def &wpn)
         item_set_appearance(wpn);
         // Message would spoil this even if we didn't identify.
         set_ident_flags(wpn, ISFLAG_KNOW_TYPE);
-        mprf_nocap("%s", wpn.name(DESC_INVENTORY_EQUIP).c_str());
-        // Might be rebranding to/from protection or evasion.
-        you.redraw_armour_class = true;
-        you.redraw_evasion = true;
-        // Might be removing antimagic.
-        calc_mp();
-        flash_view_delay(UA_PLAYER, flash_colour, 300);
+        if (player)
+        {
+            mprf_nocap("%s", wpn.name(DESC_INVENTORY_EQUIP).c_str());
+            // Might be rebranding to/from protection or evasion.
+            you.redraw_armour_class = true;
+            you.redraw_evasion = true;
+            // Might be removing antimagic.
+            calc_mp();
+        }
+        flash_view_delay(player ? UA_PLAYER : UA_MONSTER, flash_colour, 300);
     }
     return;
 }
@@ -2929,7 +2933,7 @@ static bool _handle_brand_weapon(bool alreadyknown, const string &pre_msg)
     if (!weapon)
         return !alreadyknown;
 
-    _brand_weapon(*weapon);
+    brand_weapon(*weapon);
     return true;
 }
 

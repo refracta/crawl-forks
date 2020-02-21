@@ -52,6 +52,8 @@ bool wield_weapon(bool auto_wield, int slot = -1,
 
 bool double_swap();
 
+void brand_weapon(item_def &wpn, bool player = true);
+
 bool item_is_worn(int inv_slot);
 
 bool enchant_item(item_def &item, bool quiet);

@@ -10,6 +10,7 @@
 #include "act-iter.h"
 #include "areas.h"
 #include "arena.h"
+#include "artefact.h"
 #include "attitude-change.h"
 #include "bloodspatter.h"
 #include "cloud.h"
@@ -30,6 +31,7 @@
 #include "item-name.h"
 #include "item-prop.h"
 #include "item-status-flag-type.h"
+#include "item-use.h"
 #include "items.h"
 #include "level-state-type.h"
 #include "libutil.h"
@@ -987,7 +989,6 @@ static bool _handle_scroll(monster& mons)
     }
 
     bool read        = false;
-    bool was_visible = you.can_see(mons);
 
     // Notice how few cases are actually accounted for here {dlb}:
     const int scroll_type = scroll->sub_type;
@@ -1019,7 +1020,7 @@ static bool _handle_scroll(monster& mons)
         break;
 
     case SCR_SUMMONING:
-        if (mons.can_see(you))
+        if (mons.can_see(you) && mons.get_foe())
         {
             simple_monster_message(mons, " reads a scroll.");
             mprf("Wisps of shadow swirl around %s.", mons.name(DESC_THE).c_str());
@@ -1034,15 +1035,21 @@ static bool _handle_scroll(monster& mons)
             }
         }
         break;
+
+    case SCR_BRAND_WEAPON:
+        if (mons.can_see(you) && mons.weapon() && !is_artefact(*mons.weapon())
+            && (mons.weapon()->brand == SPWPN_NORMAL))
+        {
+            simple_monster_message(mons, " reads a scroll.");
+            brand_weapon(*mons.weapon(), false);
+        }
+        break;
     }
 
     if (read)
     {
         if (dec_mitm_item_quantity(mons.inv[MSLOT_SCROLL], 1))
             mons.inv[MSLOT_SCROLL] = NON_ITEM;
-
-        if (was_visible)
-            set_ident_type(OBJ_SCROLLS, scroll_type, true);
 
         mons.lose_energy(EUT_ITEM);
     }
