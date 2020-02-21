@@ -58,6 +58,7 @@
 #include "spl-book.h"
 #include "spl-clouds.h"
 #include "spl-damage.h"
+#include "spl-goditem.h"
 #include "spl-summoning.h"
 #include "spl-transloc.h"
 #include "spl-util.h"
@@ -970,6 +971,11 @@ static bool _handle_reaching(monster* mons)
     return ret;
 }
 
+static bool _holy_word_vulnerable(actor* victim)
+{
+    return victim->undead_or_demonic();
+}
+
 static bool _handle_scroll(monster& mons)
 {
     item_def* scroll = mons.mslot_item(MSLOT_SCROLL);
@@ -1067,7 +1073,7 @@ static bool _handle_scroll(monster& mons)
         break;
 
     case SCR_FEAR:
-        if (mons_cause_fear(&mons, false, true) == 0)
+        if (mons.can_see(you) && mons_cause_fear(&mons, false, true) == 0)
         {
             simple_monster_message(mons, " reads a scroll and assumes a fearsome visage.");
             mons_cause_fear(&mons, true, true);
@@ -1076,12 +1082,40 @@ static bool _handle_scroll(monster& mons)
         break;
 
     case SCR_FOG:
-        if ((mons.caught() || mons_is_fleeing(mons)) && !bool(env.level_state & LSTATE_STILL_WINDS))
+        if (mons.can_see(you) && (mons.caught() || mons_is_fleeing(mons)) && !bool(env.level_state & LSTATE_STILL_WINDS))
         {
             simple_monster_message(mons, " reads a scroll, which dissolves into smoke.");
             auto smoke = random_smoke_type();
             big_cloud(smoke, &mons, mons.pos(), 50, 8 + random2(8));
             read = true;
+        }
+        break;
+
+    case SCR_HOLY_WORD:
+        if (mons.can_see(you) && !mons.undead_or_demonic())
+        {
+            if (you.undead_or_demonic() && mons.wont_attack())
+                break;
+            if (trace_los(&mons, _holy_word_vulnerable))
+            {
+                simple_monster_message(mons, " reads a scroll.");
+                holy_word(100, HOLY_WORD_SCROLL, mons.pos(), false, &mons);
+                read = true;
+            }
+        }
+        break;
+
+    case SCR_TORMENT:
+        if (mons.can_see(you) && mons.res_torment())
+        {
+            if (!you.res_torment() && mons.wont_attack())
+                break;
+            if (trace_los(&mons, torment_vulnerable))
+            {
+                simple_monster_message(mons, " reads a scroll.");
+                torment(&mons, TORMENT_SCROLL, mons.pos());
+                read = true;
+            }
         }
         break;
     }

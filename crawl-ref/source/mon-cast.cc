@@ -143,7 +143,6 @@ static void _setup_ghostly_sacrifice_beam(bolt& beam, const monster& caster,
                                           int power);
 static function<bool(const monster&)> _setup_hex_check(spell_type spell);
 static bool _worth_hexing(const monster &caster, spell_type spell);
-static bool _torment_vulnerable(actor* victim);
 static function<bool(const monster&)> _should_selfench(enchant_type ench);
 
 enum spell_logic_flag
@@ -488,7 +487,7 @@ static const map<spell_type, mons_spell_logic> spell_to_logic = {
     // { SPELL_PARALYSE, _hex_logic(SPELL_PARALYSE) },
     { SPELL_PETRIFY, _hex_logic(SPELL_PETRIFY) },
     { SPELL_PAIN, _hex_logic(SPELL_PAIN, [](const monster& caster) {
-            return _torment_vulnerable(caster.get_foe());
+            return torment_vulnerable(caster.get_foe());
     }) },
     { SPELL_DISINTEGRATE, _hex_logic(SPELL_DISINTEGRATE) },
     { SPELL_MAGIC_CANDLE, _hex_logic(SPELL_MAGIC_CANDLE, [](const monster& caster) {
@@ -506,7 +505,7 @@ static const map<spell_type, mons_spell_logic> spell_to_logic = {
                                          _foe_not_teleporting) },
     { SPELL_DIMENSION_ANCHOR, _hex_logic(SPELL_DIMENSION_ANCHOR, nullptr, 6)},
     { SPELL_AGONY, _hex_logic(SPELL_AGONY, [](const monster &caster) {
-            return _torment_vulnerable(caster.get_foe());
+            return torment_vulnerable(caster.get_foe());
         }, 6)
     },
     { SPELL_STRIP_RESISTANCE,
@@ -3346,7 +3345,7 @@ monster* cast_phantom_mirror(monster* mons, monster* targ, int hp_perc, int summ
     return mirror;
 }
 
-static bool _trace_los(monster* agent, bool (*vulnerable)(actor*))
+bool trace_los(monster* agent, bool (*vulnerable)(actor*))
 {
     bolt tracer;
     tracer.foe_ratio = 0;
@@ -3378,7 +3377,7 @@ static bool _tornado_vulnerable(actor* victim)
     return !victim->res_tornado();
 }
 
-static bool _torment_vulnerable(actor* victim)
+bool torment_vulnerable(actor* victim)
 {
     if (victim->is_player())
         return !player_res_torment(false);
@@ -8368,7 +8367,7 @@ static bool _ms_waste_of_time(monster* mon, mon_spell_slot slot)
         return _mons_irradiate(mon);
 
     case SPELL_SYMBOL_OF_TORMENT:
-        return !_trace_los(mon, _torment_vulnerable)
+        return !trace_los(mon, torment_vulnerable)
                || you.visible_to(mon)
                   && friendly
                   && !player_res_torment(false)
@@ -8377,24 +8376,24 @@ static bool _ms_waste_of_time(monster* mon, mon_spell_slot slot)
     case SPELL_CHAIN_OF_CHAOS:
         return !foe || you.visible_to(mon) && friendly; // don't zap player
     case SPELL_CHAIN_LIGHTNING:
-        return !_trace_los(mon, _elec_vulnerable)
+        return !trace_los(mon, _elec_vulnerable)
                 || you.visible_to(mon) && friendly; // don't zap player
     case SPELL_CORRUPTING_PULSE:
-        return !_trace_los(mon, _mutation_vulnerable)
+        return !trace_los(mon, _mutation_vulnerable)
                || you.visible_to(mon)
                   && friendly;
     case SPELL_TORNADO:
         return mon->has_ench(ENCH_TORNADO)
                || mon->has_ench(ENCH_CHAOSNADO)
                || mon->has_ench(ENCH_TORNADO_COOLDOWN)
-               || !_trace_los(mon, _tornado_vulnerable)
+               || !trace_los(mon, _tornado_vulnerable)
                || you.visible_to(mon) && friendly // don't cast near the player
                   && !(mon->holiness() & MH_DEMONIC); // demons are rude
 
     case SPELL_VORTEX:
         return mon->has_ench(ENCH_VORTEX)
                || mon->has_ench(ENCH_VORTEX_COOLDOWN)
-               || !_trace_los(mon, _tornado_vulnerable)
+               || !trace_los(mon, _tornado_vulnerable)
                || you.visible_to(mon) && friendly
                   && !(mon->holiness() & MH_DEMONIC);
 

@@ -1491,7 +1491,12 @@ bool vehumet_supports_spell(spell_type spell)
         || spell == SPELL_LEHUDIBS_CRYSTAL_SPEAR
         || spell == SPELL_FIRE_STORM
         || spell == SPELL_GLACIATE
-        || spell == SPELL_SPELLFORGED_SERVITOR)
+        || spell == SPELL_SPELLFORGED_SERVITOR
+        || spell == SPELL_STARBURST
+        || spell == SPELL_FOXFIRE
+        || spell == SPELL_MUSE_OAMS_AIR_BLAST
+        || spell == SPELL_HAILSTORM
+        || spell == SPELL_NOXIOUS_BOG)
     {
         return true;
     }
