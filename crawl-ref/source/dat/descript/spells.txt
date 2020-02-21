@@ -194,7 +194,8 @@ hits.
 Bolt of Fire spell
 
 Fires a penetrating bolt of flames. The range of the bolt is decreased by one
-for every creature it strikes.
+for every creature it strikes. Shares spellslots with the related spell 
+'Starburst'.
 %%%%
 Bolt of Magma spell
 
@@ -592,7 +593,7 @@ target's movement. It has no effect on targets that are already frozen.
 Force Lance spell
 
 Fires a shaft of concussive force. If the impact deals damage, it may knock the
-target back.
+target back. Shares spellslots with the related spell 'Force Lasso'.
 %%%%
 Forceful Invitation spell
 
@@ -837,6 +838,8 @@ crystal will cause a large and more damaging explosion.
 All targets except metal walls have a chance to be destroyed completely by this 
 fragmentation. When a wall is destroyed in this way it increases the explosion
 radius and damage significantly.
+
+Shares spellslots with the related spell 'Shorn's Methodical Deconstruction'.
 %%%%
 Legendary Destruction spell
 
@@ -850,7 +853,7 @@ Hurls a lethally sharp shard of crystal.
 Force Lasso spell
 
 Jerks the target forward violently, damaging and attempting to place them
-adjacent to the caster.
+adjacent to the caster. Shares spellslots with the related spell 'Force Lance'.
 %%%%
 Lightning Bolt spell
 
@@ -933,6 +936,8 @@ and the difficulty to destroy the wall. At the end of the meditation, the
 wall collapses in on itself.
 
 Rock takes the least time to destroy; metal takes the longest, stone in between.
+
+Shares spellslots with the related spell 'Lee's Rapid Deconstruction'.
 %%%%
 Miasma Breath spell
 
@@ -1263,6 +1268,12 @@ Smiting spell
 
 <Smiting ability>
 %%%%
+Snakes to Sticks spell
+
+A powerful but very specific hex. Turns the targeted snake or guardian serpent
+into a simple club if it's will to remain alive is overwhelmed. Shares spellslots
+with the related spell 'Sticks to Snakes'.
+%%%%
 Song of Slaying spell
 
 Recites ancient verses of battle. Each non-summoned enemy the caster slays in
@@ -1326,7 +1337,7 @@ Starburst spell
 
 Releases penetrating bolts of fire from the caster in every direction.
 The range of each bolt is decreased by one for every creature
-it strikes.
+it strikes. Shares spellslots with the related spell 'Bolt of Fire'.
 %%%%
 Static Discharge spell
 
@@ -1351,8 +1362,9 @@ is decreased by one for every creature it strikes.
 %%%%
 Sticks to Snakes spell
 
-Transforms a number of arrows in inventory into short-lived snakes, creating
-more dangerous snakes with higher power.
+Transforms one or two pieces of wood or bone from the floor into short-lived
+snakes, creating more dangerous snakes with higher power. Shares spellslots
+with the related spell 'Snakes to Sticks'.
 %%%%
 Sticky Flame Range spell
 
