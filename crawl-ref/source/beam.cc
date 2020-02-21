@@ -6043,6 +6043,12 @@ mon_resist_type bolt::apply_enchantment_to_monster(monster* mon)
                                                          : ENCH_CHARM;
 
             const bool could_see = you.can_see(*mon);
+            if (agent()->mid == mon->mid)
+            {
+                // Random effects self-zap can cause attempting to enslave self.
+                simple_monster_message(*mon, " appears momentarily confused.");
+                return MON_UNAFFECTED;
+            }
             if (mon->has_ench(bad))
             {
                 obvious_effect = mon->del_ench(bad);
