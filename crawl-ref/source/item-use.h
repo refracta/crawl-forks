@@ -56,7 +56,7 @@ void brand_weapon(item_def &wpn, bool player = true);
 
 bool item_is_worn(int inv_slot);
 
-bool enchant_item(item_def &item, bool quiet);
+bool enchant_item(item_def &item, bool quiet, bool player = true);
 
 void random_uselessness();
 

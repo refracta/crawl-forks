@@ -2937,7 +2937,7 @@ static bool _handle_brand_weapon(bool alreadyknown, const string &pre_msg)
     return true;
 }
 
-bool enchant_item(item_def &item, bool quiet)
+bool enchant_item(item_def &item, bool quiet, bool player)
 {
     ASSERT(item.defined());
 
@@ -2951,7 +2951,9 @@ bool enchant_item(item_def &item, bool quiet)
     // Get item name now before changing enchantment.
     string iname = _item_name(item);
 
-    if ( (item.base_type == OBJ_ARMOURS || (item.base_type == OBJ_SHIELDS && !is_hybrid(item.sub_type))))
+    colour_t flash_colour = BLACK;
+
+    if ((item.base_type == OBJ_ARMOURS || (item.base_type == OBJ_SHIELDS && !is_hybrid(item.sub_type))))
     {
         if (!quiet)
         {
@@ -2963,25 +2965,37 @@ bool enchant_item(item_def &item, bool quiet)
                 iname.c_str(),
                 conjugate_verb("glow", plural).c_str());
         }
-        you.redraw_armour_class = true;
+        flash_colour = GREEN;
+        if (player)
+            you.redraw_armour_class = true;
     }
 
     if (item.base_type == OBJ_WEAPONS || (item.base_type == OBJ_SHIELDS && is_hybrid(item.sub_type)) && !quiet)
+    {
+        flash_colour = RED;
         mprf("%s glows red for a moment.", iname.c_str());
+    }
 
     if (item.base_type == OBJ_STAVES && !quiet)
+    {
+        flash_colour = LIGHTMAGENTA;
         mprf("%s glows fuchsia for a moment.", iname.c_str());
+    }
 
     if (item.base_type == OBJ_WANDS)
     {
         if (!quiet)
             mprf("%s glows gold for a moment.", iname.c_str());
 
+        flash_colour = YELLOW;
         item.charges += 1 + random2avg(wand_charge_value(item.sub_type), 3);
         return true;
     }
-
-    you.wield_change = true;
+    
+    if (player)
+        you.wield_change = true;
+    else
+        flash_view_delay(UA_MONSTER, flash_colour, 300);
 
     item.plus++;
 

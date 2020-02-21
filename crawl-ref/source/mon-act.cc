@@ -1042,6 +1042,27 @@ static bool _handle_scroll(monster& mons)
         {
             simple_monster_message(mons, " reads a scroll.");
             brand_weapon(*mons.weapon(), false);
+            read = true;
+        }
+        break;
+
+    case SCR_ENCHANT:
+        if (mons.can_see(you) && mons.weapon() && !is_artefact(*mons.weapon())
+            && (mons.weapon()->plus < 9))
+        {
+            simple_monster_message(mons, " reads a scroll.");
+            enchant_item(*mons.weapon(), false);
+            read = true;
+        }
+        else if (mons.inv[MSLOT_ARMOUR] != NON_ITEM)
+        {
+            item_def &item = mitm[mons.inv[MSLOT_ARMOUR]];
+            if (!is_artefact(item) && armour_is_enchantable(item))
+            {
+                simple_monster_message(mons, " reads a scroll.");
+                enchant_item(item, false, false);
+                read = true;
+            }
         }
         break;
     }
