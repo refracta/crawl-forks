@@ -1105,6 +1105,40 @@ static bool _handle_scroll(monster& mons)
         }
         break;
 
+    case SCR_IMMOLATION:
+        // Allied mons won't use !Immo too risky.
+        if (!mons.wont_attack() && mons.can_see(you))
+        {
+            int count = 0;
+            for (radius_iterator ri(you.pos(), 3, C_SQUARE, true); ri; ++ri)
+            {
+                if (monster * m = monster_at(*ri))
+                {
+                    if (mons.see_cell(*ri) && !m->is_summoned() && !mons_immune_magic(*m))
+                        count++;
+                }
+            }
+            if (count > 4)
+            {
+
+                for (monster_near_iterator mi(mons.pos(), LOS_NO_TRANS); mi; ++mi)
+                {
+                    if (mons_immune_magic(**mi)
+                        || mi->is_summoned() && !mi->is_illusion())
+                    {
+                        continue;
+                    }
+
+                    mi->add_ench(mon_enchant(ENCH_INNER_FLAME, 0, &mons));
+                }
+
+                simple_monster_message(mons, " reads a scroll.");
+                mprf("The creatures around %s are filled with an inner flame!", mons.name(DESC_THE).c_str());
+                read = true;
+            }
+        }
+        break;
+
     case SCR_TORMENT:
         if (mons.can_see(you) && mons.res_torment())
         {
