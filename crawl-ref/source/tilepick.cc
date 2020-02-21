@@ -2826,11 +2826,7 @@ tileidx_t tileidx_item(const item_def &item)
                + rnd % tile_main_count(TILE_BOOK_OFFSET);
 
     case OBJ_STAVES:
-        if (item.flags & ISFLAG_KNOW_TYPE)
-            return TILE_STAFF_ID_FIRST + type;
-
-        return TILE_STAFF_OFFSET
-               + (subtype_rnd / NDSC_STAVE_PRI) % NDSC_STAVE_SEC;
+        return TILE_STAFF_ID_FIRST + type;
 
 #if TAG_MAJOR_VERSION == 34
     case OBJ_RODS:
