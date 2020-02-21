@@ -3472,7 +3472,7 @@ static bool _eventually_useful(const item_def &item)
     if (you.species != SP_LIGNIFITE)
         return false;
 
-    if (item.base_type == OBJ_WEAPONS || item.sub_type == OBJ_SHIELDS)
+    if (item.base_type == OBJ_WEAPONS || item.base_type == OBJ_SHIELDS)
     {
         if (!is_weapon_wieldable(item, you.body_size()) &&
             is_weapon_wieldable(item, SIZE_GIANT))

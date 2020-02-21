@@ -64,7 +64,6 @@ menu += lightblue:unidentified.*(potion|scroll|wand|jewellery|magical staff)
 # : end
 menu += green:uncursed
 
-
 # Colouring of autoinscribed god gifts
 menu_colour += pickup:green:god gift
 
@@ -72,7 +71,6 @@ menu_colour += pickup:green:god gift
 menu_colour += inventory:white:\w \+\s
 menu_colour += inventory:white:\w \#\s
 menu_colour += inventory:white:\w \*\s
-
 
 # Not really menu.
 menu_colour += notes:white:Reached XP level
