@@ -1818,6 +1818,8 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
         break;
 
     case BEAM_MAGIC_CANDLE:
+        if (doFlavouredEffects)
+            backlight_monster(mons);
         hurted = 0;
         break;
 
@@ -2760,7 +2762,7 @@ void bolt::affect_endpoint()
 
     case SPELL_MAGIC_CANDLE:
     {
-        if (hit_count.empty())
+        if (!hit_something)
         {
             if (feat_is_water(grd(pos())) || grd(pos()) == DNGN_LAVA)
             {
@@ -4264,13 +4266,15 @@ void bolt::affect_player()
     if (hit_verb.empty())
         hit_verb = engulfs ? "engulfs" : "hits";
 
-    bool is_harmless = (flavour == BEAM_MAGIC_CANDLE || flavour == BEAM_WAND_HEALING);
+    bool harmless = (flavour == BEAM_MAGIC_CANDLE || flavour == BEAM_WAND_HEALING);
+
+    hit_something = true;
 
     if (flavour != BEAM_VISUAL && !is_enchantment())
     {
         mprf("The %s %s you%s%s", name.c_str(), hit_verb.c_str(),
-             (final_dam || is_harmless) ? "" : " but does no damage",
-             attack_strength_punctuation(final_dam).c_str());
+             (final_dam || harmless) ? "" : " but does no damage",
+             harmless ? "." : attack_strength_punctuation(final_dam).c_str());
     }
 
     // Now print the messages associated with checking resistances, so that
@@ -5416,6 +5420,7 @@ void bolt::affect_monster(monster* mon)
     }
 
     update_hurt_or_helped(mon);
+    hit_something = true;
 
     // We'll say ballistomycete spore explosions don't trigger the ally attack
     // conduct for Fedhas worshipers. Mostly because you can accidentally blow
@@ -5458,7 +5463,7 @@ void bolt::affect_monster(monster* mon)
              hit_verb.c_str(),
              mon->name(DESC_THE).c_str(),
              (postac || harmless) ? "" : " but does no damage",
-             attack_strength_punctuation(final).c_str());
+             harmless ? "." : attack_strength_punctuation(final).c_str());
 
     }
     else if (heard && !hit_noise_msg.empty())
@@ -5902,14 +5907,6 @@ mon_resist_type bolt::apply_enchantment_to_monster(monster* mon)
             if (simple_monster_message(*mon, " looks drowsy..."))
                 obvious_effect = true;
             mon->put_to_sleep(agent(), ench_power, true);
-            return MON_AFFECTED;
-        }
-        return MON_UNAFFECTED;
-
-    case BEAM_MAGIC_CANDLE:
-        if (backlight_monster(mon))
-        {
-            obvious_effect = true;
             return MON_AFFECTED;
         }
         return MON_UNAFFECTED;
