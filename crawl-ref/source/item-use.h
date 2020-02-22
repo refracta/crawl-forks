@@ -58,6 +58,6 @@ bool item_is_worn(int inv_slot);
 
 bool enchant_item(item_def &item, bool quiet, bool player = true);
 
-void random_uselessness();
+void random_uselessness(actor * act);
 
 void prompt_inscribe_item();

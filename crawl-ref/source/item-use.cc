@@ -42,6 +42,7 @@
 #include "message.h"
 #include "misc.h"
 #include "mon-behv.h"
+#include "mon-place.h"
 #include "mutation.h"
 #include "nearby-danger.h"
 #include "orb.h"
@@ -3019,7 +3020,7 @@ static int _handle_enchant_item(bool alreadyknown, const string &pre_msg)
     return result ? 1 : 0;
 }
 
-void random_uselessness()
+void random_uselessness(actor * act)
 {
     ASSERT(!crawl_state.game_is_arena());
 
@@ -3031,28 +3032,41 @@ void random_uselessness()
         break;
 
     case 2:
-        if (you.weapon())
+        if (act->weapon())
         {
-            mprf("%s glows %s for a moment.",
-                 you.weapon()->name(DESC_YOUR).c_str(),
-                 weird_glowing_colour().c_str());
+            mprf("%s%s%s glows %s for a moment.",
+                act->is_player() ? "" : act->name(DESC_ITS).c_str(),
+                act->is_player() ? "" : " ",
+                act->weapon()->name(act->is_player() ? DESC_YOUR
+                                                     : DESC_PLAIN).c_str(),
+                weird_glowing_colour().c_str());
         }
-        else
+        else if (act->is_player())
         {
             mpr(you.hands_act("glow", weird_glowing_colour()
                                       + " for a moment."));
         }
+        else
+        {
+            mprf("%s flashes %s for a moment.", act->name(DESC_THE).c_str(), 
+                weird_glowing_colour().c_str());
+        }
         break;
 
     case 3:
-        if (you.species == SP_MUMMY || you.char_class == JOB_MUMMY)
+        if (act->is_player() && (you.species == SP_MUMMY || you.char_class == JOB_MUMMY))
             mpr("Your bandages flutter.");
-        else // if (you.can_smell())
+        else if (you.can_smell())
             mprf("You smell %s.", _weird_smell().c_str());
+        else
+            mpr("The air gets thick around you.");
         break;
 
     case 4:
-        mpr("You experience a momentary feeling of inescapable doom!");
+        if (act->is_player())
+            mpr("You experience a momentary feeling of inescapable doom!");
+        else
+            simple_monster_message(*act->as_monster(), " looks extremely uncomfortable for a moment.");
         break;
 
     case 5:
@@ -3065,9 +3079,29 @@ void random_uselessness()
         break;
 
     case 6:
+    {
+        if (!silenced(you.pos()))
+            mprf(MSGCH_SOUND, "You hear the tinkle of a tiny bell.");
+        else
+            mpr("Butterflies seem to form from the dust.");
+        noisy(2, act->pos());
+        int duration = 20 + random2(10);
+        int amt = roll_dice(3, 4);
+        for (int i = 0; i < amt; ++i)
+        {
+            create_monster(
+                mgen_data(MONS_BUTTERFLY, BEH_STRICT_NEUTRAL,
+                    act->pos(), MHITNOT)
+                .set_summoned(act, duration, 0));
+        }
+    }
+        break;
     case 7:
-        mprf(MSGCH_SOUND, "You hear %s.", _weird_sound().c_str());
-        noisy(2, you.pos());
+        if (!silenced(you.pos()))
+            mprf(MSGCH_SOUND, "You hear %s.", _weird_sound().c_str());
+        else
+            mpr("Nothing appears to happen.");
+        noisy(6, act->pos());
         break;
     }
 }
@@ -3664,7 +3698,7 @@ void read_scroll(item_def& scroll)
         break;
 
     case SCR_RANDOM_USELESSNESS:
-        random_uselessness();
+        random_uselessness(&you);
         break;
 
     default:

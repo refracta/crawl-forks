@@ -1140,12 +1140,21 @@ static bool _handle_scroll(monster& mons)
         break;
 
     case SCR_NOISE:
-        if (!mons.wont_attack())
+        if (mons.can_see(you) && !mons.wont_attack())
         {
             simple_monster_message(mons, " reads a scroll.");
             mpr("You hear a loud clanging noise!");
             noisy(30, mons.pos(), mons.mid);
             you.sentinel_mark();
+            read = true;
+        }
+        break;
+
+    case SCR_RANDOM_USELESSNESS:
+        if (mons.can_see(you))
+        {
+            simple_monster_message(mons, " reads a scroll.");
+            random_uselessness(&mons);
             read = true;
         }
         break;

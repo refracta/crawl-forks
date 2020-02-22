@@ -953,7 +953,7 @@ void MiscastEffect::_hexes(int severity)
                                                            act_source));
             break;
         case 1:
-            random_uselessness();
+            random_uselessness(target);
             break;
         }
         break;
@@ -1116,7 +1116,7 @@ void MiscastEffect::_charms(int severity)
                                                            act_source));
             break;
         case 1:
-            random_uselessness();
+            random_uselessness(target);
             break;
         }
         break;
@@ -1943,7 +1943,7 @@ void MiscastEffect::_transmutation(int severity)
         case 7:
         case 8:
         case 9:
-            random_uselessness();
+            random_uselessness(target);
             break;
         }
         break;
