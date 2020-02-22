@@ -1001,17 +1001,19 @@ static bool _handle_scroll(monster& mons)
     const int scroll_type = scroll->sub_type;
     switch (scroll_type)
     {
-    case SCR_TELEPORTATION:
-        if (!mons.has_ench(ENCH_TP) && !mons.no_tele(true, false))
-        {
-            if (mons.caught() || mons_is_fleeing(mons) || mons.pacified())
-            {
-                simple_monster_message(mons, " reads a scroll.");
-                read = true;
-                monster_teleport(&mons, false);
-            }
-        }
+    case SCR_ACQUIREMENT:
+    {
+        simple_monster_message(mons, " reads a scroll...of Acquirement!");
+        mprf("Something appears before %s.", mons.name(DESC_THE).c_str());
+        int x = items(true, one_chance_in(3) ? OBJ_ARMOURS : OBJ_WEAPONS, OBJ_RANDOM, ISPEC_GIFT);
+        item_def &item = mitm[x];
+        give_specific_item(&mons, x);
+        set_ident_type(item, true);
+        set_ident_flags(item, ISFLAG_IDENT_MASK);
+        do_uncurse_item(item, false);
+        read = true;
         break;
+    }
 
     case SCR_BLINKING:
         if ((mons.caught() || mons_is_fleeing(mons) || mons.pacified())
@@ -1023,23 +1025,6 @@ static bool _handle_scroll(monster& mons)
                 monster_blink(&mons);
             else
                 blink_away(&mons);
-        }
-        break;
-
-    case SCR_SUMMONING:
-        if (mons.get_foe())
-        {
-            simple_monster_message(mons, " reads a scroll.");
-            mprf("Wisps of shadow swirl around %s.", mons.name(DESC_THE).c_str());
-            read = true;
-            int count = roll_dice(2, 2);
-            for (int i = 0; i < count; ++i)
-            {
-                create_monster(
-                    mgen_data(RANDOM_MOBILE_MONSTER, SAME_ATTITUDE((&mons)),
-                              mons.pos(), mons.foe)
-                    .set_summoned(&mons, 3, MON_SUMM_SCROLL));
-            }
         }
         break;
 
@@ -1168,6 +1153,35 @@ static bool _handle_scroll(monster& mons)
                 read = true;
             } // Allied monsters don't use silence. Too risky (AI to be like oh there's a lich I should 
               // silence would be easy; but it takes away too much ability from the player).
+        break;
+
+    case SCR_SUMMONING:
+        if (mons.get_foe())
+        {
+            simple_monster_message(mons, " reads a scroll.");
+            mprf("Wisps of shadow swirl around %s.", mons.name(DESC_THE).c_str());
+            read = true;
+            int count = roll_dice(2, 2);
+            for (int i = 0; i < count; ++i)
+            {
+                create_monster(
+                    mgen_data(RANDOM_MOBILE_MONSTER, SAME_ATTITUDE((&mons)),
+                        mons.pos(), mons.foe)
+                    .set_summoned(&mons, 3, MON_SUMM_SCROLL));
+            }
+        }
+        break;
+
+    case SCR_TELEPORTATION:
+        if (!mons.has_ench(ENCH_TP) && !mons.no_tele(true, false))
+        {
+            if (mons.caught() || mons_is_fleeing(mons) || mons.pacified())
+            {
+                simple_monster_message(mons, " reads a scroll.");
+                read = true;
+                monster_teleport(&mons, false);
+            }
+        }
         break;
 
     case SCR_TORMENT:

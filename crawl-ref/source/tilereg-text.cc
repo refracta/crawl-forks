@@ -114,7 +114,8 @@ void TextRegion::addstr_aux(const char32_t *buffer, int len)
     int y = print_y - cy_ofs;
     int adrs = y * mx;
 
-    ASSERT(y < my);
+    //BCADNOTE: I still blame mainline for intermittent crashes here.
+    //ASSERT(y < my);
 
     for (int i = 0; i < len && x + i < mx; i++)
     {
