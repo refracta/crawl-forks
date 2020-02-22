@@ -1002,16 +1002,35 @@ static bool _handle_scroll(monster& mons)
     switch (scroll_type)
     {
     case SCR_ACQUIREMENT:
+    if (mons_itemuse(mons) & MU_WEAPONS)
     {
-        simple_monster_message(mons, " reads a scroll...of Acquirement!");
-        mprf("Something appears before %s.", mons.name(DESC_THE).c_str());
-        int x = items(true, one_chance_in(3) ? OBJ_ARMOURS : OBJ_WEAPONS, OBJ_RANDOM, ISPEC_GIFT);
-        item_def &item = mitm[x];
-        give_specific_item(&mons, x);
-        set_ident_type(item, true);
-        set_ident_flags(item, ISFLAG_IDENT_MASK);
-        do_uncurse_item(item, false);
+        object_class_type type = OBJ_WEAPONS;
+        if (one_chance_in(3) && mons_itemuse(mons) & MU_ARMOUR)
+            type = OBJ_ARMOURS;
+        if (one_chance_in(4) && mons_itemuse(mons) & MU_JEWELS)
+            type = OBJ_JEWELLERY;
+        simple_monster_message(mons, " reads a scroll of acquirement!");
         read = true;
+        for (int tries = 3; tries > 0; --tries)
+        {
+            int x = items(true, type, OBJ_RANDOM, ISPEC_GIFT);
+            item_def &item = mitm[x];
+            give_specific_item(&mons, x);
+            if (item.defined())
+            {
+                set_ident_type(item, true);
+                set_ident_flags(item, ISFLAG_IDENT_MASK);
+                do_uncurse_item(item, false);
+                mprf("%s appears before %s.", item.name(DESC_A).c_str(), mons.name(DESC_THE).c_str());
+                break;
+            }
+        }
+        int x = get_mitm_slot();
+        item_def &item = mitm[x];
+        item.base_type = OBJ_GOLD;
+        item.quantity = 50 + random2(120);
+        simple_monster_message(mons, " didn't like any of the acquirement options so just took some gold.");
+        give_specific_item(&mons, x);
         break;
     }
 
