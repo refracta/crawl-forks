@@ -989,7 +989,8 @@ static bool _handle_scroll(monster& mons)
         || !one_chance_in(3)
         || !mons_itemuse(mons) & MU_CONSUMABLES
         || silenced(mons.pos())
-        || scroll->base_type != OBJ_SCROLLS)
+        || scroll->base_type != OBJ_SCROLLS
+        || !mons.can_see(you))
     {
         return false;
     }
@@ -1014,7 +1015,7 @@ static bool _handle_scroll(monster& mons)
 
     case SCR_BLINKING:
         if ((mons.caught() || mons_is_fleeing(mons) || mons.pacified())
-            && mons.can_see(you) && !mons.no_tele(true, false))
+            && !mons.no_tele(true, false))
         {
             simple_monster_message(mons, " reads a scroll.");
             read = true;
@@ -1026,7 +1027,7 @@ static bool _handle_scroll(monster& mons)
         break;
 
     case SCR_SUMMONING:
-        if (mons.can_see(you) && mons.get_foe())
+        if (mons.get_foe())
         {
             simple_monster_message(mons, " reads a scroll.");
             mprf("Wisps of shadow swirl around %s.", mons.name(DESC_THE).c_str());
@@ -1043,7 +1044,7 @@ static bool _handle_scroll(monster& mons)
         break;
 
     case SCR_BRAND_WEAPON:
-        if (mons.can_see(you) && mons.weapon() && !is_artefact(*mons.weapon())
+        if (mons.weapon() && !is_artefact(*mons.weapon())
             && (mons.weapon()->brand == SPWPN_NORMAL))
         {
             simple_monster_message(mons, " reads a scroll.");
@@ -1053,7 +1054,7 @@ static bool _handle_scroll(monster& mons)
         break;
 
     case SCR_ENCHANT:
-        if (mons.can_see(you) && mons.weapon() && !is_artefact(*mons.weapon())
+        if (mons.weapon() && !is_artefact(*mons.weapon())
             && (mons.weapon()->plus < 9))
         {
             simple_monster_message(mons, " reads a scroll.");
@@ -1073,7 +1074,7 @@ static bool _handle_scroll(monster& mons)
         break;
 
     case SCR_FEAR:
-        if (mons.can_see(you) && mons_cause_fear(&mons, false, true) == 0)
+        if (mons_cause_fear(&mons, false, true) == 0)
         {
             simple_monster_message(mons, " reads a scroll and assumes a fearsome visage.");
             mons_cause_fear(&mons, true, true);
@@ -1082,7 +1083,7 @@ static bool _handle_scroll(monster& mons)
         break;
 
     case SCR_FOG:
-        if (mons.can_see(you) && (mons.caught() || mons_is_fleeing(mons)) && !bool(env.level_state & LSTATE_STILL_WINDS))
+        if ((mons.caught() || mons_is_fleeing(mons)) && !bool(env.level_state & LSTATE_STILL_WINDS))
         {
             simple_monster_message(mons, " reads a scroll, which dissolves into smoke.");
             auto smoke = random_smoke_type();
@@ -1092,7 +1093,7 @@ static bool _handle_scroll(monster& mons)
         break;
 
     case SCR_HOLY_WORD:
-        if (mons.can_see(you) && !mons.undead_or_demonic())
+        if (!mons.undead_or_demonic())
         {
             if (you.undead_or_demonic() && mons.wont_attack())
                 break;
@@ -1107,7 +1108,7 @@ static bool _handle_scroll(monster& mons)
 
     case SCR_IMMOLATION:
         // Allied mons won't use !Immo too risky.
-        if (!mons.wont_attack() && mons.can_see(you))
+        if (!mons.wont_attack())
         {
             int count = 0;
             for (radius_iterator ri(you.pos(), 3, C_SQUARE, true); ri; ++ri)
@@ -1140,7 +1141,7 @@ static bool _handle_scroll(monster& mons)
         break;
 
     case SCR_NOISE:
-        if (mons.can_see(you) && !mons.wont_attack())
+        if (!mons.wont_attack())
         {
             simple_monster_message(mons, " reads a scroll.");
             mpr("You hear a loud clanging noise!");
@@ -1151,12 +1152,22 @@ static bool _handle_scroll(monster& mons)
         break;
 
     case SCR_RANDOM_USELESSNESS:
-        if (mons.can_see(you))
-        {
-            simple_monster_message(mons, " reads a scroll.");
-            random_uselessness(&mons);
-            read = true;
-        }
+        simple_monster_message(mons, " reads a scroll.");
+        random_uselessness(&mons);
+        read = true;
+        break;
+
+    case SCR_SILENCE:
+        if (!mons.wont_attack() && (grid_distance(mons.pos(), you.pos()) < 5)
+                                && !(you.species == SP_SILENT_SPECTRE))
+            {
+                mons.add_ench(ENCH_SILENCE);
+                invalidate_agrid(true);
+                simple_monster_message(mons, " reads a scroll.");
+                simple_monster_message(mons, "'s surroundings become eerily quiet.");
+                read = true;
+            } // Allied monsters don't use silence. Too risky (AI to be like oh there's a lich I should 
+              // silence would be easy; but it takes away too much ability from the player).
         break;
 
     case SCR_TORMENT:
@@ -1171,6 +1182,10 @@ static bool _handle_scroll(monster& mons)
                 read = true;
             }
         }
+        break;
+
+    case SCR_VULNERABILITY: // Most monsters would have no use for Vulnerability and AI as to when it would be helpful is complicated.
+    default:
         break;
     }
 
