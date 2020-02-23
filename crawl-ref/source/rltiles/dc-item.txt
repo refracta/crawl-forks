@@ -715,7 +715,7 @@ i-acquirement SCR_ACQUIREMENT
 %back scroll-green
 # Remove enchantment II when TAG_MAJOR_VERSION > 34
 i-enchant-weapon SCR_ENCHANT_WEAPON_II
-i-brand-weapon SCR_BRAND_WEAPON
+i-brand-weapon SCR_BLESS_ITEM
 # Remove recharging when TAG_MAJOR_VERSION > 34
 i-recharging SCR_RECHARGING
 # Remove enchantment III when TAG_MAJOR_VERSION > 34

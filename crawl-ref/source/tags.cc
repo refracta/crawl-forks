@@ -2305,8 +2305,8 @@ static void tag_read_you(reader &th)
 {
     int count;
 
-    ASSERT(species_type_valid(you.species));
-    ASSERT(job_type_valid(you.char_class));
+    ASSERT_RANGE(you.species, 0, NUM_SPECIES);
+    ASSERT_RANGE(you.char_class, 0, NUM_JOBS);
     ASSERT_RANGE(you.experience_level, 1, 28);
     ASSERT(you.religion < NUM_GODS);
     ASSERT_RANGE(crawl_state.type, GAME_TYPE_UNSPECIFIED + 1, NUM_GAME_TYPE);
@@ -4601,6 +4601,9 @@ void unmarshallItem(reader &th, item_def &item)
                 item.quantity = div_rand_round(item.quantity, 5);
         }
     }
+
+    if (item.base_type == OBJ_SCROLLS && item.sub_type == SCR_REMOVE_CURSE)
+        item.sub_type = SCR_BLESS_ITEM;
 
     if (th.getMinorVersion() < TAG_MINOR_REMOVE_ITEM_COLOUR)
         /* item.colour = */ unmarshallUByte(th);

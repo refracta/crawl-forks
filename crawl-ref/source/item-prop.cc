@@ -2054,6 +2054,27 @@ bool convert2bad(item_def &item)
     return false;
 }
 
+bool is_blessable_item(const item_def &item)
+{
+    if (item.cursed())
+        return true;
+
+    if (is_artefact(item))
+        return false;
+
+    switch (item.base_type)
+    {
+    case OBJ_ARMOURS:
+    case OBJ_SHIELDS:
+    case OBJ_STAVES:
+    case OBJ_WEAPONS:
+        return true;
+
+    default:
+        return false;
+    }
+}
+
 bool is_brandable_weapon(const item_def &wpn, bool allow_ranged, bool divine)
 {
     if (is_artefact(wpn) && !divine)

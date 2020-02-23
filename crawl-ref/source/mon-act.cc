@@ -1048,7 +1048,7 @@ static bool _handle_scroll(monster& mons)
         }
         break;
 
-    case SCR_BRAND_WEAPON:
+    case SCR_BLESS_ITEM:
         if (mons.weapon() && !is_artefact(*mons.weapon())
             && (mons.weapon()->brand == SPWPN_NORMAL))
         {

@@ -2756,6 +2756,43 @@ bool god_hates_brand(const int brand)
     return false;
 }
 
+static void _rebrand_staff(item_def &stf)
+{
+    const facet_type old_brand = get_staff_facet(stf);
+    facet_type new_brand = old_brand;
+
+    while (old_brand == new_brand || new_brand == SPSTF_NORMAL)
+        new_brand = generate_staff_facet(stf, 500);
+
+    stf.brand = new_brand;
+}
+
+static void _rebrand_armour(item_def &arm)
+{
+    const special_armour_type old_brand = get_armour_ego_type(arm);
+    special_armour_type new_brand = old_brand;
+
+    while (old_brand == new_brand)
+    {
+        new_brand = generate_armour_type_ego((armour_type)arm.sub_type);
+        if (one_chance_in(3) || new_brand == SPARM_NORMAL)
+            new_brand = random_choose(SPARM_FIRE_RESISTANCE, SPARM_COLD_RESISTANCE, SPARM_STEALTH);
+    }
+
+    arm.brand = new_brand;
+}
+
+static void _rebrand_shield(item_def &shd)
+{
+    const special_armour_type old_brand = get_armour_ego_type(shd);
+    special_armour_type new_brand = old_brand;
+
+    while (old_brand == new_brand)
+        new_brand = defensive_shield_brand();
+
+    shd.brand = new_brand;
+}
+
 static void _rebrand_weapon(item_def& wpn)
 {
     if (&wpn == you.weapon() && you.duration[DUR_EXCRUCIATING_WOUNDS])
@@ -2800,16 +2837,227 @@ static string _item_name(item_def &item)
     return item.name(in_inventory(item) ? DESC_YOUR : DESC_THE);
 }
 
+static void _finish_rebranding(item_def &item, colour_t flash_colour, bool player = true)
+{
+    item_set_appearance(item);
+    // Message would spoil this even if we didn't identify.
+    set_ident_flags(item, ISFLAG_KNOW_TYPE);
+    if (player)
+    {
+        mprf_nocap("%s", item.name(DESC_INVENTORY_EQUIP).c_str());
+        you.wield_change = true;
+        you.redraw_armour_class = true;
+        you.redraw_evasion = true;
+    }
+    flash_view_delay(player ? UA_PLAYER : UA_MONSTER, flash_colour, 300);
+}
+
+static void _brand_staff(item_def &stf)
+{
+    const string itname = _item_name(stf);
+
+    _rebrand_staff(stf);
+
+    colour_t flash_colour = BLACK;
+
+    switch (get_staff_facet(stf))
+    {
+    case SPSTF_ACCURACY:
+        flash_colour = WHITE;
+        mprf("%s feels like an instrument of precision!", itname.c_str());
+        break;
+
+    case SPSTF_CHAOS:
+        flash_colour = ETC_CHAOS;
+        mprf("%s exudes an aura of scintillating colours!", itname.c_str());
+        break;
+
+    case SPSTF_ENERGY:
+        flash_colour = ETC_MAGIC;
+        mprf("%s makes you feel much more energetic!", itname.c_str());
+        break;
+
+    case SPSTF_FLAY:
+        flash_colour = ETC_BLOOD;
+        mprf("%s gives off an evil aura!", itname.c_str());
+        break;
+
+    case SPSTF_MENACE:
+        flash_colour = ETC_DARK;
+        mprf("%s feels corruptingly powerful!", itname.c_str());
+        break;
+
+    case SPSTF_REAVER:
+        flash_colour = LIGHTGRAY;
+        mprf("Even touching %s makes you feel more able to cast in armour!", itname.c_str());
+        break;
+
+    case SPSTF_SCOPED:
+        flash_colour = CYAN;
+        mprf("%s extends the range of your destructive magicks!", itname.c_str());
+        break;
+
+    case SPSTF_SHIELD:
+        flash_colour = YELLOW;
+        mprf("%s exudes a shield of force!", itname.c_str());
+        break;
+
+    case SPSTF_WARP:
+        flash_colour = ETC_WARP;
+        mprf("%s twists and distorts painfully!", itname.c_str());
+        break;
+
+    case SPSTF_WIZARD:
+        flash_colour = LIGHTMAGENTA;
+        mprf("%s increases your casting ability!", itname.c_str());
+        break;
+
+    default:
+        break;
+    }
+
+    _finish_rebranding(stf, flash_colour);
+}
+
+static void _brand_armour(item_def &arm)
+{
+    const string itname = _item_name(arm);
+
+    if (arm.base_type == OBJ_SHIELDS)
+        _rebrand_shield(arm);
+    else
+        _rebrand_armour(arm);
+
+    colour_t flash_colour = BLACK;
+
+    bool plural = (arm.sub_type == ARM_BOOTS || arm.sub_type == ARM_GLOVES || 
+        (armour_is_hide(arm) && arm.sub_type != ARM_TROLL_HIDE && arm.sub_type != ARM_DEEP_TROLL_LEATHER_ARMOUR 
+                             && arm.sub_type != ARM_IRON_TROLL_LEATHER_ARMOUR && arm.sub_type != ARM_SALAMANDER_HIDE_ARMOUR));
+
+    switch (get_armour_ego_type(arm))
+    {
+    default:
+    case SPARM_DEXTERITY:
+    case SPARM_INTELLIGENCE:
+    case SPARM_STRENGTH:
+        flash_colour = YELLOW;
+        mprf("%s emit%s a brilliant flash of light!", itname.c_str(), plural ? "" : "s");
+        break;
+
+    case SPARM_ARCHERY:
+        flash_colour = ETC_WU_JIAN;
+        mprf("%s make%s you feel more skilled with ranged weapons!", itname.c_str(), plural ? "" : "s");
+        break;
+
+    case SPARM_WIELDING:
+        flash_colour = ETC_WU_JIAN;
+        mprf("%s make%s you feel more skilled with melee weapons!", itname.c_str(), plural ? "" : "s");
+        break;
+
+    case SPARM_ARCHMAGI:
+        flash_colour = ETC_MAGIC;
+        mprf("%s exude%s a strong magical aura!", itname.c_str(), plural ? "" : "s");
+        break;
+
+    case SPARM_CLOUD_IMMUNE:
+        flash_colour = ETC_AIR;
+        mprf("%s seem%s to repel mist in the air!", itname.c_str(), plural ? "" : "s");
+        break;
+
+    case SPARM_COLD_RESISTANCE:
+        flash_colour = LIGHTCYAN;
+        mprf("%s begin%s to feel comfortably warm!", itname.c_str(), plural ? "" : "s");
+        break;
+
+    case SPARM_FIRE_RESISTANCE:
+        flash_colour = RED;
+        mprf("%s begin%s to feel soothingly cool!", itname.c_str(), plural ? "" : "s");
+        break;
+
+    case SPARM_HIGH_PRIEST:
+    {
+        bool evil = is_evil_god(you.religion);
+        flash_colour = evil ? ETC_UNHOLY : ETC_HOLY;
+        mprf("%s begin%s to exude a%sholy aura!", itname.c_str(), plural ? "" : "s", evil ? "n un" : " ");
+    }
+        break;
+
+    case SPARM_IMPROVED_VISION:
+        flash_colour = ETC_SHINING;
+        mprf("%s begin%s to peer through the darkness!", itname.c_str(), plural ? "" : "s");
+        break;
+
+    case SPARM_MAGIC_RESISTANCE:
+        flash_colour = ETC_MAGIC;
+        mprf("%s begin%s to repel magical effects!", itname.c_str(), plural ? "" : "s");
+        break;
+        
+    case SPARM_POISON_RESISTANCE:
+        flash_colour = LIGHTGREEN;
+        mprf("%s become%s much healthier!", itname.c_str(), plural ? "" : "s");
+        break;
+
+    case SPARM_PONDEROUSNESS:
+        flash_colour = LIGHTGRAY;
+        mprf("%s feel%s sluggish to the touch!", itname.c_str(), plural ? "" : "s");
+        break;
+
+    case SPARM_POSITIVE_ENERGY:
+        flash_colour = WHITE;
+        mprf("%s begin%s to feel very comfortable!", itname.c_str(), plural ? "" : "s");
+        break;
+
+    case SPARM_PROTECTION:
+        flash_colour = YELLOW;
+        mprf("%s project%s a defensive aura!", itname.c_str(), plural ? "" : "s");
+        break;
+
+    case SPARM_REFLECTION:
+        flash_colour = ETC_SILVER;
+        mprf("%s project%s an invisible shield of force!", itname.c_str(), plural ? "" : "s");
+        break;
+
+    case SPARM_REPULSION:
+        flash_colour = BLUE;
+        mprf("%s repel%s away your touch!", itname.c_str(), plural ? "" : "s");
+        break;
+
+    case SPARM_RESISTANCE:
+        flash_colour = LIGHTRED;
+        mprf("%s maintain%s a comfortable temperature!", itname.c_str(), plural ? "" : "s");
+        break;
+
+    case SPARM_RUNNING:
+        flash_colour = ETC_SILVER;
+        mprf("%s make%s you feel like running away!", itname.c_str(), plural ? "" : "s");
+        break;
+
+    case SPARM_SPIRIT_SHIELD:
+        flash_colour = ETC_MUTAGENIC;
+        mprf("%s well%s up with protective spirits!", itname.c_str(), plural ? "" : "s");
+        break;
+
+    case SPARM_INVISIBILITY:
+    case SPARM_STEALTH:
+        flash_colour = BLACK;
+        mprf("%s sink%s into the shadows!", itname.c_str(), plural ? "" : "s");
+        break;
+
+    case SPARM_STURDY:
+        flash_colour = BROWN;
+        mprf("%s feel%s very rugged!", itname.c_str(), plural ? "" : "s");
+        break;
+    }
+
+    _finish_rebranding(arm, flash_colour);
+}
+
 void brand_weapon(item_def &wpn, bool player)
 {
-    if (player)
-        you.wield_change = true;
-
     const string itname = _item_name(wpn);
 
     _rebrand_weapon(wpn);
 
-    bool success = true;
     colour_t flash_colour = BLACK;
 
     switch (get_weapon_brand(wpn))
@@ -2865,26 +3113,12 @@ void brand_weapon(item_def &wpn, bool player)
         break;
 
     default:
-        success = false;
+        mpr("Scroll failed. This is a bug.");
         break;
     }
 
-    if (success)
-    {
-        item_set_appearance(wpn);
-        // Message would spoil this even if we didn't identify.
-        set_ident_flags(wpn, ISFLAG_KNOW_TYPE);
-        if (player)
-        {
-            mprf_nocap("%s", wpn.name(DESC_INVENTORY_EQUIP).c_str());
-            // Might be rebranding to/from protection or evasion.
-            you.redraw_armour_class = true;
-            you.redraw_evasion = true;
-            // Might be removing antimagic.
-            calc_mp();
-        }
-        flash_view_delay(player ? UA_PLAYER : UA_MONSTER, flash_colour, 300);
-    }
+    _finish_rebranding(wpn, flash_colour, player);
+
     return;
 }
 
@@ -2904,37 +3138,49 @@ static item_def* _choose_target_item_for_scroll(bool scroll_known, object_select
                        });
 }
 
-static object_selector _enchant_selector(scroll_type scroll)
-{
-    if (scroll == SCR_BRAND_WEAPON)
-        return OSEL_BRANDABLE_WEAPON;
-    die("Invalid scroll type %d for _enchant_selector", (int)scroll);
-}
-
-// Returns nullptr if no weapon was chosen.
-static item_def* _scroll_choose_weapon(bool alreadyknown, const string &pre_msg,
-                                       scroll_type scroll)
-{
-    item_def* target = _choose_target_item_for_scroll(alreadyknown, _enchant_selector(scroll), "Brand which item?");
-
-    if (!target)
-        return target;
-
-    if (alreadyknown)
-        mpr(pre_msg);
-
-    return target;
-}
-
 // Returns true if the scroll is used up.
-static bool _handle_brand_weapon(bool alreadyknown, const string &pre_msg)
+static bool _handle_bless_item(const string &pre_msg)
 {
-    item_def* weapon = _scroll_choose_weapon(alreadyknown, pre_msg,
-                                             SCR_BRAND_WEAPON);
-    if (!weapon)
-        return !alreadyknown;
+    item_def* item = _choose_target_item_for_scroll(true, OSEL_BLESSABLE_ITEM, "Bless which item?");
 
-    brand_weapon(*weapon);
+    if (!item)
+        return false;
+
+    mpr(pre_msg);
+
+    if (item->cursed())
+    {
+        do_uncurse_item(*item);
+        mprf("The blessing and the curse cancel each other in a brilliant flash!");
+        flash_view_delay(UA_PLAYER, WHITE, 300);
+        return true;
+    }
+
+    switch (item->base_type)
+    {
+    case OBJ_WEAPONS:
+        brand_weapon(*item);
+        break;
+
+    case OBJ_ARMOURS:
+        _brand_armour(*item);
+        break;
+
+    case OBJ_SHIELDS:
+        if (is_hybrid(item->sub_type))
+            brand_weapon(*item, true);
+        else
+            _brand_armour(*item);
+        break;
+
+    case OBJ_STAVES:
+        _brand_staff(*item);
+        break;
+
+    default:
+        mpr("Bad item selected for scroll. Please file a bug report.");
+        break;
+    }
     return true;
 }
 
@@ -3169,7 +3415,7 @@ static bool _is_cancellable_scroll(scroll_type scroll)
            || scroll == SCR_RECHARGING
            || scroll == SCR_ENCHANT_WEAPON
 #endif
-           || scroll == SCR_BRAND_WEAPON
+           || scroll == SCR_BLESS_ITEM
            || scroll == SCR_MAGIC_MAPPING
            || scroll == SCR_ACQUIREMENT;
 }
@@ -3604,15 +3850,8 @@ void read_scroll(item_def& scroll)
         break;
     }
 
-    case SCR_BRAND_WEAPON:
-        if (!alreadyknown)
-        {
-            mpr(pre_succ_msg);
-            mpr("It is a scroll of brand weapon.");
-            // included in default force_more_message (to show it before menu)
-        }
-
-        cancel_scroll = !_handle_brand_weapon(alreadyknown, pre_succ_msg);
+    case SCR_BLESS_ITEM:
+        cancel_scroll = !_handle_bless_item(pre_succ_msg);
         break;
 
     case SCR_ENCHANT:
@@ -3716,7 +3955,7 @@ void read_scroll(item_def& scroll)
 
     if (!alreadyknown
         && which_scroll != SCR_ACQUIREMENT
-        && which_scroll != SCR_BRAND_WEAPON
+        && which_scroll != SCR_BLESS_ITEM
         && which_scroll != SCR_ENCHANT
 #if TAG_MAJOR_VERSION == 34
         && which_scroll != SCR_ENCHANT_WEAPON

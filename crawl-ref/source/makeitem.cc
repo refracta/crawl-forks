@@ -596,7 +596,7 @@ static void _generate_weapon_item(item_def& item, bool allow_uniques,
     }
 }
 
-static special_armour_type _defensive_shield_brand ()
+special_armour_type defensive_shield_brand ()
 {
     return random_choose_weighted(1, SPARM_RESISTANCE,
                                   3, SPARM_FIRE_RESISTANCE,
@@ -673,7 +673,7 @@ static void _generate_shield_item(item_def& item, bool allow_uniques,
             if (is_hybrid(item.sub_type))
                 item.brand = determine_weapon_brand(item, 2 + 2 * env.absdepth0);
             else
-                item.brand = _defensive_shield_brand();
+                item.brand = defensive_shield_brand();
         }
         item.plus -= 1 + random2(3);
 
@@ -690,7 +690,7 @@ static void _generate_shield_item(item_def& item, bool allow_uniques,
             if (is_hybrid(item.sub_type))
                 item.brand = determine_weapon_brand(item, item_level);
             else
-                item.brand = _defensive_shield_brand();
+                item.brand = defensive_shield_brand();
         }
 
         // if acquired item still not ego... enchant it up a bit.
@@ -1018,7 +1018,7 @@ static bool _try_make_armour_artefact(item_def& item, int force_type,
  * @return              An ego appropriate to the item type.
  *                      May be SPARM_NORMAL.
  */
-static special_armour_type _generate_armour_type_ego(armour_type type)
+special_armour_type generate_armour_type_ego(armour_type type)
 {
     // TODO: move this into data
     switch (type)
@@ -1050,7 +1050,10 @@ static special_armour_type _generate_armour_type_ego(armour_type type)
                                       1, SPARM_WIELDING);
 
     case ARM_BOOTS:
-        return random_choose(SPARM_RUNNING, SPARM_STURDY, SPARM_STEALTH);
+        return random_choose_weighted(1, SPARM_RUNNING, 
+                                      2, SPARM_STURDY, 
+                                      5, SPARM_STEALTH);
+        // BCADDO: Buff SPARM_STEALTH.
 
     case ARM_NAGA_BARDING:
     case ARM_CENTAUR_BARDING:
@@ -1113,7 +1116,7 @@ static special_armour_type _generate_armour_ego(const item_def& item)
         return static_cast<special_armour_type>(item.brand);
 
     const special_armour_type ego
-        = _generate_armour_type_ego(static_cast<armour_type>(item.sub_type));
+        = generate_armour_type_ego(static_cast<armour_type>(item.sub_type));
 
     if (is_armour_brand_ok(item.sub_type, ego, true))
         return ego;
@@ -1132,7 +1135,7 @@ static special_armour_type _generate_armour_ego(const item_def& item)
 *                      otherwise, an ego appropriate to the item.
 *                      May be SPSTF_NORMAL.
 */
-static facet_type _generate_staff_facet(const item_def& item,
+facet_type generate_staff_facet(const item_def& item,
     int item_level)
 {
     if (x_chance_in_y(500 - item_level, 500))
@@ -1687,7 +1690,7 @@ static void _generate_scroll_item(item_def& item, int force_type,
                  32, SCR_BLINKING,
                  32, SCR_IMMOLATION,
                  // Higher-level scrolls.
-                 36, (depth_mod < 4 ? NUM_SCROLLS : SCR_BRAND_WEAPON),
+                 36, (depth_mod < 4 ? NUM_SCROLLS : SCR_BLESS_ITEM),
                  27, (depth_mod < 4 ? NUM_SCROLLS : SCR_VULNERABILITY),
                  17, (depth_mod < 4 ? NUM_SCROLLS : SCR_SUMMONING),
                  15, (depth_mod < 4 ? NUM_SCROLLS : SCR_ACQUIREMENT),
@@ -1844,7 +1847,7 @@ static void _generate_staff_item(item_def& item, bool allow_uniques,
     if (force_ego != 0)
         item.brand = force_ego;
     else
-        item.brand = _generate_staff_facet(item, item_level);
+        item.brand = generate_staff_facet(item, item_level);
 }
 
 static void _generate_rune_item(item_def& item, int force_type)
@@ -2325,7 +2328,7 @@ void reroll_brand(item_def &item, int item_level)
         item.brand = _generate_armour_ego(item);
         break;
     case OBJ_STAVES:
-        item.brand = _generate_staff_facet(item, item_level);
+        item.brand = generate_staff_facet(item, item_level);
         break;
     default:
         die("can't reroll brands of this type");
