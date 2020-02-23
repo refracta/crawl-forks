@@ -1018,7 +1018,6 @@ ITEM:    any scroll / any potion
 ITEM:    any scroll / any potion / any wand w:4
 KMONS:   V = wraith
 KMONS:   X = flying skull
-SHUFFLE: VX
 SUBST:   x = c:20 n:8
 SUBST:   z = c:20 n:4
 SUBST:   y = c:20 n:1
@@ -1041,15 +1040,15 @@ cc.......cc
    cc.cc                            ccccccccccccccccc
    cc..ccc                          c...............c
     cc...cc                         c.+cc..xxx..cc+.c
-  ccc...ccc                         c.c4c..x3x..c4c.c
- cc......cccccccccccccccccccccccccccc.ccc..yzy..ccc.c
-cc........cc$c$c$c$c$cc.....cccccVccc...............c
-c..........c+c+c+c+c+cc.GdG.cccccoccc.cxy..eee..yxx.c
+  ccc...ccc                 ccccccccc.c4c..x3x..c4c.c
+ cc......cccccccccccccccccccccccqqqcc.ccc..yzy..ccc.c
+cc........cc$c$c$c$c$cc.....ccccqVqcc...............c
+c..........c+c+c+c+c+cc.GdG.ccccqqqcc.cxy..eee..yxx.c
 c..c.......+..........+..d....+.....+.c3z..eee..z3x.c
-cc.cc......c+c+c+c+c+cc.GdG.cccccoccc.cxy..eee..yxx.c
-cc.c......cc$c$c$c$c$cc.....cccccXccc...............c
-cc.cc....cccccccccccccccccccccccccccc.ccc..yzy..ccc.c
- cc.....cc                          c.c4c..x3x..c4c.c
+cc.cc......c+c+c+c+c+cc.GdG.ccccnnncc.cxy..eee..yxx.c
+cc.c......cc$c$c$c$c$cc.....ccccnXncc...............c
+cc.cc....cccccccccccccccccccccccnnncc.ccc..yzy..ccc.c
+ cc.....cc                  ccccccccc.c4c..x3x..c4c.c
   cc...cc                           c.+cc..xxx..cc+.c
    ccccc                            c...............c
                                     ccccccccccccccccc
