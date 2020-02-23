@@ -1229,6 +1229,11 @@ wand of flame
 
 A magical device which throws little puffs of flame.
 %%%%
+wand of hasting
+
+A magical device which increases the speed of those exposed to its magic. Due
+to how the magic works, it cannot be used on the wielder.
+%%%%
 wand of healing
 
 A magical device which throws a gentle healing mist that closes the wounds
