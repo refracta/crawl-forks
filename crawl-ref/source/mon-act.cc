@@ -8,6 +8,7 @@
 #include "mon-act.h"
 
 #include "act-iter.h"
+#include "acquire.h"
 #include "areas.h"
 #include "arena.h"
 #include "artefact.h"
@@ -1028,7 +1029,7 @@ static bool _handle_scroll(monster& mons)
         int x = get_mitm_slot();
         item_def &item = mitm[x];
         item.base_type = OBJ_GOLD;
-        item.quantity = 50 + random2(120);
+        item.quantity = acquire_gold_amt();
         simple_monster_message(mons, " didn't like any of the acquirement options so just took some gold.");
         give_specific_item(&mons, x);
         break;

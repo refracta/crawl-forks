@@ -1262,6 +1262,16 @@ static string _why_reject(const item_def &item, int agent)
     return ""; // all OK
 }
 
+int acquire_gold_amt()
+{
+    // New gold acquirement formula from dpeg.
+    // Min=220, Max=5520, Mean=1218, Std=911
+    int quantity_rnd = roll_dice(1, 8); // ensure rnd sequence points
+    quantity_rnd *= roll_dice(1, 8);
+    quantity_rnd *= roll_dice(1, 8);
+    return (10 * (20 + roll_dice(1, 20) + quantity_rnd));
+}
+
 int acquirement_create_item(object_class_type class_wanted,
                             int agent, bool quiet,
                             const coord_def &pos)
@@ -1374,16 +1384,7 @@ int acquirement_create_item(object_class_type class_wanted,
         if (class_wanted == OBJ_WANDS)
             acq_item.plus = max(static_cast<int>(acq_item.plus), 3 + random2(3));
         else if (class_wanted == OBJ_GOLD)
-        {
-            // New gold acquirement formula from dpeg.
-            // Min=220, Max=5520, Mean=1218, Std=911
-            int quantity_rnd = roll_dice(1, 8); // ensure rnd sequence points
-            quantity_rnd *= roll_dice(1, 8);
-            quantity_rnd *= roll_dice(1, 8);
-            acq_item.quantity = 10 * (20
-                                    + roll_dice(1, 20)
-                                    + quantity_rnd);
-        }
+            acq_item.quantity = acquire_gold_amt();
         else if (quant > 1)
             acq_item.quantity = quant;
 
