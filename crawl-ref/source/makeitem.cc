@@ -115,7 +115,6 @@ static bool _is_boring_item(int type, int sub_type)
         // These scrolls increase knowledge and thus reduce risk.
         switch (sub_type)
         {
-        case SCR_REMOVE_CURSE:
         case SCR_MAGIC_MAPPING:
             return true;
         default:
@@ -1672,7 +1671,7 @@ static void _generate_scroll_item(item_def& item, int force_type,
         // _is_boring_item). Otherwise just weighted-choose a scroll.
         do
         {
-            // total weight:    495  if depth_mod < 4
+            // total weight:    501 if depth_mod < 4
             //                  574  otherwise
             //                 -376  in sprint
             item.sub_type = random_choose_weighted(
@@ -1688,13 +1687,12 @@ static void _generate_scroll_item(item_def& item, int force_type,
                  32, SCR_BLINKING,
                  32, SCR_IMMOLATION,
                  // Higher-level scrolls.
+                 36, (depth_mod < 4 ? NUM_SCROLLS : SCR_BRAND_WEAPON),
                  27, (depth_mod < 4 ? NUM_SCROLLS : SCR_VULNERABILITY),
                  17, (depth_mod < 4 ? NUM_SCROLLS : SCR_SUMMONING),
                  15, (depth_mod < 4 ? NUM_SCROLLS : SCR_ACQUIREMENT),
                  15, (depth_mod < 4 ? NUM_SCROLLS : SCR_NOISE),
                  15, (depth_mod < 4 ? NUM_SCROLLS : SCR_SILENCE),
-                 15, (depth_mod < 4 ? NUM_SCROLLS : SCR_REMOVE_CURSE),
-                 15, (depth_mod < 4 ? NUM_SCROLLS : SCR_BRAND_WEAPON),
                  15, (depth_mod < 4 ? NUM_SCROLLS : SCR_TORMENT),
                  15, (depth_mod < 4 ? NUM_SCROLLS : SCR_HOLY_WORD));
         }

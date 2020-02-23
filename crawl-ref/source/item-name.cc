@@ -764,9 +764,9 @@ static const char* scroll_type_name(int scrolltype)
     case SCR_TELEPORTATION:      return "teleportation";
     case SCR_FEAR:               return "fear";
     case SCR_NOISE:              return "attention";
-    case SCR_REMOVE_CURSE:       return "remove curse";
     case SCR_SUMMONING:          return "summoning";
 #if TAG_MAJOR_VERSION == 34
+    case SCR_REMOVE_CURSE:       return "old remove curse";
     case SCR_ENCHANT_WEAPON:     return "old enchant weapon";
 #endif
     case SCR_ENCHANT:            return "enchantment";
