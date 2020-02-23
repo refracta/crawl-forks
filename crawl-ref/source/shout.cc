@@ -734,7 +734,6 @@ void maybe_trigger_shoutitus(const vector<monster*> monsters)
  */
 void yell(const actor* mon)
 {
-    // BCADDO: You know what to do here.
     ASSERT(!crawl_state.game_is_arena());
 
     const string shout_verb = you.shout_verb(mon != nullptr);
@@ -765,11 +764,19 @@ void yell(const actor* mon)
 
     if (mon)
     {
-        mprf("You %s%s at %s!",
-             shout_verb.c_str(),
-             you.duration[DUR_RECITE] ? " your recitation" : "",
+        string msg = getShoutString("__DEMON_TAUNT");
+
+        if (!msg.empty())
+        {
+            msg = replace_all(msg, "@The_monster@", "You");
+            msg = replace_all(msg, "@says@", shout_verb);
+        }
+
+        mprf(MSGCH_SOUND, "%s at %s!",
+             msg.c_str(),
              mon->name(DESC_THE).c_str());
     }
+
     else
     {
         mprf(MSGCH_SOUND, "You %s%s!",
