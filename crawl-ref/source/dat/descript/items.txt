@@ -928,6 +928,15 @@ scroll of amnesia
 A scroll that allows its reader to selectively erase one spell from memory to
 recapture the magical energy bound up with it.
 %%%%
+scroll of bless item
+
+A scroll that confers a priestly blessing from a lesser known diety upon a 
+chosen item. This blessing will remove a curse should the item be cursed, 
+otherwise it will embue a magical property upon the chosen weapon, shield,
+armour or staff; replacing the existing one, should one exist. Though it 
+can remove curses from artefacts, the blessing isn't powerful enough to 
+change the properties of them.
+%%%%
 scroll of blinking
 
 A scroll that allows its reader to teleport a short distance, with precise

@@ -661,18 +661,6 @@ Denne skriftrulle lader læseren teleportere en kort distance med præcis
 kontrol. Vær opmærksom på, at kontrolleret teleportation vil besmitte den
 teleporterede med magisk energi.
 %%%%
-scroll of curse armour
-
-Denne skriftrulle kaster en forbandelse på et båret stykke rustning.
-%%%%
-scroll of curse jewellery
-
-Denn. skriftrulle kaster en forbandelse på en amulet eller ring, du har på.
-%%%%
-scroll of curse weapon
-
-Denne skriftrulle kaster en forbandelse på dit våben.
-%%%%
 scroll of enchantment
 
 Denne skriftrulle fortryller et stykke rustning. De fleste former for rustning
