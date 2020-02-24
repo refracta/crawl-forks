@@ -436,7 +436,7 @@ static void _wucad_backfire()
         break;
     case 4:
     case 5:
-        dec_mp(5 + random2(20));
+        dec_mp(random2(10));
         break;
     case 6:
         lose_stat(STAT_INT, 1 + random2avg(5, 2));

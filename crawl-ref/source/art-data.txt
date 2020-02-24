@@ -235,12 +235,14 @@ BOOL:    rCorr, skip_ego
 
 NAME:    staff of Wucad Mu
 INSCRIP: channel
-OBJ:     OBJ_WEAPONS/WPN_STAFF
+OBJ:     OBJ_STAVES/STAFF_ENCHANTMENT
 PLUS:    +9
 COLOUR:  ETC_MAGIC
 TILE:    spwpn_wucad_mu
 TILE_EQ: wucad_mu
 VALUE:   1000
+MAGIC:   2
+BOOL:    skip_ego
 
 NAME:    Vampire's Tooth
 OBJ:     OBJ_WEAPONS/WPN_QUICK_BLADE
