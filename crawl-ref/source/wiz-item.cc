@@ -497,7 +497,7 @@ void wizard_tweak_object()
 static bool _item_type_can_be_artefact(int type)
 {
     return type == OBJ_WEAPONS || type == OBJ_ARMOURS || type == OBJ_JEWELLERY
-           || type == OBJ_BOOKS || type == OBJ_SHIELDS;
+           || type == OBJ_BOOKS || type == OBJ_SHIELDS || type == OBJ_STAVES;
 }
 
 static bool _make_book_randart(item_def &book)

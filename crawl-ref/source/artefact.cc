@@ -1181,11 +1181,15 @@ void artefact_learn_prop(item_def &item, artefact_prop_type prop)
 
 static string _get_artefact_type(const item_def &item, bool appear = false)
 {
+    // BCADDNOTE: These are only used for database lookups; considering
+    // magical staves weapons and shield armour are to prevent making full
+    // new databases for these types.
     switch (item.base_type)
     {
     case OBJ_BOOKS:
         return "book";
     case OBJ_WEAPONS:
+    case OBJ_STAVES:
         return "weapon";
     case OBJ_ARMOURS:
         if (item.sub_type == ARM_ROBE)
@@ -1194,9 +1198,9 @@ static string _get_artefact_type(const item_def &item, bool appear = false)
             return "body armour";
         return "armour";
     case OBJ_SHIELDS:
-        return "shield";
-    case OBJ_STAVES:
-        return "staff";
+        if (is_hybrid(item.sub_type))
+            return "weapon";
+        return "armour";
     case OBJ_JEWELLERY:
         // Distinguish between amulets and rings only in appearance.
         if (!appear)
@@ -1217,6 +1221,8 @@ static bool _pick_db_name(const item_def &item)
     {
     case OBJ_WEAPONS:
     case OBJ_ARMOURS:
+    case OBJ_SHIELDS:
+    case OBJ_STAVES:
         return coinflip();
     case OBJ_JEWELLERY:
         return one_chance_in(5);
