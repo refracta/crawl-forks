@@ -1380,11 +1380,12 @@ BRAND:    SPWPN_DISTORTION
 
 ENUM:     BATTLE
 NAME:     staff of Battle
-OBJ:      OBJ_WEAPONS/WPN_STAFF
-PLUS:     +0
+OBJ:      OBJ_STAVES/STAFF_EARTH
+PLUS:     +3
 COLOUR:   ETC_MAGIC
 TILE:     urand_staff_of_battle
 TILE_EQ:  battle_staff
+BRAND:    SPSTF_SHIELD
 VALUE:    800
 
 # This entry must always be last.
