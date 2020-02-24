@@ -645,7 +645,7 @@ const char* armour_ego_name(const item_def& item, bool terse)
         case SPARM_ARCHMAGI:          return "Archmagi";
         case SPARM_HIGH_PRIEST:       return "High Priest";
 #if TAG_MAJOR_VERSION == 34
-        case SPARM_FLYING:            return "Fly";
+        case SPARM_FLYING:            return "obsolete";
         case SPARM_JUMPING:           return "obsolete";
         case SPARM_PRESERVATION:      return "obsolete";
 #endif
@@ -1181,7 +1181,7 @@ static const char* staff_primary_string(uint32_t p)
     return primary_strings[p % ARRAYSZ(primary_strings)];
 }
 
-static const char* staff_type_name(int stafftype)
+static const char* staff_type_name(int stafftype, bool terse = false)
 {
     switch ((stave_type)stafftype)
     {
@@ -1192,7 +1192,7 @@ static const char* staff_type_name(int stafftype)
     case STAFF_AIR:            return "air";
     case STAFF_EARTH:          return "earth";
     case STAFF_SUMMONING:      return "life";
-    case STAFF_TRANSMUTATION:  return "transmutation";
+    case STAFF_TRANSMUTATION:  return terse ? "tMut" : "transmutation";
 #if TAG_MAJOR_VERSION == 34
     case STAFF_ENERGY:         return "removedness";
     case STAFF_WIZARDRY:       return "removedness";
@@ -1203,22 +1203,40 @@ static const char* staff_type_name(int stafftype)
     }
 }
 
-static const char* staff_facet_name(int stafftype)
+static const char* staff_facet_name(int stafftype, bool terse = false)
 {
+    if (!terse)
+    {
+        switch ((facet_type)stafftype)
+        {
+        case SPSTF_NORMAL:      return "";
+        case SPSTF_SHIELD:      return "shielded ";
+        case SPSTF_FLAY:        return "flayed ";
+        case SPSTF_WARP:        return "warped ";
+        case SPSTF_ENERGY:      return "energetic ";
+        case SPSTF_REAVER:      return "reaver's ";
+        case SPSTF_WIZARD:      return "wizard's ";
+        case SPSTF_SCOPED:      return "scoped ";
+        case SPSTF_MENACE:      return "menacing ";
+        case SPSTF_ACCURACY:    return "accurate ";
+        case SPSTF_CHAOS:       return "chaotic ";
+        default:                return "buggy ";
+        }
+    }
     switch ((facet_type)stafftype)
     {
     case SPSTF_NORMAL:      return "";
-    case SPSTF_SHIELD:      return "shielded ";
-    case SPSTF_FLAY:        return "flayed ";
-    case SPSTF_WARP:        return "warped ";
-    case SPSTF_ENERGY:      return "energetic ";
-    case SPSTF_REAVER:      return "reaver's ";
-    case SPSTF_WIZARD:      return "wizard's ";
-    case SPSTF_SCOPED:      return "scoped ";
-    case SPSTF_MENACE:      return "menacing ";
-    case SPSTF_ACCURACY:    return "accurate ";
-    case SPSTF_CHAOS:       return "chaotic ";
-    default:                return "buggy ";
+    case SPSTF_SHIELD:      return "shield, ";
+    case SPSTF_FLAY:        return "flay, ";
+    case SPSTF_WARP:        return "warp, ";
+    case SPSTF_ENERGY:      return "energy, ";
+    case SPSTF_REAVER:      return "reaver, ";
+    case SPSTF_WIZARD:      return "wizard, ";
+    case SPSTF_SCOPED:      return "scoped, ";
+    case SPSTF_MENACE:      return "menace, ";
+    case SPSTF_ACCURACY:    return "accurate, ";
+    case SPSTF_CHAOS:       return "chaos, ";
+    default:                return "buggy, ";
     }
 }
 
@@ -1312,6 +1330,13 @@ string sub_type_string(const item_def &item, bool known)
     case OBJ_RUNES: return "rune of Zot";
     default: return "";
     }
+}
+
+string staff_artefact_brand_name(const item_def &staff)
+{
+    string retval = staff_facet_name(get_staff_facet(staff), true);
+    retval += staff_type_name(static_cast<stave_type>(staff.sub_type), true);
+    return retval;
 }
 
 /**
@@ -2166,9 +2191,16 @@ string item_def::name_aux(description_level_type desc, bool terse, bool ident,
         if (know_pluses)
             buff << make_stringf("%+d ", plus);
 
-        if (know_ego)
+        if (know_ego && !is_artefact(*this))
         {
             buff << staff_facet_name(get_staff_facet(*this));
+        }
+
+        if (is_random_artefact(*this) && !dbname && !basename)
+        {
+            buff << "staff";
+            buff << get_artefact_name(*this);
+            break;
         }
 
         if (!know_type)

@@ -366,6 +366,10 @@ static vector<string> _randart_propnames(const item_def& item,
                 ego = weapon_brand_name(item, true);
             else if (item.base_type == OBJ_ARMOURS || (item.base_type == OBJ_SHIELDS && !is_hybrid(item.sub_type)))
                 ego = armour_ego_name(item, true);
+            else if (item.base_type == OBJ_STAVES)
+            {
+                ego = staff_artefact_brand_name(item);
+            }
             if (!ego.empty())
             {
                 // XXX: Ugly hack for adding a comma if needed.
@@ -381,7 +385,7 @@ static vector<string> _randart_propnames(const item_def& item,
                     || is_unrandom_artefact(item)
                     && entry && entry->inscrip != nullptr)
                 {
-                    ego += ",";
+                    ego += item.base_type == OBJ_STAVES ? ";" : ",";
                 }
 
                 propnames.push_back(ego);
