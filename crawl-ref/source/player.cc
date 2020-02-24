@@ -1079,7 +1079,12 @@ bool player_equip_unrand(int unrand_index)
     case EQ_WEAPON0:
         // Hands can have more than just weapons.
         if ((item = you.slot_item(slot))
-            && item->base_type == OBJ_WEAPONS
+            && is_unrandom_artefact(*item)
+            && item->unrand_idx == unrand_index)
+        {
+            return true;
+        }
+        if ((item = you.weapon(1))
             && is_unrandom_artefact(*item)
             && item->unrand_idx == unrand_index)
         {
@@ -1743,7 +1748,6 @@ int player_res_poison(bool calc_unid, bool temp, bool items)
 
     if (you.is_nonliving(temp)
         || temp && get_form()->res_pois() == 3
-        || items && player_equip_unrand(UNRAND_OLGREB)
         || temp && you.duration[DUR_DIVINE_STAMINA])
     {
         return 3;
@@ -1923,12 +1927,7 @@ int player_spec_summ()
 
 int player_spec_poison()
 {
-    int sp = 0;
-
-    if (player_equip_unrand(UNRAND_OLGREB))
-        sp++;
-
-    return sp;
+    return 0;
 }
 
 int player_spec_translo()
@@ -4625,7 +4624,7 @@ void handle_player_poison(int delay)
         return;
     }
 
-    // Other sources of immunity (Zin, staff of Olgreb) let poison dissipate.
+    // Other sources of immunity (Zin) let poison dissipate.
     bool do_dmg = (player_res_poison() >= 3 ? false : true);
 
     int dmg = (you.duration[DUR_POISONING] / 1000)

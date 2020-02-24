@@ -35,13 +35,6 @@ tileidx_t tilep_equ_hand1(const item_def &item)
     if (item.props.exists("worn_tile"))
         return item.props["worn_tile"].get_short();
 
-    if (item.base_type == OBJ_STAVES)
-    {
-        int orig_special = you.item_description[IDESC_STAVES][item.sub_type];
-        int desc = (orig_special / NDSC_STAVE_PRI) % NDSC_STAVE_SEC;
-        return TILEP_HAND1_STAFF_LARGE + desc;
-    }
-
 #if TAG_MAJOR_VERSION == 34
     if (item.base_type == OBJ_RODS)
         return _mon_mod(TILEP_HAND1_ROD_FIRST, item.rnd);
@@ -93,6 +86,13 @@ tileidx_t tilep_equ_hand1(const item_def &item)
         const tileidx_t tile = unrandart_to_right_hand(find_unrandart_index(item));
         if (tile)
             return tile;
+    }
+
+    if (item.base_type == OBJ_STAVES)
+    {
+        int orig_special = you.item_description[IDESC_STAVES][item.sub_type];
+        int desc = (orig_special / NDSC_STAVE_PRI) % NDSC_STAVE_SEC;
+        return TILEP_HAND1_STAFF_LARGE + desc;
     }
 
     if (item.base_type == OBJ_SHIELDS)
@@ -297,13 +297,6 @@ tileidx_t tilep_equ_hand2(const item_def &item)
     if (item.props.exists("worn_tile"))
         return item.props["worn_tile"].get_short();
 
-    if (item.base_type == OBJ_STAVES)
-    {
-        int orig_special = you.item_description[IDESC_STAVES][item.sub_type];
-        int desc = (orig_special / NDSC_STAVE_PRI) % NDSC_STAVE_SEC;
-        return TILEP_HAND2_STAFF_LARGE + desc;
-    }
-
 #if TAG_MAJOR_VERSION == 34
     if (item.base_type == OBJ_RODS)
         return _mon_mod(TILEP_HAND2_ROD_FIRST, item.rnd);
@@ -355,6 +348,13 @@ tileidx_t tilep_equ_hand2(const item_def &item)
         const tileidx_t tile = unrandart_to_left_hand(find_unrandart_index(item));
         if (tile)
             return tile;
+    }
+
+    if (item.base_type == OBJ_STAVES)
+    {
+        int orig_special = you.item_description[IDESC_STAVES][item.sub_type];
+        int desc = (orig_special / NDSC_STAVE_PRI) % NDSC_STAVE_SEC;
+        return TILEP_HAND2_STAFF_LARGE + desc;
     }
 
     if (item.base_type == OBJ_SHIELDS)

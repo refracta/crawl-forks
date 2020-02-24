@@ -224,13 +224,14 @@ VALUE:   800
 BOOL:    special, no_upgrade
 
 NAME:    staff of Olgreb
-OBJ:     OBJ_WEAPONS/WPN_STAFF
-PLUS:    +9
+INSCRIP: Transmute Poison
+OBJ:     OBJ_STAVES/STAFF_POISON
+PLUS:    +7
 COLOUR:  ETC_POISON
 TILE:    spwpn_staff_of_olgreb
 TILE_EQ: olgreb
 VALUE:   1000
-BOOL:    poison
+BOOL:    rCorr, skip_ego
 
 NAME:    staff of Wucad Mu
 INSCRIP: channel

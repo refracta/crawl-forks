@@ -1287,10 +1287,7 @@ static bool _is_signature_weapon(const monster* mons, const item_def &weapon)
             return get_weapon_brand(weapon) == SPWPN_SILVER;
 
         if (mons->type == MONS_ARACHNE)
-        {
-            return weapon.is_type(OBJ_STAVES, STAFF_POISON)
-                   || is_unrandom_artefact(weapon, UNRAND_OLGREB);
-        }
+            return weapon.is_type(OBJ_STAVES, STAFF_POISON);
 
         if (mons->type == MONS_FANNAR)
             return weapon.is_type(OBJ_STAVES, STAFF_COLD);

@@ -259,46 +259,6 @@ static void _OLGREB_unequip(item_def */*item*/, bool *show_msgs)
         _equip_mpr(show_msgs, "The staff's sickly green glow vanishes.");
 }
 
-static bool _OLGREB_evoke(item_def */*item*/, bool* did_work, bool* unevokable)
-{
-    if (!enough_mp(4, false))
-    {
-        *unevokable = true;
-        return true;
-    }
-
-    if (!x_chance_in_y(you.skill(SK_EVOCATIONS, 100) + 100, 600))
-        return false;
-
-    *did_work = true;
-
-    int power = div_rand_round(20 + you.skill(SK_EVOCATIONS, 20), 4);
-
-    // Allow aborting (for example if friendlies are nearby).
-    if (your_spells(SPELL_OLGREBS_TOXIC_RADIANCE, power, false) == spret::abort)
-    {
-        *unevokable = true;
-        return false;
-    }
-
-    if (x_chance_in_y(you.skill(SK_EVOCATIONS, 100) + 100, 2000))
-        your_spells(SPELL_VENOM_BOLT, power, false);
-
-    dec_mp(4);
-    make_hungry(50, false, true);
-    practise_evoking(1);
-
-    return false;
-}
-
-static void _OLGREB_melee_effects(item_def* /*weapon*/, actor* attacker,
-                                  actor* defender, bool /*mondied*/,
-                                  int /*dam*/)
-{
-    if (defender->alive())
-        defender->poison(attacker, 2);
-}
-
 ////////////////////////////////////////////////////
 
 static void _power_pluses(item_def *item)

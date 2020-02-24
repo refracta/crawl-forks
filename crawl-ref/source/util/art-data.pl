@@ -757,6 +757,10 @@ sub write_tiles
         {
             $dir = "weapon";
         }
+		elsif ($type eq "OBJ_STAVES")
+        {
+            $dir = "weapon";
+        }
         elsif ($type eq "OBJ_ARMOURS")
         {
             $dir = "armour";
@@ -840,7 +844,8 @@ HEADER_END
         }
 
         my $part = "BODY";
-        if ($artefact->{base_type} eq "OBJ_WEAPONS" || $artefact->{base_type} eq "OBJ_SHIELDS")
+        if ($artefact->{base_type} eq "OBJ_WEAPONS" || $artefact->{base_type} eq "OBJ_SHIELDS"
+												    || $artefact->{base_type} eq "OBJ_STAVES")
         {
             $part = "HAND1";
         }
@@ -974,7 +979,7 @@ HEADER_END
     print TILES (" " x 4) . "{\n";
     foreach my $part (sort keys %parts)
     {
-			if ($part eq "HAND1")
+		if ($part eq "HAND1")
 		{
 			next;
 		}

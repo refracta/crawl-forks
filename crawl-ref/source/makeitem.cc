@@ -2041,12 +2041,8 @@ static void _setup_fallback_randart(const int unrand_id,
         && fallback_sub_type == WPN_STAFF)
     {
         item.base_type = OBJ_STAVES;
-        if (unrand_id == UNRAND_OLGREB)
-            force_type = STAFF_POISON;
-        else
-            force_type = OBJ_RANDOM;
-        // XXX: small chance of the other unrand...
-        // (but we won't hit this case until a new staff unrand is added)
+        force_type = OBJ_RANDOM;
+        // BCADDO: REMOVE THIS.
     }
     else if (item.base_type == OBJ_JEWELLERY
              && fallback_sub_type == AMU_NOTHING)

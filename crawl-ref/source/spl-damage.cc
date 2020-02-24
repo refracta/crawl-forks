@@ -2291,6 +2291,33 @@ bool ignite_poison_affects(const actor* act)
     return act->as_monster()->has_ench(ENCH_POISON);
 }
 
+// Is there ANY poison to transmute in the environment?
+static bool _olgreb_check(actor * agent)
+{
+    coord_def center = agent->pos();
+    for (radius_iterator ri(center, LOS_NO_TRANS, true); ri; ++ri)
+    {
+        if (agent->see_cell_no_trans(*ri))
+        {
+            if (actor * act = actor_at(*ri))
+            {
+                if (act->is_player() && you.duration[DUR_POISONING])
+                    return true;
+                else if (act->as_monster()->has_ench(ENCH_POISON))
+                    return true;
+            }
+            if (cloud_struct * c = cloud_at(*ri))
+            {
+                if (c->type == CLOUD_POISON || c->type == CLOUD_MEPHITIC)
+                    return true;
+            }
+            if (grd(*ri) == DNGN_TOXIC_BOG)
+                return true;
+        }
+    }
+    return false;
+}
+
 /**
  * Cast the spell Ignite Poison, burning poisoned creatures and poisonous
  * clouds in LOS.
@@ -2308,7 +2335,7 @@ bool ignite_poison_affects(const actor* act)
  *                      to abort the spell, spret::fail if they failed the cast
  *                      chance, and spret::success otherwise.
  */
-spret cast_ignite_poison(actor* agent, int pow, bool fail, bool tracer)
+spret cast_ignite_poison(actor* agent, int pow, bool fail, bool tracer, bool olgreb)
 {
     if (tracer)
     {
@@ -2323,7 +2350,7 @@ spret cast_ignite_poison(actor* agent, int pow, bool fail, bool tracer)
         return work > 0 ? spret::success : spret::abort;
     }
 
-    if (agent->is_player())
+    if (!olgreb && agent->is_player())
     {
         if (maybe_abort_ignite())
         {
@@ -2333,7 +2360,13 @@ spret cast_ignite_poison(actor* agent, int pow, bool fail, bool tracer)
         fail_check();
     }
 
+    if (olgreb && !_olgreb_check(agent))
+        return spret::abort;
+
     bool chaos = determine_chaos(agent, SPELL_IGNITE_POISON);
+
+    if (olgreb && !one_chance_in(4))
+        chaos = true;
 
     beam_type dam_type = BEAM_FIRE;
     targeter_radius hitfunc(agent, LOS_NO_TRANS);
@@ -2346,6 +2379,9 @@ spret cast_ignite_poison(actor* agent, int pow, bool fail, bool tracer)
                                           4, is_good_god(you.religion) ? BEAM_NEG : BEAM_HOLY,
                                           1, BEAM_HOLY, 
                                           6, BEAM_DEVASTATION);
+
+    if (olgreb && dam_type == BEAM_HOLY)
+        dam_type = BEAM_ACID;
 
     switch (dam_type)
     {
@@ -2362,9 +2398,11 @@ spret cast_ignite_poison(actor* agent, int pow, bool fail, bool tracer)
                                         : UA_MONSTER,
                      tyr, 100, &hitfunc);
 
+    if (olgreb)
+        mpr("The staff of Olgreb transmutes the poison in its environment!");
     mprf("%s %s the poison in %s surroundings!", agent->name(DESC_THE).c_str(),
-         agent->conj_verb(verb).c_str(),
-         agent->pronoun(PRONOUN_POSSESSIVE).c_str());
+        agent->conj_verb(verb).c_str(),
+        agent->pronoun(PRONOUN_POSSESSIVE).c_str());
 
     // this could conceivably cause crashes if the player dies midway through
     // maybe split it up...?

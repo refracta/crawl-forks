@@ -41,10 +41,10 @@ weakness.
 %%%%
 staff of Olgreb
 
-A staff which was once wielded by the mighty wizard Olgreb. It increases the
-power of its wielder's poison magic, and can be evoked to activate its own
-venomous spells. Its touch may poison even resistant creatures, and it grants
-immunity to all venoms while wielded.
+A staff which was once wielded by the mighty alchemist and poison mage Olgreb. 
+It increases the power of its wielder's poison and transmutations magic and on
+successful cast of any poison spell expends an additional amount of the wielder's
+mana to transmute the poison in the environment.
 %%%%
 staff of Wucad Mu
 

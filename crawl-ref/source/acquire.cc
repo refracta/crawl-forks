@@ -1215,15 +1215,9 @@ static string _why_reject(const item_def &item, int agent)
 
     // Trog does not gift the Wrath of Trog, nor weapons of pain
     // (which work together with Necromantic magic).
-    // nor fancy magic staffs (wucad mu, majin-bo, staff of battle, elem
-    // staff, staff of olgreb)
     if (agent == GOD_TROG)
     {
         if (is_unrandom_artefact(item, UNRAND_TROG)
-            || is_unrandom_artefact(item, UNRAND_WUCAD_MU)
-            || is_unrandom_artefact(item, UNRAND_MAJIN)
-            || is_unrandom_artefact(item, UNRAND_ELEMENTAL_STAFF)
-            || is_unrandom_artefact(item, UNRAND_OLGREB)
             || get_weapon_brand(item) == SPWPN_PAIN)
         {
             return "Destroying a weapon Trog hates!";

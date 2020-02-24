@@ -14,6 +14,7 @@
 
 #include "act-iter.h"
 #include "areas.h"
+#include "art-enum.h"
 #include "attack.h"
 #include "bloodspatter.h"
 #include "branch.h"
@@ -4375,6 +4376,9 @@ bool handle_mon_spell(monster* mons)
     if (!(flags & MON_SPELL_INSTANT))
     {
         mons->lose_energy(EUT_SPELL);
+        if (mons->staff() && bool(get_spell_disciplines(spell_cast) & spschool::poison)
+            && is_unrandom_artefact(*mons->staff(), UNRAND_OLGREB))
+            cast_ignite_poison(mons, mons->spell_hd(spell_cast), false, false, true);
         return true;
     }
 

@@ -1771,8 +1771,7 @@ static tileidx_t _tileidx_monster_no_props(const monster_info& mon)
             // (enhancer staves are compatible with those).
             const item_def* weapon = mon.inv[MSLOT_WEAPON].get();
             if (!mon.inv[MSLOT_SHIELD] && weapon
-                && (weapon->is_type(OBJ_STAVES, STAFF_POISON)
-                    || is_unrandom_artefact(*weapon, UNRAND_OLGREB)))
+                && (weapon->is_type(OBJ_STAVES, STAFF_POISON)))
             {
                 return base;
             }
@@ -2826,6 +2825,8 @@ tileidx_t tileidx_item(const item_def &item)
                + rnd % tile_main_count(TILE_BOOK_OFFSET);
 
     case OBJ_STAVES:
+        if (is_unrandom_artefact(item) && !is_randapp_artefact(item))
+            return _tileidx_unrand_artefact(find_unrandart_index(item));
         return TILE_STAFF_ID_FIRST + type;
 
 #if TAG_MAJOR_VERSION == 34

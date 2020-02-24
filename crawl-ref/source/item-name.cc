@@ -1193,11 +1193,11 @@ static const char* staff_type_name(int stafftype, bool terse = false)
     case STAFF_EARTH:          return "earth";
     case STAFF_SUMMONING:      return "life";
     case STAFF_TRANSMUTATION:  return terse ? "tMut" : "transmutation";
+    case STAFF_ENCHANTMENT:    return "nothing";
 #if TAG_MAJOR_VERSION == 34
     case STAFF_ENERGY:         return "removedness";
     case STAFF_WIZARDRY:       return "removedness";
     case STAFF_CONJURATION:    return "removedness";
-    case STAFF_ENCHANTMENT:    return "removedness";
 #endif
     default:                   return "bugginess";
     }
@@ -2196,9 +2196,10 @@ string item_def::name_aux(description_level_type desc, bool terse, bool ident,
             buff << staff_facet_name(get_staff_facet(*this));
         }
 
-        if (is_random_artefact(*this) && !dbname && !basename)
+        if (is_artefact(*this) && !dbname && !basename)
         {
-            buff << "staff";
+            if (is_random_artefact(*this))
+                buff << "staff";
             buff << get_artefact_name(*this);
             break;
         }

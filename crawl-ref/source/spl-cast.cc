@@ -12,6 +12,7 @@
 #include <cmath>
 
 #include "areas.h"
+#include "artefact.h"
 #include "art-enum.h"
 #include "beam.h"
 #include "chardump.h"
@@ -570,7 +571,8 @@ bool staff_enhances_spell(item_def * staff, spell_type spell)
     if (bool(typeflags & spschool::summoning) && staff->sub_type == STAFF_SUMMONING)
         return true;
 
-    if (bool(typeflags & spschool::transmutation) && staff->sub_type == STAFF_TRANSMUTATION)
+    if (bool(typeflags & spschool::transmutation) && 
+        (staff->sub_type == STAFF_TRANSMUTATION || is_unrandom_artefact(*staff, UNRAND_OLGREB)))
         return true;
 
     return false;
@@ -1090,6 +1092,13 @@ static void _spellcasting_side_effects(spell_type spell, god_type god,
         // Make some noise if it's actually the player casting.
         noisy(spell_noise(spell), you.pos());
 
+        if (!fake_spell && player_equip_unrand(UNRAND_OLGREB)
+            && bool(get_spell_disciplines(spell) & spschool::poison))
+        {
+            if (cast_ignite_poison(&you, calc_spell_power(spell, true), false, false, true) == spret::success)
+                dec_mp(2, true);
+        }
+
         if (!fake_spell && player_equip_unrand(UNRAND_MAJIN))
         {
             // never kill the player (directly)
@@ -1483,8 +1492,6 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
             mprf(MSGCH_PROMPT, "%s", prompt ? prompt : "Which direction?");
 
         const bool needs_path = !testbits(flags, spflag::target);
-
-        const int range = calc_spell_range(spell, powc, allow_fail);
 
         unique_ptr<targeter> hitfunc = _spell_targeter(spell, powc, range, warped);
 

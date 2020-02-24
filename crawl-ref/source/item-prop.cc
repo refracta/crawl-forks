@@ -872,7 +872,6 @@ const set<pair<object_class_type, int> > removed_items =
     { OBJ_JEWELLERY, RING_PROTECTION_FROM_COLD },
     { OBJ_JEWELLERY, RING_SEE_INVISIBLE },
     { OBJ_JEWELLERY, RING_FLIGHT },
-    { OBJ_STAVES,    STAFF_ENCHANTMENT },
     { OBJ_STAVES,    STAFF_CHANNELING },
     { OBJ_STAVES,    STAFF_CONJURATION },
     { OBJ_STAVES,    STAFF_WIZARDRY },
@@ -2167,12 +2166,6 @@ skill_type item_attack_skill(object_class_type wclass, int wtype)
 // True if item is a staff that deals extra damage based on Evocations skill.
 bool staff_uses_evocations(const item_def &item)
 {
-    if (is_unrandom_artefact(item, UNRAND_ELEMENTAL_STAFF)
-        || is_unrandom_artefact(item, UNRAND_OLGREB))
-    {
-        return true;
-    }
-
     if (item.base_type != OBJ_STAVES)
         return false;
 
