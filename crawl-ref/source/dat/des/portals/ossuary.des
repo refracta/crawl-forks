@@ -502,7 +502,7 @@ MONS:    gnoll zombie / hobgoblin zombie / orc zombie / \
          big kobold zombie / centaur zombie
 # mix of good items with useless ones
 ITEM:    scroll of random uselessness w:20 / scroll of immolation / \
-         scroll of remove curse / \
+         scroll of bless item / \
          potion of mutation w:5 / potion of ambrosia w:5 / \
          potion of degeneration / potion of lignification / \
          potion of curing w:15

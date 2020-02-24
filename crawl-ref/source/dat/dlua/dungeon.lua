@@ -640,17 +640,15 @@ end
 -- List of useful scrolls, with some reasonable weights.
 -- When changing the list or the weights, please keep the total weight at 1000.
 dgn.good_scrolls = [[
-    w:85  scroll of teleportation no_pickup /
-    w:38  scroll of teleportation no_pickup q:2 /
-    w:20  scroll of teleportation no_pickup q:3 /
-    w:85  scroll of fog no_pickup /
-    w:33  scroll of fog no_pickup q:2 /
-    w:85  scroll of remove curse no_pickup /
-    w:38  scroll of remove curse no_pickup q:2 /
-    w:95  scroll of enchantment no_pickup /
-    w:38  scroll of enchantment no_pickup q:2 /
-    w:54  scroll of blinking no_pickup /
-    w:22  scroll of blinking no_pickup q:2 /
+    w:95  scroll of teleportation no_pickup /
+    w:48  scroll of teleportation no_pickup q:2 /
+    w:30  scroll of teleportation no_pickup q:3 /
+    w:95  scroll of fog no_pickup /
+    w:43  scroll of fog no_pickup q:2 /
+    w:105 scroll of enchantment no_pickup /
+    w:48  scroll of enchantment no_pickup q:2 /
+    w:64  scroll of blinking no_pickup /
+    w:30  scroll of blinking no_pickup q:2 /
     w:54  scroll of enchantment no_pickup /
     w:22  scroll of enchantment no_pickup q:2 /
     w:33  scroll of magic mapping no_pickup /
@@ -664,7 +662,7 @@ dgn.good_scrolls = [[
     w:11  scroll of acquirement no_pickup q:1 /
     w:4   scroll of acquirement no_pickup q:2 /
     w:1   scroll of acquirement no_pickup q:3 /
-    w:11  scroll of brand weapon no_pickup q:1 /
+    w:16  scroll of bless item no_pickup q:1 /
     w:22  scroll of torment no_pickup q:1 /
     w:22  scroll of vulnerability no_pickup /
 	w:54  scroll of attention no_pickup
@@ -684,7 +682,7 @@ dgn.loot_scrolls = [[
     w:15  scroll of summoning /
     w:8   scroll of magic mapping /
     w:15  scroll of enchantment /
-    w:5   scroll of brand weapon /
+    w:5   scroll of bless item /
     w:2   scroll of acquirement
     ]]
 

@@ -102,7 +102,7 @@ e.kitem("1 = superb_item ident:all w:590 / ration w:2 /\
             scroll of acquirement q:1 w:1 ident:all /\
             scroll of enchantment ident:all q:4 w:2 /\
             scroll of enchantment ident:all q:4 w:2 /\
-            scroll of brand weapon ident:all")
+            scroll of bless item ident:all")
 
     -- Place monsters
     if id < 7 then
@@ -770,7 +770,7 @@ KITEM:    K = potion of curing q:9 ident:all, \
               potion of brilliance q:2 ident:all
 KITEM:    L = scroll of blinking q:3 ident:all, \
               scroll of fear q:2 ident:all, \
-              scroll of remove curse q:5 ident:all, \
+              scroll of bless item q:5 ident:all, \
               scroll of holy word q:1 ident:all, \
               scroll of fog q:7 ident:all, \
               scroll of amnesia q:4 ident:all

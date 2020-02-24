@@ -817,7 +817,7 @@ overall increase is determined by the size of your donation.
 %%%%
 Curse Item ability
 
-Curses a chosen item, at the cost of a scroll of remove curse.
+Curses a chosen item with sacred fragility.
 %%%%
 Recall Ancestor ability
 

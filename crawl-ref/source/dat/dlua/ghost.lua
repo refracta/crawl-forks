@@ -140,7 +140,7 @@ end
 ghost_loot_scrolls = "scroll of teleportation w:15 / scroll of fog w:15 / " ..
     "scroll of fear w:15 / scroll of blinking w:10 / " ..
     "scroll of enchantment w:5 / scroll of enchantment w:5 / " ..
-    "scroll of brand weapon w:3 / scroll of magic mapping w:10 / " ..
+    "scroll of bless item w:3 / scroll of magic mapping w:10 / " ..
     "scroll of acquirement w:1"
 ghost_loot_potions = "potion of haste w:15 / potion of might w:10 / " ..
     "potion of invisibility w:10 / potion of agility w:10 / " ..

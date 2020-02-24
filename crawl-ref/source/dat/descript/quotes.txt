@@ -2421,10 +2421,6 @@ scroll of blinking
 
 <scroll>
 %%%%
-scroll of brand weapon
-
-<scroll>
-%%%%
 scroll of enchantment
 
 <scroll>
@@ -2462,10 +2458,6 @@ scroll of noise
 <scroll>
 %%%%
 scroll of random uselessness
-
-<scroll>
-%%%%
-scroll of remove curse
 
 <scroll>
 %%%%

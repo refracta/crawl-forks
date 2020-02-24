@@ -3644,7 +3644,7 @@ bool ashenzari_end_transfer(bool finished, bool force)
  * Player can abort without penalty.
  * Player can curse any cursable item (not just worn ones).
  *
- * @param num_rc Number of remove curse scrolls available.
+ * @param num_rc Number of remove curse scrolls available. // BCADDO: Factor this out.
  * @return       Whether the player cursed anything.
  */
 bool ashenzari_curse_item(int num_rc)

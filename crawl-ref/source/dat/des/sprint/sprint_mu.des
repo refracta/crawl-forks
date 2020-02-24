@@ -169,7 +169,7 @@ MONS: patrolling human hd:2 hp:35
 KITEM: * = any potion, \
  potion of mutation ident:all q:2 / potion of mutation q:1 / any potion, \
  ration w:20, \
- scroll of remove curse ident:all q:2 / scroll of remove curse q:1 / any scroll, \
+ scroll of bless item ident:all q:2 / scroll of bless item q:1 / any scroll, \
  any scroll, \
  scroll of torment / scroll of holy word / scroll of immolation, \
  potion of mutation
@@ -202,7 +202,7 @@ MONS: patrolling human hd:2 hp:35
 KITEM: * = any potion, \
  potion of mutation ident:all q:2 / potion of mutation q:1 / any potion, \
  ration w:20, \
- scroll of remove curse ident:all q:2 / scroll of remove curse q:1 / any scroll, \
+ scroll of bless item ident:all q:2 / scroll of bless item q:1 / any scroll, \
  any scroll, \
  scroll of torment / scroll of holy word / scroll of immolation, \
  potion of mutation

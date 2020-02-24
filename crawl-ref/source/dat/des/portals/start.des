@@ -208,12 +208,12 @@ KFEAT:  C = food shop type:Multiplicative suffix:MREs count:15 use_all greed:5 ;
             ration q:32 | ration q:64 | ration q:128 | ration q:264 |\
             ration q:512 | ration q:1024 | ration q:2048 | ration q:4096 |\
 			ration q:8192 | ration q:16384
-KFEAT:  D = scroll shop type:Scrolls suffix:and_such count:19 use_all greed:16 ; \
+KFEAT:  D = scroll shop type:Scrolls suffix:and_such count:18 use_all greed:16 ; \
 			scroll of amnesia q:1 | scroll of blinking q:1 | scroll of blinking q:2 |\
             scroll of enchantment q:1 | scroll of enchantment q:2 |\
             scroll of fear q:1 | scroll of fear q:2 | scroll of fog q:1 |\
 	        scroll of fog q:2 | scroll of holy word q:1 | scroll of immolation q:1 |\
-            scroll of magic mapping q:1 | scroll of remove curse q:1 |\
+            scroll of magic mapping q:1 |\
             scroll of silence q:1 | scroll of summoning q:1 | scroll of teleportation q:1 |\
             scroll of teleportation q:2 | scroll of torment q:1 | scroll of vulnerability q:1
 KFEAT:  E = weapon shop type:Staff suffix:Store count:8 use_all greed:10 ; \
