@@ -16,6 +16,18 @@
 #include "traps.h"
 #include "xom.h"
 
+beam_type eldritch_damage_type()
+{
+    return random_choose_weighted(
+        1, BEAM_FIRE,
+        1, BEAM_COLD,
+        3, BEAM_NEG,
+        3, BEAM_ACID,
+        4, BEAM_DAMNATION,
+        3, BEAM_DEVASTATION,
+        1, BEAM_ELECTRICITY);
+}
+
 beam_type chaos_damage_type(bool player)
 {
     beam_type retval;

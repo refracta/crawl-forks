@@ -33,7 +33,7 @@
 #include "terrain.h"
 
 // Random Cloud type to be created by a chaos magic tick.
-cloud_type chaos_cloud()
+cloud_type chaos_cloud(bool player)
 {
     if (one_chance_in(3))
         return CLOUD_CHAOS;
@@ -51,7 +51,7 @@ cloud_type chaos_cloud()
                                     20, CLOUD_ACID,
                                     20, CLOUD_STORM);
 
-    if (!is_good_god(you.religion) && retval == CLOUD_HOLY)
+    if (player && !is_good_god(you.religion) && retval == CLOUD_HOLY)
         retval = random_choose_weighted(20, CLOUD_NEGATIVE_ENERGY,
                                         10, CLOUD_SPECTRAL,
                                          5, CLOUD_HOLY,
@@ -128,7 +128,7 @@ spret conjure_flame(const actor *agent, int pow, const coord_def& where,
     {
         bool chaos = determine_chaos(agent, SPELL_CONJURE_FLAME);
         const int durat = min(5 + (random2(pow)/2) + (random2(pow)/2), 23);
-        place_cloud(chaos ? chaos_cloud() : CLOUD_FIRE, where, durat, agent);
+        place_cloud(chaos ? chaos_cloud(agent->is_player()) : CLOUD_FIRE, where, durat, agent);
         if (you.see_cell(where))
         {
             if (agent->is_player())
@@ -190,7 +190,7 @@ spret cast_poisonous_vapours(int pow, const dist &beam, bool fail)
     {
         bool chaos = determine_chaos(&you, SPELL_POISONOUS_VAPOURS);
 
-        place_cloud(chaos ? chaos_cloud() : CLOUD_POISON, beam.target, cloud_duration, &you);
+        place_cloud(chaos ? chaos_cloud(true) : CLOUD_POISON, beam.target, cloud_duration, &you);
         mprf("%s vapours surround %s!", chaos ? "Random" : "Poisonous", mons->name(DESC_THE).c_str());
     }
 

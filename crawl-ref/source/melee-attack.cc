@@ -2908,6 +2908,27 @@ bool melee_attack::apply_staff_damage()
                          attack_strength_punctuation(special_damage).c_str());
             }
         }
+        else if (is_unrandom_artefact(*weapon, UNRAND_WUCAD_MU))
+        {
+            special_damage = staff_damage(SK_SPELLCASTING);
+            special_damage /= 3;
+
+            if (special_damage)
+            {
+                if (attacker->is_player())
+                    inc_mp(1 + random2(special_damage));
+
+                antimagic_affects_defender(special_damage * 8);
+
+                special_damage_message =
+                    make_stringf(
+                        "%s %s away %s magical essence%s",
+                        attacker->name(DESC_THE).c_str(),
+                        attacker->conj_verb("drain").c_str(),
+                        defender->name(DESC_ITS).c_str(),
+                        attack_strength_punctuation(special_damage).c_str());
+            }
+        }
         break;
     }
     case STAFF_TRANSMUTATION:

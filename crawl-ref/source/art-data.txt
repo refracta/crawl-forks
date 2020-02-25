@@ -224,7 +224,7 @@ VALUE:   800
 BOOL:    special, no_upgrade
 
 NAME:    staff of Olgreb
-INSCRIP: Transmute Poison
+INSCRIP: transmute poison;
 OBJ:     OBJ_STAVES/STAFF_POISON
 PLUS:    +7
 COLOUR:  ETC_POISON
@@ -234,7 +234,7 @@ VALUE:   1000
 BOOL:    rCorr, skip_ego
 
 NAME:    staff of Wucad Mu
-INSCRIP: channel, drain magic
+INSCRIP: drain magic, channel;
 OBJ:     OBJ_STAVES/STAFF_NOTHING
 FALLBACK: OBJ_STAVES/STAFF_EARTH
 FB_BRAND: SPSTF_SHIELD
@@ -244,6 +244,7 @@ TILE:    spwpn_wucad_mu
 TILE_EQ: wucad_mu
 VALUE:   1000
 MAGIC:   2
+BOOL:    skip_ego
 
 NAME:    Vampire's Tooth
 OBJ:     OBJ_WEAPONS/WPN_QUICK_BLADE
@@ -540,7 +541,7 @@ MAGIC:   1
 
 NAME:     Elemental Staff
 OBJ:      OBJ_STAVES/STAFF_NOTHING
-INSCRIP:  shield
+INSCRIP:  four elements;
 FALLBACK: OBJ_WEAPONS/WPN_LAJATANG
 FB_BRAND: SPWPN_FREEZING
 BRAND:    SPSTF_MENACE
@@ -552,7 +553,7 @@ FIRE:     2
 COLD:     2
 MAGIC:    2
 AC:       5
-BOOL:     elec
+BOOL:     elec, skip_ego
 
 NAME:     ballista "Sniper"
 OBJ:      OBJ_WEAPONS/WPN_ARBALEST
@@ -1251,15 +1252,18 @@ BOOL:     clarity
 
 ENUM:    MAJIN
 NAME:    Majin-Bo
-INSCRIP: Vampiric, Archmagi
+INSCRIP: vampiric, corrupt archmagi;
 OBJ:     OBJ_STAVES/STAFF_NOTHING
 FALLBACK: OBJ_WEAPONS/WPN_LAJATANG
+BRAND:   SPSTF_MENACE
+FB_BRAND: SPWPN_VAMPIRISM
 PLUS:    +6
 COLOUR:  ETC_UNHOLY
 TILE:    spwpn_majin
 TILE_EQ: majin
 MP:      6
 INT:     6
+BOOL:    skip_ego
 
 # TAG_MAJOR_VERSION == 34
 ENUM:    GYRE

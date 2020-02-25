@@ -34,6 +34,7 @@ enum beam_type                  // bolt::flavour
     BEAM_CHAOTIC,
     BEAM_ICY_DEVASTATION,
     BEAM_CHAOTIC_DEVASTATION,
+    BEAM_ELDRITCH,                // Majin-Bo.
     BEAM_UNRAVELLED_MAGIC,
 
     // Enchantments

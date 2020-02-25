@@ -83,17 +83,18 @@ static int _spell_enhancement(spell_type spell);
 static int _additive_power(spell_type spell);
 static string _spell_failure_rate_description(spell_type spell);
 
-#if TAG_MAJOR_VERSION == 34
 void surge_power(const int enhanced)
 {
     if (enhanced)               // one way or the other {dlb}
     {
+        bool majin = (you.staff() && is_unrandom_artefact(*you.staff(), UNRAND_MAJIN));
         const string modifier = (enhanced  < -2) ? "extraordinarily" :
                                 (enhanced == -2) ? "extremely" :
                                 (enhanced ==  2) ? "strong" :
                                 (enhanced  >  2) ? "huge"
                                                  : "";
         mprf("You feel %s %s",
+             majin              ? "a dreadful" :
              !modifier.length() ? "a"
                                 : article_a(modifier).c_str(),
              (enhanced < 0) ? "numb sensation."
@@ -111,7 +112,6 @@ void surge_power_wand(const int mp_cost)
              slight ? "."      : "!");
     }
 }
-#endif
 
 static string _spell_base_description(spell_type spell, bool viewing)
 {
@@ -516,6 +516,9 @@ bool determine_chaos(const actor *agent, spell_type spell)
         return true;
 
     if (agent->is_monster() && agent->as_monster()->has_ench(ENCH_CHAOTIC_INFUSION) && !one_chance_in(3))
+        return true;
+
+    if (agent->staff() && is_unrandom_artefact(*agent->staff(), UNRAND_MAJIN))
         return true;
 
     if (one_chance_in(3) && !bool(get_spell_disciplines(spell) & spschool::summoning))
@@ -1102,9 +1105,9 @@ static void _spellcasting_side_effects(spell_type spell, god_type god,
         if (!fake_spell && player_equip_unrand(UNRAND_MAJIN))
         {
             // never kill the player (directly)
-            int hp_cost = min(spell_mana(spell), you.hp - 1);
+            int hp_cost = min(spell_mana(spell) * 2, you.hp - 1);
             ouch(hp_cost, KILLED_BY_SOMETHING, MID_NOBODY, "the Majin-Bo");
-            if (one_chance_in(200))
+            if (one_chance_in(100))
                 _majin_speak(spell);
         }
     }

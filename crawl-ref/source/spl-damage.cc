@@ -13,6 +13,7 @@
 
 #include "act-iter.h"
 #include "areas.h"
+#include "art-enum.h"
 #include "attack.h"
 #include "beam.h"
 #include "chaos.h"
@@ -900,6 +901,9 @@ spret cast_freeze(int pow, monster* mons, bool fail)
     if (chaos)
         damtype = chaos_damage_type(true);
 
+    if (you.staff() && is_unrandom_artefact(*you.staff(), UNRAND_MAJIN))
+        damtype = eldritch_damage_type();
+
     // Set conducts here. The monster needs to be alive when this is done, and
     // mons_adjust_flavoured() could kill it.
     god_conduct_trigger conducts[3];
@@ -1249,6 +1253,9 @@ spret cast_airstrike(int pow, const dist &beam, bool fail)
 
     if (chaos)
         damtype = chaos_damage_type(true);
+
+    if (you.staff() && is_unrandom_artefact(*you.staff(), UNRAND_MAJIN))
+        damtype = eldritch_damage_type();
 
     bolt pbeam;
     pbeam.flavour = damtype;
@@ -2364,6 +2371,7 @@ spret cast_ignite_poison(actor* agent, int pow, bool fail, bool tracer, bool olg
         return spret::abort;
 
     bool chaos = determine_chaos(agent, SPELL_IGNITE_POISON);
+    bool nice = is_good_god(you.religion) && !(you.staff() && is_unrandom_artefact(*you.staff(), UNRAND_MAJIN));
 
     if (olgreb && !one_chance_in(4))
         chaos = true;
@@ -2376,7 +2384,7 @@ spret cast_ignite_poison(actor* agent, int pow, bool fail, bool tracer, bool olg
     if (chaos)
         dam_type = random_choose_weighted(3, BEAM_COLD, 
                                           5, BEAM_ACID, 
-                                          4, is_good_god(you.religion) ? BEAM_NEG : BEAM_HOLY,
+                                          4, nice ? BEAM_HOLY : BEAM_NEG,
                                           1, BEAM_HOLY, 
                                           6, BEAM_DEVASTATION);
 
@@ -2436,6 +2444,7 @@ spret cast_ignition(const actor *agent, int pow, bool fail)
     fail_check();
 
     bool chaos = determine_chaos(agent, SPELL_IGNITION);
+    bool evil = (you.staff() && is_unrandom_artefact(*you.staff(), UNRAND_MAJIN));
     bool menacing = _is_menacing(agent, SPELL_IGNITION);
     //targeter_radius hitfunc(agent, LOS_NO_TRANS);
 
@@ -2490,10 +2499,20 @@ spret cast_ignition(const actor *agent, int pow, bool fail)
 
         if (chaos)
         {
-            beam_visual.colour = ETC_CHAOS;
-            flavour = BEAM_CHAOTIC;
-            beam_actual.colour = ETC_CHAOS;
-            beam_actual.name = "entropic burst";
+            if (evil)
+            {
+                beam_visual.colour = ETC_UNHOLY;
+                flavour = BEAM_ELDRITCH;
+                beam_actual.colour = ETC_UNHOLY;
+                beam_actual.name = "eldritch blast";
+            }
+            else
+            {
+                beam_visual.colour = ETC_CHAOS;
+                flavour = BEAM_CHAOTIC;
+                beam_actual.colour = ETC_CHAOS;
+                beam_actual.name = "entropic burst";
+            }
         }
         else
         {
@@ -2574,7 +2593,8 @@ spret cast_ignition(const actor *agent, int pow, bool fail)
 }
 
 static int _discharge_monsters(const coord_def &where, int pow,
-                               const actor &agent, const bool chaos)
+                               const actor &agent, const bool chaos,
+                               const bool evil)
 {
     actor* victim = actor_at(where);
 
@@ -2597,6 +2617,11 @@ static int _discharge_monsters(const coord_def &where, int pow,
     {
         flavour = BEAM_CHAOTIC;
         beam.colour = ETC_CHAOS;
+    }
+    if (evil)
+    {
+        flavour = BEAM_ELDRITCH;
+        beam.colour = ETC_UNHOLY;
     }
     beam.flavour = flavour;
     beam.real_flavour = flavour;
@@ -2664,15 +2689,17 @@ static int _discharge_monsters(const coord_def &where, int pow,
     if ((pow >= 10 && !one_chance_in(4)) || (pow >= 3 && one_chance_in(10)))
     {
         pow /= random_range(2, 3);
-        damage += apply_random_around_square([pow, &agent, chaos] (coord_def where2) {
-            return _discharge_monsters(where2, pow, agent, chaos);
+        damage += apply_random_around_square([pow, &agent, chaos, evil] (coord_def where2) {
+            return _discharge_monsters(where2, pow, agent, chaos, evil);
         }, where, true, 1);
     }
     else if (damage > 0)
     {
         // Only printed if we did damage, so that the messages in
         // cast_discharge() are clean. -- bwr
-        if (chaos)
+        if (evil)
+            mpr("The dark synaptic static calms down.");
+        else if (chaos)
             mpr("The chaos dissipates.");
         else
             mpr("The lightning grounds out.");
@@ -2724,10 +2751,11 @@ spret cast_discharge(int pow, const actor &agent, bool fail, bool prompt)
     fail_check();
 
     bool chaos = determine_chaos(&agent, SPELL_DISCHARGE);
+    bool evil = (agent.staff() && is_unrandom_artefact(*agent.staff(), UNRAND_MAJIN));
     const int num_targs = 1 + random2(random_range(1, 3) + pow / 20);
     const int dam =
-        apply_random_around_square([pow, &agent, chaos] (coord_def target) {
-            return _discharge_monsters(target, pow, agent, chaos);
+        apply_random_around_square([pow, &agent, chaos, evil] (coord_def target) {
+            return _discharge_monsters(target, pow, agent, chaos, evil);
         }, agent.pos(), true, num_targs);
 
     dprf("Arcs: %d Damage: %d", num_targs, dam);
@@ -2736,7 +2764,9 @@ spret cast_discharge(int pow, const actor &agent, bool fail, bool prompt)
         scaled_delay(100);
     else
     {
-        if (chaos)
+        if (evil)
+            mpr("Pure evil pours through cracks in reality.");
+        else if (chaos)
             mpr("Entropic static scintillates and crepitates around.");
         else if (coinflip())
             mpr("The air crackles with electrical energy.");
@@ -2756,9 +2786,18 @@ static bool _finish_LRD_setup(bolt &beam, const actor *caster)
 {
     if (determine_chaos(caster, SPELL_LRD))
     {
-        beam.name = "an entropically infused " + beam.name;
-        beam.colour = ETC_JEWEL;
-        beam.real_flavour = beam.flavour = BEAM_CHAOTIC;
+        if (caster->staff() && is_unrandom_artefact(*caster->staff(), UNRAND_MAJIN))
+        {
+            beam.name = "an eldritch " + beam.name;
+            beam.colour = ETC_UNHOLY;
+            beam.real_flavour = beam.flavour = BEAM_ELDRITCH;
+        }
+        else
+        {
+            beam.name = "an entropically infused " + beam.name;
+            beam.colour = ETC_JEWEL;
+            beam.real_flavour = beam.flavour = BEAM_CHAOTIC;
+        }
         beam.damage.size = div_rand_round(5 * beam.damage.size, 4);
     }
     if (_is_menacing(caster, SPELL_LRD))
@@ -3665,6 +3704,9 @@ void handle_searing_ray()
     if (determine_chaos(&you, SPELL_SEARING_RAY))
         beam.flavour = beam.real_flavour = BEAM_CHAOTIC;
 
+    if (you.staff() && is_unrandom_artefact(*you.staff(), UNRAND_MAJIN))
+        beam.flavour = beam.real_flavour = BEAM_ELDRITCH;
+
     aim_battlesphere(&you, SPELL_SEARING_RAY, pow, beam);
     beam.fire();
     trigger_battlesphere(&you, beam);
@@ -3719,17 +3761,29 @@ spret cast_glaciate(actor *caster, int pow, coord_def aim, bool fail)
     }
 
     bool chaos = determine_chaos(caster, SPELL_GLACIATE);
+    bool evil = caster->staff() && is_unrandom_artefact(*caster->staff(), UNRAND_MAJIN);
 
     fail_check();
 
     bolt beam;
     if (chaos)
     {
-        beam.name = "cone of craziness";
-        beam.aux_source = "great chaos burst";
-        beam.real_flavour = BEAM_CHAOTIC;
-        beam.flavour = BEAM_CHAOTIC;
-        beam.colour = LIGHTCYAN;
+        if (evil)
+        {
+            beam.name = "eldritch fissure";
+            beam.aux_source = "great undoing";
+            beam.real_flavour = BEAM_ELDRITCH;
+            beam.flavour = BEAM_ELDRITCH;
+            beam.colour = ETC_UNHOLY;
+        }
+        else
+        {
+            beam.name = "cone of craziness";
+            beam.aux_source = "great chaos burst";
+            beam.real_flavour = BEAM_CHAOTIC;
+            beam.flavour = BEAM_CHAOTIC;
+            beam.colour = LIGHTCYAN;
+        }
     }
     else
     {

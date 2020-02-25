@@ -18,6 +18,7 @@
 
 #include "act-iter.h"
 #include "areas.h"
+#include "art-enum.h"
 #include "attack.h"
 #include "attitude-change.h"
 #include "bloodspatter.h"
@@ -514,7 +515,7 @@ void zappy(zap_type z_type, int power, bool is_monster, bolt &pbolt)
 
     if (!is_monster && you.staff() && staff_enhances_spell(you.staff(), pbolt.origin_spell))
     {
-        if (pbolt.is_enchantment() && get_staff_facet(*you.staff()) == SPSTF_CHAOS)
+        if (pbolt.is_enchantment() && determine_chaos(&you, pbolt.origin_spell))
         {
             if (pbolt.origin_spell == SPELL_INNER_FLAME)
             {
@@ -529,13 +530,18 @@ void zappy(zap_type z_type, int power, bool is_monster, bolt &pbolt)
                 pbolt.colour       = ETC_JEWEL;
             }
         }
-        else if (!pbolt.is_enchantment() && you.staff())
+        else if (!pbolt.is_enchantment())
         {
-            if (get_staff_facet(*you.staff()) == SPSTF_CHAOS && !one_chance_in(3))
+            if (is_unrandom_artefact(*you.staff(), UNRAND_MAJIN))
             {
                 pbolt.damage.size = div_rand_round(pbolt.damage.size * 5, 4);
-                pbolt.real_flavour = BEAM_CHAOTIC;
-                pbolt.flavour = BEAM_CHAOTIC;
+                pbolt.real_flavour = pbolt.flavour = BEAM_ELDRITCH;
+                pbolt.colour = ETC_UNHOLY;
+            }
+            else if (determine_chaos(&you, pbolt.origin_spell))
+            {
+                pbolt.damage.size = div_rand_round(pbolt.damage.size * 5, 4);
+                pbolt.real_flavour = pbolt.flavour = BEAM_CHAOTIC;
                 pbolt.colour = ETC_JEWEL;
             }
             if (get_staff_facet(*you.staff()) == SPSTF_ACCURACY)
@@ -867,6 +873,57 @@ void bolt::fake_flavour()
         flavour = _chaos_beam_flavour(this);
     else if (real_flavour == BEAM_CHAOS_ENCHANTMENT)
         flavour = _chaos_enchant_type();
+    else if (real_flavour == BEAM_ELDRITCH)
+    {
+        name = pierce ? "eldritch beam of " : is_explosion ? "eldritch blast of " : "eldritch shard of ";
+        switch (random2(14))
+        {
+        case 0:
+            flavour = BEAM_LAVA;
+            colour = RED;
+            name += "magma";
+            break;
+        case 1:
+            flavour = BEAM_MIASMA;
+            colour = BLACK;
+            name += "miasma";
+            break;
+        case 2:
+            flavour = BEAM_ELECTRICITY;
+            colour = LIGHTCYAN;
+            name += "lightning";
+            break;
+        case 3:
+        case 7:
+            flavour = BEAM_NEG;
+            colour = DARKGREY;
+            name += "negative energy";
+            break;
+        case 4:
+        case 8:
+        case 12:
+            flavour = BEAM_ACID;
+            colour = YELLOW;
+            name += "acid";
+            break;
+        case 5:
+        case 9:
+        case 11:
+        case 14:
+        default: // Just in case.
+            flavour = BEAM_DAMNATION;
+            colour = LIGHTRED;
+            name += "hellfire";
+            break;
+        case 6:
+        case 10:
+        case 13:
+            flavour = BEAM_DEVASTATION;
+            colour = ETC_UNHOLY;
+            name += "destruction";
+            break;
+        }
+    }
     else if (real_flavour == BEAM_CHAOTIC || real_flavour == BEAM_CHAOTIC_DEVASTATION)
     {
         name = pierce ? "chaotic beam of " : is_explosion ? "chaotic blast of " : "chaotic shard of ";
@@ -7033,6 +7090,7 @@ static string _beam_type_name(beam_type type)
     case BEAM_RANDOM:                return "random";
     case BEAM_CHAOTIC:               // fallthrough
     case BEAM_CHAOS:                 return "chaos";
+    case BEAM_ELDRITCH:              return "forbidden energy";
     case BEAM_CHAOS_ENCHANTMENT:     return "chaotic enchantment";
     case BEAM_ENTROPIC_BURST:        return "entropic burst";
     case BEAM_SLOW:                  return "slow";

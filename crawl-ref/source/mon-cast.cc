@@ -1853,10 +1853,14 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
                 beam.colour = ETC_JEWEL;
             }
         }
+        else if (mons->staff() && is_unrandom_artefact(*mons->staff(), UNRAND_MAJIN))
+        {
+            beam.real_flavour = beam.flavour = BEAM_ELDRITCH;
+            beam.colour = ETC_UNHOLY;
+        }
         else
         {
-            beam.real_flavour = BEAM_CHAOTIC;
-            beam.flavour = BEAM_CHAOTIC;
+            beam.real_flavour = beam.flavour = BEAM_CHAOTIC;
             beam.colour = ETC_JEWEL;
         }
     }
@@ -4510,13 +4514,13 @@ static monster_type _pick_vermin()
                                   3, MONS_DEMONIC_CRAWLER);
 }
 
-static monster_type _pick_drake()
+static monster_type _pick_drake(bool eldritch = false)
 {
     return random_choose_weighted(5, MONS_SWAMP_DRAKE,
                                   5, MONS_KOMODO_DRAGON,
                                   5, MONS_WIND_DRAKE,
                                   6, MONS_RIME_DRAKE,
-                                  6, MONS_DEATH_DRAKE,
+                  eldritch ? 18 : 6, MONS_DEATH_DRAKE,
                                   3, MONS_LINDWURM);
 }
 
@@ -4714,6 +4718,9 @@ static bool _mons_cast_freeze(monster* mons)
     bool chaos = determine_chaos(mons, SPELL_FREEZE);
     if (chaos)
         flavour = chaos_damage_type();
+
+    if (mons->staff() && is_unrandom_artefact(*mons->staff(), UNRAND_MAJIN))
+        flavour = eldritch_damage_type();
 
     const int base_damage = roll_dice(1, 3 + pow / 6);
     int damage = 0;
@@ -6028,6 +6035,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
     const int splpow = evoke ? mons->get_hit_dice() * 1.5 // Didn't I already change this?
                              : _mons_spellpower(spell_cast, *mons);
     const bool chaos = determine_chaos(mons, spell_cast);
+    const bool eldritch = (mons->staff() && is_unrandom_artefact(*mons->staff(), UNRAND_MAJIN));
     monster * x;
 
     switch (spell_cast)
@@ -6061,6 +6069,9 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
 
         if (chaos)
             pbolt.flavour = chaos_damage_type();
+
+        if (eldritch)
+            pbolt.flavour = eldritch_damage_type();
 
         int damage_taken = 10 + 2 * mons->get_hit_dice();
         damage_taken = foe->beam_resists(pbolt, damage_taken, false);
@@ -6212,7 +6223,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
 
         for (sumcount = 0; sumcount < sumcount2; ++sumcount)
         {
-            monster_type rats[] = { MONS_QUOKKA, MONS_RIVER_RAT, MONS_RAT };
+            monster_type rats[] = { MONS_QUOKKA, eldritch ? MONS_HELL_RAT : MONS_RIVER_RAT, MONS_RAT };
 
             const monster_type mon = (one_chance_in(3) ? MONS_BAT
                                                        : RANDOM_ELEMENT(rats));
@@ -6521,7 +6532,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
 
             for (sumcount = 0; sumcount < sumcount2; ++sumcount)
             {
-                monster_type mon = _pick_drake();
+                monster_type mon = _pick_drake(eldritch);
                 monsters.push_back(mon);
             }
 
@@ -6569,7 +6580,8 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         {
             create_monster(
                 mgen_data(random_choose_weighted(
-                            100, MONS_ANGEL,     80,  MONS_CHERUB,
+                            100, eldritch ? MONS_PROFANE_SERVITOR : MONS_ANGEL,     
+                            80,  MONS_CHERUB,
                             50,  MONS_DAEVA,      1,  MONS_OPHAN),
                           SAME_ATTITUDE(mons), mons->pos(), mons->foe)
                 .set_summoned(mons, duration, spell_cast, god));
