@@ -572,7 +572,7 @@ find it enhances the power of their spells.
 arc blade
 
 A blade somehow crafted from pure electricity. Striking an enemy with it
-occasionally unleashes powerful arcs of lightning.
+unleashes arcs of lightning.
 
 These may arc to other adjacent creatures, or back to the wielder, before
 eventually grounding out. It deals reduced damage when arcing to the wielder,
