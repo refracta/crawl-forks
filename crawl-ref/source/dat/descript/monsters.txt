@@ -623,9 +623,9 @@ Specific traits vary with the species of the worshipper.
 %%%%
 battlesphere
 
-A small crystaline sphere of magical power that follows a spellcaster. It cannot operate
-on its own, yet it will provide fire support, assaulting whatever its conjurer
-casts at with magical missiles that never miss.
+A small crystalline sphere of magical power that follows a spellcaster. It cannot 
+operate on its own, yet it will provide fire support, assaulting whatever its conjurer
+casts at with crystal bolts that never miss.
 %%%%
 bennu
 

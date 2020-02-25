@@ -330,6 +330,10 @@ static string _monster_headsup(vector<monster*> &monsters,
         if (!divine && !has_interesting_equipment)
             continue;
 
+        if (monsters.size() == 1 && mon->type == MONS_DANCING_WEAPON
+                                 && !divine) // Fairly sure a dancing weapon can't be a shapeshifter anyways, but just in case.
+            continue;
+
         if (warning_msg.size())
             warning_msg += " ";
 

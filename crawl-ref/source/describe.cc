@@ -4300,7 +4300,7 @@ static void _describe_summon_duration(const monster_info& mi, ostringstream &res
     if (mi.dur > 0)
     {
         float dur = mi.dur / 10.0;
-        result << "\nRemaining Summon Duration: " << dur << " aut.\n";
+        result << "\nRemaining Summon Duration: " << dur << " turns.\n";
     }
 }
 
