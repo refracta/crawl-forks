@@ -46,6 +46,7 @@ struct spell_desc
 {
     spell_type id;
     const char  *title;
+    const char  *chaosTitle;
     spschools_type disciplines;
     spell_flags flags;       // bitfield
     unsigned int level;
@@ -529,8 +530,6 @@ const char *get_spell_target_prompt(spell_type which_spell)
 {
     switch (which_spell)
     {
-    case SPELL_APPORTATION:
-        return "Apport";
     case SPELL_SMITING:
         return "Smite";
     case SPELL_LRD:
@@ -573,6 +572,13 @@ int count_bits(uint64_t bits)
 
 const char *spell_title(spell_type spell)
 {
+    if (you.staff() && staff_enhances_spell(you.staff(), spell) 
+                    && get_staff_facet(*you.staff()) == SPSTF_CHAOS)
+    {
+        string title = _seekspell(spell)->chaosTitle;
+        if (title.size())
+            return _seekspell(spell)->chaosTitle;
+    }
     return _seekspell(spell)->title;
 }
 
@@ -1415,6 +1421,9 @@ int spell_highlight_by_utility(spell_type spell, int default_colour,
     // Check if the spell is considered useless based on your current status
     if (spell_is_useless(spell, transient))
         return COL_USELESS;
+
+    if (staff_enhances_spell(you.staff(), spell))
+        return COL_ENHANCED;
 
     return default_colour;
 }

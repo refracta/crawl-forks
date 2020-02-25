@@ -518,7 +518,8 @@ bool determine_chaos(const actor *agent, spell_type spell)
     if (agent->is_monster() && agent->as_monster()->has_ench(ENCH_CHAOTIC_INFUSION) && !one_chance_in(3))
         return true;
 
-    if (agent->staff() && is_unrandom_artefact(*agent->staff(), UNRAND_MAJIN))
+    if (agent->staff() && is_unrandom_artefact(*agent->staff(), UNRAND_MAJIN) 
+            && staff_enhances_spell(agent->staff(), spell))
         return true;
 
     if (one_chance_in(3) && !bool(get_spell_disciplines(spell) & spschool::summoning))
