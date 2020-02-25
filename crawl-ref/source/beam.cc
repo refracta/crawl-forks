@@ -529,7 +529,7 @@ void zappy(zap_type z_type, int power, bool is_monster, bolt &pbolt)
                 pbolt.colour       = ETC_JEWEL;
             }
         }
-        else if (!pbolt.is_enchantment())
+        else if (!pbolt.is_enchantment() && you.staff())
         {
             if (get_staff_facet(*you.staff()) == SPSTF_CHAOS && !one_chance_in(3))
             {

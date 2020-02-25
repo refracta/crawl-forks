@@ -3069,10 +3069,10 @@ int monster::shield_bonus() const
     else if (has_ench(ENCH_CONDENSATION_SHIELD))
         sh += spell_hd(SPELL_CONDENSATION_SHIELD);
 
-    item_def * weap = mslot_item(MSLOT_WEAPON);
+    item_def * staff = this->staff();
 
-    if (!has_ench(ENCH_STFSHIELD_COOLDOWN) && weap && 
-        weap->base_type == OBJ_STAVES && get_staff_facet(*weap) == SPSTF_SHIELD)
+    if (!has_ench(ENCH_STFSHIELD_COOLDOWN) && staff && 
+        get_staff_facet(*staff) == SPSTF_SHIELD)
     {
         sh += spell_hd(SPELL_INFUSION);
     }

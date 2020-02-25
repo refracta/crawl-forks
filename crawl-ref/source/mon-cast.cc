@@ -1235,10 +1235,9 @@ int mons_spell_range(spell_type spell, const monster * mons)
     const int power = mons_power_for_hd(spell, hd);
     int retval = spell_range(spell, power, false);
 
-    if (retval > 1 && mons->weapon() 
-                   && mons->weapon()->base_type == OBJ_STAVES 
-                   && get_staff_facet(*mons->weapon()) == SPSTF_SCOPED
-                   && staff_enhances_spell(mons->weapon(), spell))
+    if (retval > 1 && mons->staff()
+                   && get_staff_facet(*mons->staff()) == SPSTF_SCOPED
+                   && staff_enhances_spell(mons->staff(), spell))
         retval++;
     return retval;
 }
@@ -1823,9 +1822,9 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
         beam.name = "";
     }
 
-    item_def * staff = mons->weapon();
+    item_def * staff = mons->staff();
 
-    if (staff && staff->base_type == OBJ_STAVES && staff_enhances_spell(staff, real_spell))
+    if (staff && staff_enhances_spell(staff, real_spell))
     {
         if (get_staff_facet(*staff) == SPSTF_ACCURACY)
             beam.hit = AUTOMATIC_HIT;

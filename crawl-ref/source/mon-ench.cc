@@ -906,8 +906,8 @@ void monster::remove_enchantment_effect(const mon_enchant &me, bool quiet)
     case ENCH_STFSHIELD_COOLDOWN:
         if (!quiet)
         {
-            item_def * staff = mslot_item(MSLOT_WEAPON);
-            if (!staff || staff->base_type != OBJ_STAVES || get_staff_facet(*staff) != SPSTF_SHIELD)
+            item_def * staff = this->staff();
+            if (!staff || get_staff_facet(*staff) != SPSTF_SHIELD)
                 return;
 
             string shtype;

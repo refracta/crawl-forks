@@ -521,12 +521,8 @@ bool determine_chaos(const actor *agent, spell_type spell)
     if (one_chance_in(3) && !bool(get_spell_disciplines(spell) & spschool::summoning))
         return false;
 
-    if (agent->is_player())
-        return (you.staff() && get_staff_facet(*you.staff()) == SPSTF_CHAOS &&
-            staff_enhances_spell(you.staff(), spell));
-    return (agent->weapon() && agent->weapon()->base_type == OBJ_STAVES
-        && get_staff_facet(*agent->weapon()) == SPSTF_CHAOS &&
-        staff_enhances_spell(agent->weapon(), spell));
+    return (agent->staff() && get_staff_facet(*agent->staff()) == SPSTF_CHAOS &&
+        staff_enhances_spell(agent->staff(), spell));
 }
 
 bool staff_enhances_spell(item_def * staff, spell_type spell)

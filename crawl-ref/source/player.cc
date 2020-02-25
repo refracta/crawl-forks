@@ -2432,13 +2432,9 @@ int player_wizardry(spell_type spell)
 
     wiz += you.wearing(EQ_RINGS, RING_WIZARDRY);
 
-    item_def * staff;
+    item_def * staff = you.staff();
 
-    if (you.weapon(0) && you.weapon(0)->base_type == OBJ_STAVES)
-        staff = you.weapon(0);
-    else if (you.weapon(1) && you.weapon(1)->base_type == OBJ_STAVES)
-        staff = you.weapon(1);
-    else
+    if (!staff)
         return wiz;
 
     if (get_staff_facet(*staff) == SPSTF_WIZARD && staff_enhances_spell(staff, spell))

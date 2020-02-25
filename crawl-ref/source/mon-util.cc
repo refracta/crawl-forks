@@ -855,7 +855,7 @@ bool mons_is_fiery(const monster& mon)
 
 void mon_lose_staff_shield(monster & mon, beam_type flavour, int strength)
 {
-    if (!mon->alive())
+    if (!mon.alive())
         return;
 
     item_def * staff = mon.staff();

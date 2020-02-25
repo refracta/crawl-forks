@@ -153,7 +153,7 @@ bool cast_smitey_damnation(int pow, bolt &beam)
 static bool _is_menacing(const actor * caster, spell_type spell)
 {
     item_def * staff = caster->staff();
-    if (staff && get_staff_facet(*you.staff()))
+    if (staff && get_staff_facet(*staff))
         return true;
     return false;
 }
