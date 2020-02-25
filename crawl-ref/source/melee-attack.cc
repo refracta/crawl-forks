@@ -2850,7 +2850,7 @@ bool melee_attack::apply_staff_damage()
     case STAFF_TRANSMUTATION:
 #if TAG_MAJOR_VERSION == 34
     case STAFF_CONJURATION:
-    case STAFF_ENCHANTMENT:
+    case STAFF_NOTHING:
     case STAFF_ENERGY:
     case STAFF_WIZARDRY:
 #endif

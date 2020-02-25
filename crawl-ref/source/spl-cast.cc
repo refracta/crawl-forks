@@ -534,7 +534,8 @@ bool staff_enhances_spell(item_def * staff, spell_type spell)
     if (!staff)
         return false;
 
-    // BCADDO: When Elemental Staff is made into an actual staff; add case for it here.
+    if (is_unrandom_artefact(*staff, UNRAND_MAJIN))
+        return true;
 
     const spschools_type typeflags = get_spell_disciplines(spell);
 
@@ -550,16 +551,20 @@ bool staff_enhances_spell(item_def * staff, spell_type spell)
     if (bool(typeflags & spschool::translocation) && get_staff_facet(*staff) == SPSTF_WARP)
         return true;
 
-    if (bool(typeflags & spschool::fire) && staff->sub_type == STAFF_FIRE)
+    if (bool(typeflags & spschool::fire) && 
+        (staff->sub_type == STAFF_FIRE || is_unrandom_artefact(*staff, UNRAND_ELEMENTAL_STAFF)))
         return true;
 
-    if (bool(typeflags & spschool::ice) && staff->sub_type == STAFF_COLD)
+    if (bool(typeflags & spschool::ice) && 
+        (staff->sub_type == STAFF_COLD || is_unrandom_artefact(*staff, UNRAND_ELEMENTAL_STAFF)))
         return true;
 
-    if (bool(typeflags & spschool::air) && staff->sub_type == STAFF_AIR)
+    if (bool(typeflags & spschool::air) && 
+        (staff->sub_type == STAFF_AIR || is_unrandom_artefact(*staff, UNRAND_ELEMENTAL_STAFF)))
         return true;
 
-    if (bool(typeflags & spschool::earth) && staff->sub_type == STAFF_EARTH)
+    if (bool(typeflags & spschool::earth) && 
+        (staff->sub_type == STAFF_EARTH || is_unrandom_artefact(*staff, UNRAND_ELEMENTAL_STAFF)))
         return true;
 
     if (bool(typeflags & spschool::poison) && staff->sub_type == STAFF_POISON)
@@ -622,7 +627,6 @@ static int _spell_enhancement(spell_type spell)
         enhanced -= 2;
 
     enhanced += you.archmagi();
-    enhanced += player_equip_unrand(UNRAND_MAJIN);
 
     // These are used in an exponential way, so we'll limit them a bit. -- bwr
     if (enhanced > 3)
@@ -1104,7 +1108,7 @@ static void _spellcasting_side_effects(spell_type spell, god_type god,
             // never kill the player (directly)
             int hp_cost = min(spell_mana(spell), you.hp - 1);
             ouch(hp_cost, KILLED_BY_SOMETHING, MID_NOBODY, "the Majin-Bo");
-            if (one_chance_in(500))
+            if (one_chance_in(200))
                 _majin_speak(spell);
         }
     }

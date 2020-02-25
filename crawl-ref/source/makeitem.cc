@@ -198,23 +198,23 @@ static bool _try_make_item_unrand(item_def& item, int force_type, int agent)
 
 // Return whether we made an artefact.
 // BCADDO: use the agent int; have some gods give staves (be a nice buff to Kiku, Xom or Veh).
-static bool _try_make_staff_artefact(item_def& item, int /*force_type*/,
+static bool _try_make_staff_artefact(item_def& item, int force_type,
                                       int item_level, bool force_randart,
-                                      int /*agent*/)
+                                      int agent)
 {
     if (item_level > 2 && x_chance_in_y(101 + item_level * 3, 4000)
         || force_randart)
     {
-        // Make a randart or unrandart.
-
-        /* BCADDO: Uncomment this after fixing staff unrands as actual staves.
-        // 1 in 18 randarts are unrandarts.
         if (one_chance_in(item_level == ISPEC_GOOD_ITEM ? 7 : 18)
             && !force_randart)
         {
+            int old_force_type = force_type;
+            if (force_type != STAFF_POISON && force_type != STAFF_EARTH)
+                force_type = OBJ_RANDOM; // All of them except olgreb are nothing.
             if (_try_make_item_unrand(item, force_type, agent))
                 return true;
-        } */
+            force_type = old_force_type;
+        }
 
         // Mean enchantment +6.
         item.plus = 12 - biased_random2(7,2);
@@ -1800,19 +1800,6 @@ static void _generate_book_item(item_def& item, bool allow_uniques,
 static void _generate_staff_item(item_def& item, bool allow_uniques,
                                  int force_type, int item_level, int agent, int force_ego)
 {
-    // If we make the unique roll, no further generation necessary.
-    // Copied unrand code from _try_make_weapon_artefact since randart enhancer staves
-    // can't happen.
-    if (allow_uniques
-        && one_chance_in(item_level == ISPEC_GOOD_ITEM ? 27 : 100))
-    {
-        // Temporarily fix the base_type to get enhancer staves
-        item.base_type = OBJ_WEAPONS;
-        if (_try_make_item_unrand(item, WPN_STAFF, agent))
-            return;
-        item.base_type = OBJ_STAVES;
-    }
-
     if (force_type == OBJ_RANDOM)
     {
         do
@@ -2037,12 +2024,10 @@ static void _setup_fallback_randart(const int unrand_id,
         fallback_sub_type = unrand.sub_type;
     }
 
-    if (item.base_type == OBJ_WEAPONS
-        && fallback_sub_type == WPN_STAFF)
+    if (item.base_type == OBJ_STAVES
+        && fallback_sub_type == STAFF_NOTHING)
     {
-        item.base_type = OBJ_STAVES;
-        force_type = OBJ_RANDOM;
-        // BCADDO: REMOVE THIS.
+        force_type = NUM_STAVES;
     }
     else if (item.base_type == OBJ_JEWELLERY
              && fallback_sub_type == AMU_NOTHING)
