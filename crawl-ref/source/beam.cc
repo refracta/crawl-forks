@@ -1868,7 +1868,7 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
         break;
     }
 
-    if (doFlavouredEffects)
+    if (doFlavouredEffects && mons->alive())
     {
         const int burn_power = (pbolt.is_explosion) ? 5 :
                                (pbolt.pierce)       ? 3
