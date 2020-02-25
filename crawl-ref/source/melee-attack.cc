@@ -2847,10 +2847,41 @@ bool melee_attack::apply_staff_damage()
         }
     }
         break;
+    case STAFF_NOTHING:
+    {
+        // Only fixedArts are STAFF_NOTHING so special cases time!
+        if (is_unrandom_artefact(*weapon, UNRAND_MAJIN))
+        {
+            special_damage = staff_damage(SK_NECROMANCY);
+            special_damage = resist_adjust_damage(defender, BEAM_NEG, special_damage);
+
+            if (special_damage)
+            {
+                special_damage_message =
+                    make_stringf(
+                        "%s %s %s%s ",
+                        attacker->name(DESC_THE).c_str(),
+                        attacker->conj_verb("drain").c_str(),
+                        defender->name(DESC_THE).c_str(),
+                        attack_strength_punctuation(special_damage).c_str());
+                special_damage_message +=
+                        make_stringf("%s %s strength from %s injuries%s",
+                        attacker->name(DESC_THE).c_str(),
+                        attacker->conj_verb("draw").c_str(),
+                        defender->pronoun(PRONOUN_POSSESSIVE).c_str(),
+                        attack_strength_punctuation(special_damage/3).c_str());
+
+                attacker->heal(special_damage / 3);
+                defender->drain_exp(attacker, true);
+
+                attacker->god_conduct(DID_EVIL, 4);
+            }
+        }
+        break;
+    }
     case STAFF_TRANSMUTATION:
 #if TAG_MAJOR_VERSION == 34
     case STAFF_CONJURATION:
-    case STAFF_NOTHING:
     case STAFF_ENERGY:
     case STAFF_WIZARDRY:
 #endif
