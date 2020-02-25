@@ -541,10 +541,12 @@ bool staff_enhances_spell(item_def * staff, spell_type spell)
     if (bool(typeflags & spschool::evocation))
         return false;  // Spells that are only used via evocables cannot be enhanced.
 
-    if (bool(typeflags & spschool::charms) && get_staff_facet(*staff) == SPSTF_SHIELD)
+    if (bool(typeflags & spschool::charms) && 
+        (get_staff_facet(*staff) == SPSTF_SHIELD || is_unrandom_artefact(*staff, UNRAND_WUCAD_MU)))
         return true;
 
-    if (bool(typeflags & spschool::hexes) && get_staff_facet(*staff) == SPSTF_FLAY)
+    if (bool(typeflags & spschool::hexes) && 
+        (get_staff_facet(*staff) == SPSTF_FLAY|| is_unrandom_artefact(*staff, UNRAND_WUCAD_MU)))
         return true;
 
     if (bool(typeflags & spschool::translocation) && get_staff_facet(*staff) == SPSTF_WARP)

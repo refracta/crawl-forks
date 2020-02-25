@@ -209,5 +209,6 @@ enum duration_type
     DUR_STFSHIELD_COOLDOWN,
     DUR_CHAOSNADO,
     DUR_NOXIOUS_BOG,
+    DUR_STAFF,
     NUM_DURATIONS
 };

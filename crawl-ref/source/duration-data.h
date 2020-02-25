@@ -632,6 +632,8 @@ static const duration_def duration_data[] =
     { DUR_FLIGHT, 0, "", "", "flight", "", D_DISPELLABLE /*but special-cased*/, {}, 10},
     { DUR_POISONING, 0, "", "", "poisoning", "", D_NO_FLAGS},
     { DUR_PIETY_POOL, 0, "", "", "piety pool", "", D_NO_FLAGS},
+    { DUR_STAFF, 0, "", "", "staff attunement", "", D_NO_FLAGS,
+      {{"You finish attuning to your staff."}}},
     { DUR_REGENERATION, 0, "", "", "regeneration", "", D_DISPELLABLE,
       {{ "Your skin stops crawling." },
           { "Your skin is crawling a little less now.", 1}}, 6},

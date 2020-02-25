@@ -6198,6 +6198,8 @@ int player::racial_ac(bool temp) const
 
 item_def * player::staff() const
 {
+    if (you.duration[DUR_STAFF])
+        return nullptr;
     if (weapon(0) && weapon(0)->base_type == OBJ_STAVES)
         return weapon(0);
     else if (weapon(1) && weapon(1)->base_type == OBJ_STAVES)
