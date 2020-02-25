@@ -408,7 +408,7 @@ bool can_wield(const item_def *weapon, bool say_reason,
     }
     else if (!ignore_temporary_disability
              && you.hunger_state < HS_FULL
-             && get_weapon_brand(*weapon) == SPWPN_VAMPIRISM
+             && get_weapon_brand(*weapon) == SPWPN_VAMPIRISM || is_unrandom_artefact(*weapon, UNRAND_MAJIN)
              && you.undead_state() == US_ALIVE
              && !you_foodless()
              && (item_type_known(*weapon) || !only_known)
@@ -1915,7 +1915,9 @@ static bool _safe_to_remove_or_wear(const item_def &item, bool remove, bool quie
         if (you.wearing_ego(EQ_WEAPON0, SPWPN_DISTORTION) || you.wearing_ego(EQ_WEAPON1, SPWPN_DISTORTION)
             && !have_passive(passive_t::safe_distortion))
             disto = true;
-        if (you.wearing_ego(EQ_WEAPON0, SPWPN_VAMPIRISM) || you.wearing_ego(EQ_WEAPON1, SPWPN_VAMPIRISM)
+        if (you.wearing_ego(EQ_WEAPON0, SPWPN_VAMPIRISM) || you.wearing_ego(EQ_WEAPON1, SPWPN_VAMPIRISM) 
+            || (you.weapon(0) && is_unrandom_artefact(*you.weapon(0), UNRAND_MAJIN))
+            || (you.weapon(1) && is_unrandom_artefact(*you.weapon(1), UNRAND_MAJIN))
             && you.undead_state() == US_ALIVE
             && !you_foodless())
         {

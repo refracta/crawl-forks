@@ -455,6 +455,17 @@ static void _equip_weapon_effect(item_def& item, bool showMsgs, bool unmeld, equ
     {
         set_ident_flags(item, ISFLAG_IDENT_MASK);
         set_ident_type(OBJ_STAVES, item.sub_type, true);
+
+        if (is_unrandom_artefact(item, UNRAND_MAJIN))
+        {
+            if (you.undead_state() == US_ALIVE
+                && !you_foodless()
+                && !unmeld
+                && !you.wearing_ego(EQ_GLOVES, SPARM_WIELDING))
+            {
+                make_hungry(4500, false, false);
+            }
+        }
     }
 
     else if ((item.base_type == OBJ_SHIELDS && is_hybrid(item.sub_type)) || item.base_type == OBJ_WEAPONS)
@@ -624,8 +635,7 @@ static void _equip_weapon_effect(item_def& item, bool showMsgs, bool unmeld, equ
             switch (special)
             {
             case SPWPN_VAMPIRISM:
-                if (you.species != SP_VAMPIRE
-                    && you.undead_state() == US_ALIVE
+                if (you.undead_state() == US_ALIVE
                     && !you_foodless()
                     && !unmeld
                     && !you.wearing_ego(EQ_GLOVES, SPARM_WIELDING))
@@ -886,6 +896,14 @@ static void _wielding_wear_effects(bool unwield, bool unmeld)
                     mprf("You're filled with a deep hunger from your vampiric %s as you don your gloves!", wpn0.c_str());
                 make_hungry(4500, false, false);
             }
+            else if (you.weapon(0) && is_unrandom_artefact(*you.weapon(0), UNRAND_MAJIN))
+            {
+                if (unwield)
+                    mpr("You're filled with a deep hunger from the Majin-Bo as it comes closer to your body!");
+                else
+                    mpr("You're filled with a deep hunger from the Majin-Bo as you don your gloves!");
+                make_hungry(4500, false, false);
+            }
 
             if (you.wearing_ego(EQ_WEAPON1, SPWPN_VAMPIRISM))
             {
@@ -898,6 +916,19 @@ static void _wielding_wear_effects(bool unwield, bool unmeld)
                 else
                     make_hungry(you.hunger - 500, false, false);
                     // Two of these in a row can outright kill a player. This is a failsafe.
+            }
+
+            else if (you.weapon(1) && is_unrandom_artefact(*you.weapon(1), UNRAND_MAJIN))
+            {
+                if (unwield)
+                    mpr("You're filled with a deep hunger from the Majin-Bo as it comes closer to your body!");
+                else
+                    mpr("You're filled with a deep hunger from the Majin-Bo as you don your gloves!");
+                if (you.hunger >= 5000)
+                    make_hungry(4500, false, false);
+                else
+                    make_hungry(you.hunger - 500, false, false);
+                // Two of these in a row can outright kill a player. This is a failsafe.
             }
         }
         
