@@ -2877,6 +2877,37 @@ bool melee_attack::apply_staff_damage()
                 attacker->god_conduct(DID_EVIL, 4);
             }
         }
+        else if (is_unrandom_artefact(*weapon, UNRAND_ELEMENTAL_STAFF))
+        {
+            int skill = max(attacker->skill(SK_AIR_MAGIC, 100), attacker->skill(SK_EARTH_MAGIC, 100));
+            skill = max(skill, attacker->skill(SK_ICE_MAGIC, 100));
+            skill = max(skill, attacker->skill(SK_FIRE_MAGIC, 100));
+            // Pointless on monsters as is (since monsters don't have different magic skills), but future proofing?
+
+            if (x_chance_in_y(attacker->skill(SK_EVOCATIONS, 200) + skill, 3000))
+            {
+                 special_damage = random2((skill + attacker->skill(SK_EVOCATIONS, 50)) / 80);
+                 beam_type dam_type = random_choose(BEAM_FIRE, BEAM_COLD, BEAM_NONE, BEAM_ELECTRICITY);
+                 special_damage = resist_adjust_damage(defender, dam_type, special_damage);
+                 string verb = "burn";
+                 switch (dam_type)
+                 {
+                 case BEAM_COLD:        verb = "freeze";
+                 case BEAM_NONE:        verb = "crush";
+                 case BEAM_ELECTRICITY: verb = "electrocute";
+                 default: break; // It's already burn and there are no other cases.
+                 }
+
+                 if (special_damage)
+                     special_damage_message =
+                     make_stringf(
+                         "%s %s %s%s ",
+                         attacker->name(DESC_THE).c_str(),
+                         attacker->conj_verb(verb).c_str(),
+                         defender->name(DESC_THE).c_str(),
+                         attack_strength_punctuation(special_damage).c_str());
+            }
+        }
         break;
     }
     case STAFF_TRANSMUTATION:
