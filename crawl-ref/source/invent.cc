@@ -1694,7 +1694,7 @@ bool needs_handle_warning(const item_def &item, operation_types oper,
             return true;
         }
 
-        if (get_weapon_brand(item) == SPWPN_VAMPIRISM || is_unrandom_artefact(item, UNRAND_MAJIN)
+        if ((get_weapon_brand(item) == SPWPN_VAMPIRISM || is_unrandom_artefact(item, UNRAND_MAJIN))
             && you.undead_state() == US_ALIVE
             && !you_foodless()
             // Don't prompt if you aren't wielding it and you can't.
