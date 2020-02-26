@@ -595,6 +595,11 @@ Force Lance spell
 Fires a shaft of concussive force. If the impact deals damage, it may knock the
 target back. Shares spellslots with the related spell 'Force Lasso'.
 %%%%
+Force Lasso spell
+
+Jerks the target forward violently, damaging and attempting to place them
+adjacent to the caster. Shares spellslots with the related spell 'Force Lance'.
+%%%%
 Forceful Invitation spell
 
 Summons some of the lesser threats from one of the Lair of Beasts, the Snake
@@ -810,11 +815,6 @@ at the caster's enemies in sync with its creator's own destructive magicks.
 These bolts of crystal bounce on walls and randomly freeze or burn their targets.
 With increasing power, the battlesphere lasts longer and deals more damage per bolt.
 %%%%
-Iskenderun's Mystic Blast spell
-
-Detonates a crackling sphere of destructive energy. The explosion will hit all
-nearby monsters with physical force, knocking them back if damage is done.
-%%%%
 Leda's Liquefaction spell
 
 Liquefies the ground around the caster, making it difficult to move through.
@@ -849,11 +849,6 @@ be any mix of Fireball, Iceblast, and Ghostly Fireball.
 Lehudib's Crystal Spear spell
 
 Hurls a lethally sharp shard of crystal.
-%%%%
-Force Lasso spell
-
-Jerks the target forward violently, damaging and attempting to place them
-adjacent to the caster. Shares spellslots with the related spell 'Force Lance'.
 %%%%
 Lightning Bolt spell
 
@@ -962,6 +957,11 @@ Summons a powerful exotic creature to the caster's aid. It may call forth a
 harpy, manticore or lindwurm, and at high power may summon a sphinx, or an
 entire pack of harpies. With high power the individual creatures will also gain
 increased strength.
+%%%%
+Muse Oam's Air Blast spell
+
+A massive blast of air pushes out from the caster, hitting all nearby monsters with 
+physical force, knocking them back if damage is done.
 %%%%
 Necromutation spell
 
