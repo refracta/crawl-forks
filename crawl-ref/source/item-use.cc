@@ -3152,10 +3152,21 @@ static bool _handle_bless_item(const string &pre_msg)
 
     if (item->cursed())
     {
-        do_uncurse_item(*item);
-        mprf("The blessing and the curse cancel each other in a brilliant flash!");
-        flash_view_delay(UA_PLAYER, WHITE, 300);
-        return true;
+        bool uncurse = true;
+        if (you_worship(GOD_ASHENZARI) && !is_artefact(*item) &&
+            (item->base_type == OBJ_WEAPONS || item->base_type == OBJ_ARMOURS ||
+             item->base_type == OBJ_SHIELDS || item->base_type == OBJ_STAVES))
+        {
+            mprf(MSGCH_GOD, "Ashenzari asks: Mortal, do you wish for us to preserve the curse?");
+            uncurse = !yesno("Preserve curse?", true, 0);
+        }
+        if (uncurse)
+        {
+            do_uncurse_item(*item);
+            mprf("The blessing and the curse cancel each other in a brilliant flash!");
+            flash_view_delay(UA_PLAYER, WHITE, 300);
+            return true;
+        }
     }
 
     switch (item->base_type)
