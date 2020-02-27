@@ -4212,7 +4212,7 @@ static void _hailstorm_cell(coord_def where, int pow, actor *agent, bool chaos)
     {
         string msg;
         msg = "%s is unaffected.";
-        if (mons->type == MONS_ICE_BEAST && one_chance_in(4))
+        if (!mons->is_stationary() && one_chance_in(8))
             msg = "%s dances in the hail.";
         if (you.can_see(*mons))
             mprf(msg.c_str(), mons->name(DESC_THE).c_str());
