@@ -154,7 +154,8 @@ bool cast_smitey_damnation(int pow, bolt &beam)
 static bool _is_menacing(const actor * caster, spell_type spell)
 {
     item_def * staff = caster->staff();
-    if (staff && get_staff_facet(*staff))
+    if (staff && get_staff_facet(*staff) == SPSTF_MENACE 
+              && staff_enhances_spell(staff, spell))
         return true;
     return false;
 }
@@ -4012,9 +4013,68 @@ spret cast_borgnjors_vile_clutch(int pow, bolt &beam, bool fail)
     return spret::success;
 }
 
+static void _chaos_bolt_flavour(bolt beam, int x)
+{
+    bool good = is_good_god(you.religion) && !(you.staff() && is_unrandom_artefact(*you.staff(), UNRAND_MAJIN));
+
+    x %= 8;
+    switch (x)
+    {
+    default:
+    case 0:
+    case 4:
+        beam.real_flavour = BEAM_CHAOTIC;
+        beam.colour = ETC_JEWEL;
+        break;
+    case 1:
+        beam.flavour = BEAM_ACID;
+        beam.colour = YELLOW;
+        break;
+    case 2:
+        if (good)
+        {
+            beam.flavour = BEAM_HOLY;
+            beam.colour = ETC_HOLY;
+        }
+        else
+        {
+            beam.flavour = BEAM_DAMNATION;
+            beam.colour = LIGHTRED;
+        }
+        break;
+    case 3:
+        beam.flavour = BEAM_COLD;
+        beam.colour = LIGHTCYAN;
+        break;
+    case 5:
+        if (good)
+        {
+            beam.flavour = BEAM_WAND_HEALING;
+            beam.colour = ETC_HEAL;
+        }
+        else
+        {
+            beam.flavour = BEAM_MIASMA;
+            beam.colour = ETC_DARK;
+        }
+        break;
+    case 6:
+        beam.flavour = BEAM_LAVA;
+        beam.colour = RED;
+        break;
+    case 7:
+        beam.flavour = BEAM_ELECTRICITY;
+        beam.colour = LIGHTMAGENTA;
+        break;
+    }
+}
+
 spret cast_starburst(int pow, bool fail, bool tracer)
 {
     int range = spell_range(SPELL_STARBURST, pow);
+
+    bool chaos = determine_chaos(&you, SPELL_STARBURST);
+    int x = random2(7);
 
     vector<coord_def> offsets = { coord_def(range, 0),
                                 coord_def(range, range),
@@ -4048,6 +4108,11 @@ spret cast_starburst(int pow, bool fail, bool tracer)
 
         if (tracer)
         {
+            if (chaos)
+            {
+                _chaos_bolt_flavour(beam, x);
+                x++;
+            }
             beam.fire();
             // something to hit
             if (beam.foe_info.count > 0)
