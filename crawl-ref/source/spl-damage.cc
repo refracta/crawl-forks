@@ -1985,7 +1985,7 @@ static int _ignite_poison_bog(coord_def where, int pow, actor *agent)
 {
     const bool tracer = (pow == -1);  // Only testing damage, not dealing it
 
-    if (grd(where) != DNGN_TOXIC_BOG)
+    if (grd(where) != DNGN_TOXIC_BOG && grd(where) != DNGN_QUAGMIRE)
         return false;
 
     if (tracer)
@@ -2318,7 +2318,7 @@ static bool _olgreb_check(actor * agent)
                 if (c->type == CLOUD_POISON || c->type == CLOUD_MEPHITIC)
                     return true;
             }
-            if (grd(*ri) == DNGN_TOXIC_BOG)
+            if (grd(*ri) == DNGN_TOXIC_BOG || grd(*ri) == DNGN_QUAGMIRE)
                 return true;
         }
     }
@@ -4254,12 +4254,13 @@ spret cast_imb(int pow, bool fail)
 
 void actor_apply_toxic_bog(actor * act)
 {
-    if (grd(act->pos()) != DNGN_TOXIC_BOG)
+    if (grd(act->pos()) != DNGN_TOXIC_BOG && grd(act->pos()) != DNGN_QUAGMIRE)
         return;
 
     if (!act->ground_level())
         return;
 
+    const bool chaos = grd(act->pos()) == DNGN_QUAGMIRE;
     const bool player = act->is_player();
     monster *mons = !player ? act->as_monster() : nullptr;
 
@@ -4276,34 +4277,74 @@ void actor_apply_toxic_bog(actor * act)
         }
     }
 
+    beam_type dam_type = BEAM_POISON_ARROW;
+    if (chaos)
+    {
+        switch (random2(2))
+        {
+        default: //just in case.
+        case 0: dam_type = chaos_damage_type();
+        case 1: dam_type = BEAM_ACID;
+        case 2: dam_type = BEAM_LAVA;
+        }
+    }
+
     const int base_damage = dice_def(4, 6).roll();
-    const int damage = resist_adjust_damage(act, BEAM_POISON_ARROW, base_damage);
+    const int damage = resist_adjust_damage(act, dam_type, base_damage);
     const int resist = base_damage - damage;
 
     const int final_damage = timescale_damage(act, damage);
 
-    if (player && final_damage > 0)
+    if (chaos)
     {
-        mprf("You fester in the toxic bog%s",
+        if (player && final_damage > 0)
+        {
+            mprf("You marinate in the quagmire%s",
                 attack_strength_punctuation(final_damage).c_str());
-    }
-    else if (final_damage > 0)
-    {
-        behaviour_event(mons, ME_DISTURB, 0, act->pos());
-        mprf("%s festers in the toxic bog%s",
+        }
+        else if (final_damage > 0)
+        {
+            behaviour_event(mons, ME_DISTURB, 0, act->pos());
+            mprf("%s marinates in the quagmire%s",
                 mons->name(DESC_THE).c_str(),
                 attack_strength_punctuation(final_damage).c_str());
+        }
     }
 
-    if (final_damage > 0 && resist > 0)
+    else
     {
-        if (player)
-            canned_msg(MSG_YOU_PARTIALLY_RESIST);
-
-        act->poison(oppressor, 7, true);
+        if (player && final_damage > 0)
+        {
+            mprf("You fester in the toxic bog%s",
+                attack_strength_punctuation(final_damage).c_str());
+        }
+        else if (final_damage > 0)
+        {
+            behaviour_event(mons, ME_DISTURB, 0, act->pos());
+            mprf("%s festers in the toxic bog%s",
+                mons->name(DESC_THE).c_str(),
+                attack_strength_punctuation(final_damage).c_str());
+        }
     }
-    else if (final_damage > 0)
-        act->poison(oppressor, 21, true);
+
+    if (!chaos)
+    {
+        if (final_damage > 0 && resist > 0)
+        {
+            if (player)
+                canned_msg(MSG_YOU_PARTIALLY_RESIST);
+
+            act->poison(oppressor, 7, true);
+        }
+        else if (final_damage > 0)
+            act->poison(oppressor, 21, true);
+    }
+    else if (final_damage)
+    {
+        if (one_chance_in(3))
+            chaotic_status(act, final_damage, oppressor);
+        chaotic_debuff(act, final_damage, oppressor);
+    }
 
     if (final_damage)
     {

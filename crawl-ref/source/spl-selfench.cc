@@ -255,7 +255,8 @@ spret cast_transform(int pow, transformation which_trans, bool fail)
 spret cast_noxious_bog(int pow, bool fail)
 {
     fail_check();
-    flash_view_delay(UA_PLAYER, LIGHTGREEN, 100);
+    bool chaos = determine_chaos(&you, SPELL_NOXIOUS_BOG);
+    flash_view_delay(UA_PLAYER, chaos ? LIGHTMAGENTA : LIGHTGREEN, 100);
 
     if (!you.duration[DUR_NOXIOUS_BOG])
         mpr("You begin spewing toxic sludge!");
@@ -274,6 +275,8 @@ void noxious_bog_cell(coord_def p)
 
     const int turns = 10
                     + random2avg(you.props[NOXIOUS_BOG_KEY].get_int() / 20, 2);
-    temp_change_terrain(p, DNGN_TOXIC_BOG, turns * BASELINE_DELAY,
+    bool chaos = determine_chaos(&you, SPELL_NOXIOUS_BOG);
+
+    temp_change_terrain(p, chaos ? DNGN_QUAGMIRE : DNGN_TOXIC_BOG, turns * BASELINE_DELAY,
             TERRAIN_CHANGE_BOG, you.as_monster());
 }

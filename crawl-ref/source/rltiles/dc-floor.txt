@@ -1115,6 +1115,9 @@ shallow_water_murky_disturbance2
 toxic_bog1 DNGN_TOXIC_BOG
 toxic_bog2
 
+quagmire1 DNGN_QUAGMIRE
+quagmire2
+
 grey_dirt_bb SHORE_N
 grey_dirt_bl SHORE_W
 grey_dirt_br SHORE_E

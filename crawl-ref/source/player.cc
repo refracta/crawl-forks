@@ -264,10 +264,12 @@ bool check_moveto_terrain(const coord_def& p, const string &move_verb,
 
     if (!_check_moveto_dangerous(p, msg, move_verb))
         return false;
-    if (!you.airborne() && env.grid(you.pos()) != DNGN_TOXIC_BOG
-        && env.grid(p) == DNGN_TOXIC_BOG)
+    if (!you.airborne() && env.grid(you.pos()) != env.grid(p)
+        && (env.grid(p) == DNGN_TOXIC_BOG || env.grid(p) == DNGN_QUAGMIRE))
     {
         string prompt;
+
+        bool q = env.grid(p) == DNGN_QUAGMIRE;
 
         if (prompted)
             *prompted = true;
@@ -275,8 +277,8 @@ bool check_moveto_terrain(const coord_def& p, const string &move_verb,
         if (!msg.empty())
             prompt = msg + " ";
 
-        prompt += "Are you sure you want to " + move_verb
-                + " into a toxic bog?";
+        prompt += make_stringf("Are you sure you want to %s into a %s?", 
+                    move_verb.c_str(), q ? "chaotic quagmire" : "toxic bog");
 
         if (!yesno(prompt.c_str(), false, 'n'))
         {
@@ -504,6 +506,11 @@ void moveto_location_effects(dungeon_feature_type old_feat,
                     {
                         mprf("You %s the toxic bog.",
                                 stepped ? "enter" : "fall into");
+                    }
+                    else if (new_grid == DNGN_QUAGMIRE)
+                    {
+                        mprf("You %s the chaotic quagmire.",
+                            stepped ? "enter" : "fall into");
                     }
                     else
                     {

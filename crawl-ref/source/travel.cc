@@ -257,7 +257,7 @@ bool feat_is_traversable_now(dungeon_feature_type grid, bool try_fallback)
     if (!ignore_player_traversability)
     {
         // Don't auto travel through toxic bogs
-        if (grid == DNGN_TOXIC_BOG)
+        if (grid == DNGN_TOXIC_BOG || grid == DNGN_QUAGMIRE)
             return false;
 
         // If the feature is in travel_avoid_terrain, respect that.
