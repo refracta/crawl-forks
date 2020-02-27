@@ -522,7 +522,8 @@ bool determine_chaos(const actor *agent, spell_type spell)
             && staff_enhances_spell(agent->staff(), spell))
         return true;
 
-    if (one_chance_in(3) && !bool(get_spell_disciplines(spell) & spschool::summoning))
+    if (one_chance_in(3) && !bool(get_spell_disciplines(spell) & spschool::summoning)
+        && !spell == SPELL_HAILSTORM) // Yay for special cases.
         return false;
 
     return (agent->staff() && get_staff_facet(*agent->staff()) == SPSTF_CHAOS &&

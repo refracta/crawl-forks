@@ -774,6 +774,8 @@ Ring of Chaos spell
 
 Conjures a cannonade of raw entropy. Blasts targets two to three spaces away 
 from the caster with random elements, buffing and debuffing them chaotically.
+Creatures with an infusion of chaos; such as those summoned by a chaos mage
+are immune.
 %%%%
 Haste Other spell
 

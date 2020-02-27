@@ -4099,6 +4099,8 @@ spret cast_starburst(int pow, bool fail, bool tracer)
     beam.origin_spell = SPELL_STARBURST;
     beam.draw_delay   = 5;
     zappy(ZAP_BOLT_OF_FIRE, pow, false, beam);
+    if (_is_menacing(&you, SPELL_STARBURST))
+        beam.damage.num++;
 
     for (const coord_def & offset : offsets)
     {
@@ -4157,6 +4159,8 @@ void foxfire_attack(const monster *foxfire, const actor *target)
     beam.source_id   = foxfire->summoner;
     beam.source_name = summoner->name(DESC_PLAIN, true);
     zappy(chaos ? ZAP_CHAOSFIRE : ZAP_FOXFIRE, foxfire->get_hit_dice(), !foxfire->friendly(), beam);
+    if (_is_menacing(&you, SPELL_FOXFIRE))
+        beam.damage.num++;
     beam.aux_source  = beam.name;
     beam.target      = target->pos();
     beam.fire();
@@ -4169,31 +4173,60 @@ void foxfire_attack(const monster *foxfire, const actor *target)
  * @param pow       The power with which the spell is being cast.
  * @param agent     The agent (player or monster) doing the hailstorming.
  */
-static void _hailstorm_cell(coord_def where, int pow, actor *agent)
+static void _hailstorm_cell(coord_def where, int pow, actor *agent, bool chaos)
 {
     bolt beam;
-    beam.flavour    = BEAM_ICE;
     beam.thrower    = agent->is_player() ? KILL_YOU : KILL_MON;
     beam.source_id  = agent->mid;
     beam.attitude   = agent->temp_attitude();
     beam.glyph      = dchar_glyph(DCHAR_FIRED_BURST);
-    beam.colour     = ETC_ICE;
 #ifdef USE_TILE
     beam.tile_beam  = -1;
 #endif
     beam.draw_delay = 10;
     beam.source     = where;
     beam.target     = where;
-    beam.damage     = calc_dice(3, 10 + pow / 2);
     beam.hit        = 18 + pow / 6;
-    beam.name       = "hail";
-    beam.hit_verb   = "pelts";
+    if (chaos)
+    {
+        beam.real_flavour = beam.flavour = BEAM_CHAOTIC;
+        beam.colour = ETC_JEWEL;
+        beam.name = "chaos shards";
+        beam.hit_verb = "pelt";
+        beam.damage = calc_dice(3, 13 + (pow * 5) / 8);
+    }
+    else
+    {
+        beam.flavour = BEAM_ICE;
+        beam.colour = ETC_ICE;
+        beam.name = "hail";
+        beam.hit_verb = "pelts";
+        beam.damage = calc_dice(3, 10 + pow / 2);
+    }
+
+    if (_is_menacing(&you, SPELL_HAILSTORM))
+        beam.damage.num++;
 
     monster *mons = monster_at(where);
-    if (mons && mons->is_icy())
+    if (!chaos && mons && mons->is_icy())
     {
         string msg;
-        one_chance_in(20) ? msg = "%s dances in the hail." :
+        msg = "%s is unaffected.";
+        if (mons->type == MONS_ICE_BEAST && one_chance_in(4))
+            msg = "%s dances in the hail.";
+        if (you.can_see(*mons))
+            mprf(msg.c_str(), mons->name(DESC_THE).c_str());
+        else
+            mprf(msg.c_str(), "Something");
+
+        beam.draw(where);
+        return;
+    }
+    if (chaos && mons && (mons->type == MONS_CHAOS_SPAWN || mons->has_ench(ENCH_CHAOTIC_INFUSION)
+        || mons->is_shapeshifter()))
+    {
+        string msg;
+        one_chance_in(8)  ? msg = "%s gyres and gimbles in the cannonade." :
                             msg = "%s is unaffected.";
         if (you.can_see(*mons))
             mprf(msg.c_str(), mons->name(DESC_THE).c_str());
@@ -4241,29 +4274,37 @@ spret cast_hailstorm(int pow, bool fail, bool tracer)
 
     fail_check();
 
-    mpr("A cannonade of hail descends around you!");
+    bool chaos = determine_chaos(&you, SPELL_HAILSTORM);
+
+    if (chaos)
+        mpr("A hail of chaotic shards descend around you!");
+    else
+        mpr("A cannonade of hail descends around you!");
 
     for (radius_iterator ri(you.pos(), 3, C_SQUARE, LOS_NO_TRANS, true); ri; ++ri)
     {
         if (grid_distance(you.pos(), *ri) == 1 || !in_bounds(*ri))
             continue;
 
-        _hailstorm_cell(*ri, pow, &you);
+        _hailstorm_cell(*ri, pow, &you, chaos);
     }
 
     return spret::success;
 }
 
-static void _imb_actor(actor * act, int pow)
+static void _imb_actor(actor * act, int pow, bool chaos)
 {
     bolt beam;
     beam.source          = you.pos();
     beam.thrower         = KILL_YOU;
     beam.source_id       = MID_PLAYER;
     beam.range           = LOS_RADIUS;
-    beam.colour          = LIGHTMAGENTA;
+    if (chaos)
+        beam.colour      = ETC_JEWEL;
+    else
+        beam.colour      = ETC_AIR;
     beam.glyph           = dchar_glyph(DCHAR_FIRED_ZAP);
-    beam.name            = "mystic blast";
+    beam.name            = "atmospheric blast";
     beam.origin_spell    = SPELL_MUSE_OAMS_AIR_BLAST;
     beam.ench_power      = pow;
     beam.aimed_at_spot   = true;
@@ -4271,15 +4312,24 @@ static void _imb_actor(actor * act, int pow)
 
     beam.target          = act->pos();
 
-    beam.flavour          = BEAM_VISUAL;
+    beam.flavour         = BEAM_VISUAL;
     beam.affects_nothing = true;
     beam.pierce          = true;
     beam.fire();
 
-    beam.flavour          = BEAM_MMISSILE;
+    if (chaos)
+        beam.real_flavour = beam.flavour = BEAM_CHAOTIC;
+    else
+        beam.flavour     = BEAM_MMISSILE;
     beam.affects_nothing = false;
     beam.hit             = 10 + pow / 7;
-    beam.damage          = calc_dice(2, 6 + pow / 3);
+    if (chaos)
+        beam.damage      = calc_dice(2, 7 + (pow * 5 / 12));
+    else
+        beam.damage      = calc_dice(2, 6 + pow / 3);
+
+    if (_is_menacing(&you, SPELL_MUSE_OAMS_AIR_BLAST))
+        beam.damage.num++;
 
     beam.affect_actor(act);
 }
@@ -4308,7 +4358,9 @@ spret cast_imb(int pow, bool fail)
 
     fail_check();
 
-    mpr("You erupt in a blast of force!");
+    bool chaos = determine_chaos(&you, SPELL_MUSE_OAMS_AIR_BLAST);
+
+    mprf("A blast of %s air wooshes around you!", chaos ? "chaotic": "");
 
     vector<actor *> act_list;
 
@@ -4328,7 +4380,7 @@ spret cast_imb(int pow, bool fail)
     sort(act_list.begin(), act_list.end(), sorter);
 
     for (actor *act : act_list)
-        _imb_actor(act, pow);
+        _imb_actor(act, pow, chaos);
 
     return spret::success;
 }
