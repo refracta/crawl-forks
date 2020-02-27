@@ -2103,6 +2103,7 @@ int items(bool allow_uniques,
            || force_class == OBJ_ARMOURS
            || force_class == OBJ_SHIELDS
            || force_class == OBJ_MISSILES
+           || force_class == OBJ_STAVES
            || force_class == OBJ_MISCELLANY && is_deck_type(force_type));
 
     // Find an empty slot for the item (with culling if required).

@@ -5036,11 +5036,28 @@ int str_to_ego(object_class_type item_type, string ego_str)
     };
     COMPILE_CHECK(ARRAYSZ(missile_brands) == NUM_REAL_SPECIAL_MISSILES);
 
-    const char** name_lists[3] = {armour_egos, weapon_brands, missile_brands};
+    const char* staff_facets[] =
+    {
+        "shielded",
+        "flayed",
+        "warped",
+        "energetic",
+        "reaver",
+        "wizard",
+        "scoped",
+        "menacing",
+        "accurate",
+        "chaotic",
+        nullptr
+    };
+    COMPILE_CHECK(ARRAYSZ(staff_facets) == NUM_SPECIAL_STAVES);
 
-    int armour_order[3]  = {0, 1, 2};
-    int weapon_order[3]  = {1, 0, 2};
-    int missile_order[3] = {2, 0, 1};
+    const char** name_lists[4] = {armour_egos, weapon_brands, missile_brands, staff_facets};
+
+    int armour_order[4]  = {0, 1, 2, 3};
+    int weapon_order[4]  = {1, 0, 2, 3};
+    int missile_order[4] = {2, 0, 1, 3};
+    int staff_order[4]   = {3, 1, 0, 2};
 
     int *order;
 
@@ -5052,6 +5069,10 @@ int str_to_ego(object_class_type item_type, string ego_str)
 
     case OBJ_WEAPONS:
         order = weapon_order;
+        break;
+
+    case OBJ_STAVES:
+        order = staff_order;
         break;
 
     case OBJ_MISSILES:
@@ -5077,7 +5098,7 @@ int str_to_ego(object_class_type item_type, string ego_str)
     }
 
     // Incompatible or non-existent ego type
-    for (int i = 1; i <= 2; i++)
+    for (int i = 1; i <= 3; i++)
     {
         const char** list = name_lists[order[i]];
 
@@ -5615,10 +5636,11 @@ bool item_list::parse_single_spec(item_spec& result, string s)
     if (result.base_type != OBJ_WEAPONS
         && result.base_type != OBJ_MISSILES
         && result.base_type != OBJ_ARMOURS
-        && result.base_type != OBJ_SHIELDS)
+        && result.base_type != OBJ_SHIELDS
+        && result.base_type != OBJ_STAVES)
     {
         error = "An ego can only be applied to a weapon, missile, "
-            "shield or armour.";
+            "shield, staff or armour.";
         return false;
     }
 
