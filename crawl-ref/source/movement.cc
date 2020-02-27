@@ -788,7 +788,29 @@ void move_player_action(coord_def move)
                 if (cell_is_solid(old_pos))
                     ASSERT(you.wizmode_teleported_into_rock);
                 else
+                {
+                    int x = targ.x - old_pos.x;
+                    int y = targ.y - old_pos.y;
+                    coord_def p0 = coord_def(old_pos.x - y, old_pos.y + x);
+                    coord_def p1 = coord_def(old_pos.x + y, old_pos.y - x);
+                    coord_def p2 = coord_def(old_pos.x - y, old_pos.y);
+                    coord_def p3 = coord_def(old_pos.x, old_pos.y - x);
                     noxious_bog_cell(old_pos);
+                    if (x && y)
+                    {
+                        if (!cell_is_solid(p2) && !actor_at(p2))
+                            noxious_bog_cell(p2);
+                        if (!cell_is_solid(p3) && !actor_at(p2))
+                            noxious_bog_cell(p3);
+                    }
+                    else
+                    {
+                        if (!cell_is_solid(p0) && !actor_at(p2))
+                            noxious_bog_cell(p0);
+                        if (!cell_is_solid(p1) && !actor_at(p2))
+                            noxious_bog_cell(p1);
+                    }
+                }
             }
 
             if (you.duration[DUR_CLOUD_TRAIL])
