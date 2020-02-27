@@ -4074,6 +4074,7 @@ spret cast_starburst(int pow, bool fail, bool tracer)
 void foxfire_attack(const monster *foxfire, const actor *target)
 {
     actor * summoner = actor_by_mid(foxfire->summoner);
+    const bool chaos = foxfire->type == MONS_EPHEMERAL_SPIRIT;
 
     // Don't allow foxfires that have wandered off to attack before dissapating
     if (summoner && !(summoner->can_see(*foxfire)
@@ -4090,7 +4091,7 @@ void foxfire_attack(const monster *foxfire, const actor *target)
     beam.source      = foxfire->pos();
     beam.source_id   = foxfire->summoner;
     beam.source_name = summoner->name(DESC_PLAIN, true);
-    zappy(ZAP_FOXFIRE, foxfire->get_hit_dice(), !foxfire->friendly(), beam);
+    zappy(chaos ? ZAP_CHAOSFIRE : ZAP_FOXFIRE, foxfire->get_hit_dice(), !foxfire->friendly(), beam);
     beam.aux_source  = beam.name;
     beam.target      = target->pos();
     beam.fire();

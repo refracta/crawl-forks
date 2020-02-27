@@ -223,6 +223,11 @@ cloud_flame_trail1
 cloud_flame_trail2
 cloud_flame_trail3
 
+chaos_trail0 CLOUD_EPHEMERAL
+chaos_trail1
+chaos_trail2
+chaos_trail3
+
 %sdir mon
 fungi_plants/ballistomycete_spore SPORE_OVERLAY
 

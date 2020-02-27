@@ -100,5 +100,6 @@ enum zap_type
     ZAP_CHAOS_ICEFALL,
     ZAP_CHAOS_STALACTITE,
     ZAP_FOXFIRE,
+    ZAP_CHAOSFIRE,
     NUM_ZAPS
 };

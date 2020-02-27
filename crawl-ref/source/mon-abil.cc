@@ -1058,6 +1058,7 @@ bool mon_special_ability(monster* mons)
         }
         break;
 
+    case MONS_EPHEMERAL_SPIRIT: // Fallthrough
     case MONS_FOXFIRE:
         if (is_sanctuary(mons->pos()))
             break;

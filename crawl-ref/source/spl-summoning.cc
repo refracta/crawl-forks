@@ -3572,9 +3572,11 @@ spret cast_foxfire(int pow, god_type god, bool fail)
     fail_check();
     int created = 0;
 
+    bool chaos = determine_chaos(&you, SPELL_FOXFIRE);
+
     for (fair_adjacent_iterator ai(you.pos()); ai; ++ai)
     {
-        mgen_data fox(MONS_FOXFIRE, BEH_FRIENDLY,
+        mgen_data fox(chaos ? MONS_EPHEMERAL_SPIRIT : MONS_FOXFIRE, BEH_FRIENDLY,
                       *ai, MHITNOT, MG_FORCE_PLACE);
         fox.set_summoned(&you, 0, SPELL_FOXFIRE, god);
         fox.hd = pow;
@@ -3595,7 +3597,12 @@ spret cast_foxfire(int pow, god_type god, bool fail)
     }
 
     if (created)
-        mpr("You conjure some foxfire!");
+    {
+        if (chaos)
+            mpr("Some ephemeral spirits of chaos come forth from the void!");
+        else
+            mpr("You conjure some foxfire!");
+    }
     else
         canned_msg(MSG_NOTHING_HAPPENS);
 

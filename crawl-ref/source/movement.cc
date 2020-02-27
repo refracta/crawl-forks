@@ -84,7 +84,7 @@ static void _swap_places(monster* mons, const coord_def &loc)
     mons->move_to_pos(loc, true, true);
 
     // Foxfire attacks and then dissapates at the new location after the swap.
-    if (mons->type == MONS_FOXFIRE)
+    if (mons->type == MONS_FOXFIRE || mons->type == MONS_EPHEMERAL_SPIRIT)
     {
         foxfire_attack(mons, &you);
         monster_die(*mons, KILL_DISMISSED, NON_MONSTER, true);

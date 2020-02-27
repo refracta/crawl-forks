@@ -1562,4 +1562,22 @@ _mon_hex_zap(ZAP_DRAIN_MAGIC, BEAM_DRAIN_MAGIC),
     1
 },
 
+{
+    ZAP_CHAOSFIRE,
+    "ephemeral spirit",
+    50,
+    new dicedef_calculator<1, 4, 1, 5>,
+    new tohit_calculator<AUTOMATIC_HIT>,
+    new dicedef_calculator<3, 3, 1, 12>,
+    new tohit_calculator<AUTOMATIC_HIT>,
+    ETC_JEWEL,
+    false,
+    BEAM_CHAOTIC,
+    DCHAR_FIRED_BOLT,
+    true,
+    false,
+    false,
+    1
+},
+
 };

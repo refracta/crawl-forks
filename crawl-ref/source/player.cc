@@ -430,7 +430,7 @@ bool swap_check(monster* mons, coord_def &loc, bool quiet)
     // XXX: We still need the location so we can swap the foxfire and kill it
     // in its new location (which is finalized after the player's movement is
     // complete).
-    if (mons->type == MONS_FOXFIRE && !quiet
+    if ((mons->type == MONS_FOXFIRE || mons->type == MONS_EPHEMERAL_SPIRIT) && !quiet
         && !yesno(make_stringf("Do you really want to walk into %s?",
                   mons->name(DESC_YOUR).c_str()).c_str(), true, 'N'))
     {

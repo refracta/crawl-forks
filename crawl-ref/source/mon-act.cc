@@ -263,6 +263,12 @@ static bool _swap_monsters(monster& mover, monster& moved)
         monster_die(moved, KILL_DISMISSED, NON_MONSTER, true);
     }
 
+    if (moved.type == MONS_EPHEMERAL_SPIRIT)
+    {
+        mprf(MSGCH_GOD, "By Zin's power the ephemeral spirit is soothed!");
+        monster_die(moved, KILL_DISMISSED, NON_MONSTER, true);
+    }
+
     return true;
 }
 
@@ -1673,11 +1679,14 @@ static void _pre_monster_move(monster& mons)
     // Dissipate player ball lightnings and foxfires
     // that have left the player's sight
     // (monsters are allowed to 'cheat', as with orb of destruction)
-    if ((mons.type == MONS_BALL_LIGHTNING || mons.type == MONS_ENTROPIC_SPHERE || mons.type == MONS_FOXFIRE)
+    if ((mons.type == MONS_BALL_LIGHTNING || mons.type == MONS_ENTROPIC_SPHERE 
+             || mons.type == MONS_FOXFIRE || mons.type == MONS_EPHEMERAL_SPIRIT)
         && mons.summoner == MID_PLAYER && !cell_see_cell(you.pos(), mons.pos(), LOS_SOLID))
     {
         if (mons.type == MONS_FOXFIRE)
             check_place_cloud(CLOUD_FLAME, mons.pos(), 2, &mons);
+        if (mons.type == MONS_EPHEMERAL_SPIRIT)
+            check_place_cloud(CLOUD_EPHEMERAL, mons.pos(), 2, &mons);
         monster_die(mons, KILL_RESET, NON_MONSTER);
         return;
     }
@@ -1899,7 +1908,7 @@ void handle_monster_move(monster* mons)
         return;
     }
 
-    if (mons->type == MONS_FOXFIRE)
+    if (mons->type == MONS_FOXFIRE || mons->type == MONS_EPHEMERAL_SPIRIT)
     {
         if (mons->steps_remaining == 0)
         {
@@ -2248,7 +2257,8 @@ void handle_monster_move(monster* mons)
         if (targ
             && targ != mons
             && mons->behaviour != BEH_WITHDRAW
-            && (!(mons_aligned(mons, targ) || targ->type == MONS_FOXFIRE)
+            && (!(mons_aligned(mons, targ) || targ->type == MONS_FOXFIRE 
+                || targ->type == MONS_EPHEMERAL_SPIRIT)
                 || mons->has_ench(ENCH_INSANE))
             && monster_can_hit_monster(mons, targ))
         {
@@ -2994,7 +3004,7 @@ static bool _mons_can_displace(const monster* mpusher,
     }
 
     // Foxfires can always be pushed
-    if (mpushee->type == MONS_FOXFIRE)
+    if (mpushee->type == MONS_FOXFIRE || mpushee->type == MONS_EPHEMERAL_SPIRIT)
         return !mons_aligned(mpushee, mpusher); // But allies won't do it
 
     if (!mpushee->has_action_energy()
@@ -3303,7 +3313,8 @@ bool mon_can_move_to_pos(const monster* mons, const coord_def& delta,
             return false;
 
         if ((mons_aligned(mons, targmonster)
-             || targmonster->type == MONS_FOXFIRE)
+             || targmonster->type == MONS_FOXFIRE
+             || targmonster->type == MONS_EPHEMERAL_SPIRIT)
             && !mons->has_ench(ENCH_INSANE)
             && !_mons_can_displace(mons, targmonster))
         {
@@ -3571,7 +3582,7 @@ bool monster_swaps_places(monster* mon, const coord_def& delta,
     _handle_manticore_barbs(*m2);
 
     // Pushing past a foxfire gets you burned regardless of alignment
-    if (m2->type == MONS_FOXFIRE)
+    if (m2->type == MONS_FOXFIRE || m2->type == MONS_EPHEMERAL_SPIRIT)
     {
         foxfire_attack(m2, mon);
         monster_die(*m2, KILL_DISMISSED, NON_MONSTER, true);
@@ -3676,7 +3687,7 @@ static bool _do_move_monster(monster& mons, const coord_def& delta)
     // This appears to be the real one, ie where the movement occurs:
     _swim_or_move_energy(mons);
 
-    if (mons.type == MONS_FOXFIRE)
+    if (mons.type == MONS_FOXFIRE || mons.type == MONS_EPHEMERAL_SPIRIT)
         --mons.steps_remaining;
 
     _escape_water_hold(mons);
@@ -3985,7 +3996,8 @@ static bool _monster_move(monster* mons)
         // Check for attacking another monster.
         if (monster* targ = monster_at(mons->pos() + mmov))
         {
-            if ((mons_aligned(mons, targ) || targ->type == MONS_FOXFIRE)
+            if ((mons_aligned(mons, targ) || targ->type == MONS_FOXFIRE 
+                                          || targ->type == MONS_EPHEMERAL_SPIRIT)
                 && !(mons->has_ench(ENCH_INSANE)
                      || mons->confused()))
             {
@@ -4015,6 +4027,9 @@ static bool _monster_move(monster* mons)
         {
             place_cloud(CLOUD_FIRE, mons->pos(), 2 + random2(4), mons);
         }
+
+        if (mons->type == MONS_EPHEMERAL_SPIRIT)
+            check_place_cloud(CLOUD_EPHEMERAL, mons->pos(), 2, mons);
 
         if (mons->type == MONS_FOXFIRE)
             check_place_cloud(CLOUD_FLAME, mons->pos(), 2, mons);

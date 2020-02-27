@@ -329,7 +329,7 @@ static bool _monster_blocks_travel(const monster_info *mons)
 {
     return mons
            && (mons_class_is_stationary(mons->type)
-               || mons->type == MONS_FOXFIRE)
+               || mons->type == MONS_FOXFIRE || mons->type == MONS_EPHEMERAL_SPIRIT)
            && !fedhas_passthrough(mons);
 }
 
