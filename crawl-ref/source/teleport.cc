@@ -144,7 +144,7 @@ static coord_def _random_monster_nearby_habitable_space(const monster& mon)
         if (!in_bounds(target))
             continue;
 
-        if (!monster_habitable_grid(&mon, grd(target), false))
+        if (!monster_habitable_grid(&mon, grd(target)))
             continue;
 
         if (respect_sanctuary && is_sanctuary(target))
@@ -430,14 +430,8 @@ bool valid_blink_destination(const actor* moved, const coord_def& target,
         return false;
     if (actor_at(target))
         return false;
-    if (forbid_unhabitable)
-    {
-        if (!moved->is_habitable(target))
-            return false;
-//        if (moved->is_player() && is_feat_dangerous(grd(target), true))
-//            return false;
-        // Commenting out instead of deleting outright in case I decide to revert. *Evil Laugh*
-    }
+    if (forbid_unhabitable && !moved->is_habitable(target))
+        return false;
     if (forbid_sanctuary && is_sanctuary(target))
         return false;
     if (!moved->see_cell_no_trans(target))
