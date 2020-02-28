@@ -450,7 +450,7 @@ static const map<spell_type, mons_spell_logic> spell_to_logic = {
     } },
     { SPELL_CONJURE_FLAME, {
         [](const monster &/*caster*/) {
-            return !(env.level_state & LSTATE_STILL_WINDS);
+            return !bool(env.level_state & LSTATE_STILL_WINDS);
         },
         [](monster &caster, mon_spell_slot slot, bolt& pbolt) {
             const int splpow = _mons_spellpower(slot.spell, caster);

@@ -523,7 +523,7 @@ bool determine_chaos(const actor *agent, spell_type spell)
         return true;
 
     if (one_chance_in(3) && !bool(get_spell_disciplines(spell) & spschool::summoning)
-        && !spell == SPELL_HAILSTORM) // Yay for special cases.
+        && !(spell == SPELL_HAILSTORM)) // Yay for special cases.
         return false;
 
     return (agent->staff() && get_staff_facet(*agent->staff()) == SPSTF_CHAOS &&
@@ -1969,6 +1969,9 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
 
     case SPELL_INFESTATION:
         return cast_infestation(powc, beam, fail);
+
+    case SPELL_STILL_WINDS:
+        return cast_still_winds(powc, fail);
 
     case SPELL_FOXFIRE:
         return cast_foxfire(powc, god, fail);

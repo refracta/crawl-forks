@@ -8,6 +8,7 @@ repel_missiles REPEL_MISSILES
 shock SHOCK
 silence SILENCE
 static_discharge STATIC_DISCHARGE
+still_winds STILL_WINDS
 swiftness SWIFTNESS
 tornado TORNADO
 

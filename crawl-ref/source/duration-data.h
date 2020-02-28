@@ -2,6 +2,7 @@
  * Status defaults for durations.
  */
 
+#include "cloud.h"
 #include "god-passive.h"
 
 static void _end_weapon_brand()
@@ -676,6 +677,9 @@ static const duration_def duration_data[] =
       "noxious spew", "noxious bog",
       "You are spewing a noxious bog.", D_DISPELLABLE,
       {{ "Your noxious spew wanes." }}},
+    { DUR_STILL_WINDS,
+      BROWN, "", "", "", "You are stilling the winds.", D_DISPELLABLE,
+      {{ "You release your hold on the winds." , end_still_winds}}},
 
 #if TAG_MAJOR_VERSION == 34
     // And removed ones
@@ -699,7 +703,6 @@ static const duration_def duration_data[] =
     { DUR_ANTENNAE_EXTEND, 0, "", "", "old antennae extend", "", D_NO_FLAGS},
     { DUR_BUILDING_RAGE, 0, "", "", "old building rage", "", D_NO_FLAGS},
     { DUR_NEGATIVE_VULN, 0, "", "", "old negative vuln", "", D_NO_FLAGS},
-    { DUR_SURE_BLADE, 0, "", "", "old sure blade", "", D_NO_FLAGS},
     { DUR_CONTROL_TELEPORT, 0, "", "", "old control teleport", "", D_NO_FLAGS},
     { DUR_DOOM_HOWL_IMMUNITY, 0, "", "", "old howl immunity", "", D_NO_FLAGS, {{""}}},
     { DUR_CONDENSATION_SHIELD, 0, "", "", "old condensation shield", "", D_NO_FLAGS},

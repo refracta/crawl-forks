@@ -3991,12 +3991,12 @@ TILEG_ERROR,
 {
     SPELL_STILL_WINDS, "Still Winds", "",
     spschool::hexes | spschool::air,
-    spflag::monster | spflag::selfench,
-    6,
+    spflag::selfench,
+    4,
     200,
     -1, -1,
     0, 0,
-    TILEG_GENERIC_MONSTER_SPELL,
+    TILEG_STILL_WINDS,
 },
 
 {

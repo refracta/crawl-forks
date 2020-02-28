@@ -10,11 +10,13 @@
 #include <cmath>
 
 #include "areas.h"
+#include "cloud.h"
 #include "coordit.h" // radius_iterator
 #include "env.h"
 #include "god-passive.h"
 #include "hints.h"
 #include "items.h" // stack_iterator
+#include "level-state-type.h"
 #include "libutil.h"
 #include "message.h"
 #include "output.h"
@@ -236,6 +238,23 @@ spret cast_shroud_of_golubria(int pow, bool fail)
         mpr("Space distorts slightly along a thin shroud covering your body.");
 
     you.increase_duration(DUR_SHROUD_OF_GOLUBRIA, 7 + roll_dice(2, pow), 50);
+    return spret::success;
+}
+
+spret cast_still_winds(int pow, bool fail)
+{
+    fail_check();
+    if (!bool(env.level_state & LSTATE_STILL_WINDS))
+    {
+        mpr("You grab control of the winds!");
+        start_still_winds();
+    }
+    else
+        mpr("You extend your hold on the air!");
+
+    const int base = div_rand_round(pow, 20);
+
+    you.increase_duration(DUR_STILL_WINDS, roll_dice(4, base / 2), 100);
     return spret::success;
 }
 

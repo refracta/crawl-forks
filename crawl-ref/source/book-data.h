@@ -151,6 +151,7 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_POISONOUS_VAPOURS,
     SPELL_MEPHITIC_CLOUD,
     SPELL_CONJURE_FLAME,
+    SPELL_STILL_WINDS,
     SPELL_FREEZING_CLOUD,
     SPELL_RING_OF_FLAMES,
 },

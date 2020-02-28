@@ -11,6 +11,7 @@
 
 #include <algorithm>
 
+#include "act-iter.h"
 #include "areas.h"
 #include "art-enum.h"
 #include "colour.h"
@@ -1843,11 +1844,16 @@ void start_still_winds()
 {
     delete_all_clouds();
     env.level_state |= LSTATE_STILL_WINDS;
-    mprf(MSGCH_WARN, "%s", "The air becomes perfectly still.");
+    mprf(MSGCH_WARN, "The air becomes perfectly still.");
 }
 
 void end_still_winds()
 {
+    if (you.duration[ENCH_STILL_WINDS])
+        return;
+    for (monster_iterator mon_it; mon_it; ++mon_it)
+        if (mon_it->has_ench(ENCH_STILL_WINDS))
+            return;
     env.level_state &= ~LSTATE_STILL_WINDS;
-    mpr("The air resumes its normal movements.");
+    mprf(MSGCH_DURATION, "The air resumes its normal movements.");
 }
