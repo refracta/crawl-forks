@@ -4034,7 +4034,7 @@ TILEG_ERROR,
 
 {
     SPELL_BECKONING, "Force Lasso", "Chaos Rope",
-    spschool::translocation,
+    spschool::translocation | spschool::earth,
     spflag::dir_or_target | spflag::not_self | spflag::needs_tracer,
     4,
     200,
