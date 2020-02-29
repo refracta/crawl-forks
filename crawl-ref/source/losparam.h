@@ -83,6 +83,16 @@ public:
 };
 extern const opacity_steel opc_steel;
 
+// Don't see through runed cells.
+class opacity_mon : public opacity_func
+{
+public:
+    CLONE(opacity_mon)
+
+    opacity_type operator()(const coord_def& p) const override;
+};
+extern const opacity_mon opc_mon;
+
 // Like opacity_no_trans, but only fully opaque (e.g. non-cloud) features
 // block.
 class opacity_fully_no_trans : public opacity_func

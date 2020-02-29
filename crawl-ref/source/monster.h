@@ -159,6 +159,7 @@ public:
     bool blink_to(const coord_def& c, bool quiet = false) override;
     bool blink_to(const coord_def& c, bool quiet, bool jump);
     kill_category kill_alignment() const override;
+    bool see_cell(const coord_def& p) const override;
 
     int  foe_distance() const;
     bool needs_berserk(bool check_spells = true, bool ignore_distance = false) const;

@@ -97,11 +97,11 @@ TILE:  t = dngn_tree_dead
 FTILE:  -|*%$OGt = floor_pebble_brown / floor_pebble_darkgray
 : ghost_setup(_G)
 MAP
- cccc
-.ndtc
-@=OGc
-.netc
- cccc
+ qqqq
+.qdtq
+@=OGq
+.qetq
+ qqqq
 ENDMAP
 
 NAME:   gammafunk_ghost_split
@@ -140,15 +140,15 @@ SUBST:  p : x., q : x., x : xc
 : ghost_setup(_G)
 MAP
 ...........
-.cccnnnccc.
-.nD..D..Dc.
-.n..qpqg.c.
-.=.Dpqpe.n.
-@=...O.dDn.
-.=.Dpqpf.n.
-.n..qpqh.c.
-.nD..D..Dc.
-.cccnnnccc.
+.qqqqqqqqq.
+.qD..D..Dq.
+.q..qpqg.q.
+.=.Dpqpe.q.
+@=...O.dDq.
+.=.Dpqpf.q.
+.q..qpqh.q.
+.qD..D..Dq.
+.qqqqqqqqq.
 ...........
 ENDMAP
 
@@ -205,17 +205,17 @@ MARKER: S = lua:transp_dest_loc("ghost_arena_exit")
 : ghost_setup(_G)
 MAP
   ...........
- ..nnnnnnnnn..
- .nnRD...DRnn.
- .nG.rsDsrDGn.
- .nD.sr.rsqgn.
-..n.D..D.Djen..
-@Pn.O.DQD.idnS@
-..n.D..D.Dkfn..
- .nD.sr.rsphn.
- .nG.rsDsrDGn.
- .nnRD...DRnn.
- ..nnnnnnnnn..
+ ..qqqqqqqqq..
+ .qqRD...DRqq.
+ .qG.rsDsrDGq.
+ .qD.sr.rsqgq.
+..q.D..D.Djeq..
+@Pq.O.DQD.idqS@
+..q.D..D.Dkfq..
+ .qD.sr.rsphq.
+ .qG.rsDsrDGq.
+ .qqRD...DRqq.
+ ..qqqqqqqqq..
   ...........
 ENDMAP
 
@@ -253,14 +253,14 @@ FTILE:   -de|*%$DFHpGt = floor_pebble_brown / floor_pebble_darkgray
 : set_feature_name("granite_statue", "a gravestone")
 : ghost_setup(_G)
 MAP
-  ccccccc
- ccdfrfecc
-ccq--F--qcc
-cd-D---D-ec
-ch-------hc
-csH-----Hsc
-ch-------hc
-ccnn===nncc
+  qqqqqqq
+ qqdfrfeqq
+qqq--F--qqq
+qd-D---D-eq
+qh-------hq
+qsH-----Hsq
+qh-------hq
+qqqq===qqqq
   ...@...
 ENDMAP
 
@@ -276,11 +276,11 @@ MARKER: F = lua:fog_machine { cloud_type = "black smoke", \
 : dgn.delayed_decay(_G, "d", "chunk")
 : ghost_setup(_G)
 MAP
- ccccc
-.n'''c
-@='O'c
-.n'''c
- ccccc
+ qqqqq
+.q'''q
+@='O'q
+.q'''q
+ qqqqq
 ENDMAP
 
 NAME:   ebering_ghost_gozag
@@ -335,13 +335,13 @@ COLOUR: G = yellow
 : set_feature_name("stone_wall", "golden wall")
 : ghost_setup(_G)
 MAP
- ccccccc
-ccMGOGMcc
-cM'''''Mc
-cG''1''Gc
-cM''_''Mc
-cc'''''cc
- nn===nn
+ qqqqqqq
+qqMGOGMqq
+qM'''''Mq
+qG''1''Gq
+qM''_''Mq
+qq'''''qq
+ qq===qq
  ...@...
 ENDMAP
 
@@ -357,13 +357,13 @@ COLOUR: '-O|*%$tG = yellow, c = white
 FTILE:  '-O|*%$tG = floor_dirt
 : ghost_setup(_G)
 MAP
-ccccccccc
-c---r-r-c
-crr-----c
-c----r--c
-c--r----c
-cr----r-c
-cnn===nnc
+qqqqqqqqq
+q---r-r-q
+qrr-----q
+q----r--q
+q--r----q
+qr----r-q
+qqq===qqq
  ...@...
 ENDMAP
 
@@ -376,13 +376,13 @@ KFEAT:  O = shallow_water
 FTILE:  -|*%$O : floor_pebble_brown / floor_pebble_darkgray
 : ghost_setup(_G)
 MAP
-ccccc
-cdOec
-c-w-c
-c-w-c
-c-w-c
-c-W-c
-cn=nc
+qqqqq
+qdOeq
+q-w-q
+q-w-q
+q-w-q
+q-W-q
+qq=qq
  .@.
 ENDMAP
 
@@ -408,15 +408,15 @@ FTILE:  -1defOTt = floor_grass
 : ghost_setup(_G)
 MAP
    .....
-  ..nnn..
- ..nnTnn..
-..nn---nn..
-.nn--g--nn.
-.nT-dte-Tn.
-.nn--O--nn.
-..nn---nn..
- ..nn-nn..
-  ..n=n..
+  ..qqq..
+ ..qqTqq..
+..qq---qq..
+.qq--g--qq.
+.qT-dte-Tq.
+.qq--O--qq.
+..qq---qq..
+ ..qq-qq..
+  ..q=q..
    .....
 ENDMAP
 
@@ -429,13 +429,13 @@ NSUBST: ' = d / e / 8=wWl / -
 SUBST: P = GTV
 : ghost_setup(_G)
 MAP
-cccccccccc
-cccc'c'ccc
-cc''O''c'c
-c'c'''''cc
-c''P'c''cc
-cc'''''''c
-ccnn==nncc
+qqqqqqqqqq
+qccc'c'ccq
+qc''O''c'q
+q'c'''''cq
+q''P'c''cq
+qc'''''''q
+qqqq==qqqq
   ..@@..
 ENDMAP
 
@@ -512,15 +512,15 @@ NSUBST: - = 2=1 / 4=1- / -
 FTILE:  -de|*%$O12G = floor_pebble_brown / floor_pebble_darkgray
 : ghost_setup(_G)
 MAP
- ccccccc
-.n1c1c1c
-.n---igc
-.=---ecc
-@=---dOc
-.=---fcc
-.n---jhc
-.n1c1c1c
- ccccccc
+ qqqqqqq
+.q1q1q1q
+.q---igq
+.=---eqq
+@=---dOq
+.=---fqq
+.q---jhq
+.q1q1q1q
+ qqqqqqq
 ENDMAP
 
 NAME:   gammafunk_ghost_spectres
@@ -559,15 +559,15 @@ NSUBST: D = 2 / 3 / 2=3- / 4-, - = 2=1 / 2=1- / 2=2 / 2=2- / -
 FTILE:  -de|*%$O1234G = floor_pebble_brown / floor_pebble_darkgray
 : ghost_setup(_G)
 MAP
- ccccccc
-.nDcDcDc
-.n----gc
-.=---eGc
-@=--idOc
-.=---fGc
-.n----hc
-.nDcDcDc
- ccccccc
+ qqqqqqq
+.qDnDnDq
+.q----gq
+.=---eGq
+@=--idOq
+.=---fGq
+.q----hq
+.qDnDnDq
+ qqqqqqq
 ENDMAP
 
 NAME:   gammafunk_ghost_ooze
@@ -608,15 +608,15 @@ COLOUR: c = green
 COLOUR: n = lightgreen
 : ghost_setup(_G)
 MAP
-  ccccc
- cc---cn.
-cci----n.
-ceg----=.
-c_dO---=@
-cfh----=.
-ccj----n.
- cc---cn.
-  ccccc
+  qqqqq
+ qq---qq.
+qqi----q.
+qeg----=.
+q_dO---=@
+qfh----=.
+qqj----q.
+ qq---qq.
+  qqqqq
 ENDMAP
 
 NAME:   gammafunk_ghost_mausoleum
@@ -697,19 +697,19 @@ FTILE:  -de|*%$O012389G = floor_pebble_brown / floor_pebble_darkgray
 : ghost_setup(_G)
 MAP
  ...............
- .nnnnnnnnnnnnn.
- .nR--D---D--Rn.
- .n-D---D---D-n.
- .n--ccc-ccc-in.
- .n-DcGcDcGcDgn.
-..n----------en..
-@PnOD-D-Q-D-DdnS@
-..n----------fn..
- .n-DcGcDcGcDhn.
- .n--ccc-ccc-jn.
- .n-D---D---D-n.
- .nR--D---D--Rn.
- .nnnnnnnnnnnnn.
+ .qqqqqqqqqqqqq.
+ .qR--D---D--Rq.
+ .q-D---D---D-q.
+ .q--ccc-ccc-iq.
+ .q-DcGcDcGcDgq.
+..q----------eq..
+@PqOD-D-Q-D-DdqS@
+..q----------fq..
+ .q-DcGcDcGcDhq.
+ .q--ccc-ccc-jq.
+ .q-D---D---D-q.
+ .qR--D---D--Rq.
+ .qqqqqqqqqqqqq.
  ...............
 ENDMAP
 
@@ -755,15 +755,15 @@ NSUBST: - = 1 / 3=1- / -
 : end
 : ghost_setup(_G)
 MAP
-  ccccc
- cctttcn.
-cct'''-n.
-ct''---=.
-ct'-O--=@
-ct''---=.
-cct'''-n.
- cctttcn.
-  ccccc
+  qqqqq
+ qqtttqq.
+qqt'''-q.
+qt''---=.
+qt'-O--=@
+qt''---=.
+qqt'''-q.
+ qqtttqq.
+  qqqqq
 ENDMAP
 
 NAME:   gammafunk_ghost_fury_of_okawaru
@@ -836,15 +836,15 @@ NSUBST: - = 3=1 / 4=1- / 12-- / 2=2 / 2=2- / 3 / 3- / -
 : end
 : ghost_setup(_G)
 MAP
-ccccccccccc
-cGvvvvvvvGc
-c-igvOvhj-c
-c---edf---c
-c-vG---Gv-c
-c---------c
-c-vG---Gv-c
-c---------c
-cnnn===nnnc
+qqqqqqqqqqq
+qGvvvvvvvGq
+q-igvOvhj-q
+q---edf---q
+q-vG---Gv-q
+q---------q
+q-vG---Gv-q
+q---------q
+qqqq===qqqq
  ....@....
 ENDMAP
 
@@ -872,19 +872,19 @@ FTILE:  GtO123498$*|- = floor_pebble_brown / floor_pebble_darkgray
 : ghost_setup(_G)
 MAP
      .@.
-  cccc.ccc
-  cd-n.n-cc
-  c-$nnn-eccc
-  c-|cGc$$-*c
-  cc-cOc-cc$c
-  cG-G4G-Gc-c
- cc---9-----c
- ct8-nnn-8--c
-cc--nn.nn-t-c
-c---n...n---c
-c-t-n.T.nt-cc
-cc--c...c--c
- c=cc. .cc=c
+  qqqq.qqq
+  qd-q.q-qq
+  q-$qqq-eqqq
+  q-|qGq$$-*q
+  qq-qOq-qq$q
+  qG-G4G-Gq-q
+ qq---9-----q
+ qt8-qqq-8--q
+qq--qq.qq-t-q
+q---q...q---q
+q-t-q.T.qt-qq
+qq--q...q--q
+ q=qq. .qq=q
   @... ...@
 ENDMAP
 
@@ -899,30 +899,30 @@ MONS:   iron troll / iron dragon, iron giant
 NSUBST:  2 = 2=2 / 2=2., 3 = 2=3 / 2=3.
 : ghost_setup(_G)
 MAP
-vvvvvvv
-v$d|e$v
-v$3O3$v
-v.343.v
-v.....v
-v.....v
-vvn=nvv
- v...v
-bbb+bbb
-b.*|$.b
-b.2O2.b
-b.2.2.b
-b.....b
-b.....b
-bbn=nbb
- b...b
-ccc+ccc
-c.*|$.c
-c..O..c
-c..1..c
-c.....c
-c.....c
-ccn=ncc
-  .@.
+ yyyyyyy
+ y$d|e$y
+ y$3O3$y
+ y.343.y
+ y.....y
+ y.....y
+ yyq=qyy
+qqy...yqq
+qbbb+bbbq
+qb.*|$.bq
+qb.2O2.bq
+qb.2.2.bq
+qb.....bq
+qb.....bq
+qbbq=qbbq
+qqb...bqq
+ qqq+qqq
+ q.*|$.q
+ q..O..q
+ q..1..q
+ q.....q
+ q.....q
+ qqq=qqq
+   .@.
 ENDMAP
 
 NAME:   muffindrake_ghost_dead_mans_drink
@@ -938,20 +938,20 @@ NSUBST: 1 = 3=1 / 4=1., 2 = 2=2 / 4=2., 3 = 2=3 / 4=3.
 : dgn.delayed_decay(_G, "'", "felid corpse")
 : ghost_setup(_G)
 MAP
- ccccccc
- c--+*Tc
-.cT1xxxc  .@.
-@n--+3Tccccncccc
-.cT2xxxc|$$-2--c
- c--+3Tcd$$-3--c
- c+cccccvvvccc+c
- c----'vTOe--+-c
- c-----ppppppp-c
- c3p-'---3--2--c
- c-p1-1---2----c
- c2p--p2-3p-1p2c
- c-1--1-'----1-c
- ccncccn=ncccncc
+ qqqqqqq
+ q--+*Tq
+.qT1xxxq  .@.
+@q--+3Tqqqqqqqqq
+.qT2xxxn|$$-2--q
+ q--+3Tnd$$-3--q
+ q+nnnnnvvvnnn+q
+ q----'vTOe--+-q
+ q-----ppppppp-q
+ q3p-'---3--2--q
+ q-p1-1---2----q
+ q2p--p2-3p-1p2q
+ q-1--1-'----1-q
+ qqqqqqq=qqqqqqq
   ......@.'....
 ENDMAP
 
@@ -970,14 +970,14 @@ TILE:   G = dngn_statue_imp / dngn_statue_cerebov / \
             dngn_statue_demonic_bust / dngn_statue_ancient_evil
 : ghost_setup(_G)
 MAP
-vvvvvvvvv
-vGffdefGv
-v$$232$$v
-v--lll--v
-v--lll--v
-v--lll--v
-v-.O...-v
-vnn===nnv
+yyyyyyyyy
+yGffdefGy
+y$$232$$y
+y--lll--y
+y--lll--y
+y--lll--y
+y-.O...-y
+yqq===qqy
 G...@...G
 ENDMAP
 
@@ -1037,15 +1037,17 @@ FTILE:  tGVA.pO012345689de|*$ = floor_moss
 : end
 : ghost_setup(_G)
 MAP
-  ttttttt
- tt'''--tt
- t'-t-..-t
- tt-'O--.t
-tt-..t--.tt
-t-'-.---t't
-t'tnn=nnt't
-ttnS...Sntt
- ....@....
+  qqqqqqqqq
+ qqtttttttqq
+qqtt'''--ttqq
+qqt'-t-..-tqq
+qqtt-'O--.tqq
+qtt-..t--.ttq
+qt-'-.---t'tq
+qt'ttq=qtt'tq
+qtttSq.qStttq
+qqqqqq.qqqqqq
+  ....@....
 ENDMAP
 
 NAME:   biasface_ghost_orc_armoury
@@ -1089,14 +1091,14 @@ NSUBST: - = 3=1 / 4=1. / 3 / 3. / 4. / 2=5 / 2=5. / EEEF / 2=6 / 2=6. / .7 / .
 KFEAT:  _ = altar_beogh
 : ghost_setup(_G)
 MAP
-ccccccccccccccc
-cI---hd_fj---Ic
-c-------------c
-c-cIc--I--cIc-c
-c-cnc--O--cnc-c
-c----ccncc----c
-c.............c
-cnnnnn===nnnnnc
+qqqqqqqqqqqqqqq
+qI---hd_fj---Iq
+q-------------q
+q-cIc--I--cIc-q
+q-cnc--O--cnc-q
+q----ccncc----q
+q.............q
+yqqqqq===qqqqqy
 I......@......I
 ENDMAP
 
@@ -1152,19 +1154,19 @@ FTILE:  =cnO1234567DEde|*%$' = floor_ice
 : ghost_setup(_G)
 MAP
      ...........
-    ..cnn===nnc..
-   ..cc'''''''cc.
-   .cc'''''''''c..
-  ..c''''''''''cc.
-  .cc''''xxxx'''c..
-  .c'''xxxdexx''cc.
-  .c''xxhfijgxx''c.
- ..n''x---O---x''n.
- .cc''x------xx''c.
- .c'''-----xxx''cc.
- .cc''--------''c..
- ..ccc--cnnc--'cc.
-  ...cccc..ccccc..
+    ..qqq===qqq..
+   ..qq'''''''qq.
+   .qq'''''''''q..
+  ..q''''''''''qq.
+  .qq''''xxxx'''q..
+  .q'''xxxdexx''qq.
+  .q''xxhfijgxx''q.
+ ..q''x---O---x''q.
+ .qq''x------xx''q.
+ .q'''-----xxx''qq.
+ .qq''--------''q..
+ ..qqq--qqqq--'qq.
+  ...qqqq..qqqqq..
     .............
 ENDMAP
 
@@ -1201,15 +1203,15 @@ FTILE:  O = dngn_portal_gauntlet_gone
 : ghost_setup(_G)
 MAP
 ...........
-.nnccnccnn.
-.n-gxOxh-n.
-.cc'edf'cc.
-.c-c'''c-c.
-.cac-caa-c.
-.c-a---cac.
-.c-cc--c-c.
-.c-------c.
-.cnn===nnc.
+.qqqqqqqqq.
+.q-gxOxh-q.
+.qc'edf'cq.
+.q-c'''c-q.
+.qac-caa-q.
+.q-a---caq.
+.q-cc--c-q.
+.q-------q.
+.qqq===qqq.
 .....@.....
 ENDMAP
 
@@ -1224,10 +1226,10 @@ KFEAT:  O = altar_xom
 FTILE:  -|*%$O1 : floor_pebble_brown / floor_pebble_darkgray
 : ghost_setup(_G)
 MAP
- ccc
-cc1cc
-cdOec
-cn=nc
+ qqq
+qq1qq
+qdOeq
+qq=qq
 ..@..
 ENDMAP
 
@@ -1252,11 +1254,11 @@ COLOUR: 12*%$W = lightgreen / cyan w:5
 FTILE:  O = dngn_portal_sewer_rusted
 : ghost_setup(_G)
 MAP
-       ..
-ccccccnn.
-cdOe111=.
-ccccccnn.
-       ..
+..........
+.qqqqqqqq.
+.qdOe111=.
+.qqqqqqqq.
+..........
 ENDMAP
 
 # based on sewer_entry_f
@@ -1281,11 +1283,11 @@ COLOUR: 123*%$W = lightgreen / cyan w:5
 FTILE:  O = dngn_portal_sewer_rusted
 : ghost_setup(_G)
 MAP
- ccccccccccc
-.nWWWWeWWWWn.
+ qqqqqqqqqqq
+.qWWWWeWWWWq.
 @=WWWWOWWWW=@
-.nWWWWdWWWWn.
- ccccccccccc
+.qWWWWdWWWWq.
+ qqqqqqqqqqq
 ENDMAP
 
 NAME:   ploomutoo_gammafunk_ghost_potion_laboratory
@@ -1335,22 +1337,23 @@ MARKER: U = lua:fog_machine { cloud_type = "mutagenic fog", pow_min = 3, \
                 spread_rate = 0, excl_rad = 0 }
 : ghost_setup(_G)
 MAP
-bbbbbbbbb
-bbU"P"Ubb
-b"""O"""b
-b'''''''b
-b'b'''b'b
-b```````b
-bnn===nnb
-c-------c
-c-c---c-c
-cc-c-c-cc
-c-c---c-c
-c;;;c;;;c
-c;c;;;c;c
-c;;;;;;;c
-cnn===nnc
-c...@...c
+qqqqqqqqqqq
+qbbbbbbbbbq
+qbbU"P"Ubbq
+qb"""O"""bq
+qb'''''''bq
+qb'b'''b'bq
+qb```````bq
+qbqq===qqbq
+qqq-----qqq
+ q-c---c-q
+ qc-c-c-cq
+ q-c---c-q
+ q;;;c;;;q
+ q;c;;;c;q
+ q;;;;;;;q
+ qqq===qqq
+ q...@...q
 ENDMAP
 
 NAME:    ebering_ghost_davey_jones
@@ -1375,16 +1378,16 @@ dgn.delayed_decay(_G,"'","minotaur skeleton / halfling skeleton" ..
 : ghost_setup(_G)
 MAP
  WWWWWWWWWWWWW
-WWcccccccccccWW
-WccGwwwwwwwGccW
-WcWuwwwwwdwuWcW
-WcWWWdDwDwWWWcW
-Wns'Www1wwWWWnW
-Wn.sWwwwwwW'snW
-Wc'sWduOudWs.cW
-Wc..'sWsWWs..cW
-WccG.....'.GccW
-WWcnnn===nnncWW
+WWqqqqqqqqqqqWW
+WqqGwwwwwwwGqqW
+WqWuwwwwwdwuWqW
+WqWWWdDwDwWWWqW
+Wqs'Www1wwWWWqW
+Wq.sWwwwwwW'sqW
+Wq'sWduOudWs.qW
+Wq..'sWsWWs..qW
+WqqG.....'.GqqW
+WWqqqq===qqqqWW
  WW....@....WW
 ENDMAP
 
@@ -1442,17 +1445,17 @@ MARKER: S = lua:transp_dest_loc("stat_death_exit")
 : ghost_setup(_G)
 MAP
     ....@.....
-   ..cncScccc.....
-  ..ccRccc--cccnc.
-  .cc------x---Rc..
-  .c----x---x---cc.
-  .c--xx--x------c.
- ..nR--x--Q--xx-Rn.
- .cc-x-----x-----c.
- .c----xxxO--xx-cc.
- .cc--x-gedfh---c..
- ..ccc--cnnnc--cc.
-  ...cccc.P.cccc..
+   ..qqqSqqqq.....
+  ..qqRqqq--qqqqq.
+  .qq------x---Rq..
+  .q----x---x---qq.
+  .q--xx--x------q.
+ ..qR--x--Q--xx-Rq.
+ .qq-x-----x-----q.
+ .q----xxxO--xx-qq.
+ .qq--x-gedfh---q..
+ ..qqq--qqqqq--qq.
+  ...qqqq.P.qqqq..
     ......@......
 ENDMAP
 
@@ -1505,14 +1508,14 @@ MARKER: S = lua:transp_dest_loc("smash_exit")
 MAP
      .@.
 .....P.S.....
-nnnnnnnnnnnnn
-cR--gedfh--Rc
-c-vxxvOvxxv-c
-c-xvvx-xvvx-c
-c-xvvx-xvvx-c
-c-vxxv-vxxv-c
-cR----Q----Rc
-ccccccccccccc
+qqqqqqqqqqqqq
+qR--gedfh--Rq
+q-vxxvOvxxv-q
+q-xvvx-xvvx-q
+q-xvvx-xvvx-q
+q-vxxv-vxxv-q
+qR----Q----Rq
+qqqqqqqqqqqqq
 ENDMAP
 
 NAME:   gammafunk_ghost_nasty_kobolds
@@ -1566,14 +1569,14 @@ NSUBST: - = E / H / 2=EH.. / 2=P / 2=K / 3=KM.. / 2=3 / 4=3. / .
 : end
 : ghost_setup(_G)
 MAP
-  ccccc
- ccedfcc
-cc--g--cc
-cprs-srpc
-cG-xOx-Gc
-cprs-srpc
-cn-----nc
-.nn===nn.
+  qqqqq
+ qqedfqq
+qq--g--qq
+qprs-srpq
+qG-xOx-Gq
+qprs-srpq
+qq-----qq
+.qq===qq.
 ....@....
 ENDMAP
 
@@ -1622,17 +1625,17 @@ MARKER: S = lua:transp_dest_loc("ghost_hive_exit")
 MAP
          @
   .......P.......
- ..cccccnnnccccc..
-..cnxxxfdRegxxxnc..
-.cnx-q-xhOix-p-xnc.
-.cx--x--xxx--x--xc.
-.cnx-q-x---x-p-xnc.
-@.ccxxx--x--xxxcc.@
-.cnx-r-x---x-s-xnc.
-.cx--x--xxx--x--xc.
-.cnx-r-x---x-s-xnc.
-..cnxxx--Q--xxxnc..
- ..cccccnnnccccc..
+ ..qqqqqqqqqqqqq..
+..qqxxxfdRegxxxqq..
+.qqx-q-xhOix-p-xqq.
+.qx--x--xxx--x--xq.
+.qqx-q-x---x-p-xqq.
+@.qqxxx--x--xxxqq.@
+.qqx-r-x---x-s-xqq.
+.qx--x--xxx--x--xq.
+.qqx-r-x---x-s-xqq.
+..qqxxx--Q--xxxqq..
+ ..qqqqqqqqqqqqq..
   .......S.......
          @
 ENDMAP
@@ -1712,19 +1715,19 @@ MAP
 ...........................
 .wwwwwwwwwwwwWwwwwwwwwwwww.
 .wwwwwwwwwwwwWwwwwwwwwwwww.
-.wwncccn...........ncccnww.
-.wwc's-c.cnc.S.cnc.c-s'cww.
-.wwc---cncRccnccRcnc---cww.
-.wwncc---------------ccnww.
-.ww.Gc-cnqncc~ccncnc-cG.ww.
-.ww.cc-cpKpcp-Gcej$c-cc.ww.
-.WW.n'-~-----QTcdO$~-2n.WW.
-.ww.cc-cpKpcp-Gchi$c-cc.ww.
-.ww.Gc-cnqncc~ccncnc-cG.ww.
-.wwncc---------------ccnww.
-.wwc---cncRccnccRcnc---cww.
-.wwc's-c.cnc.P.cnc.c-s'cww.
-.wwncccn...........ncccnww.
+.wwqqqqq...........qqqqqww.
+.wwq's-q.qqq.S.qqq.q-s'qww.
+.wwq---qqqRqqqqqRqqq---qww.
+.wwqqq---------------qqqww.
+.ww.Gq-cnqncc~ccncnc-qG.ww.
+.ww.qq-cpKpcp-Gcej$c-qq.ww.
+.WW.q'-~-----QTcdO$~-2q.WW.
+.ww.qq-cpKpcp-Gchi$c-qq.ww.
+.ww.Gq-cnqncc~ccncnc-qG.ww.
+.wwqqq---------------qqqww.
+.wwq---qqqRqqqqqRqqq---qww.
+.wwq's-q.qqq.P.qqq.q-s'qww.
+.wwqqqqq...........qqqqqww.
 .wwwwwwwwwww"""wwwwwwwwwww.
 .wwwwwwwwwww"""wwwwwwwwwww.
 ...........................
@@ -1765,13 +1768,13 @@ NSUBST: - = 1 / 2=1. / 7=0 / 8=0. / 2 / 2.. / .
 SUBST:  G : GGtU
 : ghost_setup(_G)
 MAP
-ccccccccccccc
-cG-hfdOegi-Gc
-c-n-n-n-n-n-c
-c'-'-'-'-'-'c
-c-'-n-n-n-'-c
-cG-'-'-'-'-Gc
-cccnn===nnccc
+qqqqqqqqqqqqq
+qG-hfdOegi-Gq
+q-n-n-n-n-n-q
+q'-'-'-'-'-'q
+q-'-n-n-n-'-q
+qG-'-'-'-'-Gq
+qqqqq===qqqqq
 .^.^.....^.^.
 ^.^.^.^.^.^.^
 .^.^.^.^.^.^.
@@ -1812,12 +1815,12 @@ KFEAT:  _ = altar_kikubaaqudgha
 FTILE:  -d|*%$ODEFHJKL12VY_ = floor_pebble_brown / floor_pebble_darkgray
 : ghost_setup(_G)
 MAP
-    ccc
-  cccDccc
-cccEcdcFccc
-c1ddV_Vdd1c
-cc-------cc
- cnn===nnc
+    qqq
+  qqqDqqq
+qqqEqdqFqqq
+q1ddV_Vdd1q
+qq-------qq
+ qqq===qqq
  ....@....
 ENDMAP
 
@@ -1919,17 +1922,17 @@ MARKER: S = lua:transp_dest_loc("berserking_beasts_exit")
 : ghost_setup(_G)
 MAP
     ....@.....
-   ..cncScccc.....
-  ..ccRccc--cccnc.
-  .cc------x---Rc..
-  .c----x---x---cc.
-  .c--xx--x------c.
- ..nR--x--Q--xx-Rn.
- .cc-x-----x-----c.
- .c----xxxD--xx-cc.
- .cc--xigedfhj--c..
- ..ccc--cnnnc--cc.
-  ...cccc.P.cccc..
+   ..qqqSqqqq.....
+  ..qqRqqq--qqqqq.
+  .qq------x---Rq..
+  .q----x---x---qq.
+  .q--xx--x------q.
+ ..qR--x--Q--xx-Rq.
+ .qq-x-----x-----q.
+ .q----xxxD--xx-qq.
+ .qq--xigedfhj--q..
+ ..qqq--qqqqq--qq.
+  ...qqqq.P.qqqq..
     ......@......
 ENDMAP
 
@@ -1966,7 +1969,7 @@ NSUBST: R = R / -
 : ghost_good_loot(_G)
 : if you.in_branch("D") then
 {{
-kmons("q = kobold spells:fire_blowgun.80.natural ; " .. wrathful_weapon("kobold",
+kmons("7 = kobold spells:fire_blowgun.80.natural ; " .. wrathful_weapon("kobold",
                crawl.one_chance_in(3) and "randart" or "good_item"))
 kmons("r = gnoll sergeant; " .. wrathful_weapon("sergeant",
                crawl.one_chance_in(3) and "randart" or "good_item") ..
@@ -1989,7 +1992,7 @@ MONS:   big kobold / gnoll sergeant / ogre / orc warrior
 MONS:   troll
 MONS:   cyclops
 SUBST:  d = *, e = *%, f = %$, ghij= -
-NSUBST: - = 1 / qrsu / 2 / 3=2. / 3y.. / 4z...... / .
+NSUBST: - = 1 / 7rsu / 2 / 3=2. / 3y.. / 4z...... / .
 :     elseif you.depth() < 12 then
 MONS:   orc warrior / troll / two-headed ogre
 MONS:   cyclops
@@ -2023,26 +2026,25 @@ NSUBST: - = 1 / 1. / 2=2 / 4=2. / D / D3.. / 4EF... / .
 # Place merfolk through merfolk impaler bands so they get better equipment.
 # Each band is 2-5 merfolk, 3.5 on-average.
 {{
-kmons("q = merfolk impaler band; " .. wrathful_weapon("impaler", "randart") ..
+kmons("7 = merfolk impaler band; " .. wrathful_weapon("impaler", "randart") ..
       "    . robe good_item | leather armour good_item")
--- Specifying jav quantity so they get their usual quantity bonus.
 kmons("r = merfolk javelineer; " .. wrathful_weapon("impaler", "randart") ..
       "    . robe good_item | leather armour good_item")
 }}
 MONS:   cyclops
 MONS:   merfolk impaler / merfolk javelineer w:5
 SUBST:  fg = |*, h = *%, i = $%--, j= -
-NSUBST: - = 1 / 1. / 3=2. / q / r / 3=3. / .
+NSUBST: - = 1 / 1. / 3=2. / 7 / r / 3=3. / .
 : elseif you.in_branch("Snake") then
 {{
-kmons("q = naga warrior; " .. wrathful_weapon("warrior", "randart") ..
+kmons("7 = naga warrior; " .. wrathful_weapon("warrior", "randart") ..
       "    . nothing w:95 | robe good_item w:95 | naga barding good_item" ..
       "    . nothing w:40 | heater shield good_item | scutum good_item")
 }}
 MONS:   naga / salamander
 MONS:   naga warrior
 SUBST:  fg = |*, h = *%, i = $%--, j= -
-NSUBST: - = 1 / 1. / 3=2 / 5=2. / q / 2=q. / 2=3. / .
+NSUBST: - = 1 / 1. / 3=2 / 5=2. / 7 / 2=7. / 2=3. / .
 : elseif you.in_branch("Swamp") then
 MONS:   spriggan w:20 / spriggan rider
 MONS:   spriggan rider / spriggan berserker
@@ -2050,14 +2052,14 @@ SUBST:  fg = |*, h = *%, i = $%--, j= -
 NSUBST: - = 1 / 1. / 3=2 / 5=2. / J / HJ.. / 2=3. / K. / .
 : elseif you.in_branch("Elf") then
 {{
-kmons("q = deep elf master archer; longbow randart " ..
+kmons("7 = deep elf master archer; longbow randart " ..
       "    . leather armour good_item")
 }}
 MONS:   deep elf blademaster / deep elf master archer
 SUBST:  fg = |*, h = *, i = $%, j= -
 # There aren't any good lower-tier, trog-appropriate warrior types. So use all
 # blademasters and master archers, but reduce the monster count.
-NSUBST: - = 1 / 2=1. / 2=L / q / 3=2. / .
+NSUBST: - = 1 / 2=1. / 2=L / 7 / 3=2. / .
 : elseif you.in_branch("Depths") then
 MONS:   tengu warrior / deep troll / spriggan berserker / stone giant / ettin
 MONS:   deep elf blademaster / spriggan defender
@@ -2066,13 +2068,13 @@ SUBST:  fgh = |*, i = *, j= %$
 NSUBST: - = 2=1 / 1. / 4=2 / 4=2. / 2=KL / KL.. / 3. / 4 / 4. / .
 : elseif you.in_branch("Zot") then
 {{
-kmons("q = base draconian; " .. wrathful_weapon("knight", "randart"))
+kmons("7 = base draconian; " .. wrathful_weapon("knight", "randart"))
 kmons("r = draconian monk; cloak randart")
 }}
 MONS:   base draconian
 MONS:   draconian monk
 SUBST:  fghij = |*
-NSUBST: - = 2=1 / 2=1. / 3=q / 2 / 5=2. / 2=r / 3 / 3=3. / .
+NSUBST: - = 2=1 / 2=1. / 3=7 / 2 / 5=2. / 2=r / 3 / 3=3. / .
 : end
 KFEAT:  _ = altar_trog
 MARKER: P = lua:transp_loc("wrathful_warriors_entry")
@@ -2085,19 +2087,19 @@ TILE:   x = wall_pebble_red
 MAP
       .@.
     ...P...
-  ...cnnnc...
- ..ccc-R-ccc..
- .cc-----'xcc.
-..cx''--"xxxc..
-.cc'xx"-xlx'cc.
-.n-'xledfxx'-n.
-.nR'xxg_h---Rn.
-.n----iOjx'--n.
-.cc----"lx'-cc.
-..c----'xx--c..
- .cc----''xcc.
- ..ccc-Q-ccc..
-  ...cnnnc...
+  ...qqqqq...
+ ..qqq-R-qqq..
+ .qq-----'xqq.
+..qx''--"xxxq..
+.qq'xx"-xlx'qq.
+.q-'xledfxx'-q.
+.qR'xxg_h---Rq.
+.q----iOjx'--q.
+.qq----"lx'-qq.
+..q----'xx--q..
+ .qq----''xqq.
+ ..qqq-q-qqq..
+  ...qqqqq...
     ...S...
       .@.
 ENDMAP
