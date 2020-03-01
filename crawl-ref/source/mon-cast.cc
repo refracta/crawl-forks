@@ -212,6 +212,7 @@ static const map<spell_type, mons_spell_logic> spell_to_logic = {
             boulder_start(&caster, &pbolt);
         },
         _target_beam_setup(_mons_move_target),
+        MSPELL_NO_AUTO_NOISE,
     } },
     { SPELL_MINOR_HEALING, {
         [](const monster &caster) {
