@@ -784,7 +784,46 @@ unsigned int item_value(item_def item, bool ident)
     }
 
     case OBJ_STAVES:
-        valued = item_type_known(item) ? 250 : 120;
+        if (item_type_known(item))
+        {
+            valued = 350;
+            valued += 25 * item.plus;
+
+            switch (get_staff_facet(item))
+            {
+            case SPSTF_ACCURACY:
+            case SPSTF_FLAY:
+            case SPSTF_REAVER:
+            case SPSTF_SHIELD:
+            case SPSTF_WIZARD:
+                valued += 150;
+                break;
+            case SPSTF_CHAOS:
+            case SPSTF_MENACE:
+            case SPSTF_SCOPED:
+                valued += 250;
+                break;
+            case SPSTF_ENERGY:
+            case SPSTF_WARP:
+                valued += 350;
+                break;
+
+            default:
+            case SPSTF_NORMAL:
+                break;
+            }
+        }
+        else 
+            valued = 200;
+
+        if (is_artefact(item))
+        {
+            if (item_type_known(item))
+                valued += (7 * artefact_value(item));
+            else
+                valued += 50;
+        }
+        
         break;
 
     case OBJ_ORBS:
