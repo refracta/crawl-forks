@@ -1584,7 +1584,7 @@ static bool _handle_veh_gift(bool forced)
     bool success = false;
     const int gifts = you.num_total_gifts[you.religion];
 
-    if (you.num_total_gifts[you.religion] >= (NUM_VEHUMET_GIFTS) || 
+    if (you.num_total_gifts[you.religion] >= (NUM_VEHUMET_GIFTS + 1) || 
             ((you.num_total_gifts[you.religion] == 9 || you.num_total_gifts[you.religion] == 13)
                 && !(you.species == SP_FELID)))
         return _give_trog_oka_gift(forced);
