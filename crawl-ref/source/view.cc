@@ -362,7 +362,7 @@ static string _monster_headsup(vector<monster*> &monsters,
             warning_msg += ".";
             continue;
         }
-        if (you_worship(GOD_ZIN))
+        else
         {
             warning_msg += " a foul ";
             if (mon->has_ench(ENCH_GLOWING_SHAPESHIFTER))
@@ -450,9 +450,9 @@ static void _handle_comes_into_view(const vector<string> &msgs,
              describe_monsters_condensed(monsters).c_str());
 
     const auto& types = _count_monster_types(monsters);
-    if (!you_worship(GOD_ZIN))
-        _secular_headsup(monsters, types);
-    _divine_headsup(monsters, types);
+    _secular_headsup(monsters, types);
+    if (you_worship(GOD_ZIN))
+        _divine_headsup(monsters, types);
 }
 
 void update_monsters_in_view()
