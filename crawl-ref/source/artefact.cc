@@ -1641,6 +1641,10 @@ static bool _randart_is_conflicting(const item_def &item,
         conflicts = ARTP_CORRODE;
         break;
 
+    case AMU_INACCURACY:
+        conflicts = ARTP_IMPROVED_VISION;
+        break;
+
     case RING_TELEPORTATION:
 #if TAG_MAJOR_VERSION == 34
     case RING_TELEPORT_CONTROL:
