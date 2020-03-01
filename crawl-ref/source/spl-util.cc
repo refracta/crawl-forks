@@ -572,8 +572,9 @@ int count_bits(uint64_t bits)
 
 const char *spell_title(spell_type spell)
 {
-    if (you.staff() && staff_enhances_spell(you.staff(), spell) 
+    if ((you.staff() && staff_enhances_spell(you.staff(), spell) 
                     && get_staff_facet(*you.staff()) == SPSTF_CHAOS)
+        || you.wearing(EQ_RINGS, RING_CHAOS))
     {
         string title = _seekspell(spell)->chaosTitle;
         if (title.size())
