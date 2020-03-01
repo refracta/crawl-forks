@@ -1499,10 +1499,10 @@ static void _shatter_chaos(actor * agent, int pow)
                 beam.explode();
                 eruptions++;
                 if (!feat_is_critical(grd(*ri)))
-                    temp_change_terrain(*ri, DNGN_LAVA, pow, TERRAIN_CHANGE_GENERIC);
+                    dungeon_terrain_changed(*ri, feat_is_water(grd(*ri)) ? DNGN_OBSIDIAN : DNGN_LAVA, false, true);
                 for (rectangle_iterator sri(*ri, 1); sri; ++sri)
-                    if (!feat_is_critical(grd(*sri)) && x_chance_in_y(2, 3))
-                        dungeon_terrain_changed(*sri, feat_is_water(grd(*sri)) ? DNGN_OBSIDIAN : DNGN_LAVA);
+                    if (!feat_is_critical(grd(*sri)) && x_chance_in_y(2, 3) && (!feat_is_solid(grd(*sri)) || feat_is_tree(grd(*sri))))
+                        dungeon_terrain_changed(*sri, feat_is_water(grd(*sri)) ? DNGN_OBSIDIAN : DNGN_LAVA, false, true);
                 break;
             case SE_ICEFALL:
                 zappy(ZAP_CHAOS_ICEFALL, pow, false, beam);
