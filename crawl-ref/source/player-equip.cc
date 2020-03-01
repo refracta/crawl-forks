@@ -456,7 +456,7 @@ static void _equip_weapon_effect(item_def& item, bool showMsgs, bool unmeld, equ
         set_ident_flags(item, ISFLAG_IDENT_MASK);
         set_ident_type(OBJ_STAVES, item.sub_type, true);
         const int dur = 2 + random2(10);
-        you.increase_duration(DUR_STAFF, , 15);
+        you.increase_duration(DUR_STAFF, dur, 15);
         if (get_staff_facet(item) == SPSTF_SHIELD)
             you.increase_duration(DUR_STFSHIELD_COOLDOWN, dur + 1 + random2(3), 15);
 
