@@ -1017,6 +1017,7 @@ static bool _handle_scroll(monster& mons)
         if (one_chance_in(4) && mons_itemuse(mons) & MU_JEWELS)
             type = OBJ_JEWELLERY;
         simple_monster_message(mons, " reads a scroll of acquirement!");
+        bool success = false;
         read = true;
         for (int tries = 3; tries > 0; --tries)
         {
@@ -1028,16 +1029,20 @@ static bool _handle_scroll(monster& mons)
                 set_ident_type(item, true);
                 set_ident_flags(item, ISFLAG_IDENT_MASK);
                 do_uncurse_item(item, false);
+                success = true;
                 mprf("%s appears before %s.", item.name(DESC_A).c_str(), mons.name(DESC_THE).c_str());
-                break;
+                tries = -2;
             }
         }
-        int x = get_mitm_slot();
-        item_def &item = mitm[x];
-        item.base_type = OBJ_GOLD;
-        item.quantity = acquire_gold_amt();
-        simple_monster_message(mons, " didn't like any of the acquirement options so just took some gold.");
-        give_specific_item(&mons, x);
+        if (!success)
+        {
+            int x = get_mitm_slot();
+            item_def &item = mitm[x];
+            item.base_type = OBJ_GOLD;
+            item.quantity = acquire_gold_amt();
+            simple_monster_message(mons, " didn't like any of the acquirement options so just took some gold.");
+            give_specific_item(&mons, x);
+        }
         break;
     }
 
