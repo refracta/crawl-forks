@@ -936,7 +936,12 @@ spret cast_conjure_ball_lightning(int pow, god_type god, bool fail)
     }
 
     if (success)
-        mpr("You create some ball lightning!");
+    {
+        if (chaos)
+            mpr("You conjure spheres of raw chaos!");
+        else
+            mpr("You create some ball lightning!");
+    }
     else
         canned_msg(MSG_NOTHING_HAPPENS);
 

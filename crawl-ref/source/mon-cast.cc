@@ -6440,7 +6440,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
             if (monster *ball = create_monster(
                     mgen_data(chaos ? MONS_ENTROPIC_SPHERE : MONS_BALL_LIGHTNING, SAME_ATTITUDE(mons),
                               mons->pos(), mons->foe)
-                    .set_summoned(mons, 0, spell_cast, god)))
+                    .set_summoned(mons, 0, SPELL_CONJURE_BALL_LIGHTNING, god)))
             {
                 ball->add_ench(ENCH_SHORT_LIVED);
             }

@@ -5540,7 +5540,7 @@ void bolt::affect_monster(monster* mon)
     mons_adjust_flavoured(mon, *this, postac, true);
 
     // Apply chaos effects.
-    if (mon->alive() && (real_flavour == BEAM_CHAOTIC || real_flavour == BEAM_CHAOTIC_DEVASTATION) && mons_class_is_firewood(mon->type()))
+    if (mon->alive() && (real_flavour == BEAM_CHAOTIC || real_flavour == BEAM_CHAOTIC_DEVASTATION) && !mons_class_is_firewood(mon->type))
     {
         int dur = damage.roll();
         dur += damage.size;

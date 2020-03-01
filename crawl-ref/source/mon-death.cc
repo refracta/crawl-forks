@@ -1208,7 +1208,7 @@ static void _setup_lightning_explosion(bolt & beam, const monster& origin, bool 
     _setup_base_explosion(beam, origin);
     if (chaos)
     {
-        beam.flavour = BEAM_CHAOTIC;
+        beam.flavour = BEAM_CHAOTIC_DEVASTATION;
         beam.name = "blast of pure entropy";
         beam.explode_noise_msg = "You hear a bemusing cacophonous burst!";
         beam.colour = ETC_JEWEL;
@@ -1220,9 +1220,9 @@ static void _setup_lightning_explosion(bolt & beam, const monster& origin, bool 
         beam.explode_noise_msg = "You hear a clap of thunder!";
         beam.colour = LIGHTCYAN;
     }
-    beam.damage    = dice_def(3, 5 + origin.get_hit_dice() * 5 / 4);
+    beam.damage       = dice_def(3, 5 + origin.get_hit_dice() * 5 / 4);
     beam.origin_spell = SPELL_CONJURE_BALL_LIGHTNING;
-    beam.ex_size   = x_chance_in_y(origin.get_hit_dice(), 24) ? 3 : 2;
+    beam.ex_size      = x_chance_in_y(origin.get_hit_dice(), 24) ? 3 : 2;
     // Don't credit the player for ally-summoned ball lightning explosions.
     if (origin.summoner && origin.summoner != MID_PLAYER)
         beam.thrower = KILL_MON;
@@ -2041,6 +2041,7 @@ item_def* monster_die(monster& mons, killer_type killer,
 
     if (mons.type == MONS_BALLISTOMYCETE_SPORE
         || mons.type == MONS_BALL_LIGHTNING
+        || mons.type == MONS_ENTROPIC_SPHERE
         || mons.type == MONS_LURKING_HORROR
         || (mons.type == MONS_FULMINANT_PRISM && mons.prism_charge > 0)
         || mons.type == MONS_BENNU
