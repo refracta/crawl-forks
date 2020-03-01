@@ -668,6 +668,7 @@ unsigned int item_value(item_def item, bool ident)
 
                 case RING_FIRE:
                 case RING_ICE:
+                case RING_CHAOS:
                 case RING_PROTECTION_FROM_MAGIC:
                     valued += 250;
                     break;

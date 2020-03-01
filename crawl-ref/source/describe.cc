@@ -237,6 +237,7 @@ const char* jewellery_base_ability_string(int subtype)
     case RING_FIRE:               return "Fire";
     case RING_ICE:                return "Ice";
     case RING_TELEPORTATION:      return "*Tele";
+    case RING_CHAOS:              return "Chaos";
 #if TAG_MAJOR_VERSION == 34
     case RING_TELEPORT_CONTROL:   return "+cTele";
 #endif
@@ -491,6 +492,9 @@ static const char* _jewellery_base_ability_description(int subtype)
 #endif
     case RING_WIZARDRY:
         return "It improves your spell success rate.";
+    case RING_CHAOS:
+        return "It infuses your magic with chaos; buffing its maximum damage and randomizing its effects. "
+            "Additionally it randomly provides additional protection from elemental components of attacks.";
     case RING_FIRE:
         return "It enhances your fire magic.";
     case RING_ICE:

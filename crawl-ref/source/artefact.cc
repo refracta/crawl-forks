@@ -69,6 +69,7 @@ static bool _god_fits_artefact(const god_type which_god, const item_def &item,
 
     const int brand = get_weapon_brand(item);
     const int ego   = get_armour_ego_type(item);
+    const int facet = get_staff_facet(item);
 
     if (is_evil_god(which_god) && brand == SPWPN_HOLY_WRATH)
         return false;
@@ -97,6 +98,9 @@ static bool _god_fits_artefact(const god_type which_god, const item_def &item,
     case GOD_ZIN:
         // Lawful god: no mutagenics.
         if (artefact_property(item, ARTP_CONTAM))
+            return false;
+        // Lawful god: no chaos.
+        if (item.base_type == OBJ_STAVES && facet == SPSTF_CHAOS)
             return false;
         break;
 
@@ -1918,7 +1922,7 @@ static void _make_faerie_armour(item_def &item)
 
 static jewellery_type octoring_types[8] =
 {
-    RING_SLAYING, RING_FIRE, RING_ICE,
+    RING_CHAOS, RING_FIRE, RING_ICE,
     RING_RESIST_CORROSION, RING_STEALTH, RING_WIZARDRY, RING_MAGICAL_POWER,
     RING_LIFE_PROTECTION
 };

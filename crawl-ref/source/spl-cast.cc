@@ -512,10 +512,7 @@ static int _additive_power(spell_type spell)
 
 bool determine_chaos(const actor *agent, spell_type spell)
 {
-    if (agent->is_player() && you.religion == GOD_XOM && one_chance_in(12))
-        return true;
-
-    if (agent->is_monster() && agent->as_monster()->has_ench(ENCH_CHAOTIC_INFUSION) && !one_chance_in(3))
+    if (you.religion == GOD_XOM && one_chance_in(12))
         return true;
 
     if (agent->staff() && is_unrandom_artefact(*agent->staff(), UNRAND_MAJIN) 
@@ -525,6 +522,20 @@ bool determine_chaos(const actor *agent, spell_type spell)
     if (one_chance_in(3) && !bool(get_spell_disciplines(spell) & spschool::summoning)
         && !(spell == SPELL_HAILSTORM)) // Yay for special cases.
         return false;
+
+    if (agent->is_player() && you.wearing(EQ_RINGS, RING_CHAOS))
+        return true;
+
+    if (agent->is_monster())
+    {
+        if (agent->as_monster()->has_ench(ENCH_CHAOTIC_INFUSION))
+            return true;
+
+        item_def * ring = agent->as_monster()->mslot_item(MSLOT_JEWELLERY);
+
+        if (ring && ring->is_type(OBJ_JEWELLERY, RING_CHAOS))
+            return true;
+    }
 
     return (agent->staff() && get_staff_facet(*agent->staff()) == SPSTF_CHAOS &&
         staff_enhances_spell(agent->staff(), spell));

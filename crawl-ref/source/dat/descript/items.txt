@@ -782,10 +782,17 @@ ring mail
 A light leather suit reinforced with a covering of metal rings. It is
 protective in combat, but slightly uncomfortable due to the added weight.
 %%%%
+ring of chaos
+
+A ring that infuses the wearer with chaos. While wearing two out of three spells 
+cast will be chaos versions of the spell, with higher maximum damage and randomized 
+damage type or more unique effects for certain spells. Additionally has a one in 
+three chance to add additional protection against any elemental attack against the 
+wearer, including completely preventing torment one out of three times.
+%%%%
 ring of dexterity
 
-A ring that increases or decreases the dexterity of its wearer, depending on
-its degree of enchantment.
+A ring that increases the dexterity of its wearer.
 %%%%
 ring of evasion
 
@@ -805,8 +812,7 @@ resistance to cold and enhances ice magic, but causes vulnerability to heat.
 %%%%
 ring of intelligence
 
-A ring that increases or decreases the mental ability of its wearer, depending
-on its degree of enchantment.
+A ring that increases the mental ability of its wearer.
 %%%%
 ring of resist corrosion
 
@@ -831,14 +837,9 @@ them partially immune to the draining effects of undead and necromantic magic.
 %%%%
 ring of protection
 
-A ring that either protects its wearer from harm or makes them more vulnerable
-to injury, depending on its degree of enchantment.
+A ring that protects its wearer from harm.
 %%%%
 ring of protection from cold
-
-Removed Ring.
-%%%%
-ring of protection from fire
 
 Removed Ring.
 %%%%
@@ -852,8 +853,8 @@ Removed Ring.
 %%%%
 ring of slaying
 
-A ring that increases or decreases the wearer's effectiveness with ranged
-weapons and melee attacks, depending on its degree of enchantment.
+A ring that increases the wearer's effectiveness with ranged weapons 
+and melee attacks.
 %%%%
 ring of stealth
 
@@ -861,8 +862,7 @@ A ring that allows its wearer to move quietly, making them more stealthy.
 %%%%
 ring of strength
 
-A ring that increases or decreases the physical strength of its wearer,
-depending on its degree of enchantment.
+A ring that increases the physical strength of its wearer.
 %%%%
 ring of teleportation
 

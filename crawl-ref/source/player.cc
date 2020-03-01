@@ -1601,6 +1601,10 @@ int player_res_cold(bool calc_unid, bool temp, bool items)
         // randart weapons:
         rc += you.scan_artefacts(ARTP_COLD, calc_unid);
 
+        // rings of chaos
+        if (calc_unid && you.wearing(EQ_RINGS, RING_CHAOS) && one_chance_in(3))
+            rc++;
+
         // dragonskin cloak: 0.5 to draconic resistances
         if (calc_unid && player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
             rc++;
@@ -1635,6 +1639,17 @@ bool player::res_corr(bool calc_unid, bool items) const
     if (you.duration[DUR_RESISTANCE])
         return true;
 
+    if (calc_unid && items)
+    {
+        // rings of chaos
+        if (you.wearing(EQ_RINGS, RING_CHAOS) && one_chance_in(3))
+            return true;
+
+        // dragonskin cloak: 0.5 to draconic resistances
+        if (player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
+            return true;
+    }
+
     // TODO: why doesn't this use the usual form suppression mechanism?
     if (form_keeps_mutations()
         && get_mutation_level(MUT_YELLOW_SCALES) >= 3)
@@ -1667,9 +1682,16 @@ int player_res_electricity(bool calc_unid, bool temp, bool items)
         // randart weapons:
         re += you.scan_artefacts(ARTP_ELECTRICITY, calc_unid);
 
-        // dragonskin cloak: 0.5 to draconic resistances
-        if (calc_unid && player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
-            re++;
+        if (calc_unid)
+        {
+            // rings of chaos
+            if (you.wearing(EQ_RINGS, RING_CHAOS) && one_chance_in(3))
+                re++;
+
+            // dragonskin cloak: 0.5 to draconic resistances
+            if (player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
+                re++;
+        }
     }
 
     // mutations:
@@ -1711,20 +1733,20 @@ bool player_res_torment(bool random)
     if (you.get_mutation_level(MUT_TORMENT_RESISTANCE))
         return true;
 
-    if (random
-        && you.get_mutation_level(MUT_STOCHASTIC_TORMENT_RESISTANCE)
-        && coinflip())
+    if (random)
     {
-        return true;
+        if (you.get_mutation_level(MUT_STOCHASTIC_TORMENT_RESISTANCE)
+          && coinflip())
+            return true;
+
+        // rings of chaos
+        if (you.wearing(EQ_RINGS, RING_CHAOS) && one_chance_in(3))
+            return true;
     }
 
     return get_form()->res_neg() == 3
-           || you.species == SP_VAMPIRE && you.hunger_state <= HS_STARVING
            || you.petrified()
-#if TAG_MAJOR_VERSION == 34
-           || player_equip_unrand(UNRAND_ETERNAL_TORMENT)
-#endif
-           ;
+           || player_equip_unrand(UNRAND_ETERNAL_TORMENT);
 }
 
 // Kiku protects you from torment to a degree.
@@ -1781,19 +1803,21 @@ int player_res_poison(bool calc_unid, bool temp, bool items)
         // rPois+ artefacts
         rp += you.scan_artefacts(ARTP_POISON, calc_unid);
 
-        // dragonskin cloak: 0.5 to draconic resistances
-        if (calc_unid && player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
-            rp++;
+        if (calc_unid)
+        {
+            // rings of chaos
+            if (you.wearing(EQ_RINGS, RING_CHAOS) && one_chance_in(3))
+                return true;
+
+            // dragonskin cloak: 0.5 to draconic resistances
+            if (player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
+                return true;
+        }
     }
 
     // mutations:
     rp += you.get_mutation_level(MUT_POISON_RESISTANCE, temp);
     rp += you.get_mutation_level(MUT_SLIMY_GREEN_SCALES, temp) == 3 ? 1 : 0;
-
-    // Only thirsty vampires are naturally poison resistant.
-    // XXX: && temp?
-    if (you.species == SP_VAMPIRE && you.hunger_state < HS_SATIATED)
-        rp++;
 
     if (temp)
     {
@@ -1828,12 +1852,9 @@ int player_res_sticky_flame(bool calc_unid, bool /*temp*/, bool items)
 {
     int rsf = 0;
 
-    // dragonskin cloak: 0.5 to draconic resistances
-    if (items && calc_unid
-        && player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
-    {
+    // rings of chaos
+    if (items && calc_unid && you.wearing(EQ_RINGS, RING_CHAOS) && one_chance_in(3))
         rsf++;
-    }
 
     if (you.get_mutation_level(MUT_GHOST) == 1)
         rsf++;
@@ -1938,30 +1959,6 @@ int player_prot_life(bool calc_unid, bool temp, bool items)
 {
     int pl = 0;
 
-    // Hunger is temporary, true, but that's something you can control,
-    // especially as life protection only increases the hungrier you
-    // get.
-    if (you.species == SP_VAMPIRE)
-    {
-        switch (you.hunger_state)
-        {
-        case HS_FAINTING:
-        case HS_STARVING:
-            pl = 3;
-            break;
-        case HS_NEAR_STARVING:
-        case HS_VERY_HUNGRY:
-        case HS_HUNGRY:
-            pl = 2;
-            break;
-        case HS_SATIATED:
-            pl = 1;
-            break;
-        default:
-            break;
-        }
-    }
-
     // Same here. Your piety status, and, hence, TSO's protection, is
     // something you can more or less control.
     if (you_worship(GOD_SHINING_ONE))
@@ -1999,9 +1996,16 @@ int player_prot_life(bool calc_unid, bool temp, bool items)
         // randart wpns
         pl += you.scan_artefacts(ARTP_NEGATIVE_ENERGY, calc_unid);
 
-        // dragonskin cloak: 0.5 to draconic resistances
-        if (calc_unid && player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
-            pl++;
+        if (calc_unid)
+        {
+            // rings of chaos
+            if (you.wearing(EQ_RINGS, RING_CHAOS) && one_chance_in(3))
+                pl++;
+
+            // dragonskin cloak: 0.5 to draconic resistances
+            if (player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
+                pl++;
+        }
 
         pl += you.wearing(EQ_STAFF, STAFF_DEATH, calc_unid);
     }
@@ -2444,7 +2448,7 @@ int player_wizardry(spell_type spell)
     if (!staff)
         return wiz;
 
-    if (get_staff_facet(*staff) == SPSTF_WIZARD && staff_enhances_spell(staff, spell))
+    if ((get_staff_facet(*staff) == SPSTF_WIZARD) && staff_enhances_spell(staff, spell))
         wiz++;
     return wiz;
 }
@@ -4210,10 +4214,8 @@ int get_real_hp(bool trans, bool rotted)
     if (trans)
         hitp = hitp * form_hp_mod() / 10;
 
-#if TAG_MAJOR_VERSION == 34
     if (trans && player_equip_unrand(UNRAND_ETERNAL_TORMENT))
         hitp = hitp * 4 / 5;
-#endif
 
     return max(1, hitp);
 }
