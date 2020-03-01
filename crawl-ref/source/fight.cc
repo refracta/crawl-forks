@@ -537,6 +537,29 @@ static int _beam_to_resist(const actor* defender, beam_type flavour)
     }
 }
 
+static bool _dragonskin_affected (beam_type flavour)
+{
+    switch (flavour)
+    {
+    case BEAM_FIRE:
+    case BEAM_LAVA:
+    case BEAM_STEAM:
+    case BEAM_COLD:
+    case BEAM_ICY_DEVASTATION:
+    case BEAM_FREEZE:
+    case BEAM_ICE:
+    case BEAM_ELECTRICITY:
+    case BEAM_NEG:
+    case BEAM_PAIN:
+    case BEAM_MALIGN_OFFERING:
+    case BEAM_ACID:
+    case BEAM_POISON:
+    case BEAM_POISON_ARROW:
+        return true;
+    default:
+        return false;
+    }
+}
 
 /**
  * Adjusts damage for elemental resists, electricity and poison.
@@ -556,11 +579,30 @@ static int _beam_to_resist(const actor* defender, beam_type flavour)
  */
 int resist_adjust_damage(const actor* defender, beam_type flavour, int rawdamage)
 {
-    const int res = _beam_to_resist(defender, flavour);
+    int res = _beam_to_resist(defender, flavour);
+    const bool is_mon = defender->is_monster();
+
+    // This special case is like 90% for Tiamat; unless a different draconian picks up 
+    // her cloak since most monsters don't use armour for non-body slot; but it's good
+    // to make the unique more unique and future-proofing should we start handing out
+    // cloaks more often.
+    if (is_mon)
+    {
+        item_def * cloak = defender->as_monster()->mslot_item(MSLOT_ARMOUR);
+
+        if (cloak && is_unrandom_artefact(*cloak, UNRAND_DRAGONSKIN)
+                && coinflip() && _dragonskin_affected(flavour))
+            res++;
+
+        item_def * ring = defender->as_monster()->mslot_item(MSLOT_JEWELLERY);
+
+        if (ring->is_type(OBJ_JEWELLERY, RING_CHAOS) && one_chance_in(3) 
+                && _dragonskin_affected(flavour))
+            res++;
+    }
+
     if (!res)
         return rawdamage;
-
-    const bool is_mon = defender->is_monster();
 
     const int resistible_fraction = get_resistible_fraction(flavour);
 
