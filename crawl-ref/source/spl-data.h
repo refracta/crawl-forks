@@ -1605,7 +1605,7 @@ static const struct spell_desc spelldata[] =
 {
     SPELL_SMD, "Methodical Deconstruction", "",
     spschool::earth,
-    spflag::target,
+    spflag::target | spflag::no_ghost,
     5,
     200,
     1, 1,

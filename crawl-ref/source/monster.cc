@@ -4937,6 +4937,8 @@ void monster::load_ghost_spells()
             spells[i].spell = SPELL_THROW_ICICLE;
         if (spells[i].spell == SPELL_EXCRUCIATING_WOUNDS)
             spells[i].spell = SPELL_AGONY;
+        if (spells[i].spell == SPELL_SMD)
+            spells[i].spell = SPELL_DIG;
         dprf(DIAG_MONPLACE, "Spell #%d: %d (%s)",
              i, spells[i].spell, spell_title(spells[i].spell));
     }

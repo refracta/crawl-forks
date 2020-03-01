@@ -2234,9 +2234,7 @@ int items(bool allow_uniques,
         break;
 
     case OBJ_STAVES:
-        // Don't generate unrand staves this way except through acquirement,
-        // since they also generate as OBJ_WEAPONS.
-        _generate_staff_item(item, (agent != NO_AGENT), force_type, item_level, agent, force_ego);
+        _generate_staff_item(item, allow_uniques, force_type, item_level, agent, force_ego);
         break;
 
     case OBJ_ORBS:              // always forced in current setup {dlb}

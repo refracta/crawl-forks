@@ -1161,8 +1161,8 @@ static set<spell_type> _vehumet_eligible_gift_spells(set<spell_type> excluded_sp
     if (gifts >= NUM_VEHUMET_GIFTS)
         return eligible_spells;
 
-    const int min_lev[] = {1,1,2,3,3,4,4,5,5,6,6,6,8};
-    const int max_lev[] = {1,2,3,4,5,7,7,7,7,7,7,7,9};
+    const int min_lev[] = {1,1,2,3,3,4,4,5,5,6,6,6,6,6,8};
+    const int max_lev[] = {1,2,3,4,5,7,7,7,7,7,7,7,7,8,9};
     COMPILE_CHECK(ARRAYSZ(min_lev) == NUM_VEHUMET_GIFTS);
     COMPILE_CHECK(ARRAYSZ(max_lev) == NUM_VEHUMET_GIFTS);
     int min_level = min_lev[gifts];
@@ -1237,7 +1237,7 @@ static spell_type _vehumet_find_spell_gift(set<spell_type> excluded_spells)
 static set<spell_type> _vehumet_get_spell_gifts()
 {
     set<spell_type> offers;
-    unsigned int num_offers = you.num_total_gifts[you.religion] == 12 ? 3 : 1;
+    unsigned int num_offers = you.num_total_gifts[you.religion] == 14 ? 3 : 1;
     while (offers.size() < num_offers)
     {
         spell_type offer = _vehumet_find_spell_gift(offers);
@@ -1403,14 +1403,21 @@ static bool _give_trog_oka_gift(bool forced)
     if (you.species == SP_FELID)
         return false;
 
-    object_class_type gift_type;
+    object_class_type gift_type = OBJ_RANDOM;
 
-    if (you_worship(GOD_TROG) && (forced || you.piety >= piety_breakpoint(4)))
+    if (you_worship(GOD_VEHUMET))
+        gift_type = OBJ_STAVES;
+    else if (you_worship(GOD_TROG))
+        gift_type = OBJ_WEAPONS;
+    else if (you_worship(GOD_OKAWARU))
+    {
+        if (one_chance_in(4))
+            gift_type = OBJ_SHIELDS;
+        else if (coinflip())
+            gift_type = OBJ_ARMOURS;
+        else
             gift_type = OBJ_WEAPONS;
-    else if (you_worship(GOD_OKAWARU) && one_chance_in(4))
-        gift_type = OBJ_SHIELDS;
-    else
-        gift_type = OBJ_ARMOURS;
+    }
 
     const bool success =
         acquirement_create_item(gift_type, you.religion,
@@ -1421,8 +1428,10 @@ static bool _give_trog_oka_gift(bool forced)
             simple_god_message(" grants you a weapon!");
         else if (gift_type == OBJ_SHIELDS)
             simple_god_message(" grants you a shield!");
-        else
+        else if (gift_type == OBJ_ARMOURS)
             simple_god_message(" grants you armour!");
+        else
+            simple_god_message(" grants you a magical staff!");
         // Okawaru charges extra for armour acquirements.
         if (you_worship(GOD_OKAWARU) && gift_type == OBJ_ARMOURS)
             _inc_gift_timeout(30 + random2avg(15, 2));
@@ -1574,11 +1583,16 @@ static bool _handle_veh_gift(bool forced)
 {
     bool success = false;
     const int gifts = you.num_total_gifts[you.religion];
-    if (forced || !you.duration[DUR_VEHUMET_GIFT]
-                  && (you.piety >= piety_breakpoint(0) && gifts == 0
+
+    if (you.num_total_gifts[you.religion] >= (NUM_VEHUMET_GIFTS) || 
+            ((you.num_total_gifts[you.religion] == 9 || you.num_total_gifts[you.religion] == 13)
+                && !(you.species == SP_FELID)))
+        return _give_trog_oka_gift(forced);
+    else if (forced ||  !you.duration[DUR_VEHUMET_GIFT]
+                     && (you.piety >= piety_breakpoint(0) && gifts == 0
                       || you.piety >= piety_breakpoint(0) + random2(6) + 18 * gifts && gifts <= 5
                       || you.piety >= piety_breakpoint(4) && gifts <= 11 && one_chance_in(20)
-                      || you.piety >= piety_breakpoint(5) && gifts <= 12 && one_chance_in(20)))
+                      || you.piety >= piety_breakpoint(5) && gifts <= 14 && one_chance_in(20)))
     {
         set<spell_type> offers = _vehumet_get_spell_gifts();
         if (!offers.empty())
@@ -1606,6 +1620,8 @@ static bool _handle_veh_gift(bool forced)
             {
                 prompt += " These spells will remain available"
                           " as long as you worship Vehumet.";
+                you.num_current_gifts[you.religion] += 2;
+                you.num_total_gifts[you.religion]   += 2;
             }
 
             you.duration[DUR_VEHUMET_GIFT] = (100 + random2avg(100, 2)) * BASELINE_DELAY;

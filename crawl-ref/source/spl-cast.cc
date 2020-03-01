@@ -523,6 +523,9 @@ bool determine_chaos(const actor *agent, spell_type spell)
         && !(spell == SPELL_HAILSTORM)) // Yay for special cases.
         return false;
 
+    if (get_spell_disciplines(spell) & spschool::evocation)
+        return false;
+
     if (agent->is_player() && you.wearing(EQ_RINGS, RING_CHAOS))
         return true;
 

@@ -15,7 +15,7 @@
 
 #define MAX_PENANCE    200
 
-#define NUM_VEHUMET_GIFTS 13
+#define NUM_VEHUMET_GIFTS 15
 
 #define NUM_PIETY_STARS 6
 

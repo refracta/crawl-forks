@@ -596,7 +596,7 @@ int resist_adjust_damage(const actor* defender, beam_type flavour, int rawdamage
 
         item_def * ring = defender->as_monster()->mslot_item(MSLOT_JEWELLERY);
 
-        if (ring->is_type(OBJ_JEWELLERY, RING_CHAOS) && one_chance_in(3) 
+        if (ring && ring->is_type(OBJ_JEWELLERY, RING_CHAOS) && one_chance_in(3) 
                 && _dragonskin_affected(flavour))
             res++;
     }

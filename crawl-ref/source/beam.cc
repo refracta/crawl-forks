@@ -513,7 +513,7 @@ void zappy(zap_type z_type, int power, bool is_monster, bolt &pbolt)
     if (pbolt.origin_spell == SPELL_NO_SPELL)
         pbolt.origin_spell = zap_to_spell(z_type);
 
-    if (!is_monster && you.staff() && staff_enhances_spell(you.staff(), pbolt.origin_spell))
+    if (!is_monster)
     {
         if (pbolt.is_enchantment() && determine_chaos(&you, pbolt.origin_spell))
         {
@@ -532,7 +532,7 @@ void zappy(zap_type z_type, int power, bool is_monster, bolt &pbolt)
         }
         else if (!pbolt.is_enchantment())
         {
-            if (is_unrandom_artefact(*you.staff(), UNRAND_MAJIN))
+            if (you.staff() && is_unrandom_artefact(*you.staff(), UNRAND_MAJIN))
             {
                 pbolt.damage.size = div_rand_round(pbolt.damage.size * 5, 4);
                 pbolt.real_flavour = pbolt.flavour = BEAM_ELDRITCH;
@@ -544,13 +544,16 @@ void zappy(zap_type z_type, int power, bool is_monster, bolt &pbolt)
                 pbolt.real_flavour = pbolt.flavour = BEAM_CHAOTIC;
                 pbolt.colour = ETC_JEWEL;
             }
-            if (get_staff_facet(*you.staff()) == SPSTF_ACCURACY)
-                pbolt.hit = AUTOMATIC_HIT;
-            if (get_staff_facet(*you.staff()) == SPSTF_MENACE)
+            if (you.staff() && staff_enhances_spell(you.staff(), pbolt.origin_spell))
             {
-                if (pbolt.damage.num > 6)
+                if (get_staff_facet(*you.staff()) == SPSTF_ACCURACY)
+                    pbolt.hit = AUTOMATIC_HIT;
+                if (get_staff_facet(*you.staff()) == SPSTF_MENACE)
+                {
+                    if (pbolt.damage.num > 6)
+                        pbolt.damage.num++;
                     pbolt.damage.num++;
-                pbolt.damage.num++;
+                }
             }
         }
     }
