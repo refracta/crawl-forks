@@ -577,7 +577,7 @@ static int _acquirement_staff_subtype(bool /*divine*/, int & /*quantity*/,
     {
         result = random2(NUM_STAVES);
     }
-    while (item_type_removed(OBJ_STAVES, result));
+    while (item_type_removed(OBJ_STAVES, result) || result == STAFF_NOTHING);
 
     switch (best_spell_skill)
     {
