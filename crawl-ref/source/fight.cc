@@ -79,7 +79,7 @@ static bool _handle_player_attack(actor * defender, bool simu, int atk_num,
     // Check if the player is fighting with something unsuitable,
     // or someone unsuitable.
     if (you.can_see(*defender) && !simu
-        && !wielded_weapon_check(attk.weapon))
+        && !wielded_weapons_check())
     {
         if (eff_atk_num != 1)
             you.turn_is_over = false;
@@ -671,23 +671,33 @@ int apply_chunked_AC(int dam, int ac)
 
 ///////////////////////////////////////////////////////////////////////////
 
-bool wielded_weapon_check(item_def *weapon)
+bool wielded_weapons_check()
 {
+    const item_def * weap0 = you.weapon(0);
+    const item_def * weap1 = you.weapon(1);
+    bool warn0 = true;
+    bool warn1 = true;
     bool penance = false;
-    if (you.received_weapon_warning
-        || (weapon
-            && !needs_handle_warning(*weapon, OPER_ATTACK, penance)
-            && is_melee_weapon(*weapon))
-        || you.confused())
-    {
+
+    if (you.received_weapon_warning || you.confused())
         return true;
+
+    if (weap0 && !is_melee_weapon(*weap0))
+    {
+        weap0 = nullptr;
+        warn0 = false;
     }
 
-    // Don't pester the player if they're using UC, in treeform,
+    if (weap1 && !is_melee_weapon(*weap1))
+    {
+        weap1 = nullptr;
+        warn1 = false;
+    }
+
+    // Don't pester the player if they're using UC
     // or if they don't have any melee weapons yet.
-    if (!weapon
-        && (you.skill(SK_UNARMED_COMBAT) > 0
-            || you.form == transformation::tree
+    if (!weap0 && !weap1
+        && (you.skill(SK_UNARMED_COMBAT) > 1
             || !any_of(you.inv.begin(), you.inv.end(),
                        [](item_def &it)
                        { return is_melee_weapon(it) && can_wield(&it); })))
@@ -695,19 +705,25 @@ bool wielded_weapon_check(item_def *weapon)
         return true;
     }
 
+    if (weap0 && !needs_handle_warning(*weap0, OPER_ATTACK, penance))
+        warn0 = false;
+
+    if (weap1 && !needs_handle_warning(*weap1, OPER_ATTACK, penance))
+        warn1 = false;
+
+    if (!warn0 && !warn1)
+        return true;
+
     string prompt;
-    if (weapon)
-    {
-        if (weapon->base_type == OBJ_SHIELDS && !is_hybrid(weapon->sub_type) && you.skill(SK_UNARMED_COMBAT) > 1)
-            return true;
-        prompt = "Really attack while wielding " + weapon->name(DESC_YOUR) + "?";
-    }
-    else if ((!you.weapon(0) && !you.weapon(1))
-        || (!you.weapon(1) && you.weapon(0) && you.weapon(0)->base_type == OBJ_SHIELDS && !is_hybrid(you.weapon(0)->sub_type))
-        || (!you.weapon(0) && you.weapon(1) && you.weapon(1)->base_type == OBJ_SHIELDS && !is_hybrid(you.weapon(1)->sub_type)))
+    if (!weap0 && !weap1)
         prompt = "Really attack unarmed?";
     else
-        return true;
+    {
+        prompt = make_stringf("Really attack while wielding %s%s%s?",
+            warn0 ? weap0->name(DESC_YOUR).c_str() : "",
+            warn0 && warn1 ? " and " : "",
+            warn1 ? weap1->name(DESC_YOUR).c_str() : "");
+    }
     if (penance)
         prompt += " This could place you under penance!";
 
