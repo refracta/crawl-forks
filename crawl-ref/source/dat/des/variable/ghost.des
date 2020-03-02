@@ -732,9 +732,9 @@ for h = 9, max_heads do
 end
 mons(hydra_def)
 }}
-KMONS:  pq = plant
-KFEAT:  q = W
-SUBST:  t = tttWpq'
+KMONS:  pr = plant
+KFEAT:  r = W
+SUBST:  t = tttWpr'
 NSUBST: ' = d / e / f / g / -
 : ghost_good_loot(_G)
 : if you.absdepth() < 10 then
