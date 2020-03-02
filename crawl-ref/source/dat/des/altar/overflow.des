@@ -108,26 +108,24 @@ function callback.xom_greatest_gift(data, triggerable, triggerer, marker, ev)
 end
 
 function species_mock(e)
-  if you.race() == "Barachi" then
+  if you.class() == "Demonspawn" then
+    e.kmons("1 = hell beast")
+  elseif you.class() == "Mummy" then
+    e.kmons("1 = mummy")
+  elseif you.class() == "Demigod" then
+    e.kmons("1 = titan simulacrum")
+  elseif you.race() == "Barachi" then
     e.kmons("1 = bullfrog")
   elseif you.race() == "Gnoll" then
     e.kmons("1 = jackal")
   elseif you.race() == "Centaur" then
     e.kmons("1 = dart slug")
-  elseif you.race() == "Demigod" then
-    e.kmons("1 = titan simulacrum")
-  elseif you.race() == "Demonspawn" then
-    e.kmons("1 = hell beast")
   elseif you.race():find("Draconian") then
     e.kmons("1 = wyvern")
-  elseif you.race() == "Deep Dwarf" then
-    e.kmons("1 = deep dwarf zombie")
   elseif you.race() == "Deep Elf" then
     e.kmons("1 = insubstantial wisp")
-  elseif you.race() == "Halfling" then
-    e.kmons("1 = hobgoblin ; mundane hunting sling")
   elseif you.race() == "Hill Orc" then
-    e.kmons("1 = goblin ; mundane hand axe . mundane ring mail")
+    e.kmons("1 = hobgoblin ; mundane hand axe . mundane ring mail")
   elseif you.race() == "Human" then
     e.kmons("1 = killer klown")
   elseif you.race() == "Felid" then
@@ -141,11 +139,9 @@ function species_mock(e)
   elseif you.race() == "Kobold" then
     e.kmons("1 = boggart")
   elseif you.race() == "Merfolk" then
-    e.kmons("1 = bullfrog")
+    e.kmons("1 = water nymph")
   elseif you.race() == "Minotaur" then
     e.kmons("1 = yak")
-  elseif you.race() == "Mummy" then
-    e.kmons("1 = human zombie")
   elseif you.race() == "Naga" then
     e.kmons("1 = torpor snail")
   elseif you.race() == "Octopode" then
@@ -158,10 +154,10 @@ function species_mock(e)
     e.kmons("1 = caustic shrike")
   elseif you.race() == "Troll" then
     e.kmons("1 = hungry ghost")
-  elseif you.race() == "Vampire" then
-    e.kmons("1 = tyrant leech")
   elseif you.race() == "Vine Stalker" then
     e.kmons("1 = thorn hunter")
+  elseif you.race() == "Lignifite" then
+    e.kmons("1 = shambling mangrove")
   else
     e.kmons("1 = spectral ugly thing")
   end
@@ -3355,14 +3351,14 @@ MARKER:  2 = lua:fog_machine { cloud_type = "thin mist", \
              pow_min = 100, pow_max = 100, delay = 1, \
              size = 1, walk_dist = 0, start_clouds = 1 }
 MAP
-cccccc
-ccb'bccccc
-cb2n1bc.+.
-c'nnnnc.c.
-cb1nA...cc
-ccbn.G.bc
-cccc..Bcc
- c...bcc
+yyyyyycc
+yyb'bqqccc
+yb2q1bq.+.
+y'qqqqq.c.
+yb1qA...cc
+yqbq.G.bc
+cqqq..Bcc
+cc...bcc
  c+cccc
  c..c
 ENDMAP
