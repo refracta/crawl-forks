@@ -541,10 +541,6 @@ direction_chooser::direction_chooser(dist& moves_,
 
     behaviour->just_looking = just_looking;
     behaviour->get_desc_func = args.get_desc_func;
-    if (unrestricted)
-        needs_path = false;
-    else if (hitfunc)
-        needs_path = true;
 
     show_beam = !just_looking && needs_path;
     need_viewport_redraw = show_beam;

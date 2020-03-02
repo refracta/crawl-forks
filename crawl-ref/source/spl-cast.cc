@@ -1512,7 +1512,9 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
         if (dir == DIR_DIR)
             mprf(MSGCH_PROMPT, "%s", prompt ? prompt : "Which direction?");
 
-        const bool needs_path = !testbits(flags, spflag::target);
+        bool needs_path;
+        if (warped) { needs_path = false; }
+        else { needs_path = !testbits(flags, spflag::target); }
 
         unique_ptr<targeter> hitfunc = _spell_targeter(spell, powc, range, warped);
 

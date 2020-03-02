@@ -1483,6 +1483,10 @@ bool spell_no_hostile_in_range(spell_type spell)
     const int range = calc_spell_range(spell, 0);
     const int minRange = get_dist_to_nearest_monster();
 
+    if (you.staff() && staff_enhances_spell(you.staff(), spell) 
+            && get_staff_facet(*you.staff()) == SPSTF_WARP)
+        return (minRange > you.current_vision);
+
     switch (spell)
     {
     // These don't target monsters or can target features.
