@@ -2318,7 +2318,8 @@ int silver_damages_victim(actor* victim, int damage, string &dmg_msg)
     else
         return 0;
 
-    dmg_msg = "The silver sears " + victim->name(DESC_THE) + "!";
+    dmg_msg = make_stringf("The silver sears %s%s", victim->name(DESC_THE).c_str(), 
+                                                    attack_strength_punctuation(damage).c_str());
     return ret;
 }
 
