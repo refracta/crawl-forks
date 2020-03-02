@@ -677,30 +677,25 @@ bool wielded_weapons_check()
     const item_def * weap1 = you.weapon(1);
     bool warn0 = true;
     bool warn1 = true;
+    bool unarmed_warning = false;
     bool penance = false;
 
     if (you.received_weapon_warning || you.confused())
         return true;
 
     if (weap0 && !is_melee_weapon(*weap0))
-    {
         weap0 = nullptr;
-        warn0 = false;
-    }
 
     if (weap1 && !is_melee_weapon(*weap1))
-    {
         weap1 = nullptr;
-        warn1 = false;
-    }
 
-    // Don't pester the player if they're using UC
-    // or if they don't have any melee weapons yet.
-    if (!weap0 && !weap1
-        && (you.skill(SK_UNARMED_COMBAT) > 1
-            || !any_of(you.inv.begin(), you.inv.end(),
+    if (!weap0 && !weap1 && (you.skill(SK_UNARMED_COMBAT) < 3))
+        unarmed_warning = true;
+
+    // Don't pester the player if they don't have any melee weapons yet.
+    if (!any_of(you.inv.begin(), you.inv.end(),
                        [](item_def &it)
-                       { return is_melee_weapon(it) && can_wield(&it); })))
+                       { return is_melee_weapon(it) && can_wield(&it); }))
     {
         return true;
     }
@@ -711,11 +706,17 @@ bool wielded_weapons_check()
     if (weap1 && !needs_handle_warning(*weap1, OPER_ATTACK, penance))
         warn1 = false;
 
+    if (!weap0)
+        warn0 = false;
+
+    if (!weap1)
+        warn1 = false;
+
     if (!warn0 && !warn1)
         return true;
 
     string prompt;
-    if (!weap0 && !weap1)
+    if (unarmed_warning)
         prompt = "Really attack unarmed?";
     else
     {
