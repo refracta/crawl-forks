@@ -220,10 +220,16 @@ void ranged_attack::set_path(bolt path)
 bool ranged_attack::handle_phase_end()
 {
     if (projectile->base_type == OBJ_MISSILES &&
-       (projectile->sub_type == MI_TRIPLE_BOLT || projectile->sub_type == MI_DOUBLE_BOLT))
+       (projectile->sub_type == MI_TRIPLE_BOLT || projectile->sub_type == MI_DOUBLE_BOLT) &&
+        !the_path.aimed_at_spot)
     {
         bolt continuation = the_path;
         continuation.range = you.current_vision - range_used;
+        const int x0 = the_path.source.x;
+        const int x1 = the_path.target.x;
+        const int y0 = the_path.source.y;
+        const int y1 = the_path.target.y;
+        continuation.target = coord_def(x0 + (x1 - x0) * 5, y0 + (y1 - y0) * 5);
         range_used = BEAM_STOP;
         continuation.source = defender->pos();
         int x = MI_BOLT;
