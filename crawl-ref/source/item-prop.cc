@@ -1053,7 +1053,7 @@ void do_curse_item(item_def &item, bool quiet)
     }
 
     // Holy wrath weapons cannot be cursed.
-    if (item.base_type == OBJ_WEAPONS
+    if ((item.base_type == OBJ_WEAPONS || item.base_type == OBJ_SHIELDS && is_hybrid(item.sub_type))
         && (get_weapon_brand(item) == SPWPN_HOLY_WRATH
             || you.duration[DUR_EXCRUCIATING_WOUNDS]
                && item_is_equipped(item)

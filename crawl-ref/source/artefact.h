@@ -13,6 +13,7 @@
 #define KNOWN_PROPS_KEY     "artefact_known_props"
 #define ARTEFACT_PROPS_KEY  "artefact_props"
 #define CURSE_PROPS_KEY     "curse_props"
+#define SOUL_BIND_XP_KEY    "soulbind_experience"
 #define ARTEFACT_NAME_KEY   "artefact_name"
 #define ARTEFACT_APPEAR_KEY "artefact_appearance"
 

@@ -610,7 +610,6 @@ public:
     bool has_spells() const;
     bool cursed() const;
     bool soul_bound() const;
-    int soul_bind_xp;
     colour_t get_colour() const;
 
     bool is_type(int base, int sub) const

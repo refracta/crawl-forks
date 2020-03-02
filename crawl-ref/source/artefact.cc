@@ -1730,7 +1730,7 @@ bool uncurse_item(item_def &item)
 
     if (bound && !item.soul_bound())
     {
-        item.soul_bind_xp = 0;
+        item.props.erase(SOUL_BIND_XP_KEY);
         if (item_is_equipped(item, false))
             mpr("The binds on your soul fade away.");
     }

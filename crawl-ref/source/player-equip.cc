@@ -261,13 +261,12 @@ static void _equip_artefact_effect(item_def &item, bool *show_msgs, bool unmeld,
     {
         if (proprt[ARTP_CURSE])
         {
-            item.soul_bind_xp = exp_needed(min<int>(you.max_level, 27) + 2)
+            const int XP = exp_needed(min<int>(you.max_level, 27) + 2)
                 - exp_needed(min<int>(you.max_level, 27));
+            item.props[SOUL_BIND_XP_KEY].get_int() = XP;
 
             mpr("It binds to your soul!");
         }
-        else
-            item.soul_bind_xp = 0; // Should be superfluous, but may squash a bug.
     }
 
     if (!alreadyknown && dangerous)
@@ -480,8 +479,6 @@ static void _equip_weapon_effect(item_def& item, bool showMsgs, bool unmeld, equ
         // generally set showMsgs to false.
         if (artefact || item.cursed())
             _equip_artefact_effect(item, &showMsgs, unmeld, slot);
-        else
-            item.soul_bind_xp = 0; // Should be superfluous but may squash a bug.
 
         const bool was_known = item_type_known(item);
 
@@ -1096,8 +1093,6 @@ static void _equip_armour_effect(item_def& arm, bool unmeld,
         bool show_msgs = true;
         _equip_artefact_effect(arm, &show_msgs, unmeld, slot);
     }
-    else
-        arm.soul_bind_xp = 0; // Should be superfluous but may squash a bug.
 
     you.redraw_armour_class = true;
     you.redraw_evasion = true;
@@ -1480,7 +1475,6 @@ static void _equip_jewellery_effect(item_def &item, bool unmeld,
     }
     else
     {
-        item.soul_bind_xp = 0; // Should be superfluous but may squash a bug.
         new_ident = set_ident_type(item, true);
         set_ident_flags(item, ISFLAG_IDENT_MASK);
     }

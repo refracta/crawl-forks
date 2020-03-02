@@ -2778,13 +2778,13 @@ static void _reduce_soul_bonds(int exp)
         const int eq = you.equip[i];
         item_def &item = you.inv[eq];
 
-        if (item.soul_bind_xp > 0)
+        if (item.props.exists(SOUL_BIND_XP_KEY))
         {
-            item.soul_bind_xp -= exp;
-            if (item.soul_bind_xp <= 0)
+            item.props[SOUL_BIND_XP_KEY].get_int() -= exp;
+            if (item.props[SOUL_BIND_XP_KEY].get_int() <= 0)
             {
                 mprf(MSGCH_DURATION, "%s is no longer bound to you. You can unequip it when you wish.", item.name(DESC_YOUR).c_str());
-                item.soul_bind_xp = 0;
+                item.props.erase(SOUL_BIND_XP_KEY);
             }
         }
     }
