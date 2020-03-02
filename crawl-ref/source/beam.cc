@@ -2297,29 +2297,28 @@ bool curare_actor(actor* source, actor* target, int levels, string name,
 int silver_damages_victim(actor* victim, int damage, string &dmg_msg)
 {
     int ret = 0;
-    if (victim->how_chaotic()
-        || victim->is_player() && player_is_shapechanged())
+    if (victim->how_chaotic() || victim->is_player() && player_is_shapechanged())
     {
-        ret = damage * 3 / 4;
+        ret = div_rand_round(damage * 3, 4);
     }
     else if (victim->is_player())
     {
         // For mutation damage, we want to count innate mutations for
         // demonspawn but not other species.
-        int multiplier = 5 * you.how_mutated(you.species == SP_DEMONSPAWN || you.char_class == JOB_DEMONSPAWN, true);
+        int multiplier = you.how_mutated(false, true, true, you.char_class == JOB_DEMONSPAWN);
         if (multiplier == 0)
             return 0;
 
-        if (multiplier > 75)
-            multiplier = 75;
+        if (multiplier > 15)
+            multiplier = 15;
 
-        ret = damage * multiplier / 100;
+        ret = div_rand_round(damage * multiplier, 20);
     }
     else
         return 0;
 
     dmg_msg = make_stringf("The silver sears %s%s", victim->name(DESC_THE).c_str(), 
-                                                    attack_strength_punctuation(damage).c_str());
+                                                    attack_strength_punctuation(ret).c_str());
     return ret;
 }
 

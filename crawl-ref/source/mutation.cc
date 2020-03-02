@@ -642,16 +642,6 @@ string describe_mutations(bool drop_title)
                 && you.form == transformation::dragon));
     }
 
-    if (you.species == SP_VAMPIRE)
-    {
-        if (you.hunger_state <= HS_STARVING)
-            result += "<green>You do not heal naturally.</green>\n";
-        else if (you.hunger_state < HS_SATIATED)
-            result += "<green>You heal slowly.</green>\n";
-        else if (you.hunger_state >= HS_FULL)
-            result += "<green>Your natural rate of healing is unusually fast.</green>\n";
-    }
-
     if (you.species == SP_LIGNIFITE)
     {
         result += _annotate_form_based(
@@ -2719,11 +2709,12 @@ bool temp_mutation_wanes()
  *
  * @param innate Whether to count innate mutations (default false).
  * @param levels Whether to add up mutation levels, as opposed to just counting number of mutations (default false).
- * @param temp Whether to count temporary mutations (default true).
+ * @param temp   Whether to count temporary mutations (default true).
+ * @param ds     Whether to count innate demonspawn mutations, ignored if innate is true (default false).
  * @return Either the number of matching mutations, or the sum of their
  *         levels, depending on \c levels
  */
-int player::how_mutated(bool innate, bool levels, bool temp) const
+int player::how_mutated(bool innate, bool levels, bool temp, bool ds) const
 {
     int result = 0;
 
@@ -2731,18 +2722,32 @@ int player::how_mutated(bool innate, bool levels, bool temp) const
     {
         if (you.mutation[i])
         {
-            const int mut_level = get_base_mutation_level(static_cast<mutation_type>(i), innate, temp);
+            const int mut_level = get_base_mutation_level(static_cast<mutation_type>(i), innate || ds, temp);
+            bool include = false;
 
-            if (levels)
-                result += mut_level;
-            else if (mut_level > 0)
-                result++;
+            if (ds)
+            {
+                for (unsigned int j = 0; j < you.demonic_traits.size(); j++)
+                {
+                    if (you.demonic_traits[j].mutation == i &&
+                        you.demonic_traits[j].level_gained <= you.experience_level)
+                    {
+                        include = true;
+                        j += 1000;
+                    }
+                }
+            }
+
+            if (!ds || include)
+            {
+                if (levels)
+                    result += mut_level;
+                else if (mut_level > 0)
+                    result++;
+            }
         }
-        if ((you.species == SP_DEMONSPAWN || you.char_class == JOB_DEMONSPAWN)
-            && you.props.exists("num_sacrifice_muts"))
-        {
+        if (innate && you.props.exists("num_sacrifice_muts"))
             result -= you.props["num_sacrifice_muts"].get_int();
-        }
     }
 
     return result;
