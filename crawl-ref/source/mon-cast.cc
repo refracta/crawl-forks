@@ -1812,7 +1812,7 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
         }
 
         die("Unknown monster spell '%s' cast by %s",
-                 spell_title(real_spell),
+                 mon_spell_title(real_spell, mons),
                  mons->name(DESC_PLAIN, true).c_str());
     }
 
@@ -5410,7 +5410,7 @@ static void _branch_summon_helper(monster* mons, spell_type spell_cast)
             break;
         default:
             die("Unsupported branch summon spell %s!",
-                 spell_title(spell_cast));
+                 mon_spell_title(spell_cast, mons));
     }
     const int num_summons = random_range(1, 3);
 
@@ -5997,7 +5997,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
     int duration = 0;
 
     dprf("Mon #%d casts %s (#%d)",
-         mons->mindex(), spell_title(spell_cast), spell_cast);
+         mons->mindex(), mon_spell_title(spell_cast, mons), spell_cast);
     ASSERT(!(flags & spflag::testing));
     // Targeted spells need a valid target.
     // Wizard-mode cast monster spells may target the boundary (shift-dir).
@@ -7281,7 +7281,7 @@ static void _speech_keys(vector<string>& key_list,
     const bool magical {slot_flags & MON_SPELL_MAGICAL};
 
     const mon_body_shape shape = get_mon_shape(*mons);
-    const string    spell_name = spell_title(spell);
+    const string    spell_name = mon_spell_title(spell, mons);
     const bool      real_spell = priest || wizard;
 
     // Before just using generic per-spell and per-monster casts, try

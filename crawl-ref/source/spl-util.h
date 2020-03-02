@@ -95,6 +95,8 @@ int count_bits(enum_bitfield<E, Exp> bits)
 }
 
 const char *spell_title(spell_type which_spell);
+const char *mon_spell_title(spell_type which_spell, const actor * caster);
+const char *mi_spell_title(spell_type which_spell, const monster_info * mi);
 const char* spelltype_short_name(spschool which_spelltype);
 const char* spelltype_long_name(spschool which_spelltype);
 

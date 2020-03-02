@@ -544,7 +544,7 @@ bool determine_chaos(const actor *agent, spell_type spell)
         staff_enhances_spell(agent->staff(), spell));
 }
 
-bool staff_enhances_spell(item_def * staff, spell_type spell)
+bool staff_enhances_spell(const item_def * staff, spell_type spell)
 {
     if (!staff)
         return false;

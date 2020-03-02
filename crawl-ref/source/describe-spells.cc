@@ -553,12 +553,12 @@ static void _describe_book(const spellbook_contents &book,
 
         description += formatted_string::parse_string(
                 make_stringf("%c - %s%s%s%s", spell_letter,
-                chop_string(spell_title(spell),
+                chop_string(mi_spell_title(spell, mon_owner),
                             29 - hex_len - range_len - hex_range_space).c_str(),
                 hex_str.c_str(),
                 hex_range_space ? " " : "",
                 range_str.c_str()));
-
+        
         // only display type & level for book spells
         if (doublecolumn)
         {
@@ -625,10 +625,11 @@ static void _write_book(const spellbook_contents &book,
     tiles.json_write_string("label", book.label);
     const int hd = mon_owner ? mon_owner->spell_hd() : 0;
     tiles.json_open_array("spells");
+
     for (auto spell : book.spells)
     {
         tiles.json_open_object();
-        tiles.json_write_string("title", spell_title(spell));
+        tiles.json_write_string("title", mi_spell_title(spell, mon_owner));
         tiles.json_write_int("colour", _spell_colour(spell, source_item));
         tiles.json_write_name("tile");
         tiles.write_tileidx(tileidx_spell(spell));

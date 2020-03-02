@@ -3525,8 +3525,8 @@ static bool _get_spell_description(const spell_type spell,
 {
     description.reserve(500);
 
-    const string long_descrip = getLongDescription(string(spell_title(spell))
-                                                   + " spell");
+    const string long_descrip = getLongDescription(
+                                    string(mi_spell_title(spell, mon_owner)) + " spell");
 
     if (!long_descrip.empty())
         description += long_descrip;
@@ -3579,7 +3579,7 @@ static bool _get_spell_description(const spell_type spell,
     if (crawl_state.player_is_dead())
         return false;
 
-    const string quote = getQuoteString(string(spell_title(spell)) + " spell");
+    const string quote = getQuoteString(string(mi_spell_title(spell, mon_owner)) + " spell");
     if (!quote.empty())
         description += "\n" + quote;
 
@@ -3680,7 +3680,7 @@ void describe_spell(spell_type spell, const monster_info *mon_owner,
     title_hbox->add_child(move(spell_icon));
 #endif
 
-    string spl_title = spell_title(spell);
+    string spl_title = mi_spell_title(spell, mon_owner);
     trim_string(desc);
 
     auto title = make_shared<Text>();
@@ -4950,7 +4950,7 @@ void get_monster_db_desc(const monster_info& mi, describe_info &inf,
         }
 
         inf.body << "    " << i << ": "
-                 << spell_title(hspell_pass[i].spell)
+                 << mi_spell_title(hspell_pass[i].spell, mi)
                  << " (";
         if (hspell_pass[i].flags & MON_SPELL_EMERGENCY)
             inf.body << "emergency, ";

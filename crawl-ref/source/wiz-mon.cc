@@ -515,10 +515,12 @@ void debug_stethoscope(int mon)
 
         spl << k << ": ";
 
+        const actor * m = &mons;
+
         if (hspell_pass[k].spell >= NUM_SPELLS)
             spl << "buggy spell";
         else
-            spl << spell_title(hspell_pass[k].spell);
+            spl << mon_spell_title(hspell_pass[k].spell, m);
 
         spl << "." << (int)hspell_pass[k].freq;
         for (const auto flag : mon_spell_slot_flags::range())

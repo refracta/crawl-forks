@@ -98,7 +98,7 @@ bool can_cast_spells(bool quiet = false);
 void do_cast_spell_cmd(bool force);
 
 bool determine_chaos(const actor *agent, spell_type spell);
-bool staff_enhances_spell(item_def * staff, spell_type spell);
+bool staff_enhances_spell(const item_def * staff, spell_type spell);
 
 int hex_success_chance(const int mr, int powc, int scale,
                        bool round_up = false);

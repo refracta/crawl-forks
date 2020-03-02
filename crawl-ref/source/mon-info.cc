@@ -1635,6 +1635,28 @@ string monster_info::constriction_description() const
     return cinfo;
 }
 
+item_def * monster_info::staff() const
+{
+    if (!bool(itemuse() & monuse_flags::MU_WEAPON_MELEE))
+        return nullptr;
+
+    item_def * retval = inv[MSLOT_WEAPON].get();
+
+    if (retval && (retval->base_type == OBJ_STAVES))
+        return retval;
+
+    // Staves can only be in primary weapon now; but monster dual wielding
+    // may come with time so future proofing...
+
+    retval = inv[MSLOT_ALT_WEAPON].get();
+
+    if (retval && (retval->base_type == OBJ_STAVES))
+        return retval;
+
+    return nullptr;
+
+}
+
 int monster_info::randarts(artefact_prop_type ra_prop) const
 {
     int ret = 0;

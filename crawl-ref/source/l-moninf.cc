@@ -436,7 +436,7 @@ LUAFN(moninf_get_spells)
         vector<string> spell_titles;
 
         for (const auto& slot : unique_slots)
-            spell_titles.emplace_back(spell_title(slot.spell));
+            spell_titles.emplace_back(mi_spell_title(slot.spell, mi));
 
         clua_stringtable(ls, spell_titles);
         lua_rawseti(ls, -2, i+1);

@@ -3622,7 +3622,7 @@ bool bolt::misses_player()
         {
             const string refl_name = name.empty() &&
                                      origin_spell != SPELL_NO_SPELL ?
-                                        spell_title(origin_spell) :
+                                        mon_spell_title(origin_spell, actor_by_mid(source_id)) :
                                         name;
 
             const item_def *shield = you.shield();

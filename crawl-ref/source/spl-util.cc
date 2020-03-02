@@ -463,7 +463,7 @@ bool spell_harms_area(spell_type spell)
 // for Xom acting (more power = more likely to grab his attention) {dlb}
 int spell_mana(spell_type which_spell)
 {
-    return _seekspell(which_spell)->level;
+    return _seekspell(which_spell)->level; // BCADDO: Change this to match with energy staff?
 }
 
 // applied in naughties (more difficult = higher level knowledge = worse)
@@ -570,17 +570,66 @@ int count_bits(uint64_t bits)
     return c;
 }
 
+static const char *_spell_title(spell_type spell, const actor * caster)
+{
+    string chaosTitle = _seekspell(spell)->chaosTitle;
+    if (!chaosTitle.size())
+        return _seekspell(spell)->title; // No need for chaos check on spells without a chaos name.
+
+    const item_def * staff = caster->staff();
+    bool chaos = staff && staff_enhances_spell(staff, spell) && get_staff_facet(*staff) == SPSTF_CHAOS;
+    // Check for Chaos Staff.
+
+    if (!chaos)
+    {
+        // Check for chaos rings.
+        if (caster->is_player() && you.wearing(EQ_RINGS, RING_CHAOS))
+            chaos = true;
+        else if (caster->is_monster())
+        {
+            const item_def * ring = caster->as_monster()->mslot_item(MSLOT_JEWELLERY);
+            if (ring && ring->is_type(OBJ_JEWELLERY, RING_CHAOS))
+                chaos = true;
+        }
+    }
+
+    if (chaos)
+        return chaosTitle.c_str();
+    return _seekspell(spell)->title;
+}
+
+const char *mi_spell_title(spell_type spell, const monster_info * mi)
+{
+    if (!mi)
+        return _spell_title(spell, &you);
+
+    string chaosTitle = _seekspell(spell)->chaosTitle;
+    if (!chaosTitle.size())
+        return _seekspell(spell)->title; // No need for chaos check on spells without a chaos name.
+
+    const item_def * staff = mi->staff();
+    bool chaos = staff && staff_enhances_spell(staff, spell) && get_staff_facet(*staff) == SPSTF_CHAOS;
+
+    if (!chaos)
+    {
+        const item_def * ring = mi->inv[MSLOT_JEWELLERY].get();
+        if (ring && ring->is_type(OBJ_JEWELLERY, RING_CHAOS))
+            chaos = true;
+    }
+
+    if (chaos)
+        return chaosTitle.c_str();
+    return _seekspell(spell)->title;
+}
+
+const char *mon_spell_title(spell_type spell, const actor * caster)
+{
+    return _spell_title(spell, caster);
+}
+
 const char *spell_title(spell_type spell)
 {
-    if ((you.staff() && staff_enhances_spell(you.staff(), spell) 
-                    && get_staff_facet(*you.staff()) == SPSTF_CHAOS)
-        || you.wearing(EQ_RINGS, RING_CHAOS))
-    {
-        string title = _seekspell(spell)->chaosTitle;
-        if (title.size())
-            return _seekspell(spell)->chaosTitle;
-    }
-    return _seekspell(spell)->title;
+    return _spell_title(spell, &you);
 }
 
 // FUNCTION APPLICATORS: Idea from Juho Snellman <jsnell@lyseo.edu.ouka.fi>

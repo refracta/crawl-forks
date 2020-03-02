@@ -6059,6 +6059,8 @@ void set_ancestor_spells(monster &ancestor, bool notify)
     if (!notify)
         return;
 
+    actor * ancy = &ancestor;
+
     for (auto spellslot : ancestor.spells)
     {
         if (find(old_spells.begin(), old_spells.end(), spellslot.spell)
@@ -6067,7 +6069,7 @@ void set_ancestor_spells(monster &ancestor, bool notify)
             mprf("%s regains %s memory of %s.",
                  ancestor.name(DESC_YOUR, true).c_str(),
                  ancestor.pronoun(PRONOUN_POSSESSIVE, true).c_str(),
-                 spell_title(spellslot.spell));
+                 mon_spell_title(spellslot.spell, ancy));
         }
     }
 }

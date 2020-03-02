@@ -460,7 +460,7 @@ static void record_spell_set(monster* mp, set<string>& spell_lists,
             continue;
         }
 
-        string spell_name = spell_title(sp);
+        string spell_name = mon_spell_title(sp, mp);
         spell_name = shorten_spell_name(spell_name);
         ret += spell_name;
         ret += _spell_flag_string(slot);
