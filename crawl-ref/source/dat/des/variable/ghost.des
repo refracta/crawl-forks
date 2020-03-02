@@ -246,7 +246,7 @@ NSUBST:  d = d / |*--, e = e / |*--, f = |* / |*--, h = 2=|* / |*--
 : else
 NSUBST:  d = d / |*--, e = e / |*--, f = |* / |*--, h = 2=|* / |*--
 : end
-SUBST:   qrs = G, Z = -, y = p, z = V, p : tp
+SUBST:   rs = G, Z = -, y = p, z = V, p : tp
 TILE:    G = dngn_gravestone
 TILE:    t = dngn_tree_dead
 FTILE:   -de|*%$DFHpGt = floor_pebble_brown / floor_pebble_darkgray
@@ -255,11 +255,11 @@ FTILE:   -de|*%$DFHpGt = floor_pebble_brown / floor_pebble_darkgray
 MAP
   qqqqqqq
  qqdfrfeqq
-qqq--F--qqq
+qqG--F--Gqq
 qd-D---D-eq
-qh-------hq
+qh--G-G--hq
 qsH-----Hsq
-qh-------hq
+qh-G---G-hq
 qqqq===qqqq
   ...@...
 ENDMAP
