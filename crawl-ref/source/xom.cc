@@ -2518,10 +2518,13 @@ static void _xom_cloud_trail(int /*sever*/)
 
 static void _xom_name(int /*sever*/)
 {
-    you.xom_name = make_name();
+    const string new_name = make_name();
     take_note(Note(NOTE_XOM_EFFECT, you.piety, -1, "renaming"), true);
-    god_speaks(GOD_XOM,"Your name was boring. This one is much better.");
-    mprf(MSGCH_GOD, "Xom changes your name to %s", you.xom_name.c_str());
+    string message = make_stringf("The name, %s, is boring. I think I'll call you %s!",
+        player_name().c_str(), new_name.c_str());
+    you.props[XOM_NAME_KEY] = new_name;
+    god_speaks(GOD_XOM, message.c_str());
+    mprf(MSGCH_GOD, "Xom changes your name to %s", new_name.c_str());
     you.redraw_title = true;
 }
 

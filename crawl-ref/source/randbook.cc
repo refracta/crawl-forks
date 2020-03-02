@@ -1221,7 +1221,7 @@ void acquire_themed_randbook(item_def &book, int agent)
 
     // Acquired randart books have a chance of being named after the player.
     const string owner = agent == AQ_SCROLL && one_chance_in(12) ?
-        you.xom_name :
+        player_name() :
         "";
 
     init_book_theme_randart(book, spells);

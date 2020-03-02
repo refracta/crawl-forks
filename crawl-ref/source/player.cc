@@ -3346,6 +3346,14 @@ void adjust_level(int diff, bool just_xp)
         level_change();
 }
 
+// Get the player's name.
+string player_name()
+{
+    if (!you.props.exists(XOM_NAME_KEY))
+        return you.your_name;
+    return you.props[XOM_NAME_KEY].get_string();
+}
+
 /**
  * Get the player's current stealth value.
  *

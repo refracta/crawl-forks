@@ -46,6 +46,7 @@
 #include "item-prop.h"
 #include "item-status-flag-type.h"
 #include "items.h"
+#include "jobs.h"
 #include "level-state-type.h"
 #include "libutil.h"
 #include "makeitem.h"
@@ -2985,18 +2986,19 @@ void excommunication(bool voluntary, god_type new_god)
             mprf("The chaos fades from your form.");
             delete_all_mutations("Fading Chaos");
         }
-        if (you.xom_name != you.your_name)
+        if (you.props.exists(XOM_NAME_KEY))
         {
             mpr("You change your name back from whatever silly name Xom gave you.");
-            you.xom_name = you.your_name;
+            you.props.erase(XOM_NAME_KEY);
             you.redraw_title = true;
         }
         if (you.char_class == JOB_CHAOS_KNIGHT)
         {
             you.char_class = JOB_XOM;
             xom_insult_name();
-            mprf(MSGCH_GOD, old_god, "Xom says: You abandoned me! You don't deserve to be called Chaos Knight; you %s.", you.xom_insult.c_str());
-            mprf(MSGCH_GOD, old_god, "Xom strips away your Chaos Knight title; from now on you are known as %s.", you.xom_insult.c_str());
+            string new_title = get_job_name(JOB_XOM);
+            mprf(MSGCH_GOD, old_god, "Xom says: You abandoned me! You don't deserve to be called Chaos Knight; you %s.", new_title.c_str());
+            mprf(MSGCH_GOD, old_god, "Xom strips away your Chaos Knight title; from now on you are known as %s.", new_title.c_str());
         }
         break;
 

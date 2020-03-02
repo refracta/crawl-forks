@@ -11,6 +11,7 @@
 #include "playable.h"
 #include "player.h"
 #include "stringutil.h"
+#include "xom.h"
 
 #include "job-data.h"
 
@@ -43,9 +44,9 @@ const char *get_job_name(job_type which_job)
 
     if (which_job == JOB_XOM)
     {
-        if (you.xom_insult == "")
+        if (!you.props.exists(XOM_AX_TITLE_KEY))
             xom_insult_name();
-        return you.xom_insult.c_str();
+        return you.props[XOM_AX_TITLE_KEY].get_string().c_str();
     }
     return _job_def(which_job).name;
 }

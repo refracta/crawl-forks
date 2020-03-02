@@ -62,7 +62,7 @@ static bool _player_is_illusion_cloneable()
 {
     for (monster_iterator mi; mi; ++mi)
     {
-        if (mi->type == MONS_PLAYER_ILLUSION && mi->mname == you.xom_name)
+        if (mi->type == MONS_PLAYER_ILLUSION && mi->mname == player_name())
             return false;
     }
     return true;

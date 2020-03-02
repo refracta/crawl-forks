@@ -122,10 +122,6 @@ public:
     species_type species;
     job_type char_class;
 
-    // Only used by Xom.
-    string xom_name;
-    string xom_insult;
-
     // This field is here even in non-WIZARD compiles, since the
     // player might have been playing previously under wiz mode.
     bool          wizard;            // true if player has entered wiz mode.
@@ -972,6 +968,8 @@ int hepliakqlana_ally_movement_speed();
 int player_movement_speed();
 
 int player_hunger_rate();
+
+string player_name();
 
 int calc_hunger(int food_cost);
 

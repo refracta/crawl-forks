@@ -889,7 +889,7 @@ void TilesFramework::_send_player(bool force_full)
     json_write_string("msg", "player");
     json_treat_as_empty();
     
-    _update_string(force_full, c.name, you.xom_name, "name");
+    _update_string(force_full, c.name, player_name(), "name");
     _update_string(force_full, c.job_title, filtered_lang(player_title()),
                    "title");
     _update_int(force_full, c.wizard, you.wizard, "wizard");

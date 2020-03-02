@@ -67,6 +67,7 @@
 #include "traps.h"
 #include "unicode.h"
 #include "unwind.h"
+#include "xom.h"
 
 static FixedVector < int, NUM_MONSTERS > mon_entry;
 
@@ -4448,8 +4449,9 @@ static string _get_species_insult(const string &species, const string &type)
 void xom_insult_name()
 {
     string genus = species_name(you.species, SPNAME_GENUS);
-    you.xom_insult = make_stringf("%s %s", uppercase_first(_get_species_insult(genus, "adj1")).c_str(),
+    const string AX_TITLE = make_stringf("%s %s", uppercase_first(_get_species_insult(genus, "adj1")).c_str(),
         uppercase_first(_get_species_insult(genus, "noun")).c_str());
+    you.props[XOM_AX_TITLE_KEY] = AX_TITLE;
 }
 
 // From should be of the form "prefix @tag@". Replaces all substrings
@@ -4542,7 +4544,7 @@ string do_mon_str_replacements(const string &in_msg, const monster& mons,
         msg = replace_all(msg, "@foe@", "you");
         msg = replace_all(msg, "@Foe@", "You");
 
-        msg = replace_all(msg, "@foe_name@", you.xom_name);
+        msg = replace_all(msg, "@foe_name@", player_name());
         msg = replace_all(msg, "@foe_species@", species_name(you.species));
         msg = replace_all(msg, "@foe_genus@", foe_genus);
         msg = replace_all(msg, "@Foe_genus@", uppercase_first(foe_genus));
