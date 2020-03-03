@@ -1180,6 +1180,8 @@ static cloud_type _cloud_from_feat(const dungeon_feature_type &ft)
             return CLOUD_BLACK_SMOKE;
         case DNGN_DEEP_WATER:
         case DNGN_SHALLOW_WATER:
+        case DNGN_SLIMY_WATER:
+        case DNGN_DEEP_SLIMY_WATER:
         case DNGN_FOUNTAIN_BLUE:
             return one_chance_in(5) ? CLOUD_RAIN : CLOUD_BLUE_SMOKE;
         case DNGN_FOUNTAIN_SPARKLING:
@@ -1193,6 +1195,8 @@ static dungeon_feature_type _veto_dangerous_terrain(dungeon_feature_type feat)
 {
     if (feat == DNGN_DEEP_WATER)
         return DNGN_SHALLOW_WATER;
+    if (feat == DNGN_DEEP_SLIMY_WATER)
+        return DNGN_SLIMY_WATER;
     if (feat == DNGN_LAVA)
         return DNGN_FLOOR;
     if (feat_is_solid(feat))

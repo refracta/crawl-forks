@@ -303,6 +303,9 @@ enum dungeon_feature_type
     DNGN_TOXIC_BOG,
     DNGN_QUAGMIRE,
 
+    DNGN_SLIMY_WATER,
+    DNGN_DEEP_SLIMY_WATER,
+
     NUM_FEATURES,
 };
 COMPILE_CHECK(NUM_FEATURES <= 256);

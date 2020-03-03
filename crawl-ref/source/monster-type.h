@@ -545,9 +545,7 @@ enum monster_type                      // menv[].type
     MONS_GIANT_GOLDFISH,
 #endif
     MONS_ELECTRIC_EEL,
-#if TAG_MAJOR_VERSION == 34
     MONS_JELLYFISH,
-#endif
     MONS_WATER_ELEMENTAL,
     MONS_SWAMP_WORM,
 #if TAG_MAJOR_VERSION == 34

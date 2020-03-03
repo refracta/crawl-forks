@@ -289,7 +289,8 @@ spret cast_noxious_bog(int pow, bool fail)
 
 void noxious_bog_cell(coord_def p)
 {
-    if (grd(p) == DNGN_DEEP_WATER || grd(p) == DNGN_LAVA)
+    if (grd(p) == DNGN_DEEP_WATER || grd(p) == DNGN_LAVA 
+        || grd(p) == DNGN_SLIMY_WATER || grd(p) == DNGN_DEEP_SLIMY_WATER)
         return;
 
     const int turns = 10

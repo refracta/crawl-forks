@@ -226,6 +226,20 @@ static feature_def feat_defs[] =
 },
 
 {
+    DNGN_SLIMY_WATER, "liquid slime", "slimy_water",
+    DCHAR_WAVY, NUM_DCHAR_TYPES,
+    COLOUR_IS(LIGHTGREEN),
+    FFT_NONE, MF_WATER,
+},
+
+{
+    DNGN_DEEP_SLIMY_WATER, "deep liquid slime", "deep_slimy_water",
+    DCHAR_WAVY, NUM_DCHAR_TYPES,
+    COLOUR_IS(GREEN),
+    FFT_NONE, MF_DEEP_WATER,
+},
+
+{
     DNGN_TOXIC_BOG, "a toxic bog", "toxic_bog",
     DCHAR_WAVY, NUM_DCHAR_TYPES,
     COLOUR_IS(ETC_POISON),

@@ -238,8 +238,8 @@ static bool _check_moveto_dangerous(const coord_def& p, const string& msg, const
     {
         if (species_likes_water(you.species))
             mpr("You can't swim in your current form.");
-        prompt = make_stringf("Do you really want to %s into deep water?",
-            move_verb.c_str());
+        prompt = make_stringf("Do you really want to %s into deep %s?",
+            move_verb.c_str(), env.grid(p) == DNGN_DEEP_SLIMY_WATER ? "slime" : "water");
     }
 
     else
@@ -304,7 +304,9 @@ bool check_moveto_terrain(const coord_def& p, const string &move_verb,
         else
             prompt += " over ";
 
-        prompt += env.grid(p) == DNGN_DEEP_WATER ? "deep water" : "lava";
+        prompt += env.grid(p) == DNGN_DEEP_WATER       ? "deep water" :
+                  env.grid(p) == DNGN_DEEP_SLIMY_WATER ? "deep slime"
+                                                       : "lava";
 
         prompt += need_expiration_warning(DUR_FLIGHT, p)
             ? " while you are losing your buoyancy?"
@@ -359,8 +361,8 @@ bool check_moveto_exclusion(const coord_def& p, const string &move_verb,
 
 bool player::drowning()
 {
-    return ((env.grid(you.position)) == DNGN_DEEP_WATER && !you.can_swim()
-        && !you.airborne() && (you.species != SP_GREY_DRACONIAN) && !you.can_water_walk());
+    return ((env.grid(you.position) == DNGN_DEEP_WATER || env.grid(you.position) == DNGN_DEEP_SLIMY_WATER) 
+        && !you.can_swim() && !you.airborne() && (you.species != SP_GREY_DRACONIAN) && !you.can_water_walk());
 }
 
 bool check_moveto(const coord_def& p, const string &move_verb, const string &msg)
@@ -525,6 +527,10 @@ void moveto_location_effects(dungeon_feature_type old_feat,
                         && you.species != SP_GREY_DRACONIAN)
                     mpr("You struggle to swim.");
 
+                if (new_grid == DNGN_DEEP_SLIMY_WATER && old_feat != DNGN_DEEP_SLIMY_WATER
+                    && you.species != SP_GREY_DRACONIAN)
+                    mpr("You struggle to swim.");
+
                 if (!feat_is_water(old_feat))
                 {
                     mpr("Moving in this stuff is going to be slow.");
@@ -607,7 +613,6 @@ void move_player_to_grid(const coord_def& p, bool stepped)
 
 /**
  * Check if the given terrain feature is safe for the player to move into.
- * (Or, at least, not instantly lethal.)
  *
  * @param grid          The type of terrain feature under consideration.
  * @param permanently   Whether to disregard temporary effects (non-permanent
@@ -625,7 +630,7 @@ bool is_feat_dangerous(dungeon_feature_type grid, bool permanently,
         return false;
     }
     else if (grid == DNGN_DEEP_WATER && !player_likes_water(permanently)
-             || grid == DNGN_LAVA)
+             || grid == DNGN_LAVA || grid == DNGN_DEEP_SLIMY_WATER && !player_likes_water(permanently) && !you_worship(GOD_JIYVA))
     {
         return true;
     }
@@ -5707,6 +5712,7 @@ int player::visible_igrd(const coord_def &where) const
 {
     if (grd(where) == DNGN_LAVA
         || (grd(where) == DNGN_DEEP_WATER
+        ||  grd(where) == DNGN_DEEP_SLIMY_WATER
             && !species_likes_water(species)))
     {
         return NON_ITEM;

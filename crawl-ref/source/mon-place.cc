@@ -110,7 +110,7 @@ static bool _feat_compatible(dungeon_feature_type wanted_feat,
 
 static bool _hab_requires_mon_flight(dungeon_feature_type g)
 {
-    return g == DNGN_LAVA || g == DNGN_DEEP_WATER;
+    return g == DNGN_LAVA || g == DNGN_DEEP_WATER || g == DNGN_DEEP_SLIMY_WATER;
 }
 
 /**

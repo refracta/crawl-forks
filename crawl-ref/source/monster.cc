@@ -4535,7 +4535,7 @@ bool monster::fully_petrify(actor *atk, bool quiet)
         if (feat == DNGN_LAVA)
             simple_monster_message(*this, " falls into the lava with a sizzling splash!");
         else if (feat_is_water(feat))
-            simple_monster_message(*this, " falls into the water and sinks like a stone!");
+            simple_monster_message(*this, " falls straight down and sinks like a stone!");
         else
         {
             simple_monster_message(*this, " crashes into the ground with a thud!");

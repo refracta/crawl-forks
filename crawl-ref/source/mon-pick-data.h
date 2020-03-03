@@ -1320,8 +1320,8 @@ static const pop_entry pop_water_swamp[] =
 
 static const pop_entry pop_water_snake[] =
 { // Snake water monsters
-  {  1,   4,  100, FALL, MONS_ELECTRIC_EEL },
-  {  0,   4,  200, RISE, MONS_SEA_SNAKE },
+  {  1,  4,  100, FALL, MONS_ELECTRIC_EEL },
+  {  0,  4,  200, RISE, MONS_SEA_SNAKE },
   { 0,0,0,FLAT,MONS_0 }
 };
 
@@ -1353,7 +1353,7 @@ static const population_list population_water[] =
     POP(water_shoals), // Shoals
     POP(water_snake),
     POP(water_generic), // Spider
-    POP(water_generic), // Slime
+    POP(slime), // Slime
     POP(water_generic), // Vaults
 #if TAG_MAJOR_VERSION == 34
     POP(water_generic), // Blade

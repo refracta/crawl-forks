@@ -1112,6 +1112,11 @@ shallow_water_murky2
 shallow_water_murky_disturbance DNGN_SHALLOW_WATER_MURKY_DISTURBANCE
 shallow_water_murky_disturbance2
 
+slime_water DNGN_SLIMY_WATER
+slime_water1
+slime_water_disturbance DNGN_SLIMY_WATER_DISTURBANCE
+deep_slime_water DNGN_DEEP_SLIMY_WATER
+
 toxic_bog1 DNGN_TOXIC_BOG
 toxic_bog2
 
@@ -1141,6 +1146,15 @@ murky_bord_btm MURKY_WAVE_S
 murky_bord_bl MURKY_WAVE_SW
 murky_bord_lft MURKY_WAVE_W
 murky_bord_tl MURKY_WAVE_NW
+
+slimy_bord_top SLIMY_WAVE_N
+slimy_bord_tr SLIMY_WAVE_NE
+slimy_bord_rgt SLIMY_WAVE_E
+slimy_bord_br SLIMY_WAVE_SE
+slimy_bord_btm SLIMY_WAVE_S
+slimy_bord_bl SLIMY_WAVE_SW
+slimy_bord_lft SLIMY_WAVE_W
+slimy_bord_tl SLIMY_WAVE_NW
 
 %weight 10
 shoals_deep_water0 SHOALS_DEEP_WATER

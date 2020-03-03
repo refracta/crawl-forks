@@ -1420,9 +1420,10 @@ string direction_chooser::target_interesting_terrain_description() const
     // feat_has_solid_floor().
     switch (feature)
     {
-    case DNGN_DEEP_WATER: return "water";
-    case DNGN_LAVA:       return "lava";
-    default:              return "";
+    case DNGN_DEEP_SLIMY_WATER: return "slime";
+    case DNGN_DEEP_WATER:       return "water";
+    case DNGN_LAVA:             return "lava";
+    default:                    return "";
     }
 }
 

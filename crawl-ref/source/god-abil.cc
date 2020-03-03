@@ -2738,7 +2738,14 @@ void process_sunlights(bool future)
         switch (ftype)
         {
         case DNGN_SHALLOW_WATER:
+        case DNGN_SLIMY_WATER:
+        case DNGN_TOXIC_BOG:
+        case DNGN_QUAGMIRE:
             ftype = DNGN_FLOOR;
+            break;
+
+        case DNGN_DEEP_SLIMY_WATER:
+            ftype = DNGN_SLIMY_WATER;
             break;
 
         case DNGN_DEEP_WATER:

@@ -657,35 +657,19 @@ ENDMAP
 NAME:    slime_pit
 PLACE:   Slime:$
 ORIENT:  encompass
+SUBVAULT: o : royal_jelly
 TAGS:    no_rotate no_dump
-MONS:    the Royal Jelly
-MONS:    acid blob
-MONS:    great orb of eyes / nothing
 SUBST:   ' : ' .:1,  ' : ' x:1,  ' = .x
-SUBST:   " : " .:3,  " = .c
-NSUBST:  P = O / *|
-KMASK:   |O* = no_monster_gen
-KPROP:   |O* = no_jiyva
-KPROP:   |O* = no_tele_into
-KFEAT:   Z = altar_jiyva
-KITEM:   O = slimy rune of Zot
-KITEM:   * = star_item
+SUBST:   " : cW .:3
 SHUFFLE: ([{
-
 {{
--- Attach function to the Royal Jelly itself. This will follow it wherever
--- it goes, even through polymorphs, and set dgn.persist.royal_jelly_dead
--- when it dies through means other than being banished.
-local function monster_die(monster, killer_type, killer_index, silent, wizard)
-    if killer_type == "banished" then
-      crawl.mpr("You feel a great sense of loss, and a brush of the Abyss.")
-    else
-      dgn.persist.fix_slime_vaults = true
-    end
-end
+local pool_contents = {}
+pool_contents["w"] = 100
+add_pools { replace = ".",
+			pool_size = 16 + crawl.random2(16),
+			contents = pool_contents,
+			frequency = 10 }
 }}
-MARKER: 1 = lua: MonPropsMarker:new {monster_dies_lua_key = monster_die}
-
 {{
 local fixup_marker = TriggerableFunction:new(
   {
@@ -736,24 +720,24 @@ xxxxxxxxxxxxxxxxx''.........................................'xxxxxxxxxxxxxxxxxxx
 xxxxxxxxxxxxxxxx'...........................................'xxxxxxxxxxxxxxxxxxx
 xxxxxxxxxxxxx''xx'..........................................'xxxxxxxxxxxxxxxxxxx
 xxxxxxxxxxxxx'..''................""""."""""...........]....''xxxxxxxxxxxxxxxxxx
-xxxxxxxxxxxxx'x.................."cccc2ccccc".................'xxxxxxxxxxxxxxxxx
-xxxxxxxxxxxxx'.'................"cc*cc..cc*cc".................''xxxxxxxxxxxxxxx
-xxxxxxxxxxxxx'................."cc***cc4c***cc".................xxxxxxxxxxxxxxxx
-xxxxxxxxxxxxx'................"cc*|*cc..cc*|*cc"................'xxxxxxxxxxxxxxx
-xxxxxxxxxxxx''..............."cc*|P|*n4nn*|P|*cc"...............'xxxxxxxxxxxxxxx
-xxxxxxxxxxxx'................"cc**|*nn..nn*|**cc"................'''xxxxxxxxxxxx
-xxxxxxxxxxxx'................"ccc**n|nn4n|n**ccc"..................xxxxxxxxxxxxx
-xxxxxxxxxxx'................."ccccnnnn.3nnnncccc"..................'xxxxxxxxxxxx
-xxxxxxxxxxx'................."c.4.n.4.1..4.n.4.c"..................''xxxxxxxxxxx
-xxxxxxxxxxx'..................2.c.4.n..Z.n.4.c.2....................'xxxxxxxxxxx
-xxxxxxxxxx'..........)......."ccccnnnn3.nnnncccc"...................'xxxxxxxxxxx
-xxxxxxxxxx'.................."ccc**n|nn4n|n**ccc"...................'xxxxxxxxxxx
-xxxxxxxxxx'.................."cc**|*nn..nn*|**cc"..................'xxxxxxxxxxxx
-xxxxxxxxx'..................."cc*|P|*n4nn*|P|*cc"..................'xxxxxxxxxxxx
-xxxxxxxxx''..................."cc*|*cc..cc*|*cc"..................'xxxxxxxxxxxxx
-xxxxxxxxxxx'..................."cc***cc4c***cc"...................'xxxxxxxxxxxxx
-xxxxxxxxxxxx'..................."cc*cc..cc*cc"....................'xxxxxxxxxxxxx
-xxxxxxxxxxxx'...................."cccc2ccccc"....................'xxxxxxxxxxxxxx
+xxxxxxxxxxxxx'x.................."oooooooooo".................'xxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxx'.'................"oooooooooooo".................''xxxxxxxxxxxxxxx
+xxxxxxxxxxxxx'................."oooooooooooooo".................xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxx'................"oooooooooooooooo"................'xxxxxxxxxxxxxxx
+xxxxxxxxxxxx''..............."oooooooooooooooooo"...............'xxxxxxxxxxxxxxx
+xxxxxxxxxxxx'................"oooooooooooooooooo"................'''xxxxxxxxxxxx
+xxxxxxxxxxxx'................"oooooooooooooooooo"..................xxxxxxxxxxxxx
+xxxxxxxxxxx'................."oooooooooooooooooo"..................'xxxxxxxxxxxx
+xxxxxxxxxxx'................."oooooooooooooooooo"..................''xxxxxxxxxxx
+xxxxxxxxxxx'..................oooooooooooooooooo....................'xxxxxxxxxxx
+xxxxxxxxxx'..........)......."oooooooooooooooooo"...................'xxxxxxxxxxx
+xxxxxxxxxx'.................."oooooooooooooooooo"...................'xxxxxxxxxxx
+xxxxxxxxxx'.................."oooooooooooooooooo"..................'xxxxxxxxxxxx
+xxxxxxxxx'..................."oooooooooooooooooo"..................'xxxxxxxxxxxx
+xxxxxxxxx''..................."oooooooooooooooo"..................'xxxxxxxxxxxxx
+xxxxxxxxxxx'..................."oooooooooooooo"...................'xxxxxxxxxxxxx
+xxxxxxxxxxxx'..................."oooooooooooo"....................'xxxxxxxxxxxxx
+xxxxxxxxxxxx'...................."oooooooooo"....................'xxxxxxxxxxxxxx
 xxxxxxxxxxxxx'...................."""".""""".....................'xxxxxxxxxxxxxx
 xxxxxxxxxxxxx'...........................................[........'xxxxxxxxxxxxx
 xxxxxxxxxxxx''..............................................'''....'xxxxxxxxxxxx
@@ -783,4 +767,54 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP
+
+NAME:    royal_jelly_end0
+TAGS:    royal_jelly no_rotate
+MONS:    the Royal Jelly
+MONS:    acid blob
+MONS:    great orb of eyes / nothing
+SUBST:   . : w..
+SUBST:   w : W
+NSUBST:  P = O / *|
+KMASK:   |O* = no_monster_gen
+KPROP:   |O* = no_jiyva
+KPROP:   |O* = no_tele_into
+KFEAT:   Z = altar_jiyva
+KITEM:   O = slimy rune of Zot
+KITEM:   * = star_item
+
+{{
+-- Attach function to the Royal Jelly itself. This will follow it wherever
+-- it goes, even through polymorphs, and set dgn.persist.royal_jelly_dead
+-- when it dies through means other than being banished.
+local function monster_die(monster, killer_type, killer_index, silent, wizard)
+    if killer_type == "banished" then
+      crawl.mpr("You feel a great sense of loss, and a brush of the Abyss.")
+    else
+      dgn.persist.fix_slime_vaults = true
+    end
+end
+}}
+MARKER: 1 = lua: MonPropsMarker:new {monster_dies_lua_key = monster_die}
+
+MAP
+    cccc2ccccc
+   cc*cc..cc*cc
+  cc***cc4c***cc
+ cc*|*cc..cc*|*cc
+cc*|P|*n4nn*|P|*cc
+cc**|*nn..nn*|**cc
+ccc**n|nn4n|n**ccc
+ccccnnnn.3nnnncccc
+c.4.n.4.1..4.n.4.c
+2.c.4.n..Z.n.4.c.2
+ccccnnnn3.nnnncccc
+ccc**n|nn4n|n**ccc
+cc**|*nn..nn*|**cc
+cc*|P|*n4nn*|P|*cc
+ cc*|*cc..cc*|*cc
+  cc***cc4c***cc
+   cc*cc..cc*cc
+    cccc2ccccc
 ENDMAP

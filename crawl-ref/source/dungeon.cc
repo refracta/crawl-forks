@@ -785,7 +785,7 @@ static bool _dgn_square_is_ever_passable(const coord_def &c)
     if (!(env.level_map_mask(c) & MMT_OPAQUE))
     {
         const dungeon_feature_type feat = grd(c);
-        if (feat == DNGN_DEEP_WATER || feat == DNGN_LAVA)
+        if (feat == DNGN_DEEP_WATER || feat == DNGN_LAVA || feat == DNGN_DEEP_SLIMY_WATER)
             return true;
     }
     return _dgn_square_is_passable(c);
@@ -1392,6 +1392,15 @@ static int _num_mons_wanted()
     return mon_wanted;
 }
 
+static void _slimify_water()
+{
+    if (!(you.where_are_you == BRANCH_SLIME))
+        return;
+
+    dgn_replace_area(0, 0, GXM - 1, GYM - 1, DNGN_SHALLOW_WATER, DNGN_SLIMY_WATER);
+    dgn_replace_area(0, 0, GXM - 1, GYM - 1, DNGN_DEEP_WATER, DNGN_DEEP_SLIMY_WATER);
+}
+
 static void _fixup_walls()
 {
     // If level part of Dis -> all walls metal.
@@ -1454,7 +1463,7 @@ void fixup_misplaced_items()
             // We accept items in deep water in the Abyss---they are likely to
             // be revealed eventually by morphing, and having deep water push
             // items away leads to strange results.
-            if (feat == DNGN_DEEP_WATER && player_in_branch(BRANCH_ABYSS))
+            if ((feat == DNGN_DEEP_WATER || feat == DNGN_DEEP_SLIMY_WATER) && player_in_branch(BRANCH_ABYSS))
                 continue;
 
             mprf(MSGCH_ERROR, "Item %s buggily placed in feature %s at (%d, %d).",
@@ -2501,6 +2510,7 @@ static void _build_dungeon_level()
         && !player_in_branch(BRANCH_SHOALS))
     {
         _prepare_water();
+        _slimify_water();
     }
 
     if (player_in_hell())

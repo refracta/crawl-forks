@@ -1409,7 +1409,7 @@ void pickup(bool partial_quantity)
     if (o == NON_ITEM)
         mpr("There are no items here.");
     else if (you.form == transformation::ice_beast
-             && grd(you.pos()) == DNGN_DEEP_WATER)
+             && (grd(you.pos()) == DNGN_DEEP_WATER || grd(you.pos()) == DNGN_DEEP_SLIMY_WATER))
     {
         mpr("You can't reach the bottom while floating on water.");
     }

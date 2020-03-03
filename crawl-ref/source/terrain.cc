@@ -12,6 +12,7 @@
 #include <sstream>
 
 #include "areas.h"
+#include "attack.h"
 #include "branch.h"
 #include "cloud.h"
 #include "coord.h"
@@ -390,7 +391,7 @@ bool cell_is_solid(const coord_def &c)
 bool feat_has_solid_floor(dungeon_feature_type feat)
 {
     return !feat_is_solid(feat) && feat != DNGN_DEEP_WATER
-           && feat != DNGN_LAVA;
+           && feat != DNGN_LAVA && feat != DNGN_DEEP_SLIMY_WATER;
 }
 
 /** Is there enough dry floor on this feature to stand without penalty?
@@ -507,7 +508,9 @@ bool feat_is_water(dungeon_feature_type feat)
            || feat == DNGN_DEEP_WATER
            || feat == DNGN_OPEN_SEA
            || feat == DNGN_TOXIC_BOG
-           || feat == DNGN_QUAGMIRE;
+           || feat == DNGN_QUAGMIRE
+           || feat == DNGN_SLIMY_WATER
+           || feat == DNGN_DEEP_SLIMY_WATER;
 }
 
 /** Does this feature have enough water to keep water-only monsters alive in it?
@@ -683,7 +686,7 @@ bool feat_is_valid_border(dungeon_feature_type feat)
 bool feat_is_mimicable(dungeon_feature_type feat, bool strict)
 {
     if (!strict && feat != DNGN_FLOOR && feat != DNGN_SHALLOW_WATER
-        && feat != DNGN_DEEP_WATER)
+        && feat != DNGN_DEEP_WATER && feat != DNGN_SLIMY_WATER && feat != DNGN_DEEP_SLIMY_WATER)
     {
         return true;
     }
@@ -903,6 +906,11 @@ void feat_splash_noise(dungeon_feature_type feat)
         mprf(MSGCH_SOUND, "You hear a splash.");
         return;
 
+    case DNGN_DEEP_SLIMY_WATER:
+    case DNGN_SLIMY_WATER:
+        mprf(MSGCH_SOUND, "You hear a pop.");
+        return;
+
     case DNGN_LAVA:
         mprf(MSGCH_SOUND, "You hear a sizzling splash.");
         return;
@@ -924,7 +932,7 @@ bool feat_destroys_items(dungeon_feature_type feat)
 bool feat_eliminates_items(dungeon_feature_type feat)
 {
     return feat_destroys_items(feat)
-           || (feat == DNGN_DEEP_WATER && !species_likes_water(you.species));
+           || ((feat == DNGN_DEEP_WATER || feat == DNGN_DEEP_SLIMY_WATER) && !species_likes_water(you.species));
 }
 
 static coord_def _dgn_find_nearest_square(
@@ -1630,6 +1638,7 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
 {
     int original = 0;
     int hurted = 0;
+    int actual = 0;
     monster *mon = act->as_monster();
     if (feat_is_lava(terrain))
     {
@@ -1637,13 +1646,14 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
         {
             original = (12 + roll_dice(3, 21));
             hurted = resist_adjust_damage(act, BEAM_FIRE, original);
+            actual = timescale_damage(act, hurted);
             if (hurted > original)
-                mpr("The lava burns you terribly!");
+                mprf("The lava burns you terribly%s", attack_strength_punctuation(actual).c_str());
             else
-                mpr("The lava burns!");
+                mprf("The lava burns%s", attack_strength_punctuation(actual).c_str());
             if (hurted < original)
                 canned_msg(MSG_YOU_RESIST);
-            ouch(timescale_damage(act, hurted) , KILLED_BY_LAVA, MID_NOBODY, "Lava");
+            ouch(actual , KILLED_BY_LAVA, MID_NOBODY, "Lava");
         }
         else
         {
@@ -1651,12 +1661,14 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
             hurted = resist_adjust_damage(act, BEAM_FIRE, original);
             if (mons_primary_habitat(*mon) == HT_LAVA || mons_primary_habitat(*mon) == HT_AMPHIBIOUS_LAVA)
                 hurted = 0;
+            actual = timescale_damage(act, hurted);
             if (you.can_see(*act) && hurted > 0)
-                mpr(make_stringf("The lava burns %s%s%s", act->name(DESC_THE).c_str(), hurted > original ? " terribly!" : ".", hurted < original ? " It resists." : ""));
-            act->hurt(nullptr, hurted, BEAM_FIRE, KILLED_BY_LAVA, "Lava", "", true, true);
+                mpr(make_stringf("The lava burns %s%s%s%s", act->name(DESC_THE).c_str(), hurted > original ? " terribly" : "", 
+                    attack_strength_punctuation(actual).c_str(), hurted < original ? " It resists." : ""));
+            act->hurt(nullptr, actual, BEAM_FIRE, KILLED_BY_LAVA, "Lava", "", true, true);
         }
     }
-    else if (terrain == DNGN_DEEP_WATER)
+    else if (terrain == DNGN_DEEP_WATER || terrain == DNGN_DEEP_SLIMY_WATER)
     {
         if (act->is_player())
         {
@@ -1664,8 +1676,9 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
             {
                 if (!you.res_water_drowning() && you.petrified())
                 {
-                    mpr("You are drowning!");
-                    ouch(timescale_damage(act, roll_dice(2, 10)), KILLED_BY_WATER, MID_NOBODY, "Deep Water");
+                    actual = timescale_damage(act, roll_dice(2, 10));
+                    mprf("You are drowning%s", attack_strength_punctuation(actual).c_str());
+                    ouch(actual, KILLED_BY_WATER, MID_NOBODY, "Deep Water");
                 }
                 else if (coinflip())
                 {
@@ -1677,20 +1690,63 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
                 }
                 else if (!you.res_water_drowning() && coinflip())
                 {
+                    actual = timescale_damage(act, roll_dice(2, 10));
                     if (coinflip())
-                        mpr("Your lungs burn in need of oxygen!");
-                    else if (coinflip())
-                        mpr("You are drowning!");
+                        mprf("Your lungs burn in need of oxygen%s", attack_strength_punctuation(actual).c_str());
+                    else if (terrain == DNGN_DEEP_WATER)
+                    {
+                        if (coinflip())
+                            mprf("You are drowning%s", attack_strength_punctuation(actual).c_str());
+                        else
+                            mprf("You inhale water%s", attack_strength_punctuation(actual).c_str());
+                    }
                     else
-                        mpr("You inhale water!");
-                    ouch(timescale_damage(act, roll_dice(2, 10)), KILLED_BY_WATER, MID_NOBODY, "Deep Water");
+                        mprf("You injest ooze%s", attack_strength_punctuation(actual).c_str());
+                    ouch(actual, KILLED_BY_WATER, MID_NOBODY, "Deep Water");
                 }
             }
         }
         else if (!act->res_water_drowning() && (mons_primary_habitat(*mon) != HT_WATER) &&
             (mons_primary_habitat(*mon) != HT_AMPHIBIOUS) && (mon->body_size(PSIZE_BODY) < SIZE_GIANT))
         {
-            act->hurt(nullptr, timescale_damage(act, roll_dice(2, 7)), BEAM_WATER, KILLED_BY_WATER, "Deep Water", "", true, true);
+            original = roll_dice(2, 7);
+            hurted = resist_adjust_damage(act, BEAM_WATER, original);
+            actual = timescale_damage(act, hurted);
+
+            if (actual)
+            {
+                mprf("%s drowns%s", act->name(DESC_THE).c_str(), attack_strength_punctuation(actual).c_str());
+                act->hurt(nullptr, actual, BEAM_WATER, KILLED_BY_WATER, "Deep Water", "", true, true);
+            }
+        }
+    }
+
+    if (terrain == DNGN_SLIMY_WATER || terrain == DNGN_DEEP_SLIMY_WATER)
+    {
+        original = (4 + roll_dice(3, 7));
+        hurted = resist_adjust_damage(act, BEAM_ACID, original);
+        actual = timescale_damage(act, hurted);
+
+        if (!actual)
+            return;
+
+        if (act->is_player() && !you_worship(GOD_JIYVA))
+        {
+            if (hurted > original)
+                mprf("The acidic ooze burns you terribly%s", attack_strength_punctuation(actual).c_str());
+            else
+                mprf("The acidic ooze burns%s", attack_strength_punctuation(actual).c_str());
+            if (hurted < original)
+                canned_msg(MSG_YOU_RESIST);
+            ouch(actual, KILLED_BY_ACID, MID_NOBODY, "Slime Pit");
+        }
+        else if (act->is_monster() && !(mons_genus(mon->type) == MONS_JELLY))
+        {
+            if (hurted > original)
+                mprf("The acidic ooze burns %s terribly%s", act->name(DESC_THE).c_str(), attack_strength_punctuation(actual).c_str());
+            else
+                mprf("The acidic ooze burns %s%s%s", act->name(DESC_THE).c_str(), attack_strength_punctuation(actual).c_str(), original < hurted ? " It resists." : "");
+            act->hurt(nullptr, actual, BEAM_ACID, KILLED_BY_ACID, "Slime Pit", "", true, true);
         }
     }
 }

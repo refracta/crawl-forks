@@ -424,6 +424,10 @@ bool dangerous_terrain_seen()
                 return true;
             if (!you.can_swim() && feat == DNGN_DEEP_WATER)
                 return true;
+            if (!you.can_swim() && !you_worship(GOD_JIYVA) && feat == DNGN_DEEP_SLIMY_WATER)
+                return true;
+            if (!you_worship(GOD_JIYVA) && feat == DNGN_DEEP_SLIMY_WATER)
+                return true;
         }
     }
     return false;

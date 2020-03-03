@@ -361,6 +361,8 @@ bool passwall_path::check_moveto() const
     string terrain_msg;
     if (grd(actual_dest) == DNGN_DEEP_WATER)
         terrain_msg = "You sense a deep body of water on the other side of the rock.";
+    else if (grd(actual_dest) == DNGN_DEEP_SLIMY_WATER) // Probably never possible.
+        terrain_msg = "You sense a massive body of slime on the other side of the rock.";
     else if (grd(actual_dest) == DNGN_LAVA)
         terrain_msg = "You sense an intense heat on the other side of the rock.";
 
