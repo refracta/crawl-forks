@@ -1031,6 +1031,7 @@ static void _describe_terrain(status_info& inf)
     case DNGN_DEEP_SLIMY_WATER:
         inf.light_colour = GREEN;
         inf.light_text = "Slime";
+        break;
     case DNGN_LAVA:
         inf.light_colour = RED;
         inf.light_text = "Lava";

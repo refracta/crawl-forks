@@ -903,12 +903,9 @@ void feat_splash_noise(dungeon_feature_type feat)
     {
     case DNGN_SHALLOW_WATER:
     case DNGN_DEEP_WATER:
-        mprf(MSGCH_SOUND, "You hear a splash.");
-        return;
-
     case DNGN_DEEP_SLIMY_WATER:
     case DNGN_SLIMY_WATER:
-        mprf(MSGCH_SOUND, "You hear a pop.");
+        mprf(MSGCH_SOUND, "You hear a splash.");
         return;
 
     case DNGN_LAVA:
@@ -1723,7 +1720,7 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
 
     if (terrain == DNGN_SLIMY_WATER || terrain == DNGN_DEEP_SLIMY_WATER)
     {
-        original = (4 + roll_dice(3, 7));
+        original = (1 + roll_dice(2, 4));
         hurted = resist_adjust_damage(act, BEAM_ACID, original);
         actual = timescale_damage(act, hurted);
 
@@ -1740,14 +1737,19 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
                 canned_msg(MSG_YOU_RESIST);
             ouch(actual, KILLED_BY_ACID, MID_NOBODY, "Slime Pit");
         }
+
         else if (act->is_monster() && !(mons_genus(mon->type) == MONS_JELLY))
         {
-            if (hurted > original)
-                mprf("The acidic ooze burns %s terribly%s", act->name(DESC_THE).c_str(), attack_strength_punctuation(actual).c_str());
-            else
-                mprf("The acidic ooze burns %s%s%s", act->name(DESC_THE).c_str(), attack_strength_punctuation(actual).c_str(), original < hurted ? " It resists." : "");
+            mprf("The acidic ooze burns %s%s%s%s", act->name(DESC_THE).c_str(), original > hurted ? " terribly" : "",
+                attack_strength_punctuation(actual).c_str(), original < hurted ? " It resists." : "");
             act->hurt(nullptr, actual, BEAM_ACID, KILLED_BY_ACID, "Slime Pit", "", true, true);
         }
+
+        else
+            hurted = 0;
+
+        if (x_chance_in_y(hurted, 20))
+            act->corrode_equipment("acidic ooze", 1);
     }
 }
 

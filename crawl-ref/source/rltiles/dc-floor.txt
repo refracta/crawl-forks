@@ -1114,8 +1114,13 @@ shallow_water_murky_disturbance2
 
 slime_water DNGN_SLIMY_WATER
 slime_water1
+slime_water2
+slime_water3
 slime_water_disturbance DNGN_SLIMY_WATER_DISTURBANCE
 deep_slime_water DNGN_DEEP_SLIMY_WATER
+deep_slime_water1
+deep_slime_water2
+deep_slime_water3
 
 toxic_bog1 DNGN_TOXIC_BOG
 toxic_bog2

@@ -26,6 +26,7 @@
 #include "mon-tentacle.h"
 #include "player.h"
 #include "player-stats.h"
+#include "religion.h"
 #include "stringutil.h"
 #include "state.h"
 #include "terrain.h"
@@ -273,6 +274,14 @@ bool i_feel_safe(bool announce, bool want_move, bool just_monsters,
         {
             if (announce)
                 mprf(MSGCH_WARN, "You're standing next to a slime covered wall!");
+
+            return false;
+        }
+
+        if (grd(you.pos()) == DNGN_SLIMY_WATER && !you_worship(GOD_JIYVA))
+        {
+            if (announce)
+                mprf(MSGCH_WARN, "You're standing in acidic ooze!");
 
             return false;
         }
