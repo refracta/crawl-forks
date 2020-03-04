@@ -3105,6 +3105,9 @@ spret cast_fragmentation(int pow, const actor *caster,
 
     bolt beam;
 
+    if (!in_bounds(target))
+        return spret::abort;
+
     if (!setup_fragmentation_beam(beam, pow, caster, target, false, &what, hole, destroy))
     {
         return spret::abort;

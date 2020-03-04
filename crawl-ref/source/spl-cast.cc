@@ -512,7 +512,10 @@ static int _additive_power(spell_type spell)
 
 bool determine_chaos(const actor *agent, spell_type spell)
 {
-    if (you.religion == GOD_XOM && one_chance_in(12))
+    if (get_spell_disciplines(spell) & spschool::evocation)
+        return false;
+
+    if (you_worship(GOD_XOM) && one_chance_in(12))
         return true;
 
     if (agent->staff() && is_unrandom_artefact(*agent->staff(), UNRAND_MAJIN) 
@@ -521,9 +524,6 @@ bool determine_chaos(const actor *agent, spell_type spell)
 
     if (one_chance_in(3) && !bool(get_spell_disciplines(spell) & spschool::summoning)
         && !(spell == SPELL_HAILSTORM)) // Yay for special cases.
-        return false;
-
-    if (get_spell_disciplines(spell) & spschool::evocation)
         return false;
 
     if (agent->is_player() && you.wearing(EQ_RINGS, RING_CHAOS))
