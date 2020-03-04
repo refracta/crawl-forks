@@ -3140,7 +3140,7 @@ void bolt::affect_place_clouds()
 
     // Fire/cold over water/lava
     if (feat == DNGN_LAVA && flavour == BEAM_COLD
-        || feat_is_watery(feat) && is_fiery())
+        || feat_is_watery(feat) && (feat != DNGN_SLIMY_WATER) && is_fiery())
     {
         place_cloud(CLOUD_STEAM, p, 2 + random2(5), agent(), 11);
     }
