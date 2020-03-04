@@ -968,15 +968,44 @@ void fire_monster_death_event(monster* mons,
 
     if (type == MONS_ROYAL_JELLY && !mons->is_summoned() && !polymorph)
     {
-        dlua.callfn("dgn_set_persistent_var", "sb", "fix_slime_vaults", true);
+        bool revived = false;
 
-        if (level_id::current() == level_id(BRANCH_SLIME, brdepth[BRANCH_SLIME]))
-            dungeon_events.fire_event(DET_ENTERED_LEVEL);
+        if (mons->get_experience_level() > 4)
+        {
+            for (rectangle_iterator ri(mons->pos(), LOS_RADIUS); ri; ++ri)
+            {
+                if (monster * m = monster_at(*ri))
+                {
+                    if (m->type == MONS_PRINCESS_SLIME && mons->see_cell_no_trans(*ri))
+                    {
+                        revived = true;
+                        monster_die(*m, KILL_DISMISSED, NON_MONSTER);
+                        monster *jelly = mons_place(mgen_data(MONS_ROYAL_JELLY, BEH_HOSTILE, *ri, MHITYOU, MG_AUTOFOE, GOD_JIYVA));
+                        jelly->set_hit_dice(max(1, mons->get_experience_level() - 3 - random2(4)));
+                        jelly->max_hit_points = div_rand_round(mons->stat_maxhp() * 3, 4);
 
-        you.royal_jelly_dead = true;
+                        god_speaks(GOD_JIYVA, "The Royal Jelly is dead! Long live the Royal Jelly!");
+                        mprf(MSGCH_WARN, "A nearby princess slime grew into a new Royal Jelly.");
+                        break;
+                    }
+                }
+            }
+        }
+        else
+            mprf(MSGCH_GOD, "Jiyva's strength has wained too far to revive a champion.");
 
-        if (jiyva_is_dead())
-            _jiyva_died();
+        if (!revived)
+        {
+            dlua.callfn("dgn_set_persistent_var", "sb", "fix_slime_vaults", true);
+
+            if (level_id::current() == level_id(BRANCH_SLIME, brdepth[BRANCH_SLIME]))
+                dungeon_events.fire_event(DET_ENTERED_LEVEL);
+
+            you.royal_jelly_dead = true;
+
+            if (jiyva_is_dead())
+                _jiyva_died();
+        }
     }
 }
 
@@ -2097,6 +2126,12 @@ item_def* monster_die(monster& mons, killer_type killer,
     const bool pet_kill = _is_pet_kill(killer, killer_index);
 
     bool did_death_message = false;
+
+    if ((mons_genus(mons.type) == MONS_JELLY) && you.royal_jelly_dead)
+    {
+        mons_place(mgen_data(MONS_PILLAR_OF_SALT, BEH_HOSTILE, mons.pos()));
+        place_cloud(CLOUD_SALT, mons.pos(), INFINITE_DURATION, &you, 2);
+    }
 
     if (mons.type == MONS_BALLISTOMYCETE_SPORE
         || mons.type == MONS_BALL_LIGHTNING

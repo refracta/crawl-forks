@@ -2013,6 +2013,12 @@ redback
 A vicious black spider with a splash of red on its swollen abdomen. Its
 mandibles drip with lethal poison.
 %%%%
+remnant of a dead god
+
+Is that slime or salt? The fabric of this creature seems to be coming apart, 
+and it's lost all it's colour and every last bit of what little intelligence it had. 
+Now it only wishes for revenge for what was lost.
+%%%%
 revenant
 
 A skeletal form wreathed in cold blue fire, standing astride this life and the

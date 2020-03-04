@@ -9,6 +9,7 @@
 
 #include "act-iter.h"
 #include "attitude-change.h"
+#include "cloud.h"
 #include "coordit.h"
 #include "decks.h"
 #include "dungeon.h"
@@ -20,9 +21,12 @@
 #include "message.h"
 #include "mon-behv.h"
 #include "mon-death.h"
+#include "mon-place.h"
 #include "mon-transit.h"
 #include "religion.h"
 #include "state.h"
+#include "terrain.h"
+#include "tiledef-dngn.h"
 #include "view.h"
 
 static void _daction_hog_to_human(monster *mon, bool in_transit);
@@ -303,11 +307,60 @@ static void _apply_daction(daction_type act)
     case DACT_REAUTOMAP:
         reautomap_level();
         break;
-    case DACT_REMOVE_JIYVA_ALTARS:
+    case DACT_REMOVE_JIYVA_ALTARS: // Also now deslimes slime.
         for (rectangle_iterator ri(1); ri; ++ri)
         {
             if (grd(*ri) == DNGN_ALTAR_JIYVA)
                 grd(*ri) = DNGN_FLOOR;
+
+            if (you.where_are_you == BRANCH_SLIME)
+            {
+                if (grd(*ri) == DNGN_SLIMY_WALL)
+                {
+                    grd(*ri) = DNGN_ROCK_WALL;
+                    env.grid_colours(*ri) = LIGHTGRAY;
+                    env.tile_flv(*ri).feat_idx =
+                        store_tilename_get_index("wall_ruined_slime");
+                    env.tile_flv(*ri).feat = TILE_WALL_RUINED_SLIME;
+                }
+
+                if (grd(*ri) == DNGN_SLIMY_WATER || grd(*ri) == DNGN_DEEP_SLIMY_WATER || grd(*ri) == DNGN_TREE)
+                    grd(*ri) = DNGN_FLOOR;
+
+                env.grid_colours(*ri) = WHITE;
+                env.tile_flv(*ri).floor_idx =
+                    store_tilename_get_index("floor_ruined_slime");
+                env.tile_flv(*ri).floor = TILE_FLOOR_RUINED_SLIME;
+
+                if (grd(*ri) == DNGN_STONE_WALL)
+                {
+                    env.grid_colours(*ri) = DARKGRAY;
+                    env.tile_flv(*ri).feat_idx =
+                        store_tilename_get_index("stone_wall_ruined_slime");
+                    env.tile_flv(*ri).feat = TILE_STONE_WALL_RUINED_SLIME;
+                }
+
+                if (!feat_is_solid(grd(*ri)) && one_chance_in(100))
+                    place_cloud(CLOUD_SALT, *ri, INFINITE_DURATION, &you, 2);
+
+                if (monster * mon = monster_at(*ri))
+                {
+                    if (mons_genus(mon->type) == MONS_JELLY || mons_genus(mon->type) == MONS_FLOATING_EYE)
+                    {
+                        if (one_chance_in(10) && !mon->is_summoned() && !bool(mon->flags & MF_NO_REWARD))
+                        {
+                            monster_die(*mon, KILL_DISMISSED, NON_MONSTER);
+                            mons_place(mgen_data(MONS_SLIME_REMNANT, BEH_HOSTILE, *ri, MHITYOU,
+                                    MG_NONE, GOD_JIYVA));
+                        }
+                        else
+                        {
+                            mon->add_ench(mon_enchant(ENCH_SLOWLY_DYING, 1, 0, 80 + random2(40)));
+                            mon->add_ench(mon_enchant(ENCH_STICK, 1, 0, INFINITE_DURATION));
+                        }
+                    }
+                }
+            }
         }
         break;
     case DACT_ROT_CORPSES:

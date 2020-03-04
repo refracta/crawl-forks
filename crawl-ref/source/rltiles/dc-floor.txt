@@ -241,6 +241,13 @@ bog_green1
 bog_green2
 bog_green3
 
+%weight 10
+ruined_slime0 FLOOR_RUINED_SLIME
+%weight 1
+ruined_slime1
+ruined_slime2
+ruined_slime3
+
 acidic_floor0 FLOOR_SLIME_ACIDIC
 acidic_floor1
 acidic_floor2

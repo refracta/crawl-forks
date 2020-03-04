@@ -660,7 +660,8 @@ ORIENT:  encompass
 SUBVAULT: o : royal_jelly
 TAGS:    no_rotate no_dump
 SUBST:   ' : ' .:1,  ' : ' x:1,  ' = .x
-SUBST:   " : cW .:3
+SUBST:   " : cc.aaa
+KFEAT:   a = slimy_water
 SHUFFLE: ([{
 {{
 local pool_contents = {}

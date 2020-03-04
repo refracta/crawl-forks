@@ -381,12 +381,20 @@ slime5
 slime6
 slime7
 
+%weight 10
+ruined_slime0 WALL_RUINED_SLIME
+ruined_slime1
+ruined_slime2
+ruined_slime3
+
 %weight 3
 slime_stone0 STONE_WALL_SLIME
 slime_stone1
 %weight 10
 slime_stone2
 slime_stone3
+
+ruined_slimestone STONE_WALL_RUINED_SLIME
 
 tomb0 WALL_TOMB
 tomb1

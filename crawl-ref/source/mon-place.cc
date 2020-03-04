@@ -893,7 +893,7 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
     coord_def fpos;
 
     // Some sanity checks.
-    if (mons_is_unique(mg.cls) && you.unique_creatures[mg.cls]
+    if (mons_is_unique(mg.cls) && !(mg.cls == MONS_ROYAL_JELLY) && you.unique_creatures[mg.cls]
             && !crawl_state.game_is_arena()
         || mons_class_flag(mg.cls, M_CANT_SPAWN))
     {
