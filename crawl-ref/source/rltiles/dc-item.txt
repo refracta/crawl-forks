@@ -1230,6 +1230,7 @@ rune_swamp RUNE_SWAMP
 rune_shoals RUNE_SHOALS
 rune_spider RUNE_SPIDER
 rune_slime RUNE_SLIME
+rune_slime_ruined RUNE_SLIME_RUINED
 rune_vaults RUNE_VAULTS
 rune_tomb RUNE_TOMB
 rune_abyss RUNE_ABYSS
@@ -1256,6 +1257,7 @@ rune_swamp UNCOLLECTED_RUNE_SWAMP
 rune_shoals UNCOLLECTED_RUNE_SHOALS
 rune_spider UNCOLLECTED_RUNE_SPIDER
 rune_slime UNCOLLECTED_RUNE_SLIME
+rune_slime_ruined UNCOLLECTED_RUNE_SLIME_RUINED
 rune_vaults UNCOLLECTED_RUNE_VAULTS
 rune_tomb UNCOLLECTED_RUNE_TOMB
 rune_abyss UNCOLLECTED_RUNE_ABYSS

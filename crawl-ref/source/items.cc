@@ -3865,6 +3865,7 @@ colour_t item_def::rune_colour() const
 
         case RUNE_TARTARUS:                 // bone
         case RUNE_SPIDER:
+        case RUNE_RUINS:
             return ETC_BONE;
 
         case RUNE_SLIME:                    // slimy

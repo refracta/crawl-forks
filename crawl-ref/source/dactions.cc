@@ -368,6 +368,12 @@ static void _apply_daction(daction_type act)
                 }
             }
         }
+        if (you.where_are_you == BRANCH_SLIME)
+        {
+            for (auto &item : mitm)
+                if (item.is_type(OBJ_RUNES, RUNE_SLIME))
+                    item.sub_type = RUNE_RUINS;
+        }
         break;
     case DACT_ROT_CORPSES:
         for (auto &item : mitm)

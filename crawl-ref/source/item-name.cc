@@ -1004,6 +1004,7 @@ const char* rune_type_name(short p)
     case RUNE_COCYTUS:     return "icy";
     case RUNE_TARTARUS:    return "bone";
     case RUNE_SLIME:       return "slimy";
+    case RUNE_RUINS:       return "cracked";
     case RUNE_VAULTS:      return "silver";
     case RUNE_SNAKE:       return "serpentine";
     case RUNE_ELF:         return "elven";
@@ -2872,7 +2873,10 @@ static MenuEntry* _fixup_runeorb_entry(MenuEntry* me)
         if (!you.runes[rune])
         {
             text += " (";
-            text += branches[rune_location(rune)].longname;
+            if (rune == RUNE_RUINS)
+                text += "Ruins of Slime";
+            else
+                text += branches[rune_location(rune)].longname;
             text += ")";
         }
         text += "</";
@@ -2924,7 +2928,13 @@ void display_runes()
                 item_def item;
                 item.base_type = OBJ_RUNES;
                 item.sub_type = rune;
-                item.quantity = you.runes[rune] ? 1 : 0;
+                if (you.royal_jelly_dead && item.sub_type == RUNE_SLIME)
+                {
+                    item.sub_type = RUNE_RUINS;
+                    item.quantity = you.runes[RUNE_RUINS] ? 1 : 0;
+                }
+                else
+                    item.quantity = you.runes[rune] ? 1 : 0;
                 item_colour(item);
                 items.push_back(item);
             }

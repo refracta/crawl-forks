@@ -2573,6 +2573,7 @@ static tileidx_t _tileidx_uncollected_rune(const item_def &item)
     case RUNE_SNAKE:       return TILE_UNCOLLECTED_RUNE_SNAKE;
     case RUNE_SPIDER:      return TILE_UNCOLLECTED_RUNE_SPIDER;
     case RUNE_SLIME:       return TILE_UNCOLLECTED_RUNE_SLIME;
+    case RUNE_RUINS:       return TILE_UNCOLLECTED_RUNE_SLIME_RUINED;
     case RUNE_VAULTS:      return TILE_UNCOLLECTED_RUNE_VAULTS;
     case RUNE_TOMB:        return TILE_UNCOLLECTED_RUNE_TOMB;
     case RUNE_SWAMP:       return TILE_UNCOLLECTED_RUNE_SWAMP;
@@ -2607,6 +2608,7 @@ static tileidx_t _tileidx_rune(const item_def &item)
     case RUNE_SNAKE:       return TILE_RUNE_SNAKE;
     case RUNE_SPIDER:      return TILE_RUNE_SPIDER;
     case RUNE_SLIME:       return TILE_RUNE_SLIME;
+    case RUNE_RUINS:       return TILE_RUNE_SLIME_RUINED;
     case RUNE_VAULTS:      return TILE_RUNE_VAULTS;
     case RUNE_TOMB:        return TILE_RUNE_TOMB;
     case RUNE_SWAMP:       return TILE_RUNE_SWAMP;

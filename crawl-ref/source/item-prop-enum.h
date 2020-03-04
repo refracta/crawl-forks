@@ -446,6 +446,7 @@ enum rune_type
 
     RUNE_SPIDER,
     RUNE_FOREST, // only used in sprints
+    RUNE_RUINS,
     NUM_RUNE_TYPES
 };
 
