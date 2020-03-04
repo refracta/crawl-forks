@@ -798,6 +798,8 @@ slime_creature5
 azure_jelly MONS_AZURE_JELLY
 acid_blob MONS_ACID_BLOB
 death_ooze MONS_DEATH_OOZE
+princess_slime MONS_PRINCESS_SLIME
+lava_glob MONS_LAVA_GLOB
 
 ## Kobolds ('K')
 %sdir mon/unique

@@ -2532,6 +2532,13 @@ static void _post_monster_move(monster* mons)
             }
     }
 
+    if (mons->type == MONS_LAVA_GLOB)
+    {
+        dungeon_feature_type grid = grd(mons->pos());
+        if (!feat_is_critical(grid) && !feat_is_watery(grid))
+            temp_change_terrain(mons->pos(), DNGN_LAVA, INFINITE_DURATION, TERRAIN_CHANGE_FLOOD, mons);
+    }
+
     if (mons->type == MONS_WATER_NYMPH)
     {
         for (adjacent_iterator ai(mons->pos(), false); ai; ++ai)
@@ -4041,6 +4048,13 @@ static bool _monster_move(monster* mons)
 
         if (mons->type == MONS_CURSE_TOE)
             place_cloud(CLOUD_MIASMA, mons->pos(), 2 + random2(3), mons);
+
+        if (mons->type == MONS_LAVA_GLOB)
+        {
+            dungeon_feature_type grid = grd(mons->pos());
+            if (!feat_is_critical(grid) && !feat_is_watery(grid))
+                temp_change_terrain(mons->pos(), DNGN_LAVA, 20 + random2(40), TERRAIN_CHANGE_FLOOD);
+        }
     }
     else
     {

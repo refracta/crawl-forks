@@ -1565,6 +1565,11 @@ A hideous conglomeration of mangled body parts, possessed and altered in ways
 that challenge sanity. Each varies in speed and durability by the nature of
 whatever unfortunates were used to make it.
 %%%%
+lava glob
+
+A quasi-sentient ball of burning hot magma. Leaves a trail of lava wherever it 
+goes and violently bursts into lava on death.
+%%%%
 lava snake
 
 A burning red snake which dwells in pools of lava. It spits gobs of molten rock
@@ -1917,6 +1922,11 @@ ursines, it will become enraged if badly hurt or frightened.
 porcupine
 
 A vicious rodent with a coat of sharp quills and a painful bite.
+%%%%
+princess slime
+
+A particularly large follower of the royal jelly. These are some of Jiyva's most
+arduent semi-sentient followers.
 %%%%
 profane servitor
 

@@ -670,32 +670,6 @@ add_pools { replace = ".",
 			contents = pool_contents,
 			frequency = 10 }
 }}
-{{
-local fixup_marker = TriggerableFunction:new(
-  {
-    func="fixup_slime_vaults",
-    repeated=true
-  }
-)
-
-fixup_marker:add_triggerer(DgnTriggerer:new {
-  type="monster_dies",
-  target="any"
-})
-
-fixup_marker:add_triggerer(DgnTriggerer:new {
-  type="entered_level"
-})
-
-}}
-# Doesn't matter where this marker goes, so we might as well choose
-# the altar.
-: lua_marker("Z", fixup_marker)
-
-{{
-    set_feature_name("stone_wall", "rune-carved stone wall")
-    set_feature_name("clear_stone_wall", "rune-carved clear stone wall")
-}}
 MAP
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -787,21 +761,33 @@ KFEAT:   a = slimy_water
 KFEAT:   Z = altar_jiyva
 KITEM:   O = slimy rune of Zot
 KITEM:   * = star_item
+{{
+local fixup_marker = TriggerableFunction:new(
+  {
+    func="fixup_slime_vaults",
+    repeated=true
+  }
+)
+
+fixup_marker:add_triggerer(DgnTriggerer:new {
+  type="monster_dies",
+  target="any"
+})
+
+fixup_marker:add_triggerer(DgnTriggerer:new {
+  type="entered_level"
+})
+
+}}
+
+# Doesn't matter where this marker goes, so we might as well choose
+# the altar.
+: lua_marker("Z", fixup_marker)
 
 {{
--- Attach function to the Royal Jelly itself. This will follow it wherever
--- it goes, even through polymorphs, and set dgn.persist.royal_jelly_dead
--- when it dies through means other than being banished.
-local function monster_die(monster, killer_type, killer_index, silent, wizard)
-    if killer_type == "banished" then
-      crawl.mpr("You feel a great sense of loss, and a brush of the Abyss.")
-    else
-      dgn.persist.fix_slime_vaults = true
-    end
-end
+    set_feature_name("stone_wall", "rune-carved stone wall")
+    set_feature_name("clear_stone_wall", "rune-carved clear stone wall")
 }}
-MARKER: 1 = lua: MonPropsMarker:new {monster_dies_lua_key = monster_die}
-
 MAP
     cccc2ccccc
    cc*cc''cc*cc

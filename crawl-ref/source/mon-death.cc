@@ -14,6 +14,7 @@
 #include "art-enum.h"
 #include "attitude-change.h"
 #include "bloodspatter.h"
+#include "branch.h"
 #include "butcher.h"
 #include "cloud.h"
 #include "cluautil.h"
@@ -957,12 +958,21 @@ void fire_monster_death_event(monster* mons,
         timeout_terrain_changes(0, true);
 
     if (killer == KILL_BANISHED)
+    {
+        if (type == MONS_ROYAL_JELLY && !mons->is_summoned() && !polymorph)
+            mprf(MSGCH_BANISHMENT, "You feel a great sense of loss, and a brush of the Abyss.");
         return;
+    }
 
     los_monster_died(mons);
 
     if (type == MONS_ROYAL_JELLY && !mons->is_summoned() && !polymorph)
     {
+        dlua.callfn("dgn_set_persistent_var", "sb", "fix_slime_vaults", true);
+
+        if (level_id::current() == level_id(BRANCH_SLIME, brdepth[BRANCH_SLIME]))
+            dungeon_events.fire_event(DET_ENTERED_LEVEL);
+
         you.royal_jelly_dead = true;
 
         if (jiyva_is_dead())
@@ -1278,6 +1288,17 @@ static void _setup_inner_flame_explosion(bolt & beam, const monster& origin,
                                                      : KILL_MON_MISSILE;
 }
 
+static void _setup_lava_burst (bolt & beam, const monster & origin)
+{
+    _setup_base_explosion(beam, origin);
+    beam.ex_size = 1;
+    beam.flavour = BEAM_LAVA;
+    beam.damage = dice_def(3, 20);
+    beam.name = "lava blob burst";
+    beam.colour = LIGHTRED;
+    beam.source_name = origin.name(DESC_A, true);
+}
+
 static bool _explode_monster(monster* mons, killer_type killer,
                              bool pet_kill, bool wizard)
 {
@@ -1323,6 +1344,11 @@ static bool _explode_monster(monster* mons, killer_type killer,
     {
         _setup_bennu_explosion(beam, *mons);
         sanct_msg = "By Zin's power, the bennu's fires are quelled.";
+    }
+    else if (type == MONS_LAVA_GLOB)
+    {
+        _setup_lava_burst(beam, *mons);
+        sanct_msg = "By Zin's power, the glob's inner magma is contained.";
     }
     else if (mons->has_ench(ENCH_ENTROPIC_BURST))
     {
@@ -1411,6 +1437,39 @@ static bool _explode_monster(monster* mons, killer_type killer,
         {
             if (!cell_is_solid(*ai) && !cloud_at(*ai) && !one_chance_in(5))
                 place_cloud(mons->has_ench(ENCH_INNER_FLAME) ? CLOUD_FIRE : chaos_cloud(), *ai, 10 + random2(10), agent);
+        }
+    }
+    else if (mons->type == MONS_LAVA_GLOB)
+    {
+        for (adjacent_iterator ai(mons->pos(), false); ai; ++ai)
+        {
+            if (!cell_is_solid(*ai) && !feat_is_critical(grd(*ai)) && !feat_is_watery(grd(*ai)))
+                temp_change_terrain(*ai, DNGN_LAVA, 20 + random2(80), TERRAIN_CHANGE_FLOOD);
+            if (actor * act = actor_at(*ai))
+            {
+                if (!(act->is_player() && you.wearing_ego(EQ_BOOTS, SPARM_STURDY) || act->is_stationary()))
+                {
+                    coord_def * newpos;
+                    for (adjacent_iterator sai(act->pos(), true); sai; ++sai)
+                    {
+                        if (grid_distance(*sai, mons->pos()) > grid_distance(act->pos(), mons->pos()) && act->is_habitable(*sai))
+                        {
+                            if (!newpos || coinflip())
+                            {
+                                coord_def x = *sai;
+                                newpos = &x;
+                            }
+                        }
+                    }
+                    if (newpos)
+                    {
+                        act->move_to_pos(*newpos);
+                        mprf("%s %s knocked back by the lava burst.", act->name(DESC_THE).c_str(), 
+                                                                      act->is_player() ? "are" : "is");
+                    }
+                }
+
+            }
         }
     }
 
@@ -2045,6 +2104,7 @@ item_def* monster_die(monster& mons, killer_type killer,
         || mons.type == MONS_LURKING_HORROR
         || (mons.type == MONS_FULMINANT_PRISM && mons.prism_charge > 0)
         || mons.type == MONS_BENNU
+        || mons.type == MONS_LAVA_GLOB
         || mons.has_ench(ENCH_INNER_FLAME)
         || mons.has_ench(ENCH_ENTROPIC_BURST))
     {
