@@ -340,8 +340,14 @@ static void _apply_daction(daction_type act)
                     env.tile_flv(*ri).feat = TILE_STONE_WALL_RUINED_SLIME;
                 }
 
-                if (!feat_is_solid(grd(*ri)) && one_chance_in(100))
-                    place_cloud(CLOUD_SALT, *ri, INFINITE_DURATION, &you, 2);
+                if (!feat_is_solid(grd(*ri)))
+                {
+                    if (one_chance_in(20))
+                        place_cloud(CLOUD_SALT, *ri, INFINITE_DURATION, &you, 2);
+                    if (one_chance_in(100) && !actor_at(*ri))
+                        mons_place(mgen_data(MONS_SLIME_REMNANT, BEH_HOSTILE, *ri, MHITYOU,
+                            MG_NONE, GOD_JIYVA));
+                }
 
                 if (monster * mon = monster_at(*ri))
                 {
