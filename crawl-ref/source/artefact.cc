@@ -506,20 +506,19 @@ void curse_desc_properties(const item_def        &item,
 
 static void _add_randart_staff_facet(const item_def &item, artefact_properties_t &item_props)
 {
-    bool c = item.sub_type != STAFF_TRANSMUTATION;
-    bool m = item.sub_type != STAFF_SUMMONING && c;
-    bool f = item.sub_type != STAFF_DEATH && m;
+    int type = item.sub_type;
 
-    item_props[ARTP_BRAND] = random_choose_weighted(   m ? 3 : 0, SPSTF_MENACE,
-                                                               6, SPSTF_SHIELD,
-                                                       f ? 6 : 0, SPSTF_FLAY,
-                                                       m ? 2 : 0, SPSTF_SCOPED,
-                                                               3, SPSTF_WIZARD,
-                                                               3, SPSTF_REAVER,
-                                                               5, SPSTF_ENERGY,
-                                                       m ? 3 : 0, SPSTF_ACCURACY,
-                                                       m ? 6 : 0, SPSTF_WARP,
-                                                       c ? 8 : 0, SPSTF_CHAOS);
+    item_props[ARTP_BRAND] = random_choose_weighted(   
+        is_staff_brand_ok(type, SPSTF_MENACE)   ? 3 : 0, SPSTF_MENACE,
+        is_staff_brand_ok(type, SPSTF_SHIELD)   ? 6 : 0, SPSTF_SHIELD,
+        is_staff_brand_ok(type, SPSTF_FLAY)     ? 6 : 0, SPSTF_FLAY,
+        is_staff_brand_ok(type, SPSTF_SCOPED)   ? 2 : 0, SPSTF_SCOPED,
+                                                      3, SPSTF_WIZARD,
+                                                      3, SPSTF_REAVER,
+                                                      5, SPSTF_ENERGY,
+        is_staff_brand_ok(type, SPSTF_ACCURACY) ? 3 : 0, SPSTF_ACCURACY,
+        is_staff_brand_ok(type, SPSTF_WARP)     ? 6 : 0, SPSTF_WARP,
+        is_staff_brand_ok(type, SPSTF_CHAOS)    ? 8 : 0, SPSTF_CHAOS);
 
     // no brand = magic flag to reject and retry
     if (!is_staff_brand_ok(item.sub_type, item_props[ARTP_BRAND], true))

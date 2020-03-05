@@ -792,6 +792,10 @@ bool is_staff_brand_ok(int type, int brand, bool /*strict*/)
 {
     switch (brand)
     {
+    case SPSTF_SHIELD:
+        if (type == STAFF_POISON)
+            return false;
+        // fallthrough
     case SPSTF_FLAY:
         if (type == STAFF_DEATH)
             return false;
@@ -802,6 +806,8 @@ bool is_staff_brand_ok(int type, int brand, bool /*strict*/)
     case SPSTF_WARP:
         if (type == STAFF_SUMMONING)
             return false;
+        if (brand == SPSTF_SHIELD)
+            return true;
         // fallthrough
     case SPSTF_CHAOS:
         if (type == STAFF_TRANSMUTATION)
@@ -1141,21 +1147,20 @@ facet_type generate_staff_facet(const item_def& item,
     if (x_chance_in_y(500 - item_level, 500))
         return SPSTF_NORMAL;
 
-    bool c = item.sub_type != STAFF_TRANSMUTATION;
-    bool m = item.sub_type != STAFF_SUMMONING && c;
-    bool f = item.sub_type != STAFF_DEATH && m;
+    int type = item.sub_type;
 
         // Total Weight: 42 (Arbitrary).
-    return random_choose_weighted( m ? 8 : 0, SPSTF_MENACE,
-                                           6, SPSTF_SHIELD,
-                                   f ? 6 : 0, SPSTF_FLAY,
-                                   m ? 4 : 0, SPSTF_SCOPED,
-                                           4, SPSTF_WIZARD,
-                                           4, SPSTF_REAVER,
-                                           3, SPSTF_ENERGY,
-                                   m ? 3 : 0, SPSTF_ACCURACY,
-                                   m ? 2 : 0, SPSTF_WARP,
-                                   c ? 2 : 0, SPSTF_CHAOS);
+    return random_choose_weighted(
+        is_staff_brand_ok(type, SPSTF_MENACE)   ? 8 : 0, SPSTF_MENACE,
+        is_staff_brand_ok(type, SPSTF_SHIELD)   ? 6 : 0, SPSTF_SHIELD,
+        is_staff_brand_ok(type, SPSTF_FLAY)     ? 6 : 0, SPSTF_FLAY,
+        is_staff_brand_ok(type, SPSTF_SCOPED)   ? 4 : 0, SPSTF_SCOPED,
+                                                      4, SPSTF_WIZARD,
+                                                      4, SPSTF_REAVER,
+                                                      3, SPSTF_ENERGY,
+        is_staff_brand_ok(type, SPSTF_ACCURACY) ? 3 : 0, SPSTF_ACCURACY,
+        is_staff_brand_ok(type, SPSTF_WARP)     ? 2 : 0, SPSTF_WARP,
+        is_staff_brand_ok(type, SPSTF_CHAOS)    ? 2 : 0, SPSTF_CHAOS);
 }
 
 bool is_armour_brand_ok(int type, int brand, bool strict)
@@ -1834,6 +1839,9 @@ static void _generate_staff_item(item_def& item, bool allow_uniques,
     if (force_ego != 0)
         item.brand = force_ego;
     else
+        item.brand = generate_staff_facet(item, item_level);
+
+    if (!is_staff_brand_ok(item.sub_type, item.brand))
         item.brand = generate_staff_facet(item, item_level);
 }
 
