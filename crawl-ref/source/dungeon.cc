@@ -1431,10 +1431,10 @@ static void _slimify_water()
             int slimy = 0;
             for (adjacent_iterator ai(*ri); ai; ++ai)
             {
-                if (grd(*ai) == DNGN_SLIMY_WALL && one_chance_in(5))
+                if (grd(*ai) == DNGN_SLIMY_WALL)
                     slimy++;
             }
-            if (x_chance_in_y(slimy, 4))
+            if (slimy > 3 || x_chance_in_y(slimy, 6))
             {
                 grd(*ri) = DNGN_SLIMY_WATER;
                 if (env.map_knowledge(*ri).seen())
