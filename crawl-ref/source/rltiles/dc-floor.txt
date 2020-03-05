@@ -1030,6 +1030,21 @@ deep_water_ice0 DEEP_WATER_ICE
 deep_water_ice1
 
 %weight 10
+slimeice SLIMY_WATER_ICE
+%weight 1
+slimeice1
+slimeice2
+slimeice3
+
+%weight 10
+slimeicecracked SLIMY_WATER_ICE_CRACKED
+%weight 1
+slimeicecracked1
+slimeicecracked2
+slimeicecracked3
+
+
+%weight 10
 mosaic0 FLOOR_MOSAIC
 mosaic1
 mosaic2

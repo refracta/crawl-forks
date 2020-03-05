@@ -3148,7 +3148,8 @@ void bolt::affect_place_clouds()
         place_cloud(CLOUD_STEAM, p, 2 + random2(5), agent(), 11);
     }
 
-    if (feat_is_watery(feat) && (flavour == BEAM_COLD || flavour == BEAM_FREEZE)
+    if (feat_is_watery(feat) && feat != DNGN_SLIMY_WATER && feat != DNGN_DEEP_SLIMY_WATER
+        && (flavour == BEAM_COLD || flavour == BEAM_FREEZE)
         && damage.num * damage.size > 35)
     {
         place_cloud(CLOUD_COLD, p, damage.num * damage.size / 30 + 1, agent());

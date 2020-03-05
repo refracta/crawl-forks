@@ -648,9 +648,17 @@ tileidx_t tileidx_feature(const coord_def &gc)
             if (terch)
             {
                 if (terch->duration > 40)
+                {
+                    if (player_in_branch(BRANCH_SLIME))
+                        return TILE_SLIMY_WATER_ICE;
                     return tileidx_feature_base(feat);
+                }
                 else if (feat == DNGN_ICE)
+                {
+                    if (player_in_branch(BRANCH_SLIME))
+                        return TILE_SLIMY_WATER_ICE_CRACKED;
                     return TILE_ICE_CRACKED;
+                }
                 else
                     return TILE_OBSIDIAN_MELTING;
             }
