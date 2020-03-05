@@ -186,6 +186,21 @@ void apply_daction_to_mons(monster* mon, daction_type act, bool local,
     // See _daction_hog_to_human for an example.
     switch (act)
     {
+        case DACT_KILL_JIYVA:
+            if (mon->type == MONS_DISSOLUTION)
+                monster_die(*mon, KILL_DISMISSED, NON_MONSTER);
+            if (player_in_branch(BRANCH_SLIME) && (mons_genus(mon->type) == MONS_JELLY || mons_genus(mon->type) == MONS_FLOATING_EYE))
+            {
+                if (one_chance_in(10) && !mon->is_summoned() && !bool(mon->flags & MF_NO_REWARD))
+                {
+                    monster_die(*mon, KILL_DISMISSED, NON_MONSTER);
+                    mons_place(mgen_data(MONS_SLIME_REMNANT, BEH_HOSTILE, mon->pos(), MHITYOU,
+                        MG_NONE, GOD_JIYVA));
+                }
+                else
+                    mon->add_ench(mon_enchant(ENCH_SLOWLY_DYING, 1, 0, 80 + random2(40)));
+            }
+            break;
         case DACT_ALLY_YRED_SLAVE:
             if (mon->type == MONS_ZOMBIE)
             {
@@ -307,7 +322,7 @@ static void _apply_daction(daction_type act)
     case DACT_REAUTOMAP:
         reautomap_level();
         break;
-    case DACT_REMOVE_JIYVA_ALTARS: // Also now deslimes slime.
+    case DACT_KILL_JIYVA:
         for (rectangle_iterator ri(1); ri; ++ri)
         {
             if (grd(*ri) == DNGN_ALTAR_JIYVA)
@@ -347,24 +362,6 @@ static void _apply_daction(daction_type act)
                     if (one_chance_in(100) && !actor_at(*ri))
                         mons_place(mgen_data(MONS_SLIME_REMNANT, BEH_HOSTILE, *ri, MHITYOU,
                             MG_NONE, GOD_JIYVA));
-                }
-
-                if (monster * mon = monster_at(*ri))
-                {
-                    if (mons_genus(mon->type) == MONS_JELLY || mons_genus(mon->type) == MONS_FLOATING_EYE)
-                    {
-                        if (one_chance_in(10) && !mon->is_summoned() && !bool(mon->flags & MF_NO_REWARD))
-                        {
-                            monster_die(*mon, KILL_DISMISSED, NON_MONSTER);
-                            mons_place(mgen_data(MONS_SLIME_REMNANT, BEH_HOSTILE, *ri, MHITYOU,
-                                    MG_NONE, GOD_JIYVA));
-                        }
-                        else
-                        {
-                            mon->add_ench(mon_enchant(ENCH_SLOWLY_DYING, 1, 0, 80 + random2(40)));
-                            mon->add_ench(mon_enchant(ENCH_STICK, 1, 0, INFINITE_DURATION));
-                        }
-                    }
                 }
             }
         }

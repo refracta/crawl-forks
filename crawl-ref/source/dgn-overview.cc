@@ -901,6 +901,27 @@ void set_unique_annotation(monster* mons, const level_id level)
     _update_unique_annotation(level);
 }
 
+// When dissolution is being dismissed because Jiyva died, we don't have a
+// monster to pass so this is a semi-unique version of remove_unique_annotation below.
+void kill_dissolution()
+{
+    set<level_id> affected_levels;
+    for (auto i = auto_unique_annotations.begin();
+        i != auto_unique_annotations.end();)
+    {
+        if (i->first == "Dissolution")
+        {
+            affected_levels.insert(i->second);
+            auto_unique_annotations.erase(i++);
+        }
+        else
+            ++i;
+    }
+
+    for (auto lvl : affected_levels)
+        _update_unique_annotation(lvl);
+}
+
 void remove_unique_annotation(monster* mons)
 {
     if (mons->is_illusion()) // Fake monsters don't clear real annotations

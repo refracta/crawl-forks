@@ -900,7 +900,10 @@ static void _jiyva_died()
     if (you_worship(GOD_JIYVA))
         return;
 
-    add_daction(DACT_REMOVE_JIYVA_ALTARS);
+    add_daction(DACT_KILL_JIYVA);
+
+    if (you.unique_creatures[MONS_DISSOLUTION])
+        kill_dissolution();
 
     if (!player_in_branch(BRANCH_SLIME))
         return;
@@ -2127,12 +2130,6 @@ item_def* monster_die(monster& mons, killer_type killer,
 
     bool did_death_message = false;
 
-    if ((mons_genus(mons.type) == MONS_JELLY) && you.royal_jelly_dead)
-    {
-        mons_place(mgen_data(MONS_PILLAR_OF_SALT, BEH_HOSTILE, mons.pos()));
-        place_cloud(CLOUD_SALT, mons.pos(), INFINITE_DURATION, &you, 2);
-    }
-
     if (mons.type == MONS_BALLISTOMYCETE_SPORE
         || mons.type == MONS_BALL_LIGHTNING
         || mons.type == MONS_ENTROPIC_SPHERE
@@ -2884,6 +2881,18 @@ item_def* monster_die(monster& mons, killer_type killer,
         // message ordering... :(
         if (corpse->base_type == OBJ_CORPSES) // not gold
             _maybe_drop_monster_hide(*corpse, silent);
+    }
+
+    if ((mons_genus(mons.type) == MONS_JELLY) && player_in_branch(BRANCH_SLIME) && you.royal_jelly_dead)
+    {
+        // Enemies with more HD leave longer-lasting pillars of salt.
+        if (monster *pillar = create_monster(mgen_data(MONS_PILLAR_OF_SALT, BEH_HOSTILE, mons.pos(), MHITNOT, MG_FORCE_PLACE).set_base(mons.type), false))
+        {
+            int time_left = (random2(8) + mons.get_hit_dice()) * BASELINE_DELAY;
+            mon_enchant temp_en(ENCH_SLOWLY_DYING, 1, 0, time_left);
+            pillar->update_ench(temp_en);
+        }
+        place_cloud(CLOUD_SALT, mons.pos(), INFINITE_DURATION, &you, 2);
     }
 
     if (mons.is_divine_companion()
