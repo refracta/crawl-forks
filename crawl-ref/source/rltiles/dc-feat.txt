@@ -519,6 +519,8 @@ unknown DNGN_UNKNOWN_ALTAR
 blue_fountain DNGN_FOUNTAIN DNGN_BLUE_FOUNTAIN
 blue_fountain2
 
+ruined_plinth DNGN_RUINED_PLINTH
+
 sparkling_fountain DNGN_SPARKLING_FOUNTAIN
 sparkling_fountain2
 blood_fountain DNGN_BLOOD_FOUNTAIN

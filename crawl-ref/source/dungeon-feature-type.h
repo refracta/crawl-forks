@@ -306,6 +306,8 @@ enum dungeon_feature_type
     DNGN_SLIMY_WATER,
     DNGN_DEEP_SLIMY_WATER,
 
+    DNGN_RUINED_PLINTH,
+
     NUM_FEATURES,
 };
 COMPILE_CHECK(NUM_FEATURES <= 256);

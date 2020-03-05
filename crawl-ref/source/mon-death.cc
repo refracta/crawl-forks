@@ -2883,10 +2883,12 @@ item_def* monster_die(monster& mons, killer_type killer,
             _maybe_drop_monster_hide(*corpse, silent);
     }
 
-    if ((mons_genus(mons.type) == MONS_JELLY) && player_in_branch(BRANCH_SLIME) && you.royal_jelly_dead)
+    if ((mons_genus(mons.type) == MONS_JELLY) && player_in_branch(BRANCH_SLIME) 
+            && you.royal_jelly_dead && mons.type != MONS_ROYAL_JELLY)
     {
         // Enemies with more HD leave longer-lasting pillars of salt.
-        if (monster *pillar = create_monster(mgen_data(MONS_PILLAR_OF_SALT, BEH_HOSTILE, mons.pos(), MHITNOT, MG_FORCE_PLACE).set_base(mons.type), false))
+        if (monster *pillar = create_monster(mgen_data(MONS_PILLAR_OF_SALT, BEH_HOSTILE, 
+              mons.pos(), MHITNOT, MG_FORCE_PLACE).set_base(mons.type), false))
         {
             int time_left = (random2(8) + mons.get_hit_dice()) * BASELINE_DELAY;
             mon_enchant temp_en(ENCH_SLOWLY_DYING, 1, 0, time_left);

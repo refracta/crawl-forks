@@ -220,6 +220,8 @@ tileidx_t tileidx_feature_base(dungeon_feature_type feat)
         return TILE_OBSIDIAN;
     case DNGN_ICE:
         return TILE_DEEP_ICE;
+    case DNGN_RUINED_PLINTH:
+        return TILE_DNGN_RUINED_PLINTH;
     case DNGN_ENDLESS_SALT:
         return TILE_DNGN_ENDLESS_SALT;
     case DNGN_ENTER_HELL:

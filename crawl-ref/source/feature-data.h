@@ -261,6 +261,13 @@ static feature_def feat_defs[] =
 },
 
 {
+    DNGN_RUINED_PLINTH, "a ruined plinth", "plinth",
+    DCHAR_ALTAR, NUM_DCHAR_TYPES,
+    COLOUR_IS(LIGHTGREY),
+    FFT_NONE, MF_FLOOR,
+},
+
+{
     DNGN_ICE, "ice", "ice",
     DCHAR_FLOOR, DCHAR_FLOOR_MAGIC,
     COLOUR_IS(WHITE),

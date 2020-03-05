@@ -326,10 +326,21 @@ static void _apply_daction(daction_type act)
         for (rectangle_iterator ri(1); ri; ++ri)
         {
             if (grd(*ri) == DNGN_ALTAR_JIYVA)
-                grd(*ri) = DNGN_FLOOR;
+            {
+                grd(*ri) = DNGN_RUINED_PLINTH;
+                env.tile_flv(*ri).floor_idx =
+                    store_tilename_get_index("floor_ruined_slime");
+                env.tile_flv(*ri).floor = TILE_FLOOR_RUINED_SLIME;
+            }
 
             if (you.where_are_you == BRANCH_SLIME)
             {
+
+                env.grid_colours(*ri) = WHITE;
+                env.tile_flv(*ri).floor_idx =
+                    store_tilename_get_index("floor_ruined_slime");
+                env.tile_flv(*ri).floor = TILE_FLOOR_RUINED_SLIME;
+
                 if (grd(*ri) == DNGN_SLIMY_WALL)
                 {
                     grd(*ri) = DNGN_ROCK_WALL;
@@ -341,11 +352,6 @@ static void _apply_daction(daction_type act)
 
                 if (grd(*ri) == DNGN_SLIMY_WATER || grd(*ri) == DNGN_DEEP_SLIMY_WATER || grd(*ri) == DNGN_TREE)
                     grd(*ri) = DNGN_FLOOR;
-
-                env.grid_colours(*ri) = WHITE;
-                env.tile_flv(*ri).floor_idx =
-                    store_tilename_get_index("floor_ruined_slime");
-                env.tile_flv(*ri).floor = TILE_FLOOR_RUINED_SLIME;
 
                 if (grd(*ri) == DNGN_STONE_WALL)
                 {
