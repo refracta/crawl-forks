@@ -64,6 +64,8 @@ mangrove2
 %weight 5
 mangrove3
 
+slimeshroom DNGN_SLIMESHROOM
+slimeshroom0
 
 ## doors
 %sdir dngn/doors

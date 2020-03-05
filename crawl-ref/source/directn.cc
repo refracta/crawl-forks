@@ -2857,6 +2857,10 @@ static string _base_feature_desc(dungeon_feature_type grid, trap_type trap)
 
     if (grid == DNGN_ROCK_WALL && player_in_branch(BRANCH_PANDEMONIUM))
         return "wall of the weird stuff which makes up Pandemonium";
+    if (grid == DNGN_TREE && player_in_branch(BRANCH_SWAMP))
+        return "mangrove";
+    if (grid == DNGN_TREE && player_in_branch(BRANCH_SLIME))
+        return "giant mushroom";
     else if (!is_valid_feature_type(grid))
         return "";
     else

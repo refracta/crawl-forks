@@ -182,6 +182,15 @@ through it slowly. Non-swimmers will occasionally fail to attack in melee when
 wading through shallow water, although large creatures are able to keep their
 balance and avoid fumbling.
 %%%%
+A quagmire
+
+A pool of chaos residue. Wading or swimming through the pool of these chaotic
+secretions will damage any creature; with random chaos effects throughout.
+Those well-adapted to water can swim through it; other creatures can wade
+through it slowly. Non-swimmers will occasionally fail to attack in melee when
+wading through shallow water, although large creatures are able to keep their
+balance and avoid fumbling.
+%%%%
 The open sea
 
 An expanse of endless wind and waves, with not a lighthouse in sight. Anyone
@@ -266,12 +275,34 @@ enough to sustain large plants, there are spots where, with the grace of
 Fedhas, trees as big as those on the surface can grow underground. It is
 susceptible to bolts of lightning and to sufficiently intense sources of fire.
 %%%%
+A giant mushroom
+
+A fruiting body sprouted from a pool of slime mould. Seems to grow on the fertile
+earth of the pits of slime quite well; though what died here to make the ground
+fertile enough to support such growth is a mystery. It is susceptible to bolts 
+of lightning and to sufficiently intense sources of fire.
+%%%%
+An awoken giant mushroom
+
+A giant mushroom that has been enchanted to grant it some limited motility,
+allowing it to lash out out at any adjacent enemies of the creature who awoke
+it. It is susceptible to bolts of lightning and to sufficiently intense sources
+of fire.
+%%%%
 An awoken tree
 
 A large tree that has been enchanted to grant it some limited motility,
 allowing it to lash out out at any adjacent enemies of the creature who awoke
 it. It is susceptible to bolts of lightning and to sufficiently intense sources
 of fire.
+%%%%
+A mangrove
+
+<A tree>
+%%%%
+An awoken mangrove
+
+<A mangrove>
 %%%%
 An awoken autumnal tree
 

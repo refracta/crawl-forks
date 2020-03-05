@@ -996,12 +996,12 @@ void fire_monster_death_event(monster* mons,
 
         if (!revived)
         {
+            you.royal_jelly_dead = true;
+
             dlua.callfn("dgn_set_persistent_var", "sb", "fix_slime_vaults", true);
 
             if (level_id::current() == level_id(BRANCH_SLIME, brdepth[BRANCH_SLIME]))
                 dungeon_events.fire_event(DET_ENTERED_LEVEL);
-
-            you.royal_jelly_dead = true;
 
             if (jiyva_is_dead())
                 _jiyva_died();

@@ -3245,7 +3245,8 @@ spret fedhas_evolve_flora(bool fail)
     if (!plant)
     {
         if (feat_is_tree(env.grid(spelld.target)))
-            mpr("The tree has already reached the pinnacle of evolution.");
+            mprf("The %s has already reached the pinnacle of evolution.", 
+                player_in_branch(BRANCH_SLIME) ? "slimy mushroom" : "tree");
         else
             mpr("You must target a plant or fungus.");
         return spret::abort;

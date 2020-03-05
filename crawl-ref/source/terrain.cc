@@ -2214,9 +2214,9 @@ void temp_change_terrain(coord_def pos, dungeon_feature_type newfeat, int dur,
 /// What terrain type do destroyed feats become, in the current branch?
 static dungeon_feature_type _destroyed_feat_type()
 {
-    return player_in_branch(BRANCH_SWAMP) ?
-        DNGN_SHALLOW_WATER :
-        DNGN_FLOOR;
+    return                          player_in_branch(BRANCH_SWAMP) ? DNGN_SHALLOW_WATER :
+           player_in_branch(BRANCH_SLIME) && !you.royal_jelly_dead ? DNGN_SLIMY_WATER   :
+                                                                     DNGN_FLOOR;
 }
 
 static bool _revert_terrain_to_floor(coord_def pos)

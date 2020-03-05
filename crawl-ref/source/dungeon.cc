@@ -1399,6 +1399,77 @@ static void _slimify_water()
 
     dgn_replace_area(0, 0, GXM - 1, GYM - 1, DNGN_SHALLOW_WATER, DNGN_SLIMY_WATER);
     dgn_replace_area(0, 0, GXM - 1, GYM - 1, DNGN_DEEP_WATER, DNGN_DEEP_SLIMY_WATER);
+
+    for (rectangle_iterator ri(coord_def(0,0), coord_def(GXM-1, GYM-1)); ri; ++ri)
+    {
+        if ((grd(*ri) == DNGN_DEEP_SLIMY_WATER || grd(*ri) == DNGN_SLIMY_WATER))
+        {
+            if (!actor_at(*ri))
+            {
+                bool clumping = false;
+                for (adjacent_iterator ai(*ri); ai; ++ai)
+                {
+                    if (grd(*ai) == DNGN_TREE)
+                        clumping = true;
+                }
+                if (one_chance_in(25) || clumping && !one_chance_in(3))
+                {
+                    grd(*ri) = DNGN_TREE;
+                    if (env.map_knowledge(*ri).seen())
+                    {
+                        env.map_knowledge(*ri).set_feature(DNGN_TREE, 0,
+                            get_trap_type(*ri));
+#ifdef USE_TILE
+                        env.tile_bk_bg(*ri) = DNGN_TREE;
+#endif
+                    }
+                }
+            }
+        }
+        if ((grd(*ri) == DNGN_FLOOR))
+        {
+            int slimy = 0;
+            for (adjacent_iterator ai(*ri); ai; ++ai)
+            {
+                if (grd(*ai) == DNGN_SLIMY_WALL && one_chance_in(5))
+                    slimy++;
+            }
+            if (x_chance_in_y(slimy, 4))
+            {
+                grd(*ri) = DNGN_SLIMY_WATER;
+                if (env.map_knowledge(*ri).seen())
+                {
+                    env.map_knowledge(*ri).set_feature(DNGN_TREE, 0,
+                        get_trap_type(*ri));
+#ifdef USE_TILE
+                    env.tile_bk_bg(*ri) = DNGN_SLIMY_WATER;
+#endif
+                }
+            }
+        }
+    }
+
+    for (auto &item : mitm)
+    {
+        if (!item.defined() || item.held_by_monster())
+            continue;
+
+        if (in_bounds(item.pos))
+        {
+            if (grd(item.pos) == DNGN_TREE)
+            {
+                grd(item.pos) = DNGN_SLIMY_WATER;
+                if (env.map_knowledge(item.pos).seen())
+                {
+                    env.map_knowledge(item.pos).set_feature(DNGN_TREE, 0,
+                        get_trap_type(item.pos));
+#ifdef USE_TILE
+                    env.tile_bk_bg(item.pos) = DNGN_SLIMY_WATER;
+#endif
+                }
+            }
+        }
+    }
 }
 
 static void _fixup_walls()

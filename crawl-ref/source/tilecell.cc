@@ -5,6 +5,7 @@
 #include "colour.h"
 #include "coord.h"
 #include "coordit.h"
+#include "player.h"
 #include "terrain.h"
 #include "tile-flags.h"
 #include "tiledef-dngn.h"
@@ -353,7 +354,7 @@ static dungeon_feature_type _safe_feat(coord_def gc, crawl_view_buffer& vbuf)
 
 static bool _feat_is_mangrove(dungeon_feature_type feat)
 {
-    return feat == DNGN_TREE && player_in_branch(BRANCH_SWAMP);
+    return feat == DNGN_TREE && (player_in_branch(BRANCH_SWAMP) || player_in_branch(BRANCH_SLIME));
 }
 
 static bool _is_seen_land(coord_def gc, crawl_view_buffer& vbuf)
@@ -396,6 +397,9 @@ static void _pack_default_waves(const coord_def &gc, crawl_view_buffer& vbuf)
     // Treat trees in Swamp as though they were shallow water.
     if (cell.mangrove_water && feat == DNGN_TREE)
         feat = DNGN_SHALLOW_WATER;
+
+    if (feat == DNGN_TREE && player_in_branch(BRANCH_SLIME))
+        feat = DNGN_SLIMY_WATER;
 
     if (!feat_is_water(feat) && !feat_is_lava(feat))
         return;

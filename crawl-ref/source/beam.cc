@@ -1134,6 +1134,8 @@ void bolt::burn_wall_effect()
             emit_message("The door bursts into flame!");
         else if (player_in_branch(BRANCH_SWAMP))
             emit_message("The tree smoulders and burns.");
+        else if (player_in_branch(BRANCH_SLIME))
+            emit_message("The mushroom smoulders and burns.");
         else
             emit_message("The tree burns like a torch!");
     }
@@ -1145,7 +1147,7 @@ void bolt::burn_wall_effect()
         did_god_conduct(DID_KILL_PLANT, 1, god_cares());
 
     // Trees do not burn so readily in a wet environment.
-    if (player_in_branch(BRANCH_SWAMP) && feat_is_tree(feat))
+    if ((player_in_branch(BRANCH_SWAMP) || player_in_branch(BRANCH_SLIME)) && feat_is_tree(feat))
         place_cloud(CLOUD_FIRE, pos(), random2(12)+5, agent());
     else
         place_cloud(CLOUD_FOREST_FIRE, pos(), random2(30)+25, agent());
@@ -3140,8 +3142,8 @@ void bolt::affect_place_clouds()
 
     // Fire/cold over water/lava
     if (feat == DNGN_LAVA && flavour == BEAM_COLD
-        || feat_is_watery(feat) && (feat != DNGN_SLIMY_WATER) 
-           && (feat != DNGN_DEEP_SLIMY_WATER) && is_fiery())
+        || (feat_is_watery(feat) && (feat != DNGN_SLIMY_WATER) 
+           && (feat != DNGN_DEEP_SLIMY_WATER) && is_fiery()))
     {
         place_cloud(CLOUD_STEAM, p, 2 + random2(5), agent(), 11);
     }
@@ -3184,7 +3186,7 @@ void bolt::affect_place_explosion_clouds()
 
     // First check: fire/cold over water/lava.
     if (grd(p) == DNGN_LAVA && flavour == BEAM_COLD
-        || feat_is_watery(grd(p)) && is_fiery())
+        || feat_is_watery(grd(p)) && (grd(p) != DNGN_SLIMY_WATER) && (grd(p) != DNGN_DEEP_SLIMY_WATER) && is_fiery())
     {
         place_cloud(CLOUD_STEAM, p, 2 + random2(5), agent());
         return;
