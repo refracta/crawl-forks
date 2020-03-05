@@ -183,6 +183,15 @@ WEIGHT: 5
 MONS:   oklob plant / nothing w:20
 KFEAT:  O = enter_slime_pits
 KFEAT:  S = slimy_wall
+KFEAT:  a = slimy_water
+{{
+local pool_contents = {}
+pool_contents["a"] = 75
+add_pools { replace = ".b",
+			pool_size = 16 + crawl.random2(16),
+			contents = pool_contents,
+			frequency = 1 }
+}}
 MAP
 xxxxxxxxxxxxxxxxxxxxx
 xxxxxxxxx......xxxxxx
@@ -252,6 +261,16 @@ KPROP: f = no_tele_into
 SUBST: f = w.1
 KMASK: w = no_monster_gen
 KMASK: W = no_monster_gen
+{{
+local pool_contents = {}
+pool_contents["w"] = 75
+pool_contents["W"] = 20
+pool_contents["t"] = 5
+add_pools { replace = ".",
+			pool_size = 4 + crawl.random2(4),
+			contents = pool_contents,
+			frequency = 10 }
+}}
 MAP
    cccc
  ..........
@@ -274,6 +293,16 @@ ORIENT: float
 SHUFFLE: abcdefgh
 SUBST: a = @, b : @., c : @.., d : @..., efgh = .
 KMONS: j = jelly
+{{
+local pool_contents = {}
+pool_contents["w"] = 75
+pool_contents["W"] = 20
+pool_contents["t"] = 5
+add_pools { replace = ".",
+			pool_size = 4 + crawl.random2(4),
+			contents = pool_contents,
+			frequency = 10 }
+}}
 MAP
       aaaaa
     hh.....bb
@@ -299,6 +328,16 @@ TAGS: transparent extra
 DEPTH: Slime, !Slime:$
 SHUFFLE: abcde
 SUBST: a = @, bcde = .
+{{
+local pool_contents = {}
+pool_contents["w"] = 75
+pool_contents["W"] = 20
+pool_contents["t"] = 5
+add_pools { replace = ".",
+			pool_size = 8 + crawl.random2(8),
+			contents = pool_contents,
+			frequency = 10 }
+}}
 MAP
   aaaaa
  .........
@@ -333,6 +372,16 @@ DEPTH: Slime:2-, !Slime:$
 SUBST: X = x., { = {[(
 KMONS: 1 : jelly w:20 / ooze / slime creature w:30 / \
    acid blob w:5 / death ooze w:5 / azure jelly w:5
+{{
+local pool_contents = {}
+pool_contents["w"] = 75
+pool_contents["W"] = 20
+pool_contents["t"] = 5
+add_pools { replace = ".",
+			pool_size = 4 + crawl.random2(4),
+			contents = pool_contents,
+			frequency = 10 }
+}}
 MAP
       xxx
    xxxxxxxx
@@ -355,6 +404,16 @@ NSUBST: W = 4:1 / *:W
 KMONS: 1 = slime creature
 KFEAT: 1 = W
 CLEAR: _
+{{
+local pool_contents = {}
+pool_contents["w"] = 75
+pool_contents["W"] = 20
+pool_contents["t"] = 5
+add_pools { replace = ".",
+			pool_size = 8 + crawl.random2(4),
+			contents = pool_contents,
+			frequency = 10 }
+}}
 MAP
        '.......'
       '..........'
@@ -385,6 +444,16 @@ SHUFFLE: {}/()/[]
 NSUBST: a = X / .
 SUBST: X = x., z = x_, 0 = 0009.., 9 = 9998
 CLEAR: _
+{{
+local pool_contents = {}
+pool_contents["w"] = 75
+pool_contents["W"] = 20
+pool_contents["t"] = 5
+add_pools { replace = ".",
+			pool_size = 4 + crawl.random2(4),
+			contents = pool_contents,
+			frequency = 10 }
+}}
 MAP
        zzzzzzzzzzz
      zzzXXXXXXXXXzzz
@@ -419,6 +488,16 @@ WEIGHT: 2
 TAGS: extra decor transparent
 SUBST: c = ccc., X = x_, V = V..
 CLEAR: _
+{{
+local pool_contents = {}
+pool_contents["w"] = 75
+pool_contents["W"] = 20
+pool_contents["t"] = 5
+add_pools { replace = ".",
+			pool_size = 4 + crawl.random2(8),
+			contents = pool_contents,
+			frequency = 10 }
+}}
 MAP
   XXXX         XXXX
  XXxxXX       XXxxXX
@@ -448,6 +527,16 @@ DEPTH: Slime, !Slime:$
 TAGS: decor transparent ruin
 ORIENT: float
 SUBST: B = xxxW., C = W., D = VVW.
+{{
+local pool_contents = {}
+pool_contents["w"] = 75
+pool_contents["W"] = 20
+pool_contents["t"] = 5
+add_pools { replace = ".",
+			pool_size = 8 + crawl.random2(8),
+			contents = pool_contents,
+			frequency = 10 }
+}}
 MAP
 xxxxxxxxxxxxxxxxx
 xxxxxxxxxxxxxxxxx
@@ -472,6 +561,16 @@ NAME: cheibrodos_slime_lost_civilization_2
 DEPTH: Slime, !Slime:$
 TAGS: decor
 ORIENT: float
+{{
+local pool_contents = {}
+pool_contents["w"] = 75
+pool_contents["W"] = 20
+pool_contents["t"] = 5
+add_pools { replace = ".",
+			pool_size = 4 + crawl.random2(4),
+			contents = pool_contents,
+			frequency = 10 }
+}}
 MAP
    xxxxx
   xxxxxxx
@@ -493,6 +592,16 @@ ORIENT: float
 SHUFFLE: W.
 SUBST: W = WW.
 KMASK: W = no_monster_gen
+{{
+local pool_contents = {}
+pool_contents["w"] = 75
+pool_contents["W"] = 20
+pool_contents["t"] = 5
+add_pools { replace = ".",
+			pool_size = 4 + crawl.random2(4),
+			contents = pool_contents,
+			frequency = 10 }
+}}
 MAP
 xxxxxxxxxxxxx
 xWWWxWWWxWWWx
@@ -523,6 +632,16 @@ DEPTH: Slime, !Slime:$
 TAGS: decor
 SUBST: A=x, B=.
 SHUFFLE: AB
+{{
+local pool_contents = {}
+pool_contents["w"] = 75
+pool_contents["W"] = 20
+pool_contents["t"] = 5
+add_pools { replace = ".",
+			pool_size = 4 + crawl.random2(8),
+			contents = pool_contents,
+			frequency = 10 }
+}}
 MAP
      ...
     ..B..
@@ -543,6 +662,16 @@ NAME: cheibrodos_slime_lost_civilization_6
 DEPTH: Slime, !Slime:$
 TAGS: decor
 SUBST: } = }G..
+{{
+local pool_contents = {}
+pool_contents["w"] = 75
+pool_contents["W"] = 20
+pool_contents["t"] = 5
+add_pools { replace = ".",
+			pool_size = 4 + crawl.random2(4),
+			contents = pool_contents,
+			frequency = 10 }
+}}
 MAP
 .............
 .x.x.x.x.x.x.
@@ -562,6 +691,16 @@ ENDMAP
 NAME: cheibrodos_slime_lost_civilization_7
 DEPTH: Slime, !Slime:$
 TAGS: decor
+{{
+local pool_contents = {}
+pool_contents["w"] = 75
+pool_contents["W"] = 20
+pool_contents["t"] = 5
+add_pools { replace = ".",
+			pool_size = 4 + crawl.random2(4),
+			contents = pool_contents,
+			frequency = 10 }
+}}
 MAP
   ...........
  .............
@@ -581,6 +720,16 @@ DEPTH: Slime, !Slime:$
 TAGS: decor
 ORIENT: float
 SUBST: - = xxx., " = ...x
+{{
+local pool_contents = {}
+pool_contents["w"] = 75
+pool_contents["W"] = 20
+pool_contents["t"] = 5
+add_pools { replace = ".",
+			pool_size = 4 + crawl.random2(4),
+			contents = pool_contents,
+			frequency = 10 }
+}}
 MAP
 @.............
 .(..----------
@@ -603,6 +752,16 @@ DEPTH: Slime, !Slime:$
 TAGS: decor transparent
 ORIENT: float
 SUBST: x = xxx., G = G..
+{{
+local pool_contents = {}
+pool_contents["w"] = 75
+pool_contents["W"] = 20
+pool_contents["t"] = 5
+add_pools { replace = ".",
+			pool_size = 4 + crawl.random2(4),
+			contents = pool_contents,
+			frequency = 10 }
+}}
 MAP
 .............
 .xx.xx.xx.xx.
@@ -622,6 +781,14 @@ DEPTH: Slime, !Slime:$
 TAGS: decor transparent
 ORIENT: float
 SUBST: x = xxxx.
+{{
+local pool_contents = {}
+pool_contents["t"] = 100
+add_pools { replace = ".",
+			pool_size = 4 + crawl.random2(4),
+			contents = pool_contents,
+			frequency = 10 }
+}}
 MAP
 ...............
 .xxxxxxxxxxxxx.
@@ -643,12 +810,10 @@ NAME:   dissolution_awaits
 DEPTH:  Slime:2-, !Slime:$
 KMONS:  1 = patrolling Dissolution, azure jelly / great orb of eyes
 MAP
- .....
-...{...
-.......
-...1...
-.[...(.
-.......
+  {
+  .
+ .1.
+[...(
 ENDMAP
 
 ################################################################################
