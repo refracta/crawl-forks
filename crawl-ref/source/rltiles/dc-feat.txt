@@ -66,6 +66,7 @@ mangrove3
 
 slimeshroom DNGN_SLIMESHROOM
 slimeshroom0
+slimeshroom1
 
 ## doors
 %sdir dngn/doors

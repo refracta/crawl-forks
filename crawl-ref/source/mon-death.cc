@@ -551,7 +551,7 @@ item_def* place_monster_corpse(const monster& mons, bool silent, bool force)
     {
         _gold_pile(corpse, mons_species(mons.type));
         // If gold would be destroyed, give it directly to the player instead.
-        if (feat_eliminates_items(grd(mons.pos()))|| feat_is_solid(grd(mons.pos())))
+        if (feat_eliminates_items(grd(mons.pos()))|| feat_is_solid(grd(mons.pos())) || mons.type == MONS_LAVA_GLOB)
         {
             get_gold(corpse, corpse.quantity, false);
             destroy_item(corpse, true);
