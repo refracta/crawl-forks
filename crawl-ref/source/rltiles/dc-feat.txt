@@ -68,6 +68,9 @@ slimeshroom DNGN_SLIMESHROOM
 slimeshroom0
 slimeshroom1
 
+deadshroom DNGN_DEADSHROOM
+deadshroom0
+
 ## doors
 %sdir dngn/doors
 closed_door DNGN_CLOSED_DOOR

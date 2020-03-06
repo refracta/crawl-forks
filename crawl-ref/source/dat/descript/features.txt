@@ -280,6 +280,10 @@ enough to sustain large plants, there are spots where, with the grace of
 Fedhas, trees as big as those on the surface can grow underground. It is
 susceptible to bolts of lightning and to sufficiently intense sources of fire.
 %%%%
+A dead mushroom stump
+
+Stump left when a mushroom died and crumbled away.
+%%%%
 A giant mushroom
 
 A fruiting body sprouted from a pool of slime mould. Seems to grow on the fertile
