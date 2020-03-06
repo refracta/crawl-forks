@@ -17,12 +17,7 @@ function callback.rats_trap_stepped(data, triggerable, triggerer, marker, ev)
   if dgn.mons_at(x,y) then
     if not you.see_cell(x, y) then
       return
-    else
-      data.triggered = true
-      dgn.grid(x,y,"floor")
-      crawl.mpr("You hear a faint click.")
-      return
-    end
+	end
   end
 
   data.triggered = true
@@ -31,7 +26,6 @@ function callback.rats_trap_stepped(data, triggerable, triggerer, marker, ev)
   for slave in iter.slave_iterator("hole", 1) do
       if not dgn.is_passable(slave.x,slave.y) then
         dgn.terrain_changed(slave.x, slave.y, "floor", false)
-        dgn.create_item(slave.x, slave.y)
       else
         crawl.mpr("You hear a click.")
         return

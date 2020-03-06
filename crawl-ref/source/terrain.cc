@@ -1243,6 +1243,47 @@ void dungeon_terrain_changed(const coord_def &pos,
 {
     if (grd(pos) == nfeat)
         return;
+
+    // Grate trap coding.
+    if (nfeat == DNGN_GRATE)
+    {
+        actor * act = actor_at(pos);
+        if (act)
+        {
+            bool failure = true;
+            for (adjacent_iterator ai(pos); ai; ++ai)
+            {
+                if (!actor_at(*ai) && act->can_pass_through(*ai) && act->is_habitable(*ai))
+                {
+                    failure = false;
+                    act->move_to_pos(*ai);
+                    break;
+                }
+            }
+            if (failure)
+            {
+                int dam = roll_dice(4, 8);
+                dam = act->apply_ac(dam);
+                if (act->is_player())
+                {
+                    ouch(dam, KILLED_BY_TRAP);
+                    mprf("A porticulus crashes down on your head%s This prevents the grating from closing.", 
+                        attack_strength_punctuation(dam).c_str());
+                    return;
+                }
+                else
+                {
+                    act->hurt(nullptr, dam, BEAM_DEVASTATION, KILLED_BY_TRAP); // Devastation used to explode the monster if it's fatal.
+                    mprf("A porticulus crashes down on %s%s%s", act->name(DESC_THE).c_str(), 
+                        attack_strength_punctuation(dam).c_str(), act->alive() ? " This prevents the grating from closing." : "");
+                    if (act->alive())
+                        return;
+                }
+            }
+        }
+        mpr("A porticulus slams shut!");
+    }
+
     if (_dgn_check_terrain_monsters(pos) && feat_is_wall(nfeat))
         return;
 

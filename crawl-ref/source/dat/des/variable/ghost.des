@@ -1520,8 +1520,8 @@ ENDMAP
 
 NAME:   gammafunk_ghost_nasty_kobolds
 DEPTH:  D:3-13
-KMONS:  pq = plant / fungus
-KFEAT:  q = W
+KMONS:  pv = plant / fungus
+KFEAT:  v = W
 KMONS:  O = player ghost
 MONS:   kobold, big kobold, kobold demonologist
 KMONS:  D = kobold spells:fire_curare.80.natural ; dagger
@@ -1551,7 +1551,7 @@ KMONS:  K = big kobold ; dagger ego:distortion | short sword ego:distortion | \
 # 50% of time put statue/tree/fountain with plants and vertical wall, otherwise
 # add some diagonal wall instead. The second shuffle makes any statue sometimes
 # be fountain + water plants.
-SHUFFLE: Gprs / Zrsr, Gp / Tq
+SHUFFLE: Gprs / Zrsr, Gp / Tv
 SUBST: r = -, Z = T, s = x, G : GGt, T : TTUV, x : xcbv
 : ghost_good_loot(_G)
 : if you.depth() < 6 then
@@ -1572,9 +1572,9 @@ MAP
   qqqqq
  qqedfqq
 qq--g--qq
-qprs-srpq
+qprs-srvq
 qG-xOx-Gq
-qprs-srpq
+qprs-srvq
 qq-----qq
 .qq===qq.
 ....@....
