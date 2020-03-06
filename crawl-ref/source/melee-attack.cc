@@ -2551,8 +2551,8 @@ bool melee_attack::apply_staff_damage()
         int flay_power;
         if (attacker->is_player())
         {
-            flay_power = 3 + you.skill(SK_HEXES);
-            flay_dur = div_rand_round(you.skill(SK_EVOCATIONS), 2);
+            flay_power = 3 + you.skill(SK_HEXES) + div_rand_round(you.skill(staff_magic_skill(*weapon)), 2);
+            flay_dur = div_rand_round(you.skill(staff_magic_skill(*weapon)) + you.skill(SK_EVOCATIONS), 2);
         }
         else
         {
@@ -2560,7 +2560,7 @@ bool melee_attack::apply_staff_damage()
             flay_power = div_rand_round(6 + attacker->get_hit_dice(), 2);
             flay_dur = div_rand_round(flay_power, 2);
         }
-        flay_power = random2(flay_power);
+        flay_power = flay_power/2 + random2(flay_power);
 
         int hd = defender->get_experience_level();
 
