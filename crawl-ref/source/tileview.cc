@@ -19,6 +19,7 @@
 #include "options.h"
 #include "pcg.h"
 #include "player.h"
+#include "religion.h"
 #include "state.h"
 #include "terrain.h"
 #include "tile-flags.h"
@@ -173,8 +174,16 @@ void tile_default_flv(branch_type br, tile_flavour &flv)
         return;
 
     case BRANCH_SLIME:
-        flv.wall  = TILE_WALL_SLIME;
-        flv.floor = TILE_FLOOR_SLIME;
+        if (jiyva_is_dead())
+        {
+            flv.wall = TILE_WALL_RUINED_SLIME;
+            flv.floor = TILE_FLOOR_RUINED_SLIME;
+        }
+        else
+        {
+            flv.wall = TILE_WALL_SLIME;
+            flv.floor = TILE_FLOOR_SLIME;
+        }
         return;
 
     case BRANCH_SNAKE:
@@ -1337,7 +1346,12 @@ void apply_variations(const tile_flavour &flv, tileidx_t *bg,
     else if (player_in_branch(BRANCH_SLIME))
     {
         if (orig == TILE_DNGN_STONE_WALL)
-            orig = TILE_STONE_WALL_SLIME;
+        {
+            if (jiyva_is_dead())
+                orig = TILE_STONE_WALL_RUINED_SLIME;
+            else
+                orig = TILE_STONE_WALL_SLIME;
+        }
     }
     else if (player_in_branch(BRANCH_VAULTS))
     {

@@ -1135,7 +1135,12 @@ void bolt::burn_wall_effect()
         else if (player_in_branch(BRANCH_SWAMP))
             emit_message("The tree smoulders and burns.");
         else if (player_in_branch(BRANCH_SLIME))
-            emit_message("The mushroom smoulders and burns.");
+        {
+            if (jiyva_is_dead())
+                emit_message("The remains of the mushroom burn like a torch!");
+            else
+                emit_message("The mushroom smoulders and burns.");
+        }
         else
             emit_message("The tree burns like a torch!");
     }
@@ -1147,7 +1152,7 @@ void bolt::burn_wall_effect()
         did_god_conduct(DID_KILL_PLANT, 1, god_cares());
 
     // Trees do not burn so readily in a wet environment.
-    if ((player_in_branch(BRANCH_SWAMP) || player_in_branch(BRANCH_SLIME)) && feat_is_tree(feat))
+    if ((player_in_branch(BRANCH_SWAMP) || (player_in_branch(BRANCH_SLIME) && !jiyva_is_dead())) && feat_is_tree(feat))
         place_cloud(CLOUD_FIRE, pos(), random2(12)+5, agent());
     else
         place_cloud(CLOUD_FOREST_FIRE, pos(), random2(30)+25, agent());

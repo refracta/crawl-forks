@@ -2255,6 +2255,7 @@ static bool _revert_terrain_to_floor(coord_def pos)
     }
 
     grd(pos) = newfeat;
+
     set_terrain_changed(pos);
 
     tile_clear_flavour(pos);

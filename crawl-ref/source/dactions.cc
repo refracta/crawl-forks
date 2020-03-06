@@ -330,7 +330,6 @@ static void _apply_daction(daction_type act)
 
             if (you.where_are_you == BRANCH_SLIME)
             {
-
                 env.grid_colours(*ri) = WHITE;
                 env.tile_flv(*ri).floor_idx =
                     store_tilename_get_index("floor_ruined_slime");
