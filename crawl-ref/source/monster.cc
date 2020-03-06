@@ -4939,6 +4939,8 @@ void monster::load_ghost_spells()
             spells[i].spell = SPELL_AGONY;
         if (spells[i].spell == SPELL_SMD)
             spells[i].spell = SPELL_DIG;
+        if (spells[i].spell == SPELL_FORCEFUL_DISMISSAL)
+            spells[i].spell = SPELL_SUMMON_DEMON;
         dprf(DIAG_MONPLACE, "Spell #%d: %d (%s)",
              i, spells[i].spell, spell_title(spells[i].spell));
     }
