@@ -1476,7 +1476,7 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
     bool warped = you.staff() && staff_enhances_spell(you.staff(), spell) 
                             && get_staff_facet(*you.staff()) == SPSTF_WARP
                             && bool(flags & spflag::needs_tracer)
-                            && spell != SPELL_FIRE_STORM; // Odd singular special case.
+                            && (spell != SPELL_FIRE_STORM); // Odd singular special case.
 
     // [dshaligram] Any action that depends on the spellcasting attempt to have
     // succeeded must be performed after the switch.

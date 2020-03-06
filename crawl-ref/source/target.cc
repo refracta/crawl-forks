@@ -416,7 +416,7 @@ targeter_smite::targeter_smite(const actor* act, int ran,
 
 bool targeter_smite::valid_aim(coord_def a)
 {
-    if (a != origin && !cell_see_cell(origin, a, LOS_NO_TRANS))
+    if (a != origin && !cell_see_cell(origin, a, LOS_DEFAULT))
     {
         // Scrying/glass/tree/grate.
         if (agent && agent->see_cell(a))
