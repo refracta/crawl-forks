@@ -1779,9 +1779,11 @@ static tileidx_t _tileidx_monster_no_props(const monster_info& mon)
             return mon.props.exists(ELVEN_IS_ENERGIZED_KEY) ? base + 1 : base;
 
         case MONS_BOULDER_BEETLE:
-            return (mon.is(MB_ROLLING)
-                ? _mon_random(TILEP_MONS_BOULDER_BEETLE_ROLLING, mon.pos.x * GXM + mon.pos.y)
-                : TILEP_MONS_BOULDER_BEETLE);
+        {
+            if (mon.is(MB_ROLLING))
+                return _mon_random(TILEP_MONS_BOULDER_BEETLE_ROLLING, mon.pos.x * GXM + mon.pos.y);
+            return TILEP_MONS_BOULDER_BEETLE;
+        }
 
         case MONS_ARACHNE:
         {

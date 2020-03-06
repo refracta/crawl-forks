@@ -346,7 +346,7 @@ bool is_channeling_item(const item_def& item, bool calc_unid)
               && item.sub_type == MISC_CRYSTAL_BALL_OF_ENERGY;
 }
 
-bool is_wizardly_item(const item_def& item, bool calc_unid)
+bool is_wizardly_item(const item_def& item, bool /*calc_unid*/)
 {
     if (is_unrandom_artefact(item, UNRAND_BATTLE))
         return true;

@@ -393,12 +393,12 @@ public:
         static PotionFlight inst; return inst;
     }
 
-    bool can_quaff(string *reason = nullptr) const override
+    bool can_quaff(string */*reason*/) const override
     {
         return false;
     }
 
-    bool effect(bool=true, int pow = 40, bool=true) const override
+    bool effect(bool=true, int=40, bool=true) const override
     {
         mpr("The removed item fails to make you fly anymore");
         return false;

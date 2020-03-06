@@ -5339,7 +5339,7 @@ int get_sacrifice_piety(ability_type sac, bool include_skill)
                 piety_gain += 20;
             break;
         case ABIL_RU_SACRIFICE_LOVE:
-            else if (you.get_mutation_level(MUT_NO_SUMMONING_MAGIC)
+            if (you.get_mutation_level(MUT_NO_SUMMONING_MAGIC)
                 && you.get_mutation_level(MUT_NO_ARTIFICE))
             {
                 // this is virtually useless, aside from zot_tub

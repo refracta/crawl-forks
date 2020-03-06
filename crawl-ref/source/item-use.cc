@@ -453,7 +453,7 @@ static vector<equipment_type> _current_weapon_types()
     return ret;
 }
 
-static const char _weapon_slot_key(equipment_type slot)
+static char _weapon_slot_key(equipment_type slot)
 {
     switch (slot)
     {

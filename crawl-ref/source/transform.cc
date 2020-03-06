@@ -2049,14 +2049,6 @@ void untransform(bool skip_move)
         you.transform_uncancellable = false;
 }
 
-static void _extra_hp(int amount_extra) // must also set in calc_hp
-{
-    calc_hp();
-
-    you.hp *= amount_extra;
-    you.hp /= 10;
-}
-
 /**
  * Update whether a merfolk should be swimming.
  *

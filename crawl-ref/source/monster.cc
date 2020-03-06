@@ -512,13 +512,16 @@ hands_reqd_type monster::hands_reqd(const item_def &item, bool base) const
     return actor::hands_reqd(item, base);
 }
 
+// Refactor or remove this? Or figure out what function (if any) is called instead 
+// and/or restore calls to it to actually check which floor items a mon can use.
 bool monster::can_wield(const item_def& item, bool /*ignore_curse*/,
                          bool ignore_brand, bool ignore_shield,
                          bool ignore_transform) const
 {
     // Monsters can only wield weapons or go unarmed (OBJ_UNASSIGNED
     // means unarmed).
-    if (item.base_type != OBJ_WEAPONS && item.base_type != OBJ_UNASSIGNED)
+    if (item.base_type != OBJ_WEAPONS && item.base_type != OBJ_STAVES 
+                                      && item.base_type != OBJ_UNASSIGNED)
         return false;
 
     // These *are* weapons, so they can't wield another weapon or
@@ -540,12 +543,12 @@ bool monster::can_wield(const item_def& item, bool /*ignore_curse*/,
     if (inv[MSLOT_WEAPON] != NON_ITEM)
         weap1 = &mitm[inv[MSLOT_WEAPON]];
 
-    int       avail_slots = 1;
+    // int       avail_slots = 1;
     item_def* weap2       = nullptr;
     if (mons_wields_two_weapons(*this))
     {
-        if (!weap1 || hands_reqd(*weap1) != HANDS_TWO)
-            avail_slots = 2;
+        // if (!weap1 || hands_reqd(*weap1) != HANDS_TWO)
+           // avail_slots = 2;
 
         const int offhand = _mons_offhand_weapon_index(this);
         if (offhand != NON_ITEM)
@@ -560,7 +563,7 @@ bool monster::can_wield(const item_def& item, bool /*ignore_curse*/,
     const bool two_handed = item.base_type == OBJ_UNASSIGNED
                             || hands_reqd(item) == HANDS_TWO;
 
-    item_def* _shield = nullptr;
+    // item_def* _shield = nullptr;
     if (inv[MSLOT_SHIELD] != NON_ITEM)
     {
         ASSERT(!(weap1 && weap2));
@@ -568,7 +571,7 @@ bool monster::can_wield(const item_def& item, bool /*ignore_curse*/,
         if (two_handed && !ignore_shield)
             return false;
 
-        _shield = &mitm[inv[MSLOT_SHIELD]];
+        //_shield = &mitm[inv[MSLOT_SHIELD]];
     }
 
     return could_wield(item, ignore_brand, ignore_transform);

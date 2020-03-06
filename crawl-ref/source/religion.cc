@@ -1390,7 +1390,7 @@ static bool _give_pakellas_gift()
 }
 #endif
 
-static bool _give_trog_oka_gift(bool forced)
+static bool _give_equipment_gift()
 {
     // Break early if giving a gift now means it would be lost.
     if (!(feat_has_solid_floor(grd(you.pos()))
@@ -1588,7 +1588,7 @@ static bool _handle_veh_gift(bool forced)
     if (you.num_total_gifts[you.religion] >= (NUM_VEHUMET_GIFTS + 1) || 
             ((you.num_total_gifts[you.religion] == 9 || you.num_total_gifts[you.religion] == 13)
                 && !(you.species == SP_FELID)))
-        return _give_trog_oka_gift(forced);
+        return _give_equipment_gift();
     else if (forced ||  !you.duration[DUR_VEHUMET_GIFT]
                      && (you.piety >= piety_breakpoint(0) && gifts == 0
                       || you.piety >= piety_breakpoint(0) + random2(6) + 18 * gifts && gifts <= 5
@@ -2135,7 +2135,7 @@ bool do_god_gift(bool forced)
 
         case GOD_OKAWARU:
         case GOD_TROG:
-            success = _give_trog_oka_gift(forced);
+            success = _give_equipment_gift();
             break;
 
         case GOD_YREDELEMNUL:

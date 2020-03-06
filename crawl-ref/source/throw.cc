@@ -52,7 +52,9 @@ static int  _fire_prompt_for_item();
 static bool _fire_validate_item(int selected, string& err);
 static int  _get_blowgun_chance(const int hd);
 
-bool is_penetrating_attack(const actor& attacker, const item_def* weapon,
+// BCADNOTE: Preserving unused attacker parameter in case of future self-enchantment
+// for force penetration; etc.
+bool is_penetrating_attack(const actor& /*attacker*/, const item_def* weapon,
                            const item_def& projectile)
 {
     return projectile.base_type == OBJ_MISSILES
@@ -102,7 +104,9 @@ int get_next_fire_item(int current, int direction)
  *      if hd < 15, fixed 3% chance to succeed regardless of roll
  *      else, or if the 3% chance fails,
  *                      succeed if 2 + random2(4 + skill + enchantment) >= hd
- */
+ *
+ *   BCADDO: Restore this function (though in a different location in the code)
+ *   when adding old blowgun effects as spells.
 static int _get_blowgun_chance(const int hd)
 {
     const int plus = you.weapon()->plus;
@@ -117,7 +121,7 @@ static int _get_blowgun_chance(const int hd)
         chance += 300; // 3% chance to ignore HD and affect enemy anyway
     }
     return chance / 100;
-}
+} */
 
 /**
  *  Validate any item selected to be fired, and choose a target to fire at.

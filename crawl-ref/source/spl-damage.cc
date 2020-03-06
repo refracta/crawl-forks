@@ -3545,7 +3545,7 @@ spret cast_toxic_radiance(actor *agent, int pow, bool fail, bool mon_tracer)
         you.increase_duration(DUR_TOXIC_RADIANCE, 2 + random2(pow/20), 15);
         toxic_radiance_effect(&you, 10, true);
 
-        flash_view_delay(UA_PLAYER, chaos ? ETC_SLIME : GREEN, 300, &hitfunc);
+        flash_view_delay(UA_PLAYER, chaos ? colour_t(ETC_SLIME) : GREEN, 300, &hitfunc);
 
         return spret::success;
     }
@@ -3573,7 +3573,7 @@ spret cast_toxic_radiance(actor *agent, int pow, bool fail, bool mon_tracer)
         toxic_radiance_effect(agent, 10);
 
         targeter_radius hitfunc(mon_agent, LOS_NO_TRANS);
-        flash_view_delay(UA_MONSTER, chaos ? ETC_SLIME : GREEN, 300, &hitfunc);
+        flash_view_delay(UA_MONSTER, chaos ? colour_t(ETC_SLIME) : GREEN, 300, &hitfunc);
 
         return spret::success;
     }

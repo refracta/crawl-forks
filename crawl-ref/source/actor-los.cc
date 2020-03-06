@@ -15,6 +15,7 @@ bool actor::observable() const
 
 bool actor::see_cell(const coord_def &p) const
 {
+    UNUSED(p);
     return false; // Always overwritten.
 }
 
