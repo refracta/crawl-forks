@@ -3332,16 +3332,16 @@ void forest_damage(actor *mon)
                 if (!apply_chunked_AC(1, foe->evasion(ev_ignore::none, mon)))
                 {
                     msg = random_choose(
-                            "@foe@ @is@ waved at by a branch",
-                            "A tree reaches out but misses @foe@",
+                            "@foe@ @is@ waved at by @branch@",
+                            "A @tree@ reaches out but misses @foe@",
                             "A root lunges up near @foe@");
                 }
                 else if (!(dmg = foe->apply_ac(hd + random2(hd), hd * 2 - 1,
                                                ac_type::proportional)))
                 {
                     msg = random_choose(
-                            "@foe@ @is@ scraped by a branch",
-                            "A tree reaches out and scrapes @foe@",
+                            "@foe@ @is@ scraped by @branch@",
+                            "A @tree@ reaches out and scrapes @foe@",
                             "A root barely touches @foe@ from below");
                     if (foe->is_monster())
                         behaviour_event(foe->as_monster(), ME_WHACK);
@@ -3349,16 +3349,18 @@ void forest_damage(actor *mon)
                 else
                 {
                     msg = random_choose(
-                        "@foe@ @is@ hit by a branch",
-                        "A tree reaches out and hits @foe@",
+                        "@foe@ @is@ hit by @branch@",
+                        "A @tree@ reaches out and hits @foe@",
                         "A root smacks @foe@ from below");
                     if (foe->is_monster())
                         behaviour_event(foe->as_monster(), ME_WHACK);
                 }
 
-                msg = replace_all(replace_all(msg,
+                msg = replace_all(replace_all(replace_all(replace_all(msg,
                     "@foe@", foe->name(DESC_THE)),
-                    "@is@", foe->conj_verb("be"))
+                    "@is@", foe->conj_verb("be")),
+                    "@tree@", player_in_branch(BRANCH_SLIME) ? "mushroom" : "tree"),
+                    "@branch@", player_in_branch(BRANCH_SLIME) ? "some gills" : "a branch")
                     + attack_strength_punctuation(dmg);
                 if (you.see_cell(foe->pos()))
                     mpr(msg);
@@ -3368,11 +3370,11 @@ void forest_damage(actor *mon)
 
                 if (determine_chaos(mon, SPELL_AWAKEN_FOREST) && one_chance_in(3))
                 {
-                    mpr("Chaos arcs from the awakened trees.");
+                    mprf("Chaos arcs from the awakened %s.", player_in_branch(BRANCH_SLIME) ? "mushrooms" : "trees");
                     chaotic_status(foe, 5 + random2(15), mon);
                 }
 
-                foe->hurt(mon, dmg, BEAM_MISSILE, KILLED_BY_BEAM, "",
+                foe->hurt(mon, dmg, BEAM_MISSILE, KILLED_BY_BEAM, "", player_in_branch(BRANCH_SLIME) ? "by angry mushrooms" :
                           "by angry trees");
 
                 break;

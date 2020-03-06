@@ -23,6 +23,7 @@
 #include "mon-util.h"
 #include "options.h"
 #include "player.h"
+#include "religion.h"
 #include "shopping.h"
 #include "state.h"
 #include "stringutil.h"
@@ -192,7 +193,7 @@ tileidx_t tileidx_feature_base(dungeon_feature_type feat)
         return TILE_DNGN_ORCISH_IDOL;
     case DNGN_TREE:
         return player_in_branch(BRANCH_SWAMP) ? TILE_DNGN_MANGROVE :
-               player_in_branch(BRANCH_SLIME) ? TILE_DNGN_SLIMESHROOM
+               player_in_branch(BRANCH_SLIME) ? (jiyva_is_dead() ? TILE_DNGN_DEADSHROOM : TILE_DNGN_SLIMESHROOM)
                                               : TILE_DNGN_TREE;
     case DNGN_GRANITE_STATUE:
         return TILE_DNGN_GRANITE_STATUE;

@@ -283,6 +283,13 @@ susceptible to bolts of lightning and to sufficiently intense sources of fire.
 A dead mushroom stump
 
 Stump left when a mushroom died and crumbled away.
+%%%
+An awoken dead mushroom stump
+
+A stump of a dead mushroom revived and awoken by magic. It seems angry and full 
+of loss. It lashes out out at any adjacent enemies of the creature who awoke
+it. It is susceptible to bolts of lightning and to sufficiently intense sources
+of fire.
 %%%%
 A giant mushroom
 

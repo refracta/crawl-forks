@@ -1505,12 +1505,30 @@ spret cast_summon_forest(actor* caster, int pow, god_type god, bool fail)
                             feat = DNGN_DEEP_WATER;
                     }
 
+                    if (player_in_branch(BRANCH_SLIME))
+                    {
+                        if (jiyva_is_dead())
+                            feat = DNGN_FLOOR;
+                        else
+                            feat = DNGN_SLIMY_WATER;
+                    }
+
                     temp_change_terrain(*di, feat, duration, TERRAIN_CHANGE_FORESTED);
                 }
             }
         }
 
-        mpr("A forested plane collides here with a resounding crunch!");
+        if (player_in_branch(BRANCH_SLIME))
+        {
+            if (jiyva_is_dead())
+                mpr("A sinister howling wind blows as part of Jiyva's old plane tries to return here!");
+            else
+                mpr("One of Jivya's private planes collides here with a gurgle!");
+        }
+        if (player_in_branch(BRANCH_SWAMP))
+            mpr("An enchanted swamp collides here with a loud woosh!");
+        else
+            mpr("A forested plane collides here with a resounding crunch!");
         noisy(spell_effect_noise(SPELL_SUMMON_FOREST), caster->pos());
 
         mgen_data dryad_data = _pal_data(MONS_DRYAD, 1, god,
