@@ -822,12 +822,13 @@ DEPTH:  Slime: 4
 TAGS:   place_unique no_monster_gen no_item_gen transparent
 WEIGHT: 25
 KMONS:  1 = patrolling Dissolution
-KMONS:  2 = patrolling azure jelly / patrolling acid blob / patrolling death ooze
+KMONS:  2 = azure jelly / acid blob / death ooze
+KMONS:  3 = slime creature
 KFEAT:  1 = altar_jiyva
 KFEAT:  a = slimy_water
 NSUBST:  d : .aa
 NSUBST:  b : aat
-NSUBST:  c : 22.
+NSUBST:  c : 22333.
 NSUBST:  x : xxxt.
 MAP
 ddddddddddddd
