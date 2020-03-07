@@ -582,8 +582,8 @@ ENDMAP
 # Previously named "layout_city".
 #
 NAME:   layout_regular_city
-DEPTH:  Lair, Crypt, !Crypt:$, Dis, !Dis:$
-WEIGHT: 10, 15 (Lair)
+DEPTH:  Slime:4, Crypt, !Crypt:$, Dis, !Dis:$
+WEIGHT: 10
 ORIENT: encompass
 TAGS:   overwritable layout allow_dup unrand layout_type_city
 TAGS:   no_rotate no_vmirror no_hmirror
@@ -621,6 +621,8 @@ TAGS:   no_rotate no_vmirror no_hmirror
         percent_inner_new_wall = 0
         percent_inner_box   = percent_inner_box * 1.5
         percent_inner_split = percent_inner_split * 2
+	elseif you.in_branch("Slime") then
+	    wall_type = 'x'
     end
 
     local gxm, gym = dgn.max_bounds()
@@ -752,6 +754,19 @@ TAGS:   no_rotate no_vmirror no_hmirror
                         veto_gates=true }
     end
 
+	
+	local pool_contents = {}
+	pool_contents["w"] = 75
+	pool_contents["W"] = 20
+	pool_contents["t"] = 40
+	if you.in_branch("slime") then
+	  add_pools { replace = ".",
+				  pool_size = 16 + crawl.random2(16),
+				  contents = pool_contents,
+				  frequency = 20 }
+	  subst("+ = t")
+	end
+
     -- remove doors in Lair, increasingly with depth
     if you.in_branch("Lair") then
         local keep_weight   = dgn.br_depth(you.branch())
@@ -849,7 +864,7 @@ ENDMAP
 # TODO: Take out special case for non-Orc non-Slime.
 #
 NAME:   layout_caves
-DEPTH:  Orc, Slime
+DEPTH:  Orc, Slime, !Slime:4
 WEIGHT: 10
 ORIENT: encompass
 TAGS:   overwritable layout allow_dup unrand layout_type_open_caves

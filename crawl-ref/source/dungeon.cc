@@ -1402,6 +1402,28 @@ static void _slimify_water()
 
     for (rectangle_iterator ri(coord_def(0,0), coord_def(GXM-1, GYM-1)); ri; ++ri)
     {
+        if ((grd(*ri) == DNGN_FLOOR))
+        {
+            int slimy = 0;
+            for (adjacent_iterator ai(*ri); ai; ++ai)
+            {
+                if (grd(*ai) == DNGN_SLIMY_WALL)
+                    slimy++;
+            }
+            if (slimy > 3 || x_chance_in_y(slimy, 6))
+            {
+                grd(*ri) = DNGN_SLIMY_WATER;
+                if (env.map_knowledge(*ri).seen())
+                {
+                    env.map_knowledge(*ri).set_feature(DNGN_TREE, 0,
+                        get_trap_type(*ri));
+#ifdef USE_TILE
+                    env.tile_bk_bg(*ri) = DNGN_SLIMY_WATER;
+#endif
+                }
+            }
+        }
+
         if ((grd(*ri) == DNGN_DEEP_SLIMY_WATER || grd(*ri) == DNGN_SLIMY_WATER))
         {
             if (!actor_at(*ri))
@@ -1423,27 +1445,6 @@ static void _slimify_water()
                         env.tile_bk_bg(*ri) = DNGN_TREE;
 #endif
                     }
-                }
-            }
-        }
-        if ((grd(*ri) == DNGN_FLOOR))
-        {
-            int slimy = 0;
-            for (adjacent_iterator ai(*ri); ai; ++ai)
-            {
-                if (grd(*ai) == DNGN_SLIMY_WALL)
-                    slimy++;
-            }
-            if (slimy > 3 || x_chance_in_y(slimy, 6))
-            {
-                grd(*ri) = DNGN_SLIMY_WATER;
-                if (env.map_knowledge(*ri).seen())
-                {
-                    env.map_knowledge(*ri).set_feature(DNGN_TREE, 0,
-                        get_trap_type(*ri));
-#ifdef USE_TILE
-                    env.tile_bk_bg(*ri) = DNGN_SLIMY_WATER;
-#endif
                 }
             }
         }

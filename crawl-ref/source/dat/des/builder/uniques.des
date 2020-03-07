@@ -385,11 +385,6 @@ DEPTH:  Spider:2-
 WEIGHT: 50
 : place_unique(_G, "Arachne")
 
-NAME:   uniq_dissolution
-DEPTH:  Slime:2-
-WEIGHT: 100
-: place_unique(_G, "Dissolution")
-
 NAME:   uniq_khufu
 DEPTH:  Tomb, Crypt
 : place_unique(_G, "Khufu band")

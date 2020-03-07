@@ -807,13 +807,45 @@ ENDMAP
 
 # inspired by a comment of spacejung on SomethingAwful (dpeg)
 NAME:   dissolution_awaits
-DEPTH:  Slime:2-, !Slime:$
+DEPTH:  Slime:2, Slime:3
 KMONS:  1 = patrolling Dissolution, azure jelly / great orb of eyes
 MAP
   {
   .
  .1.
 [...(
+ENDMAP
+
+# Bcadren Original
+NAME:   dissolution_ruined_church
+DEPTH:  Slime: 4
+TAGS:   place_unique no_monster_gen no_item_gen transparent
+WEIGHT: 25
+KMONS:  1 = patrolling Dissolution
+KMONS:  2 = patrolling azure jelly / patrolling acid blob / patrolling death ooze
+KFEAT:  1 = altar_jiyva
+KFEAT:  a = slimy_water
+NSUBST:  d : .aa
+NSUBST:  b : aat
+NSUBST:  c : 22.
+NSUBST:  x : xxxt.
+MAP
+ddddddddddddd
+dxxxxxxxxxxxd
+dxbbbtttbbbxd
+dxb}..{..)bxd
+dxbd.....dbxd
+dxbddd1dddbxd
+dxbdddddddbxd
+dxbcccdcccbxd
+dxbdddddddbxd
+dxbcccdcccbxd
+dxbdddddddbxd
+dxbcccdcccbxd
+dxbdddddddbxd
+dxbbtt.ttbbxd
+dxxxx...xxxxd
+ddddd@@@ddddd
 ENDMAP
 
 ################################################################################
