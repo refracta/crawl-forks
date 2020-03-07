@@ -483,9 +483,13 @@ halberd
 A polearm consisting of an axe blade topped with a spike, mounted on a long
 shaft.
 %%%%
-hand axe
+hatchet
 
-A small axe.
+A small axe. More at home for use in chopping wood; but a servicible weapon.
+%%%%
+hammer
+
+A small hammer. More at home for use in carpentry; but a servicible weapon.
 %%%%
 hand crossbow
 

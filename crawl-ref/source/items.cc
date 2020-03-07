@@ -3553,7 +3553,7 @@ colour_t item_def::weapon_colour() const
             return CYAN;
         case SK_LONG_BLADES:
             return LIGHTCYAN;
-        case SK_AXES:
+        case SK_AXES_HAMMERS:
             return MAGENTA;
         case SK_WHIPS_FLAILS:
             return LIGHTGREY;

@@ -184,7 +184,7 @@ KFEAT:  9 = weapon shop type:Blade suffix:Boutique count:16 use_all greed:40 ; \
             mundane not_cursed rapier |\
             mundane not_cursed falchion | mundane not_cursed long sword |\
             mundane not_cursed scimitar | mundane not_cursed great sword |\
-            mundane not_cursed hand axe |\
+            mundane not_cursed hatchet |\
             mundane not_cursed war axe | mundane not_cursed broad axe |\
             mundane not_cursed battleaxe|\
             mundane not_cursed spear | mundane not_cursed trident |\

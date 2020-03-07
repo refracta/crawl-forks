@@ -125,7 +125,7 @@ function species_mock(e)
   elseif you.race() == "Deep Elf" then
     e.kmons("1 = insubstantial wisp")
   elseif you.race() == "Hill Orc" then
-    e.kmons("1 = hobgoblin ; mundane hand axe . mundane ring mail")
+    e.kmons("1 = hobgoblin ; mundane hatchet . mundane ring mail")
   elseif you.race() == "Human" then
     e.kmons("1 = killer klown")
   elseif you.race() == "Felid" then
@@ -1502,7 +1502,7 @@ ENDMAP
 NAME:  okawaru_ov_weapons_minmay
 TAGS:  temple_overflow_1 temple_overflow_okawaru uniq_altar_okawaru
 TAGS:  transparent decor
-ITEM:  hand axe, falchion, mace, spear
+ITEM:  hatchet, falchion, mace, spear
 KFEAT: _ = altar_okawaru
 : interest_check(_G)
 MAP
@@ -2060,9 +2060,9 @@ KMONS:  2 = ogre god:trog ; giant club ego:antimagic ident:type | w:3 giant club
         big kobold god:trog ; short sword ego:antimagic ident:type | dagger ego:antimagic ident:type | \
         rapier ego:antimagic ident:type | rapier
 : else
-KMONS:  2 = orc god:trog ; spear ego:antimagic ident:type | hand axe ego:antimagic ident:type | \
+KMONS:  2 = orc god:trog ; spear ego:antimagic ident:type | hatchet ego:antimagic ident:type | \
         war axe ego:antimagic ident:type | any weapon / \
-        kobold god:trog ; short sword ego:antimagic ident:type | hand axe ego:antimagic ident:type | \
+        kobold god:trog ; short sword ego:antimagic ident:type | hatchet ego:antimagic ident:type | \
         club ego:antimagic ident:type | whip ego:antimagic ident:type | any weapon / \
         goblin god:trog ; dagger ego:antimagic ident:type | short sword ego:antimagic ident:type / \
         gnoll god:trog ; spear ego:antimagic ident:type | trident ego:antimagic ident:type | \
@@ -2085,7 +2085,7 @@ NAME:   trog_butcher_becter
 TAGS:   overflow_altar_trog
 DEPTH:  D:2-9, Orc, !Orc:$
 : if you.absdepth() < 6 then
-MONS:   orc ; hand axe . animal skin
+MONS:   orc ; hatchet . animal skin
 MONS:   leopard gecko / rat / frilled lizard / quokka
 {{
   dgn.delayed_decay(_G, 'd',
@@ -2169,7 +2169,7 @@ ENDMAP
 NAME:   dancing_weapons_uskayaw
 DEPTH:  D:2-9
 TAGS:   temple_overflow_1 temple_overflow_uskayaw transparent
-MONS:   generate_awake dancing weapon ; dagger | hand axe
+MONS:   generate_awake dancing weapon ; dagger | hatchet
 KFEAT:  _ = altar_uskayaw
 NSUBST: ' = 2:1 / *:'
 KMASK:  1' = no_monster_gen
@@ -3111,10 +3111,10 @@ KFEAT:  B = altar_trog
 KPROP:  . = bloody / nothing
 : if you.absdepth() < 8 then
 MONS:   gnoll ; club | spear | nothing . potion of berserk rage / \
-        orc ; club | hand axe | short sword . \
+        orc ; club | hatchet | short sword . \
               leather armour | nothing . potion of berserk rage
 : else
-MONS:   orc warrior ; club | hand axe | short sword . \
+MONS:   orc warrior ; club | hatchet | short sword . \
                       leather armour | ring mail . \
                       potion of berserk rage
 : end

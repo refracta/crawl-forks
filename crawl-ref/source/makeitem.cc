@@ -2081,7 +2081,7 @@ static void _setup_fallback_randart(const int unrand_id,
  *
  * Various parameters determine whether the item can be an artifact, set the
  * item class (ex. weapon, wand), set the item subtype (ex.
- * hand axe, wand of flame), set the item ego (ex. of flaming, of running), set
+ * hatchet, wand of flame), set the item ego (ex. of flaming, of running), set
  * the rough power level of the item, and set the agent of the item (which
  * affects what artefacts can be generated, and also non-artefact items if the
  * agent is Xom). Item class, Item type, and Item ego can also be randomly

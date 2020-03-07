@@ -290,13 +290,13 @@ function setup_xom_dancing_weapon(e)
     -- depths and always with lower weight.
     if you.absdepth() < 9 then
         base_weapons = {"dagger", "short sword", "rapier", "falchion",
-                        "long sword", "whip", "mace", "hand axe", "spear",
+                        "long sword", "whip", "mace", "hatchet", "spear",
                         "trident"}
         good_weapons = {"scimitar", "flail", "war axe", "quarterstaff"}
         quality = crawl.one_chance_in(6) and "good_item" or ""
     elseif you.absdepth() < 12 then
         base_weapons = {"rapier", "long sword", "scimitar", "mace", "flail",
-                        "hand axe", "war axe", "trident", "quarterstaff"}
+                        "hatchet", "war axe", "trident", "quarterstaff"}
         good_weapons = {"morningstar", "dire flail", "broad axe", "halberd"}
         quality = crawl.one_chance_in(4) and "good_item" or ""
     elseif you.absdepth() < 14 then
@@ -354,7 +354,7 @@ end
 -- high-end weapons at reasonable weights.
 ghost_warrior_weap = {
     ["short sword"] = 5, ["rapier"] = 10, ["long sword"] = 10,
-    ["scimitar"] = 5, ["great sword"] = 10, ["hand axe"] = 5, ["war axe"] = 10,
+    ["scimitar"] = 5, ["great sword"] = 10, ["hatchet"] = 5, ["war axe"] = 10,
     ["broad axe"] = 5, ["battleaxe"] = 10, ["spear"] = 5, ["trident"] = 10,
     ["halberd"] = 10, ["glaive"] = 5, ["whip"] = 5, ["mace"] = 10,
     ["flail"] = 10, ["morningstar"] = 5, ["dire flail"] = 10,

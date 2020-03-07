@@ -1847,7 +1847,7 @@ static tileidx_t _tileidx_monster_no_props(const monster_info& mon)
             {
             case SK_LONG_BLADES:
                 return TILEP_MONS_SPECTRAL_LBL;
-            case SK_AXES:
+            case SK_AXES_HAMMERS:
                 return TILEP_MONS_SPECTRAL_AXE;
             case SK_POLEARMS:
                 return TILEP_MONS_SPECTRAL_SPEAR;
@@ -2184,6 +2184,7 @@ static tileidx_t _tileidx_weapon_base(const item_def &item)
     case WPN_DOUBLE_SWORD:          return TILE_WPN_DOUBLE_SWORD;
     case WPN_TRIPLE_SWORD:          return TILE_WPN_TRIPLE_SWORD;
     case WPN_HAND_AXE:              return TILE_WPN_HAND_AXE;
+    case WPN_HAMMER:                return TILE_WPN_HAMMER;
     case WPN_WAR_AXE:               return TILE_WPN_WAR_AXE;
     case WPN_BROAD_AXE:             return TILE_WPN_BROAD_AXE;
     case WPN_BATTLEAXE:             return TILE_WPN_BATTLEAXE;
@@ -3294,7 +3295,7 @@ tileidx_t tileidx_skill(skill_type skill, int train)
     case SK_FIGHTING:       ch = TILEG_FIGHTING_ON; break;
     case SK_SHORT_BLADES:   ch = TILEG_SHORT_BLADES_ON; break;
     case SK_LONG_BLADES:    ch = TILEG_LONG_BLADES_ON; break;
-    case SK_AXES:           ch = TILEG_AXES_ON; break;
+    case SK_AXES_HAMMERS:           ch = TILEG_AXES_ON; break;
     case SK_WHIPS_FLAILS:   ch = TILEG_MACES_FLAILS_ON; break;
     case SK_POLEARMS:       ch = TILEG_POLEARMS_ON; break;
     case SK_MACES_STAVES:   ch = TILEG_STAVES_ON; break;

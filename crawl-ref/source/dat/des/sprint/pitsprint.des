@@ -711,7 +711,7 @@ NAME:  equipment_1
 TAGS:  equipment_1
 KITEM: a = dagger plus:2 ident:all not_cursed, /\
            falchion plus:2 ident:all not_cursed
-KITEM: b = hand axe plus:2 ident:all not_cursed, /\
+KITEM: b = hatchet plus:2 ident:all not_cursed, /\
            mace plus:2 ident:all not_cursed
 KITEM: c = trident plus:2 ident:all not_cursed, /\
            quarterstaff plus:2 ident:all not_cursed
@@ -728,8 +728,8 @@ TAGS:  equipment_2
 KITEM: a = dagger ego:electrocution ident:all not_cursed /\
        dagger ego:draining ident:all not_cursed /\
        dagger ego:venom ident:all not_cursed
-KITEM: b = hand axe ego:freezing ident:all not_cursed /\
-       hand axe ego:vorpal ident:all not_cursed
+KITEM: b = hatchet ego:freezing ident:all not_cursed /\
+       hatchet ego:vorpal ident:all not_cursed
 KITEM: c = mace ego:vorpal ident:all not_cursed /\
        mace ego:protection ident:all not_cursed /\
        flail ego:vorpal ident:all not_cursed /\

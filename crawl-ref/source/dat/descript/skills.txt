@@ -23,10 +23,13 @@ weapons of this type, as well as increasing your accuracy and damage with them.
 Being skilled with Long Blades increases your effectiveness with Short Blades,
 and vice versa.
 %%%%
-Axes
+Axes and Hammers
 
-Axes cleave through multiple enemies with a single swing, hitting foes in an
-arc around the wielder.
+Axes and Hammers cleave through multiple enemies with a single swing, hitting 
+foes in an arc around the wielder.
+
+Hammer's base damage is higher, but base delay slower than axes, additionally 
+they hit bluntly instead of sharply having no effect on hydra heads.
 
 Being skilled with Axes will allow you to attack more quickly with all weapons
 of this type, as well as increasing your accuracy and damage with them.

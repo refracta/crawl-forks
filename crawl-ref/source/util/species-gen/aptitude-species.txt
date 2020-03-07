@@ -1,7 +1,7 @@
     APT({enum}, SK_FIGHTING,         {fighting}),
     APT({enum}, SK_SHORT_BLADES,     {short_blades}),
     APT({enum}, SK_LONG_BLADES,      {long_blades}),
-    APT({enum}, SK_AXES,             {axes}),
+    APT({enum}, SK_AXES_HAMMERS,             {axes}),
     APT({enum}, SK_WHIPS_FLAILS,     {whips_and_flails}),
     APT({enum}, SK_POLEARMS,         {polearms}),
     APT({enum}, SK_MACES_STAVES,     {maces_and_staves}),

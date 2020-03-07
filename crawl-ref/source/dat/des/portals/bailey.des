@@ -76,11 +76,11 @@ function kobold_axe_returning(e)
 end
 
 function easy_axe_fighter(e)
-  e.mons("w:3 orc warrior ; hand axe w:60 | war axe . ring mail / \
-          w:7 gnoll ; hand axe w:60 | war axe . leather armour / \
-          w:10 hobgoblin ; hand axe w:60 | war axe . leather armour / \
-          w:10 orc ; hand axe w:60 | war axe . leather armour / \
-          w:12 goblin ; hand axe w:60 | war axe . leather armour")
+  e.mons("w:3 orc warrior ; hatchet w:60 | war axe . ring mail / \
+          w:7 gnoll ; hatchet w:60 | war axe . leather armour / \
+          w:10 hobgoblin ; hatchet w:60 | war axe . leather armour / \
+          w:10 orc ; hatchet w:60 | war axe . leather armour / \
+          w:12 goblin ; hatchet w:60 | war axe . leather armour")
 end
 
 function hard_axe_fighter(e)
@@ -140,7 +140,7 @@ NAME: enter_bailey_2
 TAGS: transparent
 : local rnd = crawl.random2(2)
 : if rnd == 0 then
-ITEM: hand axe
+ITEM: hatchet
 :   bailey_portal_axe(_G)
 : elseif rnd == 1 then
 ITEM: halberd / spear
@@ -158,7 +158,7 @@ NAME: enter_bailey_3
 TAGS: transparent
 : local rnd = crawl.random2(2)
 : if rnd == 0 then
-MONS: goblin ; hand axe
+MONS: goblin ; hatchet
 :   bailey_portal_axe(_G)
 : elseif rnd == 1 then
 MONS: goblin ; spear
@@ -182,7 +182,7 @@ TAGS:   transparent
 WEIGHT: 5
 : local rnd = crawl.random2(2)
 : if rnd == 0 then
-MONS:   goblin ; hand axe / hobgoblin ; hand axe / orc ; hand axe
+MONS:   goblin ; hatchet / hobgoblin ; hatchet / orc ; hatchet
 MONS:   goblin spells:throw_tomahawk.100.natural / \
         hobgoblin spells:throw_tomahawk.100.natural / \
         orc spells:throw_tomahawk.100.natural
@@ -261,7 +261,7 @@ NAME:   enter_bailey_7
 WEIGHT: 3
 : local rnd = crawl.random2(2)
 : if rnd == 0 then
-MONS:   gnoll ; hand axe / goblin ; hand axe
+MONS:   gnoll ; hatchet / goblin ; hatchet
 :   bailey_portal_axe(_G)
 : elseif rnd == 1 then
 MONS:   gnoll ; spear / goblin ; spear
@@ -315,8 +315,8 @@ TAGS: transparent
 WEIGHT: 1
 : local rnd = crawl.random2(2)
 : if rnd == 0 then
-MONS: orc spells:throw_tomahawk.100.natural ; hand axe
-MONS: gnoll ; hand axe / goblin ; hand axe
+MONS: orc spells:throw_tomahawk.100.natural ; hatchet
+MONS: gnoll ; hatchet / goblin ; hatchet
 :   bailey_portal_axe(_G)
 : elseif rnd == 1 then
 MONS: orc ; spear, gnoll ; spear / goblin ; spear
@@ -920,8 +920,8 @@ SUBST:  4 = 2:5 3   4:5
 SUBST:  5 = 3:5 4
 NSUBST: ! = 1:ddde / *:e
 NSUBST: ? = 1:fffg / *:g
-MONS:   orc warrior ; spear w:5 | trident w:5 | halberd | hand axe | war axe /\
-        orc w:110   ; spear w:5 | trident w:5 | halberd | hand axe | war axe
+MONS:   orc warrior ; spear w:5 | trident w:5 | halberd | hatchet | war axe /\
+        orc w:110   ; spear w:5 | trident w:5 | halberd | hatchet | war axe
 : orc_with_polearm(_G)
 : orc_warrior_with_polearm(_G)
 : orc_knight_with_polearm(_G)

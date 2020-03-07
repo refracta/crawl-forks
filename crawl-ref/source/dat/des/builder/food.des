@@ -208,7 +208,7 @@ KMONS:    E = big kobold ; nothing
 KMONS:    F = plant
 KITEM:    C = ration
 KITEM:    E = falchion ego:molten ident:type / \
-              hand axe ego:molten ident:type
+              hatchet ego:molten ident:type
 KITEM:    H = ration q:2
 KITEM:    I = halberd
 KFEAT:    EF = shallow_water
@@ -240,7 +240,7 @@ KMONS:   E = merfolk
 KMONS:   F = human
 KMONS:   G = necrophage
 KMONS:   H = crimson imp
-KITEM:   1 = mundane hand axe w:1 no_pickup
+KITEM:   1 = mundane hatchet w:1 no_pickup
 KITEM:   Ya = ration
 KITEM:   b = ration / nothing w:12
 KFEAT:   1Yab = shallow_water
@@ -326,7 +326,7 @@ DEPTH:  D:7-14
 WEIGHT: 15
 TAGS:   uniq_second_food extra chance_second_food no_monster_gen no_trap_gen \
         patrolling
-MONS:   human ; animal skin . hand axe
+MONS:   human ; animal skin . hatchet
 {{
   local hog_weight = 14 - you.absdepth()
   if hog_weight <= 0 then

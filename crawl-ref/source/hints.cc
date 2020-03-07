@@ -171,7 +171,7 @@ static void _fill_newgame_choice_for_hints(newgame_def& choice, hints_types type
     choice.job = _get_hints_job(type);
     // easiest choice for fighters
     choice.weapon = choice.job == JOB_HUNTER ? WPN_SHORTBOW
-                                                : WPN_HAND_AXE;
+                                             : WPN_HAND_AXE;
 }
 
 // Hints mode selection screen and choice.
@@ -770,7 +770,7 @@ void hints_gained_new_skill(skill_type skill)
     // Melee skills.
     case SK_SHORT_BLADES:
     case SK_LONG_BLADES:
-    case SK_AXES:
+    case SK_AXES_HAMMERS:
     case SK_WHIPS_FLAILS:
     case SK_POLEARMS:
     case SK_MACES_STAVES:

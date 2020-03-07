@@ -55,6 +55,6 @@ recommended_weapons:
   - SK_WHIPS_FLAILS
   - SK_POLEARMS
   - SK_MACES_STAVES
-  - SK_AXES
+  - SK_AXES_HAMMERS
   - SK_SLINGS
 create_enum: False

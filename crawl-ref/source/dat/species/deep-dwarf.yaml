@@ -63,7 +63,7 @@ fake_mutations:
     short: heal wounds
 recommended_weapons:
   - SK_WHIPS_FLAILS
-  - SK_AXES
+  - SK_AXES_HAMMERS
   - SK_LONG_BLADES
   - SK_CROSSBOWS
   - SK_SLINGS

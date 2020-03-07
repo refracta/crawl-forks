@@ -801,7 +801,7 @@ void get_cleave_targets(const actor &attacker, const coord_def& def,
         }
     }
 
-    else if (weap && item_attack_skill(*weap) == SK_AXES
+    else if (weap && item_attack_skill(*weap) == SK_AXES_HAMMERS
             || attacker.is_player()
                && (you.form == transformation::hydra && you.heads() > 1
                    || you.duration[DUR_CLEAVE]))
@@ -937,6 +937,10 @@ int weapon_min_delay(const item_def &weapon, bool check_speed)
     }
     else base = property(weapon, PWPN_SPEED);
     int min_delay = base/2;
+
+    // Hammers are special cased slightly.
+    if (weapon.is_type(OBJ_WEAPONS, WPN_HAMMER))
+        min_delay = 6;
 
     if (is_unrandom_artefact(weapon, UNRAND_ZEPHYR))
         min_delay = 3;

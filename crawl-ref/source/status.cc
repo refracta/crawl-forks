@@ -675,7 +675,7 @@ bool fill_status_info(int status, status_info& inf)
     {
         const item_def* weapon = you.weapon();
 
-        if (weapon && item_attack_skill(*weapon) == SK_AXES)
+        if (weapon && item_attack_skill(*weapon) == SK_AXES_HAMMERS)
             inf.light_colour = DARKGREY;
 
         break;

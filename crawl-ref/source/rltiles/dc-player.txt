@@ -781,6 +781,9 @@ axe_executioner2
 axe_double AXE_DOUBLE
 axe_blood AXE_BLOOD
 axe_short AXE_SHORT
+hammer HAMMER
+hammer1
+hammer2
 
 ## launchers
 sling HUNTING_SLING
@@ -1139,6 +1142,9 @@ axe_executioner2
 axe_double AXE_DOUBLE
 axe_blood AXE_BLOOD
 axe_short AXE_SHORT
+hammer HAMMER
+hammer1
+hammer2
 
 ## launchers
 sling HUNTING_SLING

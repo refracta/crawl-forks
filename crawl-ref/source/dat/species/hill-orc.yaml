@@ -50,6 +50,6 @@ recommended_jobs:
 recommended_weapons:
   - SK_WHIPS_FLAILS
   - SK_LONG_BLADES
-  - SK_AXES
+  - SK_AXES_HAMMERS
   - SK_POLEARMS
 create_enum: False

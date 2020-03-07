@@ -1376,7 +1376,7 @@ string ego_type_string(const item_def &item, bool terse, brand_type override_bra
             brand_type checkbrand = override_brand ? override_brand
                                             : get_weapon_brand(item);
             // this is specialcased out of weapon_brand_name
-            // ("vampiric hand axe", etc)
+            // ("vampiric hatchet", etc)
             if (checkbrand == SPWPN_VAMPIRISM)
                 return "vampirism";
             else if (checkbrand == SPWPN_ANTIMAGIC)

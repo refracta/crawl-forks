@@ -3005,7 +3005,7 @@ SUBST:  " = ., B = x
 NSUBST: . = 5:d / 10=d. / 2:e / 1:e. / *=.f
 ITEM:   ration / w:5 minotaur chunk
 : dgn.delayed_decay(_G, 'e', 'minotaur corpse')
-ITEM:   hand axe
+ITEM:   hatchet
 SUBST:  ' = .
 MAP
 xxxxxxxxx

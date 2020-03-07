@@ -96,10 +96,13 @@ demon_blade2
 demon_blade3
 blessed_blade WPN_BLESSED_BLADE
 
-##Axes
+##Axes and Hammers
 hand_axe1 WPN_HAND_AXE
 hand_axe2
 hand_axe3
+hammer1 WPN_HAMMER
+hammer2
+hammer3
 war_axe1 WPN_WAR_AXE
 war_axe2
 war_axe3

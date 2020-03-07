@@ -469,11 +469,6 @@ static const weapon_def Weapon_prop[] =
             { SPWPN_ACID,           2 },
             { SPWPN_ANTIMAGIC,      1 },
         }},
-#if TAG_MAJOR_VERSION == 34
-    { WPN_HAMMER,            "hammer",              7,  3, 13,
-        SK_MACES_STAVES, SIZE_LITTLE, SIZE_LITTLE, MI_NONE,
-        DAMV_CRUSHING, 0, 0, 0, M_AND_F_BRANDS },
-#endif
     { WPN_MACE,              "mace",                8,  3, 14,
         SK_MACES_STAVES, SIZE_LITTLE, SIZE_LITTLE, MI_NONE,
         DAMV_CRUSHING, 9, 10, 30, M_AND_F_BRANDS },
@@ -618,20 +613,23 @@ static const weapon_def Weapon_prop[] =
 #endif
 
     // Axes
-    { WPN_HAND_AXE,          "hand axe",            7,  3, 13,
-        SK_AXES,       SIZE_LITTLE, SIZE_LITTLE, MI_NONE,
-        DAMV_CHOPPING, 9, 10, 30, AXE_BRANDS },
+    { WPN_HAND_AXE,          "hatchet",             7,  3, 13,
+        SK_AXES_HAMMERS,       SIZE_LITTLE, SIZE_LITTLE, MI_NONE,
+        DAMV_CHOPPING, 6, 10, 30, AXE_BRANDS },
+    { WPN_HAMMER,            "hammer",              9,  3, 15,
+        SK_AXES_HAMMERS,       SIZE_LITTLE, SIZE_LITTLE, MI_NONE,
+        DAMV_CRUSHING, 6, 12, 40, M_AND_F_BRANDS },
     { WPN_WAR_AXE,           "war axe",            11,  0, 15,
-        SK_AXES,       SIZE_LITTLE, SIZE_LITTLE, MI_NONE,
+        SK_AXES_HAMMERS,       SIZE_LITTLE, SIZE_LITTLE, MI_NONE,
         DAMV_CHOPPING, 7, 10, 35, AXE_BRANDS },
     { WPN_BROAD_AXE,         "broad axe",          13, -2, 16,
-        SK_AXES,       SIZE_LITTLE, SIZE_MEDIUM, MI_NONE,
+        SK_AXES_HAMMERS,       SIZE_LITTLE, SIZE_MEDIUM, MI_NONE,
         DAMV_CHOPPING, 4, 10, 40, AXE_BRANDS },
     { WPN_BATTLEAXE,         "battleaxe",          23, -4, 17,
-        SK_AXES,       SIZE_MEDIUM, NUM_SIZE_LEVELS, MI_NONE,
+        SK_AXES_HAMMERS,       SIZE_MEDIUM, NUM_SIZE_LEVELS, MI_NONE,
         DAMV_CHOPPING, 6, 10, 65, AXE_BRANDS },
     { WPN_EXECUTIONERS_AXE,  "executioner's axe",  27, -6, 20,
-        SK_AXES,       SIZE_MEDIUM, NUM_SIZE_LEVELS, MI_NONE,
+        SK_AXES_HAMMERS,       SIZE_MEDIUM, NUM_SIZE_LEVELS, MI_NONE,
         DAMV_CHOPPING, 0, 2, 100, AXE_BRANDS },
 
     // Polearms

@@ -1177,7 +1177,7 @@ NAME:    old_forge
 DEPTH:   D:4-12
 ORIENT:  float
 KITEM:   ? = singing_sword, damaged short sword, \
-             damaged long sword, damaged hand axe
+             damaged long sword, damaged hatchet
 KITEM:   ! = damaged executioner's axe, damaged short sword, \
              damaged long sword, damaged morningstar
 KITEM:   + = damaged eveningstar, damaged short sword, \
@@ -1553,7 +1553,7 @@ ENDMAP
 ##############################################################################
 # Slaugherhouse (Zaba)
 #
-# Butchers have either knives (daggers) or hand axes. They have some chance
+# Butchers have either knives (daggers) or hatchets. They have some chance
 # of opening the doors so animals can go for a walk, that's intended.
 #
 NAME:   slaughterhouse
@@ -1567,7 +1567,7 @@ MARKER: F = lua:fog_machine { \
                 size_buildup_time = 25, cloud_type = "freezing vapour" \
             }
 MONS:   death yak w:5 / dream sheep w:3 / yak w:7
-MONS:   generate_awake human ; dagger | hand axe
+MONS:   generate_awake human ; dagger | hatchet
 SUBST:  F=d, 2=2.
 ITEM:   ration w:5 / nothing
 KFEAT:  ~ = closed_clear_door
@@ -4469,7 +4469,7 @@ KMONS:  1 = fire bat
 KMONS:  2 = nothing
 KMONS:  34 = ice beast
 KMONS:  56 = ogre zombie ; giant club ego:venom | giant spiked club ego:venom \
-           / orc warrior zombie ; hand axe ego:venom | war axe ego:venom \
+           / orc warrior zombie ; hatchet ego:venom | war axe ego:venom \
                | short sword ego:venom | long sword ego:venom \
                | flail ego:venom | mace ego:venom \
            / gnoll sergeant zombie ; spear ego:venom | trident ego:venom
@@ -4482,7 +4482,7 @@ MONS:   fire bat, fire elemental / hell hound
 MONS:   ice beast, simulacrum place:D:15
 MONS:   water moccasin
 KMONS:  6 = ogre zombie ; giant club ego:venom | giant spiked club ego:venom \
-           / orc warrior zombie ; hand axe ego:venom | war axe ego:venom \
+           / orc warrior zombie ; hatchet ego:venom | war axe ego:venom \
                | short sword ego:venom | long sword ego:venom \
                | flail ego:venom | mace ego:venom \
            / gnoll sergeant zombie ; spear ego:venom | trident ego:venom
@@ -9085,7 +9085,7 @@ DEPTH:   D:13-, Depths
 ORIENT:  float
 KITEM:   _ = necklace of bloodlust no_pickup / wrath of trog no_pickup
 ITEM:    manual of armour w:30 / manual of fighting w:30 / \
-         manual of long blades / manual of axes / manual of whips & flails / \
+         manual of long blades / manual of axes & hammers / manual of whips & flails / \
          manual of polearms / manual of dodging / manual of shields
 ITEM:    executioner's axe good_item no_pickup w:5 / \
          battleaxe good_item randart no_pickup / \

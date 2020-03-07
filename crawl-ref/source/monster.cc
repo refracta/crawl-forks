@@ -4182,7 +4182,7 @@ int monster::skill(skill_type sk, int scale, bool /*real*/, bool /*drained*/, bo
     // Weapon skills for spectral weapon
     case SK_SHORT_BLADES:
     case SK_LONG_BLADES:
-    case SK_AXES:
+    case SK_AXES_HAMMERS:
     case SK_WHIPS_FLAILS:
     case SK_POLEARMS:
     case SK_MACES_STAVES:

@@ -202,9 +202,12 @@ tileidx_t tilep_equ_hand1(const item_def &item)
         tile = TILEP_HAND1_BLESSED_BLADE;
         break;
 
-        // Axe
+        // Axes and Hammers
     case WPN_HAND_AXE:
         tile = TILEP_HAND1_HAND_AXE;
+        break;
+    case WPN_HAMMER:
+        tile = TILEP_HAND1_HAMMER;
         break;
     case WPN_BATTLEAXE:
         tile = TILEP_HAND1_BATTLEAXE;
@@ -464,9 +467,12 @@ tileidx_t tilep_equ_hand2(const item_def &item)
         tile = TILEP_HAND2_BLESSED_BLADE;
         break;
 
-        // Axe
+        // Axes and hammers
     case WPN_HAND_AXE:
         tile = TILEP_HAND2_HAND_AXE;
+        break;
+    case WPN_HAMMER:
+        tile = TILEP_HAND2_HAMMER;
         break;
     case WPN_BATTLEAXE:
         tile = TILEP_HAND2_BATTLEAXE;
@@ -735,9 +741,12 @@ tileidx_t tilep_equ_weapon(const item_def &item)
         tile = TILEP_HAND1_BLESSED_BLADE;
         break;
 
-    // Axe
+    // Axes and hammers
     case WPN_HAND_AXE:
         tile = TILEP_HAND1_HAND_AXE;
+        break;
+    case WPN_HAMMER:
+        tile = TILEP_HAND1_HAMMER;
         break;
     case WPN_BATTLEAXE:
         tile = TILEP_HAND1_BATTLEAXE;

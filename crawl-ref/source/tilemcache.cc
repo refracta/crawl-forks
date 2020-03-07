@@ -1434,7 +1434,7 @@ mcache_ghost::mcache_ghost(const monster_info& mon)
             m_doll.parts[TILEP_PART_HAND1] = TILEP_HAND1_FALCHION;
         break;
 
-    case SK_AXES:
+    case SK_AXES_HAMMERS:
         if (dam > 30)
             m_doll.parts[TILEP_PART_HAND1] = TILEP_HAND1_EXECUTIONERS_AXE;
         else if (dam > 20)

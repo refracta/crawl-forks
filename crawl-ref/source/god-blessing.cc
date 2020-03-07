@@ -55,6 +55,7 @@ static int _upgrade_weapon_type(int old_type, bool has_shield, bool highlevel)
         case WPN_GREAT_SWORD: return highlevel ? WPN_TRIPLE_SWORD :
                                                  WPN_GREAT_SWORD;
 
+        case WPN_HAMMER:      return WPN_WAR_AXE; // BCADDO: WAR HAMMER
         case WPN_HAND_AXE:    return WPN_WAR_AXE;
             // Low level orcs shouldn't get fairly rare items.
         case WPN_WAR_AXE:     return !highlevel  ? WPN_WAR_AXE   :
