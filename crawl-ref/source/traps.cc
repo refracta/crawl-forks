@@ -696,10 +696,6 @@ void trap_def::trigger(actor& triggerer)
                     // Triggered and hit.
                     triggered = true;
 
-                    item_def item = generate_trap_item();
-                    copy_item_to_grid(item, triggerer.pos());
-                    _mark_net_trapping(m->pos());
-
                     if (in_sight)
                     {
                         if (m->visible_to(&you))
@@ -714,6 +710,9 @@ void trap_def::trigger(actor& triggerer)
                     // actually try to net the monster
                     if (monster_caught_in_net(m))
                     {
+                        item_def item = generate_trap_item();
+                        copy_item_to_grid(item, triggerer.pos());
+                        _mark_net_trapping(m->pos());
                         // Don't try to escape the net in the same turn
                         m->props[NEWLY_TRAPPED_KEY] = true;
                     }
