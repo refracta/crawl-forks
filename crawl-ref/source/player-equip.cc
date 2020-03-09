@@ -135,6 +135,8 @@ static void _assert_valid_slot(equipment_type eq, equipment_type slot)
         return;
     if (eq == EQ_RINGS) // all other slots are unique
     {
+        if (you.species == SP_FAIRY && slot == EQ_FAIRY_JEWEL)
+            return;
         equipment_type r1 = EQ_LEFT_RING, r2 = EQ_RIGHT_RING;
         if (you.species == SP_OCTOPODE)
             r1 = EQ_RING_ONE, r2 = EQ_RING_EIGHT;

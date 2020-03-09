@@ -6261,6 +6261,19 @@ DUMMY(MONS_HELL_LORD, '&', COLOUR_UNDEF, "hell lord", TILEP_MONS_PROGRAM_BUG)
     {TILEP_MONS_ORB_OF_FIRE}, TILE_ERROR
 },
 
+{   // Monster equivalent of Player Fairy Race for Vaults.
+    MONS_FAIRY, '*', LIGHTRED, "fairy",
+    M_FLIES | M_NOT_DANGEROUS,
+    MR_VUL_POISON | MR_RES_ACID,
+    10, MONS_FAIRY, MONS_FAIRY, MH_HOLY, 10,
+    { AT_NO_ATK, AT_NO_ATK, AT_NO_ATK, AT_NO_ATK },
+    1, 10,
+    0, 25, MST_NO_SPELLS, CE_NOCORPSE, S_SHOUT,
+    I_HUMAN, HT_LAND, 25, DEFAULT_ENERGY,
+    MU_NOTHING, SIZE_TINY, MON_SHAPE_INSECT_WINGED,
+    {TILEP_MONS_FAIRY, TVARY_MOD}, TILE_ERROR
+},
+
 { // not an actual monster, used by a spell
     MONS_ORB_OF_DESTRUCTION, '*', WHITE, "ball of snow and ice",
     M_INSUBSTANTIAL | M_NOT_DANGEROUS | M_NO_POLY_TO | M_PROJECTILE | M_FLIES,

@@ -33,6 +33,13 @@ Draconian
 Draconians are versatile hybrids. They mature when reaching level 7 and develop
 a colour.
 %%%%
+Fairy
+
+Fairies are tiny insubstantial balls of light; too tiny to use almost any gear at 
+all and extremely low on mana and frail Their magical auras protect them from damage 
+reducing all damage to a single hit point and reduce the cost of their spells and 
+abilities to cost a single mana point or less.
+%%%%
 Formicid
 
 Formicids are humanoid ants adept at digging. Their limbs are exceptionally

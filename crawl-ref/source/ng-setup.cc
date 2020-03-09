@@ -8,6 +8,7 @@
 #include "end.h"
 #include "files.h"
 #include "food.h"
+#include "god-abil.h"
 #include "god-companions.h"
 #include "hints.h"
 #include "invent.h"
@@ -291,9 +292,6 @@ void give_items_skills(const newgame_def& ng)
     give_job_equipment(you.char_class);
     give_job_skills(you.char_class);
 
-    if (you.species == SP_FELID)
-        you.skills[SK_SHIELDS] = 0;
-
     if (!you_worship(GOD_NO_GOD))
     {
         you.worshipped[you.religion] = 1;
@@ -549,6 +547,12 @@ static void _setup_generic(const newgame_def& ng,
 
     if (you.char_class == JOB_WANDERER)
         memorise_wanderer_spell();
+
+    if (you.species == SP_FAIRY && !vehumet_supports_spell(you.spells[0]))
+    {
+        you.skills[SK_FIRE_MAGIC] = 1;
+        add_spell_to_memory(SPELL_FOXFIRE);
+    }
 
     // A first pass to link the items properly.
     for (int i = 0; i < ENDOFPACK; ++i)

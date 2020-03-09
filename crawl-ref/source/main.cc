@@ -1589,7 +1589,7 @@ static void _do_display_map()
 
 static void _do_cycle_quiver(int dir)
 {
-    if (you.species == SP_FELID)
+    if (you.species == SP_FELID || you.species == SP_FAIRY)
     {
         mpr("You can't grasp things well enough to throw them.");
         return;

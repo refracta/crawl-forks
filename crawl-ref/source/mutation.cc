@@ -140,10 +140,8 @@ static const int conflict[][3] =
     { MUT_REGENERATION,        MUT_INHIBITED_REGENERATION,  1},
     { MUT_ACUTE_VISION,        MUT_IMPAIRED_VISION,         1},
     { MUT_BERSERK,             MUT_CLARITY,                 1},
-    { MUT_GHOST,               MUT_BERSERK                 -1},
-    { MUT_GHOST,               MUT_POISON_RESISTANCE       -1},
-    { MUT_GHOST,               MUT_THIN_SKELETAL_STRUCTURE -1},
-    { MUT_GHOST,               MUT_LARGE_BONE_PLATES       -1},
+    { MUT_INSUBSTANTIAL,       MUT_THIN_SKELETAL_STRUCTURE -1},
+    { MUT_INSUBSTANTIAL,       MUT_LARGE_BONE_PLATES       -1},
     { MUT_SILENT_CAST,         MUT_SCREAM                  -1},
     { MUT_SILENT_CAST,         MUT_IMPAIRED_VISION         -1},
     { MUT_FAST,                MUT_SLOW,                    1},
@@ -670,7 +668,7 @@ string describe_mutations(bool drop_title)
             !form_keeps_mutations());
     }
 
-    if (you.species != SP_FELID)
+    if (you.species != SP_FELID && you.species != SP_FAIRY)
     {
         switch (you.body_size(PSIZE_TORSO, true))
         {
@@ -1234,6 +1232,15 @@ bool physiology_mutation_conflict(mutation_type mutat, bool ds_roll)
                            return t.mutation == mutat;});
     }
 
+    if (you.undead_or_demonic())
+    {
+        if (mutat == MUT_BERSERK || mutat == MUT_POISON_RESISTANCE)
+            return true; // Poison Resist is redundant and undeads can't berserk.
+    }
+
+    if (you.species == SP_FAIRY && (mutat == MUT_CLAWS || mutat == MUT_HORNS))
+        return true;
+
     // Strict 3-scale limit.
     if (_is_covering(mutat) && _body_covered() >= 3 && !ds_roll)
         return true;
@@ -1267,15 +1274,6 @@ bool physiology_mutation_conflict(mutation_type mutat, bool ds_roll)
     // Only Draconians (and gargoyles) can get wings.
     if (!species_is_draconian(you.species) && you.species != SP_GARGOYLE
         && mutat == MUT_BIG_WINGS)
-    {
-        return true;
-    }
-
-    // Vampires' healing and thirst rates depend on their blood level.
-    if (you.species == SP_VAMPIRE
-        && (mutat == MUT_CARNIVOROUS || mutat == MUT_HERBIVOROUS
-            || mutat == MUT_REGENERATION || mutat == MUT_INHIBITED_REGENERATION
-            || mutat == MUT_FAST_METABOLISM || mutat == MUT_SLOW_METABOLISM))
     {
         return true;
     }

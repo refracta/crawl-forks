@@ -547,7 +547,7 @@ static int _acquirement_jewellery_subtype(bool /*divine*/, int & /*quantity*/,
 
     // Rings are (number of usable rings) times as common as amulets.
     // XXX: unify this with the actual check for ring slots
-    const int ring_num = (you.species == SP_OCTOPODE ? 8 : 2)
+    const int ring_num = (you.species == SP_FAIRY ? 1 : you.species == SP_OCTOPODE ? 8 : 2)
                        - (you.get_mutation_level(MUT_MISSING_HAND) ? 1 : 0);
 
     // Try ten times to give something the player hasn't seen.
@@ -731,7 +731,7 @@ static int _find_acquirement_subtype(object_class_type &class_wanted,
     COMPILE_CHECK(ARRAYSZ(_subtype_finders) == NUM_OBJECT_CLASSES);
     ASSERT(class_wanted != OBJ_RANDOM);
 
-    if (class_wanted == OBJ_ARMOURS && you.species == SP_FELID)
+    if (class_wanted == OBJ_ARMOURS && (you.species == SP_FELID || you.species == SP_FAIRY))
         return OBJ_RANDOM;
 
     int type_wanted = OBJ_RANDOM;
@@ -1696,7 +1696,7 @@ static void _make_acquirement_items()
 {
     vector<object_class_type> rand_acq_classes;
 
-    if (you.species != SP_FELID)
+    if (you.species != SP_FELID && you.species != SP_FAIRY)
     {
         rand_acq_classes.emplace_back(OBJ_WEAPONS);
         rand_acq_classes.emplace_back(OBJ_ARMOURS);

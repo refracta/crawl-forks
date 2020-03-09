@@ -1473,7 +1473,7 @@ static bool _gift_jiyva_gift(bool forced)
     if (forced || you.piety >= piety_breakpoint(2)
                   && random2(you.piety) > 50
                   && one_chance_in(4) && !you.gift_timeout
-                  && (you.can_safely_mutate() || you.get_mutation_level(MUT_GHOST) == 1))
+                  && (you.can_safely_mutate() || you.get_mutation_level(MUT_INSUBSTANTIAL) == 1))
     {
         if (_jiyva_mutate())
         {
@@ -3227,6 +3227,7 @@ static bool _god_rejects_loveless(god_type god)
     }
 }
 
+// BCADDO: Refactor this to include the rejection messages clearly.
 bool player_can_join_god(god_type which_god)
 {
     if (you.species == SP_DEMIGOD || you.char_class == JOB_DEMIGOD)
@@ -3247,6 +3248,13 @@ bool player_can_join_god(god_type which_god)
 
     // Stasis prevents berserk.
     if (which_god == GOD_TROG && you.species == SP_FORMICID)
+        return false;
+
+    // Fairies natural halo cuts them out of Dith; lack of melee cuts them out of Trog, Oka and Wu.
+    // Being considered "Holy" cuts them out of Yred.
+    if (you.species == SP_FAIRY && (which_god == GOD_DITHMENOS || which_god == GOD_TROG 
+        || which_god == GOD_OKAWARU || which_god == GOD_WU_JIAN || which_god == GOD_YREDELEMNUL
+        || which_god == GOD_HEPLIAKLQANA)) // Hep is temporary pending coding their special case.
         return false;
 
     if (which_god == GOD_GOZAG && you.gold < gozag_service_fee())

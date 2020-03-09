@@ -331,7 +331,7 @@ bool player_caught_in_net()
     if (you.body_size(PSIZE_BODY) >= SIZE_GIANT)
         return false;
 
-    if (you.get_mutation_level(MUT_GHOST) == 1)
+    if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
     {
         mpr("A net falls through you.");
         return false;

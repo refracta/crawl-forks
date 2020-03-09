@@ -4427,7 +4427,7 @@ void bolt::affect_player()
     // Manticore spikes
     if (origin_spell == SPELL_THROW_BARBS && final_dam > 0)
     {
-        if (you.get_mutation_level(MUT_GHOST) == 1)
+        if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
             mpr("The barbed spikes sting slightly as they fall through your immaterial body.");
         else {
             mpr("The barbed spikes become lodged in your body.");

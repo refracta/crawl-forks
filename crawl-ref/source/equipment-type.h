@@ -28,6 +28,7 @@ enum equipment_type
     EQ_RING_SIX,
     EQ_RING_SEVEN,
     EQ_RING_EIGHT,
+    EQ_FAIRY_JEWEL,
     // Finger amulet provides an extra ring slot
     EQ_RING_AMULET,
     EQ_LAST_JEWELLERY = EQ_RING_AMULET,

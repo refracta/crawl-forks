@@ -459,11 +459,15 @@ bool spell_harms_area(spell_type spell)
     return false;
 }
 
-// applied to spell misfires (more power = worse) and triggers
-// for Xom acting (more power = more likely to grab his attention) {dlb}
 int spell_mana(spell_type which_spell)
 {
-    return _seekspell(which_spell)->level; // BCADDO: Change this to match with energy staff?
+    int base = _seekspell(which_spell)->level;
+    if (you.species == SP_FAIRY)
+        return min(1, base - 1);
+    item_def * stf = you.staff();
+    if (stf && staff_enhances_spell(stf, which_spell) && get_staff_facet(*stf) == SPSTF_ENERGY)
+        return base - 1;
+    return base;
 }
 
 // applied in naughties (more difficult = higher level knowledge = worse)
@@ -1252,6 +1256,8 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
         break;
 
     case SPELL_INVISIBILITY:
+        if (you.species == SP_FAIRY)
+            return "you cannot douse your own light!";
         if (!prevent && temp && you.backlit())
             return "invisibility won't help you when you glow in the dark.";
         break;
@@ -1260,6 +1266,8 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
         // mere magic candle is not enough, but divine light blocks it completely
         if (temp && (you.haloed() || !prevent && have_passive(passive_t::halo)))
             return "darkness is useless against divine light.";
+        if (you.species == SP_FAIRY)
+            return "you cannot douse your own light!";
         break;
 
     case SPELL_DEFLECT_MISSILES:
@@ -1280,6 +1288,8 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
     case SPELL_HYDRA_FORM:
     case SPELL_ICE_FORM:
     case SPELL_SPIDER_FORM:
+        if (you.species == SP_FAIRY)
+            return "you cannot grow enough in size to do this.";
         if (you.undead_state(temp) == US_UNDEAD
             || you.undead_state(temp) == US_HUNGRY_DEAD)
         {
@@ -1308,7 +1318,7 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
         // intentional fallthrough
     case SPELL_PORTAL_PROJECTILE:
     case SPELL_SPECTRAL_WEAPON:
-        if (you.species == SP_FELID)
+        if (you.species == SP_FELID || you.species == SP_FAIRY)
             return "this spell is useless without hands.";
         break;
 

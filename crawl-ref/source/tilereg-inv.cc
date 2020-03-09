@@ -408,7 +408,7 @@ bool InventoryRegion::update_tip_text(string& tip)
             case OBJ_WEAPONS:
             case OBJ_STAVES:
             case OBJ_SHIELDS:
-                if (you.species != SP_FELID)
+                if (you.species != SP_FELID && you.species != SP_FAIRY)
                 {
                     _handle_wield_tip(tmp, cmd);
                     if (is_throwable(&you, item))
@@ -446,7 +446,7 @@ bool InventoryRegion::update_tip_text(string& tip)
                 _handle_wield_tip(tmp, cmd, "\n[Ctrl + L-Click] ", true);
                 break;
             case OBJ_ARMOURS:
-                if (you.species != SP_FELID)
+                if (you.species != SP_FELID && you.species != SP_FAIRY)
                 {
                     tmp += "Wear (%)";
                     cmd.push_back(CMD_WEAR_ARMOUR);
@@ -465,7 +465,7 @@ bool InventoryRegion::update_tip_text(string& tip)
                 cmd.push_back(CMD_REMOVE_JEWELLERY);
                 break;
             case OBJ_MISSILES:
-                if (you.species != SP_FELID)
+                if (you.species != SP_FELID && you.species != SP_FAIRY)
                 {
                     tmp += "Fire (%)";
                     cmd.push_back(CMD_FIRE);
@@ -475,7 +475,7 @@ bool InventoryRegion::update_tip_text(string& tip)
                 }
                 break;
             case OBJ_WANDS:
-                if (you.species != SP_FELID)
+                if (you.species != SP_FELID && you.species != SP_FAIRY)
                 {
                     tmp += "Evoke (%)";
                     cmd.push_back(CMD_EVOKE);

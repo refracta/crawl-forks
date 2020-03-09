@@ -553,7 +553,9 @@ int player::halo_radius() const
                                                     / piety_breakpoint(5);
     }
 
-    if (player_equip_unrand(UNRAND_EOS))
+    if (you.species == SP_FAIRY)
+        size = max(size, 2);
+    else if (player_equip_unrand(UNRAND_EOS))
         size = max(size, 3);
     else if (you.attribute[ATTR_HEAVENLY_STORM] > 0)
         size = max(size, 1);
@@ -568,6 +570,8 @@ static int _mons_class_halo_radius(monster_type type)
     // little or none.
     switch (type)
     {
+    case MONS_FAIRY:
+        return 2;
     case MONS_ANGEL:
         return 4;
     case MONS_CHERUB:

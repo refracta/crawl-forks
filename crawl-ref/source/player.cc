@@ -801,6 +801,11 @@ maybe_bool you_can_wear(equipment_type eq, bool temp)
     case EQ_AMULET:
         return MB_TRUE;
 
+    case EQ_FAIRY_JEWEL:
+        if (you.species == SP_FAIRY)
+            return MB_TRUE;
+        return MB_FALSE;
+
     case EQ_RING_AMULET:
         return player_equip_unrand(UNRAND_FINGER_AMULET) ? MB_TRUE : MB_FALSE;
 
@@ -881,6 +886,7 @@ bool player_has_feet(bool temp, bool include_mutations)
         || you.species == SP_FELID
         || you.species == SP_OCTOPODE
         || you.species == SP_LIGNIFITE
+        || you.species == SP_FAIRY
         || you.fishtail && temp)
     {
         return false;
@@ -960,8 +966,13 @@ int player::wearing(equipment_type slot, int sub_type, bool calc_unid) const
     case EQ_AMULET:
         if ((item = slot_item(static_cast<equipment_type>(EQ_AMULET)))
             && item->sub_type == sub_type
-            && (calc_unid
-                || item_type_known(*item)))
+            && (calc_unid || item_type_known(*item)))
+        {
+            ret += 1;
+        }
+        if ((item = slot_item(static_cast<equipment_type>(EQ_FAIRY_JEWEL)))
+            && item->sub_type == sub_type
+            && (calc_unid || item_type_known(*item)))
         {
             ret += 1;
         }
@@ -1177,7 +1188,7 @@ int player_teleport(bool calc_unid)
 }
 
 // Computes bonuses to regeneration from most sources. Does not handle
-// slow regeneration, vampireness, or Trog's Hand.
+// slow regeneration, or Trog's Hand.
 static int _player_bonus_regen()
 {
     int rr = 0;
@@ -1214,6 +1225,10 @@ static int _player_bonus_regen()
     // if the duration of the effect is still active.
     if (you.duration[DUR_POWERED_BY_DEATH])
         rr += you.props[POWERED_BY_DEATH_KEY].get_int() * 100;
+
+    // With fairy's super low HP. Normal bonuses would be too much.
+    if (you.species == SP_FAIRY)
+        rr /= 5;
 
     return rr;
 }
@@ -1258,18 +1273,6 @@ int player_regen()
     // Before applying other effects, make sure that there's something
     // to heal.
     rr = max(1, rr);
-
-    // Healing depending on satiation.
-    // The better-fed you are, the faster you heal.
-    if (you.species == SP_VAMPIRE)
-    {
-        if (you.hunger_state <= HS_STARVING)
-            rr = 0;   // No regeneration for starving vampires.
-        else if (you.hunger_state < HS_SATIATED)
-            rr /= 2;  // Halved regeneration for hungry vampires.
-        else if (you.hunger_state >= HS_FULL)
-            rr += 20; // Bonus regeneration for full vampires.
-    }
 
     if (you.disease || regeneration_is_inhibited() || !player_regenerates_hp() || you.duration[DUR_COLLAPSE])
         rr = 0;
@@ -1861,7 +1864,7 @@ int player_res_sticky_flame(bool calc_unid, bool /*temp*/, bool items)
     if (items && calc_unid && you.wearing(EQ_RINGS, RING_CHAOS) && one_chance_in(3))
         rsf++;
 
-    if (you.get_mutation_level(MUT_GHOST) == 1)
+    if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
         rsf++;
 
     if (get_form()->res_sticky_flame())
@@ -2042,7 +2045,7 @@ int hepliakqlana_ally_movement_speed()
     mv += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_PONDEROUSNESS);
 
     // Tengu flight always active for ancestor.
-    if (you.species == SP_TENGU && you.experience_level > 13)
+    if (you.species == SP_TENGU && you.experience_level > 3)
         mv--;
 
     // Mutations: Ignoring temporary forms.
@@ -2334,7 +2337,7 @@ static int _player_scale_evasion(int prescaled_ev, const int scale)
     }
 
     // Ghost Mutation (Silent Spectre) gives a 20% EV boost.
-    if (you.get_mutation_level(MUT_GHOST) == 1)
+    if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
     {
         const int ev_bonus = max(1 * scale, prescaled_ev / 5);
         return prescaled_ev + ev_bonus;
@@ -4190,6 +4193,9 @@ int get_real_hp(bool trans, bool rotted)
 {
     int hitp;
 
+    if (you.species == SP_FAIRY)
+        return (3 + you.experience_level / 3);
+
     hitp  = you.experience_level * 11 / 2 + 8;
     hitp += you.hp_max_adj_perm;
     // Important: we shouldn't add Heroism boosts here.
@@ -4271,6 +4277,9 @@ int get_real_mp(bool include_items)
 
     if (include_items && you.wearing_ego(EQ_WEAPON1, SPWPN_ANTIMAGIC) && !you.wearing_ego(EQ_GLOVES, SPARM_WIELDING))
         enp /= 3;
+
+    if (you.species == SP_FAIRY)
+        enp = max(3, enp/5);
 
     enp = max(enp, 0);
 
@@ -5082,6 +5091,8 @@ bool invis_allowed(bool quiet, string *fail_reason)
             reason = "Your divine halo glows too radiantly";
         else if (weapon)
             reason = "Your weapon shines too brightly";
+        else if (you.species == SP_FAIRY)
+            reason = "Your natural light cannot be put out";
         else
             die("haloed by an unknown source");
 
@@ -6563,7 +6574,7 @@ bool player::is_insubstantial() const
 {
     if (form == transformation::wisp)
         return true;
-    if (you.get_mutation_level(MUT_GHOST) == 1)
+    if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
         return true;
     else
         return false;
@@ -8200,6 +8211,8 @@ bool player::can_potion_heal()
 
 int player::scale_potion_healing(int healing_amount)
 {
+    if (you.species == SP_FAIRY)
+        healing_amount = div_round_up(healing_amount, 10);
     return div_rand_round(healing_amount * _get_potion_heal_factor(), 3);
 }
 
@@ -8689,7 +8702,7 @@ bool player::immune_to_hex(const spell_type hex) const
     case SPELL_PETRIFY:
     case SPELL_PETRIFICATION_GAZE:
     {
-        if (you.get_mutation_level(MUT_GHOST) > 0)
+        if (you.get_mutation_level(MUT_INSUBSTANTIAL) > 0)
             return true;
     }   // fallthrough
     case SPELL_PARALYSE:

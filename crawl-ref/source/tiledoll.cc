@@ -278,7 +278,7 @@ void fill_doll_equipment(dolls_data &result)
     switch (you.form)
     {
     case transformation::tree:
-        if (you.get_mutation_level(MUT_GHOST) == 1)
+        if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
             result.parts[TILEP_PART_BASE] = TILEP_TRAN_TREE_SPECTRAL;
         else 
             result.parts[TILEP_PART_BASE]    = TILEP_TRAN_TREE;
@@ -476,7 +476,7 @@ void fill_doll_equipment(dolls_data &result)
     // Halo.
     if (result.parts[TILEP_PART_HALO] == TILEP_SHOW_EQUIP)
     {
-        const bool halo = you.haloed();
+        const bool halo = (you.haloed() && you.species != SP_FAIRY);
         result.parts[TILEP_PART_HALO] = halo ? TILEP_HALO_TSO : 0;
     }
     // Enchantments.

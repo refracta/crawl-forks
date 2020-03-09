@@ -603,24 +603,26 @@ void ash_check_bondage(bool msg)
             s = ET_ARMOUR;
         // Missing hands mean fewer rings
         else if (you.species != SP_OCTOPODE && i == EQ_LEFT_RING
-                 && you.get_mutation_level(MUT_MISSING_HAND))
+            && you.get_mutation_level(MUT_MISSING_HAND))
         {
             continue;
         }
         // Octopodes don't count these slots:
         else if (you.species == SP_OCTOPODE
-                 && ((i == EQ_LEFT_RING || i == EQ_RIGHT_RING)
-                     || (i == EQ_RING_EIGHT
-                         && you.get_mutation_level(MUT_MISSING_HAND))))
+            && ((i == EQ_LEFT_RING || i == EQ_RIGHT_RING)
+                || (i == EQ_RING_EIGHT
+                    && you.get_mutation_level(MUT_MISSING_HAND))))
         {
             continue;
         }
         // *Only* octopodes count these slots:
         else if (you.species != SP_OCTOPODE
-                 && i >= EQ_RING_ONE && i <= EQ_RING_EIGHT)
+            && i >= EQ_RING_ONE && i <= EQ_RING_EIGHT)
         {
             continue;
         }
+        else if (you.species != SP_FAIRY && i == EQ_FAIRY_JEWEL)
+            continue;
         // The macabre finger necklace's extra slot does count if equipped.
         else if (!player_equip_unrand(UNRAND_FINGER_AMULET)
                  && i == EQ_RING_AMULET)
@@ -683,6 +685,12 @@ void ash_check_bondage(bool msg)
         // Allow full bondage when all available slots are cursed.
         if (you.bondage_level == 3)
             ++you.bondage_level;
+    }
+    // Fairies only have one slot!
+    if (you.species == SP_FAIRY)
+    {
+        if (you.equip[EQ_FAIRY_JEWEL])
+            you.bondage_level = 4;
     }
     else
         for (int i = ET_RIGHT; i < NUM_ET; ++i)

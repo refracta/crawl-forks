@@ -4887,6 +4887,8 @@ mon_body_shape get_mon_shape(const monster_type mc)
                 break;
             case SP_CENTAUR:
                 return static_cast<mon_body_shape>(MON_SHAPE_CENTAUR);
+            case SP_FAIRY:
+                return static_cast<mon_body_shape>(MON_SHAPE_INSECT_WINGED);
             default:
                 return static_cast<mon_body_shape>(MON_SHAPE_HUMANOID);
                 break;

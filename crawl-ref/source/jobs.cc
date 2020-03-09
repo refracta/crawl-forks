@@ -10,6 +10,7 @@
 #include "ng-setup.h"
 #include "playable.h"
 #include "player.h"
+#include "skills.h"
 #include "stringutil.h"
 #include "xom.h"
 
@@ -150,7 +151,8 @@ void give_job_skills(job_type job)
             if (you.species == SP_FELID && job == JOB_FIGHTER)
                 amount += 2;
         }
-        you.skills[skill] += amount;
+        if (!is_useless_skill(skill))
+            you.skills[skill] += amount;
     }
 }
 

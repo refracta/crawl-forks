@@ -306,6 +306,9 @@ string item_def::name(description_level_type descrip, bool terse, bool ident,
                 case EQ_RING_AMULET:
                     buff << " (on amulet)";
                     break;
+                case EQ_FAIRY_JEWEL:
+                    buff << " (around core)";
+                    break;
                 case EQ_OLD_SHIELD:
                     buff << " (OLD SHIELD; USELESS)";
                     break;
@@ -3606,7 +3609,7 @@ bool is_useless_item(const item_def &item, bool temp)
     {
     case OBJ_SHIELDS: // Deliberate fallthrough.
     case OBJ_WEAPONS:
-        if (you.species == SP_FELID)
+        if (you.species == SP_FELID || you.species == SP_FAIRY)
             return true;
 
         // Either you can use it now or you'll be able to use it later.
@@ -3679,7 +3682,7 @@ bool is_useless_item(const item_def &item, bool temp)
         case SCR_AMNESIA:
             return you_worship(GOD_TROG);
         case SCR_ENCHANT:
-            return (you.species == SP_FELID && you.get_mutation_level(MUT_NO_ARTIFICE));
+            return ((you.species == SP_FELID || you.species == SP_FAIRY) && you.get_mutation_level(MUT_NO_ARTIFICE));
         case SCR_BLESS_ITEM:
             return you.species == SP_FELID;
         case SCR_SUMMONING:
@@ -3853,7 +3856,7 @@ bool is_useless_item(const item_def &item, bool temp)
 #endif
 
     case OBJ_STAVES:
-        if (you.species == SP_FELID)
+        if (you.species == SP_FELID || you.species == SP_FAIRY)
             return true;
         if (!you.could_wield(item, true, !temp))
         {

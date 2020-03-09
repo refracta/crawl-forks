@@ -20,6 +20,17 @@ static bool _banned_combination(job_type job, species_type species)
 {
     switch (species)
     {
+    case SP_FAIRY:
+        if (job == JOB_FIGHTER
+            || job == JOB_MONK
+            || job == JOB_ENCHANTER
+            || job == JOB_BERSERKER
+            || job == JOB_SKALD
+            || job == JOB_TRANSMUTER)
+        {
+            return true;
+        }
+        // Fallthrough.
     case SP_FELID:
         if (job == JOB_GLADIATOR
             || job == JOB_HUNTER

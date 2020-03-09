@@ -155,6 +155,14 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
     else if (attacker->is_player())
     {
         ASSERT(!crawl_state.game_is_arena());
+
+        if (you.species == SP_FAIRY)
+        {
+            mpr("You're too small and insubstantial to effectively melee attack.");
+            you.turn_is_over = false;
+            return false;
+        }
+
         // Can't damage orbs this way.
         if (mons_is_projectile(defender->type) && !you.confused())
         {

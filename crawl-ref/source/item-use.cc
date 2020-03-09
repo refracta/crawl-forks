@@ -1217,7 +1217,7 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
 {
     const object_class_type base_type = item.base_type;
 
-    if (base_type != OBJ_ARMOURS || you.species == SP_FELID)
+    if (base_type != OBJ_ARMOURS || you.species == SP_FELID || you.species == SP_FAIRY)
     {
         if (verbose)
             mpr("You can't wear that.");
@@ -1537,7 +1537,7 @@ bool wear_armour(int item)
     // conditions that would make it impossible to wear any type of armour.
     // TODO: perhaps also worth checking here whether all available armour slots
     // are cursed. Same with jewellery.
-    if (you.species == SP_FELID)
+    if (you.species == SP_FELID || you.species == SP_FAIRY)
     {
         mpr("You can't wear anything.");
         return false;
@@ -1730,6 +1730,10 @@ static vector<equipment_type> _current_ring_types()
                 ret.push_back(slot);
         }
     }
+    else if (you.species == SP_FAIRY)
+    {
+        ret.push_back(EQ_FAIRY_JEWEL);
+    }
     else
     {
         if (you.get_mutation_level(MUT_MISSING_HAND) == 0)
@@ -1744,7 +1748,8 @@ static vector<equipment_type> _current_ring_types()
 static vector<equipment_type> _current_jewellery_types()
 {
     vector<equipment_type> ret = _current_ring_types();
-    ret.push_back(EQ_AMULET);
+    if (you.species != SP_FAIRY)
+        ret.push_back(EQ_AMULET);
     return ret;
 }
 
@@ -1754,6 +1759,7 @@ static char _ring_slot_key(equipment_type slot)
     {
     case EQ_LEFT_RING:      return '<';
     case EQ_RIGHT_RING:     return '>';
+    case EQ_FAIRY_JEWEL:    return '.';
     case EQ_RING_AMULET:    return '^';
     case EQ_RING_ONE:       return '1';
     case EQ_RING_TWO:       return '2';
@@ -2174,6 +2180,8 @@ static equipment_type _choose_ring_slot()
             msg += " (left)";
         else if (eq == EQ_RIGHT_RING)
             msg += " (right)";
+        else if (eq == EQ_FAIRY_JEWEL)
+            msg += " (around core)";
         else if (eq == EQ_RING_AMULET)
             msg += " (amulet)";
         mprf_nocap("%s", msg.c_str());
@@ -2218,6 +2226,17 @@ static bool _can_puton_jewellery(int item_slot)
     {
         mpr("You can only put on jewellery.");
         return false;
+    }
+
+    if (you.species == SP_FAIRY)
+    {
+        int existing = you.equip[EQ_FAIRY_JEWEL];
+        if (existing != -1 && you.inv[existing].soul_bound())
+        {
+            mprf("%s is bound to your soul!",
+                you.inv[existing].name(DESC_YOUR).c_str());
+            return false;
+        }
     }
 
     const bool is_amulet = jewellery_is_amulet(item);

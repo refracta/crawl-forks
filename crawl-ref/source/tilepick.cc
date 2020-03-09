@@ -4046,6 +4046,8 @@ static tileidx_t _tileidx_player_species_base(const species_type species)
             return TILEG_SP_MERFOLK;
         case SP_FELID:
             return TILEG_SP_FELID;
+        case SP_FAIRY:
+            return TILEG_SP_FAIRY;
         case SP_OCTOPODE:
             return TILEG_SP_OCTOPODE;
         case SP_GARGOYLE:

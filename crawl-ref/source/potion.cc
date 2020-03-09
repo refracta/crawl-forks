@@ -623,7 +623,10 @@ public:
 
     bool effect(bool=true, int = 40, bool=true) const override
     {
-        inc_mp(POT_MAGIC_MP);
+        int amt = POT_MAGIC_MP;
+        if (you.species == SP_FAIRY)
+            amt = div_rand_round(amt, 10);
+        inc_mp(amt);
         mpr("Magic courses through your body.");
         return true;
     }

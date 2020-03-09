@@ -1932,7 +1932,7 @@ static const mutation_def mut_data[] =
 { "Silence once again prevents your spellcasting.", "", "" },
 },
 
-{ MUT_GHOST, 0, 1, mutflag::good, false,
+{ MUT_INSUBSTANTIAL, 0, 1, mutflag::good, false,
 "insubstantial",
 
 { "Your insubstantial form boosts your evasion and grants immunity to sticky flames, nets and constriction.", "", "" },

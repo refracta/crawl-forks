@@ -97,7 +97,7 @@ enum class abflag
     conf_ok             = 0x00000100, // can use even if confused
                         //0x00000200, // was rations
                         //0x00000400, // was rations_or_piety
-    variable_mp         = 0x00000800, // costs a variable amount of MP
+                        //0x00000800, // was variable_mp
                         //0x00001000,
                         //0x00002000,
                         //0x00004000,
@@ -577,7 +577,7 @@ static const ability_def Ability_List[] =
     // Pakellas
     { ABIL_PAKELLAS_DEVICE_SURGE, "Device Surge",
       0, 0, 0, 1,
-      {fail_basis::invo, 40, 5, 20}, abflag::variable_mp | abflag::instant },
+      {fail_basis::invo, 40, 5, 20}, abflag::instant },
 #endif
 
     // Uskayaw
@@ -639,6 +639,8 @@ static const ability_def& get_ability_def(ability_type abil)
 
 unsigned int ability_mp_cost(ability_type abil)
 {
+    if (you.species == SP_FAIRY && get_ability_def(abil).mp_cost > 1)
+        return 1;
     return get_ability_def(abil).mp_cost;
 }
 
@@ -715,11 +717,8 @@ const string make_cost_description(ability_type ability)
 {
     const ability_def& abil = get_ability_def(ability);
     string ret;
-    if (abil.mp_cost)
-        ret += make_stringf(", %d MP", abil.mp_cost);
-
-    if (abil.flags & abflag::variable_mp)
-        ret += ", MP";
+    if (ability_mp_cost(abil.ability))
+        ret += make_stringf(", %d MP", ability_mp_cost(abil.ability));
 
     if (ability == ABIL_HEAL_WOUNDS)
         ret += make_stringf(", Permanent MP (%d left)", get_real_mp(false));
@@ -793,11 +792,11 @@ static const string _detailed_cost_description(ability_type ability)
     bool have_cost = false;
     ret << "This ability costs: ";
 
-    if (abil.mp_cost > 0)
+    if (ability_mp_cost(abil.ability) > 0)
     {
         have_cost = true;
         ret << "\nMP     : ";
-        ret << abil.mp_cost;
+        ret << ability_mp_cost(abil.ability);
     }
     if (abil.hp_cost)
     {
@@ -915,7 +914,7 @@ ability_type fixup_ability(ability_type ability)
     case ABIL_TSO_BLESS_WEAPON:
     case ABIL_KIKU_BLESS_WEAPON:
     case ABIL_LUGONU_BLESS_WEAPON:
-        if (you.species == SP_FELID)
+        if (you.species == SP_FELID || you.species == SP_FAIRY)
             return ABIL_NON_ABILITY;
         else
             return ability;
@@ -1352,7 +1351,7 @@ static bool _check_ability_possible(const ability_def& abil, bool quiet = false)
     // Check that we can afford to pay the costs.
     // Note that mutation shenanigans might leave us with negative MP,
     // so don't fail in that case if there's no MP cost.
-    if (abil.mp_cost > 0 && !enough_mp(abil.mp_cost, quiet, true))
+    if (ability_mp_cost(abil.ability) > 0 && !enough_mp(ability_mp_cost(abil.ability), quiet, true))
         return false;
 
     const int hpcost = abil.hp_cost.cost(you.hp_max);
@@ -1998,7 +1997,7 @@ static spret _do_ability(const ability_def& abil, bool fail)
             you.attribute[ATTR_PERM_FLIGHT] = 1;
             float_player();
         }
-        if (you.species == SP_TENGU)
+        if (you.get_mutation_level(MUT_TENGU_FLIGHT))
             mpr("You feel very comfortable in the air.");
         break;
 
@@ -2547,6 +2546,9 @@ static spret _do_ability(const ability_def& abil, bool fail)
         else
             pow = apply_invo_enhancer(10 + you.skill_rdiv(SK_INVOCATIONS, 1, 3), true);
         pow = min(50, pow);
+        if (you.species == SP_FAIRY)
+            pow = div_rand_round(pow, 10);
+        pow = max(1, pow);
         const int healed = pow + roll_dice(2, pow) - 2;
         mpr("You are healed.");
         inc_hp(healed);
@@ -3113,10 +3115,10 @@ static void _pay_ability_costs(const ability_def& abil)
     const int hp_cost    = abil.hp_cost.cost(you.hp_max);
 
     dprf("Cost: mp=%d; hp=%d; food=%d; piety=%d",
-         abil.mp_cost, hp_cost, food_cost, piety_cost);
+        ability_mp_cost(abil.ability), hp_cost, food_cost, piety_cost);
 
-    if (abil.mp_cost)
-        dec_mp(abil.mp_cost);
+    if (ability_mp_cost(abil.ability))
+        dec_mp(ability_mp_cost(abil.ability));
 
     if (abil.hp_cost)
         dec_hp(hp_cost, false);

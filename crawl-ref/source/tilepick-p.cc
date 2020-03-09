@@ -1013,19 +1013,19 @@ tileidx_t tileidx_player()
         break;
     // animals
     case transformation::bat:
-        if (you.get_mutation_level(MUT_GHOST) == 1)
+        if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
             ch = TILEP_TRAN_BAT_SPECTRAL;
         else    
             ch = TILEP_TRAN_BAT;       
         break;
     case transformation::spider:
-        if (you.get_mutation_level(MUT_GHOST) == 1)
+        if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
             ch = TILEP_TRAN_SPIDER_SPECTRAL;
         else
             ch = TILEP_TRAN_SPIDER;
         break;
     case transformation::pig:
-        if (you.get_mutation_level(MUT_GHOST) == 1)
+        if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
             ch = TILEP_TRAN_PIG_SPECTRAL;
         else
             ch = TILEP_TRAN_PIG;
@@ -1035,7 +1035,7 @@ tileidx_t tileidx_player()
 #endif
     // non-animals
     case transformation::ice_beast:
-        if (you.get_mutation_level(MUT_GHOST) == 1)
+        if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
             ch = TILEP_TRAN_ICE_BEAST_SPECTRAL;
         else
             ch = TILEP_TRAN_ICE_BEAST;
@@ -1045,14 +1045,14 @@ tileidx_t tileidx_player()
     case transformation::jelly:     ch = TILEP_MONS_JELLY;     break;
 #endif
     case transformation::fungus:
-        if (you.get_mutation_level(MUT_GHOST) == 1)
+        if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
             ch = TILEP_TRAN_MUSHROOM_SPECTRAL;
         else
             ch = TILEP_TRAN_MUSHROOM;
         break;
     case transformation::shadow:    ch = TILEP_TRAN_SHADOW;    break;
     case transformation::hydra:     
-        if (you.get_mutation_level(MUT_GHOST) == 1)
+        if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
             ch = tileidx_mon_clamp(TILEP_TRAN_SPECTRAL_HYDRA, you.heads() - 1);
         else
             ch = tileidx_mon_clamp(TILEP_MONS_HYDRA, you.heads() - 1);
@@ -1152,7 +1152,8 @@ tileidx_t tilep_species_to_base_tile(int sp, int level)
 {
 
     if (sp != SP_CENTAUR && sp != SP_OCTOPODE
-        && sp != SP_NAGA && sp != SP_FELID)
+        && sp != SP_NAGA && sp != SP_FELID
+        && sp != SP_FAIRY)
     {
         if (you.char_class == JOB_MUMMY)
             return TILEP_BASE_MUMMY;
@@ -1166,7 +1167,6 @@ tileidx_t tilep_species_to_base_tile(int sp, int level)
     case SP_HUMAN:
         return TILEP_BASE_HUMAN;
 #if TAG_MAJOR_VERSION == 34
-    case SP_HIGH_ELF:
     case SP_SLUDGE_ELF:
 #endif
     case SP_DEEP_ELF:
@@ -1208,6 +1208,8 @@ tileidx_t tilep_species_to_base_tile(int sp, int level)
         return TILEP_BASE_MINOTAUR;
     case SP_DEMONSPAWN:
         return TILEP_BASE_DEMONSPAWN;
+    case SP_FAIRY:
+        return TILEP_BASE_FAIRY;
     case SP_GHOUL:
         return TILEP_BASE_GHOUL;
     case SP_TENGU:
@@ -1273,7 +1275,6 @@ void tilep_race_default(int sp, int level, dolls_data *doll)
     switch (sp)
     {
 #if TAG_MAJOR_VERSION == 34
-        case SP_HIGH_ELF:
         case SP_SLUDGE_ELF:
             hair = TILEP_HAIR_ELF_YELLOW;
             break;
@@ -1619,6 +1620,22 @@ void tilep_calc_flags(const dolls_data &doll, int flag[])
         flag[TILEP_PART_SHADOW]= TILEP_FLAG_HIDE;
         flag[TILEP_PART_DRCWING]=TILEP_FLAG_HIDE;
         flag[TILEP_PART_DRCHEAD]=TILEP_FLAG_HIDE;
+    }
+    else if (is_player_tile(doll.parts[TILEP_PART_BASE], TILEP_BASE_FAIRY))
+    {
+        flag[TILEP_PART_CLOAK] = TILEP_FLAG_HIDE;
+        flag[TILEP_PART_BOOTS] = TILEP_FLAG_HIDE;
+        flag[TILEP_PART_LEG] = TILEP_FLAG_HIDE;
+        flag[TILEP_PART_BODY] = TILEP_FLAG_HIDE;
+        flag[TILEP_PART_ARM] = TILEP_FLAG_HIDE;
+        flag[TILEP_PART_HAND1] = TILEP_FLAG_HIDE;
+        flag[TILEP_PART_HAND2] = TILEP_FLAG_HIDE;
+        flag[TILEP_PART_HELM] = TILEP_FLAG_HIDE;
+        flag[TILEP_PART_HAIR] = TILEP_FLAG_HIDE;
+        flag[TILEP_PART_BEARD] = TILEP_FLAG_HIDE;
+        flag[TILEP_PART_SHADOW] = TILEP_FLAG_HIDE;
+        flag[TILEP_PART_DRCWING] = TILEP_FLAG_HIDE;
+        flag[TILEP_PART_DRCHEAD] = TILEP_FLAG_HIDE;
     }
     else if (is_player_tile(doll.parts[TILEP_PART_BASE], TILEP_BASE_OCTOPODE))
     {

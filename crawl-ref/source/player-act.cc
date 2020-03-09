@@ -927,7 +927,7 @@ bool player::is_web_immune() const
     // Spider form
     if (form == transformation::spider)
         return true;
-    else if (you.get_mutation_level(MUT_GHOST) == 1)
+    else if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
         return true;
     else
         return false;
