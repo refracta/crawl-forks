@@ -418,15 +418,15 @@ static bool _build_level_vetoable(bool enable_random_maps)
 // the rug with a veto.
 static void _builder_assertions()
 {
-#ifdef ASSERTS
     for (rectangle_iterator ri(0); ri; ++ri)
         if (!in_bounds(*ri))
             if (!feat_is_valid_border(grd(*ri)))
             {
-                die("invalid map border at (%d,%d): %s", ri->x, ri->y,
-                    dungeon_feature_name(grd(*ri)));
+                grd(*ri) = DNGN_PERMAROCK_WALL;
+
+//                die("invalid map border at (%d,%d): %s", ri->x, ri->y,
+//                    dungeon_feature_name(grd(*ri)));
             }
-#endif
 }
 
 /**
