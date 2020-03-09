@@ -833,6 +833,9 @@ void attack_cleave_targets(actor &attacker, list<actor*> &targets,
                            int attack_number, int effective_attack_number,
                            wu_jian_attack_type wu_jian_attack)
 {
+    if (!attacker.alive())
+        return;
+
     if (attacker.is_player())
     {
         if ((wu_jian_attack == WU_JIAN_ATTACK_WHIRLWIND
