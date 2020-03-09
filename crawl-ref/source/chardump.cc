@@ -1237,6 +1237,8 @@ static const char* _aux_attack_names[1 + UNAT_LAST_ATTACK] =
 {
     "No attack",
     "Constrict",
+    "Staff Constrict",
+    "Staff Tentacle Slap",
     "Kick",
     "Headbutt",
     "Peck",
