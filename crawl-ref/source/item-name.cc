@@ -3156,7 +3156,18 @@ string make_name(uint32_t seed, makename_type name_type)
         if (name_type == MNAME_JIYVA)
             return make_name(rng::get_uint32(), MNAME_JIYVA);
 
-        name = "plog";
+        switch (random2(8))
+        {
+        case 0: name = "plog"; break;
+        case 1: name = "rose"; break;
+        case 2: name = "dpeg"; break;
+        case 3: name = "aidanh"; break;
+        case 4: name = "dynast"; break;
+        case 5: name = "ontoclasm"; break;
+        case 6: name = "hellmonk"; break;
+        case 7: name = "dracoOmega"; break;
+        case 8: name = "bcadren"; break;
+        }
     }
 
     string uppercased_name;
