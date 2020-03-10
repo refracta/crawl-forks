@@ -776,7 +776,12 @@ static const vector<chaos_effect> chaos_effects = {
     { "invisible", 10, nullptr, BEAM_INVISIBILITY, },
     { "mighting", 10, nullptr, BEAM_MIGHT, },
     { "agility", 10, nullptr, BEAM_AGILITY, },
-    // BCADDO: Add chaotic infusion here.
+    { "entropic burst", 30, [](const actor &defender) {
+            return defender.is_monster();
+        }, BEAM_ENTROPIC_BURST, },
+    { "chaotic infusion", 30, [](const actor &defender) {
+            return defender.is_monster();
+        }, BEAM_CHAOTIC_INFUSION, },
     { "slowing", 10, _is_chaos_slowable, BEAM_SLOW },
     {
         "petrify", 10, [](const actor &defender) {

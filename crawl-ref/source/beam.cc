@@ -593,6 +593,7 @@ static beam_type _chaos_enchant_type()
 {
     beam_type ret_val;
     ret_val = random_choose_weighted(
+        28, BEAM_CHAOTIC_INFUSION,
         14, BEAM_CONFUSION,
         14, BEAM_ENTROPIC_BURST,
         // We don't have a distortion beam, so choose from the three effects
@@ -6201,6 +6202,16 @@ mon_resist_type bolt::apply_enchantment_to_monster(monster* mon)
         }
         return MON_AFFECTED;
 
+    case BEAM_CHAOTIC_INFUSION:
+        if (!mon->has_ench(ENCH_CHAOTIC_INFUSION)
+            && !mon->is_summoned()
+            && mon->add_ench(mon_enchant(ENCH_CHAOTIC_INFUSION, 1, agent())))
+        {
+            if (simple_monster_message(*mon, " is infused with chaotic energies!"))
+                obvious_effect = true;
+        }
+        return MON_AFFECTED;
+
     case BEAM_DIMENSION_ANCHOR:
         if (!mon->has_ench(ENCH_DIMENSION_ANCHOR)
             && mon->add_ench(mon_enchant(ENCH_DIMENSION_ANCHOR, 0, agent(),
@@ -6905,7 +6916,8 @@ bool bolt::nice_to(const monster_info& mi) const
         || flavour == BEAM_MIGHT
         || flavour == BEAM_AGILITY
         || flavour == BEAM_INVISIBILITY
-        || flavour == BEAM_RESISTANCE)
+        || flavour == BEAM_RESISTANCE
+        || flavour == BEAM_CHAOTIC_INFUSION)
     {
         return true;
     }
@@ -7105,6 +7117,7 @@ static string _beam_type_name(beam_type type)
     case BEAM_ELDRITCH:              return "forbidden energy";
     case BEAM_CHAOS_ENCHANTMENT:     return "chaotic enchantment";
     case BEAM_ENTROPIC_BURST:        return "entropic burst";
+    case BEAM_CHAOTIC_INFUSION:      return "infusion of chaos";
     case BEAM_SLOW:                  return "slow";
     case BEAM_HASTE:                 return "haste";
     case BEAM_MIGHT:                 return "might";

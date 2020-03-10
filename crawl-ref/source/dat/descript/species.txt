@@ -36,7 +36,7 @@ a colour.
 Fairy
 
 Fairies are tiny insubstantial balls of light; too tiny to use almost any gear at 
-all and extremely low on mana and frail Their magical auras protect them from damage 
+all and extremely low on mana and frail. Their magical auras protect them from damage 
 reducing all damage to a single hit point and reduce the cost of their spells and 
 abilities to cost a single mana point or less.
 %%%%

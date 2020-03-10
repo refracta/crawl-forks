@@ -2384,7 +2384,7 @@ static bool _mons_call_of_chaos(const monster& mon, bool check_only = false)
                                                    150, BEAM_RESISTANCE,
                                                    150, BEAM_BLINK_CLOSE,
                                                    200, BEAM_ENTROPIC_BURST,
-                                                   // BCADDO: Add a Chaotic Infusion chance here?
+                                                   200, BEAM_CHAOTIC_INFUSION,
                                                     15, BEAM_BLINK,
                                                     15, BEAM_SLOW,
                                                     15, BEAM_VULNERABILITY,
