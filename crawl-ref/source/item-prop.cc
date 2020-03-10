@@ -1392,6 +1392,9 @@ void set_item_ego_type(item_def &item, int ego_type)
 
         if (item.props.exists(ARTEFACT_NAME_KEY))
             item.props.erase(ARTEFACT_NAME_KEY);
+
+        const bool t = true;
+        item.props[CHANGED_BRAND_KEY] = t;
     }
     else
         item.brand = ego_type;

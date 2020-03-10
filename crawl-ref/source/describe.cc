@@ -359,7 +359,7 @@ static vector<string> _randart_propnames(const item_def& item,
         }
         else if (item_brand_known(item)
             && !(is_unrandom_artefact(item) && entry
-                && entry->flags & UNRAND_FLAG_SKIP_EGO))
+                && entry->flags & UNRAND_FLAG_SKIP_EGO && !item.props.exists(CHANGED_BRAND_KEY)))
         {
             string ego;
             if (item.base_type == OBJ_WEAPONS || (item.base_type == OBJ_SHIELDS && is_hybrid(item.sub_type)))

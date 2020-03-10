@@ -16,6 +16,7 @@
 #define SOUL_BIND_XP_KEY    "soulbind_experience"
 #define ARTEFACT_NAME_KEY   "artefact_name"
 #define ARTEFACT_APPEAR_KEY "artefact_appearance"
+#define CHANGED_BRAND_KEY   "changed_brand"
 
 #define DAMNATION_BOLT_KEY "damnation_bolt"
 
