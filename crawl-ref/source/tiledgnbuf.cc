@@ -118,7 +118,7 @@ void DungeonCellBuffer::add_monster(const monster_info &mon, int x, int y)
 }
 
 void DungeonCellBuffer::add_dngn_tile(int tileidx, int x, int y,
-                                      bool in_water)
+                                      bool in_water, bool in_slime)
 {
     ASSERT(tileidx < TILE_FEAT_MAX);
 
@@ -131,9 +131,8 @@ void DungeonCellBuffer::add_dngn_tile(int tileidx, int x, int y,
         m_buf_floor.add(TILE_DNGN_SHALLOW_WATER, x, y);
         m_buf_feat_trans.add(tileidx, x, y, 0, true, false);
     }
-    else if (tileidx == TILE_DNGN_SLIMESHROOM || tileidx == (TILE_DNGN_SLIMESHROOM + 1) 
-          || tileidx == (TILE_DNGN_SLIMESHROOM + 2))
-    {  // Hacky compared to how swamp is done; but less trouble.
+    else if (in_slime)
+    { 
         m_buf_floor.add(TILE_DNGN_SLIMY_WATER, x, y);
         m_buf_feat_trans.add(tileidx, x, y, 0, true, false);
     }
@@ -260,7 +259,7 @@ void DungeonCellBuffer::pack_background(int x, int y, const packed_cell &cell)
     if (bg_idx > TILE_WALL_MAX)
         add_blood_overlay(x, y, cell);
 
-    add_dngn_tile(bg_idx, x, y, cell.mangrove_water);
+    add_dngn_tile(bg_idx, x, y, cell.mangrove_water, cell.mushroom_slime);
 
     if (bg_idx > TILE_DNGN_UNSEEN)
     {

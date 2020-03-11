@@ -35,6 +35,7 @@ struct packed_cell
     bool is_sanctuary;
     bool is_liquefied;
     bool mangrove_water;
+    bool mushroom_slime;
     bool awakened_forest;
     uint8_t orb_glow;
     char blood_rotation;
@@ -53,8 +54,8 @@ struct packed_cell
                     is_highlighted_summoner(false), is_bloody(false),
                     is_silenced(false), halo(HALO_NONE), is_moldy(false),
                     glowing_mold(false), is_sanctuary(false), is_liquefied(false),
-                    mangrove_water(false), awakened_forest(false), orb_glow(0),
-                    blood_rotation(0), old_blood(false), travel_trail(0),
+                    mangrove_water(false), mushroom_slime(false), awakened_forest(false), 
+                    orb_glow(0), blood_rotation(0), old_blood(false), travel_trail(0),
                     quad_glow(false), disjunct(false)
 #if TAG_MAJOR_VERSION == 34
                     , heat_aura(false)
@@ -74,6 +75,7 @@ struct packed_cell
                                         is_sanctuary(c->is_sanctuary),
                                         is_liquefied(c->is_liquefied),
                                         mangrove_water(c->mangrove_water),
+                                        mushroom_slime(c->mushroom_slime),
                                         awakened_forest(c->awakened_forest),
                                         orb_glow(c->orb_glow),
                                         blood_rotation(c->blood_rotation),

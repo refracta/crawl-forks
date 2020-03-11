@@ -37,7 +37,8 @@ void packed_cell::clear()
     glowing_mold     = false;
     is_sanctuary     = false;
     is_liquefied     = false;
-    mangrove_water = false;
+    mangrove_water   = false;
+    mushroom_slime   = false;
     orb_glow         = 0;
     blood_rotation   = 0;
     old_blood        = false;
@@ -63,7 +64,8 @@ bool packed_cell::operator ==(const packed_cell &other) const
     if (glowing_mold != other.glowing_mold) return false;
     if (is_sanctuary != other.is_sanctuary) return false;
     if (is_liquefied != other.is_liquefied) return false;
-    if (mangrove_water != other.mangrove_water) return false;
+    if (mangrove_water != other.mangrove_water) return false; 
+    if (mushroom_slime != other.mushroom_slime) return false;
     if (awakened_forest != other.awakened_forest) return false;
     if (orb_glow != other.orb_glow) return false;
     if (blood_rotation != other.blood_rotation) return false;
@@ -399,7 +401,7 @@ static void _pack_default_waves(const coord_def &gc, crawl_view_buffer& vbuf)
     if (cell.mangrove_water && feat == DNGN_TREE)
         feat = DNGN_SHALLOW_WATER;
 
-    if (feat == DNGN_TREE && player_in_branch(BRANCH_SLIME) && !jiyva_is_dead())
+    if (cell.mushroom_slime && feat == DNGN_TREE)
         feat = DNGN_SLIMY_WATER;
 
     if (!feat_is_water(feat) && !feat_is_lava(feat))

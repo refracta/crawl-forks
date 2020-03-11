@@ -579,6 +579,8 @@ function ($, view_data, main, tileinfo_player, icons, dngn, enums,
 
             if (cell.mangrove_water && bg_idx > dngn.DNGN_UNSEEN)
                 this.draw_dngn(dngn.DNGN_SHALLOW_WATER, x, y);
+            else if (cell.mushroom_slime && bg_idx > dngn.DNGN_UNSEEN)
+                this.draw_dngn(dngn.DNGN_SLIMY_WATER, x, y);
             else if (bg_idx >= dngn.DNGN_FIRST_TRANSPARENT)
             {
                 this.draw_dngn(cell.flv.f, x, y); // f = floor
@@ -598,7 +600,7 @@ function ($, view_data, main, tileinfo_player, icons, dngn, enums,
             if (bg_idx > dngn.WALL_MAX)
                 this.draw_blood_overlay(x, y, cell);
 
-            if (cell.mangrove_water) // Draw the tree submerged
+            if (cell.mangrove_water || cell.mushroom_slime) // Draw the tree submerged
             {
                 this.ctx.save();
                 try
