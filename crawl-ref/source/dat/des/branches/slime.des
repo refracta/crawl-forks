@@ -188,22 +188,24 @@ KFEAT:  a = slimy_water
 local pool_contents = {}
 pool_contents["a"] = 75
 add_pools { replace = ".b",
-			pool_size = 16 + crawl.random2(16),
+			pool_size = 4 + crawl.random2(4),
 			contents = pool_contents,
 			frequency = 1 }
 }}
 MAP
-xxxxxxxxxxxxxxxxxxxxx
-xxxxxxxxx......xxxxxx
-xxSSxx...........xxxx
-xxS111......xx....xxx
-xSS.11....xxxx....xxx
-xS..O11.xxxxx....xxxx
-xSS..1xxxxxx.....xxxx
-xxSSSSxxxxx.....xxxxx
-xxxxxxxxxx.....xxxxxx
-xxxxxxxx.....xxxxxxxx
-xxxxxxx.@..xxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxx......xxxxxxxx
+xxSSxx...........xxxxxx
+xxS111......xx....xxxxx
+xSS.11....xxxx....xxxxx
+xS..O11.xxxxx....xxxxxx
+xSS..1xxxxxx.....xxxxxx
+xxSSSSxxxxx.....xxxxxxx
+xxxxxxxxxx.....xxxxxxxx
+xxxxxxxx.....xxxxxxxxxx
+xxxxxxx.@..xxxxxxxxxxxx
 ENDMAP
 
 NAME:   dpeg_slime_entry_corner
