@@ -317,6 +317,13 @@ void build_themed_book(item_def &book, themed_spell_filter filter,
     spschool discipline_1 = get_discipline();
     spschool discipline_2 = get_discipline();
 
+    // Substitutions are arbitrary this is to prevent a crash on trying
+    // to create a spellbook of non-player spells.
+    if (discipline_1 == spschool::evocation)
+        discipline_1 = spschool::air;
+    if (discipline_2 == spschool::evocation)
+        discipline_2 = spschool::fire;
+
     item_source_type agent;
     if (!origin_is_acquirement(book, &agent))
         agent = (item_source_type)origin_as_god_gift(book);

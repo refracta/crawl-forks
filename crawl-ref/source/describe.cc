@@ -4950,7 +4950,7 @@ void get_monster_db_desc(const monster_info& mi, describe_info &inf,
         }
 
         inf.body << "    " << i << ": "
-                 << mi_spell_title(hspell_pass[i].spell, mi)
+                 << mi_spell_title(hspell_pass[i].spell, &mi)
                  << " (";
         if (hspell_pass[i].flags & MON_SPELL_EMERGENCY)
             inf.body << "emergency, ";

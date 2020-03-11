@@ -67,9 +67,9 @@ static const vector<spell_type> spellbook_templates[] =
 {   // Book of Spatial Translocations
     SPELL_BLINK,
     SPELL_SHROUD_OF_GOLUBRIA,
+    SPELL_TELEPORT_OTHER,
     SPELL_BECKONING,
     SPELL_FORCE_LANCE,
-    SPELL_TELEPORT_OTHER,
     SPELL_GOLUBRIAS_PASSAGE,
 },
 
