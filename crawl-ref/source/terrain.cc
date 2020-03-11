@@ -1789,7 +1789,7 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
         else
             hurted = 0;
 
-        if (act->alive() && one_chance_in(hurted, 20))
+        if (act->alive() && x_chance_in_y(hurted, 20))
             act->corrode_equipment("acidic ooze", 1);
     }
 }
