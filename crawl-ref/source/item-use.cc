@@ -3004,7 +3004,7 @@ static void _brand_armour(item_def &arm)
         break;
 
     case SPARM_IMPROVED_VISION:
-        flash_colour = ETC_SHINING;
+        flash_colour = WHITE;
         mprf("%s begin%s to peer through the darkness!", itname.c_str(), plural ? "" : "s");
         break;
 
@@ -3060,7 +3060,7 @@ static void _brand_armour(item_def &arm)
 
     case SPARM_INVISIBILITY:
     case SPARM_STEALTH:
-        flash_colour = BLACK;
+        flash_colour = DARKGREY;
         mprf("%s sink%s into the shadows!", itname.c_str(), plural ? "" : "s");
         break;
 
