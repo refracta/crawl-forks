@@ -385,7 +385,7 @@ static void _place_dragon()
 
     const int pow = calc_spell_power(SPELL_DRAGON_CALL, true);
     monster_type mon = _choose_dragon_type(pow, you.religion, true);
-    int mp_cost = random_range(2, 3);
+    const int mp_cost = you.species == SP_FAIRY ? 1 : random_range(2, 3);
 
     vector<monster*> targets;
 

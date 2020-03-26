@@ -3694,7 +3694,7 @@ void handle_searing_ray()
         return;
     }
 
-    if (!enough_mp(1, true))
+    if (!enough_mp(1, true) && (you.species != SP_FAIRY))
     {
         mpr("Without enough magic to sustain it, your searing ray dissipates.");
         end_searing_ray();
@@ -3732,7 +3732,8 @@ void handle_searing_ray()
     beam.fire();
     trigger_battlesphere(&you, beam);
 
-    dec_mp(1);
+    if (you.species != SP_FAIRY)
+        dec_mp(1);
 
     if (++you.attribute[ATTR_SEARING_RAY] > 3)
     {
