@@ -1750,7 +1750,7 @@ static skill_type _choose_manual_skill()
     // mundane skill
 #if TAG_MAJOR_VERSION == 34
     skill_type skill = SK_TRAPS;
-    while (skill == SK_TRAPS || skill == SK_STABBING)
+    while (skill == SK_TRAPS || skill == SK_STABBING || skill == SK_THROWING)
         skill = static_cast<skill_type>(random2(SK_LAST_MUNDANE+1));
     return skill;
 #else
