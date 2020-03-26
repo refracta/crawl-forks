@@ -72,6 +72,8 @@ bool unequip_item(equipment_type slot, bool msg)
     const int item_slot = you.equip[slot];
     if (item_slot == -1)
         return false;
+    else if (you.inv[item_slot].soul_bound())
+        return false; // Should never get here; but extra security hurts nothing.
     else
     {
         you.equip[slot] = -1;

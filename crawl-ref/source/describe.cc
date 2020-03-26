@@ -56,6 +56,7 @@
 #include "mon-tentacle.h"
 #include "monuse-flags.h"
 #include "output.h"
+#include "player-equip.h"
 #include "religion.h"
 #include "skills.h"
 #include "species.h"
@@ -2891,7 +2892,7 @@ static vector<command_type> _allowed_actions(const item_def& item)
 {
     vector<command_type> actions;
     actions.push_back(CMD_ADJUST_INVENTORY);
-    if (item_equip_slot(item) == EQ_WEAPON0 || item_equip_slot(item) == EQ_WEAPON1)
+    if ((item_equip_slot(item) == EQ_WEAPON0 || item_equip_slot(item) == EQ_WEAPON1) && !item.soul_bound())
         actions.push_back(CMD_UNWIELD_WEAPON);
     switch (item.base_type)
     {
@@ -3036,7 +3037,12 @@ static bool _do_action(item_def &item, const vector<command_type>& actions, int 
     switch (action)
     {
     case CMD_WIELD_WEAPON:     wield_weapon(true, slot);            break;
-    case CMD_UNWIELD_WEAPON:   wield_weapon(true, SLOT_BARE_HANDS); break;
+    case CMD_UNWIELD_WEAPON:   
+    {
+        const bool handedness = (slot == you.equip[EQ_WEAPON0]);
+        unwield_item(handedness, true);    
+    }
+    break;
     case CMD_QUIVER_ITEM:      quiver_item(slot);                   break;
     case CMD_WEAR_ARMOUR:      wear_armour(slot);                   break;
     case CMD_REMOVE_ARMOUR:    takeoff_armour(slot);                break;
