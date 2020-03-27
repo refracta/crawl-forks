@@ -958,6 +958,8 @@ void cloud_strike(actor * caster, actor * foe, int damage)
 {
     if (!cloud_at(foe->pos()))
         return;
+    if (foe->is_player() && you.species == SP_FAIRY)
+        return;
     if (foe->cloud_immune())
         return;
     cloud_type cloud = cloud_at(foe->pos())->type;

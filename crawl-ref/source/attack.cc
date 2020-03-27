@@ -563,6 +563,8 @@ bool attack::distortion_affects_defender()
     switch (choice)
     {
     case SMALL_DMG:
+        if (defender->is_player() && you.species == SP_FAIRY)
+            return false;
         special_damage += 1 + random2avg(7, 2);
         // No need to call attack_strength_punctuation here,
         // since special damage < 7, so it will always return "."
@@ -642,6 +644,10 @@ void attack::pain_affects_defender()
     {
         special_damage += resist_adjust_damage(defender, BEAM_NEG,
                               random2(1 + user->skill_rdiv(SK_NECROMANCY)));
+
+        if (special_damage && defender->is_player() 
+                           && you.species == SP_FAIRY && x_chance_in_y(30 - special_damage, 30))
+            special_damage = 0;
 
         if (special_damage && defender_visible)
         {
@@ -877,7 +883,7 @@ struct chaos_attack_type
 // always be a valid option, triggering a more unpredictable chaos_effect
 // instead of a normal attack brand when selected.
 static const vector<chaos_attack_type> chaos_types = {
-    { AF_FIRE,      SPWPN_MOLTEN,       10,
+    { AF_FIRE,      SPWPN_MOLTEN,        10,
       [](const actor &d) { return !d.is_fiery(); } },
     { AF_COLD,      SPWPN_FREEZING,      10,
       [](const actor &d) { return !d.is_icy(); } },
@@ -919,7 +925,7 @@ brand_type attack::random_chaos_brand()
     string brand_name = "CHAOS brand: ";
     switch (brand)
     {
-    case SPWPN_MOLTEN:         brand_name += "molten"; break;
+    case SPWPN_MOLTEN:          brand_name += "molten"; break;
     case SPWPN_FREEZING:        brand_name += "freezing"; break;
     case SPWPN_HOLY_WRATH:      brand_name += "holy wrath"; break;
     case SPWPN_ELECTROCUTION:   brand_name += "electrocution"; break;
@@ -1014,9 +1020,6 @@ void attack::do_miscast()
 void attack::drain_defender()
 {
     if (defender->is_monster() && coinflip())
-        return;
-
-    if (!(defender->holiness() & MH_NATURAL))
         return;
 
     special_damage = resist_adjust_damage(defender, BEAM_NEG,
@@ -1568,6 +1571,8 @@ bool attack::apply_damage_brand(const char *what)
         // These brands require some regular damage to function.
         return false;
     }
+    
+    const bool fae = (defender->is_player() && you.species == SP_FAIRY);
 
     switch (brand)
     {
@@ -1575,16 +1580,18 @@ bool attack::apply_damage_brand(const char *what)
         break;
 
     case SPWPN_MOLTEN:
-        calc_elemental_brand_damage(BEAM_FIRE,
-                                    defender->is_icy() ? "melt" : "burn",
-                                    what);
+        if (!fae)
+            calc_elemental_brand_damage(BEAM_FIRE,
+                                        defender->is_icy() ? "melt" : "burn",
+                                        what);
         defender->expose_to_element(BEAM_FIRE, 2);
         if (defender->is_player())
             maybe_melt_player_enchantments(BEAM_FIRE, special_damage);
         break;
 
     case SPWPN_FREEZING:
-        calc_elemental_brand_damage(BEAM_COLD, "freeze", what);
+        if (!fae)
+            calc_elemental_brand_damage(BEAM_COLD, "freeze", what);
         defender->expose_to_element(BEAM_COLD, 2);
         break;
 
@@ -1635,7 +1642,8 @@ bool attack::apply_damage_brand(const char *what)
         break;
 
     case SPWPN_VORPAL:
-        special_damage = 1 + random2(damage_done) / 3;
+        if (!fae)
+            special_damage = 1 + random2(damage_done) / 3;
         // Note: Leaving special_damage_message empty because there isn't one.
         break;
 
@@ -1654,6 +1662,9 @@ bool attack::apply_damage_brand(const char *what)
                        is_unrandom_artefact(*weapon, UNRAND_LEECH)
                        ? damage_done : max(div_rand_round(roll_dice(3,damage_done),6),1);
         hp_boost = resist_adjust_damage(defender, BEAM_NEG, hp_boost);
+
+        if (fae && hp_boost)
+            hp_boost = 1; // Suck on my non-HP. :)
 
         if (hp_boost)
         {
@@ -1747,7 +1758,6 @@ bool attack::apply_damage_brand(const char *what)
         defender->splash_with_acid(attacker, x_chance_in_y(1, 4) ? 2 : 1 );
         break;
 
-
     default:
         if (using_weapon() && is_unrandom_artefact(*weapon, UNRAND_DAMNATION))
             attacker->god_conduct(DID_EVIL, 2 + random2(3));
@@ -1811,7 +1821,6 @@ void attack::calc_elemental_brand_damage(beam_type flavour,
                                          const char *verb,
                                          const char *what)
 {
-
     if (flavour == BEAM_FIRE)
         special_damage = resist_adjust_damage(defender, flavour,
                                           damage_done);

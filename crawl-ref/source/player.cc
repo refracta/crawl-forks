@@ -4517,6 +4517,9 @@ bool poison_player(int amount, string source, string source_aux, bool force)
     if (player_res_poison() < 0)
         amount *= 2;
 
+    if (you.species == SP_FAIRY)
+        amount = div_rand_round(amount, 10);
+
     you.duration[DUR_POISONING] += amount * 1000;
 
     if (you.duration[DUR_POISONING] > old_value)
@@ -7090,6 +7093,11 @@ void player::splash_with_acid(const actor* evildoer, int acid_strength,
     const int dam = roll_dice(4, acid_strength);
     const int post_res_dam = resist_adjust_damage(&you, BEAM_ACID, dam);
 
+    if (you.species == SP_FAIRY)
+    {
+        mprf("You are splashed with acid.");
+        return; // No bonus damage (corrosion probably doesn't do much either but whatever).
+    }
     mprf("You are splashed with acid%s%s",
          post_res_dam > 0 ? "" : " but take no damage",
          attack_strength_punctuation(post_res_dam).c_str());

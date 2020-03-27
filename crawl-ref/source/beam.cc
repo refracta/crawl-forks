@@ -2321,6 +2321,9 @@ int silver_damages_victim(actor* victim, int damage, string &dmg_msg)
             multiplier = 15;
 
         ret = div_rand_round(damage * multiplier, 20);
+
+        if (you.species == SP_FAIRY && x_chance_in_y(20 - multiplier, 20))
+            ret = 0;
     }
     else
         return 0;
