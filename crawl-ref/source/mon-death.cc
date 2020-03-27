@@ -2373,22 +2373,29 @@ item_def* monster_die(monster& mons, killer_type killer,
 
                 if (have_passive(passive_t::restore_hp))
                 {
-                    hp_heal = apply_pity(mons.get_experience_level()
+                    hp_heal += apply_pity(mons.get_experience_level()
                         + random2(mons.get_experience_level()));
                 }
-                if (have_passive(passive_t::restore_hp_mp_vs_evil))
+                if (have_passive(passive_t::restore_hp_mp_vs_evil) && mons.evil())
                 {
-                    hp_heal = random2(apply_pity(1 + 2 * mons.get_experience_level()));
-                    mp_heal = random2(apply_pity(2 + mons.get_experience_level() / 3));
+                    hp_heal += random2(apply_pity(1 + 2 * mons.get_experience_level()));
+                    mp_heal += random2(apply_pity(2 + mons.get_experience_level() / 3));
                 }
 
                 if (have_passive(passive_t::mp_on_kill))
                 {
-                    mp_heal = apply_pity(1 + random2(mons.get_experience_level() / 2));
-#if TAG_MAJOR_VERSION == 34
-                    if (you.religion == GOD_PAKELLAS)
-                        mp_heal = random2(2 + mons.get_experience_level() / 6);
-#endif
+                    mp_heal += apply_pity(1 + random2(mons.get_experience_level() / 2));
+                //    if (you.religion == GOD_PAKELLAS)
+                //        mp_heal = random2(2 + mons.get_experience_level() / 6);
+                }
+
+                if (you.species == SP_FAIRY)
+                {
+                    bool local_mp = mp_heal;
+                    hp_heal = div_rand_round(hp_heal, 10);
+                    mp_heal = div_rand_round(mp_heal, 7);
+                    if (!mp_heal && local_mp && (mons.get_experience_level() > (8 + random2(4))))
+                        mp_heal = 1;
                 }
 
                 if (hp_heal && you.hp < you.hp_max
