@@ -4436,6 +4436,9 @@ int monster::hurt(const actor *agent, int amount, beam_type flavour,
                 flags |= MF_EXPLODE_KILL;
         }
 
+        if (mons_genus(this->type) == MONS_FAIRY)
+            amount = 1;
+
         amount = min(amount, hit_points);
         hit_points -= amount;
 

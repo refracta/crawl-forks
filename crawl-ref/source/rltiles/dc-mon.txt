@@ -629,6 +629,7 @@ angel MONS_ANGEL
 daeva MONS_DAEVA
 cherub MONS_CHERUB
 silver_star MONS_SILVER_STAR
+%rim 0
 fairy MONS_FAIRY
 fairy0
 fairy1
@@ -638,6 +639,7 @@ fairy4
 fairy5
 fairy6
 fairy7
+%rim 1
 %sdir mon/undead
 profane_servitor MONS_PROFANE_SERVITOR
 %sdir mon/unique
