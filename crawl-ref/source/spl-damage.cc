@@ -4357,9 +4357,9 @@ spret cast_imb(int pow, bool fail)
     targeter_radius hitfunc(&you, LOS_SOLID_SEE, range);
     bool (*vulnerable) (const actor *) = [](const actor * act) -> bool
     {
-        return !(act->is_monster()
-                 && mons_is_conjured(act->as_monster()->type));
-    };
+        return !(act->is_monster() && mons_is_conjured(act->as_monster()->type)) 
+                                   && !cell_is_solid((act->pos()));
+    }; 
 
     if (stop_attack_prompt(hitfunc, "blast", vulnerable))
         return spret::abort;
@@ -4368,13 +4368,14 @@ spret cast_imb(int pow, bool fail)
 
     bool chaos = determine_chaos(&you, SPELL_MUSE_OAMS_AIR_BLAST);
 
-    mprf("A blast of %s air wooshes around you!", chaos ? "chaotic": "");
+    mprf("A blast of %sair wooshes around you!", chaos ? "chaotic ": "");
 
     vector<actor *> act_list;
 
     for (actor_near_iterator ai(you.pos(), LOS_SOLID_SEE); ai; ++ai)
     {
         if (ai->pos().distance_from(you.pos()) > range
+            || cell_is_solid(ai->pos())
             || ai->pos() == you.pos() // so it's never aimed_at_feet
             || mons_is_conjured(ai->as_monster()->type)) // skip prisms &c.
         {
