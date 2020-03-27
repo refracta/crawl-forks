@@ -779,9 +779,12 @@ void yell(const actor* mon)
 
     else
     {
-        mprf(MSGCH_SOUND, "You %s%s!",
-             shout_verb.c_str(),
-             you.berserk() ? " wildly" : " for attention");
+        if (you.species == SP_FAIRY)
+            mprf(MSGCH_SOUND, "\"Hey, listen!\" you exclaim.");
+        else
+            mprf(MSGCH_SOUND, "You %s%s!",
+                 shout_verb.c_str(),
+                 you.berserk() ? " wildly" : " for attention");
     }
 
     noisy(noise_level, you.pos());
