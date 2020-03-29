@@ -43,9 +43,9 @@
 #include "stringutil.h"
 #include "throw.h"
 #ifdef USE_TILE
- #include "tiledef-icons.h"
- #include "tiledef-main.h"
- #include "tiledef-dngn.h"
+ #include "rltiles/tiledef-icons.h"
+ #include "rltiles/tiledef-main.h"
+ #include "rltiles/tiledef-dngn.h"
  #include "tilepick.h"
 #endif
 

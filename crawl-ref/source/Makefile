@@ -670,7 +670,6 @@ endif
 endif #ANDROID
 
 RLTILES = rltiles
-INCLUDES_L += -I$(RLTILES)
 
 ifdef WEBTILES
 DEFINES_L += -DUSE_TILE

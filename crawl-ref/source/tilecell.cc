@@ -9,8 +9,8 @@
 #include "religion.h"
 #include "terrain.h"
 #include "tile-flags.h"
-#include "tiledef-dngn.h"
-#include "tiledef-main.h"
+#include "rltiles/tiledef-dngn.h"
+#include "rltiles/tiledef-main.h"
 #include "viewgeom.h"
 
 void packed_cell::clear()
