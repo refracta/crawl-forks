@@ -1130,30 +1130,6 @@ static bool _jiyva_mutate()
         return mutate(RANDOM_GOOD_MUTATION, "Jiyva's grace", true, false, true);
 }
 
-bool vehumet_is_offering(spell_type spell)
-{
-    return you.vehumet_gifts.count(spell);
-}
-
-void vehumet_accept_gift(spell_type spell)
-{
-    if (vehumet_is_offering(spell))
-    {
-        you.vehumet_gifts.erase(spell);
-        you.duration[DUR_VEHUMET_GIFT] = 0;
-    }
-}
-
-static void _add_to_old_gifts(spell_type spell)
-{
-    you.old_vehumet_gifts.insert(spell);
-}
-
-static bool _is_old_gift(spell_type spell)
-{
-    return you.old_vehumet_gifts.count(spell);
-}
-
 static set<spell_type> _vehumet_eligible_gift_spells(set<spell_type> excluded_spells)
 {
     set<spell_type> eligible_spells;
@@ -1189,10 +1165,7 @@ static set<spell_type> _vehumet_eligible_gift_spells(set<spell_type> excluded_sp
             && spell_difficulty(spell) <= max_level
             && spell_difficulty(spell) >= min_level)
         {
-            if (!_is_old_gift(spell))
-                eligible_spells.insert(spell);
-            else
-                backup_spells.insert(spell);
+            eligible_spells.insert(spell);
         }
     }
     // Don't get stuck just because all spells have been seen/offered.
@@ -1589,8 +1562,7 @@ static bool _handle_veh_gift(bool forced)
             ((you.num_total_gifts[you.religion] == 9 || you.num_total_gifts[you.religion] == 13)
                 && !(you.species == SP_FELID)))
         return _give_equipment_gift();
-    else if (forced ||  !you.duration[DUR_VEHUMET_GIFT]
-                     && (you.piety >= piety_breakpoint(0) && gifts == 0
+    else if (forced ||  (you.piety >= piety_breakpoint(0) && gifts == 0
                       || you.piety >= piety_breakpoint(0) + random2(6) + 18 * gifts && gifts <= 5
                       || you.piety >= piety_breakpoint(4) && gifts <= 11 && one_chance_in(20)
                       || you.piety >= piety_breakpoint(5) && gifts <= 14 && one_chance_in(20)))
@@ -1598,8 +1570,19 @@ static bool _handle_veh_gift(bool forced)
         set<spell_type> offers = _vehumet_get_spell_gifts();
         if (!offers.empty())
         {
-            you.vehumet_gifts = offers;
-            string prompt = " offers you knowledge of ";
+            string prompt = " adds ";
+
+            if (gifts >= NUM_VEHUMET_GIFTS - 1)
+            {
+                prompt += "three final spells, ";
+                you.num_current_gifts[you.religion] += 2;
+                you.num_total_gifts[you.religion] += 2;
+            }
+            else
+            {
+                prompt += "the spell: ";
+            }
+
             for (auto it = offers.begin(); it != offers.end(); ++it)
             {
                 if (it != offers.begin())
@@ -1612,24 +1595,16 @@ static bool _handle_veh_gift(bool forced)
                     if (next == offers.end())
                         prompt += "and ";
                 }
+                you.spell_library.set(*it, true);
                 prompt += spell_title(*it);
-                _add_to_old_gifts(*it);
                 take_note(Note(NOTE_OFFERED_SPELL, *it));
             }
-            prompt += ".";
-            if (gifts >= NUM_VEHUMET_GIFTS - 1)
-            {
-                prompt += " These spells will remain available"
-                          " as long as you worship Vehumet.";
-                you.num_current_gifts[you.religion] += 2;
-                you.num_total_gifts[you.religion]   += 2;
-            }
+            prompt += ", to your library.";
 
-            you.duration[DUR_VEHUMET_GIFT] = (100 + random2avg(100, 2)) * BASELINE_DELAY;
             if (gifts >= 5)
                 _inc_gift_timeout(30 + random2avg(30, 2));
-            you.num_current_gifts[you.religion]++;
-            you.num_total_gifts[you.religion]++;
+            you.num_current_gifts[GOD_VEHUMET]++;
+            you.num_total_gifts[GOD_VEHUMET]++;
 
             simple_god_message(prompt.c_str());
             // included in default force_more_message
@@ -2895,11 +2870,6 @@ void excommunication(bool voluntary, god_type new_god)
             add_daction(DACT_ALLY_YRED_SLAVE);
             remove_all_companions(GOD_YREDELEMNUL);
         }
-        break;
-
-    case GOD_VEHUMET:
-        you.vehumet_gifts.clear();
-        you.duration[DUR_VEHUMET_GIFT] = 0;
         break;
 
     case GOD_MAKHLEB:

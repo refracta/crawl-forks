@@ -122,10 +122,6 @@ bool is_orcish_follower(const monster& mon);
 bool is_fellow_slime(const monster& mon);
 bool is_follower(const monster& mon);
 
-// Vehumet gift interface.
-bool vehumet_is_offering(spell_type spell);
-void vehumet_accept_gift(spell_type spell);
-
 mgen_data hepliaklqana_ancestor_gen_data();
 string hepliaklqana_ally_name();
 int hepliaklqana_ally_hp();

@@ -894,22 +894,6 @@ static formatted_string _describe_god_powers(god_type which_god)
                 chei_stat_boost(piety));
         break;
 
-    case GOD_VEHUMET:
-        have_any = true;
-        if (const int numoffers = you.vehumet_gifts.size())
-        {
-            const char* offer = numoffers == 1
-                               ? spell_title(*you.vehumet_gifts.begin())
-                               : "some of Vehumet's most lethal spells";
-            desc.cprintf("You can memorise %s.\n", offer);
-        }
-        else
-        {
-            desc.textcolour(DARKGREY);
-            desc.cprintf("You can memorise some of Vehumet's spells.\n");
-        }
-        break;
-
     case GOD_DITHMENOS:
     {
         have_any = true;

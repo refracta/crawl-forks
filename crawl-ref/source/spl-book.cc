@@ -358,10 +358,6 @@ static void _list_available_spells(spell_set &available_spells)
         if (you.spell_library[st])
             available_spells.insert(st);
     }
-
-    // Handle Vehumet gifts
-    for (auto gift : you.vehumet_gifts)
-        available_spells.insert(gift);
 }
 
 bool player_has_available_spells()
@@ -481,12 +477,6 @@ static bool _sort_mem_spells(const sortable_spell &a, const sortable_spell &b)
     const bool mem_b = you_can_memorise(b.spell);
     if (mem_a != mem_b)
         return mem_a;
-
-    // List the Vehumet gifts at the very top.
-    const bool offering_a = vehumet_is_offering(a.spell);
-    const bool offering_b = vehumet_is_offering(b.spell);
-    if (offering_a != offering_b)
-        return offering_a;
 
     // List spells we can memorise right away first.
     const int player_levels = player_spell_levels();
@@ -657,15 +647,10 @@ private:
 
     colour_t entry_colour(const sortable_spell& entry)
     {
-        if (vehumet_is_offering(entry.spell))
-            return LIGHTBLUE;
-        else
-        {
-            bool transient = false;
-            bool memcheck = true;
-            return spell_highlight_by_utility(entry.spell, COL_UNKNOWN,
-                                                    transient, memcheck);
-        }
+        bool transient = false;
+        bool memcheck = true;
+        return spell_highlight_by_utility(entry.spell, COL_UNKNOWN,
+                                                transient, memcheck);
     }
 
     // Update the list of spells. If show_hidden is true, show only hidden
@@ -947,7 +932,7 @@ bool learn_spell(spell_type specspell, bool wizard)
 
         const int severity = fail_severity(specspell);
 
-        if (raw_spell_fail(specspell) >= 100 && !vehumet_is_offering(specspell))
+        if (raw_spell_fail(specspell) >= 100)
             mprf(MSGCH_WARN, "This spell is impossible to cast!");
         else if (severity > 0)
         {

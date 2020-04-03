@@ -2631,17 +2631,19 @@ static void tag_read_you(reader &th)
 #endif
         count = unmarshallUByte(th);
         for (int i = 0; i < count; ++i)
-            you.old_vehumet_gifts.insert(unmarshallSpellType(th));
+        {
+            you.spell_library.set(unmarshallSpellType(th), true);
+        }
 
 #if TAG_MAJOR_VERSION == 34
         if (th.getMinorVersion() < TAG_MINOR_VEHUMET_MULTI_GIFTS)
-            you.vehumet_gifts.insert(unmarshallSpellType(th));
+            you.spell_library.set(unmarshallSpellType(th), true);
         else
         {
 #endif
             count = unmarshallUByte(th);
             for (int i = 0; i < count; ++i)
-                you.vehumet_gifts.insert(unmarshallSpellType(th));
+                you.spell_library.set(unmarshallSpellType(th), true);
 #if TAG_MAJOR_VERSION == 34
         }
     }
@@ -2723,6 +2725,7 @@ static void tag_read_you(reader &th)
     {
         you.duration[DUR_CONFUSING_TOUCH] = 0;
     }
+    you.duration[DUR_VEHUMET_GIFT] = 0;
 
     you.duration[DUR_JELLY_PRAYER] = 0;
 #endif

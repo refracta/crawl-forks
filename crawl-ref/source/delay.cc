@@ -494,12 +494,6 @@ void ArmourOffDelay::start()
 
 void MemoriseDelay::start()
 {
-    if (vehumet_is_offering(spell))
-    {
-        string message = make_stringf(" grants you knowledge of %s.",
-            spell_title(spell));
-        simple_god_message(message.c_str());
-    }
     mprf(MSGCH_MULTITURN_ACTION, "You start memorising the spell.");
 }
 
@@ -845,7 +839,6 @@ void MemoriseDelay::finish()
 #endif
     mpr("You finish memorising.");
     add_spell_to_memory(spell);
-    vehumet_accept_gift(spell);
 }
 
 void PasswallDelay::finish()
