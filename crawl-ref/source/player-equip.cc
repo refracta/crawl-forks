@@ -148,6 +148,8 @@ static void _assert_valid_slot(equipment_type eq, equipment_type slot)
             if (is_unrandom_artefact(*amu, UNRAND_FINGER_AMULET) && slot == EQ_RING_AMULET)
                 return;
     }
+    if (eq == EQ_AMULET && you.species == SP_FAIRY && slot == EQ_FAIRY_JEWEL)
+        return;
     if ((eq == EQ_WEAPON0 || eq == EQ_WEAPON1) && (slot == EQ_WEAPON0 || slot == EQ_WEAPON1))
         return;
 }

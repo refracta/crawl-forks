@@ -2237,6 +2237,7 @@ static bool _can_puton_jewellery(int item_slot)
                 you.inv[existing].name(DESC_YOUR).c_str());
             return false;
         }
+        return true;
     }
 
     const bool is_amulet = jewellery_is_amulet(item);
@@ -2331,7 +2332,22 @@ static bool _puton_item(int item_slot, bool prompt_slot,
 
     const vector<equipment_type> ring_types = _current_ring_types();
 
-    if (!is_amulet)     // i.e. it's a ring
+    if (you.species == SP_FAIRY)
+    {
+        if (you.slot_item(EQ_FAIRY_JEWEL))
+        {
+            if (!remove_ring(you.equip[EQ_FAIRY_JEWEL], true))
+                return false;
+
+            if (!_safe_to_remove_or_wear(item, false))
+                return false;
+
+            start_delay<JewelleryOnDelay>(1, item);
+
+            return true;
+        }
+    }
+    else if (!is_amulet)     // i.e. it's a ring
     {
         // Check whether there are any unused ring slots
         bool need_swap = true;
@@ -2373,7 +2389,9 @@ static bool _puton_item(int item_slot, bool prompt_slot,
 
     equipment_type hand_used = EQ_NONE;
 
-    if (is_amulet)
+    if (you.species == SP_FAIRY)
+        hand_used = EQ_FAIRY_JEWEL;
+    else if (is_amulet)
         hand_used = EQ_AMULET;
     else if (prompt_slot)
     {

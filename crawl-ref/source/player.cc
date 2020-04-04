@@ -791,14 +791,17 @@ maybe_bool you_can_wear(equipment_type eq, bool temp)
     case EQ_WEAPON0:
     case EQ_WEAPON1:
     case EQ_STAFF:
-        return you.species == SP_FELID ? MB_FALSE :
-               you.body_size(PSIZE_TORSO, !temp) < SIZE_MEDIUM ? MB_MAYBE :
+        return (you.species == SP_FELID || you.species == SP_FAIRY) ? MB_FALSE :
+                you.body_size(PSIZE_TORSO, !temp) < SIZE_MEDIUM ? MB_MAYBE :
                                          MB_TRUE;
 
     // You can always wear at least one ring (forms were already handled).
     case EQ_RINGS:
     case EQ_ALL_ARMOUR:
+        return MB_TRUE;
     case EQ_AMULET:
+        if (you.species == SP_FAIRY)
+            return MB_FALSE;
         return MB_TRUE;
 
     case EQ_FAIRY_JEWEL:

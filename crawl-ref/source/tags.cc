@@ -3807,6 +3807,13 @@ static void tag_read_you_items(reader &th)
     {
         const item_def *item = you.slot_item(static_cast<equipment_type>(i));
 
+        if (item && i == EQ_AMULET && you.species == SP_FAIRY)
+        {
+            you.equip[i] = -1;
+            you.melded.set(i, false);
+            continue;
+        }
+
         if (item && is_unrandom_artefact(*item))
         {
 #if TAG_MAJOR_VERSION == 34
