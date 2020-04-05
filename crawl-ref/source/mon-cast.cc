@@ -4352,6 +4352,9 @@ bool handle_mon_spell(monster* mons)
         if (battlesphere)
             aim_battlesphere(mons, spell_cast, beem.ench_power, beem);
         const bool was_visible = you.can_see(*mons);
+        // Interrupt here if our target is invalid.
+        if (!map_bounds(beem.target) && !bool(get_spell_flags(spell_cast) & spflag::targeting_mask))
+            return false;
         mons_cast(mons, beem, spell_cast, flags);
         if ((was_visible || you.can_see(*mons)) && mons->alive())
             mons->note_spell_cast(spell_cast);
