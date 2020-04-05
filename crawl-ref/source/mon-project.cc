@@ -323,7 +323,18 @@ static bool _iood_hit(monster& mon, const coord_def &pos, bool big_boom = false)
         beam.real_flavour = BEAM_CHAOTIC_DEVASTATION;
         beam.flavour = BEAM_CHAOTIC_DEVASTATION;
         beam.fake_flavour();
-        beam.colour = ETC_CHAOS;
+
+        // Normal bolt bounce doesn't work, but entropic spheres should be allowed to bolt bounce.
+        if (grd(pos) == DNGN_CRYSTAL_WALL && coinflip())
+        {
+            mpr("The entropic orb bounces off the crystal wall.");
+            return false;
+        }
+        else
+        {
+            beam.real_flavour = BEAM_ICY_DEVASTATION;
+            beam.flavour = BEAM_ICY_DEVASTATION;
+        }
     }
     else
     {
@@ -671,6 +682,14 @@ move_again:
             if (!iood)
                 _iood_stop(mon);
             return true;
+        }
+        else if (iood)
+        {
+            mon.props[IOOD_VX] = vx = -vx;
+            mon.props[IOOD_VY] = vy = -vy;
+
+            mon.lose_energy(EUT_MOVE);
+            goto move_again;
         }
     }
 
