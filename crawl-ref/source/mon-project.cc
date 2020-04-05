@@ -325,15 +325,31 @@ static bool _iood_hit(monster& mon, const coord_def &pos, bool big_boom = false)
         beam.fake_flavour();
 
         // Normal bolt bounce doesn't work, but entropic spheres should be allowed to bolt bounce.
-        if (grd(pos) == DNGN_CRYSTAL_WALL && coinflip())
+        if (grd(pos) == DNGN_CRYSTAL_WALL)
         {
-            mpr("The entropic orb bounces off the crystal wall.");
-            return false;
+            if (coinflip())
+            {
+                mpr("The entropic orb bounces off the crystal wall.");
+                return false;
+            }
+            else
+            {
+                beam.real_flavour = BEAM_ICY_DEVASTATION;
+                beam.flavour = BEAM_ICY_DEVASTATION;
+            }
         }
-        else
+        else if (cell_is_solid(pos) && !actor_at(pos) && !feat_is_tree(grd(pos)))
         {
-            beam.real_flavour = BEAM_ICY_DEVASTATION;
-            beam.flavour = BEAM_ICY_DEVASTATION;
+            if (one_chance_in(5))
+            {
+                mpr("The entropic orb bounces off the wall.");
+                return false;
+            }
+            else
+            {
+                beam.real_flavour = BEAM_ICY_DEVASTATION;
+                beam.flavour = BEAM_ICY_DEVASTATION;
+            }
         }
     }
     else
