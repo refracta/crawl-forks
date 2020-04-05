@@ -5094,9 +5094,9 @@ void bolt::knockback_actor(actor *act, int dam)
 
     const int distance =
         (origin_spell == SPELL_FORCE_LANCE)
-            ? 1 + div_rand_round(ench_power, 30) :
+            ? 2 + div_rand_round(ench_power, 30) :
         (origin_spell == SPELL_MUSE_OAMS_AIR_BLAST)
-            ? 2 + div_rand_round(ench_power, 50) :
+            ? 1 + div_rand_round(ench_power, 50) :
         (origin_spell == SPELL_CHILLING_BREATH) ? 2 : 1;
 
     const int roll = origin_spell == SPELL_FORCE_LANCE
@@ -5118,7 +5118,9 @@ void bolt::knockback_actor(actor *act, int dam)
     // We can't do knockback if the beam starts and ends on the same space
     if (source == oldpos)
         return;
-    ASSERT(ray.pos() == oldpos);
+    // Tornado moved it or distortion blinked it away on the same turn it was hit.
+    if (ray.pos() != oldpos)
+        return;
 
     coord_def newpos = oldpos;
     for (int dist_travelled = 0; dist_travelled < distance; ++dist_travelled)
