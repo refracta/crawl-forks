@@ -3997,6 +3997,8 @@ void bolt::affect_player_enchantment(bool resistible)
     case BEAM_DRAIN_MAGIC:
     {
         int amount = min(you.magic_points, random2avg(ench_power / 8, 3));
+        if (you.species == SP_FAIRY && amount > 3)
+            amount = div_rand_round(amount, 6);
         if (!amount)
             break;
         mprf(MSGCH_WARN, "You feel your power leaking away.");
