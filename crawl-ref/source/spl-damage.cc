@@ -1563,11 +1563,11 @@ static void _shatter_chaos(actor * agent, int pow)
                     beam.flavour = BEAM_VISUAL;
                     beam.colour = BROWN;
                     beam.explode();
-                    dungeon_terrain_changed(*ri, you.where_are_you == BRANCH_SLIME ? DNGN_SLIMY_WALL : DNGN_ROCK_WALL, true, true, false, false);
+                    dungeon_terrain_changed(*ri, (you.where_are_you == BRANCH_SLIME && !jiyva_is_dead) ? DNGN_SLIMY_WALL : DNGN_ROCK_WALL, true, true, false, false);
                     cavein = true;
                     for (rectangle_iterator tri(*ri, 1); tri; ++tri)
                         if (!feat_is_critical(grd(*tri)) && x_chance_in_y(3, 4))
-                            dungeon_terrain_changed(*tri, you.where_are_you == BRANCH_SLIME ? DNGN_SLIMY_WALL : DNGN_ROCK_WALL, true, true, false, false);
+                            dungeon_terrain_changed(*tri, (you.where_are_you == BRANCH_SLIME && !jiyva_is_dead) ? DNGN_SLIMY_WALL : DNGN_ROCK_WALL, true, true, false, false);
                 }
                 break;
             }

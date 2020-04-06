@@ -398,7 +398,8 @@ int actor::apply_ac(int damage, int max_damage, ac_type ac_rule,
 
 bool actor_slime_wall_immune(const actor *act)
 {
-    return act->is_player() && have_passive(passive_t::slime_wall_immune)
+    return act->is_player() && 
+        (have_passive(passive_t::slime_wall_immune) || you.species == SP_FAIRY && you.res_corr())
         || act->res_acid() == 3
         || act->is_monster() && mons_is_slime(*act->as_monster());
 }
