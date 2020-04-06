@@ -6079,9 +6079,13 @@ void ru_draw_out_power()
 
     int hp_inc = div_rand_round(you.piety, 16);
     hp_inc += roll_dice(div_rand_round(you.piety, 20), 6);
+    if (you.species == SP_FAIRY)
+        hp_inc = div_rand_round(hp_inc, 10);
     inc_hp(apply_invo_enhancer(hp_inc, false));
     int mp_inc = div_rand_round(you.piety, 48);
     mp_inc += roll_dice(div_rand_round(you.piety, 40), 4);
+    if (you.species == SP_FAIRY)
+        mp_inc = div_rand_round(mp_inc, 7);
     inc_mp(apply_invo_enhancer(mp_inc, false));
     drain_player(30, false, true);
 }
