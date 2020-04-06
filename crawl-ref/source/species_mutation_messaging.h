@@ -23,6 +23,14 @@ static const species_mutation_message spmu_data[] =
     { "","","" },
 },
 
+{ SP_FAIRY, MUT_MP_WANDS,
+  "MP-powered wands",
+
+  {"You expend magic power (1 MP) to strengthen your wands.", "", ""},
+  {"You feel your magical essence link to the dungeon's wands.", "", ""},
+  {"Your magical essence no longer links to wands of the dungeon.", "", ""},
+},
+
 { SP_LIGNIFITE, MUT_UNBREATHING,
   "plant",
 

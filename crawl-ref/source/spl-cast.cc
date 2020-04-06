@@ -105,12 +105,7 @@ void surge_power(const int enhanced)
 void surge_power_wand(const int mp_cost)
 {
     if (mp_cost)
-    {
-        const bool slight = mp_cost < 3;
-        mprf("You feel a %ssurge of power%s",
-             slight ? "slight " : "",
-             slight ? "."      : "!");
-    }
+        mpr("You feel a surge of power.");
 }
 
 static string _spell_base_description(spell_type spell, bool viewing)

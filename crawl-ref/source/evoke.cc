@@ -387,7 +387,8 @@ void black_drac_breath()
 int wand_mp_cost()
 {
     // Update mutation-data.h when updating this value.
-    return min(you.magic_points, you.get_mutation_level(MUT_MP_WANDS) * 3);
+    const int multiplier = you.species == SP_FAIRY ? 1 : 3;
+    return min(you.magic_points, you.get_mutation_level(MUT_MP_WANDS) * multiplier);
 }
 
 void zap_wand(int slot)
@@ -471,8 +472,9 @@ void zap_wand(int slot)
     if (power > 240)
         power = 160 + power / 2;
 
-    power *= (mp_cost + 9);
-    power /= 90;
+    const int m = mp_cost ? 1 : 0;
+    power *= (m + 3);
+    power /= 30;
 
     const spell_type spell =
         spell_in_wand(static_cast<wand_type>(wand.sub_type));
