@@ -149,6 +149,8 @@ int check_your_resists(int hurted, beam_type flavour, string source,
     case BEAM_WAND_HEALING:
         if (hurted && you.hp < you.hp_max)
             mpr("Your wounds heal themselves!");
+        if (you.species == SP_FAIRY)
+            hurted = div_rand_round(hurted, 8);
         you.heal(hurted);
         hurted = 0;
         break;
