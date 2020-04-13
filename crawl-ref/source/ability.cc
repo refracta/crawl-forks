@@ -2798,7 +2798,7 @@ static spret _do_ability(const ability_def& abil, bool fail)
     case ABIL_ASHENZARI_CURSE:
     {
         fail_check();
-        if (!ashenzari_curse_item(1))
+        if (!ashenzari_curse_item())
             return spret::abort;
         break;
     }

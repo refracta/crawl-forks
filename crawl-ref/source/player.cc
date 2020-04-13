@@ -940,15 +940,11 @@ int player::wearing(equipment_type slot, int sub_type, bool calc_unid) const
     switch (slot)
     {
     
-    // BCADDO: This function is broken for EQ_WEAPON0 and EQ_WEAPON1; check for weird behavior caused by this.
     case EQ_WEAPON0:
-        if (weapon(0))
-            ret++;
-        break;
-    
     case EQ_WEAPON1:
-        if (weapon(1))
-            ret++;
+        // BCADNOTE: This function CAN'T be used for weapon slot because it'd be checking for multiple
+        // base types and thus a sub_type match doesn't help.
+        die("EQ_WEAPON0/EQ_WEAPON1 is not a proper slot");
         break;
 
     case EQ_STAFF:
@@ -1051,9 +1047,28 @@ int player::wearing_ego(equipment_type slot, int special, bool calc_unid) const
     case EQ_LEFT_RING:
     case EQ_RIGHT_RING:
     case EQ_AMULET:
-    case EQ_STAFF: // BCADDO: Fix to allow using this function for staff brands.
+
     case EQ_RINGS:
         // no ego types for these slots
+        break;
+
+    case EQ_STAFF:
+
+        if (weapon(0)
+            && (weapon(0)->base_type == OBJ_STAVES)
+            && (calc_unid || item_type_known(*weapon(0)))
+            && get_staff_facet(*weapon(0)) == special)
+        {
+            ret++;
+        }
+
+        if (weapon(1)
+            && (weapon(1)->base_type == OBJ_STAVES)
+            && (calc_unid || item_type_known(*weapon(1)))
+            && get_staff_facet(*weapon(1)) == special)
+        {
+            ret++;
+        }
         break;
 
     case EQ_ALL_ARMOUR:

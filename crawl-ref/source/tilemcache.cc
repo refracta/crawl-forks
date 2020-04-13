@@ -1374,7 +1374,6 @@ mcache_ghost::mcache_ghost(const monster_info& mon)
     else if (m_doll.parts[TILEP_PART_HELM] == TILEP_HELM_PUMPKIN)
         m_doll.parts[TILEP_PART_HELM] = TILEP_HELM_FIRST_NORM; // every day is *not* halloween
 
-
     if (ac > 25)
         m_doll.parts[TILEP_PART_BODY] = TILEP_BODY_PLATE_BLACK;
     else if (ac > 18)
@@ -1393,19 +1392,26 @@ mcache_ghost::mcache_ghost(const monster_info& mon)
 
     switch (sk)
     {
-        // BCADDO: Consider reworking these tile choices.
-
     case SK_WHIPS_FLAILS:
         if (dam > 30)
             m_doll.parts[TILEP_PART_HAND1] = TILEP_HAND1_GREAT_FLAIL;
-        else if (dam > 25)
-            m_doll.parts[TILEP_PART_HAND1] = TILEP_HAND1_GREAT_MACE;
+        else if (dam > 20)
+            m_doll.parts[TILEP_PART_HAND1] = TILEP_HAND1_NUNCHAKU;
+        else if (dam > 10)
+            m_doll.parts[TILEP_PART_HAND1] = TILEP_HAND1_BLACK_WHIP;
+        else if (dam > 5)
+            m_doll.parts[TILEP_PART_HAND1] = TILEP_HAND1_FLAIL;
+        else
+            m_doll.parts[TILEP_PART_HAND1] = TILEP_HAND1_WHIP;
+        break;
+
+    case SK_MACES_STAVES:
+        if (dam > 30)
+            m_doll.parts[TILEP_PART_HAND1] = TILEP_HAND1_LAJATANG;
         else if (dam > 20)
             m_doll.parts[TILEP_PART_HAND1] = TILEP_HAND1_EVENINGSTAR;
-        else if (dam > 15)
-            m_doll.parts[TILEP_PART_HAND1] = TILEP_HAND1_MORNINGSTAR;
         else if (dam > 10)
-            m_doll.parts[TILEP_PART_HAND1] = TILEP_HAND1_FLAIL;
+            m_doll.parts[TILEP_PART_HAND1] = TILEP_HAND1_QUARTERSTAFF1;
         else if (dam > 5)
             m_doll.parts[TILEP_PART_HAND1] = TILEP_HAND1_MACE;
         else
@@ -1449,9 +1455,14 @@ mcache_ghost::mcache_ghost(const monster_info& mon)
 
     case SK_POLEARMS:
         if (dam > 30)
-            m_doll.parts[TILEP_PART_HAND1] = TILEP_HAND1_GLAIVE;
+        {
+            if (seed % 3)
+                m_doll.parts[TILEP_PART_HAND1] = TILEP_HAND1_GLAIVE;
+            else
+                m_doll.parts[TILEP_PART_HAND1] = TILEP_HAND1_SCYTHE_SLANT;
+        }
         else if (dam > 20)
-            m_doll.parts[TILEP_PART_HAND1] = TILEP_HAND1_SCYTHE;
+            m_doll.parts[TILEP_PART_HAND1] = TILEP_HAND1_DEMON_TRIDENT;
         else if (dam > 15)
             m_doll.parts[TILEP_PART_HAND1] = TILEP_HAND1_HALBERD;
         else if (dam > 10)

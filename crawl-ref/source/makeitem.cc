@@ -210,7 +210,7 @@ static bool _try_make_staff_artefact(item_def& item, int force_type,
         {
             int old_force_type = force_type;
             if (force_type != STAFF_POISON && force_type != STAFF_EARTH)
-                force_type = OBJ_RANDOM; // All of them except olgreb are nothing.
+                force_type = OBJ_RANDOM; // Only two unique staves are nothing.
             if (_try_make_item_unrand(item, force_type, agent))
                 return true;
             force_type = old_force_type;
