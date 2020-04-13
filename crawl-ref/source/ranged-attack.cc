@@ -385,9 +385,10 @@ bool ranged_attack::handle_phase_dodged()
             if (attacker->is_player())
                 mprf("%s makes you miss your attack.", blocker.c_str());
             else if (attacker->as_monster()->friendly())
-                mprf("%s makes %s miss their attack.", // BCADDO: Make this use his/her on appropriate uniques.
+                mprf("%s makes %s miss %s attack.",
                     blocker.c_str(),
-                    attacker->as_monster()->name(DESC_THE).c_str());
+                    attacker->as_monster()->name(DESC_THE).c_str(),
+                    attacker->pronoun(PRONOUN_POSSESSIVE).c_str());
             needs_message = false;
         }
     }
