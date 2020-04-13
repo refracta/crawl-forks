@@ -358,6 +358,9 @@ brand_type determine_weapon_brand(const item_def& item, int item_level)
             wpn_type = WPN_DIRE_FLAIL;
         }
     }
+    else if (item.base_type == OBJ_ARMOURS)
+        // Just clawed Gauntlets right now.
+        wpn_type = WPN_WHIP;
     else
     {
         wpn_type = static_cast<weapon_type>(item.sub_type);
@@ -946,7 +949,7 @@ static void _generate_missile_item(item_def& item, int force_type,
 
 static bool _armour_disallows_randart(int sub_type)
 {
-    // Scarves are never randarts.
+    // Scarves are never randarts. BCADDO: Change this.
     return sub_type == ARM_SCARF;
 }
 
@@ -1048,6 +1051,9 @@ special_armour_type generate_armour_type_ego(armour_type type)
 
     case ARM_HELMET:
         return random_choose(SPARM_IMPROVED_VISION, SPARM_INTELLIGENCE);
+
+    case ARM_CLAW:
+        return SPARM_DEXTERITY; // Actual value set with weapon brands.
 
     case ARM_GLOVES:
         return random_choose_weighted(3, SPARM_DEXTERITY, 
@@ -1306,13 +1312,15 @@ static armour_type _get_random_armour_type(int item_level)
     {
         // Total weight is 48, each slot has a weight of 12
         armtype = random_choose_weighted(12, ARM_BOOTS,
-                                         12, ARM_GLOVES,
+                                         // Glove slot
+                                         10, ARM_GLOVES,
+                                          2, ARM_CLAW,
                                          // Cloak slot
                                          9, ARM_CLOAK,
                                          3, ARM_SCARF,
                                          // Head slot
                                          10, ARM_HELMET,
-                                         2, ARM_HAT);
+                                          2, ARM_HAT);
     }
     else if (x_chance_in_y(11 + item_level, 10000))
     {
@@ -1489,6 +1497,9 @@ static void _generate_armour_item(item_def& item, bool allow_uniques,
 
         item.brand = SPARM_NORMAL;
     }
+
+    if (item.sub_type == ARM_CLAW && item.brand != SPARM_NORMAL)
+        item.brand = determine_weapon_brand(item, item_level);
 
     // Don't overenchant items.
     if (item.plus > armour_max_enchant(item))

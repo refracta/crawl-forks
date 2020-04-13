@@ -507,6 +507,10 @@ glove3
 glove4
 glove5
 
+deathclaw  ARM_CLAW
+deathclaw1
+deathclaw2
+
 ###### BOOTS
 %rim 1
 boots1_brown ARM_BOOTS

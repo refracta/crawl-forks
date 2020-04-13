@@ -89,7 +89,7 @@ KFEAT:  2 = weapon shop type:Archery suffix:Annex count:5 use_all greed:40 ; \
 KFEAT:  4 = weapon shop type:Sling suffix:Spring count:3 use_all greed:20 ; \
             mundane not_cursed hunting sling | mundane not_cursed fustibalus |\
 			mundane not_cursed mangonel
-KFEAT:  8 = armour shop type:Auxillary suffix:Armour count:12 use_all greed:20 ; \
+KFEAT:  8 = armour shop type:Auxillary suffix:Armour count:13 use_all greed:20 ; \
             mundane not_cursed hat | not_cursed hat ego:magic_resistance plus:0|\
             not_cursed hat ego:intelligence plus:0 |\
             not_cursed hat ego:see_invisible plus:0 |\
@@ -100,7 +100,8 @@ KFEAT:  8 = armour shop type:Auxillary suffix:Armour count:12 use_all greed:20 ;
             not_cursed pair of gloves ego:dexterity plus:0|\
             not_cursed pair of gloves ego:strength plus:0|\
             not_cursed pair of gloves ego:archery plus:0|\
-            not_cursed pair of gloves ego:wielding plus:0
+            not_cursed pair of gloves ego:wielding plus:0|\
+			mundane not_cursed pair of clawed gauntlets
 KFEAT:  L = armour shop type:Shoe suffix:Department count:14 use_all greed:30 ; \
 			mundane not_cursed naga barding |\
             mundane not_cursed naga barding |\

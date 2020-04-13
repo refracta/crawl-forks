@@ -129,6 +129,9 @@ static const armour_def Armour_prop[] =
     { ARM_GLOVES,               "gloves",                 1,   0,   45,
         EQ_GLOVES,      SIZE_SMALL,  SIZE_MEDIUM, true },
 
+    { ARM_CLAW,                 "clawed gauntlets",       0,   0,   90,
+        EQ_GLOVES,      SIZE_SMALL,  SIZE_MEDIUM, true },
+
     { ARM_HELMET,               "helmet",                 1,   0,   45,
         EQ_HELMET,      SIZE_SMALL,  SIZE_MEDIUM, true },
         
@@ -1405,9 +1408,7 @@ void set_item_ego_type(item_def &item, int ego_type)
 brand_type get_weapon_brand(const item_def &item)
 {
     // Weapon ego types are "brands", so we do the randart lookup here.
-
-    // Staves "brands" handled specially
-    if (item.base_type == OBJ_STAVES)
+    if (item.base_type != OBJ_WEAPONS && !item.is_type(OBJ_ARMOURS, ARM_CLAW))
         return SPWPN_NORMAL;
 
     if (is_artefact(item))
@@ -1440,6 +1441,9 @@ special_armour_type get_armour_ego_type(const item_def &item)
 {
     // Armour ego types are "brands", so we do the randart lookup here.
     if (item.base_type != OBJ_ARMOURS && !(item.base_type == OBJ_SHIELDS && !is_hybrid(item.sub_type)))
+        return SPARM_NORMAL;
+
+    if (item.sub_type == ARM_CLAW)
         return SPARM_NORMAL;
 
     if (is_artefact(item))

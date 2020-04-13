@@ -35,6 +35,7 @@ enum armour_type
     ARM_HELMET,
 
     ARM_GLOVES,
+    ARM_CLAW,
 
     ARM_BOOTS,
 

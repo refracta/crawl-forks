@@ -1362,7 +1362,7 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
         return can_wear_armour(item, verbose, ignore_temporary);
     }
 
-    if (sub_type == ARM_GLOVES)
+    if (sub_type == ARM_GLOVES || sub_type == ARM_CLAW)
     {
         if (you.has_claws(false) == 3)
         {
@@ -2969,7 +2969,7 @@ static void _brand_armour(item_def &arm)
 
     colour_t flash_colour = BLACK;
 
-    bool plural = (arm.sub_type == ARM_BOOTS || arm.sub_type == ARM_GLOVES || 
+    bool plural = (arm.sub_type == ARM_BOOTS || arm.sub_type == ARM_GLOVES || arm.sub_type == ARM_CLAW ||
         (armour_is_hide(arm) && arm.sub_type != ARM_TROLL_HIDE && arm.sub_type != ARM_DEEP_TROLL_LEATHER_ARMOUR 
                              && arm.sub_type != ARM_IRON_TROLL_LEATHER_ARMOUR && arm.sub_type != ARM_SALAMANDER_HIDE_ARMOUR));
 

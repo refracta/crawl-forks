@@ -940,6 +940,7 @@ int player::wearing(equipment_type slot, int sub_type, bool calc_unid) const
     switch (slot)
     {
     
+    // BCADDO: This function is broken for EQ_WEAPON0 and EQ_WEAPON1; check for weird behavior caused by this.
     case EQ_WEAPON0:
         if (weapon(0))
             ret++;
@@ -1050,7 +1051,7 @@ int player::wearing_ego(equipment_type slot, int special, bool calc_unid) const
     case EQ_LEFT_RING:
     case EQ_RIGHT_RING:
     case EQ_AMULET:
-    case EQ_STAFF:
+    case EQ_STAFF: // BCADDO: Fix to allow using this function for staff brands.
     case EQ_RINGS:
         // no ego types for these slots
         break;
@@ -6361,7 +6362,10 @@ int player::base_ac(int scale) const
 
         const item_def& item = inv[equip[eq]];
         AC += base_ac_from(item, 100);
-        AC += item.plus * 100;
+
+        // Claws give UC slaying from enchant instead of AC.
+        if (item.sub_type != ARM_CLAW)
+            AC += item.plus * 100;
     }
 
     AC += wearing(EQ_RINGS, RING_PROTECTION) * 500;
@@ -7254,11 +7258,16 @@ int player::has_claws(bool allow_tran) const
             return 0;
     }
 
+    if (you.wearing(EQ_GLOVES, ARM_CLAW))
+        return 1;
+
     return get_mutation_level(MUT_CLAWS, allow_tran);
 }
 
 bool player::has_usable_claws(bool allow_tran) const
 {
+    if (you.wearing(EQ_GLOVES, ARM_CLAW))
+        return true;
     return !slot_item(EQ_GLOVES) && has_claws(allow_tran);
 }
 

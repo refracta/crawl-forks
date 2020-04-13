@@ -954,7 +954,7 @@ tileidx_t tilep_equ_helm(const item_def &item)
 
 tileidx_t tilep_equ_gloves(const item_def &item)
 {
-    if (item.base_type != OBJ_ARMOURS || item.sub_type != ARM_GLOVES)
+    if (item.base_type != OBJ_ARMOURS)
         return 0;
 
     if (item.props.exists("worn_tile"))
@@ -967,7 +967,11 @@ tileidx_t tilep_equ_gloves(const item_def &item)
             return tile;
     }
 
-    return _modrng(item.rnd, TILEP_ARM_FIRST_NORM, TILEP_ARM_LAST_NORM);
+    if (item.sub_type == ARM_GLOVES)
+        return _modrng(item.rnd, TILEP_ARM_FIRST_NORM, TILEP_ARM_LAST_NORM);
+    else if (item.sub_type == ARM_CLAW)
+        return TILEP_ARM_CLAWS;
+    return 0;
 }
 
 tileidx_t tilep_equ_boots(const item_def &item)

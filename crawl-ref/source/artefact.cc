@@ -528,7 +528,19 @@ static void _add_randart_staff_facet(const item_def &item, artefact_properties_t
 static void _add_randart_weapon_brand(const item_def &item,
                                     artefact_properties_t &item_props)
 {
-    const int item_type = item.sub_type;
+    int item_type = item.sub_type;
+
+    if (item.is_type(OBJ_ARMOURS, ARM_CLAW))
+        item_type = WPN_DEMON_WHIP;
+    else if (item.base_type == OBJ_SHIELDS)
+    {
+        if (item.sub_type == SHD_SAI)
+            item_type = WPN_DAGGER;
+        if (item.sub_type == SHD_NUNCHAKU)
+            item_type = WPN_QUARTERSTAFF;
+        if (item.sub_type == SHD_TARGE)
+            item_type = WPN_DIRE_FLAIL;
+    }
 
     if (!is_weapon_brand_ok(item_type, item_props[ARTP_BRAND], true))
         item_props[ARTP_BRAND] = SPWPN_NORMAL;
@@ -967,7 +979,7 @@ static void _get_randart_properties(const item_def &item,
     item_props.init(0);
 
     // make sure all weapons have a brand
-    if (!curse && (item_class == OBJ_WEAPONS || (item_class == OBJ_SHIELDS && is_hybrid(item.sub_type))))
+    if (!curse && (item_class == OBJ_WEAPONS || (item_class == OBJ_SHIELDS && is_hybrid(item.sub_type)) || item.is_type(OBJ_ARMOURS, ARM_CLAW)))
         _add_randart_weapon_brand(item, item_props);
 
     if (!curse && item_class == OBJ_STAVES)
@@ -1199,6 +1211,8 @@ static string _get_artefact_type(const item_def &item, bool appear = false)
             return "robe";
         if (get_item_slot(item) == EQ_BODY_ARMOUR)
             return "body armour";
+        if (item.sub_type == ARM_CLAW)
+            return "weapon";
         return "armour";
     case OBJ_SHIELDS:
         if (is_hybrid(item.sub_type))

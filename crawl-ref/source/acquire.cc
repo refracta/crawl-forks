@@ -172,6 +172,8 @@ static armour_type _acquirement_armour_for_slot(equipment_type slot_type,
                 return random_choose(ARM_CLOAK, ARM_SCARF);
             return ARM_SCARF;
         case EQ_GLOVES:
+            if (x_chance_in_y(you.skill(SK_UNARMED_COMBAT, 1, true, false, false), 50))
+                return ARM_CLAW;
             return ARM_GLOVES;
         case EQ_BOOTS:
             switch (you.species)
@@ -350,6 +352,8 @@ static armour_type _useless_armour_type()
                 return ARM_NAGA_BARDING;
             return ARM_BOOTS;
         case EQ_GLOVES:
+            if (coinflip())
+                return ARM_CLAW;
             return ARM_GLOVES;
         case EQ_HELMET:
             if (you_can_wear(EQ_HELMET))

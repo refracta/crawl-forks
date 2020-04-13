@@ -3601,6 +3601,7 @@ colour_t item_def::armour_colour() const
         case ARM_BOOTS:
             return BLUE;
         case ARM_GLOVES:
+        case ARM_CLAW:
             return LIGHTBLUE;
         case ARM_LEATHER_ARMOUR:
             return BROWN;

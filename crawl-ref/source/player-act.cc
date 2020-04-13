@@ -225,6 +225,9 @@ brand_type player::damage_brand(int which_attack)
     if (duration[DUR_CONFUSING_TOUCH])
         return SPWPN_CONFUSE;
 
+    if (you.wearing(EQ_GLOVES, ARM_CLAW))
+        return get_weapon_brand(inv[EQ_GLOVES]);
+
     return get_form()->get_uc_brand();
 }
 

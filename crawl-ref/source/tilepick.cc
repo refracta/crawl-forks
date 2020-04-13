@@ -2393,6 +2393,9 @@ static tileidx_t _tileidx_armour_base(const item_def &item)
     case ARM_GLOVES:
         return TILE_ARM_GLOVES;
 
+    case ARM_CLAW:
+        return TILE_ARM_CLAW;
+
     case ARM_BOOTS:
         return TILE_ARM_BOOTS;
 

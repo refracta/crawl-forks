@@ -1361,6 +1361,8 @@ public:
     AuxPunch()
     : AuxAttackType(5, "punch") { };
 
+    // BCADNOTE: Is this ever used anymore?
+
     int get_damage() const override
     {
         const int base_dam = damage + you.skill_rdiv(SK_UNARMED_COMBAT, 1, 2);

@@ -636,6 +636,13 @@ pair of boots
 A pair of boots. They are worn on the feet, and cover all but the largest
 hooves and talons.
 %%%%
+pair of clawed gauntlets
+
+A pair of gloves. They are worn on the hands, and cover all but the largest
+claws. Rather than providing protection, like most armours; this gauntlets are
+weapons for use in "unarmed" combat, granting slaying and potentially a weapon
+brand type to melee without a normal weapon.
+%%%%
 pair of gloves
 
 A pair of gloves. They are worn on the hands, and cover all but the largest

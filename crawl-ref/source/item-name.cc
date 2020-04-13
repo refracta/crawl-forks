@@ -1372,6 +1372,8 @@ string ego_type_string(const item_def &item, bool terse, brand_type override_bra
     switch (item.base_type)
     {
     case OBJ_ARMOURS:
+        if (item.sub_type == ARM_CLAW)
+            return weapon_brand_name(item, terse, override_brand);
         return armour_ego_name(item, terse);
     case OBJ_WEAPONS:
         if (!terse)
@@ -1898,7 +1900,10 @@ string item_def::name_aux(description_level_type desc, bool terse, bool ident,
         if (know_pluses && armour_is_enchantable(*this))
             buff << make_stringf("%+d ", plus);
 
-        if (item_typ == ARM_GLOVES || item_typ == ARM_BOOTS)
+        if (this->sub_type == ARM_CLAW)
+            buff << _ego_prefix(*this, desc, terse, ident, with_inscription);
+
+        if (item_typ == ARM_GLOVES || item_typ == ARM_BOOTS || item_typ == ARM_CLAW)
             buff << "pair of ";
 
         if (is_artefact(*this) && !dbname)
@@ -1914,9 +1919,9 @@ string item_def::name_aux(description_level_type desc, bool terse, bool ident,
             case ISFLAG_EMBROIDERED_SHINY:
                 if (testbits(ignore_flags, ISFLAG_EMBROIDERED_SHINY))
                     break;
-                if (item_typ == ARM_ROBE || item_typ == ARM_CLOAK
+                if (   item_typ == ARM_ROBE   || item_typ == ARM_CLOAK
                     || item_typ == ARM_GLOVES || item_typ == ARM_BOOTS
-                    || item_typ == ARM_SCARF
+                    || item_typ == ARM_SCARF  || item_typ == ARM_CLAW
                     || get_armour_slot(*this) == EQ_HELMET
                        && !is_hard_helmet(*this))
                 {
@@ -1947,18 +1952,24 @@ string item_def::name_aux(description_level_type desc, bool terse, bool ident,
 
         if (know_ego && !is_artefact(*this))
         {
-            const special_armour_type sparm = get_armour_ego_type(*this);
-
-            if (sparm != SPARM_NORMAL)
+            if (this->sub_type != ARM_CLAW)
             {
-                if (!terse)
-                    buff << " of ";
-                else
-                    buff << " {";
-                buff << armour_ego_name(*this, terse);
-                if (terse)
-                    buff << "}";
+                const special_armour_type sparm = get_armour_ego_type(*this);
+
+                if (sparm != SPARM_NORMAL)
+                {
+                    if (!terse)
+                        buff << " of ";
+                    else
+                        buff << " {";
+                    buff << armour_ego_name(*this, terse);
+                    if (terse)
+                        buff << "}";
+                }
             }
+
+            else 
+                buff << _ego_suffix(*this, terse);
         }
 
         if (know_curse && cursed() && terse)
