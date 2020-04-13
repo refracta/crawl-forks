@@ -708,8 +708,6 @@ static void _catchup_monster_moves(monster* mon, int turns)
     if (mon->asleep() || mon->paralysed())
         return;
 
-    // BCADDO: Melt ice here?
-
     const int mon_turns = (turns * mon->speed) / 10;
     const int moves = min(mon_turns, 50);
 
@@ -903,6 +901,8 @@ void update_level(int elapsedTime)
     rot_floor_items(elapsedTime);
     shoals_apply_tides(turns, true);
     timeout_tombs(turns);
+    timeout_terrain_changes(turns);
+    timeout_malign_gateways(turns);
 
     if (env.sanctuary_time)
     {
