@@ -3213,7 +3213,10 @@ static bool _handle_bless_item(const string &pre_msg)
         break;
 
     case OBJ_ARMOURS:
-        _brand_armour(*item);
+        if (item->sub_type == ARM_CLAW)
+            brand_weapon(*item);
+        else
+            _brand_armour(*item);
         break;
 
     case OBJ_SHIELDS:
