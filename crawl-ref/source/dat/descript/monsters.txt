@@ -2538,6 +2538,11 @@ warg
 
 A particularly evil-looking wolf, usually found in the company of orcs.
 %%%%
+war dog
+
+A well trained hound. Wears a spiked collar providing some limited protection 
+and often impaling those that attack in melee.
+%%%%
 war gargoyle
 
 A rare type of gargoyle, constructed from a solid steel statue and imbued with

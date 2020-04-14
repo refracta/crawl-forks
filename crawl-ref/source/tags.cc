@@ -5773,11 +5773,6 @@ void unmarshallMonsterInfo(reader &th, monster_info& mi)
         mi.type = MONS_SKELETON;
     if (mi.type == MONS_SIMULACRUM_SMALL || mi.type == MONS_SIMULACRUM_LARGE)
         mi.type = MONS_SIMULACRUM;
-    if (th.getMinorVersion() < TAG_MINOR_WAR_DOG_REMOVAL)
-    {
-        if (mi.type == MONS_WAR_DOG)
-            mi.type = MONS_WOLF;
-    }
 #endif
 
     if (mons_is_removed(mi.type))
@@ -6601,12 +6596,6 @@ void unmarshallMonster(reader &th, monster& m)
         m.type = MONS_SKELETON;
     if (m.type == MONS_SIMULACRUM_SMALL || m.type == MONS_SIMULACRUM_LARGE)
         m.type = MONS_SIMULACRUM;
-
-    if (th.getMinorVersion() < TAG_MINOR_WAR_DOG_REMOVAL)
-    {
-        if (m.type == MONS_WAR_DOG)
-            m.type = MONS_WOLF;
-    }
 
     if (m.props.exists("no_hide"))
         m.props.erase("no_hide");

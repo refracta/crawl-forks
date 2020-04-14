@@ -3875,7 +3875,9 @@ void melee_attack::do_spines()
                 mprf("%s %s struck by %s %s.", attacker->name(DESC_THE).c_str(),
                      attacker->conj_verb("are").c_str(),
                      defender->name(DESC_ITS).c_str(),
-                     defender->type == MONS_BRIAR_PATCH ? "thorns"
+                     defender->type == MONS_BRIAR_PATCH ? "thorns" :
+                     defender->type == MONS_WAR_DOG     ? "spiked collar" :
+                     defender->type == MONS_SPINY_FROG  ? "venomous spines"
                                                         : "spines");
             }
 
