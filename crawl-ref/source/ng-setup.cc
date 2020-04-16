@@ -524,6 +524,8 @@ static void _setup_generic(const newgame_def& ng,
 
     roll_demonspawn_mutations();
 
+    draconian_setup();
+
     _give_starting_food();
 
     if (crawl_state.game_is_sprint())

@@ -279,6 +279,12 @@ public:
 
     vector<demon_trait> demonic_traits;
 
+    // Draconian Rework Skills
+    bool major_first;
+    skill_type major_skill;
+    skill_type minor_skill;
+    skill_type defence_skill;
+
     int magic_contamination;
 
     FixedVector<uint32_t, NUM_WEAPONS> seen_weapon;

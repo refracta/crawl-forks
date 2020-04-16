@@ -63,6 +63,7 @@
  #include "mon-tentacle.h"
  #include "mon-util.h"
 #endif
+#include "mutation.h"
 #include "place.h"
 #include "player-stats.h"
 #include "prompt.h" // index_to_letter
@@ -1535,6 +1536,14 @@ static void tag_construct_you(writer &th)
     {
         marshallByte(th, you.demonic_traits[j].level_gained);
         marshallShort(th, you.demonic_traits[j].mutation);
+    }
+
+    if (species_is_draconian(you.species))
+    {
+        marshallBoolean(th, you.major_first);
+        marshallInt(th, you.major_skill);
+        marshallInt(th, you.minor_skill);
+        marshallInt(th, you.defence_skill);
     }
 
     // set up sacrifice piety by ability
@@ -3224,6 +3233,19 @@ static void tag_read_you(reader &th)
 #endif
         ASSERT_RANGE(dt.mutation, 0, NUM_MUTATIONS);
         you.demonic_traits.push_back(dt);
+    }
+
+    if (species_is_draconian(you.species))
+    {
+        if (th.getMinorVersion() >= TAG_MINOR_DRACONIAN_REWORK)
+        {
+            you.major_first   = unmarshallBoolean(th);
+            you.major_skill   = static_cast<skill_type>(unmarshallInt(th));
+            you.minor_skill   = static_cast<skill_type>(unmarshallInt(th));
+            you.defence_skill = static_cast<skill_type>(unmarshallInt(th));
+        }
+        else // Old save from before the new variables needs them setup.
+            draconian_setup();
     }
 
 #if TAG_MAJOR_VERSION == 34

@@ -66,6 +66,8 @@ string mutation_desc(mutation_type which_mutat, int level = -1,
 
 void roll_demonspawn_mutations();
 
+void draconian_setup();
+
 bool perma_mutate(mutation_type which_mut, int how_much, const string &reason);
 bool temp_mutate(mutation_type which_mut, const string &reason);
 int temp_mutation_roll();

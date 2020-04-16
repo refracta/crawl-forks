@@ -516,6 +516,9 @@ void change_species_to(species_type sp)
         }
     }
 
+    if (species_is_draconian(sp))
+        draconian_setup();
+
     update_vision_range(); // for Ba, and for DS with Nightstalker
 
     if ((old_sp == SP_OCTOPODE) != (sp == SP_OCTOPODE))

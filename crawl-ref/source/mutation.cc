@@ -2631,6 +2631,26 @@ void roll_demonspawn_mutations()
                          _select_ds_mutations()));
 }
 
+// Sets up variables only used by the Draconian pseudomutations.
+void draconian_setup()
+{
+    if (!species_is_draconian(you.species))
+        return;
+
+    you.major_first = coinflip();
+
+    you.major_skill = random_choose(SK_LONG_BLADES, SK_AXES_HAMMERS, SK_MACES_STAVES, SK_WHIPS_FLAILS, SK_SLINGS,
+        SK_BOWS, SK_CROSSBOWS);
+
+    you.minor_skill = random_choose(SK_SHORT_BLADES, SK_LONG_BLADES, SK_AXES_HAMMERS, SK_MACES_STAVES, SK_WHIPS_FLAILS,
+        SK_SLINGS, SK_BOWS, SK_CROSSBOWS, SK_UNARMED_COMBAT);
+
+    you.defence_skill = random_choose(SK_DODGING, SK_STEALTH, SK_SHIELDS);
+
+    if (you.major_skill == you.minor_skill)
+        you.minor_skill = SK_UNARMED_COMBAT;
+}
+
 bool perma_mutate(mutation_type which_mut, int how_much, const string &reason)
 {
     ASSERT(_is_valid_mutation(which_mut));
