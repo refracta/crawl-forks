@@ -104,6 +104,15 @@ cat4 MONS_FELID
 %rim 0
 %sdir mon/unique
 natasha MONS_NATASHA
+%sdir mon/nonliving
+balloon_dog_magenta MONS_BALLOON_DOG
+balloon_dog_red
+balloon_dog_orange
+balloon_dog_yellow
+balloon_dog_green
+balloon_dog_cyan
+balloon_dog_blue
+balloon_dog_purple
 %rim 1
 %sdir mon/animals
 

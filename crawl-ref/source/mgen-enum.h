@@ -114,6 +114,7 @@ enum band_type
     BAND_DANCING_WEAPONS,
     BAND_MOLTEN_GARGOYLES,
     BAND_GRUM,
+    BAND_BALLOON,
     NUM_BANDS                   // always last
 };
 

@@ -1331,6 +1331,18 @@ static void _setup_lava_burst (bolt & beam, const monster & origin)
     beam.source_name = origin.name(DESC_A, true);
 }
 
+static void _setup_balloon_pop(bolt & beam, const monster & origin)
+{
+    _setup_base_explosion(beam, origin);
+    beam.ex_size = 1;
+    beam.flavour = BEAM_FRAG;
+    beam.damage = dice_def(3, 5);
+    beam.name = "burst balloon";
+    beam.colour = CYAN;
+    // BCADDO: Explosion Knockback and Disperse Clouds?
+    beam.source_name = origin.name(DESC_A, true);
+}
+
 static bool _explode_monster(monster* mons, killer_type killer,
                              bool pet_kill, bool wizard)
 {
@@ -1350,8 +1362,8 @@ static bool _explode_monster(monster* mons, killer_type killer,
     if (type == MONS_BALLISTOMYCETE_SPORE)
     {
         setup_spore_explosion(beam, *mons);
-        sanct_msg    = "By Zin's power, the ballistomycete spore's explosion is "
-                       "contained.";
+        sanct_msg    = "By Zin's power, the ballistomycete spore's "
+                       "explosion is contained.";
     }
     else if (type == MONS_BALL_LIGHTNING)
     {
@@ -1363,6 +1375,12 @@ static bool _explode_monster(monster* mons, killer_type killer,
     {
         _setup_lightning_explosion(beam, *mons, true);
         sanct_msg = "By Zin's power, the entropic burst "
+                    "is contained.";
+    }
+    else if (type == MONS_BALLOON_DOG)
+    {
+        _setup_balloon_pop(beam, *mons);
+        sanct_msg = "By Zin's power, the force of the balloon bursting "
                     "is contained.";
     }
     else if (type == MONS_LURKING_HORROR)
@@ -2137,6 +2155,7 @@ item_def* monster_die(monster& mons, killer_type killer,
         || (mons.type == MONS_FULMINANT_PRISM && mons.prism_charge > 0)
         || mons.type == MONS_BENNU
         || mons.type == MONS_LAVA_GLOB
+        || mons.type == MONS_BALLOON_DOG
         || mons.has_ench(ENCH_INNER_FLAME)
         || mons.has_ench(ENCH_ENTROPIC_BURST))
     {

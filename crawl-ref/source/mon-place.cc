@@ -1805,6 +1805,9 @@ static const band_conditions mf_band_condition = { 0, 0, []() {
 }};
 
 /// For each monster, what band or bands may follow them?
+/// { Leader, { 
+/// Conditions block: {one_chance_in(int), minimum absdepth, []() { Custom condition function } },
+/// Pack block: {{ Band_Enum, {Minimum Members, Maximum Members}, stick close to leader? }}}},
 static const map<monster_type, band_set> bands_by_leader = {
     { MONS_ORC,             { {2}, {{ BAND_ORCS, {2, 5} }}}},
     { MONS_ORC_WIZARD,      { {}, {{ BAND_ORCS, {2, 5} }}}},
@@ -1902,6 +1905,10 @@ static const map<monster_type, band_set> bands_by_leader = {
     { MONS_DRACONIAN_KNIGHT, classy_drac_set },
     { MONS_DRACONIAN_ANNIHILATOR, classy_drac_set },
     { MONS_DRACONIAN_SHIFTER, classy_drac_set },
+            
+    { MONS_KILLER_KLOWN,    { {3, 21}, {{ BAND_BALLOON, {3, 5}, true }}}},
+    { MONS_BALLOON_DOG,     { {1, 21}, {{ BAND_BALLOON, {1, 2}, true }}}},
+
     // yup, scary
     { MONS_TIAMAT,          { {}, {{ BAND_DRACONIAN, {8, 15}, true }}}},
     { MONS_ILSUIW,          { {}, {{ BAND_ILSUIW, {3, 6} }}}},
@@ -2108,6 +2115,7 @@ static const map<band_type, vector<member_possibilites>> band_membership = {
     { BAND_YAKS,                {{{MONS_YAK, 1}}}},
     { BAND_FAUNS,               {{{MONS_FAUN, 1}}}},
     { BAND_WOLVES,              {{{MONS_WOLF, 1}}}},
+    { BAND_BALLOON,             {{{MONS_BALLOON_DOG, 1}}}},
     { BAND_GRUM,                {{{MONS_WAR_DOG, 1}}}},
     { BAND_DUVESSA,             {{{MONS_DOWAN, 1}}}},
     { BAND_GNOLLS,              {{{MONS_GNOLL, 1}}}},

@@ -597,6 +597,12 @@ ballistomycete spore
 A deceptively fast, floating ball filled with gas and spores, prone to burst at
 the slightest disturbance.
 %%%%
+balloon dog
+
+A simple sculpture of a hound made from party balloons and brought to life by the 
+mysterious magic of killer klowns. Usually found in small packs either alone or 
+with the klown that imbued them life.
+%%%%
 balrug
 
 A huge and very powerful demon, wreathed in fire and shadows.
