@@ -1167,7 +1167,7 @@ static monsterentry mondata[] =
 {
     MONS_BALLOON_DOG, 'h', ETC_JEWEL, "balloon dog",
     M_SEE_INVIS | M_UNBLINDABLE | M_BLOOD_SCENT | M_FLIES,
-    MR_RES_COLD,
+    MR_RES_COLD | MR_VUL_FIRE,
     12, MONS_HOUND, MONS_BALLOON_DOG, MH_NONLIVING, 40,
     { {AT_BITE, AF_CHAOTIC, 40}, {AT_CLAW, AF_BLINK, 12}, 
     AT_NO_ATK, AT_NO_ATK },
