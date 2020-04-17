@@ -2664,7 +2664,12 @@ string mutation_overview()
 
         current = mutation_name(mut, false, true);
 
-        if (max_levels > 1)
+        if (mut == MUT_MAJOR_MARTIAL_APT_BOOST)
+        {
+            if (ordinary_levels > 1)
+                current = make_stringf("strongly %s", current.c_str()).c_str();
+        }
+        else if (max_levels > 1)
         {
             // add on any numeric levels
             ostringstream ostr;

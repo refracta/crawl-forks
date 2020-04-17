@@ -2125,6 +2125,13 @@ const char* mutation_name(mutation_type mut, bool allow_category, bool for_displ
     if (!for_display)
         return _get_mutation_def(mut).short_desc;
 
+    if (mut == MUT_MINOR_MARTIAL_APT_BOOST || mut == MUT_MAJOR_MARTIAL_APT_BOOST || mut == MUT_DEFENSIVE_APT_BOOST)
+    {
+        return make_stringf("boosted %s aptitude", mut == MUT_MINOR_MARTIAL_APT_BOOST ? skill_name(you.minor_skill) : 
+                                                   mut == MUT_MAJOR_MARTIAL_APT_BOOST ? skill_name(you.major_skill) 
+                                                                                      : skill_name(you.defence_skill)).c_str();
+    }
+
     species_mutation_message msg = _spmut_msg(mut);
     if (msg.mutation == MUT_NON_MUTATION)
         return _get_mutation_def(mut).short_desc;
@@ -2274,6 +2281,34 @@ string mutation_desc(mutation_type mut, int level, bool colour,
             ostr << mdef.have[level - 1] << sanguine_armour_bonus() / 100 << ")";
         else
             ostr << msg.have[level - 1] << sanguine_armour_bonus() / 100 << ")";
+        result = ostr.str();
+    }
+    else if (mut == MUT_MINOR_MARTIAL_APT_BOOST)
+    {
+        ostringstream ostr;
+        if (msg.mutation == MUT_NON_MUTATION)
+            ostr << mdef.have[0] << skill_name(you.minor_skill) << " (Aptitude +3).";
+        else
+            ostr << msg.have[0] << skill_name(you.minor_skill) << " (Aptitude +3).";
+        result = ostr.str();
+    }
+    else if (mut == MUT_DEFENSIVE_APT_BOOST)
+    {
+        ostringstream ostr;
+        if (msg.mutation == MUT_NON_MUTATION)
+            ostr << mdef.have[0] << skill_name(you.defence_skill) << " (Aptitude +3).";
+        else
+            ostr << msg.have[0] << skill_name(you.defence_skill) << " (Aptitude +3).";
+        result = ostr.str();
+    }
+    else if (mut == MUT_MAJOR_MARTIAL_APT_BOOST)
+    {
+        ostringstream ostr;
+        string x = level > 1 ? " (Aptitude +5)." : " (Aptitude +3)";
+        if (msg.mutation == MUT_NON_MUTATION)
+            ostr << mdef.have[level - 1] << skill_name(you.defence_skill) << x;
+        else
+            ostr << msg.have[level - 1] << skill_name(you.defence_skill) << x;
         result = ostr.str();
     }
     else if (!ignore_player && you.species == SP_FELID && mut == MUT_CLAWS)

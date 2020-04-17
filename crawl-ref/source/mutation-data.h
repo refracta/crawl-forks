@@ -1459,6 +1459,31 @@ static const mutation_def mut_data[] =
    "You feel your blood thin."},
 },
 
+// Draconian rework mutations all the messaging on these is done specially.
+{ MUT_MINOR_MARTIAL_APT_BOOST, 0, 1, mutflag::good, false,
+   "minor martial skill boost",
+    
+  {"You are naturally skilled at ", "", ""},
+  {"Your draconian ancestry asserts itself, you feel more capable at ", "", ""},
+  {"", "", ""},
+},
+
+{ MUT_MAJOR_MARTIAL_APT_BOOST, 0, 2, mutflag::good, false,
+   "major martial skill boost",
+
+  { "You are naturally skilled at ", "", "" },
+  { "Your draconian ancestry asserts itself, you feel more capable at ", "Your draconian ancestry asserts itself, you feel extremely proficient at ", "" },
+  {"", "", ""},
+},
+
+{ MUT_DEFENSIVE_APT_BOOST, 0, 1, mutflag::good, false,
+   "defensive skill boost",
+    
+  {"You are naturally skilled at ", "", ""},
+  {"Your draconian ancestry asserts itself, you feel more capable at ", "", ""},
+  {"", "", ""},
+},
+
 { MUT_CAMOUFLAGE, 1, 3, mutflag::good, true,
   "camouflage",
 
