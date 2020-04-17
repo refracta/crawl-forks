@@ -1544,7 +1544,8 @@ static void tag_construct_you(writer &th)
         marshallInt(th, you.major_skill);
         marshallInt(th, you.minor_skill);
         marshallInt(th, you.defence_skill);
-        marshallInt(th, you.drac_colour);
+        if (you.experience_level >= 7)
+            marshallInt(th, you.drac_colour);
     }
 
     // set up sacrifice piety by ability
@@ -3238,6 +3239,8 @@ static void tag_read_you(reader &th)
 
     if (species_is_draconian(you.species))
     {
+        you.drac_colour = DR_BROWN;
+
         if (you.species != SP_DRACONIAN)
         {
             switch (you.species)
@@ -3280,7 +3283,8 @@ static void tag_read_you(reader &th)
             you.major_skill   = static_cast<skill_type>(unmarshallInt(th));
             you.minor_skill   = static_cast<skill_type>(unmarshallInt(th));
             you.defence_skill = static_cast<skill_type>(unmarshallInt(th));
-            you.drac_colour   = static_cast<draconian_colour>(unmarshallInt(th));
+            if (you.drac_colour == DR_BROWN && (you.experience_level >= 7))
+                you.drac_colour   = static_cast<draconian_colour>(unmarshallInt(th));
         }
         else // Old save from before the new variables needs them setup.
             draconian_setup();
