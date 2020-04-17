@@ -3274,7 +3274,9 @@ void level_change(bool skip_attribute_increase)
                 break;
             }
 
-            if (you.char_class == JOB_DEMONSPAWN || you.species == SP_DEMONSPAWN)
+            // BCADDO: Can I just deprecate references to SP_DEMONSPAWN as a species? Logically I'd have to change any old games 
+            // that are still Species Demonspawn (if there are any) into a new species, but...
+            if (you.char_class == JOB_DEMONSPAWN || you.species == SP_DEMONSPAWN) 
             {
                 for (const player::demon_trait trait : you.demonic_traits)
                 {
@@ -3289,10 +3291,36 @@ void level_change(bool skip_attribute_increase)
             give_level_mutations(you.species, you.experience_level);
         }
 
-        if (species_is_draconian(you.species) && !(you.experience_level % 3))
+        // BCADDNOTE: All Draconian shared mutations are handled here now, instead of repeating the same mutations
+        // in multiple .yaml files.
+        if (species_is_draconian(you.species))
         {
-            mprf(MSGCH_INTRINSIC_GAIN, "Your scales feel tougher.");
-            you.redraw_armour_class = true;
+            if (you.experience_level == 10)
+            {
+                if (you.major_first)
+                    perma_mutate(MUT_MAJOR_MARTIAL_APT_BOOST, 1, "draconic bloodline");
+                else
+                    perma_mutate(MUT_MINOR_MARTIAL_APT_BOOST, 1, "draconic bloodline");
+            }
+            if (you.experience_level == 12)
+                perma_mutate(MUT_DEFENSIVE_APT_BOOST, 1, "draconic bloodline");
+            if (you.experience_level == 14)
+            {
+                if (you.major_first)
+                    perma_mutate(MUT_MINOR_MARTIAL_APT_BOOST, 1, "draconic bloodline");
+                else
+                    perma_mutate(MUT_MAJOR_MARTIAL_APT_BOOST, 1, "draconic bloodline");
+            }
+            if (you.experience_level == 15)
+                perma_mutate(MUT_MAJOR_MARTIAL_APT_BOOST, 1, "draconic bloodline");
+            if (you.experience_level == 18)
+                perma_mutate(MUT_BIG_WINGS, 1, "draconic bloodline");
+
+            if (!(you.experience_level % 3))
+            {
+                mprf(MSGCH_INTRINSIC_GAIN, "Your scales feel tougher.");
+                you.redraw_armour_class = true;
+            }
         }
 
         if (!updated_maxhp)
