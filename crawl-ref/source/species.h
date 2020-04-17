@@ -2,6 +2,7 @@
 
 #include "enum.h"
 #include "ability-type.h"
+#include "draconian.h"
 #include "item-prop-enum.h"
 #include "job-type.h"
 #include "size-part-type.h"
@@ -44,7 +45,7 @@ string species_walking_verb(species_type sp);
 const vector<string>& fake_mutations(species_type species, bool terse);
 
 monster_type dragon_form_dragon_type();
-const char* scale_type(species_type species);
+const char* scale_type();
 ability_type draconian_breath(species_type species);
 
 monster_type player_species_to_mons_species(species_type species);
@@ -68,7 +69,7 @@ const species_def& get_species_def(species_type species);
 
 species_type random_starting_species();
 bool is_starting_species(species_type species);
-species_type random_draconian_colour();
+draconian_colour random_draconian_colour();
 
 bool species_is_removed(species_type species);
 

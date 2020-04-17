@@ -624,9 +624,8 @@ string describe_mutations(bool drop_title)
 
     if (you.racial_ac(false) > 0)
     {
-        const string scale_clause = string(scale_type(you.species))
-            + " scales are "
-            + (you.species == SP_GREY_DRACONIAN ? "very " : "") + "hard";
+        const string scale_clause = string(scale_type())
+            + " scales are hard";
 
         result += _annotate_form_based(
             make_stringf("Your %s. (AC +%d)",

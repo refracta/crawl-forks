@@ -3198,10 +3198,10 @@ void level_change(bool skip_attribute_increase)
                 }
                 break;
 
-            case SP_BASE_DRACONIAN:
-                if (you.experience_level >= 7)
+            case SP_DRACONIAN:
+                if (you.experience_level == 7)
                 {
-                    you.species = random_draconian_colour();
+                    you.drac_colour = random_draconian_colour();
 
                     // We just changed our aptitudes, so some skills may now
                     // be at the wrong level (with negative progress); if we
@@ -3227,14 +3227,15 @@ void level_change(bool skip_attribute_increase)
 #endif
                     mprf(MSGCH_INTRINSIC_GAIN,
                          "Your scales start taking on %s colour.",
-                         article_a(scale_type(you.species)).c_str());
+                         article_a(scale_type()).c_str());
 
                     // Produce messages about skill increases/decreases. We
                     // restore one skill level at a time so that at most the
                     // skill being checked is at the wrong level.
                     for (skill_type sk = SK_FIRST_SKILL; sk < NUM_SKILLS; ++sk)
                     {
-                        const int oldapt = species_apt(sk, SP_BASE_DRACONIAN);
+                        // BCADDO: Come back here!
+                        const int oldapt = species_apt(sk, SP_DRACONIAN);
                         const int newapt = species_apt(sk, you.species);
                         if (oldapt != newapt)
                         {
@@ -7763,7 +7764,7 @@ bool player::cannot_act() const
 
 bool player::can_smell() const
 {
-    return (species != SP_MUMMY && char_class != JOB_MUMMY);
+    return (char_class != JOB_MUMMY);
 }
 
 bool player::can_sleep(bool holi_only) const

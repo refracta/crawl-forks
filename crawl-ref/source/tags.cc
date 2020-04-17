@@ -1544,6 +1544,7 @@ static void tag_construct_you(writer &th)
         marshallInt(th, you.major_skill);
         marshallInt(th, you.minor_skill);
         marshallInt(th, you.defence_skill);
+        marshallInt(th, you.drac_colour);
     }
 
     // set up sacrifice piety by ability
@@ -3237,12 +3238,49 @@ static void tag_read_you(reader &th)
 
     if (species_is_draconian(you.species))
     {
+        if (you.species != SP_DRACONIAN)
+        {
+            switch (you.species)
+            {
+            case SP_RED_DRACONIAN:
+            case SP_MOTTLED_DRACONIAN: // Shouldn't exist in BcadrenCrawl, but just in case.
+                you.drac_colour = DR_RED;
+                break;
+            case SP_WHITE_DRACONIAN:
+                you.drac_colour = DR_WHITE;
+                break;
+            case SP_GREEN_DRACONIAN:
+                you.drac_colour = DR_GREEN;
+                break;
+            case SP_YELLOW_DRACONIAN:
+                you.drac_colour = DR_YELLOW;
+                break;
+            case SP_GREY_DRACONIAN:
+                you.drac_colour = DR_SILVER;
+                break;
+            case SP_BLACK_DRACONIAN:
+                you.drac_colour = DR_BLUE;
+                break;
+            case SP_PURPLE_DRACONIAN:
+                you.drac_colour = DR_PURPLE;
+                break;
+            case SP_PALE_DRACONIAN:
+                you.drac_colour = DR_MAGENTA;
+                break;
+            default:
+                break;
+            }
+
+            you.species = SP_DRACONIAN;
+        }
+
         if (th.getMinorVersion() >= TAG_MINOR_DRACONIAN_REWORK)
         {
             you.major_first   = unmarshallBoolean(th);
             you.major_skill   = static_cast<skill_type>(unmarshallInt(th));
             you.minor_skill   = static_cast<skill_type>(unmarshallInt(th));
             you.defence_skill = static_cast<skill_type>(unmarshallInt(th));
+            you.drac_colour   = static_cast<draconian_colour>(unmarshallInt(th));
         }
         else // Old save from before the new variables needs them setup.
             draconian_setup();

@@ -28,7 +28,7 @@ static const map<job_type, job_def> job_data =
 { JOB_ABYSSAL_KNIGHT, {
     "AK", "Abyssal Knight",
     4, 4, 4,
-    { SP_HILL_ORC, SP_SPRIGGAN, SP_TROLL, SP_MERFOLK, SP_BASE_DRACONIAN, },
+    { SP_HILL_ORC, SP_SPRIGGAN, SP_TROLL, SP_MERFOLK, SP_DRACONIAN, },
     { "leather armour" },
     WCHOICE_PLAIN,
     { { SK_FIGHTING, 3 }, { SK_ARMOUR, 1 }, { SK_DODGING, 1 },
@@ -38,7 +38,7 @@ static const map<job_type, job_def> job_data =
 { JOB_AIR_ELEMENTALIST, {
     "AE", "Air Elementalist",
     0, 7, 5,
-    { SP_DEEP_ELF, SP_TENGU, SP_BASE_DRACONIAN, SP_NAGA, SP_VINE_STALKER, 
+    { SP_DEEP_ELF, SP_TENGU, SP_DRACONIAN, SP_NAGA, SP_VINE_STALKER, 
         SP_SILENT_SPECTRE},
     { "robe", "book of Air" },
     WCHOICE_NONE,
@@ -59,7 +59,7 @@ static const map<job_type, job_def> job_data =
 { JOB_ARTIFICER, {
     "Ar", "Artificer",
     4, 3, 5,
-    { SP_KOBOLD, SP_SPRIGGAN, SP_BASE_DRACONIAN, },
+    { SP_KOBOLD, SP_SPRIGGAN, SP_DRACONIAN, },
     { "short sword", "leather armour", "wand of flame charges:15",
       "wand of enslavement charges:15", "wand of random effects charges:15" },
     WCHOICE_NONE,
@@ -89,7 +89,7 @@ static const map<job_type, job_def> job_data =
     "CK", "Chaos Knight",
     4, 4, 4,
     { SP_HILL_ORC, SP_TROLL, SP_CENTAUR, SP_MERFOLK, SP_MINOTAUR,
-      SP_BASE_DRACONIAN, SP_LIGNIFITE, },
+      SP_DRACONIAN, SP_LIGNIFITE, },
     { "leather armour plus:2" },
     WCHOICE_PLAIN,
     { { SK_FIGHTING, 3 }, { SK_ARMOUR, 1 }, { SK_DODGING, 1 },
@@ -171,7 +171,7 @@ static const map<job_type, job_def> job_data =
 { JOB_ICE_ELEMENTALIST, {
     "IE", "Ice Elementalist",
     0, 7, 5,
-    { SP_DEEP_ELF, SP_MERFOLK, SP_NAGA, SP_BASE_DRACONIAN, SP_GARGOYLE, },
+    { SP_DEEP_ELF, SP_MERFOLK, SP_NAGA, SP_DRACONIAN, SP_GARGOYLE, },
     { "robe", "book of Frost" },
     WCHOICE_NONE,
     { { SK_SUMMONINGS, 1 }, { SK_ICE_MAGIC, 3 }, { SK_SPELLCASTING, 2 },
@@ -201,7 +201,7 @@ static const map<job_type, job_def> job_data =
 { JOB_SKALD, {
     "Sk", "Skald",
     3, 5, 4,
-    { SP_CENTAUR, SP_MERFOLK, SP_BASE_DRACONIAN, },
+    { SP_CENTAUR, SP_MERFOLK, SP_DRACONIAN, },
     { "leather armour", "book of Battle" },
     WCHOICE_PLAIN,
     { { SK_FIGHTING, 2 }, { SK_ARMOUR, 1 }, { SK_DODGING, 2 },
@@ -221,7 +221,7 @@ static const map<job_type, job_def> job_data =
 { JOB_TRANSMUTER, {
     "Tm", "Transmuter",
     2, 5, 5,
-    { SP_NAGA, SP_MERFOLK, SP_BASE_DRACONIAN, SP_TROLL, },
+    { SP_NAGA, SP_MERFOLK, SP_DRACONIAN, SP_TROLL, },
     { "arrow q:12", "robe", "book of Changes" },
     WCHOICE_NONE,
     { { SK_FIGHTING, 1 }, { SK_UNARMED_COMBAT, 3 }, { SK_DODGING, 2 },
@@ -241,7 +241,7 @@ static const map<job_type, job_def> job_data =
 { JOB_WANDERER, {
     "Wn", "Wanderer",
     0, 0, 0, // Randomised
-    { SP_HILL_ORC, SP_SPRIGGAN, SP_CENTAUR, SP_MERFOLK, SP_BASE_DRACONIAN,
+    { SP_HILL_ORC, SP_SPRIGGAN, SP_CENTAUR, SP_MERFOLK, SP_DRACONIAN,
       SP_HUMAN, SP_LIGNIFITE},
     { }, // Randomised
     WCHOICE_NONE,
@@ -252,7 +252,7 @@ static const map<job_type, job_def> job_data =
     "Wr", "Warper",
     3, 5, 4,
     { SP_FELID, SP_SILENT_SPECTRE, SP_SPRIGGAN, SP_CENTAUR,
-      SP_BASE_DRACONIAN, },
+      SP_DRACONIAN, },
     { "leather armour", "book of Spatial Translocations", "scroll of blinking" },
     WCHOICE_PLAIN,
     { { SK_FIGHTING, 2 }, { SK_ARMOUR, 1 }, { SK_DODGING, 2 },
@@ -263,7 +263,7 @@ static const map<job_type, job_def> job_data =
 { JOB_WIZARD, {
     "Wz", "Wizard",
     -1, 10, 3,
-    { SP_DEEP_ELF, SP_NAGA, SP_BASE_DRACONIAN, SP_OCTOPODE, SP_HUMAN, },
+    { SP_DEEP_ELF, SP_NAGA, SP_DRACONIAN, SP_OCTOPODE, SP_HUMAN, },
     { "robe", "hat", "book of Minor Magic" },
     WCHOICE_NONE,
     { { SK_DODGING, 2 }, { SK_STEALTH, 2 }, { SK_SPELLCASTING, 3 },
@@ -300,7 +300,7 @@ static const map<job_type, job_def> job_data =
 { JOB_DEMONSPAWN,{
     "Ds", "Demonspawn",
     6, 4, 4,
-    { SP_HILL_ORC, SP_TROLL, SP_FELID, SP_LIGNIFITE, SP_BASE_DRACONIAN },
+    { SP_HILL_ORC, SP_TROLL, SP_FELID, SP_LIGNIFITE, SP_DRACONIAN },
     { "leather armour" },
     WCHOICE_GOOD,
     { { SK_DODGING, 3 } ,{ SK_STEALTH, 2 } ,{ SK_WEAPON,4 } ,{ SK_FIGHTING, 2 } ,{ SK_INVOCATIONS,3 } },

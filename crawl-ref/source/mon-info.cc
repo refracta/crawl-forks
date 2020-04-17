@@ -673,8 +673,6 @@ monster_info::monster_info(const monster* m, int milev)
         ASSERT(m->ghost);
         ghost_demon& ghost = *m->ghost;
         i_ghost.species = ghost.species;
-        if (species_is_draconian(i_ghost.species) && ghost.xl < 7)
-            i_ghost.species = SP_BASE_DRACONIAN;
         i_ghost.job = ghost.job;
         i_ghost.religion = ghost.religion;
         i_ghost.best_skill = ghost.best_skill;

@@ -40,7 +40,7 @@ const char *get_species_abbrev(species_type which_species)
 species_type get_species_by_abbrev(const char *abbrev)
 {
     if (lowercase_string(abbrev) == "dr")
-        return SP_BASE_DRACONIAN;
+        return SP_DRACONIAN;
 
     for (auto& entry : species_data)
         if (lowercase_string(abbrev) == lowercase_string(entry.second.abbrev))
@@ -218,28 +218,50 @@ string species_prayer_action(species_type species)
   return action ? action : "kneel at";
 }
 
-const char* scale_type(species_type species)
+const char* scale_type()
 {
-    switch (species)
+    if (you.species != SP_DRACONIAN)
+        return "";
+
+    switch (you.drac_colour)
     {
-        case SP_RED_DRACONIAN:
+        case DR_RED:
             return "fiery red";
-        case SP_WHITE_DRACONIAN:
+        case DR_WHITE:
             return "icy white";
-        case SP_GREEN_DRACONIAN:
+        case DR_GREEN:
             return "lurid green";
-        case SP_YELLOW_DRACONIAN:
-            return "golden yellow";
-        case SP_GREY_DRACONIAN:
-            return "dull iron-grey";
-        case SP_BLACK_DRACONIAN:
-            return "glossy black";
-        case SP_PURPLE_DRACONIAN:
+        case DR_CYAN:
+            return "empereal azure";
+        case DR_YELLOW:
+            return "viscuous yellow";
+        case DR_SILVER:
+            return "gleaming silver";
+        case DR_BLUE:
+            return "flickering blue";
+        case DR_PURPLE:
             return "rich purple";
-        case SP_PALE_DRACONIAN:
-            return "pale cyan-grey";
-        case SP_BASE_DRACONIAN:
+        case DR_PINK:
+            return "fierce pink";
+        case DR_MAGENTA:
+            return "hazy amethyst";
+        case DR_BLACK:
+            return "shadowy dark";
+        case DR_OLIVE:
+            return "sickly drab";
+        case DR_BROWN:
             return "plain brown";
+        case DR_TEAL:
+            return "spectral turquoise";
+        case DR_GOLDEN:
+            return "imposing gold";
+        case DR_PEARL:
+            return "opalescent pearl";
+        case DR_SCINTILLATING:
+            return "scintillating rainbow";
+        case DR_BLOOD:
+            return "gory crimson";
+        case DR_BONE: // Don't have scales, needs special casing.
         default:
             return "";
     }
@@ -281,7 +303,7 @@ ability_type draconian_breath(species_type species)
     case SP_BLACK_DRACONIAN:   return ABIL_BREATHE_LIGHTNING;
     case SP_PURPLE_DRACONIAN:  return ABIL_BREATHE_POWER;
     case SP_PALE_DRACONIAN:    return ABIL_BREATHE_STEAM;
-    case SP_BASE_DRACONIAN: case SP_GREY_DRACONIAN:
+    case SP_DRACONIAN: case SP_GREY_DRACONIAN:
     default: return ABIL_NON_ABILITY;
     }
 }
@@ -572,26 +594,18 @@ bool is_starting_species(species_type species)
 }
 
 // A random non-base draconian colour appropriate for the player.
-species_type random_draconian_colour()
+draconian_colour random_draconian_colour()
 {
-  species_type species;
-  do {
-      species =
-          static_cast<species_type>(random_range(SP_FIRST_NONBASE_DRACONIAN,
-                                                 SP_LAST_NONBASE_DRACONIAN));
-  } while (species_is_removed(species));
-  return species;
+    if (you.char_class == JOB_MUMMY || one_chance_in(12))
+        return random_choose(DR_BLACK, DR_OLIVE, DR_BONE, DR_TEAL);
+    if (you.char_class == JOB_DEMIGOD || one_chance_in(12))
+        return random_choose(DR_GOLDEN, DR_PEARL, DR_SCINTILLATING, DR_BLOOD);
+    return random_choose(DR_RED, DR_WHITE, DR_BLUE, DR_CYAN, DR_SILVER, 
+        DR_GREEN, DR_PINK, DR_PURPLE, DR_YELLOW, DR_MAGENTA, DR_BLACK, DR_SCINTILLATING);
 }
 
 bool species_is_removed(species_type species)
 {
-#if TAG_MAJOR_VERSION == 34
-    if (species == SP_MOTTLED_DRACONIAN)
-        return true;
-#endif
-    // all other derived Dr are ok and don't have recommended jobs
-    if (species_is_draconian(species))
-        return false;
     if (get_species_def(species).recommended_jobs.empty())
         return true;
     return false;

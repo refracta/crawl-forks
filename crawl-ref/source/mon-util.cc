@@ -5989,7 +5989,7 @@ void set_ancestor_spells(monster &ancestor, bool notify)
                 SPELL_BOLT_OF_FIRE :
                 SPELL_THROW_FLAME);
         }
-        else if (you.species == SP_MUMMY || you.char_class == JOB_MUMMY ||  you.species == SP_GHOUL)
+        else if (you.char_class == JOB_MUMMY ||  you.species == SP_GHOUL)
         {
             _add_ancestor_spell(ancestor.spells, HD >= 10 ?
                 SPELL_AGONY :
@@ -6027,6 +6027,7 @@ void set_ancestor_spells(monster &ancestor, bool notify)
     if (you.species == SP_NAGA)
         ancestor.spells.emplace_back(SPELL_SPIT_POISON, 25, MON_SPELL_NATURAL | MON_SPELL_BREATH);
 
+    // BCADDO: Come back here. Draconian. Again.
     if (you.species == SP_RED_DRACONIAN)
         ancestor.spells.emplace_back(SPELL_SEARING_BREATH, 25, MON_SPELL_NATURAL | MON_SPELL_BREATH);
 
