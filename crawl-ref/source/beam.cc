@@ -513,7 +513,7 @@ void zappy(zap_type z_type, int power, bool is_monster, bolt &pbolt)
     if (pbolt.origin_spell == SPELL_NO_SPELL)
         pbolt.origin_spell = zap_to_spell(z_type);
 
-    if (!is_monster)
+    if (!is_monster && pbolt.origin_spell != SPELL_NO_SPELL)
     {
         if (pbolt.is_enchantment() && determine_chaos(&you, pbolt.origin_spell))
         {
@@ -1885,6 +1885,9 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
     case BEAM_MAGIC_CANDLE:
         if (doFlavouredEffects)
             backlight_monster(mons);
+        // Fallthrough
+
+    case BEAM_FOG:
         hurted = 0;
         break;
 
@@ -3164,10 +3167,13 @@ void bolt::affect_place_clouds()
     if (flavour == BEAM_MIASMA)
         place_cloud(CLOUD_MIASMA, p, random2(5) + 2, agent());
 
-    //XXX: these use the name for a gameplay effect.
-    if (name == "ball of steam")
+    if (flavour == BEAM_STEAM)
         place_cloud(CLOUD_STEAM, p, random2(5) + 2, agent());
 
+    if (flavour == BEAM_FOG)
+        place_cloud(CLOUD_PURPLE_SMOKE, p, damage.roll() + 2, agent(), 2);
+
+    //XXX: these use the name for a gameplay effect.
     if (name == "poison gas")
         place_cloud(CLOUD_POISON, p, random2(4) + 3, agent());
 
@@ -3373,6 +3379,7 @@ bool bolt::is_harmless(const monster* mon) const
     case BEAM_VISUAL:
     case BEAM_DIGGING:
     case BEAM_WAND_HEALING:
+    case BEAM_FOG:
         return true;
 
     case BEAM_HOLY:
@@ -3428,6 +3435,7 @@ bool bolt::harmless_to_player() const
     case BEAM_VISUAL:
     case BEAM_DIGGING:
     case BEAM_WAND_HEALING:
+    case BEAM_FOG:
         return true;
 
     // Positive enchantments.
@@ -4339,7 +4347,8 @@ void bolt::affect_player()
     if (hit_verb.empty())
         hit_verb = engulfs ? "engulfs" : "hits";
 
-    bool harmless = (flavour == BEAM_MAGIC_CANDLE || flavour == BEAM_WAND_HEALING);
+    bool harmless = (flavour == BEAM_MAGIC_CANDLE || flavour == BEAM_WAND_HEALING
+                  || flavour == BEAM_FOG);
 
     hit_something = true;
 
@@ -4955,7 +4964,7 @@ static void _glaciate_freeze(monster* mon, killer_type englaciator,
 void bolt::monster_post_hit(monster* mon, int dmg)
 {
     // Don't annoy anyone with a harmless mist.
-    if (flavour == BEAM_WAND_HEALING)
+    if (flavour == BEAM_WAND_HEALING || flavour == BEAM_FOG)
         return;
 
     // Suppress the message for scattershot.
@@ -5528,7 +5537,8 @@ void bolt::affect_monster(monster* mon)
         if (hit_verb.empty())
             hit_verb = engulfs ? "engulfs" : "hits";
 
-        bool harmless = (flavour == BEAM_MAGIC_CANDLE || flavour == BEAM_WAND_HEALING);
+        bool harmless = (flavour == BEAM_MAGIC_CANDLE || flavour == BEAM_WAND_HEALING
+                      || flavour == BEAM_FOG);
 
         // If the beam did no damage because of resistances,
         // mons_adjust_flavoured below will print "%s completely resists", so
@@ -7128,6 +7138,7 @@ static string _beam_type_name(beam_type type)
     case BEAM_MIGHT:                 return "might";
     case BEAM_HEALING:               return "healing";
     case BEAM_WAND_HEALING:          return "healing mist";
+    case BEAM_FOG:                   return "fog";
     case BEAM_CONFUSION:             return "confusion";
     case BEAM_INVISIBILITY:          return "invisibility";
     case BEAM_DIGGING:               return "digging";

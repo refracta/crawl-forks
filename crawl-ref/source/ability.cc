@@ -1762,6 +1762,7 @@ static int _calc_breath_ability_range(ability_type ability)
     case ABIL_BREATHE_FROST:
     case ABIL_BREATHE_DART:
     case ABIL_SPIT_POISON:
+    case ABIL_BREATHE_FOG:
         range = 5;
         break;
     case ABIL_BREATHE_MEPHITIC:
@@ -1769,12 +1770,10 @@ static int _calc_breath_ability_range(ability_type ability)
     case ABIL_BREATHE_POISON:
         range = 6;
         break;
+    default:
     case ABIL_BREATHE_LIGHTNING:
     case ABIL_BREATHE_POWER:
         range = LOS_MAX_RANGE;
-        break;
-    default:
-        die("Bad breath type!");
         break;
     }
 
@@ -1941,6 +1940,7 @@ static spret _do_ability(const ability_def& abil, bool fail)
         break;
     }
 
+    // Bolt/Shard Breaths.
     case ABIL_BREATHE_FIRE:
     case ABIL_BREATHE_FROST:
     case ABIL_BREATHE_LIGHTNING:
@@ -1961,114 +1961,102 @@ static spret _do_ability(const ability_def& abil, bool fail)
     case ABIL_BREATHE_GHOSTLY_FLAMES:
     case ABIL_BREATHE_METAL:
     case ABIL_BREATHE_RADIATION:
-
+    
+    {
         beam.range = _calc_breath_ability_range(abil.ability);
         
         if (!spell_direction(abild, beam))
             return spret::abort;
 
+        string m;
+        zap_type zap;
+        const int power = 
+            you.form == transformation::dragon ? 2 * you.experience_level 
+                                               : you.experience_level;
+
         fail_check();
 
         switch (abil.ability)
         {
-        case ABIL_BREATHE_FIRE:
-        {
-            int power = you.experience_level;
-
-            if (you.form == transformation::dragon)
-                power += 12;
-
-            string msg = "You breathe a blast of fire";
-            msg += (power < 15) ? '.' : '!';
-
-            if (zapping(ZAP_BREATHE_FIRE, power, beam, true, msg.c_str())
-                == spret::abort)
-            {
-                return spret::abort;
-            }
+        default:
             break;
-        }
+
+        case ABIL_BREATHE_FIRE:
+            zap = ZAP_BREATHE_FIRE;
+            m   = "You breathe a blast of fire.";
+            break;
+
+        case ABIL_BREATHE_CHAOS:
+            zap = ZAP_BREATHE_CHAOS;
+            m   = "You breathe a bolt of seething chaos.";
+            break;
 
         case ABIL_BREATHE_FROST:
-            if (zapping(ZAP_BREATHE_FROST,
-                        you.form == transformation::dragon
-                            ? 2 * you.experience_level : you.experience_level,
-                        beam, true, "You exhale a wave of freezing cold.")
-                == spret::abort)
-            {
-                return spret::abort;
-            }
+            zap = ZAP_BREATHE_FROST;
+            m   = "You exhale a wave of freezing cold.";
             break;
 
         case ABIL_BREATHE_POISON:
-            if (zapping(ZAP_BREATHE_POISON, you.experience_level, beam, true,
-                        "You exhale a blast of poison gas.")
-                == spret::abort)
-            {
-                return spret::abort;
-            }
+            zap = ZAP_BREATHE_POISON;
+            m   = "You exhale a blast of poison gas.";
             break;
 
         case ABIL_BREATHE_LIGHTNING:
-            mpr("You breathe a wild blast of lightning!");
-            black_drac_breath();
-            break;
-
-        case ABIL_BREATHE_ACID:
-            if (zapping(ZAP_BREATHE_ACID,
-                        you.form == transformation::dragon
-                            ? 2 * you.experience_level : you.experience_level,
-                        beam, true, "You spit a glob of acid.")
-                == spret::abort)
-            {
-                return spret::abort;
-            }
+            zap = ZAP_BREATHE_LIGHTNING;
+            m   = "You breathe a wild blast of lightning!";
             break;
 
         case ABIL_BREATHE_POWER:
-            if (zapping(ZAP_BREATHE_POWER,
-                        you.form == transformation::dragon
-                            ? 2 * you.experience_level : you.experience_level,
-                        beam, true, "You breathe a bolt of dispelling energy.")
-                == spret::abort)
-            {
-                return spret::abort;
-            }
+            zap = ZAP_BREATHE_POWER;
+            m   = "You breathe a bolt of dispelling energy.";
             break;
 
         case ABIL_BREATHE_STEAM:
-            if (zapping(ZAP_BREATHE_STEAM,
-                        you.form == transformation::dragon
-                            ? 2 * you.experience_level : you.experience_level,
-                        beam, true, "You exhale a blast of scalding steam.")
-                == spret::abort)
-            {
-                return spret::abort;
-            }
+            zap = ZAP_BREATHE_STEAM;
+            m   = "You exhale a blast of scalding steam.";
+            break;
+
+        case ABIL_BREATHE_FOG:
+            zap = ZAP_BREATHE_FOG;
+            m   = "You exhale a fog of harmless, colorful smoke.";
             break;
 
         case ABIL_BREATHE_MEPHITIC:
-            if (zapping(ZAP_BREATHE_MEPHITIC,
-                        you.form == transformation::dragon
-                            ? 2 * you.experience_level : you.experience_level,
-                        beam, true, "You exhale a blast of noxious fumes.")
-                == spret::abort)
-            {
-                return spret::abort;
-            }
+            zap = ZAP_BREATHE_MEPHITIC;
+            m   = "You exhale a blast of noxious fumes.";
             break;
 
-        default:
+        case ABIL_BREATHE_HOLY_FLAMES:
+            zap = ZAP_BREATHE_HOLY_FLAMES;
+            beam.origin_spell = SPELL_HOLY_BREATH;
+            m   = "You exhale a cleansing burst of sacred fire.";
+            break;
+
+        case ABIL_BREATHE_DRAIN:
+            zap = ZAP_BREATHE_DRAIN;
+            m   = "You exhale a bolt of negative energy.";
+            break;
+
+        case ABIL_BREATHE_GHOSTLY_FLAMES:
+            zap = ZAP_BREATHE_SPECTRAL;
+            beam.origin_spell = SPELL_SPECTRAL_CLOUD;
+            m   = "You exhale a plume of spectral mist.";
+            break;
+
+        case ABIL_BREATHE_MIASMA:
+            zap = ZAP_BREATHE_MIASMA;
+            beam.origin_spell = SPELL_MIASMA_BREATH;
+            m   = "You exhale a cloud of foul miasma";
             break;
         }
 
+        if (zapping(zap, power, beam, true, m.c_str()) == spret::abort)
+            return spret::abort;
+
         you.increase_duration(DUR_BREATH_WEAPON,
                       3 + random2(10) + random2(30 - you.experience_level));
-
-        if (abil.ability == ABIL_BREATHE_STEAM)
-            you.duration[DUR_BREATH_WEAPON] /= 2;
-
         break;
+    }
 
     case ABIL_EVOKE_BLINK:      // randarts
         fail_check();

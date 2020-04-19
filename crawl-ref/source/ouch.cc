@@ -142,8 +142,11 @@ int check_your_resists(int hurted, beam_type flavour, string source,
         break; // sucks to be you (:
 
     case BEAM_MAGIC_CANDLE:
-        hurted = 0;
         you.backlight();
+        // Fallthrough
+
+    case BEAM_FOG:
+        hurted = 0;
         break;
 
     case BEAM_WAND_HEALING:
