@@ -5196,7 +5196,7 @@ string short_ghost_description(const monster *mon, bool abbrev)
     const char* rank = xl_rank_names[ghost_level_to_rank(ghost.xl)];
 
     string desc = make_stringf("%s %s %s", rank,
-                               species_name(ghost.species).c_str(),
+                               species_name(ghost.species, SPNAME_PLAIN, false).c_str(),
                                get_job_name(ghost.job));
 
     if (abbrev || strwidth(desc) > 40)
@@ -5233,7 +5233,7 @@ string get_ghost_description(const monster_info &mi, bool concise)
     }
     else
     {
-        gstr << species_name(gspecies)
+        gstr << species_name(gspecies, SPNAME_PLAIN, false)
              << " "
              << get_job_name(mi.i_ghost.job);
     }

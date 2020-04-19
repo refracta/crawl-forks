@@ -266,9 +266,9 @@ static const ability_def Ability_List[] =
     // ^ failure special-cased
 
     { ABIL_BREATHE_FIRE, "Breathe Fire",
-        0, 0, 125, 0, {fail_basis::xl, 30, 1}, abflag::breath },
+      0, 0, 125, 0, {fail_basis::xl, 30, 1}, abflag::breath },
     { ABIL_BREATHE_FROST, "Breathe Frost",
-        0, 0, 125, 0, {fail_basis::xl, 30, 1}, abflag::breath },
+      0, 0, 125, 0, {fail_basis::xl, 30, 1}, abflag::breath },
     { ABIL_BREATHE_POISON, "Breathe Poison Gas",
       0, 0, 125, 0, {fail_basis::xl, 30, 1}, abflag::breath },
     { ABIL_BREATHE_MEPHITIC, "Breathe Noxious Fumes",
@@ -277,13 +277,42 @@ static const ability_def Ability_List[] =
       0, 0, 125, 0, {fail_basis::xl, 30, 1}, abflag::breath },
     { ABIL_BREATHE_POWER, "Breathe Dispelling Energy",
       0, 0, 125, 0, {fail_basis::xl, 30, 1}, abflag::breath },
+    { ABIL_BREATHE_FOG, "Breathe Fog",
+      0, 0, 125, 0, {fail_basis::xl, 20, 1}, abflag::breath },
     { ABIL_BREATHE_STEAM, "Breathe Steam",
-      0, 0, 75, 0, {fail_basis::xl, 20, 1}, abflag::breath },
+      0, 0, 125, 0, {fail_basis::xl, 20, 1}, abflag::breath },
+    { ABIL_BREATHE_DRAIN, "Breathe Negative Energy",
+      0, 0, 125, 0,{ fail_basis::xl, 30, 1 }, abflag::breath },
+    { ABIL_BREATHE_MIASMA, "Breathe Foul Miasma",
+      0, 0, 125, 0,{ fail_basis::xl, 30, 1 }, abflag::breath },
+    { ABIL_BREATHE_SILVER, "Breathe Silver Splinters",
+      0, 0, 125, 0,{ fail_basis::xl, 30, 1 }, abflag::breath },
+    { ABIL_BREATHE_WIND, "Breathe Blast of Wind",
+      0, 0, 125, 0,{ fail_basis::xl, 30, 1 }, abflag::breath },
+    { ABIL_BREATHE_BLOOD, "Breathe Demon Blood",
+      0, 0, 125, 0,{ fail_basis::xl, 30, 1 }, abflag::breath },
+    { ABIL_BREATHE_HOLY_FLAMES, "Breathe Blessed Flames",
+      0, 0, 125, 0,{ fail_basis::xl, 30, 1 }, abflag::breath },
+    { ABIL_BREATHE_BUTTERFLIES, "Breathe Butterflies",
+      0, 0, 125, 0,{ fail_basis::xl, 30, 1 }, abflag::breath },
+    { ABIL_BREATHE_BONE, "Breathe Bone Shards",
+      0, 0, 125, 0,{ fail_basis::xl, 30, 1 }, abflag::breath },
+    { ABIL_BREATHE_CHAOS, "Breathe Seething Chaos",
+      0, 0, 125, 0,{ fail_basis::xl, 30, 1 }, abflag::breath },
+    { ABIL_BREATHE_GHOSTLY_FLAMES, "Breathe Spectral Mist",
+      0, 0, 125, 0,{ fail_basis::xl, 30, 1 }, abflag::breath },
+    { ABIL_BREATHE_METAL, "Breathe Metal Splinters",
+      0, 0, 125, 0,{ fail_basis::xl, 30, 1 }, abflag::breath },
+    { ABIL_BREATHE_RADIATION, "Breathe Mutagenic Radiation",
+      0, 0, 125, 0,{ fail_basis::xl, 30, 1 }, abflag::breath },
+    { ABIL_BREATHE_ACID, "Breathe Acid",
+      0, 0, 125, 0, {fail_basis::xl, 30, 1}, abflag::breath },
+    { ABIL_BREATHE_DART, "Breathe Dart",
+      0, 0, 125, 0, {fail_basis::xl, 30, 1}, abflag::breath },
+
     { ABIL_TRAN_BAT, "Bat Form",
       2, 0, 0, 0, {fail_basis::xl, 45, 2}, abflag::starve_ok },
 
-    { ABIL_BREATHE_ACID, "Breathe Acid",
-      0, 0, 125, 0, {fail_basis::xl, 30, 1}, abflag::breath },
 
     { ABIL_FLY, "Fly", 3, 0, 100, 0, {fail_basis::xl, 42, 3}, abflag::none },
     { ABIL_STOP_FLYING, "Stop Flying", 0, 0, 0, 0, {}, abflag::starve_ok },
@@ -952,6 +981,7 @@ static int _adjusted_failure_chance(ability_type ability, int base_chance)
 {
     switch (ability)
     {
+    case ABIL_BREATHE_DART:
     case ABIL_BREATHE_FIRE:
     case ABIL_BREATHE_FROST:
     case ABIL_BREATHE_ACID:
@@ -959,6 +989,20 @@ static int _adjusted_failure_chance(ability_type ability, int base_chance)
     case ABIL_BREATHE_POWER:
     case ABIL_BREATHE_MEPHITIC:
     case ABIL_BREATHE_STEAM:
+    case ABIL_BREATHE_POISON:
+    case ABIL_BREATHE_FOG:
+    case ABIL_BREATHE_DRAIN:
+    case ABIL_BREATHE_MIASMA:
+    case ABIL_BREATHE_SILVER:
+    case ABIL_BREATHE_WIND:
+    case ABIL_BREATHE_BLOOD:
+    case ABIL_BREATHE_HOLY_FLAMES:
+    case ABIL_BREATHE_BUTTERFLIES:
+    case ABIL_BREATHE_BONE:
+    case ABIL_BREATHE_CHAOS:
+    case ABIL_BREATHE_GHOSTLY_FLAMES:
+    case ABIL_BREATHE_METAL:
+    case ABIL_BREATHE_RADIATION:
         if (you.form == transformation::dragon)
             return base_chance - 20;
         return base_chance;
@@ -1474,14 +1518,28 @@ static bool _check_ability_possible(const ability_def& abil, bool quiet = false)
     }
 
     case ABIL_SPIT_POISON:
+    case ABIL_BREATHE_DART:
     case ABIL_BREATHE_FIRE:
     case ABIL_BREATHE_FROST:
-    case ABIL_BREATHE_POISON:
-    case ABIL_BREATHE_LIGHTNING:
     case ABIL_BREATHE_ACID:
+    case ABIL_BREATHE_LIGHTNING:
     case ABIL_BREATHE_POWER:
-    case ABIL_BREATHE_STEAM:
     case ABIL_BREATHE_MEPHITIC:
+    case ABIL_BREATHE_STEAM:
+    case ABIL_BREATHE_POISON:
+    case ABIL_BREATHE_FOG:
+    case ABIL_BREATHE_DRAIN:
+    case ABIL_BREATHE_MIASMA:
+    case ABIL_BREATHE_SILVER:
+    case ABIL_BREATHE_WIND:
+    case ABIL_BREATHE_BLOOD:
+    case ABIL_BREATHE_HOLY_FLAMES:
+    case ABIL_BREATHE_BUTTERFLIES:
+    case ABIL_BREATHE_BONE:
+    case ABIL_BREATHE_CHAOS:
+    case ABIL_BREATHE_GHOSTLY_FLAMES:
+    case ABIL_BREATHE_METAL:
+    case ABIL_BREATHE_RADIATION:
         if (you.duration[DUR_BREATH_WEAPON])
         {
             if (!quiet)
@@ -1702,6 +1760,7 @@ static int _calc_breath_ability_range(ability_type ability)
         break;
     case ABIL_BREATHE_FIRE:
     case ABIL_BREATHE_FROST:
+    case ABIL_BREATHE_DART:
     case ABIL_SPIT_POISON:
         range = 5;
         break;
@@ -1858,23 +1917,57 @@ static spret _do_ability(const ability_def& abil, bool fail)
         break;
     }
 
+    case ABIL_BREATHE_DART:
+    {
+        beam.range = _calc_breath_ability_range(abil.ability);
+        targeter_splash hitfunc(&you, beam.range);
+        direction_chooser_args args;
+        args.mode = TARG_HOSTILE;
+        args.hitfunc = &hitfunc;
+
+        if (!spell_direction(abild, beam, &args))
+            return spret::abort;
+
+        if (stop_attack_prompt(hitfunc, "spit at"))
+            return spret::abort;
+
+        fail_check();
+        zapping(ZAP_SLUG_DART, (you.form == transformation::dragon) ?
+            2 * you.experience_level : you.experience_level,
+            beam, true, "You spit a rudimentary magic dart.");
+
+        you.increase_duration(DUR_BREATH_WEAPON,
+            3 + random2(10) + random2(30 - you.experience_level));
+        break;
+    }
+
     case ABIL_BREATHE_FIRE:
     case ABIL_BREATHE_FROST:
-    case ABIL_BREATHE_POISON:
+    case ABIL_BREATHE_LIGHTNING:
     case ABIL_BREATHE_POWER:
-    case ABIL_BREATHE_STEAM:
     case ABIL_BREATHE_MEPHITIC:
+    case ABIL_BREATHE_STEAM:
+    case ABIL_BREATHE_POISON:
+    case ABIL_BREATHE_FOG:
+    case ABIL_BREATHE_DRAIN:
+    case ABIL_BREATHE_MIASMA:
+    case ABIL_BREATHE_SILVER:
+    case ABIL_BREATHE_WIND:
+    case ABIL_BREATHE_BLOOD:
+    case ABIL_BREATHE_HOLY_FLAMES:
+    case ABIL_BREATHE_BUTTERFLIES:
+    case ABIL_BREATHE_BONE:
+    case ABIL_BREATHE_CHAOS:
+    case ABIL_BREATHE_GHOSTLY_FLAMES:
+    case ABIL_BREATHE_METAL:
+    case ABIL_BREATHE_RADIATION:
+
         beam.range = _calc_breath_ability_range(abil.ability);
+        
         if (!spell_direction(abild, beam))
             return spret::abort;
 
-        // fallthrough to ABIL_BREATHE_LIGHTNING
-
-    case ABIL_BREATHE_LIGHTNING: // not targeted
         fail_check();
-
-        // TODO: refactor this to use only one call to zapping(), don't
-        // duplicate its fail_check(), split out breathe_lightning, etc
 
         switch (abil.ability)
         {
@@ -3329,6 +3422,11 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
         && draconian_breath() != ABIL_NON_ABILITY)
     {
         _add_talent(talents, draconian_breath(), check_confused);
+        if (you.drac_colour == DR_GOLDEN)
+        {
+            _add_talent(talents, ABIL_BREATHE_FROST, check_confused);
+            _add_talent(talents, ABIL_BREATHE_POISON, check_confused);
+        }
     }
 
     if (you.species == SP_VAMPIRE && you.experience_level >= 3

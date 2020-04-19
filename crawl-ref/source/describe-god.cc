@@ -1165,7 +1165,7 @@ static void _send_god_ui(god_type god, bool is_altar)
     {
         tiles.json_write_string("title", god_title(god, you.species, you.piety));
         if (god == GOD_ASHENZARI)
-            tiles.json_write_string("bondage", ash_describe_bondage(ETF_ALL, true));
+            tiles.json_write_string("freedom", ash_describe_bondage(ETF_ALL, true));
     }
     tiles.json_write_string("favour", you_worship(god) ?
             _describe_favour(god) : _god_penance_message(god));

@@ -7,7 +7,6 @@
 
 #include "artefact.h"
 #include "describe.h"
-#include "draconian.h"
 #include "item-name.h"
 #include "item-prop.h"
 #include "player.h"

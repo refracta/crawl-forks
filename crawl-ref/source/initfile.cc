@@ -679,7 +679,7 @@ static string _species_to_str(species_type sp)
     else if (sp == SP_VIABLE)
         return "viable";
     else
-        return species_name(sp);
+        return species_name(sp, SPNAME_PLAIN, false);
 }
 
 static species_type _str_to_species(const string &str)

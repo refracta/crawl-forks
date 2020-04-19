@@ -144,7 +144,7 @@ string newgame_char_description(const newgame_def& ng)
     else if (_is_random_job(ng.job))
     {
         const string j = (ng.job == JOB_RANDOM ? "Random " : "Recommended ");
-        return j + species_name(ng.species);
+        return j + species_name(ng.species, SPNAME_PLAIN, false);
     }
     else if (_is_random_species(ng.species))
     {
@@ -152,14 +152,14 @@ string newgame_char_description(const newgame_def& ng)
         return s + get_job_name(ng.job);
     }
     else
-        return species_name(ng.species) + " " + get_job_name(ng.job);
+        return species_name(ng.species, SPNAME_PLAIN, false) + " " + get_job_name(ng.job);
 }
 
 static string _welcome(const newgame_def& ng)
 {
     string text;
     if (ng.species != SP_UNKNOWN)
-        text = species_name(ng.species);
+        text = species_name(ng.species, SPNAME_PLAIN, false);
     if (ng.job != JOB_UNKNOWN)
     {
         if (!text.empty())
@@ -281,7 +281,7 @@ static void _resolve_species_job(newgame_def& ng, const newgame_def& ng_choice)
 static string _highlight_pattern(const newgame_def& ng)
 {
     if (ng.species != SP_UNKNOWN)
-        return species_name(ng.species) + "  ";
+        return species_name(ng.species, SPNAME_PLAIN, false) + "  ";
 
     if (ng.job == JOB_UNKNOWN)
         return "";
@@ -290,7 +290,7 @@ static string _highlight_pattern(const newgame_def& ng)
 
     for (const auto sp : playable_species())
         if (species_allowed(ng.job, sp) == CC_UNRESTRICTED)
-            ret += species_name(sp) + "  |";
+            ret += species_name(sp, SPNAME_PLAIN, false) + "  |";
 
     if (!ret.empty())
         ret.resize(ret.size() - 1);
@@ -442,11 +442,11 @@ static void _choose_char(newgame_def& ng, newgame_def& choice,
                 {
                     for (const auto sp : playable_species())
                     {
-                        if (starts_with(character, species_name(sp)))
+                        if (starts_with(character, species_name(sp, SPNAME_PLAIN, false)))
                         {
                             choice.species = sp;
                             string temp =
-                                character.substr(species_name(sp).length());
+                                character.substr(species_name(sp, SPNAME_PLAIN, false).length());
                             choice.job = str_to_job(trim_string(temp));
                             break;
                         }
@@ -550,7 +550,7 @@ static void _choose_name(newgame_def& ng, newgame_def& choice)
     bool good_name = true;
     bool cancel = false;
 
-    string specs = chop_string(species_name(ng.species), 79, false);
+    string specs = chop_string(species_name(ng.species, SPNAME_PLAIN, false), 79, false);
 
     formatted_string title;
     title.cprintf("You are a%s %s %s.",
@@ -1587,7 +1587,7 @@ void species_group::attach(const newgame_def& ng, const newgame_def& defaults,
             letter,
             this_species,
             item_status,
-            species_name(this_species),
+            species_name(this_species, SPNAME_PLAIN, false),
 #ifdef USE_TILE
             tile_def(tileidx_player_species(this_species,
                     item_status != ITEM_STATUS_RESTRICTED), TEX_GUI),

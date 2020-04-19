@@ -59,7 +59,7 @@ species_type str_to_species(const string &species)
     for (int i = 0; i < NUM_SPECIES; ++i)
     {
         sp = static_cast<species_type>(i);
-        if (species == species_name(sp))
+        if (species == species_name(sp, SPNAME_PLAIN, false))
             return sp;
     }
 
@@ -73,13 +73,47 @@ species_type str_to_species(const string &species)
  * @returns the requested name, which will just be plain if no adjective
  *          or genus is defined.
  */
-string species_name(species_type speci, species_name_type spname_type)
+string species_name(species_type speci, species_name_type spname_type, bool player)
 {
     const species_def& def = get_species_def(speci);
     if (spname_type == SPNAME_GENUS && def.genus_name)
         return def.genus_name;
     else if (spname_type == SPNAME_ADJ && def.adj_name)
         return def.adj_name;
+    if (speci == SP_DRACONIAN)
+    {
+        if (!player)
+            return "Draconian";
+
+        switch (you.drac_colour)
+        {
+        default:
+        case DR_BROWN:
+            if (you.char_class == JOB_MUMMY)
+                return "Draconian";
+            return "Immature Draconian";
+
+        case DR_BLACK:          return "Black Draconian";
+        case DR_BLOOD:          return "Blood Draconian";
+        case DR_BLUE:           return "Blue Draconian";
+        case DR_BONE:           return "Bone Draconian";
+        case DR_CYAN:           return "Cyan Draconian";
+        case DR_GOLDEN:         return "Golden Draconian";
+        case DR_GREEN:          return "Green Draconian";
+        case DR_LIME:           return "Lime Draconian";
+        case DR_MAGENTA:        return "Magenta Draconian";
+        case DR_OLIVE:          return "Olive Draconian";
+        case DR_PEARL:          return "Pearl Draconian";
+        case DR_PINK:           return "Pink Draconian";
+        case DR_PLATINUM:       return "Platinum Draconian";
+        case DR_PURPLE:         return "Purple Draconian";
+        case DR_RED:            return "Red Draconian";
+        case DR_SCINTILLATING:  return "Scintillating Draconian";
+        case DR_SILVER:         return "Silver Draconian";
+        case DR_TEAL:           return "Spectral Draconian";
+        case DR_WHITE:          return "White Draconian";
+        }
+    }
     return def.name;
 }
 
@@ -314,13 +348,34 @@ ability_type draconian_breath()
 
     switch (you.drac_colour)
     {
-    case DR_GREEN:      return ABIL_BREATHE_MEPHITIC;
-    case DR_RED:        return ABIL_BREATHE_FIRE;
-    case DR_WHITE:      return ABIL_BREATHE_FROST;
-    case DR_LIME:       return ABIL_BREATHE_ACID;
-    case DR_BLACK:      return ABIL_BREATHE_LIGHTNING;
-    case DR_PURPLE:     return ABIL_BREATHE_POWER;
-    case DR_MAGENTA:    return ABIL_BREATHE_STEAM;
+    // Basic
+    case DR_BROWN:              return ABIL_BREATHE_DART;
+
+    // Common
+    case DR_GREEN:              return ABIL_BREATHE_MEPHITIC;
+    case DR_RED:                return ABIL_BREATHE_FIRE;
+    case DR_WHITE:              return ABIL_BREATHE_FROST;
+    case DR_LIME:               return ABIL_BREATHE_ACID;
+    case DR_BLUE:               return ABIL_BREATHE_LIGHTNING;
+    case DR_PURPLE:             return ABIL_BREATHE_POWER;
+    case DR_MAGENTA:            return ABIL_BREATHE_FOG;
+    case DR_CYAN:               return ABIL_BREATHE_WIND;
+    case DR_SILVER:             return ABIL_BREATHE_SILVER;
+    case DR_PINK:               return ABIL_BREATHE_BUTTERFLIES;
+    case DR_SCINTILLATING:      return ABIL_BREATHE_CHAOS;
+
+    // Undead
+    case DR_BLACK:              return ABIL_BREATHE_DRAIN;
+    case DR_OLIVE:              return ABIL_BREATHE_MIASMA;
+    case DR_BONE:               return ABIL_BREATHE_BONE;
+    case DR_TEAL:               return ABIL_BREATHE_GHOSTLY_FLAMES;
+
+    // Demigod/Rare.
+    case DR_GOLDEN:             return ABIL_BREATHE_FIRE; // Special Cased Later.
+    case DR_PEARL:              return ABIL_BREATHE_HOLY_FLAMES;
+    case DR_BLOOD:              return ABIL_BREATHE_BLOOD;
+    case DR_PLATINUM:           return ABIL_BREATHE_RADIATION;
+
     default: return ABIL_NON_ABILITY;
     }
 }
@@ -469,7 +524,7 @@ species_type find_species_from_string(const string &species, bool initial_only)
     for (int i = 0; i < NUM_SPECIES; ++i)
     {
         const species_type si = static_cast<species_type>(i);
-        const string sp_name = lowercase_string(species_name(si));
+        const string sp_name = lowercase_string(species_name(si, SPNAME_PLAIN, false));
 
         string::size_type pos = sp_name.find(spec);
         if (pos != string::npos)
@@ -613,9 +668,10 @@ bool is_starting_species(species_type species)
 // A random non-base draconian colour appropriate for the player.
 draconian_colour random_draconian_colour()
 {
-    if (you.char_class == JOB_MUMMY || one_chance_in(24))
+    bool rare = one_chance_in(50);
+    if (you.char_class == JOB_MUMMY || rare && coinflip())
         return random_choose(DR_BLACK, DR_OLIVE, DR_BONE, DR_TEAL);
-    if (you.char_class == JOB_DEMIGOD || one_chance_in(24))
+    if ((you.char_class == JOB_DEMIGOD && !rare) || (you.char_class != JOB_DEMIGOD && rare))
         return random_choose(DR_GOLDEN, DR_PEARL, DR_BLOOD, DR_PLATINUM);
     return random_choose(DR_RED, DR_WHITE, DR_BLUE, DR_CYAN, DR_SILVER, 
         DR_GREEN, DR_PINK, DR_PURPLE, DR_LIME, DR_MAGENTA, DR_BLACK, DR_SCINTILLATING);

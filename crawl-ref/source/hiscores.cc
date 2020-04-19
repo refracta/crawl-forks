@@ -965,7 +965,7 @@ static string _species_name(int race)
     case OLD_SP_LAVA_ORC: return "Lava Orc";
     }
 
-    return species_name(static_cast<species_type>(race));
+    return species_name(static_cast<species_type>(race, SPNAME_PLAIN, false));
 }
 
 static const char* _species_abbrev(int race)
@@ -1966,7 +1966,7 @@ scorefile_entry::character_description(death_desc_verbosity verbosity) const
         desc += make_stringf("Began as a%s %s %s",
                  is_vowel(srace[0]) ? "n" : "",
                  srace.c_str(),
-                 _job_name(job));
+                 _job_name(job)); // BCADDO: Job name isn't the same as what you started as if you're an --AX.
 
         ASSERT(birth_time);
         desc += " on ";

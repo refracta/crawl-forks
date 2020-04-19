@@ -2,13 +2,40 @@
 
 #include "enum.h"
 #include "ability-type.h"
-#include "draconian.h"
 #include "item-prop-enum.h"
 #include "job-type.h"
 #include "size-part-type.h"
 #include "size-type.h"
+#include "species.h"
 #include "species-def.h"
 #include "species-type.h"
+
+enum draconian_colour
+{
+    DR_BROWN,
+
+    DR_RED,
+    DR_WHITE,
+    DR_BLUE,
+    DR_CYAN,
+    DR_SILVER,
+    DR_GREEN,
+    DR_PINK,
+    DR_PURPLE,
+    DR_LIME,
+    DR_MAGENTA,
+
+    DR_BLACK,
+    DR_OLIVE,
+    DR_BONE,
+    DR_TEAL,
+
+    DR_GOLDEN,
+    DR_PEARL,
+    DR_SCINTILLATING,
+    DR_BLOOD,
+    DR_PLATINUM
+};
 
 bool species_is_elven(species_type species);
 bool species_is_draconian(species_type species);
@@ -39,7 +66,7 @@ enum species_name_type
     SPNAME_GENUS,
     SPNAME_ADJ
 };
-string species_name(species_type speci, species_name_type spname = SPNAME_PLAIN);
+string species_name(species_type speci, species_name_type spname = SPNAME_PLAIN, bool player = true);
 species_type str_to_species(const string &species);
 string species_walking_verb(species_type sp);
 const vector<string>& fake_mutations(species_type species, bool terse);

@@ -18,7 +18,6 @@
 #include "book-type.h"
 #include "caction-type.h"
 #include "daction-type.h"
-#include "draconian.h"
 #include "duration-type.h"
 #include "eq-type.h"
 #include "equipment-type.h"

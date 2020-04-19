@@ -1717,13 +1717,13 @@ string skill_title_by_rank(skill_type best_skill, uint8_t skill_rank,
             result = skill_titles[best_skill][skill_rank];
     }
 
-    const map<string, string> replacements =
+    // BCADDO: Make job_class usable here too for mummy/demigod replacements. (can't just check you.char_class because it's also used for player ghosts).
+    const map<string, string> replacements =    
     {
         { "Adj", species_name(species, SPNAME_ADJ) },
         { "Genus", species_name(species, SPNAME_GENUS) },
         { "genus", lowercase_string(species_name(species, SPNAME_GENUS)) },
-        { "Genus_Short", (species == SP_DEMIGOD || you.char_class == JOB_DEMIGOD) ? "God" :
-                           species_name(species, SPNAME_GENUS) },
+        { "Genus_Short", species_name(species, SPNAME_GENUS) },
         { "Walker", species_walking_verb(species) + "er" },
         { "Weight", _stk_weight(species) },
     };
