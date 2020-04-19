@@ -1260,6 +1260,8 @@ void tilep_draconian_init(int sp, int level, tileidx_t *base,
 {
     const int colour_offset = _draconian_colour(sp, level);
     *base = TILEP_BASE_DRACONIAN + colour_offset * 2;
+    if (you.char_class == JOB_MUMMY && you.drac_colour == DR_BROWN)
+        *base = TILEP_BASE_MUMMY;
     *head = tile_player_part_start[TILEP_PART_DRCHEAD] + colour_offset;
 
     if (you.has_mutation(MUT_BIG_WINGS))

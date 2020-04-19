@@ -4,61 +4,67 @@ enum ability_type
 {
     ABIL_NON_ABILITY = -1,
     // Innate abilities and (Demonspawn) mutations.
-    ABIL_SPIT_POISON = 1,
+
+    // Species-specific abilities.
+
+    // Draconians
+    ABIL_BREATHE_DART = 1,
     ABIL_BREATHE_FIRE,
     ABIL_BREATHE_FROST,
     ABIL_BREATHE_POISON,
     ABIL_BREATHE_LIGHTNING,
     ABIL_BREATHE_POWER,
-#if TAG_MAJOR_VERSION == 34
-    ABIL_BREATHE_STICKY_FLAME,
-#endif
+    ABIL_BREATHE_FOG,
     ABIL_BREATHE_STEAM,
     ABIL_BREATHE_MEPHITIC,
     ABIL_BREATHE_ACID,
-    ABIL_BLINK,
-    // Others
-#if TAG_MAJOR_VERSION == 34
-    ABIL_DELAYED_FIREBALL,
-#endif
-    // Abort duration-based spells
-    ABIL_END_TRANSFORMATION,
-#if TAG_MAJOR_VERSION == 34
-    ABIL_STOP_SINGING, // From song of slaying
-#endif
-    ABIL_CANCEL_PPROJ,
+    ABIL_BREATHE_DRAIN,
+    ABIL_BREATHE_MIASMA,
+    ABIL_BREATHE_SILVER,
+    ABIL_BREATHE_WIND,
+    ABIL_BREATHE_BLOOD,
+    ABIL_BREATHE_HOLY_FLAMES,
+    ABIL_BREATHE_BUTTERFLIES,
+    ABIL_BREATHE_BONE,
+    ABIL_BREATHE_CHAOS,
+    ABIL_BREATHE_GHOSTLY_FLAMES,
+    ABIL_BREATHE_METAL,
+    ABIL_BREATHE_RADIATION,
 
-    // Species-specific abilities.
-    // Demonspawn-only
-    ABIL_DAMNATION,
-    // Lignifite-only
-    ABIL_PLANT_ROOTS,
+    // Lignifite
+    ABIL_PLANT_ROOTS = 50,
     ABIL_DEROOT,
-    // Tengu, Draconians
-    ABIL_FLY,
-#if TAG_MAJOR_VERSION == 34
-    ABIL_WISP_BLINK,
-#endif
-    ABIL_STOP_FLYING,
-#if TAG_MAJOR_VERSION == 34
-    ABIL_MUMMY_RESTORATION,
-#endif
+
     // Vampires
-    ABIL_TRAN_BAT,
-#if TAG_MAJOR_VERSION == 34
-    ABIL_BOTTLE_BLOOD,
-#endif
+    ABIL_TRAN_BAT = 60, // BCADNOTE: Likely to turn into god ability at some point.
+
     // Deep Dwarves
-    ABIL_HEAL_WOUNDS,
+    ABIL_HEAL_WOUNDS = 70, // BCADNOTE: Can be removed; but no rush.
+
     // Formicids
-    ABIL_DIG,
+    ABIL_DIG = 80,
     ABIL_SHAFT_SELF,
+
     // Barachim
-    ABIL_HOP,
-    ABIL_MAX_INTRINSIC = ABIL_HOP,
+    ABIL_HOP = 90,
+
+    // Demonspawn-only
+    ABIL_DAMNATION = 100,
+
+    // Naga
+    ABIL_SPIT_POISON = 110,
+
+    // Not-tied to species
+    ABIL_BLINK = 200,
+    ABIL_FLY,
+    ABIL_STOP_FLYING,
+    ABIL_CANCEL_PPROJ,
+    ABIL_END_TRANSFORMATION,
+
+    ABIL_MAX_INTRINSIC = ABIL_END_TRANSFORMATION,
 
     // Evoking items.
-    ABIL_EVOKE_BERSERK = 40,
+    ABIL_EVOKE_BERSERK = 500,
     ABIL_MIN_EVOKE = ABIL_EVOKE_BERSERK,
 #if TAG_MAJOR_VERSION == 34
     ABIL_EVOKE_TELEPORTATION,

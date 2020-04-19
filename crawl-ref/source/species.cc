@@ -271,41 +271,56 @@ const char* scale_type()
 
 monster_type dragon_form_dragon_type()
 {
-    switch (you.species)
+    if (you.species != SP_DRACONIAN)
+        return MONS_FIRE_DRAGON;
+
+    // BCADDO: RETURN HERE.
+    switch (you.drac_colour)
     {
-    case SP_WHITE_DRACONIAN:
+    case DR_WHITE:
         return MONS_ICE_DRAGON;
-    case SP_GREEN_DRACONIAN:
+    case DR_GREEN:
         return MONS_SWAMP_DRAGON;
-    case SP_YELLOW_DRACONIAN:
-        return MONS_GOLDEN_DRAGON;
-    case SP_GREY_DRACONIAN:
+    case DR_LIME:
+        return MONS_ACID_DRAGON;
+    case DR_SILVER:
         return MONS_IRON_DRAGON;
-    case SP_BLACK_DRACONIAN:
-        return MONS_STORM_DRAGON;
-    case SP_PURPLE_DRACONIAN:
+    case DR_BLACK:
+        return MONS_SHADOW_DRAGON;
+    case DR_PURPLE:
         return MONS_QUICKSILVER_DRAGON;
-    case SP_PALE_DRACONIAN:
+    case DR_MAGENTA:
         return MONS_STEAM_DRAGON;
-    case SP_RED_DRACONIAN:
+    case DR_GOLDEN:
+        return MONS_GOLDEN_DRAGON;
+    case DR_BONE:
+        return MONS_BONE_DRAGON;
+    case DR_BLUE:
+        return MONS_STORM_DRAGON;
+    case DR_PEARL:
+        return MONS_PEARL_DRAGON;
+    case DR_OLIVE:
+        return MONS_DEATH_DRAKE;
+    case DR_RED:
     default:
         return MONS_FIRE_DRAGON;
     }
 }
 
-ability_type draconian_breath(species_type species)
+ability_type draconian_breath()
 {
-    ASSERT(species_is_draconian(species));
-    switch (species)
+    if (you.species != SP_DRACONIAN)
+        return ABIL_NON_ABILITY;
+
+    switch (you.drac_colour)
     {
-    case SP_GREEN_DRACONIAN:   return ABIL_BREATHE_MEPHITIC;
-    case SP_RED_DRACONIAN:     return ABIL_BREATHE_FIRE;
-    case SP_WHITE_DRACONIAN:   return ABIL_BREATHE_FROST;
-    case SP_YELLOW_DRACONIAN:  return ABIL_BREATHE_ACID;
-    case SP_BLACK_DRACONIAN:   return ABIL_BREATHE_LIGHTNING;
-    case SP_PURPLE_DRACONIAN:  return ABIL_BREATHE_POWER;
-    case SP_PALE_DRACONIAN:    return ABIL_BREATHE_STEAM;
-    case SP_DRACONIAN: case SP_GREY_DRACONIAN:
+    case DR_GREEN:      return ABIL_BREATHE_MEPHITIC;
+    case DR_RED:        return ABIL_BREATHE_FIRE;
+    case DR_WHITE:      return ABIL_BREATHE_FROST;
+    case DR_LIME:       return ABIL_BREATHE_ACID;
+    case DR_BLACK:      return ABIL_BREATHE_LIGHTNING;
+    case DR_PURPLE:     return ABIL_BREATHE_POWER;
+    case DR_MAGENTA:    return ABIL_BREATHE_STEAM;
     default: return ABIL_NON_ABILITY;
     }
 }

@@ -46,7 +46,7 @@ const vector<string>& fake_mutations(species_type species, bool terse);
 
 monster_type dragon_form_dragon_type();
 const char* scale_type();
-ability_type draconian_breath(species_type species);
+ability_type draconian_breath();
 
 monster_type player_species_to_mons_species(species_type species);
 string species_prayer_action(species_type species);

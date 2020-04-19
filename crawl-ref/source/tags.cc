@@ -2588,9 +2588,7 @@ static void tag_read_you(reader &th)
                 a += ABIL_STOP_RECALL - ABIL_ASHENZARI_END_TRANSFER - 1;
             }
         }
-        if (a == ABIL_FLY
-            || a == ABIL_WISP_BLINK // was ABIL_FLY_II
-               && th.getMinorVersion() < TAG_MINOR_0_12)
+        if (a == ABIL_FLY && th.getMinorVersion() < TAG_MINOR_0_12)
         {
             if (found_fly)
                 a = ABIL_NON_ABILITY;
@@ -2620,10 +2618,22 @@ static void tag_read_you(reader &th)
                 a -= 1;
         }
 
-        if (th.getMinorVersion() < TAG_MINOR_MOTTLED_REMOVAL)
+        if (th.getMinorVersion() < TAG_MINOR_DRACONIAN_REWORK)
         {
-            if (a == ABIL_BREATHE_STICKY_FLAME)
-                a = ABIL_BREATHE_FIRE;
+            // BCADNOTE: This is all to clean up the enum while not breaking old save compat.
+            if (a > 39 && a < 80)       a += 460;
+            if (a == 28)                a = ABIL_HOP;
+            if (a == 26 || a == 27)     a += 54;
+            if (a == 25)                a = ABIL_HEAL_WOUNDS;
+            if (a == 23)                a = ABIL_TRAN_BAT;
+            if (a == 21)                a = ABIL_STOP_FLYING;
+            if (a == 19)                a = ABIL_FLY;
+            if (a == 17 || a == 18)     a += 33;
+            if (a = 16)                 a = ABIL_DAMNATION;
+            if (a = 15)                 a = ABIL_CANCEL_PPROJ;
+            if (a = 13)                 a = ABIL_END_TRANSFORMATION;
+            if (a = 11)                 a = ABIL_BLINK;
+            if (a = 1)                  a = ABIL_SPIT_POISON;
         }
 
         // Bad offset from games transferred prior to 0.17-a0-2121-g4af814f.

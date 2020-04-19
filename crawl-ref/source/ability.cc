@@ -3325,13 +3325,10 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
     else if (you.get_mutation_level(MUT_SPIT_POISON))
         _add_talent(talents, ABIL_SPIT_POISON, check_confused);
 
-    if (species_is_draconian(you.species)
-        // Draconians don't maintain their original breath weapons
-        // if shapechanged into a non-dragon form.
-        && (!form_changed_physiology() || you.form == transformation::dragon)
-        && draconian_breath(you.species) != ABIL_NON_ABILITY)
+    if ((!form_changed_physiology() || you.form == transformation::dragon)
+        && draconian_breath() != ABIL_NON_ABILITY)
     {
-        _add_talent(talents, draconian_breath(you.species), check_confused);
+        _add_talent(talents, draconian_breath(), check_confused);
     }
 
     if (you.species == SP_VAMPIRE && you.experience_level >= 3
@@ -3384,13 +3381,8 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
     if (env.level_state & LSTATE_BEOGH && can_convert_to_beogh())
         _add_talent(talents, ABIL_CONVERT_TO_BEOGH, check_confused);
 
-    //jmf: Check for breath weapons - they're exclusive of each other, I hope!
-    //     Make better ones come first.
-    if (you.species != SP_RED_DRACONIAN && you.form == transformation::dragon
-         && dragon_form_dragon_type() == MONS_FIRE_DRAGON)
-    {
+    if (you.species != SP_DRACONIAN && you.form == transformation::dragon)
         _add_talent(talents, ABIL_BREATHE_FIRE, check_confused);
-    }
 
     if (you.duration[DUR_PORTAL_PROJECTILE])
         _add_talent(talents, ABIL_CANCEL_PPROJ, check_confused);

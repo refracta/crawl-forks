@@ -2022,15 +2022,18 @@ int species_apt(skill_type skill, species_type species)
                 mod += 4;
             break;
         case DR_PEARL:
-            if (skill == SK_AIR_MAGIC || skill == SK_CHARMS || skill == SK_SUMMONINGS)
+            if (skill == SK_EARTH_MAGIC || skill == SK_CHARMS || skill == SK_SUMMONINGS)
                 mod += 4;
+            break;
+        case DR_PLATINUM:
+            if (skill == SK_TRANSLOCATIONS || skill == SK_TRANSMUTATIONS || skill == SK_HEXES)
             break;
         case DR_SCINTILLATING:
             if (is_magic_skill(skill) && skill != SK_SPELLCASTING)
                 mod += 3;
             break;
         case DR_BLOOD:
-            if (skill == SK_NECROMANCY || skill == SK_EARTH_MAGIC || skill == SK_HEXES)
+            if (skill == SK_NECROMANCY || skill == SK_AIR_MAGIC || skill == SK_HEXES)
                 mod += 4;
             break;
         }
