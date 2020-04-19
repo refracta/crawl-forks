@@ -233,8 +233,8 @@ const char* scale_type()
             return "lurid green";
         case DR_CYAN:
             return "empereal azure";
-        case DR_YELLOW:
-            return "viscuous yellow";
+        case DR_LIME:
+            return "slimy lime-green";
         case DR_SILVER:
             return "gleaming silver";
         case DR_BLUE:
@@ -261,6 +261,8 @@ const char* scale_type()
             return "scintillating rainbow";
         case DR_BLOOD:
             return "gory crimson";
+        case DR_PLATINUM:
+            return "lustrous platinum";
         case DR_BONE: // Don't have scales, needs special casing.
         default:
             return "";
@@ -596,12 +598,12 @@ bool is_starting_species(species_type species)
 // A random non-base draconian colour appropriate for the player.
 draconian_colour random_draconian_colour()
 {
-    if (you.char_class == JOB_MUMMY || one_chance_in(12))
+    if (you.char_class == JOB_MUMMY || one_chance_in(24))
         return random_choose(DR_BLACK, DR_OLIVE, DR_BONE, DR_TEAL);
-    if (you.char_class == JOB_DEMIGOD || one_chance_in(12))
-        return random_choose(DR_GOLDEN, DR_PEARL, DR_SCINTILLATING, DR_BLOOD);
+    if (you.char_class == JOB_DEMIGOD || one_chance_in(24))
+        return random_choose(DR_GOLDEN, DR_PEARL, DR_BLOOD, DR_PLATINUM);
     return random_choose(DR_RED, DR_WHITE, DR_BLUE, DR_CYAN, DR_SILVER, 
-        DR_GREEN, DR_PINK, DR_PURPLE, DR_YELLOW, DR_MAGENTA, DR_BLACK, DR_SCINTILLATING);
+        DR_GREEN, DR_PINK, DR_PURPLE, DR_LIME, DR_MAGENTA, DR_BLACK, DR_SCINTILLATING);
 }
 
 bool species_is_removed(species_type species)

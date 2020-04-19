@@ -14,7 +14,7 @@ enum draconian_colour
     DR_GREEN,
     DR_PINK,
     DR_PURPLE,
-    DR_YELLOW,
+    DR_LIME,
     DR_MAGENTA,
 
     DR_BLACK,
@@ -25,5 +25,6 @@ enum draconian_colour
     DR_GOLDEN,
     DR_PEARL,
     DR_SCINTILLATING,
-    DR_BLOOD
+    DR_BLOOD,
+    DR_PLATINUM
 };

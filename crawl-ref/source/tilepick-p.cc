@@ -7,6 +7,7 @@
 
 #include "artefact.h"
 #include "describe.h"
+#include "draconian.h"
 #include "item-name.h"
 #include "item-prop.h"
 #include "player.h"
@@ -1073,7 +1074,7 @@ tileidx_t tileidx_player()
         case SP_PURPLE_DRACONIAN:  ch = TILEP_TRAN_DRAGON_PURPLE;  break;
         case SP_WHITE_DRACONIAN:   ch = TILEP_TRAN_DRAGON_WHITE;   break;
         case SP_RED_DRACONIAN:     ch = TILEP_TRAN_DRAGON_RED;     break;
-        case SP_SILENT_SPECTRE:       ch = TILEP_TRAN_DRAGON_SPECTRAL; break;
+        case SP_SILENT_SPECTRE:    ch = TILEP_TRAN_DRAGON_SPECTRAL; break;
         default:                   ch = TILEP_TRAN_DRAGON;         break;
         }
         break;
@@ -1138,16 +1139,30 @@ static int _draconian_colour(int race, int level)
         case MONS_WHITE_DRACONIAN:  return 8;
         }
     }
-    switch (race)
+    switch (you.drac_colour)
     {
-    case SP_BLACK_DRACONIAN:   return 1;
-    case SP_YELLOW_DRACONIAN:  return 2;
-    case SP_GREY_DRACONIAN:    return 3;
-    case SP_GREEN_DRACONIAN:   return 4;
-    case SP_PALE_DRACONIAN:    return 5;
-    case SP_PURPLE_DRACONIAN:  return 6;
-    case SP_RED_DRACONIAN:     return 7;
-    case SP_WHITE_DRACONIAN:   return 8;
+    case DR_BROWN: 
+        if (you.char_class == JOB_MUMMY)    return 21; 
+                            return 0;
+    case DR_BLACK:          return 1;
+    case DR_LIME:           return 2;
+    case DR_GREEN:          return 3;
+    case DR_CYAN:           return 4;
+    case DR_PURPLE:         return 5;
+    case DR_RED:            return 6;
+    case DR_WHITE:          return 7;
+    case DR_BLOOD:          return 8;
+    case DR_BLUE:           return 9;
+    case DR_BONE:           return 10;
+    case DR_GOLDEN:         return 11;
+    case DR_MAGENTA:        return 12;
+    case DR_OLIVE:          return 13;
+    case DR_PEARL:          return 14;
+    case DR_PINK:           return 15;
+    case DR_PLATINUM:       return 16;
+    case DR_SCINTILLATING:  return 17;
+    case DR_SILVER:         return 18;
+    case DR_TEAL:           return 19;
     }
     return 0;
 }
@@ -1190,14 +1205,6 @@ tileidx_t tilep_species_to_base_tile(int sp, int level)
     case SP_TROLL:
         return TILEP_BASE_TROLL;
     case SP_DRACONIAN:
-    case SP_RED_DRACONIAN:
-    case SP_WHITE_DRACONIAN:
-    case SP_GREEN_DRACONIAN:
-    case SP_YELLOW_DRACONIAN:
-    case SP_GREY_DRACONIAN:
-    case SP_BLACK_DRACONIAN:
-    case SP_PURPLE_DRACONIAN:
-    case SP_PALE_DRACONIAN:
     {
         const int colour_offset = _draconian_colour(sp, level);
         return TILEP_BASE_DRACONIAN + colour_offset * 2;
@@ -1290,14 +1297,6 @@ void tilep_race_default(int sp, int level, dolls_data *doll)
             hair = TILEP_HAIR_TROLL;
             break;
         case SP_DRACONIAN:
-        case SP_RED_DRACONIAN:
-        case SP_WHITE_DRACONIAN:
-        case SP_GREEN_DRACONIAN:
-        case SP_YELLOW_DRACONIAN:
-        case SP_GREY_DRACONIAN:
-        case SP_BLACK_DRACONIAN:
-        case SP_PURPLE_DRACONIAN:
-        case SP_PALE_DRACONIAN:
         {
             tilep_draconian_init(sp, level, &result, &head, &wing);
             hair   = 0;

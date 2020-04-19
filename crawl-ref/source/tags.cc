@@ -3256,7 +3256,7 @@ static void tag_read_you(reader &th)
                 you.drac_colour = DR_GREEN;
                 break;
             case SP_YELLOW_DRACONIAN:
-                you.drac_colour = DR_YELLOW;
+                you.drac_colour = DR_LIME;
                 break;
             case SP_GREY_DRACONIAN:
                 you.drac_colour = DR_SILVER;

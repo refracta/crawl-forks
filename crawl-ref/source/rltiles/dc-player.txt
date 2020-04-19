@@ -103,20 +103,44 @@ draconian_f DRACONIAN DRACONIAN_FIRST
 draconian_m
 draconian_black_f DRACONIAN_BLACK
 draconian_black_m
-draconian_gold_f DRACONIAN_GOLD
-draconian_gold_m
-draconian_gray_f DRACONIAN_GREY
-draconian_gray_m
+draconian_lime_f DRACONIAN_LIME
+draconian_lime_m
 draconian_green_f DRACONIAN_GREEN
 draconian_green_m
-draconian_pale_f DRACONIAN_PALE
-draconian_pale_m
+draconian_cyan_f DRACONIAN_CYAN
+draconian_cyan_m
 draconian_purple_f DRACONIAN_PURPLE
 draconian_purple_m
 draconian_red_f DRACONIAN_RED
 draconian_red_m
 draconian_white_f DRACONIAN_WHITE
-draconian_white_m DRACONIAN_LAST
+draconian_white_m 
+draconian_blood_f DRACONIAN_BLOOD
+draconian_blood_m
+draconian_blue_f DRACONIAN_BLUE
+draconian_blue_m
+draconian_bone_f DRACONIAN_BONE
+draconian_bone_m
+draconian_gold_f DRACONIAN_GOLD
+draconian_gold_m
+draconian_magenta_f DRACONIAN_MAGENTA
+draconian_magenta_m
+draconian_olive_f DRACONIAN_OLIVE
+draconian_olive_m
+draconian_pearl_f DRACONIAN_PEARL
+draconian_pearl_m
+draconian_pink_f DRACONIAN_PINK
+draconian_pink_m
+draconian_platinum_f DRACONIAN_PLATINUM
+draconian_platinum_m
+draconian_scintillating_f DRACONIAN_SCINTILLATING
+draconian_scintillating_m
+draconian_silver_f DRACONIAN_SILVER
+draconian_silver_m
+draconian_teal_f DRACONIAN_TEAL
+draconian_teal_m
+draconian_statue_f DRACONIAN_STATUE
+draconian_statue_m DRACONIAN_LAST
 
 centaur_brown_f CENTAUR
 centaur_brown_m
@@ -1539,24 +1563,49 @@ ninja_black MASK_NINJA_BLACK
 %sdir player/drcwing
 drcwing_brown BROWN
 drcwing_black BLACK
-drcwing_yellow YELLOW
-drcwing_grey GREY
+drcwing_lime LIME
 drcwing_green GREEN
-drcwing_pale PALE
+drcwing_cyan CYAN
 drcwing_purple PURPLE
 drcwing_red RED
 drcwing_white WHITE
+drcwing_blood BLOOD
+drcwing_blue BLUE
+drcwing_bone BONE
+drcwing_gold GOLD
+drcwing_magenta MAGENTA
+drcwing_olive OLIVE
+drcwing_pearl PEARL
+drcwing_pink PINK
+drcwing_platinum PLATINUM
+drcwing_scintillating SCINTILLATING
+drcwing_silver SILVER
+drcwing_teal TEAL
+drcwing_statue STATUE
 %end_ctg
 
 %parts_ctg DRCHEAD
 %sdir player/drchead
 drchead_brown BROWN
 drchead_black BLACK
-drchead_yellow YELLOW
-drchead_grey GREY
+drchead_lime LIME
 drchead_green GREEN
-drchead_pale PALE
+drchead_cyan CYAN
 drchead_purple PURPLE
 drchead_red RED
 drchead_white WHITE
+drchead_blood BLOOD
+drchead_blue BLUE
+drchead_bone BONE
+drchead_gold GOLD
+drchead_magenta MAGENTA
+drchead_olive OLIVE
+drchead_pearl PEARL
+drchead_pink PINK
+drchead_platinum PLATINUM
+drchead_scintillating SCINTILLATING
+drchead_silver SILVER
+drchead_teal TEAL
+drchead_statue STATUE
+drchead_mummy MUMMY
 %end_ctg

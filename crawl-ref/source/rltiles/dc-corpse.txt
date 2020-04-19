@@ -334,15 +334,15 @@ base/octopode1 CORPSE_OCTOPODE
 %finish CORPSE_DRACONIAN_GREEN
 
 %start
-%compose drcwing/drcwing_grey
-%compose base/draconian_gray_f
-%compose drchead/drchead_grey
+%compose drcwing/drcwing_silver
+%compose base/draconian_silver_f
+%compose drchead/drchead_silver
 %finish CORPSE_DRACONIAN_GREY
 
 %start
-%compose drcwing/drcwing_pale
-%compose base/draconian_pale_f
-%compose drchead/drchead_pale
+%compose drcwing/drcwing_cyan
+%compose base/draconian_cyan_f
+%compose drchead/drchead_cyan
 %finish CORPSE_DRACONIAN_PALE
 
 %start
@@ -364,9 +364,9 @@ base/octopode1 CORPSE_OCTOPODE
 %finish CORPSE_DRACONIAN_WHITE
 
 %start
-%compose drcwing/drcwing_yellow
-%compose base/draconian_gold_f
-%compose drchead/drchead_yellow
+%compose drcwing/drcwing_lime
+%compose base/draconian_lime_f
+%compose drchead/drchead_lime
 %finish CORPSE_DRACONIAN_YELLOW
 
 # Demonspawn ('6')

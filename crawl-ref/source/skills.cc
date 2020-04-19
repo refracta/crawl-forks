@@ -1993,7 +1993,7 @@ int species_apt(skill_type skill, species_type species)
             if (skill == SK_HEXES)
                 mod += 5;
             break;
-        case DR_YELLOW:
+        case DR_LIME:
             if (skill == SK_TRANSMUTATIONS)
                 mod += 5;
             break;
