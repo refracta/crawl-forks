@@ -391,6 +391,7 @@ public:
     bool res_torment() const override;
     int res_acid(bool calc_unid = true) const override;
     bool res_tornado() const override;
+    bool res_wind() const override;
     bool res_petrify(bool /*temp*/ = true) const override;
     int res_constrict() const override;
     int res_magic(bool calc_unid = true) const override;

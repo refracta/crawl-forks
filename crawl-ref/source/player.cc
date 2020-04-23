@@ -6809,11 +6809,19 @@ bool player::res_torment() const
 
 bool player::res_tornado() const
 {
-    if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE) && (you.drac_colour == DR_CYAN))
-        return 1;
-
     // Full control of the winds around you can negate a hostile tornado.
-    return (duration[DUR_TORNADO] || duration[DUR_CHAOSNADO]) ? 1 : 0;
+    if (duration[DUR_TORNADO] || duration[DUR_CHAOSNADO])
+        return true;
+
+    return player::res_wind();
+}
+
+bool player::res_wind() const
+{
+    if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE) && (you.drac_colour == DR_CYAN))
+        return true;
+
+    return false;
 }
 
 bool player::res_petrify(bool temp) const

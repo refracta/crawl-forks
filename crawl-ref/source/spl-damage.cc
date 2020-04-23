@@ -1245,6 +1245,13 @@ spret cast_airstrike(int pow, const dist &beam, bool fail)
     }
 
     monster* mons = monster_at(beam.target);
+
+    if (mons->res_wind())
+    {
+        mprf("But the air would do no harm to %s", mons->name(DESC_THE).c_str());
+        return spret::abort;
+    }
+
     if (!mons || mons->submerged())
     {
         fail_check();
@@ -4353,7 +4360,7 @@ static void _imb_actor(actor * act, int pow, bool chaos)
     if (chaos)
         beam.real_flavour = beam.flavour = BEAM_CHAOTIC;
     else
-        beam.flavour     = BEAM_MMISSILE;
+        beam.flavour     = BEAM_AIR;
     beam.affects_nothing = false;
     beam.hit             = 10 + pow / 7;
     if (chaos)

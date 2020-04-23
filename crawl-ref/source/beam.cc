@@ -1935,7 +1935,9 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
         break;
 
     case BEAM_AIR:
-        if (mons->airborne())
+        if (mons->res_wind())
+            hurted = 0;
+        else if (mons->airborne())
             hurted += hurted / 2;
         if (original < hurted)
         {

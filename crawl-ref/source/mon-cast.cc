@@ -8226,6 +8226,8 @@ static bool _ms_waste_of_time(monster* mon, mon_spell_slot slot)
     // Don't use unless our foe is close to us and there are no allies already
     // between the two of us
     case SPELL_WIND_BLAST:
+        if (foe && foe->res_wind())
+            return true;
         if (foe && foe->pos().distance_from(mon->pos()) < 4)
         {
             bolt tracer;
@@ -8251,8 +8253,10 @@ static bool _ms_waste_of_time(monster* mon, mon_spell_slot slot)
     case SPELL_SUMMON_SPECTRAL_ORCS:
     case SPELL_SUMMON_MUSHROOMS:
     case SPELL_ENTROPIC_WEAVE:
-    case SPELL_AIRSTRIKE:
         return !foe;
+
+    case SPELL_AIRSTRIKE:
+        return !foe || foe->res_wind();
 
     case SPELL_HOLY_FLAMES:
         return !foe || no_clouds;

@@ -208,7 +208,7 @@ enum mon_resist_flags
     MR_RES_DAMNATION     = 1 << 24,
     // unused 1 << 25,
     MR_RES_STICKY_FLAME  = 1 << 26,
-    MR_RES_TORNADO       = 1 << 27,
+    MR_RES_WIND       = 1 << 27,
     MR_RES_STEAM         = 1 << 28,
 
     // vulnerabilities

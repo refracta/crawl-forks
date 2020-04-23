@@ -2139,50 +2139,30 @@ const char* mutation_name(mutation_type mut, bool allow_category, bool for_displ
                                                                                       : skill_name(you.defence_skill)).c_str();
     }
 
-    if (mut == MUT_DRACONIAN_DEFENSE)
+    if (mut == MUT_DRACONIAN_DEFENSE && for_display)
     {
         switch (you.drac_colour)
         {
-        case DR_BLACK:
-            return "Stlth++";
-        case DR_BLOOD:
-            return "rTorm, rHellfire";
-        case DR_BLUE:
-            return "rElec";
-        case DR_BONE:
-            return "AC+++, rShatter-";
-        case DR_BROWN:
-            return "buggy mutation!";
-        case DR_CYAN:
-            return "rCloud, rAir";
-        case DR_GOLDEN:
-            return "rF+, rC+, rPois";
-        case DR_GREEN:
-            return "rPois";
-        case DR_LIME:
-            return "rCorr";
-        case DR_MAGENTA:
-            return "rMsl";
-        case DR_OLIVE:
-            return "rMut";
-        case DR_PEARL:
-            return "AC++, rN+++";
-        case DR_PINK:
-            return "clarity";
-        case DR_PLATINUM:
-            return "fast, rMut";
-        case DR_PURPLE:
-            return "MR++";
-        case DR_RED:
-            return "rF+";
-        case DR_SCINTILLATING:
-            return "AC+, Chaos+";
-        case DR_SILVER:
-            return "AC++, rMut";
-        case DR_TEAL:
-            return "spectral";
-        case DR_WHITE:
-            return "rC+";
+        case DR_BLACK:              return "Stlth+++";
+        case DR_BLOOD:              return "rTorm, rHellfire";
+        case DR_BLUE:               return "rElec";
+        case DR_BONE:               return "AC+++, rShatter-";
+        case DR_BROWN:              return "buggy mutation!";
+        case DR_CYAN:               return "rCloud, rAir";
+        case DR_GOLDEN:             return "rF+, rC+, rPois";
+        case DR_GREEN:              return "rPois";
+        case DR_LIME:               return "rCorr";
+        case DR_MAGENTA:            return "rMsl";
+        case DR_OLIVE:              return "rMut";
+        case DR_PEARL:              return "AC++, rN+++";
+        case DR_PINK:               return "clarity";
+        case DR_PLATINUM:           return "fast, rMut";
+        case DR_PURPLE:             return "MR++";
+        case DR_RED:                return "rF+";
+        case DR_SCINTILLATING:      return "AC+, Chaos+";
+        case DR_SILVER:             return "AC++, rMut";
+        case DR_TEAL:               return "spectral";
+        case DR_WHITE:              return "rC+";
         }
     }
 
