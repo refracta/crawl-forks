@@ -73,7 +73,7 @@ spret cast_random_bolt(int pow, bolt& beam, bool fail = false);
 
 size_t shotgun_beam_count(int pow);
 spret cast_scattershot(const actor *caster, int pow, const coord_def &pos,
-                            bool fail = false);
+                            bool fail = false, zap_type zap = ZAP_SCATTERSHOT);
 
 spret cast_ignition(const actor *caster, int pow, bool fail);
 

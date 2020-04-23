@@ -92,6 +92,8 @@ enum beam_type                  // bolt::flavour
     BEAM_DEATH_RATTLE,
     BEAM_MAGIC_CANDLE,
     BEAM_FOG,
+    BEAM_ANTIABJ,
+    BEAM_BUTTERFLY,
     BEAM_WAND_HEALING,
     BEAM_WAND_RANDOM, // Used for Monster Setup only.
     BEAM_LAST_REAL = BEAM_WAND_HEALING,

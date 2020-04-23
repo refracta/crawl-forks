@@ -3942,7 +3942,7 @@ size_t shotgun_beam_count(int pow)
 }
 
 spret cast_scattershot(const actor *caster, int pow, const coord_def &pos,
-                            bool fail)
+                            bool fail, zap_type zap)
 {
     const size_t range = spell_range(SPELL_SCATTERSHOT, pow);
     const size_t beam_count = shotgun_beam_count(pow);
@@ -3953,7 +3953,7 @@ spret cast_scattershot(const actor *caster, int pow, const coord_def &pos,
 
     if (caster->is_player())
     {
-        if (stop_attack_prompt(hitfunc, "scattershot"))
+        if (stop_attack_prompt(hitfunc, zap == ZAP_SCATTERSHOT  ? "scattershot" : "breathe at"))
             return spret::abort;
     }
 
@@ -3967,7 +3967,7 @@ spret cast_scattershot(const actor *caster, int pow, const coord_def &pos,
     beam.source      = caster->pos();
     beam.source_id   = caster->mid;
     beam.source_name = caster->name(DESC_PLAIN, true);
-    zappy(ZAP_SCATTERSHOT, pow, false, beam);
+    zappy(zap, pow, false, beam);
     beam.aux_source  = beam.name;
 
     map<mid_t, int> hit_count;

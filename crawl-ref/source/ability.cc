@@ -78,6 +78,7 @@
 #include "uncancel.h"
 #include "unicode.h"
 #include "view.h"
+#include "viewchar.h"
 
 #ifdef USE_TILE
 # include "tiledef-icons.h"
@@ -813,6 +814,14 @@ const string make_cost_description(ability_type ability)
     return ret;
 }
 
+// Ripped this out both because it's used a lot and because it will likely become more complicated 
+// later so keeping it centralized for all calls will make the later mutations easier.
+static int _drac_breath_power()
+{
+    return (you.form == transformation::dragon) ? 2 * you.experience_level 
+                                                : you.experience_level;
+}
+
 static const string _detailed_cost_description(ability_type ability)
 {
     const ability_def& abil = get_ability_def(ability);
@@ -1546,6 +1555,7 @@ static bool _check_ability_possible(const ability_def& abil, bool quiet = false)
                 canned_msg(MSG_CANNOT_DO_YET);
             return false;
         }
+
         if (!you.is_unbreathing() && you.res_poison() < 2
             && cloud_at(you.pos()) && cloud_at(you.pos())->type == CLOUD_MEPHITIC
             && one_chance_in(1 + div_round_up(you.experience_level, 8)))
@@ -1553,7 +1563,6 @@ static bool _check_ability_possible(const ability_def& abil, bool quiet = false)
             mpr("You sharply inhale and choke on fumes!");
             return false;
         }
-
         return true;
 
     case ABIL_HEAL_WOUNDS:
@@ -1893,6 +1902,47 @@ static spret _do_ability(const ability_def& abil, bool fail)
         break;
     }
 
+    // Shotgun Breaths
+    case ABIL_BREATHE_METAL:
+    case ABIL_BREATHE_SILVER:
+    case ABIL_BREATHE_BONE:
+    {
+        beam.range = _calc_breath_ability_range(abil.ability);
+
+        zap_type zap;
+
+        switch (abil.ability)
+        {
+        default:
+        case ABIL_BREATHE_BONE:
+            zap = ZAP_BREATHE_BONE;
+            break;
+        case ABIL_BREATHE_SILVER:
+            zap = ZAP_BREATHE_SILVER;
+            break;
+        }
+
+        const int power = _drac_breath_power();
+
+        targeter_shotgun hitfunc(&you, shotgun_beam_count(power), beam.range);
+        direction_chooser_args args;
+        args.mode = TARG_HOSTILE;
+        args.hitfunc = &hitfunc;
+        if (!spell_direction(abild, beam, &args))
+            return spret::abort;
+
+        fail_check();
+
+        spret s = cast_scattershot(&you, power, beam.target, false, zap);
+
+        if (s == spret::success)
+            you.increase_duration(DUR_BREATH_WEAPON,
+                5 + random2(15) + random2(40 - you.experience_level));
+
+        return s;
+    }
+
+    // Only breath with a "splash" effect.
     case ABIL_BREATHE_ACID:       // Draconian acid splash
     {
         beam.range = _calc_breath_ability_range(abil.ability);
@@ -1907,8 +1957,7 @@ static spret _do_ability(const ability_def& abil, bool fail)
           return spret::abort;
 
         fail_check();
-        zapping(ZAP_BREATHE_ACID, (you.form == transformation::dragon) ?
-                2 * you.experience_level : you.experience_level,
+        zapping(ZAP_BREATHE_ACID, _drac_breath_power(),
                 beam, false, "You spit a glob of acid.");
 
         you.increase_duration(DUR_BREATH_WEAPON,
@@ -1916,34 +1965,65 @@ static spret _do_ability(const ability_def& abil, bool fail)
         break;
     }
 
-    case ABIL_BREATHE_DART:
+    // Blast Breaths
+    case ABIL_BREATHE_LIGHTNING:
     {
-        beam.range = _calc_breath_ability_range(abil.ability);
-        targeter_splash hitfunc(&you, beam.range);
-        direction_chooser_args args;
-        args.mode = TARG_HOSTILE;
-        args.hitfunc = &hitfunc;
+        targeter_radius hitfunc(&you, LOS_NO_TRANS, 2, 0, 2);
 
-        if (!spell_direction(abild, beam, &args))
+        auto vulnerable = [](const actor *act) -> bool
+        {
+            return !(you.deity() == GOD_FEDHAS
+                    && fedhas_protects(act->as_monster()))
+                && (act->res_elec() < 3);
+        };
+
+        if (stop_attack_prompt(hitfunc, "lightning breath", vulnerable))
             return spret::abort;
 
-        if (stop_attack_prompt(hitfunc, "spit at"))
-            return spret::abort;
+        bolt vis_beam;
+        vis_beam.name = "lightning breath";
+        vis_beam.flavour = BEAM_VISUAL;
+        vis_beam.set_agent(&you);
+        vis_beam.colour = CYAN;
+        vis_beam.glyph = dchar_glyph(DCHAR_EXPLOSION);
+        vis_beam.range = 1;
+        vis_beam.ex_size = 2;
+        vis_beam.is_explosion = true;
+        vis_beam.explode_delay = beam.explode_delay * 3 / 2;
+        vis_beam.source = you.pos();
+        vis_beam.target = you.pos();
+        vis_beam.hit = AUTOMATIC_HIT;
+        vis_beam.loudness = 0;
+        vis_beam.explode(true, true);
 
-        fail_check();
-        zapping(ZAP_SLUG_DART, (you.form == transformation::dragon) ?
-            2 * you.experience_level : you.experience_level,
-            beam, true, "You spit a rudimentary magic dart.");
+        mpr("You breathe a wild blast of lightning!");
 
-        you.increase_duration(DUR_BREATH_WEAPON,
-            3 + random2(10) + random2(30 - you.experience_level));
+        bolt dam_beam;
+        zappy(ZAP_BREATHE_LIGHTNING, _drac_breath_power(), false, dam_beam);
+
+        for (radius_iterator ri(you.pos(), 2, C_SQUARE, true); ri; ++ri)
+        {
+            actor *act = actor_at(*ri);
+            if (act && act->alive())
+            {
+
+                if (you.religion == GOD_FEDHAS && fedhas_protects(act->as_monster()))
+                    simple_god_message(" protects your plant from harm.", GOD_FEDHAS);
+                else
+                {
+                    dam_beam.target = *ri;
+                    dam_beam.in_explosion_phase = true;
+                    dam_beam.explosion_affect_cell(*ri);
+                }
+            }
+        }
         break;
     }
 
     // Bolt/Shard Breaths.
+    case ABIL_BREATHE_DART:
     case ABIL_BREATHE_FIRE:
     case ABIL_BREATHE_FROST:
-    case ABIL_BREATHE_LIGHTNING:
     case ABIL_BREATHE_POWER:
     case ABIL_BREATHE_MEPHITIC:
     case ABIL_BREATHE_STEAM:
@@ -1951,15 +2031,12 @@ static spret _do_ability(const ability_def& abil, bool fail)
     case ABIL_BREATHE_FOG:
     case ABIL_BREATHE_DRAIN:
     case ABIL_BREATHE_MIASMA:
-    case ABIL_BREATHE_SILVER:
     case ABIL_BREATHE_WIND:
     case ABIL_BREATHE_BLOOD:
     case ABIL_BREATHE_HOLY_FLAMES:
     case ABIL_BREATHE_BUTTERFLIES:
-    case ABIL_BREATHE_BONE:
     case ABIL_BREATHE_CHAOS:
     case ABIL_BREATHE_GHOSTLY_FLAMES:
-    case ABIL_BREATHE_METAL:
     case ABIL_BREATHE_RADIATION:
     
     {
@@ -1970,20 +2047,21 @@ static spret _do_ability(const ability_def& abil, bool fail)
 
         string m;
         zap_type zap;
-        const int power = 
-            you.form == transformation::dragon ? 2 * you.experience_level 
-                                               : you.experience_level;
+        const int power = _drac_breath_power();
 
         fail_check();
 
         switch (abil.ability)
         {
         default:
-            break;
-
         case ABIL_BREATHE_FIRE:
             zap = ZAP_BREATHE_FIRE;
             m   = "You breathe a blast of fire.";
+            break;
+
+        case ABIL_BREATHE_DART:
+            zap = ZAP_BREATHE_DART;
+            m   = "You spit a rudimentary magic dart.";
             break;
 
         case ABIL_BREATHE_CHAOS:
@@ -2001,11 +2079,6 @@ static spret _do_ability(const ability_def& abil, bool fail)
             m   = "You exhale a blast of poison gas.";
             break;
 
-        case ABIL_BREATHE_LIGHTNING:
-            zap = ZAP_BREATHE_LIGHTNING;
-            m   = "You breathe a wild blast of lightning!";
-            break;
-
         case ABIL_BREATHE_POWER:
             zap = ZAP_BREATHE_POWER;
             m   = "You breathe a bolt of dispelling energy.";
@@ -2019,6 +2092,7 @@ static spret _do_ability(const ability_def& abil, bool fail)
         case ABIL_BREATHE_FOG:
             zap = ZAP_BREATHE_FOG;
             m   = "You exhale a fog of harmless, colorful smoke.";
+            beam.hit_verb = "coalesce around";
             break;
 
         case ABIL_BREATHE_MEPHITIC:
@@ -2048,10 +2122,23 @@ static spret _do_ability(const ability_def& abil, bool fail)
             beam.origin_spell = SPELL_MIASMA_BREATH;
             m   = "You exhale a cloud of foul miasma";
             break;
+
+        case ABIL_BREATHE_BUTTERFLIES:
+            zap = ZAP_BREATHE_BUTTERFLY;
+            m   = "You exhale a cloud of butterflies.";
+            beam.hit_verb = "sparkle around";
+            break;
         }
 
         if (zapping(zap, power, beam, true, m.c_str()) == spret::abort)
             return spret::abort;
+
+        if (zap == ZAP_BREATHE_BUTTERFLY)
+        {
+            zappy(zap, power, false, beam);
+            beam.flavour = BEAM_BUTTERFLY;
+            beam.fire();
+        }
 
         you.increase_duration(DUR_BREATH_WEAPON,
                       3 + random2(10) + random2(30 - you.experience_level));
@@ -3410,6 +3497,10 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
         && draconian_breath() != ABIL_NON_ABILITY)
     {
         _add_talent(talents, draconian_breath(), check_confused);
+        // For debug purposes let's just add all of them for now.
+        _add_talent(talents, ABIL_BREATHE_CHAOS, check_confused);
+        _add_talent(talents, ABIL_BREATHE_BUTTERFLIES, check_confused);
+        _add_talent(talents, ABIL_BREATHE_BONE, check_confused);
         if (you.drac_colour == DR_GOLDEN)
         {
             _add_talent(talents, ABIL_BREATHE_FROST, check_confused);

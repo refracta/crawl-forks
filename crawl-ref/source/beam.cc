@@ -34,6 +34,7 @@
 #include "exercise.h"
 #include "fight.h"
 #include "food.h"
+#include "god-blessing.h"
 #include "god-conduct.h"
 #include "god-item.h"
 #include "god-passive.h" // passive_t::convert_orcs
@@ -1887,7 +1888,24 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
             backlight_monster(mons);
         // Fallthrough
 
+    case BEAM_BUTTERFLY:
     case BEAM_FOG:
+        hurted = 0;
+        break;
+
+    case BEAM_ANTIABJ:
+        if ((mons_aligned(pbolt.agent(), mons) || pbolt.agent()->is_player() && mons->friendly()) 
+            && mons->has_ench(ENCH_ABJ))
+        {
+            int x;
+            mons->is_summoned(nullptr, &x);
+            if (x != MON_SUMM_BREATH) // Don't increase the duration of summons made by this same effect.
+            {
+                mprf(MSGCH_DURATION, "%s fairy dust increases %s's time in this world.",
+                    pbolt.agent()->name(DESC_YOUR).c_str(), mons->name(DESC_YOUR).c_str());
+                increase_ench_duration(mons, mons->get_ench(ENCH_ABJ), hurted * 10);
+            }
+        }
         hurted = 0;
         break;
 
@@ -3037,6 +3055,7 @@ bool bolt::can_affect_wall(const coord_def& p, bool map_knowledge) const
 }
 
 // Also used to terrain change ice bridges now (no real reason to have a seperate function for that).
+// Also used to summon butterflies with butterfly breath.
 void bolt::affect_place_clouds()
 {
     if (in_explosion_phase)
@@ -3172,6 +3191,10 @@ void bolt::affect_place_clouds()
 
     if (flavour == BEAM_FOG)
         place_cloud(CLOUD_PURPLE_SMOKE, p, damage.roll() + 2, agent(), 2);
+
+    if (flavour == BEAM_BUTTERFLY && !defender)
+        create_monster( mgen_data(MONS_BUTTERFLY, BEH_COPY, p, agent()->is_player() ? int{ MHITYOU } 
+            : agent()->as_monster()->foe, MG_AUTOFOE).set_summoned(agent(), damage.roll(), SPELL_NO_SPELL, GOD_NO_GOD));
 
     //XXX: these use the name for a gameplay effect.
     if (name == "poison gas")
@@ -4524,6 +4547,8 @@ void bolt::affect_player()
         if (x_chance_in_y(85 - you.experience_level * 3 , 100))
             you.confuse(agent(), 5 + random2(3));
     }
+    else if (origin_spell == SPELL_CHILLING_BREATH && final_dam)
+        you.slow_down(agent(), max(random2(10), final_dam / 3));
 }
 
 int bolt::apply_AC(const actor *victim, int hurted)
@@ -5080,6 +5105,9 @@ void bolt::monster_post_hit(monster* mon, int dmg)
         }
     }
 
+    if (origin_spell == SPELL_CHILLING_BREATH && dmg > 0)
+        do_slow_monster(*mon, agent(), max(random2(10), dmg / 3));
+
     if (origin_spell == SPELL_THROW_BARBS && dmg > 0
         && !(mon->is_insubstantial() || mons_genus(mon->type) == MONS_JELLY))
     {
@@ -5105,8 +5133,7 @@ void bolt::knockback_actor(actor *act, int dam)
         (origin_spell == SPELL_FORCE_LANCE)
             ? 2 + div_rand_round(ench_power, 30) :
         (origin_spell == SPELL_MUSE_OAMS_AIR_BLAST)
-            ? 1 + div_rand_round(ench_power, 50) :
-        (origin_spell == SPELL_CHILLING_BREATH) ? 2 : 1;
+            ? 1 + div_rand_round(ench_power, 50) : 1;
 
     const int roll = origin_spell == SPELL_FORCE_LANCE
                      ? 7 + 0.5 * ench_power
@@ -5162,19 +5189,10 @@ void bolt::knockback_actor(actor *act, int dam)
 
     if (you.can_see(*act))
     {
-        if (origin_spell == SPELL_CHILLING_BREATH)
-        {
-            mprf("%s %s blown backwards by the freezing wind.",
-                 act->name(DESC_THE).c_str(),
-                 act->conj_verb("are").c_str());
-        }
-        else
-        {
-            mprf("%s %s knocked back by the %s.",
-                 act->name(DESC_THE).c_str(),
-                 act->conj_verb("are").c_str(),
-                 name.c_str());
-        }
+        mprf("%s %s knocked back by the %s.",
+                act->name(DESC_THE).c_str(),
+                act->conj_verb("are").c_str(),
+                name.c_str());
     }
 
     if (act->pos() != newpos)
@@ -7139,6 +7157,8 @@ static string _beam_type_name(beam_type type)
     case BEAM_HEALING:               return "healing";
     case BEAM_WAND_HEALING:          return "healing mist";
     case BEAM_FOG:                   return "fog";
+    case BEAM_ANTIABJ:               // fallthrough
+    case BEAM_BUTTERFLY:             return "fairy dust";
     case BEAM_CONFUSION:             return "confusion";
     case BEAM_INVISIBILITY:          return "invisibility";
     case BEAM_DIGGING:               return "digging";
@@ -7219,7 +7239,6 @@ bool bolt::can_knockback(const actor &act, int dam) const
         return false;
 
     return flavour == BEAM_WATER && origin_spell == SPELL_PRIMAL_WAVE
-           || origin_spell == SPELL_CHILLING_BREATH && act.airborne()
            || origin_spell == SPELL_FORCE_LANCE && dam
            || origin_spell == SPELL_MUSE_OAMS_AIR_BLAST && dam;
 }

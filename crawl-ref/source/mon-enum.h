@@ -152,10 +152,11 @@ enum mon_summon_type
     MON_SUMM_WRATH,   // Divine wrath
     MON_SUMM_AID,     // Divine aid
     MON_SUMM_SCROLL,  // Scroll of summoning
-    MON_SUMM_SHADOW,  // Shadow trap
-#if TAG_MAJOR_VERSION == 34
-    MON_SUMM_LANTERN, // Lantern of shadows
-#endif
+    MON_SUMM_BREATH,  // Butterfly breath or similar
+
+    // BCADNOTE: These are long unused but may be restored at some point.
+//    MON_SUMM_SHADOW,  // Shadow trap
+//    MON_SUMM_LANTERN, // Lantern of shadows
 };
 
 #include "mon-flags.h"
