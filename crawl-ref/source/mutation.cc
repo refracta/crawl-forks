@@ -308,17 +308,13 @@ mutation_activity_type mutation_activity_level(mutation_type mut)
     {
         if (you.form == transformation::dragon)
         {
-            monster_type drag = dragon_form_dragon_type();
-            if (mut == MUT_SHOCK_RESISTANCE && drag == MONS_STORM_DRAGON)
+            if (mut == MUT_DRACONIAN_DEFENSE)
                 return mutation_activity_type::FULL;
-            if (mut == MUT_UNBREATHING && drag == MONS_IRON_DRAGON)
+            if (mut == MUT_DRACONIAN_ENHANCER)
                 return mutation_activity_type::FULL;
-            if ((mut == MUT_ACIDIC_BITE || mut == MUT_ACID_RESISTANCE)
-                && drag == MONS_ACID_DRAGON)
-            {
+            if (mut == MUT_ACIDIC_BITE && you.drac_colour == DR_LIME)
                 return mutation_activity_type::FULL;
-            }
-            if (mut == MUT_STINGER && drag == MONS_SWAMP_DRAGON)
+            if (mut == MUT_STINGER && you.drac_colour == DR_GREEN)
                 return mutation_activity_type::FULL;
         }
         // Vampire bats keep their fangs.
@@ -410,12 +406,6 @@ static string _annotate_form_based(string desc, bool suppressed)
     }
 
     return desc + "\n";
-}
-
-static string _dragon_abil(string desc)
-{
-    const bool supp = form_changed_physiology() && you.form != transformation::dragon;
-    return _annotate_form_based(desc, supp);
 }
 
 /*
@@ -612,9 +602,7 @@ string describe_mutations(bool drop_title)
     // we handle only Naga/Draconian AC and Yellow Draconian rAcid.
     for (const string& str : fake_mutations(you.species, false))
     {
-        if (species_is_draconian(you.species))
-            result += _dragon_abil(str);
-        else if (you.species == SP_MERFOLK)
+        if (you.species == SP_MERFOLK)
             result += _annotate_form_based(str, form_changed_physiology());
         else if (you.species == SP_MINOTAUR)
             result += _annotate_form_based(str, !form_keeps_mutations());
@@ -690,11 +678,6 @@ string describe_mutations(bool drop_title)
             break;
         }
     }
-
-    // Could move this into species-data, but then the hack that assumes
-    // _dragon_abil should get called on all draconian fake muts would break.
-    if (species_is_draconian(you.species))
-        result += "You cannot fit into any form of body armour.\n";
 
     if (player_res_poison(false, false, false) == 3)
         result += "You are immune to poison.\n";
@@ -1387,12 +1370,21 @@ static bool _resist_mutation(mutation_permanence_class mutclass,
     if (you.get_mutation_level(MUT_MUTATION_RESISTANCE) == 3)
         return true;
 
-    const int mut_resist_chance = mutclass == MUTCLASS_TEMPORARY ? 2 : 3;
-    if (you.get_mutation_level(MUT_MUTATION_RESISTANCE)
-        && !one_chance_in(mut_resist_chance))
+    bool you_res = you.get_mutation_level(MUT_MUTATION_RESISTANCE);
+
+    // draconian scales:
+    if (!you_res && (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, true)))
     {
-        return true;
+        if (you.drac_colour == DR_PLATINUM || you.drac_colour == DR_OLIVE || you.drac_colour == DR_SILVER)
+            you_res = true;
+        if (you.drac_colour == DR_SCINTILLATING && one_chance_in(3))
+            you_res = true;
     }
+
+    const int mut_resist_chance = mutclass == MUTCLASS_TEMPORARY ? 2 : 3;
+    if (you_res && !one_chance_in(mut_resist_chance))
+        return true;
+
 
     // To be nice, beneficial mutations go through removable sources of rMut.
     if (you.rmut_from_item() && !beneficial
@@ -2147,6 +2139,53 @@ const char* mutation_name(mutation_type mut, bool allow_category, bool for_displ
                                                                                       : skill_name(you.defence_skill)).c_str();
     }
 
+    if (mut == MUT_DRACONIAN_DEFENSE)
+    {
+        switch (you.drac_colour)
+        {
+        case DR_BLACK:
+            return "Stlth++";
+        case DR_BLOOD:
+            return "rTorm, rHellfire";
+        case DR_BLUE:
+            return "rElec";
+        case DR_BONE:
+            return "AC+++, rShatter-";
+        case DR_BROWN:
+            return "buggy mutation!";
+        case DR_CYAN:
+            return "rCloud, rAir";
+        case DR_GOLDEN:
+            return "rF+, rC+, rPois";
+        case DR_GREEN:
+            return "rPois";
+        case DR_LIME:
+            return "rCorr";
+        case DR_MAGENTA:
+            return "rMsl";
+        case DR_OLIVE:
+            return "rMut";
+        case DR_PEARL:
+            return "AC++, rN+++";
+        case DR_PINK:
+            return "clarity";
+        case DR_PLATINUM:
+            return "fast, rMut";
+        case DR_PURPLE:
+            return "MR++";
+        case DR_RED:
+            return "rF+";
+        case DR_SCINTILLATING:
+            return "AC+, Chaos+";
+        case DR_SILVER:
+            return "AC++, rMut";
+        case DR_TEAL:
+            return "spectral";
+        case DR_WHITE:
+            return "rC+";
+        }
+    }
+
     species_mutation_message msg = _spmut_msg(mut);
     if (msg.mutation == MUT_NON_MUTATION)
         return _get_mutation_def(mut).short_desc;
@@ -2298,32 +2337,93 @@ string mutation_desc(mutation_type mut, int level, bool colour,
             ostr << msg.have[level - 1] << sanguine_armour_bonus() / 100 << ")";
         result = ostr.str();
     }
+    else if (mut == MUT_DRACONIAN_DEFENSE)
+    {
+        ostringstream ostr;
+        ostr << "Your " << scale_type() << "scales ";
+        switch (you.drac_colour)
+        {
+        case DR_BLACK:
+            ostr << "make you much more stealthy. (Stealth++)";
+            break;
+        case DR_BLOOD:
+            ostr << "grant some resistance to hellfire and unholy torment. (rTorm, rHellfire)";
+            break;
+        case DR_BLUE:
+            ostr << "grant you resistance to electric shocks. (rElec)";
+            break;
+        case DR_BONE:
+            // Special case; no scales.
+            result = "Your tough skeletal form vastly boosts your defenses. (AC+++)\nHowever; you are also weak to shatter and Lee's Rapid Deconstruction.";
+            break;
+        case DR_BROWN:
+            ostr << "don't do anything special. (This message shouldn't ever display.)";
+            break;
+        case DR_CYAN:
+            ostr << "grant you immunity to the effects of clouds and air. (rCloud, rAir)";
+            break;
+        case DR_GOLDEN:
+            ostr << "grant you resistance to fire, cold and poison. (rF+, rC+, rPois)";
+            break;
+        case DR_GREEN:
+            ostr << "grant you resistance to poison. (rPois)";
+            break;
+        case DR_LIME:
+            ostr << "grant you resistance to acid and corrosion. (rCorr)";
+            break;
+        case DR_MAGENTA:
+            ostr << "passively repel missiles. (rMsl)";
+            break;
+        case DR_OLIVE:
+            ostr << "grant you resistance to rotting caused by mutagenic radiation. (rMut)";
+            break;
+        case DR_PEARL:
+            ostr << "boost your defenses and vastly increase your resistance to negative energy. (AC++, rN+++)";
+            break;
+        case DR_PINK:
+            ostr << "grant you exceptional clarity of mind. (clarity)";
+            break;
+        case DR_PLATINUM:
+            ostr << "increase your movement speed and make you resistant to mutation. (fast, rMut)";
+            break;
+        case DR_PURPLE:
+            ostr << "protect you from hostile magic. (MR++)";
+            break;
+        case DR_RED:
+            ostr << "grant you resistance to heat and fire. (rF+)";
+            break;
+        case DR_SCINTILLATING:
+            ostr << "chaotically grant elemental resistances and boost your physical defenses a bit. (AC+, Chaos+)";
+            break;
+        case DR_SILVER:
+            ostr << "boost your physical defenses and make you resistant to mutation. (AC++, rMut)";
+            break;
+        case DR_TEAL:
+            ostr << "hold together your spectral form.";
+            break;
+        case DR_WHITE:
+            ostr << "grant you resistance to cold and ice. (rC+)";
+            break;
+        }
+        result = ostr.str();
+    }
     else if (mut == MUT_MINOR_MARTIAL_APT_BOOST)
     {
         ostringstream ostr;
-        if (msg.mutation == MUT_NON_MUTATION)
-            ostr << mdef.have[0] << skill_name(you.minor_skill) << " (Aptitude +3).";
-        else
-            ostr << msg.have[0] << skill_name(you.minor_skill) << " (Aptitude +3).";
+        ostr << mdef.have[0] << skill_name(you.minor_skill) << " (Aptitude +3).";
         result = ostr.str();
     }
     else if (mut == MUT_DEFENSIVE_APT_BOOST)
     {
         ostringstream ostr;
-        if (msg.mutation == MUT_NON_MUTATION)
-            ostr << mdef.have[0] << skill_name(you.defence_skill) << " (Aptitude +3).";
-        else
-            ostr << msg.have[0] << skill_name(you.defence_skill) << " (Aptitude +3).";
+        ostr << mdef.have[0] << skill_name(you.defence_skill) << " (Aptitude +3).";
         result = ostr.str();
     }
     else if (mut == MUT_MAJOR_MARTIAL_APT_BOOST)
     {
         ostringstream ostr;
         string x = level > 1 ? " (Aptitude +5)." : " (Aptitude +3)";
-        if (msg.mutation == MUT_NON_MUTATION)
-            ostr << mdef.have[level - 1] << skill_name(you.defence_skill) << x;
-        else
-            ostr << msg.have[level - 1] << skill_name(you.defence_skill) << x;
+        ostr << mdef.have[level - 1] << skill_name(you.defence_skill) << x;
         result = ostr.str();
     }
     else if (!ignore_player && you.species == SP_FELID && mut == MUT_CLAWS)

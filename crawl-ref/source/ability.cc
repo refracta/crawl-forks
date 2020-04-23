@@ -1920,6 +1920,9 @@ static spret _do_ability(const ability_def& abil, bool fail)
         case ABIL_BREATHE_SILVER:
             zap = ZAP_BREATHE_SILVER;
             break;
+        case ABIL_BREATHE_METAL:
+            zap = ZAP_BREATHE_METAL;
+            break;
         }
 
         const int power = _drac_breath_power();

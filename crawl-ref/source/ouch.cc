@@ -139,7 +139,12 @@ int check_your_resists(int hurted, beam_type flavour, string source,
         break;
 
     case BEAM_DAMNATION:
-        break; // sucks to be you (:
+        if (you.drac_colour == DR_BLOOD)
+        {
+            hurted /= 2;
+            mpr("Your gory crimson scales reflect some of the hellish flames.");
+        }
+        break;
 
     case BEAM_MAGIC_CANDLE:
         you.backlight();

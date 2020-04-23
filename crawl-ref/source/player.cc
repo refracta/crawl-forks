@@ -1528,6 +1528,15 @@ int player_res_fire(bool calc_unid, bool temp, bool items)
     rf -= you.get_mutation_level(MUT_TEMPERATURE_SENSITIVITY, temp);
     rf += you.get_mutation_level(MUT_MOLTEN_SCALES, temp) == 3 ? 1 : 0;
 
+    // draconian scales:
+    if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, temp))
+    {
+        if (you.drac_colour == DR_RED || you.drac_colour == DR_GOLDEN)
+            rf++;
+        if (you.drac_colour == DR_SCINTILLATING && calc_unid && one_chance_in(3))
+            rf++;
+    }
+
     // spells:
     if (temp)
     {
@@ -1644,6 +1653,15 @@ int player_res_cold(bool calc_unid, bool temp, bool items)
     rc += you.get_mutation_level(MUT_ICY_BLUE_SCALES, temp) == 3 ? 1 : 0;
     rc += you.get_mutation_level(MUT_SHAGGY_FUR, temp) == 3 ? 1 : 0;
 
+    // draconian scales:
+    if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, temp))
+    {
+        if (you.drac_colour == DR_WHITE || you.drac_colour == DR_GOLDEN)
+            rc++;
+        if (you.drac_colour == DR_SCINTILLATING && calc_unid && one_chance_in(3))
+            rc++;
+    }
+
     if (rc < -3)
         rc = -3;
     else if (rc > 3)
@@ -1677,11 +1695,21 @@ bool player::res_corr(bool calc_unid, bool items) const
             return true;
     }
 
+    // BCADDO: This mainline TODO:
     // TODO: why doesn't this use the usual form suppression mechanism?
     if (form_keeps_mutations()
         && get_mutation_level(MUT_YELLOW_SCALES) >= 3)
     {
         return true;
+    }
+
+    // draconian scales:
+    if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, true))
+    {
+        if (you.drac_colour == DR_SCINTILLATING && one_chance_in(3) && calc_unid)
+            return true;
+        if (you.drac_colour == DR_LIME)
+            return true;
     }
 
     return actor::res_corr(calc_unid, items);
@@ -1726,6 +1754,15 @@ int player_res_electricity(bool calc_unid, bool temp, bool items)
     re += you.get_mutation_level(MUT_SHOCK_RESISTANCE, temp);
     re -= you.get_mutation_level(MUT_SHOCK_VULNERABILITY, temp);
 
+    // draconian scales:
+    if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, temp))
+    {
+        if (you.drac_colour == DR_SCINTILLATING && one_chance_in(3) && calc_unid)
+            return true;
+        if (you.drac_colour == DR_BLUE)
+            return true;
+    }
+
     if (temp)
     {
         if (you.duration[DUR_RESISTANCE])
@@ -1768,6 +1805,11 @@ bool player_res_torment(bool random)
 
         // rings of chaos
         if (you.wearing(EQ_RINGS, RING_CHAOS) && one_chance_in(3))
+            return true;
+
+        // draconian scales:
+        if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, true) 
+            && you.drac_colour == DR_SCINTILLATING && one_chance_in(3))
             return true;
     }
 
@@ -1846,6 +1888,15 @@ int player_res_poison(bool calc_unid, bool temp, bool items)
     rp += you.get_mutation_level(MUT_POISON_RESISTANCE, temp);
     rp += you.get_mutation_level(MUT_SLIMY_GREEN_SCALES, temp) == 3 ? 1 : 0;
 
+    // draconian scales:
+    if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, temp))
+    {
+        if (you.drac_colour == DR_GREEN || you.drac_colour == DR_GOLDEN)
+            rp++;
+        if (you.drac_colour == DR_SCINTILLATING && one_chance_in(3))
+            rp++;
+    }
+
     if (temp)
     {
         // potions/cards:
@@ -1875,13 +1926,20 @@ int player_res_poison(bool calc_unid, bool temp, bool items)
     return rp;
 }
 
-int player_res_sticky_flame(bool calc_unid, bool /*temp*/, bool items)
+int player_res_sticky_flame(bool calc_unid, bool temp, bool items)
 {
     int rsf = 0;
 
     // rings of chaos
     if (items && calc_unid && you.wearing(EQ_RINGS, RING_CHAOS) && one_chance_in(3))
         rsf++;
+
+    // draconian scales:
+    if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, temp) 
+        && you.drac_colour == DR_SCINTILLATING && one_chance_in(3))
+    {
+        rsf++;
+    }
 
     if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
         rsf++;
@@ -2037,6 +2095,15 @@ int player_prot_life(bool calc_unid, bool temp, bool items)
         pl += you.wearing(EQ_STAFF, STAFF_DEATH, calc_unid);
     }
 
+    // draconian scales:
+    if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, temp))
+    {
+        if (you.drac_colour == DR_PEARL)
+            pl += 3;
+        if (you.drac_colour == DR_SCINTILLATING && one_chance_in(3))
+            pl++;
+    }
+
     // undead/demonic power
     pl += you.get_mutation_level(MUT_NEGATIVE_ENERGY_RESISTANCE, temp);
 
@@ -2106,6 +2173,10 @@ int player_movement_speed()
     else if (you.fishtail || you.form == transformation::hydra && you.in_water())
         mv = 6;
 
+    // draconian scales:
+    if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, true) && you.drac_colour == DR_PLATINUM)
+        mv--;
+
     // Wading through water is very slow.
     if (you.in_water() && !you.can_swim()
         || you.liquefied_ground() && !you.duration[DUR_LIQUEFYING])
@@ -2121,7 +2192,7 @@ int player_movement_speed()
         mv += 6;
 
     // armour
-    if (you.run())
+    if (you.run()) // BCADDO: for SC: this will need to be able to stack.
         mv -= 1;
 
     mv += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_PONDEROUSNESS);
@@ -3292,9 +3363,7 @@ void level_change(bool skip_attribute_increase)
             give_level_mutations(you.species, you.experience_level);
         }
 
-        // BCADDNOTE: All Draconian shared mutations are handled here now, instead of repeating the same mutations
-        // in multiple .yaml files.
-        if (species_is_draconian(you.species))
+        if (you.species == SP_DRACONIAN)
         {
             if (you.experience_level == 10)
             {
@@ -3303,8 +3372,6 @@ void level_change(bool skip_attribute_increase)
                 else
                     perma_mutate(MUT_MINOR_MARTIAL_APT_BOOST, 1, "draconic bloodline");
             }
-            if (you.experience_level == 12)
-                perma_mutate(MUT_DEFENSIVE_APT_BOOST, 1, "draconic bloodline");
             if (you.experience_level == 14)
             {
                 if (you.major_first)
@@ -3312,12 +3379,8 @@ void level_change(bool skip_attribute_increase)
                 else
                     perma_mutate(MUT_MAJOR_MARTIAL_APT_BOOST, 1, "draconic bloodline");
             }
-            if (you.experience_level == 15)
-                perma_mutate(MUT_MAJOR_MARTIAL_APT_BOOST, 1, "draconic bloodline");
-            if (you.experience_level == 18)
-                perma_mutate(MUT_BIG_WINGS, 1, "draconic bloodline");
 
-            if (!(you.experience_level % 3))
+            if (!(you.experience_level % 5))
             {
                 mprf(MSGCH_INTRINSIC_GAIN, "Your scales feel tougher.");
                 you.redraw_armour_class = true;
@@ -3486,14 +3549,9 @@ int player_stealth()
     if (how_transparent)
         stealth += 15 * (how_transparent);
 
-    // Thirsty vampires are stealthier.
-    if (you.species == SP_VAMPIRE)
-    {
-        if (you.hunger_state <= HS_STARVING || you.form == transformation::bat)
-            stealth += STEALTH_PIP * 2;
-        else if (you.hunger_state <= HS_HUNGRY)
-            stealth += STEALTH_PIP;
-    }
+    // draconian scales:
+    if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, true) && you.drac_colour == DR_BLACK)
+        stealth += STEALTH_PIP * 3;
 
     if (!you.airborne())
     {
@@ -3803,6 +3861,9 @@ bool player::clarity(bool calc_unid, bool items) const
     if (you.get_mutation_level(MUT_CLARITY))
         return true;
 
+    if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE) && you.drac_colour == DR_PINK)
+        return true;
+
     if (have_passive(passive_t::clarity))
         return true;
 
@@ -3822,6 +3883,9 @@ bool player::stasis() const
 
 bool player::cloud_immune(bool calc_unid, bool items) const
 {
+    if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE) && you.drac_colour == DR_CYAN)
+        return true;
+
     return have_passive(passive_t::cloud_immunity)
         || actor::cloud_immune(calc_unid, items);
 }
@@ -6031,6 +6095,9 @@ int player::missile_deflection() const
     if (attribute[ATTR_DEFLECT_MISSILES])
         return 2;
 
+    if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE) && you.drac_colour == DR_MAGENTA)
+        return 1;
+
     if (get_mutation_level(MUT_DISTORTION_FIELD) == 3
         || you.wearing_ego(EQ_ALL_ARMOUR, SPARM_REPULSION)
         || scan_artefacts(ARTP_RMSL, true)
@@ -6257,9 +6324,13 @@ int player::racial_ac(bool temp) const
         && (!player_is_shapechanged() || form == transformation::dragon
             || !temp))
     {
-        int AC = 400 + 100 * (experience_level / 3);  // max 13
-        if (species == SP_GREY_DRACONIAN) // no breath
-            AC += 500;
+        int AC = 900 + 100 * (experience_level / 5);  // max 14
+        if (you.drac_colour == DR_BONE)
+            AC *= 3;
+        if (you.drac_colour == DR_PEARL || you.drac_colour == DR_SILVER)
+            AC *= 2;
+        if (you.drac_colour == DR_SCINTILLATING)
+            AC += 3;
         return AC;
     }
 
@@ -6738,6 +6809,9 @@ bool player::res_torment() const
 
 bool player::res_tornado() const
 {
+    if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE) && (you.drac_colour == DR_CYAN))
+        return 1;
+
     // Full control of the winds around you can negate a hostile tornado.
     return (duration[DUR_TORNADO] || duration[DUR_CHAOSNADO]) ? 1 : 0;
 }
@@ -6794,6 +6868,15 @@ int player_res_magic(bool calc_unid, bool temp)
     // transformations
     if (you.form == transformation::lich && temp)
         rm += MR_PIP;
+
+    // draconian scales:
+    if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, temp))
+    {
+        if (you.drac_colour == DR_SCINTILLATING && one_chance_in(3) && calc_unid)
+            rm += MR_PIP;
+        if (you.drac_colour == DR_PURPLE)
+            rm += MR_PIP * 2;
+    }
 
     // Trog's Hand
     if (you.duration[DUR_TROGS_HAND] && temp)

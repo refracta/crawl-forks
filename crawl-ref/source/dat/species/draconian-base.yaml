@@ -45,6 +45,20 @@ levelup_stat_frequency: 4
 mutations:
   1:
     MUT_COLD_BLOODED: 1
+  7:
+    MUT_DRACONIAN_DEFENSE: 1
+    MUT_DRACONIAN_ENHANCER: 1
+  12:
+    MUT_DEFENSIVE_APT_BOOST: 1
+  13:
+    MUT_DRACONIAN_ENHANCER: 1
+  15:
+    MUT_MAJOR_MARTIAL_APT_BOOST: 1
+  18:
+    MUT_BIG_WINGS: 1
+fake_mutations:
+  - long: You cannot fit into any form of body armour.
+    short: no body armour
 recommended_jobs:
   - JOB_BERSERKER
   - JOB_TRANSMUTER

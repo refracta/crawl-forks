@@ -2664,6 +2664,9 @@ string mutation_overview()
 
         current = mutation_name(mut, false, true);
 
+        if (mut == MUT_DRACONIAN_DEFENSE && you.drac_colour == DR_TEAL)
+            continue;
+
         if (mut == MUT_MAJOR_MARTIAL_APT_BOOST)
         {
             if (ordinary_levels > 1)

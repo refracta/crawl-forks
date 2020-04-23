@@ -1448,7 +1448,8 @@ static int _shatter_player_dice()
         return 4; 
     else if (you.form == transformation::statue
              || you.form == transformation::ice_beast
-             || you.species == SP_GARGOYLE)
+             || you.species == SP_GARGOYLE
+             || (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, true) && you.drac_colour == DR_BONE))
         return 6;
     else if (you.airborne())
         return 1;
@@ -2892,6 +2893,14 @@ bool setup_fragmentation_beam(bolt &beam, int pow, const actor *caster,
             beam.colour     = WHITE;
             beam.damage.num = 3;
             beam.flavour    = BEAM_ICE;
+            return _finish_LRD_setup(beam, caster);
+        }
+        else if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, true) && you.drac_colour == DR_BONE)
+        {
+            beam.name = "blast of bone shards";
+            beam.colour = WHITE;
+            beam.damage.num = (you.form == transformation::dragon) ? 5 : 3;
+            beam.flavour = BEAM_FRAG;
             return _finish_LRD_setup(beam, caster);
         }
     }

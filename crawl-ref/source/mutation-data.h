@@ -1476,6 +1476,22 @@ static const mutation_def mut_data[] =
   {"", "", ""},
 },
 
+{ MUT_DRACONIAN_ENHANCER, 0, 2, mutflag::good, true,
+  "magic enhancer",
+
+  { "", "", ""},
+  { "", "", ""},
+  { "", "", ""},
+},
+
+{ MUT_DRACONIAN_DEFENSE, 0, 1, mutflag::good, true,
+  "colourful defense",
+
+  { "", "", ""},
+  { "", "", ""},
+  { "", "", ""},
+},
+
 { MUT_DEFENSIVE_APT_BOOST, 0, 1, mutflag::good, false,
    "defensive skill boost",
     
