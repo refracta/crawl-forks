@@ -1421,6 +1421,116 @@ static species_mutation_message _spmut_msg(mutation_type mutat)
     return spmu_data[0];
 }
 
+static string _drac_def_msg()
+{
+    ostringstream ostr;
+    ostr << "Your " << scale_type() << " scales ";
+    switch (you.drac_colour)
+    {
+    case DR_BLACK:
+        ostr << "make you much more stealthy. (Stealth++)";
+        break;
+    case DR_BLOOD:
+        ostr << "grant partial resistance to hellfire and unholy torment. (rTorm, rHellfire)";
+        break;
+    case DR_BLUE:
+        ostr << "grant you resistance to electric shocks. (rElec)";
+        break;
+    case DR_BONE: // Special case; no scales.
+        return "Your tough skeletal form vastly boosts your defenses. (AC+++)\nHowever; you are also weak to shatter and Lee's Rapid Deconstruction.";
+    case DR_BROWN:
+        ostr << "don't do anything special. (This message shouldn't ever display.)";
+        break;
+    case DR_CYAN:
+        ostr << "grant you immunity to the effects of clouds and air. (rCloud, rAir)";
+        break;
+    case DR_GOLDEN:
+        ostr << "grant you resistance to fire, cold and poison. (rF+, rC+, rPois)";
+        break;
+    case DR_GREEN:
+        ostr << "grant you resistance to poison. (rPois)";
+        break;
+    case DR_LIME:
+        ostr << "grant you resistance to acid and corrosion. (rCorr)";
+        break;
+    case DR_MAGENTA:
+        ostr << "passively repel missiles. (rMsl)";
+        break;
+    case DR_OLIVE:
+        ostr << "grant you resistance to rotting caused by mutagenic radiation. (rMut)";
+        break;
+    case DR_PEARL:
+        ostr << "boost your defenses and vastly increase your resistance to negative energy. (AC++, rN+++)";
+        break;
+    case DR_PINK:
+        ostr << "grant you exceptional clarity of mind. (clarity)";
+        break;
+    case DR_PLATINUM:
+        ostr << "increase your movement speed and make you resistant to mutation. (fast, rMut)";
+        break;
+    case DR_PURPLE:
+        ostr << "protect you from hostile magic. (MR++)";
+        break;
+    case DR_RED:
+        ostr << "grant you resistance to heat and fire. (rF+)";
+        break;
+    case DR_SCINTILLATING:
+        ostr << "chaotically grant elemental resistances and boost your physical defenses a bit. (AC+, Chaos+)";
+        break;
+    case DR_SILVER:
+        ostr << "boost your physical defenses and make you resistant to mutation. (AC++, rMut)";
+        break;
+    case DR_TEAL:
+        ostr << "hold together your spectral form.";
+        break;
+    case DR_WHITE:
+        ostr << "grant you resistance to cold and ice. (rC+)";
+        break;
+    }
+    return ostr.str();
+}
+
+static string _drac_enhancer_msg(bool gain)
+{
+    ostringstream ostr;
+    if (gain)
+        ostr << _get_mutation_def(MUT_DRACONIAN_ENHANCER).gain[0];
+    else
+        ostr << _get_mutation_def(MUT_DRACONIAN_ENHANCER).have[you.get_mutation_level(MUT_DRACONIAN_ENHANCER) - 1];
+
+    switch (you.drac_colour)
+    {
+    case DR_BLACK:      ostr << "death.";                                       break;
+    case DR_BLOOD:      ostr << "death, curses and the sky.";                   break;
+    case DR_BLUE:       ostr << "the air.";                                     break;
+    case DR_BONE:       ostr << "charms and the earth.";                        break;
+    case DR_CYAN:       ostr << "the sky.";                                     break;
+    case DR_GOLDEN:     ostr << "fire, ice and venom.";                         break;
+    case DR_GREEN:      ostr << "venom.";                                       break;
+    case DR_LIME:       ostr << "transmutation.";                               break;
+    case DR_MAGENTA:    ostr << "charms.";                                      break;
+    case DR_OLIVE:      ostr << "venom and the sky.";                           break;
+    case DR_PEARL:      ostr << "charms, summonings and the earth.";            break;
+    case DR_PINK:       ostr << "summonings.";                                  break;
+    case DR_PLATINUM:   ostr << "translocation, transmutation and hexes.";      break;
+    case DR_PURPLE:     ostr << "hexes.";                                       break;
+    case DR_RED:        ostr << "fire.";                                        break;
+    case DR_SILVER:     ostr << "the earth.";                                   break;
+    case DR_TEAL:       ostr << "translocation and transmutation.";             break;
+    case DR_WHITE:      ostr << "ice.";                                         break;
+    default:    // Shouldn't display ever; hopefully.
+    case DR_BROWN:      ostr << "bugginess.";                                   break;
+    case DR_SCINTILLATING:  // Special case; messaging unlike the others.
+        if (gain)
+            return "Your magic feels more chaotic and you randomly feel bursts of power when casting.";
+        else if (you.get_mutation_level(MUT_DRACONIAN_ENHANCER) > 1)
+            return "Your magic is chaotic and you often have strongly boosted spellpower when casting.";
+        else
+            return "Your magic is chaotic and you often have boosted spellpower when casting.";
+    }
+    return ostr.str();
+}
+
 /*
  * Try to mutate the player, along with associated bookkeeping. This accepts mutation categories as well as particular mutations.
  *
@@ -1639,6 +1749,16 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
                                  arms).c_str());
                 gain_msg = false;
             }
+            break;
+
+        case MUT_DRACONIAN_DEFENSE:
+            mprf(MSGCH_MUTATION, "%s", _drac_def_msg().c_str());
+            gain_msg = false;
+            break;
+
+        case MUT_DRACONIAN_ENHANCER:
+            mprf(MSGCH_MUTATION, "%s", _drac_enhancer_msg(true).c_str());
+            gain_msg = false;
             break;
 
         case MUT_MISSING_HAND:
@@ -2105,6 +2225,7 @@ bool delete_temp_mutation()
     return false;
 }
 
+// If for_display is false ignores species-specific messaging to give a neat version for use in wizmode etc.
 const char* mutation_name(mutation_type mut, bool allow_category, bool for_display)
 {
     if (allow_category && mut >= CATEGORY_MUTATIONS && mut < MUT_NON_MUTATION)
@@ -2124,7 +2245,7 @@ const char* mutation_name(mutation_type mut, bool allow_category, bool for_displ
                                                                                       : skill_name(you.defence_skill)).c_str();
     }
 
-    if (mut == MUT_DRACONIAN_DEFENSE && for_display)
+    if (mut == MUT_DRACONIAN_DEFENSE)
     {
         switch (you.drac_colour)
         {
@@ -2148,6 +2269,34 @@ const char* mutation_name(mutation_type mut, bool allow_category, bool for_displ
         case DR_SILVER:             return "AC++, rMut";
         case DR_TEAL:               return "spectral";
         case DR_WHITE:              return "rC+";
+        }
+    }
+
+    if (mut == MUT_DRACONIAN_ENHANCER)
+    {
+        switch (you.drac_colour)
+        {
+        case DR_BLACK:              return "necromancy enhancer";
+        case DR_BLOOD:              return "necromancy, hexes and air enhancers";
+        case DR_BLUE:               return "air enhancer";
+        case DR_BONE:               return "charms and earth enhancers";
+        case DR_CYAN:               return "air enhancer";
+        case DR_GOLDEN:             return "fire, ice and poison enhancers";
+        case DR_GREEN:              return "poison enhancer";
+        case DR_LIME:               return "transmutation enhancer";
+        case DR_MAGENTA:            return "charms enhancer";
+        case DR_OLIVE:              return "poison and air enhancers";
+        case DR_PEARL:              return "charms, summoning and earth enhancers";
+        case DR_PINK:               return "summoning enhancer";
+        case DR_PLATINUM:           return "translocation, transmutation and hexes enhancers";
+        case DR_PURPLE:             return "hexes enhancer";
+        case DR_RED:                return "fire enhancer";
+        case DR_SILVER:             return "earth enhancer";
+        case DR_TEAL:               return "translocation and transmutation enhancers";
+        case DR_WHITE:              return "ice enhancer";
+        case DR_SCINTILLATING:      return "chaos magic, random archmage";
+        default:    // Shouldn't display ever; hopefully.
+        case DR_BROWN:              return "bugginess.";
         }
     }
 
@@ -2303,75 +2452,9 @@ string mutation_desc(mutation_type mut, int level, bool colour,
         result = ostr.str();
     }
     else if (mut == MUT_DRACONIAN_DEFENSE)
-    {
-        ostringstream ostr;
-        ostr << "Your " << scale_type() << "scales ";
-        switch (you.drac_colour)
-        {
-        case DR_BLACK:
-            ostr << "make you much more stealthy. (Stealth++)";
-            break;
-        case DR_BLOOD:
-            ostr << "grant some resistance to hellfire and unholy torment. (rTorm, rHellfire)";
-            break;
-        case DR_BLUE:
-            ostr << "grant you resistance to electric shocks. (rElec)";
-            break;
-        case DR_BONE:
-            // Special case; no scales.
-            result = "Your tough skeletal form vastly boosts your defenses. (AC+++)\nHowever; you are also weak to shatter and Lee's Rapid Deconstruction.";
-            break;
-        case DR_BROWN:
-            ostr << "don't do anything special. (This message shouldn't ever display.)";
-            break;
-        case DR_CYAN:
-            ostr << "grant you immunity to the effects of clouds and air. (rCloud, rAir)";
-            break;
-        case DR_GOLDEN:
-            ostr << "grant you resistance to fire, cold and poison. (rF+, rC+, rPois)";
-            break;
-        case DR_GREEN:
-            ostr << "grant you resistance to poison. (rPois)";
-            break;
-        case DR_LIME:
-            ostr << "grant you resistance to acid and corrosion. (rCorr)";
-            break;
-        case DR_MAGENTA:
-            ostr << "passively repel missiles. (rMsl)";
-            break;
-        case DR_OLIVE:
-            ostr << "grant you resistance to rotting caused by mutagenic radiation. (rMut)";
-            break;
-        case DR_PEARL:
-            ostr << "boost your defenses and vastly increase your resistance to negative energy. (AC++, rN+++)";
-            break;
-        case DR_PINK:
-            ostr << "grant you exceptional clarity of mind. (clarity)";
-            break;
-        case DR_PLATINUM:
-            ostr << "increase your movement speed and make you resistant to mutation. (fast, rMut)";
-            break;
-        case DR_PURPLE:
-            ostr << "protect you from hostile magic. (MR++)";
-            break;
-        case DR_RED:
-            ostr << "grant you resistance to heat and fire. (rF+)";
-            break;
-        case DR_SCINTILLATING:
-            ostr << "chaotically grant elemental resistances and boost your physical defenses a bit. (AC+, Chaos+)";
-            break;
-        case DR_SILVER:
-            ostr << "boost your physical defenses and make you resistant to mutation. (AC++, rMut)";
-            break;
-        case DR_TEAL:
-            ostr << "hold together your spectral form.";
-            break;
-        case DR_WHITE:
-            ostr << "grant you resistance to cold and ice. (rC+)";
-            break;
-        }
-        result = ostr.str();
-    }
+        result = _drac_def_msg();
+    else if (mut == MUT_DRACONIAN_ENHANCER)
+        result = _drac_enhancer_msg(false);
     else if (mut == MUT_MINOR_MARTIAL_APT_BOOST)
     {
         ostringstream ostr;

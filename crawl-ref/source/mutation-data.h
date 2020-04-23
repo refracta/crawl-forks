@@ -1479,8 +1479,9 @@ static const mutation_def mut_data[] =
 { MUT_DRACONIAN_ENHANCER, 0, 2, mutflag::good, true,
   "draconian enhancer",
 
-  { "", "", ""},
-  { "", "", ""},
+  { "You are in touch with the powers of ",
+    "You are strongly in touch with the powers of ", ""},
+  { "You become more in touch with the powers of ", "You become more in touch with the powers of ", ""},
   { "", "", ""},
 },
 

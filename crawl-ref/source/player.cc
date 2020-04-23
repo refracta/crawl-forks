@@ -1959,6 +1959,10 @@ int player_spec_death()
 {
     int sd = 0;
 
+    // draconian scales:
+    if (you.drac_colour == DR_BLACK || you.drac_colour == DR_BLOOD)
+        sd += you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+
     // species:
     sd += you.get_mutation_level(MUT_NECRO_ENHANCER);
 
@@ -1975,6 +1979,10 @@ int player_spec_fire()
     // rings of fire:
     sf += you.wearing(EQ_RINGS, RING_FIRE);
 
+    // draconian scales:
+    if (you.drac_colour == DR_RED || you.drac_colour == DR_GOLDEN)
+        sf += you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+
     if (you.duration[DUR_FIRE_SHIELD])
         sf++;
 
@@ -1983,44 +1991,112 @@ int player_spec_fire()
 
 int player_spec_cold()
 {
-    return you.wearing(EQ_RINGS, RING_ICE);
+    int sc = 0;
+    // rings of ice:
+    sc += you.wearing(EQ_RINGS, RING_ICE);
+
+    // draconian scales:
+    if (you.drac_colour == DR_WHITE || you.drac_colour == DR_GOLDEN)
+        sc += you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+
+    return sc;
 }
 
 int player_spec_earth()
 {
+    // draconian scales:
+    if (you.drac_colour == DR_SILVER || you.drac_colour == DR_BONE
+                                     || you.drac_colour == DR_PEARL)
+    {
+        return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+    }
+
     return 0;
 }
 
 int player_spec_air()
 {
+    // draconian scales:
+    if (you.drac_colour == DR_BLUE || you.drac_colour == DR_OLIVE
+                                   || you.drac_colour == DR_BLOOD)
+    {
+        return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+    }
+
     return 0;
 }
 
 int player_spec_hex()
 {
-    if (player_equip_unrand(UNRAND_BOTONO))
-        return 1;
+    int sh;
 
-    return 0;
+    if (player_equip_unrand(UNRAND_BOTONO))
+        sh++;
+
+    // draconian scales:
+    if (you.drac_colour == DR_BLOOD || you.drac_colour == DR_PLATINUM
+                                    || you.drac_colour == DR_PURPLE)
+    {
+        sh += you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+    }
+
+    return sh;
 }
 
 int player_spec_charm()
 {
+    // draconian scales:
+    if (you.drac_colour == DR_MAGENTA || you.drac_colour == DR_BONE
+                                      || you.drac_colour == DR_PEARL)
+    {
+        return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+    }
+
     return 0;
 }
 
 int player_spec_summ()
 {
+    // draconian scales:
+    if (you.drac_colour == DR_PINK || you.drac_colour == DR_PEARL)
+        return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+
     return 0;
 }
 
 int player_spec_poison()
 {
+    // draconian scales:
+    if (you.drac_colour == DR_GREEN || you.drac_colour == DR_OLIVE
+                                    || you.drac_colour == DR_GOLDEN)
+    {
+        return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+    }
+
     return 0;
 }
 
 int player_spec_translo()
 {
+    // draconian scales:
+    if (you.drac_colour == DR_CYAN || you.drac_colour == DR_TEAL
+                                   || you.drac_colour == DR_PLATINUM)
+    {
+        return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+    }
+
+    return 0;
+}
+
+int player_spec_transmu()
+{
+    // draconian scales:
+    if (you.drac_colour == DR_LIME || you.drac_colour == DR_TEAL
+                                   || you.drac_colour == DR_PLATINUM)
+    {
+        return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+    }
+
     return 0;
 }
 

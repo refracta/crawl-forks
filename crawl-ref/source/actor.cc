@@ -254,10 +254,18 @@ bool actor::faith(bool calc_unid, bool items) const
 
 int actor::archmagi(bool calc_unid, bool items) const
 {
-    if (!items)
-        return 0;
+    int am = 0;
 
-    return wearing_ego(EQ_ALL_ARMOUR, SPARM_ARCHMAGI, calc_unid);
+    if (items)
+        am += wearing_ego(EQ_ALL_ARMOUR, SPARM_ARCHMAGI, calc_unid);
+
+    if (is_player() && you.drac_colour == DR_SCINTILLATING 
+                    && calc_unid && one_chance_in(3))
+    {
+        am++;
+    }
+
+    return am;
 }
 
 

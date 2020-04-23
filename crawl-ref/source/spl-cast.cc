@@ -524,6 +524,9 @@ bool determine_chaos(const actor *agent, spell_type spell)
     if (agent->is_player() && you.wearing(EQ_RINGS, RING_CHAOS))
         return true;
 
+    if (agent->is_player() && you.drac_colour == DR_SCINTILLATING)
+        return true;
+
     if (agent->is_monster())
     {
         if (agent->as_monster()->has_ench(ENCH_CHAOTIC_INFUSION))
@@ -634,6 +637,9 @@ static int _spell_enhancement(spell_type spell)
 
     if (typeflags & spschool::air)
         enhanced += player_spec_air();
+
+    if (typeflags & spschool::transmutation)
+        enhanced += player_spec_transmu();
 
     if (you.form == transformation::shadow)
         enhanced -= 2;

@@ -1036,6 +1036,7 @@ int player_spec_charm();
 int player_spec_poison();
 int player_spec_summ();
 int player_spec_translo();
+int player_spec_transmu();
 int player_spec_invo();
 
 int player_adjust_evoc_power(const int power, int enhancers = 0);
