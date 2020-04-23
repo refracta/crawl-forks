@@ -1429,6 +1429,8 @@ monster* shadow_monster(bool equip)
         if (wpn_index == NON_ITEM)
             return nullptr;
         item_def& new_item = mitm[wpn_index];
+
+        // BCADDO: Let shadow creature copy staff melee proper?
         if (wpn->base_type == OBJ_STAVES)
         {
             new_item.base_type = OBJ_WEAPONS;

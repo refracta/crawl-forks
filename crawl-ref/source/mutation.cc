@@ -1657,21 +1657,6 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
             }
             break;
 
-        case MUT_MAJOR_MARTIAL_APT_BOOST:
-            mprf(MSGCH_MUTATION, "%s%s.", mdef.gain[cur_base_level - 1], skill_name(you.major_skill));
-            gain_msg = false;
-            break;
-
-        case MUT_DEFENSIVE_APT_BOOST:
-            mprf(MSGCH_MUTATION, "%s%s.", mdef.gain[0], skill_name(you.defence_skill));
-            gain_msg = false;
-            break;
-
-        case MUT_MINOR_MARTIAL_APT_BOOST:
-            mprf(MSGCH_MUTATION, "%s%s.", mdef.gain[0], skill_name(you.minor_skill));
-            gain_msg = false;
-            break;
-
         case MUT_SPIT_POISON:
             // Breathe poison replaces spit poison (so it takes the slot).
             if (cur_base_level >= 2)

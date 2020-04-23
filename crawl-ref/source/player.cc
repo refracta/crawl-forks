@@ -49,8 +49,10 @@
 #include "kills.h"
 #include "libutil.h"
 #include "macro.h"
+#include "makeitem.h"
 #include "melee-attack.h"
 #include "message.h"
+#include "mon-death.h"
 #include "mon-place.h"
 #include "mutation.h"
 #include "nearby-danger.h"
@@ -3114,6 +3116,56 @@ int xp_to_level_diff(int xp, int scale)
         return adjusted_level - projected_level;
 }
 
+static void _draconian_skill_check(mutation_type mut = MUT_NON_MUTATION)
+{
+    // We just changed our aptitudes, so some skills may now
+    // be at the wrong level (with negative progress); if we
+    // print anything in this condition, we might trigger a
+    // --More--, a redraw, and a crash (#6376 on Mantis).
+    //
+    // Hence we first fix up our skill levels silently (passing
+    // do_level_up = false) but save the old values; then when
+    // we want the messages later, we restore the old skill
+    // levels and call check_skill_level_change() again, this
+    // time passing do_level_up = true.
+
+    uint8_t saved_skills[NUM_SKILLS];
+    for (skill_type sk = SK_FIRST_SKILL; sk < NUM_SKILLS; ++sk)
+    {
+        saved_skills[sk] = you.skills[sk];
+        check_skill_level_change(sk, false);
+    }
+
+    // Produce messages about skill increases/decreases. We
+    // restore one skill level at a time so that at most the
+    // skill being checked is at the wrong level.
+    for (skill_type sk = SK_FIRST_SKILL; sk < NUM_SKILLS; ++sk)
+    {
+        if (mut == MUT_NON_MUTATION && colour_apt(sk) > 0)
+        {
+            mprf(MSGCH_INTRINSIC_GAIN, "You learn %s %smore quickly.",
+                skill_name(sk),
+                colour_apt(sk) > 4 ? "much " : "");
+        }
+
+        if (mut == MUT_MINOR_MARTIAL_APT_BOOST && sk == you.minor_skill
+            || mut == MUT_MAJOR_MARTIAL_APT_BOOST && sk == you.major_skill
+            || mut == MUT_DEFENSIVE_APT_BOOST && sk == you.defence_skill)
+        {
+            mprf(MSGCH_INTRINSIC_GAIN, "You learn %s more quickly.",
+                skill_name(sk));
+        }
+
+        you.skills[sk] = saved_skills[sk];
+        check_skill_level_change(sk);
+    }
+
+    // It's possible we passed a training target due to
+    // skills being rescaled to new aptitudes. Thus, we must
+    // check the training targets.
+    check_training_targets();
+}
+
 /**
  * Handle the effects from a player's change in XL.
  * @param aux                     A string describing the cause of the level
@@ -3274,60 +3326,48 @@ void level_change(bool skip_attribute_increase)
                 {
                     you.drac_colour = random_draconian_colour();
 
-                    // We just changed our aptitudes, so some skills may now
-                    // be at the wrong level (with negative progress); if we
-                    // print anything in this condition, we might trigger a
-                    // --More--, a redraw, and a crash (#6376 on Mantis).
-                    //
-                    // Hence we first fix up our skill levels silently (passing
-                    // do_level_up = false) but save the old values; then when
-                    // we want the messages later, we restore the old skill
-                    // levels and call check_skill_level_change() again, this
-                    // time passing do_level_up = true.
-
-                    uint8_t saved_skills[NUM_SKILLS];
-                    for (skill_type sk = SK_FIRST_SKILL; sk < NUM_SKILLS; ++sk)
-                    {
-                        saved_skills[sk] = you.skills[sk];
-                        check_skill_level_change(sk, false);
-                    }
                     // The player symbol depends on species.
                     update_player_symbol();
 #ifdef USE_TILE
                     init_player_doll();
 #endif
-                    mprf(MSGCH_INTRINSIC_GAIN,
-                         "Your scales start taking on %s colour.",
-                         article_a(scale_type()).c_str());
-
-                    // Produce messages about skill increases/decreases. We
-                    // restore one skill level at a time so that at most the
-                    // skill being checked is at the wrong level.
-                    for (skill_type sk = SK_FIRST_SKILL; sk < NUM_SKILLS; ++sk)
+                    if (you.drac_colour == DR_TEAL)
                     {
-                        // BCADDO: Come back here!
-                        const int oldapt = species_apt(sk, SP_DRACONIAN);
-                        const int newapt = species_apt(sk, you.species);
-                        if (oldapt != newapt)
-                        {
-                            mprf(MSGCH_INTRINSIC_GAIN, "You learn %s %s%s.",
-                                 skill_name(sk),
-                                 abs(oldapt - newapt) > 1 ? "much " : "",
-                                 oldapt > newapt ? "slower" : "quicker");
-                        }
+                        monster dummy;
+                        dummy.type = MONS_DRACONIAN;
+                        define_monster(dummy);
+                        dummy.props["always_corpse"] = true; // BCADDO: I think I can get rid of this prop...
+                        dummy.mname = player_name();
+                        dummy.set_hit_dice(you.experience_level);
+                        dummy.position = you.pos();
+                        place_monster_corpse(dummy, true, true);
 
-                        you.skills[sk] = saved_skills[sk];
-                        check_skill_level_change(sk);
+                        perma_mutate(MUT_INSUBSTANTIAL, 1, "draconic bloodline");
+                    }
+                    else if (you.drac_colour == DR_BONE)
+                    {
+                        int i = items(false, OBJ_FOOD, FOOD_CHUNK, 1);
+                        item_def& item = mitm[i];
+                        item.quantity = roll_dice(2, 4);
+                        move_item_to_grid(&i, you.pos());
+
+                        mprf(MSGCH_INTRINSIC_GAIN,
+                            "Your flesh falls away, revealing a tough animated skeleton!");
+                    }
+                    else
+                    {
+                        mprf(MSGCH_INTRINSIC_GAIN,
+                            "Your scales start taking on %s colour.",
+                            article_a(scale_type()).c_str());
                     }
 
-                    // It's possible we passed a training target due to
-                    // skills being rescaled to new aptitudes. Thus, we must
-                    // check the training targets.
-                    check_training_targets();
+                    _draconian_skill_check();
 
-                    // Tell the player about their new species
-                    for (auto &mut : fake_mutations(you.species, false))
-                        mprf(MSGCH_INTRINSIC_GAIN, "%s", mut.c_str());
+                    if (!(you.experience_level % 5))
+                    {
+                        mprf(MSGCH_INTRINSIC_GAIN, "Your scales feel tougher.");
+                        you.redraw_armour_class = true;
+                    }
 
                     // needs to be done early here, so HP doesn't look rotted
                     // when we redraw the screen
@@ -3335,6 +3375,47 @@ void level_change(bool skip_attribute_increase)
                     updated_maxhp = true;
 
                     redraw_screen();
+                }
+
+                // BCADDNOTE: All the "change apts. mutations are here instead of in the .yaml
+                // to make sure the skill check after effect of gaining the mutation is followed properly.
+                if (you.experience_level == 10)
+                {
+                    if (you.major_first)
+                    {
+                        perma_mutate(MUT_MAJOR_MARTIAL_APT_BOOST, 1, "draconic bloodline");
+                        _draconian_skill_check(MUT_MAJOR_MARTIAL_APT_BOOST);
+                    }
+                    else
+                    {
+                        perma_mutate(MUT_MINOR_MARTIAL_APT_BOOST, 1, "draconic bloodline");
+                        _draconian_skill_check(MUT_MINOR_MARTIAL_APT_BOOST);
+                    }
+                }
+                if (you.experience_level == 14)
+                {
+                    if (you.major_first)
+                    {
+                        perma_mutate(MUT_MINOR_MARTIAL_APT_BOOST, 1, "draconic bloodline");
+                        _draconian_skill_check(MUT_MINOR_MARTIAL_APT_BOOST);
+                    }
+                    else
+                    {
+                        perma_mutate(MUT_MAJOR_MARTIAL_APT_BOOST, 1, "draconic bloodline");
+                        _draconian_skill_check(MUT_MAJOR_MARTIAL_APT_BOOST);
+                    }
+                }
+
+                if (you.experience_level == 12)
+                {
+                    perma_mutate(MUT_DEFENSIVE_APT_BOOST, 1, "draconic bloodline");
+
+                    _draconian_skill_check(MUT_DEFENSIVE_APT_BOOST);
+                }
+                if (you.experience_level == 15)
+                {
+                    perma_mutate(MUT_DEFENSIVE_APT_BOOST, 1, "draconic bloodline");
+                    _draconian_skill_check(MUT_MAJOR_MARTIAL_APT_BOOST);
                 }
                 break;
 
@@ -3361,30 +3442,6 @@ void level_change(bool skip_attribute_increase)
                 }
             }
             give_level_mutations(you.species, you.experience_level);
-        }
-
-        if (you.species == SP_DRACONIAN)
-        {
-            if (you.experience_level == 10)
-            {
-                if (you.major_first)
-                    perma_mutate(MUT_MAJOR_MARTIAL_APT_BOOST, 1, "draconic bloodline");
-                else
-                    perma_mutate(MUT_MINOR_MARTIAL_APT_BOOST, 1, "draconic bloodline");
-            }
-            if (you.experience_level == 14)
-            {
-                if (you.major_first)
-                    perma_mutate(MUT_MINOR_MARTIAL_APT_BOOST, 1, "draconic bloodline");
-                else
-                    perma_mutate(MUT_MAJOR_MARTIAL_APT_BOOST, 1, "draconic bloodline");
-            }
-
-            if (!(you.experience_level % 5))
-            {
-                mprf(MSGCH_INTRINSIC_GAIN, "Your scales feel tougher.");
-                you.redraw_armour_class = true;
-            }
         }
 
         if (!updated_maxhp)

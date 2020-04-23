@@ -1464,7 +1464,7 @@ static const mutation_def mut_data[] =
    "minor martial skill boost",
     
   {"You are naturally skilled at ", "", ""},
-  {"Your draconian ancestry asserts itself, you feel more capable at ", "", ""},
+  {"Your draconian ancestry asserts itself.", "", ""},
   {"", "", ""},
 },
 
@@ -1472,7 +1472,7 @@ static const mutation_def mut_data[] =
    "major martial skill boost",
 
   { "You are naturally skilled at ", "", "" },
-  { "Your draconian ancestry asserts itself, you feel more capable at ", "Your draconian ancestry asserts itself, you feel extremely proficient at ", "" },
+  { "Your draconian ancestry asserts itself.", "Your draconian ancestry asserts itself.", "" },
   {"", "", ""},
 },
 
@@ -1496,7 +1496,7 @@ static const mutation_def mut_data[] =
    "defensive skill boost",
     
   {"You are naturally skilled at ", "", ""},
-  {"Your draconian ancestry asserts itself, you feel more capable at ", "", ""},
+  {"Your draconian ancestry asserts itself.", "", ""},
   {"", "", ""},
 },
 
@@ -1977,7 +1977,8 @@ static const mutation_def mut_data[] =
 "insubstantial",
 
 { "Your insubstantial form boosts your evasion and grants immunity to sticky flames, nets and constriction.", "", "" },
-{ "Your body fades partially out of reality.", "", "" },
+{ "Your spirit separates from your body becoming a ghostly form.", "", "" },
+    // BCADDNOTE: This only makes sense for the only race that currently gains this with level. If more races are given this with level revise/use mutation-messaging.
 { "You become solid.", "", "" },
 },
 

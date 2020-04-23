@@ -1914,6 +1914,91 @@ unsigned int skill_exp_needed(int lev, skill_type sk, species_type sp)
     return exp[lev] * species_apt_factor(sk, sp);
 }
 
+int colour_apt(skill_type skill)
+{
+    switch (you.drac_colour)
+    {
+    default:
+    case DR_BROWN:
+        return 0;
+    case DR_RED:
+        if (skill == SK_FIRE_MAGIC)
+            return 5;
+        return 0;
+    case DR_WHITE:
+        if (skill == SK_ICE_MAGIC)
+            return 5;
+        return 0;
+    case DR_BLUE:
+        if (skill == SK_AIR_MAGIC)
+            return 5;
+        return 0;
+    case DR_CYAN:
+        if (skill == SK_TRANSLOCATIONS)
+            return 5;
+        return 0;
+    case DR_SILVER:
+        if (skill == SK_EARTH_MAGIC)
+            return 5;
+        return 0;
+    case DR_GREEN:
+        if (skill == SK_POISON_MAGIC)
+            return 5;
+        return 0;
+    case DR_PINK:
+        if (skill == SK_SUMMONINGS)
+            return 5;
+        return 0;
+    case DR_PURPLE:
+        if (skill == SK_HEXES)
+            return 5;
+        return 0;
+    case DR_LIME:
+        if (skill == SK_TRANSMUTATIONS)
+            return 5;
+        return 0;
+    case DR_MAGENTA:
+        if (skill == SK_CHARMS)
+            return 5;
+        return 0;
+    case DR_BLACK:
+        if (skill == SK_NECROMANCY)
+            return 5;
+        return 0;
+    case DR_OLIVE:
+        if (skill == SK_AIR_MAGIC || skill == SK_POISON_MAGIC)
+            return 4;
+        return 0;
+    case DR_BONE:
+        if (skill == SK_EARTH_MAGIC || skill == SK_CHARMS)
+            return 4;
+        return 0;
+    case DR_TEAL:
+        if (skill == SK_TRANSLOCATIONS || skill == SK_TRANSMUTATIONS)
+            return 4;
+        return 0;
+    case DR_GOLDEN:
+        if (skill == SK_FIRE_MAGIC || skill == SK_ICE_MAGIC || skill == SK_POISON_MAGIC)
+            return 4;
+        return 0;
+    case DR_PEARL:
+        if (skill == SK_EARTH_MAGIC || skill == SK_CHARMS || skill == SK_SUMMONINGS)
+            return 4;
+        return 0;
+    case DR_PLATINUM:
+        if (skill == SK_TRANSLOCATIONS || skill == SK_TRANSMUTATIONS || skill == SK_HEXES)
+            return 0;
+    case DR_SCINTILLATING:
+        if (is_magic_skill(skill) && skill != SK_SPELLCASTING)
+            return 3;
+        return 0;
+    case DR_BLOOD:
+        if (skill == SK_NECROMANCY || skill == SK_AIR_MAGIC || skill == SK_HEXES)
+            return 4;
+        return 0;
+    }
+}
+
 int species_apt(skill_type skill, species_type species)
 {
     static bool spec_skills_initialised = false;
@@ -1955,89 +2040,11 @@ int species_apt(skill_type skill, species_type species)
             mod = -1;
     }
 
-    if (you.species == SP_DRACONIAN)
+    // The check for experience_level is because this can be called uninitialized during creation.
+    if (you.species == SP_DRACONIAN && you.experience_level > 1)
     {
-        switch (you.drac_colour)
-        {
-        case DR_BROWN:
-            break;
-        case DR_RED:
-            if (skill == SK_FIRE_MAGIC)
-                mod += 5;
-            break;
-        case DR_WHITE:
-            if (skill == SK_ICE_MAGIC)
-                mod += 5;
-            break;
-        case DR_BLUE:
-            if (skill == SK_AIR_MAGIC)
-                mod += 5;
-            break;
-        case DR_CYAN:
-            if (skill == SK_TRANSLOCATIONS)
-                mod += 5;
-            break;
-        case DR_SILVER:
-            if (skill == SK_EARTH_MAGIC)
-                mod += 5;
-            break;
-        case DR_GREEN:
-            if (skill == SK_POISON_MAGIC)
-                mod += 5;
-            break;
-        case DR_PINK:
-            if (skill == SK_SUMMONINGS)
-                mod += 5;
-            break;
-        case DR_PURPLE:
-            if (skill == SK_HEXES)
-                mod += 5;
-            break;
-        case DR_LIME:
-            if (skill == SK_TRANSMUTATIONS)
-                mod += 5;
-            break;
-        case DR_MAGENTA:
-            if (skill == SK_CHARMS)
-                mod += 5;
-            break;
-        case DR_BLACK:
-            if (skill == SK_NECROMANCY)
-                mod += 5;
-            break;
-        case DR_OLIVE:
-            if (skill == SK_AIR_MAGIC || skill == SK_POISON_MAGIC)
-                mod += 4;
-            break;
-        case DR_BONE:
-            if (skill == SK_EARTH_MAGIC || skill == SK_CHARMS)
-                mod += 4;
-            break;
-        case DR_TEAL:
-            if (skill == SK_TRANSLOCATIONS || skill == SK_TRANSMUTATIONS)
-                mod += 4;
-            break;
-        case DR_GOLDEN:
-            if (skill == SK_FIRE_MAGIC || skill == SK_ICE_MAGIC || skill == SK_POISON_MAGIC)
-                mod += 4;
-            break;
-        case DR_PEARL:
-            if (skill == SK_EARTH_MAGIC || skill == SK_CHARMS || skill == SK_SUMMONINGS)
-                mod += 4;
-            break;
-        case DR_PLATINUM:
-            if (skill == SK_TRANSLOCATIONS || skill == SK_TRANSMUTATIONS || skill == SK_HEXES)
-            break;
-        case DR_SCINTILLATING:
-            if (is_magic_skill(skill) && skill != SK_SPELLCASTING)
-                mod += 3;
-            break;
-        case DR_BLOOD:
-            if (skill == SK_NECROMANCY || skill == SK_AIR_MAGIC || skill == SK_HEXES)
-                mod += 4;
-            break;
-        }
-
+        mod += colour_apt(skill);
+        
         if (you.get_mutation_level(MUT_MINOR_MARTIAL_APT_BOOST) && skill == you.minor_skill)
             mod += 3;
         if (you.get_mutation_level(MUT_MAJOR_MARTIAL_APT_BOOST) && skill == you.major_skill)
