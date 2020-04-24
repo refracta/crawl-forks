@@ -427,8 +427,26 @@ void give_level_mutations(species_type species, int xp_level)
             perma_mutate(lum.mut, lum.mut_level,
                          species_name(species) + " growth");
         }
-    if (you.char_class == JOB_MUMMY && xp_level == 13)
-        perma_mutate(MUT_NECRO_ENHANCER, 2, "mummy growth");
+    if (you.char_class == JOB_MUMMY)
+    {
+        if (xp_level == 7 && you.species == SP_DRACONIAN)
+        {
+            you.mutation[MUT_HEAT_VULNERABILITY] = you.innate_mutation[MUT_HEAT_VULNERABILITY] = 0;
+            string msg;
+            switch (you.drac_colour)
+            {
+            case DR_BONE:   msg = "As your flesh falls away, so does its vulnerability to fire.";                                               break;
+            case DR_TEAL:   msg = "As you leave your mummified body behind, you also leave behind its vulnerability to flames.";                break;
+            default:        //Just in case
+            case DR_OLIVE:
+            case DR_BLACK:  msg = "As you take on an adult scale colour, your bandages fall away and you become less vulnerable to flames.";    break;
+            }
+            mprf(MSGCH_INTRINSIC_GAIN, "%s", msg.c_str());
+        }
+
+        if (xp_level == 13)
+            perma_mutate(MUT_NECRO_ENHANCER, 2, "mummy growth");
+    }
 
     // Ineligant, make something more refined if losing mutations with level becomes more common.
     // Also doing this way instead of perma_mutate() to use custom messaging.

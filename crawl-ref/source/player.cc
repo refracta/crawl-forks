@@ -525,14 +525,6 @@ void moveto_location_effects(dungeon_feature_type old_feat,
                     }
                 }
 
-                if (new_grid == DNGN_DEEP_WATER && old_feat != DNGN_DEEP_WATER 
-                        && you.species != SP_GREY_DRACONIAN)
-                    mpr("You struggle to swim.");
-
-                if (new_grid == DNGN_DEEP_SLIMY_WATER && old_feat != DNGN_DEEP_SLIMY_WATER
-                    && you.species != SP_GREY_DRACONIAN)
-                    mpr("You struggle to swim.");
-
                 if (!feat_is_water(old_feat))
                 {
                     mpr("Moving in this stuff is going to be slow.");
@@ -1569,9 +1561,6 @@ int player_res_steam(bool calc_unid, bool temp, bool items)
     int res = 0;
     const int rf = player_res_fire(calc_unid, temp, items);
 
-    if (you.species == SP_PALE_DRACONIAN)
-        res += 2;
-
     if (items)
     {
         const item_def *body_armour = you.slot_item(EQ_BODY_ARMOUR);
@@ -2028,7 +2017,7 @@ int player_spec_air()
 
 int player_spec_hex()
 {
-    int sh;
+    int sh = 0;
 
     if (player_equip_unrand(UNRAND_BOTONO))
         sh++;
@@ -3419,6 +3408,10 @@ void level_change(bool skip_attribute_increase)
                         place_monster_corpse(dummy, true, true);
 
                         perma_mutate(MUT_INSUBSTANTIAL, 1, "draconic bloodline");
+                        if (you.char_class == JOB_MUMMY)
+                            mprf(MSGCH_INTRINSIC_GAIN, "Your ghostly form can be transmuted to any form you wish and you can drink potions once more.");
+                        else
+                            mprf(MSGCH_INTRINSIC_GAIN, "As a ghost, you can still transmute into various forms you may have been using.");
                     }
                     else if (you.drac_colour == DR_BONE)
                     {
@@ -7197,6 +7190,13 @@ undead_state_type player::undead_state(bool temp) const
 {
     if (temp && you.form == transformation::lich)
         return US_UNDEAD;
+    if (you.species == SP_DRACONIAN)
+    {
+        if (you.drac_colour == DR_TEAL)
+            return US_GHOST;
+        if (you.drac_colour == DR_BONE || you.drac_colour == DR_OLIVE)
+            return US_UNDEAD;
+    }
     if (you.char_class == JOB_MUMMY)
         return US_UNDEAD;
     return species_undead_type(you.species);
@@ -7988,7 +7988,7 @@ bool player::cannot_act() const
 
 bool player::can_smell() const
 {
-    return (char_class != JOB_MUMMY);
+    return (you.undead_state() != US_UNDEAD);
 }
 
 bool player::can_sleep(bool holi_only) const

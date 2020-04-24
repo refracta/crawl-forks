@@ -2129,19 +2129,12 @@ static spret _do_ability(const ability_def& abil, bool fail)
         case ABIL_BREATHE_BUTTERFLIES:
             zap = ZAP_BREATHE_BUTTERFLY;
             m   = "You exhale a cloud of butterflies.";
-            beam.hit_verb = "sparkle around";
+            beam.hit_verb = "sparkles around";
             break;
         }
 
         if (zapping(zap, power, beam, true, m.c_str()) == spret::abort)
             return spret::abort;
-
-        if (zap == ZAP_BREATHE_BUTTERFLY)
-        {
-            zappy(zap, power, false, beam);
-            beam.flavour = BEAM_BUTTERFLY;
-            beam.fire();
-        }
 
         you.increase_duration(DUR_BREATH_WEAPON,
                       3 + random2(10) + random2(30 - you.experience_level));
@@ -3501,13 +3494,13 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
     {
         _add_talent(talents, draconian_breath(), check_confused);
         // For debug purposes let's just add all of them for now.
-        _add_talent(talents, ABIL_BREATHE_CHAOS, check_confused);
-        _add_talent(talents, ABIL_BREATHE_BUTTERFLIES, check_confused);
+        _add_talent(talents, ABIL_BREATHE_MIASMA, check_confused);
+        _add_talent(talents, ABIL_BREATHE_MEPHITIC, check_confused);
         _add_talent(talents, ABIL_BREATHE_BONE, check_confused);
         if (you.drac_colour == DR_GOLDEN)
         {
             _add_talent(talents, ABIL_BREATHE_FROST, check_confused);
-            _add_talent(talents, ABIL_BREATHE_POISON, check_confused);
+            _add_talent(talents, ABIL_BREATHE_MEPHITIC, check_confused);
         }
     }
 

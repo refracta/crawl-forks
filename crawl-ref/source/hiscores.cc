@@ -2221,9 +2221,9 @@ string scorefile_entry::death_description(death_desc_verbosity verbosity) const
             desc += "lava";
         else
         {
-            if (you.char_class == JOB_MUMMY)
+            if (you.undead_state() == US_UNDEAD)
                 desc += "Turned to ash by lava";
-            if (race == SP_SILENT_SPECTRE)
+            if (you.undead_state() == US_GHOST)
                 desc += "Lost beneath molten lava";
             else
                 desc += "Took a swim in molten lava";
@@ -2233,7 +2233,7 @@ string scorefile_entry::death_description(death_desc_verbosity verbosity) const
     case KILLED_BY_WATER:
         if (you.undead_state())
         {
-            if (race == SP_SILENT_SPECTRE) {
+            if (you.undead_state() == US_GHOST) {
                 if (terse)
                     desc = "sank";
                 else
@@ -2241,7 +2241,7 @@ string scorefile_entry::death_description(death_desc_verbosity verbosity) const
             }
             if (terse)
                 desc = "fell apart";
-            else if (you.char_class == JOB_MUMMY)
+            else if (you.undead_state() == US_UNDEAD)
                 desc = "Soaked and fell apart";
             else
                 desc = "Sank and fell apart";

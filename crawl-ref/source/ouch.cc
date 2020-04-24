@@ -150,7 +150,6 @@ int check_your_resists(int hurted, beam_type flavour, string source,
         you.backlight();
         // Fallthrough
 
-    case BEAM_ANTIABJ:
     case BEAM_BUTTERFLY:
     case BEAM_FOG:
         hurted = 0;

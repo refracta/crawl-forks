@@ -3528,7 +3528,7 @@ tileidx_t tileidx_ability(const ability_type ability)
 {
     switch (ability)
     {
-    // Innate abilities and (Demonspaw) mutations.
+    // Innate abilities and (Demonspawn) mutations.
     case ABIL_SPIT_POISON:
         return TILEG_ABILITY_SPIT_POISON;
     case ABIL_BREATHE_FIRE:
@@ -3547,6 +3547,34 @@ tileidx_t tileidx_ability(const ability_type ability)
         return TILEG_ABILITY_BREATHE_MEPHITIC;
     case ABIL_BREATHE_ACID:
         return TILEG_ABILITY_BREATHE_ACID;
+    case ABIL_BREATHE_FOG:
+        return TILEG_ABILITY_BREATHE_FOG;
+    case ABIL_BREATHE_BLOOD:
+        return TILEG_ABILITY_BREATHE_BLOOD;
+    case ABIL_BREATHE_BONE:
+        return TILEG_ABILITY_BREATHE_BONE;
+    case ABIL_BREATHE_BUTTERFLIES:
+        return TILEG_ABILITY_BREATHE_BUTTERFLIES;
+    case ABIL_BREATHE_CHAOS:
+        return TILEG_ABILITY_BREATHE_CHAOS;
+    case ABIL_BREATHE_DART:
+        return TILEG_ABILITY_BREATHE_DART;
+    case ABIL_BREATHE_DRAIN:
+        return TILEG_ABILITY_BREATHE_DRAIN;
+    case ABIL_BREATHE_GHOSTLY_FLAMES:
+        return TILEG_ABILITY_BREATHE_GHOSTLY_FLAMES;
+    case ABIL_BREATHE_HOLY_FLAMES:
+        return TILEG_ABILITY_BREATHE_HOLY_FLAMES;
+    case ABIL_BREATHE_METAL:
+        return TILEG_ABILITY_BREATHE_METAL;
+    case ABIL_BREATHE_MIASMA:
+        return TILEG_ABILITY_BREATHE_MIASMA;
+    case ABIL_BREATHE_RADIATION:
+        return TILEG_ABILITY_BREATHE_RADIATION;
+    case ABIL_BREATHE_SILVER:
+        return TILEG_ABILITY_BREATHE_SILVER;
+    case ABIL_BREATHE_WIND:
+        return TILEG_ABILITY_BREATHE_WIND;
     case ABIL_BLINK:
         return TILEG_ABILITY_BLINK;
     case ABIL_HOP:

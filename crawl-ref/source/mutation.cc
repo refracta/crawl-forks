@@ -679,6 +679,10 @@ string describe_mutations(bool drop_title)
         }
     }
 
+    if (you.species == SP_DRACONIAN && you.undead_state(false) == US_UNDEAD)
+        result += "Your connection to dragons allows you to use the spell dragon form,\n"
+        "despite your undead form not otherwise being capable of transmutation.\n";
+
     if (player_res_poison(false, false, false) == 3)
         result += "You are immune to poison.\n";
 

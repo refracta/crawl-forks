@@ -1893,22 +1893,6 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
         hurted = 0;
         break;
 
-    case BEAM_ANTIABJ:
-        if ((mons_aligned(pbolt.agent(), mons) || pbolt.agent()->is_player() && mons->friendly()) 
-            && mons->has_ench(ENCH_ABJ))
-        {
-            int x;
-            mons->is_summoned(nullptr, &x);
-            if (x != MON_SUMM_BREATH) // Don't increase the duration of summons made by this same effect.
-            {
-                mprf(MSGCH_DURATION, "%s fairy dust increases %s's time in this world.",
-                    pbolt.agent()->name(DESC_YOUR).c_str(), mons->name(DESC_YOUR).c_str());
-                increase_ench_duration(mons, mons->get_ench(ENCH_ABJ), hurted * 10);
-            }
-        }
-        hurted = 0;
-        break;
-
     case BEAM_WAND_HEALING:
         if (doFlavouredEffects)
         {
@@ -7159,7 +7143,6 @@ static string _beam_type_name(beam_type type)
     case BEAM_HEALING:               return "healing";
     case BEAM_WAND_HEALING:          return "healing mist";
     case BEAM_FOG:                   return "fog";
-    case BEAM_ANTIABJ:               // fallthrough
     case BEAM_BUTTERFLY:             return "fairy dust";
     case BEAM_CONFUSION:             return "confusion";
     case BEAM_INVISIBILITY:          return "invisibility";

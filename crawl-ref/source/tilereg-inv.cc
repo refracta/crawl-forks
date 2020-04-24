@@ -229,11 +229,7 @@ static bool _can_use_item(const item_def &item, bool equipped)
 
     // Vampires can drain corpses.
     if (item.base_type == OBJ_CORPSES)
-    {
-        return you.species == SP_VAMPIRE
-               && item.sub_type != CORPSE_SKELETON
-               && mons_has_blood(item.mon_type);
-    }
+        return false;
 
     if (equipped && item.cursed())
     {
@@ -247,8 +243,16 @@ static bool _can_use_item(const item_def &item, bool equipped)
     }
 
     // Mummies can't do anything with food or potions.
-    if (you.char_class == JOB_MUMMY)
+    if (you.undead_state() == US_UNDEAD)
         return item.base_type != OBJ_POTIONS && item.base_type != OBJ_FOOD;
+
+    // Ghosts can't use food.
+    if (you.undead_state() == US_GHOST && item.base_type == OBJ_FOOD)
+        return false;
+
+    // Silent spectres can't use scrolls.
+    if (you.species == SP_SILENT_SPECTRE)
+        return item.base_type != OBJ_SCROLLS;
 
     // In all other cases you can use the item in some way.
     return true;

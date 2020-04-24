@@ -1278,13 +1278,15 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
     case SPELL_STATUE_FORM:
         if (SP_GARGOYLE == you.species)
             return "you're already a statue.";
-        if (SP_SILENT_SPECTRE == you.species)
+        if (you.undead_state(temp) == US_GHOST)
             return "you are incapable of being fully solid.";
         // fallthrough to other forms
 
+    case SPELL_DRAGON_FORM:
+        if (SP_DRACONIAN == you.species && spell == SPELL_DRAGON_FORM)
+            return "";  // Draconians can always turn into some kind of dragon.
     case SPELL_BEASTLY_APPENDAGE:
     case SPELL_BLADE_HANDS:
-    case SPELL_DRAGON_FORM:
     case SPELL_HYDRA_FORM:
     case SPELL_ICE_FORM:
     case SPELL_SPIDER_FORM:
@@ -1368,10 +1370,7 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
     case SPELL_SUBLIMATION_OF_BLOOD:
         // XXX: write player_can_bleed(bool temp) & use that
         if (you.species == SP_GARGOYLE
-            || you.species == SP_GHOUL
-            || you.species == SP_MUMMY
-            || you.char_class == JOB_MUMMY
-            || you.species == SP_SILENT_SPECTRE
+            || you.undead_state(temp) != US_ALIVE
             || (temp && !form_can_bleed(you.form)))
         {
             return "you have no blood to sublime.";

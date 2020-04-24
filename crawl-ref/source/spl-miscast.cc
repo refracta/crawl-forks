@@ -678,15 +678,15 @@ static bool _has_hair(actor* target)
         return false;
 
     return !form_changed_physiology()
-           && (species_has_hair(you.species) || you.species == SP_MUMMY
-               || you.char_class == JOB_MUMMY);
+           && (species_has_hair(you.species)
+               || you.char_class == JOB_MUMMY && you.undead_state() == US_UNDEAD);
 }
 
 static string _hair_str(actor* target, bool &plural)
 {
     ASSERT(target->is_player());
 
-    if (you.species == SP_MUMMY || you.char_class == JOB_MUMMY)
+    if (you.undead_state() == US_UNDEAD)
     {
         plural = true;
         return "bandages";
@@ -774,7 +774,7 @@ void MiscastEffect::_conjuration(int severity)
             // care of elsewhere.
             break;
         case 9:
-            if (you.species == SP_MUMMY || you.char_class == JOB_MUMMY)
+            if (you.char_class == JOB_MUMMY && you.undead_state() == US_UNDEAD)
                 you_msg = "Your bandages flutter.";
             else if (you.can_smell())
                 all_msg = "You smell something strange.";
@@ -1616,7 +1616,7 @@ void MiscastEffect::_necromancy(int severity)
         switch (random2(10))
         {
         case 0:
-            if (you.species == SP_MUMMY || you.char_class == JOB_MUMMY)
+            if (you.char_class == JOB_MUMMY && you.undead_state() == US_UNDEAD)
                 you_msg = "Your bandages flutter.";
             else if (you.can_smell())
                 all_msg = "You smell decay.";
@@ -1707,7 +1707,7 @@ void MiscastEffect::_necromancy(int severity)
                     do_msg();
                 target->rot(act_source, 1, true);
             }
-            else if (you.species == SP_MUMMY || you.char_class == JOB_MUMMY)
+            else if (you.char_class == JOB_MUMMY && you.undead_state() == US_UNDEAD)
             {
                 // Monster messages needed.
                 you_msg = "Your bandages flutter.";
@@ -1889,7 +1889,7 @@ void MiscastEffect::_transmutation(int severity)
             // care of elsewhere.
             break;
         case 9:
-            if (you.species == SP_MUMMY || you.char_class == JOB_MUMMY)
+            if (you.char_class == JOB_MUMMY && you.undead_state() == US_UNDEAD)
                 you_msg = "Your bandages flutter.";
             else if (you.can_smell())
                 all_msg = "You smell something strange.";
@@ -2072,7 +2072,7 @@ void MiscastEffect::_fire(int severity)
             all_msg = "You have a brief vision of globes of primordial fire.";
             break;
         case 4:
-            if (you.species == SP_MUMMY || you.char_class == JOB_MUMMY)
+            if (you.char_class == JOB_MUMMY && you.undead_state() == US_UNDEAD)
                 you_msg = "Your bandages flutter.";
             else if (you.can_smell())
                 all_msg = "You smell smoke.";
@@ -2612,7 +2612,7 @@ void MiscastEffect::_air(int severity)
                 msg_ch         = MSGCH_SOUND;
                 sound_loudness = 2;
             }
-            else if (you.species == SP_MUMMY || you.char_class == JOB_MUMMY)
+            else if (you.char_class == JOB_MUMMY && you.undead_state() == US_UNDEAD)
                 you_msg = "Your bandages flutter.";
             else if (you.can_smell())
                 all_msg = "You smell ozone.";
@@ -2628,7 +2628,7 @@ void MiscastEffect::_air(int severity)
                 msg_ch         = MSGCH_SOUND;
                 sound_loudness = 2;
             }
-            else if (you.species == SP_MUMMY || you.char_class == JOB_MUMMY)
+            else if (you.char_class == JOB_MUMMY && you.undead_state() == US_UNDEAD)
                 you_msg = "Your bandages flutter.";
             else if (you.can_smell())
                 all_msg = "You smell something musty.";
