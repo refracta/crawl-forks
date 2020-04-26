@@ -308,9 +308,11 @@ monster_type dragon_form_dragon_type()
     if (you.species != SP_DRACONIAN)
         return MONS_FIRE_DRAGON;
 
-    // BCADDO: RETURN HERE.
+    // BCADDO: Consider the unimplemented dragon equivalents mentioned here.
     switch (you.drac_colour)
     {
+    case DR_CYAN:
+        return MONS_WIND_DRAKE;
     case DR_WHITE:
         return MONS_ICE_DRAGON;
     case DR_GREEN:
@@ -321,12 +323,11 @@ monster_type dragon_form_dragon_type()
         return MONS_IRON_DRAGON;
     case DR_BLACK:
         return MONS_SHADOW_DRAGON;
+    case DR_PLATINUM:
     case DR_PURPLE:
         return MONS_QUICKSILVER_DRAGON;
     case DR_MAGENTA:
         return MONS_STEAM_DRAGON;
-    case DR_GOLDEN:
-        return MONS_GOLDEN_DRAGON;
     case DR_BONE:
         return MONS_BONE_DRAGON;
     case DR_BLUE:
@@ -335,6 +336,13 @@ monster_type dragon_form_dragon_type()
         return MONS_PEARL_DRAGON;
     case DR_OLIVE:
         return MONS_DEATH_DRAKE;
+    case DR_SCINTILLATING:  // Apocalypse Dragon?
+    case DR_PINK:           // Fairy-tale dragon
+    case DR_BLOOD:          // Demon Dragon?
+    case DR_TEAL:           // Spectral Dragon?
+    case DR_GOLDEN:
+        return MONS_GOLDEN_DRAGON;
+    case DR_BROWN:
     case DR_RED:
     default:
         return MONS_FIRE_DRAGON;
@@ -412,7 +420,8 @@ void give_basic_mutations(species_type species)
         you.mutation[MUT_NEGATIVE_ENERGY_RESISTANCE] = you.innate_mutation[MUT_NEGATIVE_ENERGY_RESISTANCE] = 3;
         you.mutation[MUT_COLD_RESISTANCE] = you.innate_mutation[MUT_COLD_RESISTANCE] = (you.get_mutation_level(MUT_COLD_RESISTANCE) + 1);
         you.mutation[MUT_TORMENT_RESISTANCE] = you.innate_mutation[MUT_TORMENT_RESISTANCE] = 1;
-        you.mutation[MUT_UNBREATHING] = you.innate_mutation[MUT_UNBREATHING] = 1;
+        you.mutation[MUT_UNBREATHING_FORM] = you.innate_mutation[MUT_UNBREATHING_FORM] = 1;
+        // Form version lets Draconians keep on transmutation; no effect on other --Mu since can't transmute.
         you.mutation[MUT_NECRO_ENHANCER] = you.innate_mutation[MUT_NECRO_ENHANCER] = 1;
         you.mutation[MUT_HEAT_VULNERABILITY] = you.innate_mutation[MUT_HEAT_VULNERABILITY] = 1;
         you.mutation[MUT_COLD_BLOODED] = you.innate_mutation[MUT_COLD_BLOODED] = 0; // Taking this back away from things that have it because it makes no sense on undead.

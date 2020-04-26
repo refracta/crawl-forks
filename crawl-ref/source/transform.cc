@@ -1528,13 +1528,16 @@ undead_form_reason lifeless_prevents_form(transformation which_trans,
     if (which_trans == transformation::shadow)
         return UFR_GOOD; // even the undead can use dith's shadow form
 
-    if (you.species == SP_SILENT_SPECTRE) {
-        
+    if (you.undead_state(false) == US_GHOST)
+    {
         if (which_trans == transformation::lich || which_trans == transformation::statue)
             return UFR_TOO_SOLID;
         else 
             return UFR_GOOD;
     }
+
+    if (you.species == SP_DRACONIAN && which_trans == transformation::dragon)
+        return UFR_GOOD;
 
     if (you.species != SP_VAMPIRE)
         return UFR_TOO_DEAD; // ghouls & mummies can't become anything else

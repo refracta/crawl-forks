@@ -301,7 +301,10 @@ void fill_doll_equipment(dolls_data &result)
         default:         ch = TILEP_TRAN_STATUE_HUMANOID; break;
         }
         result.parts[TILEP_PART_BASE]    = ch;
-        result.parts[TILEP_PART_DRCHEAD] = 0;
+        if (you.species == SP_DRACONIAN)
+            result.parts[TILEP_PART_DRCHEAD] = TILEP_DRCHEAD_STATUE;
+        else
+            result.parts[TILEP_PART_DRCHEAD] = 0;
         result.parts[TILEP_PART_HAIR]    = 0;
         result.parts[TILEP_PART_LEG]     = 0;
         break;

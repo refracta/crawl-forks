@@ -1063,19 +1063,35 @@ tileidx_t tileidx_player()
         break;
     case transformation::dragon:
     {
-        switch (you.species)
+        if (you.undead_state() == US_GHOST)
+            ch = TILEP_TRAN_DRAGON_SPECTRAL;
+        else if (you.species == SP_DRACONIAN)
         {
-        case SP_BLACK_DRACONIAN:   ch = TILEP_TRAN_DRAGON_BLACK;   break;
-        case SP_YELLOW_DRACONIAN:  ch = TILEP_TRAN_DRAGON_YELLOW;  break;
-        case SP_GREY_DRACONIAN:    ch = TILEP_TRAN_DRAGON_GREY;    break;
-        case SP_GREEN_DRACONIAN:   ch = TILEP_TRAN_DRAGON_GREEN;   break;
-        case SP_PALE_DRACONIAN:    ch = TILEP_TRAN_DRAGON_PALE;    break;
-        case SP_PURPLE_DRACONIAN:  ch = TILEP_TRAN_DRAGON_PURPLE;  break;
-        case SP_WHITE_DRACONIAN:   ch = TILEP_TRAN_DRAGON_WHITE;   break;
-        case SP_RED_DRACONIAN:     ch = TILEP_TRAN_DRAGON_RED;     break;
-        case SP_SILENT_SPECTRE:    ch = TILEP_TRAN_DRAGON_SPECTRAL; break;
-        default:                   ch = TILEP_TRAN_DRAGON;         break;
+            switch (you.drac_colour)
+            {
+            case DR_PLATINUM:           ch = TILEP_TRAN_DRAGON_PLATINUM;        break;
+            case DR_BLOOD:              ch = TILEP_TRAN_DRAGON_BLOOD;           break;
+            case DR_SCINTILLATING:      ch = TILEP_TRAN_DRAGON_SCINTILLATING;   break;
+            case DR_PEARL:              ch = TILEP_TRAN_DRAGON_PEARL;           break;
+            case DR_GOLDEN:             ch = TILEP_TRAN_DRAGON_GOLDEN;          break;
+            case DR_BONE:               ch = TILEP_TRAN_DRAGON_BONE;            break;
+            case DR_OLIVE:              ch = TILEP_TRAN_DRAGON_OLIVE;           break;
+            case DR_MAGENTA:            ch = TILEP_TRAN_DRAGON_MAGENTA;         break;
+            case DR_PINK:               ch = TILEP_TRAN_DRAGON_PINK;            break;
+            case DR_BLUE:               ch = TILEP_TRAN_DRAGON_BLUE;            break;
+            case DR_BLACK:              ch = TILEP_TRAN_DRAGON_BLACK;           break;
+            case DR_LIME:               ch = TILEP_TRAN_DRAGON_LIME;            break;
+            case DR_SILVER:             ch = TILEP_TRAN_DRAGON_SILVER;          break;
+            case DR_GREEN:              ch = TILEP_TRAN_DRAGON_GREEN;           break;
+            case DR_CYAN:               ch = TILEP_TRAN_DRAGON_CYAN;            break;
+            case DR_PURPLE:             ch = TILEP_TRAN_DRAGON_PURPLE;          break;
+            case DR_WHITE:              ch = TILEP_TRAN_DRAGON_WHITE;           break;
+            case DR_RED:                ch = TILEP_TRAN_DRAGON_RED;             break;
+            default:   /* DR_BROWN */   ch = TILEP_TRAN_DRAGON;                 break;
+            }
         }
+        else
+            ch = TILEP_TRAN_DRAGON;
         break;
     }
     // no special tile
