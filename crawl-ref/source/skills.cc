@@ -1987,7 +1987,8 @@ int colour_apt(skill_type skill)
         return 0;
     case DR_PLATINUM:
         if (skill == SK_TRANSLOCATIONS || skill == SK_TRANSMUTATIONS || skill == SK_HEXES)
-            return 0;
+            return 4;
+        return 0;
     case DR_SCINTILLATING:
         if (is_magic_skill(skill) && skill != SK_SPELLCASTING)
             return 3;
