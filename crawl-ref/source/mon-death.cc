@@ -1241,6 +1241,7 @@ void setup_spore_explosion(bolt & beam, const monster& origin)
     beam.flavour = BEAM_SPORE;
     beam.damage  = dice_def(3, 15);
     beam.name    = "explosion of spores";
+    beam.explode_noise_msg = "You hear a rapid fungal infestation!";
     beam.colour  = LIGHTGREY;
     beam.ex_size = 2;
 }
@@ -2882,7 +2883,8 @@ item_def* monster_die(monster& mons, killer_type killer,
         arena_monster_died(&mons, killer, killer_index, silent, corpse);
 
     const coord_def mwhere = mons.pos();
-    if (mons.type == MONS_ORB_OF_DESTRUCTION || mons.type == MONS_ORB_OF_CHAOS)
+    if (mons.type == MONS_ORB_OF_DESTRUCTION || mons.type == MONS_ORB_OF_CHAOS
+        || mons.type == MONS_BALLISTOMYCETE_SPORE)
         drop_items = false;
     if (drop_items)
     {
