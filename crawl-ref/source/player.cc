@@ -3438,6 +3438,8 @@ void level_change(bool skip_attribute_increase)
                         you.redraw_armour_class = true;
                     }
 
+                    describe_breath(true);
+
                     // needs to be done early here, so HP doesn't look rotted
                     // when we redraw the screen
                     _gain_and_note_hp_mp();

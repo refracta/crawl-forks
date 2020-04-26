@@ -1302,8 +1302,6 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
         break;
 
     case SPELL_REGENERATION:
-        if (you.species == SP_DEEP_DWARF)
-            return "you can't regenerate without divine aid.";
         if (you.undead_state(temp) == US_UNDEAD)
             return "you're too dead to regenerate.";
         if (you.undead_state(temp) == US_GHOST)

@@ -974,6 +974,7 @@ static bool _grab_follower_at(const coord_def &pos, bool can_follow)
     if (!fol || !fol->alive() || fol->incapacitated())
         return false;
 
+    // BCADDO: CHANGE THIS:
     // only H's ancestors can follow into portals & similar.
     if (!can_follow && !mons_is_hepliaklqana_ancestor(fol->type))
         return false;

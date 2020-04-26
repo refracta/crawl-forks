@@ -6027,27 +6027,39 @@ void set_ancestor_spells(monster &ancestor, bool notify)
     if (you.species == SP_NAGA)
         ancestor.spells.emplace_back(SPELL_SPIT_POISON, 25, MON_SPELL_NATURAL | MON_SPELL_BREATH);
 
-    // BCADDO: Come back here. Draconian. Again.
-    if (you.species == SP_RED_DRACONIAN)
-        ancestor.spells.emplace_back(SPELL_SEARING_BREATH, 25, MON_SPELL_NATURAL | MON_SPELL_BREATH);
+    // BCADDO: Come back here after mirroring new draconians to enemy drakes to give correct breaths to ancestors.
+    if (you.species == SP_DRACONIAN)
+    {
+        spell_type spell = SPELL_SEARING_BREATH; // Default for as of yet unhandled breaths.
+        switch (you.drac_colour)
+        {
+        case DR_BLACK:          spell = SPELL_BOLT_OF_DRAINING;     break;
+        // case DR_BLOOD:           BCADDO.
+        case DR_BLUE:           spell = SPELL_LIGHTNING_BOLT;       break;
+        // case DR_BONE:            BCADDO.
+        case DR_BROWN:          spell = SPELL_STONE_ARROW;          break;
+        case DR_CYAN:           spell = SPELL_WIND_BLAST;           break;
+        case DR_GOLDEN:     // Special case, three breaths.
+            ancestor.spells.emplace_back(SPELL_SEARING_BREATH, 25, MON_SPELL_NATURAL | MON_SPELL_BREATH);
+            ancestor.spells.emplace_back(SPELL_CHILLING_BREATH, 25, MON_SPELL_NATURAL | MON_SPELL_BREATH);
+            // Fallthrough
+        case DR_GREEN:          spell = SPELL_POISONOUS_CLOUD;      break;
+        case DR_LIME:           spell = SPELL_ACID_SPLASH;          break;
+        //case DR_MAGENTA:          BCADDO.
+        case DR_OLIVE:          spell = SPELL_MIASMA_BREATH;        break;
+        case DR_PEARL:          spell = SPELL_HOLY_BREATH;          break;
+        case DR_PINK:           spell = SPELL_SUMMON_BUTTERFLIES;   break;
+        case DR_PLATINUM:       spell = SPELL_IRRADIATE;            break;
+        case DR_PURPLE:         spell = SPELL_QUICKSILVER_BOLT;     break;
+        case DR_RED:            default:                            break;
+        //case DR_SCINTILLATING:    BCADDO.
+        case DR_SILVER:         spell = SPELL_METAL_SPLINTERS;      break;
+        case DR_TEAL:           spell = SPELL_GHOSTLY_FIREBALL;     break;
+        case DR_WHITE:          spell = SPELL_CHILLING_BREATH;      break;
+        }
 
-    if (you.species == SP_YELLOW_DRACONIAN)
-        ancestor.spells.emplace_back(SPELL_ACID_SPLASH, 25, MON_SPELL_NATURAL | MON_SPELL_BREATH);
-
-    if (you.species == SP_WHITE_DRACONIAN)
-        ancestor.spells.emplace_back(SPELL_CHILLING_BREATH, 25, MON_SPELL_NATURAL | MON_SPELL_BREATH);
-
-    if (you.species == SP_GREEN_DRACONIAN)
-        ancestor.spells.emplace_back(SPELL_POISONOUS_CLOUD, 25, MON_SPELL_NATURAL | MON_SPELL_BREATH);
-
-    if (you.species == SP_PALE_DRACONIAN)
-        ancestor.spells.emplace_back(SPELL_STEAM_BALL, 25, MON_SPELL_NATURAL | MON_SPELL_BREATH);
-
-    if (you.species == SP_BLACK_DRACONIAN)
-        ancestor.spells.emplace_back(SPELL_LIGHTNING_BOLT, 25, MON_SPELL_NATURAL | MON_SPELL_BREATH);
-
-    if (you.species == SP_PURPLE_DRACONIAN)
-        ancestor.spells.emplace_back(SPELL_QUICKSILVER_BOLT, 25, MON_SPELL_NATURAL | MON_SPELL_BREATH);
+        ancestor.spells.emplace_back(spell, 25, MON_SPELL_NATURAL | MON_SPELL_BREATH);
+    }
 
     if (HD >= 13)
     {

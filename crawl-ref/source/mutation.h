@@ -48,6 +48,7 @@ string describe_mutations(bool center_title);
 int get_mutation_cap(mutation_type mut);
 void validate_mutations(bool debug_msg=false);
 
+string describe_breath(bool gain = false);
 bool delete_mutation(mutation_type which_mutation, const string &reason,
                      bool failMsg = true,
                      bool force_mutation = false, bool god_gift = false,

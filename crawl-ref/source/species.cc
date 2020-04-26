@@ -39,9 +39,6 @@ const char *get_species_abbrev(species_type which_species)
 // Needed for debug.cc and hiscores.cc.
 species_type get_species_by_abbrev(const char *abbrev)
 {
-    if (lowercase_string(abbrev) == "dr")
-        return SP_DRACONIAN;
-
     for (auto& entry : species_data)
         if (lowercase_string(abbrev) == lowercase_string(entry.second.abbrev))
             return entry.first;
@@ -354,6 +351,9 @@ ability_type draconian_breath()
     if (you.species != SP_DRACONIAN)
         return ABIL_NON_ABILITY;
 
+    if (you.form == transformation::statue)
+        return ABIL_BREATHE_METAL;
+
     switch (you.drac_colour)
     {
     // Basic
@@ -417,11 +417,12 @@ void give_basic_mutations(species_type species)
     // Ineligant, but the more 'refined' way of doing it is no better and is more work.
     if (you.char_class == JOB_MUMMY)
     {
+        // Form version lets Draconians keep on transmutation; no effect on other --Mu since can't transmute.
+        you.mutation[MUT_UNBREATHING_FORM] = you.innate_mutation[MUT_UNBREATHING_FORM] = 1;
+
         you.mutation[MUT_NEGATIVE_ENERGY_RESISTANCE] = you.innate_mutation[MUT_NEGATIVE_ENERGY_RESISTANCE] = 3;
         you.mutation[MUT_COLD_RESISTANCE] = you.innate_mutation[MUT_COLD_RESISTANCE] = (you.get_mutation_level(MUT_COLD_RESISTANCE) + 1);
         you.mutation[MUT_TORMENT_RESISTANCE] = you.innate_mutation[MUT_TORMENT_RESISTANCE] = 1;
-        you.mutation[MUT_UNBREATHING_FORM] = you.innate_mutation[MUT_UNBREATHING_FORM] = 1;
-        // Form version lets Draconians keep on transmutation; no effect on other --Mu since can't transmute.
         you.mutation[MUT_NECRO_ENHANCER] = you.innate_mutation[MUT_NECRO_ENHANCER] = 1;
         you.mutation[MUT_HEAT_VULNERABILITY] = you.innate_mutation[MUT_HEAT_VULNERABILITY] = 1;
         you.mutation[MUT_COLD_BLOODED] = you.innate_mutation[MUT_COLD_BLOODED] = 0; // Taking this back away from things that have it because it makes no sense on undead.
@@ -620,21 +621,6 @@ void change_species_to(species_type sp)
             you.innate_mutation[i] = 0;
         else
             you.innate_mutation[i] -= prev_muts[i];
-    }
-
-    if (sp == SP_DEMONSPAWN || you.char_class == JOB_DEMONSPAWN)
-    {
-        roll_demonspawn_mutations();
-        for (int i = 0; i < int(you.demonic_traits.size()); ++i)
-        {
-            mutation_type m = you.demonic_traits[i].mutation;
-
-            if (you.demonic_traits[i].level_gained > you.experience_level)
-                continue;
-
-            ++you.mutation[m];
-            ++you.innate_mutation[m];
-        }
     }
 
     if (species_is_draconian(sp))

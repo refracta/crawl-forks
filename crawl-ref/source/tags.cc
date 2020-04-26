@@ -3258,7 +3258,6 @@ static void tag_read_you(reader &th)
         }
         else // Old save from before the new variables needs them setup.
         {
-            draconian_setup();
             if (you.species != SP_DRACONIAN)
             {
                 switch (you.species)
@@ -3291,9 +3290,9 @@ static void tag_read_you(reader &th)
                 default:
                     break;
                 }
-
-                you.species = SP_DRACONIAN;
             }
+
+            change_species_to(SP_DRACONIAN);
         }
     }
 

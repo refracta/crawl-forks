@@ -577,6 +577,41 @@ void validate_mutations(bool debug_msg)
     ASSERT(total_temp == you.attribute[ATTR_TEMP_MUTATIONS]);
 }
 
+string describe_breath(bool gain)
+{
+    ostringstream ostr;
+    if (gain)
+        ostr << "You lose your ability to breathe basic magical darts and instead you can breathe ";
+    else
+        ostr << "You can breathe ";
+
+    switch (you.drac_colour)
+    {
+    case DR_BROWN:          ostr << "rudimentary magical darts.";   break;
+    case DR_BLOOD:          ostr << "clouds of vampiric fog.";      break;
+    case DR_BLUE:           ostr << "wild blasts of lightning";     break;
+    case DR_BONE:           ostr << "shards of bone.";              break;
+    case DR_BLACK:          ostr << "bolts of negative energy.";    break;
+    case DR_CYAN:           ostr << "strong gales of wind.";        break;
+    case DR_GREEN:          ostr << "clouds of noxious fumes.";     break;
+    case DR_LIME:           ostr << "balls of acidic spit.";        break;
+    case DR_MAGENTA:        ostr << "clouds of thick fog.";         break;
+    case DR_OLIVE:          ostr << "clouds of foul miasma.";       break;
+    case DR_PEARL:          ostr << "bursts of cleansing flame.";   break;
+    case DR_PINK:           ostr << "friendly butterflies.";        break;
+    case DR_PLATINUM:       ostr << "blasts of radiation.";         break;
+    case DR_PURPLE:         ostr << "bolts of dispelling energy.";  break;
+    case DR_WHITE:          ostr << "puffs of frost.";              break;
+    case DR_SCINTILLATING:  ostr << "bolts of chaotic energy.";     break;
+    case DR_GOLDEN:         ostr << "your choice of flames, frost or noxious fumes.";                           break;
+    case DR_RED:            ostr << "puffs of flames, which leave flaming clouds in their wake.";               break;
+    case DR_SILVER:         ostr << "silver splinters, which deal bonus damage to chaotic creatures.";          break;
+    case DR_TEAL:           ostr << "blasts of ghostly flames, which heal the undead and damage the living.";   break;
+    }
+
+    return ostr.str();
+}
+
 string describe_mutations(bool drop_title)
 {
 #ifdef DEBUG
@@ -679,9 +714,15 @@ string describe_mutations(bool drop_title)
         }
     }
 
-    if (you.species == SP_DRACONIAN && you.undead_state(false) == US_UNDEAD)
-        result += "Your connection to dragons allows you to use the spell dragon form,\n"
-        "despite your undead form not otherwise being capable of transmutation.\n";
+    if (you.species == SP_DRACONIAN)
+    {
+        if (you.undead_state(false) == US_UNDEAD)
+        {
+            result += "Your connection to dragons allows you to use the spell dragon form,\n"
+                "despite your undead form not otherwise being capable of transmutation.\n";
+        }
+        result += describe_breath();
+    }
 
     if (player_res_poison(false, false, false) == 3)
         result += "You are immune to poison.\n";
@@ -2838,6 +2879,10 @@ void draconian_setup()
 {
     if (!species_is_draconian(you.species))
         return;
+
+    // Only case where you'd get here at higher than XL 7 is importing an old save (rare) but still.
+    if (you.experience_level < 7)
+        you.drac_colour = DR_BROWN;
 
     you.major_first = coinflip();
 
