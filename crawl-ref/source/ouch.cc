@@ -150,6 +150,7 @@ int check_your_resists(int hurted, beam_type flavour, string source,
         you.backlight();
         // Fallthrough
 
+    case BEAM_BLOOD:
     case BEAM_BUTTERFLY:
     case BEAM_FOG:
         hurted = 0;
@@ -180,6 +181,11 @@ int check_your_resists(int hurted, beam_type flavour, string source,
 
         if (hurted < original && doEffects)
             canned_msg(MSG_YOU_RESIST);
+        break;
+
+    case BEAM_IRRADIATE:
+        if (doEffects)
+            you.malmutate("magical radiation");
         break;
 
     case BEAM_POISON:

@@ -209,6 +209,10 @@ cloud_acid2
 cloud_storm1 CLOUD_STORM
 cloud_storm2
 
+cloud_blood0 CLOUD_BLOOD
+cloud_blood1
+cloud_blood2
+
 cloud_neg0 CLOUD_NEG
 cloud_neg1
 cloud_neg2

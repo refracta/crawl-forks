@@ -609,6 +609,9 @@ string describe_breath(bool gain)
     case DR_TEAL:           ostr << "blasts of ghostly flames, which heal the undead and damage the living.";   break;
     }
 
+    if (!gain)
+        ostr << "\n";
+
     return ostr.str();
 }
 

@@ -1883,7 +1883,7 @@ static void _storm_card(int power, deck_rarity_type rarity)
 
     _friendly(MONS_AIR_ELEMENTAL, 3);
 
-    wind_blast(&you, (power_level == 0) ? 100 : 200, coord_def(), true);
+    wind_blast(&you, (power_level == 0) ? 100 : 200, coord_def(), 1);
 
     for (radius_iterator ri(you.pos(), 4, C_SQUARE, LOS_SOLID); ri; ++ri)
     {

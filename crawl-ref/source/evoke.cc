@@ -1125,7 +1125,7 @@ static double _angle_between(coord_def origin, coord_def p1, coord_def p2)
     return min(fabs(ang - ang0), fabs(ang - ang0 + 2 * PI));
 }
 
-void wind_blast(actor* agent, int pow, coord_def target, bool card)
+void wind_blast(actor* agent, int pow, coord_def target, int source)
 {
     vector<actor *> act_list;
 
@@ -1300,12 +1300,19 @@ void wind_blast(actor* agent, int pow, coord_def target, bool card)
 
     if (agent->is_player())
     {
-        const string source = card ? "card" : "fan";
+        string s = (source == 0) ? "fan" : "card";
 
-        if (pow > 120)
-            mprf("A mighty gale blasts forth from the %s!", source.c_str());
+        if (source == 2)
+        {
+            mpr("You exhale a mighty gale!");
+        }
         else
-            mprf("A fierce wind blows from the %s.", source.c_str());
+        {
+            if (pow > 120)
+                mprf("A mighty gale blasts forth from the %s!", s.c_str());
+            else
+                mprf("A fierce wind blows from the %s.", s.c_str());
+        }
     }
 
     noisy(8, agent->pos());

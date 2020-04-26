@@ -305,6 +305,13 @@ static const cloud_data clouds[] = {
       ETC_JEWEL,                                // colour
       { TILE_CLOUD_EPHEMERAL, CTVARY_RANDOM },   // tile
     },
+    // CLOUD_BLOOD,
+    { "vampiric fog", nullptr,                  // terse, verbose name
+      ETC_INCARNADINE,                          // colour
+      { TILE_CLOUD_BLOOD, CTVARY_DUR },         // tile
+      BEAM_NEG,                                 // beam_effect
+      NORMAL_CLOUD_DAM,                         // base, random damage
+    },
 };
 COMPILE_CHECK(ARRAYSZ(clouds) == NUM_CLOUD_TYPES);
 
@@ -1345,6 +1352,18 @@ int actor_apply_cloud(actor *act)
              final_damage,
              oppr_name.c_str(),
              cloud.cloud_name().c_str());
+
+        if (cloud.type == CLOUD_BLOOD && oppressor)
+        {
+            int healed = random2(final_damage);
+            oppressor->heal(healed);
+            mprf("%s %s strength from %s wounds%s",
+                oppressor->name(DESC_THE).c_str(),
+                oppressor->conj_verb("draw").c_str(),
+                act->is_player() ? "your"
+                : apostrophise(act->name(DESC_THE)).c_str(),
+                attack_strength_punctuation(healed).c_str());
+        }
 
         act->hurt(oppressor, final_damage, BEAM_MISSILE,
                   KILLED_BY_CLOUD, "", cloud.cloud_name(true));

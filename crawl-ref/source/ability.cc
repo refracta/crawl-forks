@@ -1764,26 +1764,39 @@ static int _calc_breath_ability_range(ability_type ability)
 
     switch (ability)
     {
+    case ABIL_BREATHE_BONE:
+    case ABIL_BREATHE_SILVER:
+    case ABIL_BREATHE_METAL:
     case ABIL_BREATHE_ACID:
+    case ABIL_BREATHE_RADIATION:
+    case ABIL_BREATHE_MIASMA:
+    case ABIL_BREATHE_DRAIN:
         range = 3;
         break;
+    case ABIL_BREATHE_BLOOD:
+    case ABIL_BREATHE_GHOSTLY_FLAMES:
     case ABIL_BREATHE_FIRE:
     case ABIL_BREATHE_FROST:
     case ABIL_BREATHE_DART:
+    case ABIL_BREATHE_MEPHITIC:
+    case ABIL_BREATHE_POISON:
+        range = 4;
+        break;
+    case ABIL_BREATHE_BUTTERFLIES:
+    case ABIL_BREATHE_HOLY_FLAMES:
     case ABIL_SPIT_POISON:
-    case ABIL_BREATHE_FOG:
         range = 5;
         break;
-    case ABIL_BREATHE_MEPHITIC:
     case ABIL_BREATHE_STEAM:
-    case ABIL_BREATHE_POISON:
+    case ABIL_BREATHE_FOG:
         range = 6;
         break;
-    default:
+    case ABIL_BREATHE_WIND:
+    case ABIL_BREATHE_CHAOS:
     case ABIL_BREATHE_LIGHTNING:
     case ABIL_BREATHE_POWER:
         range = LOS_MAX_RANGE;
-        break;
+    default:    break;
     }
 
     return min((int)you.current_vision, range);
@@ -1945,6 +1958,61 @@ static spret _do_ability(const ability_def& abil, bool fail)
         return s;
     }
 
+    // Cloud Cone Breaths
+    case ABIL_BREATHE_MEPHITIC:
+    case ABIL_BREATHE_POISON:
+    case ABIL_BREATHE_FOG:
+    case ABIL_BREATHE_BLOOD:
+    case ABIL_BREATHE_GHOSTLY_FLAMES:
+    {
+        cloud_type cloud;
+
+        switch (abil.ability)
+        {
+        case ABIL_BREATHE_GHOSTLY_FLAMES:   cloud = CLOUD_SPECTRAL;         break;
+        case ABIL_BREATHE_FOG:              cloud = CLOUD_PURPLE_SMOKE;     break;
+        case ABIL_BREATHE_POISON:           cloud = CLOUD_POISON;           break;
+        case ABIL_BREATHE_BLOOD:            cloud = CLOUD_BLOOD;            break;
+        case ABIL_BREATHE_MEPHITIC:         cloud = CLOUD_MEPHITIC;         break;
+        default:                            cloud = CLOUD_CHAOS;            break;  
+        }
+
+        const int range = _calc_breath_ability_range(abil.ability);
+        targeter_shotgun hitfunc(&you, CLOUD_CONE_BEAM_COUNT, range);
+
+        direction_chooser_args args;
+        args.mode = TARG_HOSTILE;
+        args.hitfunc = &hitfunc;
+
+        if (!spell_direction(abild, beam, &args))
+            return spret::abort;
+
+        fail_check();
+
+        int power = _drac_breath_power();
+
+        if (abil.ability == ABIL_BREATHE_FOG)
+            mprf("You exhale a massive amount of fog.");
+        else
+        {
+            mprf("You exhale a mighty wave of %s!",
+                cloud_type_name(cloud).c_str());
+        }
+
+        for (const auto &entry : hitfunc.zapped)
+        {
+            if (entry.second <= 0)
+                continue;
+            place_cloud(cloud, entry.first,
+                max(5, random2avg(power, 3)),
+                &you, div_round_up(power, 10) - 1);
+        }
+
+        you.increase_duration(DUR_BREATH_WEAPON,
+            3 + random2(10) + random2(30 - you.experience_level));
+        break;
+    }
+
     // Only breath with a "splash" effect.
     case ABIL_BREATHE_ACID:       // Draconian acid splash
     {
@@ -1960,6 +2028,7 @@ static spret _do_ability(const ability_def& abil, bool fail)
           return spret::abort;
 
         fail_check();
+
         zapping(ZAP_BREATHE_ACID, _drac_breath_power(),
                 beam, false, "You spit a glob of acid.");
 
@@ -1982,6 +2051,8 @@ static spret _do_ability(const ability_def& abil, bool fail)
 
         if (stop_attack_prompt(hitfunc, "lightning breath", vulnerable))
             return spret::abort;
+
+        fail_check();
 
         bolt vis_beam;
         vis_beam.name = "lightning breath";
@@ -2020,6 +2091,20 @@ static spret _do_ability(const ability_def& abil, bool fail)
                 }
             }
         }
+
+        you.increase_duration(DUR_BREATH_WEAPON,
+            3 + random2(10) + random2(30 - you.experience_level));
+        break;
+    }
+
+    case ABIL_BREATHE_WIND:
+    {
+        fail_check();
+
+        wind_blast(&you, _drac_breath_power() * 5, coord_def(), 2);
+
+        you.increase_duration(DUR_BREATH_WEAPON,
+            3 + random2(10) + random2(30 - you.experience_level));
         break;
     }
 
@@ -2028,20 +2113,13 @@ static spret _do_ability(const ability_def& abil, bool fail)
     case ABIL_BREATHE_FIRE:
     case ABIL_BREATHE_FROST:
     case ABIL_BREATHE_POWER:
-    case ABIL_BREATHE_MEPHITIC:
     case ABIL_BREATHE_STEAM:
-    case ABIL_BREATHE_POISON:
-    case ABIL_BREATHE_FOG:
     case ABIL_BREATHE_DRAIN:
     case ABIL_BREATHE_MIASMA:
-    case ABIL_BREATHE_WIND:
-    case ABIL_BREATHE_BLOOD:
     case ABIL_BREATHE_HOLY_FLAMES:
     case ABIL_BREATHE_BUTTERFLIES:
     case ABIL_BREATHE_CHAOS:
-    case ABIL_BREATHE_GHOSTLY_FLAMES:
     case ABIL_BREATHE_RADIATION:
-    
     {
         beam.range = _calc_breath_ability_range(abil.ability);
         
@@ -2059,6 +2137,7 @@ static spret _do_ability(const ability_def& abil, bool fail)
         default:
         case ABIL_BREATHE_FIRE:
             zap = ZAP_BREATHE_FIRE;
+            beam.origin_spell = SPELL_SEARING_BREATH;
             m   = "You breathe a blast of fire.";
             break;
 
@@ -2077,11 +2156,6 @@ static spret _do_ability(const ability_def& abil, bool fail)
             m   = "You exhale a wave of freezing cold.";
             break;
 
-        case ABIL_BREATHE_POISON:
-            zap = ZAP_BREATHE_POISON;
-            m   = "You exhale a blast of poison gas.";
-            break;
-
         case ABIL_BREATHE_POWER:
             zap = ZAP_BREATHE_POWER;
             m   = "You breathe a bolt of dispelling energy.";
@@ -2092,15 +2166,10 @@ static spret _do_ability(const ability_def& abil, bool fail)
             m   = "You exhale a blast of scalding steam.";
             break;
 
-        case ABIL_BREATHE_FOG:
-            zap = ZAP_BREATHE_FOG;
-            m   = "You exhale a fog of harmless, colorful smoke.";
-            beam.hit_verb = "coalesce around";
-            break;
-
-        case ABIL_BREATHE_MEPHITIC:
-            zap = ZAP_BREATHE_MEPHITIC;
-            m   = "You exhale a blast of noxious fumes.";
+        case ABIL_BREATHE_RADIATION:
+            zap = ZAP_BREATHE_RADIATION;
+            m   = "You exhale a fountain of uncontrolled magic.";
+            beam.hit_verb = "blasts";
             break;
 
         case ABIL_BREATHE_HOLY_FLAMES:
@@ -2112,18 +2181,6 @@ static spret _do_ability(const ability_def& abil, bool fail)
         case ABIL_BREATHE_DRAIN:
             zap = ZAP_BREATHE_DRAIN;
             m   = "You exhale a bolt of negative energy.";
-            break;
-
-        case ABIL_BREATHE_GHOSTLY_FLAMES:
-            zap = ZAP_BREATHE_SPECTRAL;
-            beam.origin_spell = SPELL_SPECTRAL_CLOUD;
-            m   = "You exhale a plume of spectral mist.";
-            break;
-
-        case ABIL_BREATHE_MIASMA:
-            zap = ZAP_BREATHE_MIASMA;
-            beam.origin_spell = SPELL_MIASMA_BREATH;
-            m   = "You exhale a cloud of foul miasma";
             break;
 
         case ABIL_BREATHE_BUTTERFLIES:
@@ -3492,15 +3549,40 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
     if ((!form_changed_physiology() || you.form == transformation::dragon)
         && draconian_breath() != ABIL_NON_ABILITY)
     {
-        _add_talent(talents, draconian_breath(), check_confused);
+        if (you.form == transformation::dragon && draconian_breath() == ABIL_BREATHE_MEPHITIC)
+            _add_talent(talents, ABIL_BREATHE_POISON, check_confused);
+        else
+            _add_talent(talents, draconian_breath(), check_confused);
+
         // For debug purposes let's just add all of them for now.
+        _add_talent(talents, ABIL_BREATHE_FOG, check_confused);
+        _add_talent(talents, ABIL_BREATHE_BLOOD, check_confused);
         _add_talent(talents, ABIL_BREATHE_MIASMA, check_confused);
         _add_talent(talents, ABIL_BREATHE_MEPHITIC, check_confused);
+        _add_talent(talents, ABIL_BREATHE_POISON, check_confused);
         _add_talent(talents, ABIL_BREATHE_BONE, check_confused);
+        _add_talent(talents, ABIL_BREATHE_SILVER, check_confused);
+        _add_talent(talents, ABIL_BREATHE_METAL, check_confused);
+        _add_talent(talents, ABIL_BREATHE_DART, check_confused);
+        _add_talent(talents, ABIL_BREATHE_FIRE, check_confused);
+        _add_talent(talents, ABIL_BREATHE_FROST, check_confused);
+        _add_talent(talents, ABIL_BREATHE_ACID, check_confused);
+        _add_talent(talents, ABIL_BREATHE_LIGHTNING, check_confused);
+        _add_talent(talents, ABIL_BREATHE_POWER, check_confused);
+        _add_talent(talents, ABIL_BREATHE_DRAIN, check_confused);
+        _add_talent(talents, ABIL_BREATHE_WIND, check_confused);
+        _add_talent(talents, ABIL_BREATHE_HOLY_FLAMES, check_confused);
+        _add_talent(talents, ABIL_BREATHE_BUTTERFLIES, check_confused);
+        _add_talent(talents, ABIL_BREATHE_CHAOS, check_confused);
+        _add_talent(talents, ABIL_BREATHE_GHOSTLY_FLAMES, check_confused);
+        _add_talent(talents, ABIL_BREATHE_RADIATION, check_confused);
         if (you.drac_colour == DR_GOLDEN)
         {
             _add_talent(talents, ABIL_BREATHE_FROST, check_confused);
-            _add_talent(talents, ABIL_BREATHE_MEPHITIC, check_confused);
+            if (you.form == transformation::dragon)
+                _add_talent(talents, ABIL_BREATHE_POISON, check_confused);
+            else
+                _add_talent(talents, ABIL_BREATHE_MEPHITIC, check_confused);
         }
     }
 
@@ -3556,6 +3638,9 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
 
     if (you.species != SP_DRACONIAN && you.form == transformation::dragon)
         _add_talent(talents, ABIL_BREATHE_FIRE, check_confused);
+
+    if (you.species == SP_DRACONIAN && you.form == transformation::statue)
+        _add_talent(talents, ABIL_BREATHE_METAL, check_confused);
 
     if (you.duration[DUR_PORTAL_PROJECTILE])
         _add_talent(talents, ABIL_CANCEL_PPROJ, check_confused);

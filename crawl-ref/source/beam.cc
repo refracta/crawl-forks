@@ -1741,6 +1741,11 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
         break;
     }
 
+    case BEAM_IRRADIATE:
+        if (doFlavouredEffects && hurted)
+            mons->malmutate("mutagenic radiation");
+        break;
+
     case BEAM_POISON_ARROW:
         hurted = resist_adjust_damage(mons, pbolt.flavour, hurted);
         if (hurted < original)
@@ -1888,6 +1893,7 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
             backlight_monster(mons);
         // Fallthrough
 
+    case BEAM_BLOOD:
     case BEAM_BUTTERFLY:
     case BEAM_FOG:
         hurted = 0;
@@ -3178,6 +3184,9 @@ void bolt::affect_place_clouds()
     if (flavour == BEAM_FOG)
         place_cloud(CLOUD_PURPLE_SMOKE, p, damage.roll() + 2, agent(), 2);
 
+    if (flavour == BEAM_BLOOD)
+        place_cloud(CLOUD_BLOOD, p, damage.roll() + 2, agent(), 2);
+
     if (flavour == BEAM_BUTTERFLY && !defender)
         create_monster( mgen_data(MONS_BUTTERFLY, BEH_COPY, p, agent()->is_player() ? int{ MHITYOU } 
             : agent()->as_monster()->foe, MG_AUTOFOE).set_summoned(agent(), damage.roll(), SPELL_NO_SPELL, GOD_NO_GOD));
@@ -3406,6 +3415,7 @@ bool bolt::is_harmless(const monster* mon) const
     case BEAM_MIASMA:
         return mon->res_rotting();
 
+    case BEAM_BLOOD:
     case BEAM_NEG:
         return mon->res_negative_energy() == 3;
 
@@ -3462,6 +3472,7 @@ bool bolt::harmless_to_player() const
     case BEAM_MIASMA:
         return you.res_rotting();
 
+    case BEAM_BLOOD:
     case BEAM_NEG:
         return player_prot_life(false) >= 3;
 
@@ -7112,6 +7123,7 @@ static string _beam_type_name(beam_type type)
     case BEAM_ELECTRICITY:           return "electricity";
     case BEAM_MEPHITIC:              return "noxious fumes";
     case BEAM_POISON:                return "weak poison";
+    case BEAM_IRRADIATE:             return "mutagenic radiation";
     case BEAM_NEG:                   return "negative energy";
     case BEAM_ACID:                  return "acid";
     case BEAM_MIASMA:                return "miasma";
@@ -7144,6 +7156,7 @@ static string _beam_type_name(beam_type type)
     case BEAM_WAND_HEALING:          return "healing mist";
     case BEAM_FOG:                   return "fog";
     case BEAM_BUTTERFLY:             return "fairy dust";
+    case BEAM_BLOOD:                 return "vampiric fog";
     case BEAM_CONFUSION:             return "confusion";
     case BEAM_INVISIBILITY:          return "invisibility";
     case BEAM_DIGGING:               return "digging";

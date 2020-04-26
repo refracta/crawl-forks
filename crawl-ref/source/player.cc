@@ -6776,10 +6776,21 @@ mon_holy_type player::holiness(bool temp) const
     if (is_good_god(religion))
         holi |= MH_HOLY;
 
-    if (is_evil_god(religion) || species == SP_DEMONSPAWN || 
-        (char_class == JOB_DEMONSPAWN && species != SP_GARGOYLE))
+    // Scales! haha
+    if (you.species == SP_DRACONIAN)
+    {
+        switch (you.drac_colour)
+        {
+        case DR_BLOOD:  holi |= MH_DEMONIC; break;
+        case DR_PEARL:  holi |= MH_HOLY;    break;
+        default:                            break;
+        }
+    }
+
+    if (is_evil_god(religion) || char_class == JOB_DEMONSPAWN)
         holi |= MH_EVIL;
 
+    // BCADDO: evil bit from evil spells (would affect holy damage and little else?)
     // possible XXX: Monsters get evil/unholy bits set on spell selection
     //  should players?
     return holi;
