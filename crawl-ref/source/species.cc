@@ -681,10 +681,9 @@ bool is_starting_species(species_type species)
 // A random non-base draconian colour appropriate for the player.
 draconian_colour random_draconian_colour()
 {
-    bool rare = one_chance_in(50);
-    if (you.char_class == JOB_MUMMY || rare && coinflip())
+    if (you.char_class == JOB_MUMMY || one_chance_in(50))
         return random_choose(DR_BLACK, DR_OLIVE, DR_BONE, DR_TEAL);
-    if ((you.char_class == JOB_DEMIGOD && !rare) || (you.char_class != JOB_DEMIGOD && rare))
+    if (you.char_class == JOB_DEMIGOD && !one_chance_in(30))
         return random_choose(DR_GOLDEN, DR_PEARL, DR_BLOOD, DR_PLATINUM);
     return random_choose(DR_RED, DR_WHITE, DR_BLUE, DR_CYAN, DR_SILVER, 
         DR_GREEN, DR_PINK, DR_PURPLE, DR_LIME, DR_MAGENTA, DR_BLACK, DR_SCINTILLATING);

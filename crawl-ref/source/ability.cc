@@ -3554,28 +3554,6 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
         else
             _add_talent(talents, draconian_breath(), check_confused);
 
-        // For debug purposes let's just add all of them for now.
-        _add_talent(talents, ABIL_BREATHE_FOG, check_confused);
-        _add_talent(talents, ABIL_BREATHE_BLOOD, check_confused);
-        _add_talent(talents, ABIL_BREATHE_MIASMA, check_confused);
-        _add_talent(talents, ABIL_BREATHE_MEPHITIC, check_confused);
-        _add_talent(talents, ABIL_BREATHE_POISON, check_confused);
-        _add_talent(talents, ABIL_BREATHE_BONE, check_confused);
-        _add_talent(talents, ABIL_BREATHE_SILVER, check_confused);
-        _add_talent(talents, ABIL_BREATHE_METAL, check_confused);
-        _add_talent(talents, ABIL_BREATHE_DART, check_confused);
-        _add_talent(talents, ABIL_BREATHE_FIRE, check_confused);
-        _add_talent(talents, ABIL_BREATHE_FROST, check_confused);
-        _add_talent(talents, ABIL_BREATHE_ACID, check_confused);
-        _add_talent(talents, ABIL_BREATHE_LIGHTNING, check_confused);
-        _add_talent(talents, ABIL_BREATHE_POWER, check_confused);
-        _add_talent(talents, ABIL_BREATHE_DRAIN, check_confused);
-        _add_talent(talents, ABIL_BREATHE_WIND, check_confused);
-        _add_talent(talents, ABIL_BREATHE_HOLY_FLAMES, check_confused);
-        _add_talent(talents, ABIL_BREATHE_BUTTERFLIES, check_confused);
-        _add_talent(talents, ABIL_BREATHE_CHAOS, check_confused);
-        _add_talent(talents, ABIL_BREATHE_GHOSTLY_FLAMES, check_confused);
-        _add_talent(talents, ABIL_BREATHE_RADIATION, check_confused);
         if (you.drac_colour == DR_GOLDEN)
         {
             _add_talent(talents, ABIL_BREATHE_FROST, check_confused);
