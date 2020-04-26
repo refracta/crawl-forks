@@ -78,6 +78,7 @@ ability_type draconian_breath();
 monster_type player_species_to_mons_species(species_type species);
 string species_prayer_action(species_type species);
 
+void mummify();
 void give_basic_mutations(species_type species);
 void give_level_mutations(species_type species, int xp_level);
 

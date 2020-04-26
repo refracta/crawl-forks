@@ -404,6 +404,21 @@ bool species_has_claws(species_type species)
                                                      && lum.xp_level == 1; });
 }
 
+void mummify()
+{
+    // Ineligant, but the more 'refined' way of doing it is no better and is more work.
+
+    // Form version lets Draconians keep on transmutation; no effect on other --Mu since can't transmute.
+    you.mutation[MUT_UNBREATHING_FORM] = you.innate_mutation[MUT_UNBREATHING_FORM] = 1;
+
+    you.mutation[MUT_NEGATIVE_ENERGY_RESISTANCE] = you.innate_mutation[MUT_NEGATIVE_ENERGY_RESISTANCE] = 3;
+    you.mutation[MUT_COLD_RESISTANCE] = you.innate_mutation[MUT_COLD_RESISTANCE] = (you.get_mutation_level(MUT_COLD_RESISTANCE) + 1);
+    you.mutation[MUT_TORMENT_RESISTANCE] = you.innate_mutation[MUT_TORMENT_RESISTANCE] = 1;
+    you.mutation[MUT_NECRO_ENHANCER] = you.innate_mutation[MUT_NECRO_ENHANCER] = 1;
+    you.mutation[MUT_HEAT_VULNERABILITY] = you.innate_mutation[MUT_HEAT_VULNERABILITY] = 1;
+    you.mutation[MUT_COLD_BLOODED] = you.innate_mutation[MUT_COLD_BLOODED] = 0; // Taking this back away from things that have it because it makes no sense on undead.
+}
+
 void give_basic_mutations(species_type species)
 {
     // Don't perma_mutate since that gives messages.
@@ -414,19 +429,8 @@ void give_basic_mutations(species_type species)
     if (you.char_class == JOB_DEMIGOD && you.get_mutation_level(MUT_HIGH_MAGIC) < 3)
         you.mutation[MUT_HIGH_MAGIC] = you.innate_mutation[MUT_HIGH_MAGIC] = (you.get_mutation_level(MUT_HIGH_MAGIC) + 1);
     
-    // Ineligant, but the more 'refined' way of doing it is no better and is more work.
     if (you.char_class == JOB_MUMMY)
-    {
-        // Form version lets Draconians keep on transmutation; no effect on other --Mu since can't transmute.
-        you.mutation[MUT_UNBREATHING_FORM] = you.innate_mutation[MUT_UNBREATHING_FORM] = 1;
-
-        you.mutation[MUT_NEGATIVE_ENERGY_RESISTANCE] = you.innate_mutation[MUT_NEGATIVE_ENERGY_RESISTANCE] = 3;
-        you.mutation[MUT_COLD_RESISTANCE] = you.innate_mutation[MUT_COLD_RESISTANCE] = (you.get_mutation_level(MUT_COLD_RESISTANCE) + 1);
-        you.mutation[MUT_TORMENT_RESISTANCE] = you.innate_mutation[MUT_TORMENT_RESISTANCE] = 1;
-        you.mutation[MUT_NECRO_ENHANCER] = you.innate_mutation[MUT_NECRO_ENHANCER] = 1;
-        you.mutation[MUT_HEAT_VULNERABILITY] = you.innate_mutation[MUT_HEAT_VULNERABILITY] = 1;
-        you.mutation[MUT_COLD_BLOODED] = you.innate_mutation[MUT_COLD_BLOODED] = 0; // Taking this back away from things that have it because it makes no sense on undead.
-    }
+        mummify();
 }
 
 void give_level_mutations(species_type species, int xp_level)

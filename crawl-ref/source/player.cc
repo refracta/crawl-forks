@@ -3430,6 +3430,9 @@ void level_change(bool skip_attribute_increase)
                             article_a(scale_type()).c_str());
                     }
 
+                    if (you.char_class != JOB_MUMMY && you.undead_state() != US_ALIVE)
+                        mummify();
+
                     _draconian_skill_check();
 
                     if (!(you.experience_level % 5))
