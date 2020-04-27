@@ -22,7 +22,7 @@ Breathe Fire ability
 {{
     local desc = "Breathes a blast of fire at a targeted creature"
 
-    if you.race() == "Red Draconian" then
+    if you.race() == "Draconian" then
         desc = desc .. ", leaving a cloud of flames at the endpoint"
     end
 
@@ -59,6 +59,80 @@ Breathe Noxious Fumes ability
 
 Breathes a blast of noxious fumes at a targeted creature. The range of the blast
 is decreased by one for every creature it strikes.
+%%%%
+Breathe Fog ability
+
+Breathes a massive cone of fog; obscuring vision completely in the direction of 
+the cone.
+%%%%
+Breathe Drain ability
+
+Breathes a puff of negative energy, draining those that it hits.
+%%%%
+Breathe Foul Miasma ability
+
+Breathes a bolt of terrible rot, leaving clouds of foul miasma in its wake. 
+The range of the bolt is decreased by one for every creature it strikes.
+%%%%
+Breathe Silver Splinters ability
+
+Breathes a cone of silver splinters, dealing damage sharply reduced by AC. 
+Chaotic creatures, such as malmutators recieve additional damage from the 
+blessed silver.
+%%%%
+Breathe Metal Splinters ability
+
+Breathes a cone of metal splinters, dealing damage sharply reduced by AC.
+%%%%
+Breathe Blast of Wind ability
+
+Breathes a sharp pushing wind, dealing no damage (except collision damage), 
+but blowing everything away from the user.
+%%%%
+Breathe Vampiric Fog ability
+
+Breathes a cone of vampiric fog, a strange crimson cloud that drains the 
+life and experience of those that touch it and transfers a portion of the 
+damage dealt to the creator of those clouds.
+%%%%
+Breathe Blessed Flames ability
+
+Breathes a blast of blessed fire, leaving blessed flame clouds in its wake. 
+The range of the blast is decreased by one for every creature it strikes.
+%%%%
+Breathe Butterflies ability
+
+Breathes a gust of harmless fairy dust, which coalesces into harmless 
+butterflies on every empty tile it crosses. The range of the gust is 
+decreased by one for every creature it crosses.
+%%%%
+Breathe Bone Shards ability
+
+Breathes a cone of bone shards, dealing damage sharply reduced by AC.
+%%%%
+Breathe Seething Chaos ability
+
+Breathes a bolt of chaotic energy; which may deal damage of any type or even 
+heal those struck by it, followed immediately by a random buff or debuff to 
+those targets. The range of the bolt is decreased by one for every creature 
+it strikes.
+%%%%
+Breathe Spectral Mist ability
+
+Breathes a cone of spectral mist, a strange cloud type that drains the living 
+and heals the undead. As the clouds dissipate, short lived spectral creatures 
+come to the aid of the user.
+%%%%
+Breathe Mutagenic Radition ability
+
+Breathes a fountain on uncontrolled magic directed at a single target. The 
+victim caught in this blast will find itself malmutated.
+%%%%
+Breathe Dart ability
+
+Breathes a small amount of magical potential that forms into a rudimentary 
+stone dart. Deals physical damage to those struck. Replaced by a more potent 
+breath as you grow.
 %%%%
 Bat Form ability
 

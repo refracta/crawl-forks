@@ -290,7 +290,7 @@ static const ability_def Ability_List[] =
       0, 0, 125, 0,{ fail_basis::xl, 30, 1 }, abflag::breath },
     { ABIL_BREATHE_WIND, "Breathe Blast of Wind",
       0, 0, 125, 0,{ fail_basis::xl, 30, 1 }, abflag::breath },
-    { ABIL_BREATHE_BLOOD, "Breathe Demon Blood",
+    { ABIL_BREATHE_BLOOD, "Breathe Vampiric Fog",
       0, 0, 125, 0,{ fail_basis::xl, 30, 1 }, abflag::breath },
     { ABIL_BREATHE_HOLY_FLAMES, "Breathe Blessed Flames",
       0, 0, 125, 0,{ fail_basis::xl, 30, 1 }, abflag::breath },
