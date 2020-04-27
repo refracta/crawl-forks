@@ -6705,9 +6705,14 @@ int player::gdr_perc() const
 
     const item_def *body_armour = slot_item(EQ_BODY_ARMOUR, false);
 
-    int body_base_AC = (species == SP_GARGOYLE ? 5 : 0);
-    if (species == SP_LIGNIFITE)
+    int body_base_AC = 0;
+    if (species == SP_GARGOYLE)
+        body_base_AC = 5;
+
+    // Currently affects Draconians, Nagas and Lignifites.
+    else
         body_base_AC += (racial_ac(true)/300);
+
     if (body_armour)
         body_base_AC += property(*body_armour, PARM_AC);
 
