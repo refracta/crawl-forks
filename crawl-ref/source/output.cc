@@ -909,6 +909,9 @@ static int _wpn_name_colour(int hand)
         return LIGHTGREY;
     }
 
+    if (you.weapon(0) && hand == 1 && you.hands_reqd(*you.weapon(0)) == HANDS_TWO)
+        return DARKGREY;
+
     return get_form()->uc_colour;
 }
 
@@ -930,6 +933,8 @@ static void _print_stats_wp(int hand, int y)
 
         text = wpn.name(DESC_PLAIN, true, false, true);
     }
+    else if (hand == 1 && you.weapon(0) && you.hands_reqd(*you.weapon(0)) == HANDS_TWO)
+        text = "(also wielding the above weapon)";
     else
         text = you.unarmed_attack_name();
 
@@ -1841,11 +1846,11 @@ static string _itosym(int level, int max = 1)
 
 static const char *s_equip_slot_names[] =
 {
-    "Weapon", "Weapon0", "Cloak",  "Helmet", "Gloves", "Boots",
-    "Shield", "Armour", "Left Ring", "Right Ring", "Amulet",
-    "Jewelry", "First Ring", "Second Ring", "Third Ring", 
-    "Fourth Ring", "Fifth Ring", "Sixth Ring", "Seventh Ring", 
-    "Eighth Ring", "Amulet Ring"
+    "Weapon", "Shield", "Cloak",  "Helmet", "Gloves", "Boots",
+    "UNUSED", "Armour", "Left Ring", "Right Ring", "Amulet",
+    "First Ring", "Second Ring", "Third Ring", "Fourth Ring", 
+    "Fifth Ring", "Sixth Ring", "Seventh Ring", 
+    "Eighth Ring", "Jewelry", "Amulet Ring"
 };
 
 const char *equip_slot_to_name(int equip)
@@ -1859,7 +1864,8 @@ const char *equip_slot_to_name(int equip)
         return "Ring";
     }
 
-    if (equip == EQ_FAIRY_JEWEL)
+    if (equip == EQ_WEAPON1)
+        return "Weapon";
 
     if (equip == EQ_BOOTS
         && (you.species == SP_CENTAUR || you.species == SP_NAGA))
@@ -1957,9 +1963,14 @@ static void _print_overview_screen_equip(column_composer& cols,
             continue;
         }
 
+        if (you.species != SP_FAIRY && eqslot == EQ_FAIRY_JEWEL)
+            continue;
+
         if (you.species == SP_FAIRY && eqslot != EQ_FAIRY_JEWEL
                                     && eqslot != EQ_RING_AMULET)
+        {
             continue;
+        }
 
         if (you.species != SP_OCTOPODE
             && eqslot >= EQ_RING_ONE && eqslot <= EQ_RING_EIGHT)
@@ -1998,6 +2009,11 @@ static void _print_overview_screen_equip(column_composer& cols,
                                  melded ? sw - 43 : sw - 36, false).c_str(),
                      colname.c_str());
             equip_chars.push_back(equip_char);
+        }
+        else if (you.weapon(0) && you.hands_reqd(*you.weapon(0)) == HANDS_TWO
+            && eqslot == EQ_WEAPON1)
+        {
+            str = "<darkgrey>(also wielding the above weapon)</darkgrey>";
         }
         else if ((eqslot == EQ_WEAPON0 || eqslot == EQ_WEAPON1)
                  && you.skill(SK_UNARMED_COMBAT))
@@ -2457,6 +2473,8 @@ static vector<formatted_string> _get_overview_resistances(
 
     const int rspir = you.spirit_shield(calc_unid);
     out += _resist_composer("Spirit", cwidth, rspir) + "\n";
+
+    // BCADDO: Add a display for chaos defence here (check all sources).
 
     const item_def *sh = you.shield();
     const int reflect = you.reflection(calc_unid)

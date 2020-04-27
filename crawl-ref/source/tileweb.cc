@@ -1035,10 +1035,21 @@ void TilesFramework::_send_player(bool force_full)
     _update_int(force_full, c.quiver_item,
                 (int8_t) you.m_quiver.get_fire_item(), "quiver_item");
 
-    _update_string(force_full, c.unarmed_attack,
-                   you.unarmed_attack_name(), "unarmed_attack");
-    _update_int(force_full, c.unarmed_attack_colour,
-                (uint8_t) get_form()->uc_colour, "unarmed_attack_colour");
+    if (you.weapon(0) && you.hands_reqd(*you.weapon(0)) == HANDS_TWO)
+    {
+        _update_string(force_full, c.unarmed_attack,
+                       "(also wielding the above weapon)", "unarmed_attack");
+
+        _update_int(force_full, c.unarmed_attack_colour,
+                    (uint8_t) DARKGREY, "unarmed_attack_colour");
+    }
+    else
+    {
+        _update_string(force_full, c.unarmed_attack,
+                       you.unarmed_attack_name(), "unarmed_attack");
+        _update_int(force_full, c.unarmed_attack_colour,
+                    (uint8_t) get_form()->uc_colour, "unarmed_attack_colour");
+    }
     _update_int(force_full, c.quiver_available, !fire_warn_if_impossible(true),
                 "quiver_available");
 

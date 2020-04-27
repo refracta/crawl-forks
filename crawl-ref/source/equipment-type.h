@@ -19,7 +19,7 @@ enum equipment_type
     EQ_LEFT_RING = EQ_FIRST_JEWELLERY,
     EQ_RIGHT_RING,
     EQ_AMULET,
-    //Octopodes don't have left and right rings. They have eight rings, instead.
+    // Octopodes don't have left and right rings. They have eight rings, instead.
     EQ_RING_ONE,
     EQ_RING_TWO,
     EQ_RING_THREE,
@@ -28,6 +28,7 @@ enum equipment_type
     EQ_RING_SIX,
     EQ_RING_SEVEN,
     EQ_RING_EIGHT,
+    // Fairy specific slot.
     EQ_FAIRY_JEWEL,
     // Finger amulet provides an extra ring slot
     EQ_RING_AMULET,
