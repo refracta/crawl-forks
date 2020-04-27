@@ -959,19 +959,22 @@ static string _describe_mutant_beast(const monster_info &mi)
  */
 static int _item_training_target(const item_def &item)
 {
-    const int throw_dam = property(item, PWPN_DAMAGE);
     if (item.base_type == OBJ_WEAPONS || item.base_type == OBJ_STAVES)
         return weapon_min_delay_skill(item) * 10;
 
     else if (item.base_type == OBJ_SHIELDS)
     {
+        int x = round(you.get_shield_skill_to_offset_penalty(item) * 10);
+
         if (is_hybrid(item.sub_type))
-            return max(weapon_min_delay_skill(item) * 10, int(round(you.get_shield_skill_to_offset_penalty(item) * 10)));
+        {
+            int y = weapon_min_delay_skill(item) * 10;
+            return max(x, y);
+        }
         else
-            return round(you.get_shield_skill_to_offset_penalty(item) * 10);
+            return x;
     }
-    else if (item.base_type == OBJ_MISSILES && throw_dam)
-        return (((10 + throw_dam / 2) - FASTEST_PLAYER_THROWING_SPEED) * 2) * 10;
+
     else
         return 0;
 }
@@ -1166,10 +1169,12 @@ static string _skill_target_desc(skill_type skill, int scaled_target,
 static void _append_skill_target_desc(string &description, skill_type skill,
                                         int scaled_target, bool dual)
 {
+    if (scaled_target < 0 || scaled_target > 270)
+        return;
     if (you.species != SP_GNOLL)
     {
         if (dual) description += "\n    " + _skill_target_desc(skill, scaled_target, 50);
-        else description += "\n    " + _skill_target_desc(skill, scaled_target, 50);
+        else      description += "\n    " + _skill_target_desc(skill, scaled_target, 100);
     }
     if (you.training[skill] > 0 && you.training[skill] < 100)
     {
@@ -1670,11 +1675,11 @@ static string _describe_shield(const item_def &item, bool verbose)
         description += "\n";
         if (is_hybrid(item.sub_type))
             _append_weapon_stats(description, item);
-    }
 
-    if (verbose && item_type_known(item) && is_hybrid(item.sub_type) 
-        && get_weapon_brand(item) != SPWPN_NORMAL)
-        description += _weapon_brand_desc(item);
+        if (item_type_known(item) && is_hybrid(item.sub_type)
+            && get_weapon_brand(item) != SPWPN_NORMAL)
+            description += _weapon_brand_desc(item);
+    }
 
     const int target_skill = _item_training_target(item);
     const int penalty_skill = round(you.get_shield_skill_to_offset_penalty(item) * 10);
