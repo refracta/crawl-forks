@@ -56,19 +56,19 @@ static const species_mutation_message spmu_data[] =
 },
 
 { SP_OCTOPODE, MUT_CLAWS,
-  "sharp tentacles",
+  "toothy tentacles",
 
-  {"Your front tentacles are covered in pointy shells. (+2 Unarmed)",
-   "Your tentacles are covered in sharp pointed shells. (+4 Unarmed)",
-   "You have razor-sharp shells on your tentacles. (+6 Unarmed)"},
+  {"Your front tentacles are covered in pointy teeth. (+2 Unarmed)",
+   "Your tentacles are covered in sharp spiky teeth. (+4 Unarmed)",
+   "You have razor-sharp teeth on your tentacles. (+6 Unarmed)"},
 
-  {"Bits of shell form on your front tentacles.",
-   "Your shells become harder and sharper.",
-   "Your forearms are completely covered in sharp shell."},
+  {"Squid-like teeth form on your front tentacles.",
+   "Your teeth become harder and sharper.",
+   "Your forearms are completely covered in teeth."},
 
-  {"Your shells soften and return to being fleshy.",
-   "Your shells shrink."
-   "Your sharp shells become softer and duller."},
+  {"Your teeth soften and return to being fleshy.",
+   "Your teeth shrink."
+   "Your sharp teeth become softer and duller."},
 },
 
 { SP_LIGNIFITE, MUT_PASSIVE_FREEZE,
