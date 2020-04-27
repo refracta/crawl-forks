@@ -142,8 +142,8 @@ bool ranged_attack::attack()
     // XXX: Can this ever happen?
     if (!defender->alive())
     {
-        handle_phase_killed();
         handle_phase_end();
+        handle_phase_killed();
         return true;
     }
 
@@ -175,10 +175,11 @@ bool ranged_attack::attack()
         {
             if (!handle_phase_hit())
             {
+                handle_phase_end();
+
                 if (!defender->alive())
                     handle_phase_killed();
 
-                handle_phase_end();
                 return false;
             }
         }
@@ -189,9 +190,6 @@ bool ranged_attack::attack()
     if (should_alert_defender)
         alert_defender();
 
-    if (!defender->alive())
-        handle_phase_killed();
-
     if (attacker->is_player() && defender->is_monster()
         && !shield_blocked && ev_margin >= 0)
     {
@@ -199,6 +197,9 @@ bool ranged_attack::attack()
     }
 
     handle_phase_end();
+
+    if (!defender->alive())
+        handle_phase_killed();
 
     return attack_occurred;
 }
@@ -221,7 +222,7 @@ bool ranged_attack::handle_phase_end()
 {
     if (projectile->base_type == OBJ_MISSILES &&
        (projectile->sub_type == MI_TRIPLE_BOLT || projectile->sub_type == MI_DOUBLE_BOLT) &&
-        !the_path.aimed_at_spot)
+        !the_path.aimed_at_spot && !invalid_monster(defender->as_monster()))
     {
         bolt continuation = the_path;
         continuation.range = you.current_vision - range_used;
