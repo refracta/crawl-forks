@@ -249,7 +249,7 @@ bool ranged_attack::handle_phase_end()
 
     if (projectile->base_type == OBJ_MISSILES && 
         projectile->sub_type == MI_SLING_BULLET && !reflected && one_chance_in(3) &&
-        (defender->is_player() || !mons_is_firewood(*defender->as_monster())))
+        (defender->is_player() || !(mons_is_firewood(*defender->as_monster()) && !invalid_monster(defender->as_monster()))))
     {
         bolt continuation = the_path;
         continuation.range = you.current_vision - range_used;

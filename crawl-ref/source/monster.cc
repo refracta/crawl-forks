@@ -2077,6 +2077,9 @@ item_def *monster::shield() const
 
 item_def *monster::staff() const
 {
+    if (!alive() || invalid_monster(this))
+        return nullptr;
+
     if (!bool(mons_itemuse(*this) & monuse_flags::MU_WEAPON_MELEE))
         return nullptr;
 
