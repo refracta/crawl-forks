@@ -14,7 +14,10 @@ enum monuse_flags
     MU_CONSUMABLES   = 0x0100, // Scrolls/Potions
     MU_MISC          = 0x0200, // Phials of Floods, etc.
 
-    // unused        = 0x0400,
+    MU_NO_GOLD       = 0x0400, // Even monsters that can't use items are allowed
+    // to pick up gold (part of Gozag flavour). These are the exceptions (mostly
+    // pseudomonsters that are actually projectiles.
+
     // unused        = 0x0800,
 
     MU_THROW_ROCK    = 0x1000,
