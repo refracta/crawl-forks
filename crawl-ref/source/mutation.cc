@@ -585,6 +585,12 @@ string describe_breath(bool gain)
     else
         ostr << "You can breathe ";
 
+    if (you.form == transformation::statue)
+    {
+        ostr << "metallic splinters.";
+        return ostr.str();
+    }
+
     switch (you.drac_colour)
     {
     case DR_BROWN:          ostr << "rudimentary magical darts.";   break;
@@ -608,9 +614,6 @@ string describe_breath(bool gain)
     case DR_SILVER:         ostr << "silver splinters, which deal bonus damage to chaotic creatures.";          break;
     case DR_TEAL:           ostr << "blasts of ghostly flames, which heal the undead and damage the living.";   break;
     }
-
-    if (!gain)
-        ostr << "\n";
 
     return ostr.str();
 }
@@ -724,7 +727,9 @@ string describe_mutations(bool drop_title)
             result += "Your connection to dragons allows you to use the spell dragon form,\n"
                 "despite your undead form not otherwise being capable of transmutation.\n";
         }
-        result += describe_breath();
+        result += _annotate_form_based(describe_breath(), 
+                (!form_keeps_mutations() && you.form != transformation::dragon 
+                                         && you.form != transformation::lich));
     }
 
     if (player_res_poison(false, false, false) == 3)
@@ -1544,7 +1549,7 @@ static string _drac_enhancer_msg(bool gain)
     if (gain)
         ostr << _get_mutation_def(MUT_DRACONIAN_ENHANCER).gain[0];
     else
-        ostr << _get_mutation_def(MUT_DRACONIAN_ENHANCER).have[you.get_mutation_level(MUT_DRACONIAN_ENHANCER) - 1];
+        ostr << _get_mutation_def(MUT_DRACONIAN_ENHANCER).have[you.get_mutation_level(MUT_DRACONIAN_ENHANCER, false) - 1];
 
     switch (you.drac_colour)
     {
@@ -2520,8 +2525,8 @@ string mutation_desc(mutation_type mut, int level, bool colour,
     else if (mut == MUT_MAJOR_MARTIAL_APT_BOOST)
     {
         ostringstream ostr;
-        string x = level > 1 ? " (Aptitude +5)." : " (Aptitude +3)";
-        ostr << mdef.have[level - 1] << skill_name(you.defence_skill) << x;
+        string x = level > 1 ? " (Aptitude +5)." : " (Aptitude +3).";
+        ostr << mdef.have[level - 1] << skill_name(you.major_skill) << x;
         result = ostr.str();
     }
     else if (!ignore_player && you.species == SP_FELID && mut == MUT_CLAWS)

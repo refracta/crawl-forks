@@ -1471,7 +1471,7 @@ static const mutation_def mut_data[] =
 { MUT_MAJOR_MARTIAL_APT_BOOST, 0, 2, mutflag::good, false,
    "major martial skill boost",
 
-  { "You are naturally skilled at ", "", "" },
+  { "You are naturally skilled at ", "You are naturally adept at ", "" },
   { "Your draconian ancestry asserts itself.", "Your draconian ancestry asserts itself.", "" },
   {"", "", ""},
 },

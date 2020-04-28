@@ -3488,7 +3488,7 @@ void level_change(bool skip_attribute_increase)
                 }
                 if (you.experience_level == 15)
                 {
-                    perma_mutate(MUT_DEFENSIVE_APT_BOOST, 1, "draconic bloodline");
+                    perma_mutate(MUT_MAJOR_MARTIAL_APT_BOOST, 1, "draconic bloodline");
                     _draconian_skill_check(MUT_MAJOR_MARTIAL_APT_BOOST);
                 }
                 break;
