@@ -151,7 +151,7 @@ static const map<job_type, job_def> job_data =
     "Gl", "Gladiator",
     6, 0, 6,
     { SP_HILL_ORC, SP_MERFOLK, SP_MINOTAUR, SP_GARGOYLE, 
-      SP_CENTAUR, SP_SILENT_SPECTRE, },
+      SP_CENTAUR, SP_SILENT_SPECTRE, SP_DRACONIAN },
     { "leather armour", "helmet", "wand of ensnaring charges:9" },
     WCHOICE_GOOD,
     { { SK_FIGHTING, 2 }, { SK_EVOCATIONS, 2 }, { SK_DODGING, 3 },
@@ -201,7 +201,7 @@ static const map<job_type, job_def> job_data =
 { JOB_SKALD, {
     "Sk", "Skald",
     3, 5, 4,
-    { SP_CENTAUR, SP_MERFOLK, SP_DRACONIAN, },
+    { SP_CENTAUR, SP_MERFOLK, },
     { "leather armour", "book of Battle" },
     WCHOICE_PLAIN,
     { { SK_FIGHTING, 2 }, { SK_ARMOUR, 1 }, { SK_DODGING, 2 },
@@ -282,7 +282,7 @@ static const map<job_type, job_def> job_data =
 { JOB_DEMIGOD,{
     "Dg", "Demigod",
     7, 7, 7,
-    { SP_GNOLL, SP_SPRIGGAN, SP_TROLL, SP_MINOTAUR },
+    { SP_GNOLL, SP_SPRIGGAN, SP_TROLL, SP_MINOTAUR, SP_DRACONIAN },
     { "leather armour" },
     WCHOICE_GOOD,
     { { SK_DODGING, 3 } ,{ SK_STEALTH, 2 } ,{ SK_WEAPON,4 } ,{ SK_FIGHTING, 2 } , },
@@ -291,7 +291,7 @@ static const map<job_type, job_def> job_data =
 { JOB_MUMMY,{
     "Mu", "Mummy",
     2, 7, 4,
-    { SP_GNOLL, SP_SPRIGGAN, },
+    { SP_GNOLL, SP_SPRIGGAN, SP_DRACONIAN },
     { "leather armour" , "book of necromancy"},
     WCHOICE_PLAIN,
     { { SK_DODGING, 3 } ,{ SK_STEALTH, 2 } ,{ SK_WEAPON,2 } , {SK_SPELLCASTING, 2} , {SK_NECROMANCY,3} },
