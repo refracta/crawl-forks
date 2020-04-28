@@ -234,8 +234,8 @@ static const map<job_type, job_def> job_data =
     { SP_DEEP_ELF, SP_SPRIGGAN, SP_NAGA, SP_MERFOLK, SP_TENGU, SP_FELID, },
     { "robe", "Young Poisoner's Handbook" },
     WCHOICE_NONE,
-    { { SK_POISON_MAGIC, 3 }, { SK_SPELLCASTING, 2 },
-      { SK_DODGING, 2 }, { SK_STEALTH, 2 }, },
+    { { SK_POISON_MAGIC, 3 }, { SK_AIR_MAGIC, 1 },  { SK_SPELLCASTING, 2 },
+      { SK_DODGING, 1 }, { SK_STEALTH, 2 }, },
 } },
 
 { JOB_WANDERER, {
