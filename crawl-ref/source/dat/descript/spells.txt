@@ -210,7 +210,7 @@ Chaos Bolt spell
 Fires a penetrating bolt of seething chaos; dealing damage of a random type and 
 buffing or debuffing each creature it strikes.
 %%%%
-Lesser Chaos Bolt
+Lesser Chaos Bolt spell
 
 Fires a penetrating bolt of seething chaos; dealing damage of a random type and 
 buffing or debuffing each creature it strikes.
