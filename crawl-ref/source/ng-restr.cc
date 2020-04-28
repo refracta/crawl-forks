@@ -26,7 +26,8 @@ static bool _banned_combination(job_type job, species_type species)
             || job == JOB_ENCHANTER
             || job == JOB_BERSERKER
             || job == JOB_SKALD
-            || job == JOB_TRANSMUTER)
+            || job == JOB_TRANSMUTER
+            || job == JOB_DEMONSPAWN)
         {
             return true;
         }
