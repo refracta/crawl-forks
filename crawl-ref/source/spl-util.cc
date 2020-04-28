@@ -598,7 +598,7 @@ static const char *_spell_title(spell_type spell, const actor * caster)
     }
 
     if (chaos)
-        return chaosTitle.c_str();
+        return _seekspell(spell)->chaosTitle;
     return _seekspell(spell)->title;
 }
 

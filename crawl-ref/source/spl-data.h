@@ -8,7 +8,7 @@
 /*
 struct spell_desc
 {
-    enum, spell name,
+    enum, spell name, chaos name,
     spell schools,
     flags,
     level,
