@@ -1822,8 +1822,8 @@ static void _generate_staff_item(item_def& item, bool allow_uniques,
         {
             item.sub_type = random2(NUM_STAVES);
         }
-        while (item_type_removed(OBJ_STAVES, item.sub_type) || item.sub_type == STAFF_NOTHING);
-    }  // Nothing is pseudo-removed; should only spawn for fixedArts.
+        while (item_type_removed(OBJ_STAVES, item.sub_type));
+    } 
     else
         item.sub_type = force_type;
 
