@@ -3390,6 +3390,7 @@ void level_change(bool skip_attribute_increase)
                 if (you.experience_level == 7)
                 {
                     you.drac_colour = random_draconian_colour();
+                    abil_swap(ABIL_BREATHE_DART, draconian_breath());
 
                     // The player symbol depends on species.
                     update_player_symbol();

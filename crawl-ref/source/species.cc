@@ -377,12 +377,12 @@ monster_type dragon_form_dragon_type()
     }
 }
 
-ability_type draconian_breath()
+ability_type draconian_breath(bool check_tran)
 {
     if (you.species != SP_DRACONIAN)
         return ABIL_NON_ABILITY;
 
-    if (you.form == transformation::statue)
+    if (check_tran && you.form == transformation::statue)
         return ABIL_BREATHE_METAL;
 
     switch (you.drac_colour)
@@ -391,7 +391,11 @@ ability_type draconian_breath()
     case DR_BROWN:              return ABIL_BREATHE_DART;
 
     // Common
-    case DR_GREEN:              return ABIL_BREATHE_MEPHITIC;
+    case DR_GREEN:              
+        if (check_tran && you.form == transformation::dragon)
+            return ABIL_BREATHE_POISON; 
+        return ABIL_BREATHE_MEPHITIC;
+
     case DR_RED:                return ABIL_BREATHE_FIRE;
     case DR_WHITE:              return ABIL_BREATHE_FROST;
     case DR_LIME:               return ABIL_BREATHE_ACID;

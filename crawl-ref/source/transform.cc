@@ -10,6 +10,7 @@
 #include <cstdio>
 #include <cstring>
 
+#include "ability.h"
 #include "artefact.h"
 #include "art-enum.h"
 #include "delay.h"
@@ -30,6 +31,7 @@
 #include "player-stats.h"
 #include "prompt.h"
 #include "religion.h"
+#include "species.h"
 #include "spl-cast.h"
 #include "state.h"
 #include "stringutil.h"
@@ -1792,6 +1794,8 @@ bool transform(int pow, transformation which_trans, bool involuntary,
             mprf(MSGCH_DURATION, "Your new body cracks your icy armour.");
             you.duration[DUR_ICY_ARMOUR] = 0;
         }
+        if (you.species == SP_DRACONIAN)
+            abil_swap(draconian_breath(false), ABIL_BREATHE_METAL);
         break;
 
     case transformation::spider:
@@ -1825,6 +1829,11 @@ bool transform(int pow, transformation which_trans, bool involuntary,
             }
 
             stop_being_held();
+        }
+        if (you.species == SP_DRACONIAN && (draconian_breath(false) == ABIL_BREATHE_MEPHITIC
+            || you.drac_colour == DR_GOLDEN))
+        {
+            abil_swap(ABIL_BREATHE_MEPHITIC, ABIL_BREATHE_POISON);
         }
         break;
 
@@ -1971,6 +1980,14 @@ void untransform(bool skip_move)
                  mutation_name(app), verb,
                  app == MUT_TENTACLE_SPIKE ? "s" : "");
         }
+    }
+
+    if (you.species == SP_DRACONIAN)
+    {
+        if (old_form == transformation::statue)
+            abil_swap(ABIL_BREATHE_METAL, draconian_breath(false));
+        if (old_form == transformation::dragon && draconian_breath(false) == ABIL_BREATHE_MEPHITIC || you.drac_colour == DR_GOLDEN)
+            abil_swap(ABIL_BREATHE_POISON, ABIL_BREATHE_MEPHITIC);
     }
 
     calc_hp(true, false);

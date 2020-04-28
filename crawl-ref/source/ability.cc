@@ -3549,13 +3549,10 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
     if ((!form_changed_physiology() || you.form == transformation::dragon)
         && draconian_breath() != ABIL_NON_ABILITY)
     {
-        if (you.form == transformation::dragon && draconian_breath() == ABIL_BREATHE_MEPHITIC)
-            _add_talent(talents, ABIL_BREATHE_POISON, check_confused);
-        else
-            _add_talent(talents, draconian_breath(), check_confused);
+        _add_talent(talents, draconian_breath(), check_confused);
 
         if (you.drac_colour == DR_GOLDEN)
-        {
+        { 
             _add_talent(talents, ABIL_BREATHE_FROST, check_confused);
             if (you.form == transformation::dragon)
                 _add_talent(talents, ABIL_BREATHE_POISON, check_confused);
@@ -3968,6 +3965,14 @@ int abil_skill_weight(ability_type ability)
     return max(floor, div_rand_round(base_fail, 8) - 3);
 }
 
+// When a mutation replaces an ability with a different that should logically
+// share the same slot; this tries to maintain the slot in the ability table.
+void abil_swap(ability_type old_abil, ability_type new_abil)
+{
+    for (int i = 0; i < 52; ++i)
+        if (you.ability_letter_table[i] == old_abil)
+            you.ability_letter_table[i] = new_abil;
+}
 
 ////////////////////////////////////////////////////////////////////////
 // scaling_cost

@@ -32,6 +32,7 @@ int choose_ability_menu(const vector<talent>& talents);
 string describe_talent(const talent& tal);
 skill_type abil_skill(ability_type abil);
 int abil_skill_weight(ability_type abil);
+void abil_swap(ability_type old_abil, ability_type new_abil);
 
 void no_ability_msg();
 bool activate_ability();

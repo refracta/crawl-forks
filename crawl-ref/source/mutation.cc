@@ -1833,10 +1833,7 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
         case MUT_SPIT_POISON:
             // Breathe poison replaces spit poison (so it takes the slot).
             if (cur_base_level >= 2)
-                for (int i = 0; i < 52; ++i)
-                    if (you.ability_letter_table[i] == ABIL_SPIT_POISON)
-                        you.ability_letter_table[i] = ABIL_BREATHE_POISON;
-            // BCADDO: Basic Draconian breath being replaced with colour breath will be based on this.
+                abil_swap(ABIL_SPIT_POISON, ABIL_BREATHE_POISON);
             break;
 
         default:
@@ -2019,9 +2016,7 @@ static bool _delete_single_mutation_level(mutation_type mutat,
     case MUT_SPIT_POISON:
         // Breathe poison replaces spit poison (so it takes the slot).
         if (you.mutation[mutat] < 2)
-            for (int i = 0; i < 52; ++i)
-                if (you.ability_letter_table[i] == ABIL_SPIT_POISON)
-                    you.ability_letter_table[i] = ABIL_BREATHE_POISON;
+            abil_swap(ABIL_BREATHE_POISON, ABIL_SPIT_POISON);
         break;
 
     case MUT_NIGHTSTALKER:
