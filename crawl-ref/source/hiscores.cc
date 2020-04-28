@@ -950,7 +950,7 @@ enum old_species_type
     NUM_OLD_SPECIES = -OLD_SP_LAVA_ORC
 };
 
-static string _species_name(int race)
+static string _species_name(int race, bool bo = true)
 {
     switch (race)
     {
@@ -965,7 +965,7 @@ static string _species_name(int race)
     case OLD_SP_LAVA_ORC: return "Lava Orc";
     }
 
-    return species_name(static_cast<species_type>(race, SPNAME_PLAIN, false));
+    return species_name(static_cast<species_type>(race), SPNAME_PLAIN, bo);
 }
 
 static const char* _species_abbrev(int race)
@@ -994,7 +994,7 @@ static int _species_by_name(const string& name)
         return race;
 
     for (race = -1; race >= -NUM_OLD_SPECIES; race--)
-        if (name == _species_name(race))
+        if (name == _species_name(race, false))
             return race;
 
     return SP_UNKNOWN;
@@ -1922,6 +1922,32 @@ static string _append_sentence_delimiter(const string &sentence,
     return sentence + delimiter;
 }
 
+static string _special_case(int race, int job, int lvl)
+{
+    switch (job)
+    {
+    case JOB_DEMIGOD:
+        if (race == SP_NAGA)
+            return "Nagaraja";
+        if (race == SP_HUMAN)
+            return "Demigod";
+        break;
+    case JOB_DEMONSPAWN:
+        if (race == SP_HUMAN)
+            return "Demonspawn";
+        break;
+    case JOB_MUMMY:
+        if (race == SP_HUMAN)
+            return "Mummy";
+        if (race != SP_DRACONIAN || lvl < 7)
+            return make_stringf("Mummified %s", _species_name(race).c_str());
+        break;
+    default: break;
+    }
+
+    return "";
+}
+
 string
 scorefile_entry::character_description(death_desc_verbosity verbosity) const
 {
@@ -1962,14 +1988,18 @@ scorefile_entry::character_description(death_desc_verbosity verbosity) const
 
     if (verbose)
     {
-        string srace = _species_name(race);
-        desc += make_stringf("Began as a%s %s %s",
-                 is_vowel(srace[0]) ? "n" : "",
-                 srace.c_str(),
-                 _job_name(job)); // BCADDO: Job name isn't the same as what you started as if you're an --AX.
+        string spcas = _special_case(race, job, lvl);
+        if (spcas != "")
+            desc += make_stringf("%s. Began on ", spcas.c_str());
+        else
+        {
+            string srace = _species_name(race);
+            desc += make_stringf("%s %s. Began on ",
+                srace.c_str(),
+                _job_name(job));
+        }
 
         ASSERT(birth_time);
-        desc += " on ";
         desc += _hiscore_date_string(birth_time);
         // TODO: show seed here?
 
@@ -2263,7 +2293,8 @@ string scorefile_entry::death_description(death_desc_verbosity verbosity) const
         if (terse)
             desc += "stupidity";
         else if (race >= 0 && // not a removed race
-                 species_is_unbreathing(static_cast<species_type>(race)))
+                 species_is_unbreathing(static_cast<species_type>(race))
+                 || job == JOB_MUMMY)
         {
             desc += "Forgot to exist";
         }
@@ -2297,8 +2328,9 @@ string scorefile_entry::death_description(death_desc_verbosity verbosity) const
         {
             if (num_runes > 0)
                 desc += "Got out of the dungeon";
-            else if (species_is_undead(static_cast<species_type>(race)))
-                desc += "Safely got out of the dungeon";
+            else if (species_is_undead(static_cast<species_type>(race))
+                || job == JOB_MUMMY)
+                desc += "Got out of the dungeon intact";
             else
                 desc += "Got out of the dungeon alive";
         }

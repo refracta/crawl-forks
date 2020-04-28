@@ -2221,11 +2221,6 @@ static vector<formatted_string> _get_overview_stats()
         entry.textcolour(HUD_VALUE_COLOUR);
 
     entry.cprintf("%d/%d", you.magic_points, you.max_magic_points);
-    if (you.species == SP_DEEP_DWARF
-        && get_real_mp(false) != you.max_magic_points)
-    {
-        entry.cprintf(" (%d)", get_real_mp(false));
-    }
 
     cols.add_formatted(0, entry.to_colour_string(), false);
     entry.clear();
