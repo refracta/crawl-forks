@@ -66,6 +66,7 @@ enum species_name_type
     SPNAME_GENUS,
     SPNAME_ADJ
 };
+string display_sp_name();
 string species_name(species_type speci, species_name_type spname = SPNAME_PLAIN, bool player = true);
 species_type str_to_species(const string &species);
 string species_walking_verb(species_type sp);
