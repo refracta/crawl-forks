@@ -2288,9 +2288,11 @@ const char* mutation_name(mutation_type mut, bool allow_category, bool for_displ
 
     if (mut == MUT_MINOR_MARTIAL_APT_BOOST || mut == MUT_MAJOR_MARTIAL_APT_BOOST || mut == MUT_DEFENSIVE_APT_BOOST)
     {
-        return make_stringf("boosted %s aptitude", mut == MUT_MINOR_MARTIAL_APT_BOOST ? skill_name(you.minor_skill) : 
-                                                   mut == MUT_MAJOR_MARTIAL_APT_BOOST ? skill_name(you.major_skill) 
-                                                                                      : skill_name(you.defence_skill)).c_str();
+        // BCADNOTE: I don't know if this makes a difference or why it would.
+        const char* retval = make_stringf("boosted %s aptitude", mut == MUT_MINOR_MARTIAL_APT_BOOST ? skill_name(you.minor_skill) : 
+                                                                 mut == MUT_MAJOR_MARTIAL_APT_BOOST ? skill_name(you.major_skill) 
+                                                                                                    : skill_name(you.defence_skill)).c_str();
+        return retval;
     }
 
     if (mut == MUT_DRACONIAN_DEFENSE)
