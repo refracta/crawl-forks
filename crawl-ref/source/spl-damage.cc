@@ -1247,17 +1247,17 @@ spret cast_airstrike(int pow, const dist &beam, bool fail)
 
     monster* mons = monster_at(beam.target);
 
-    if (mons->res_wind())
-    {
-        mprf("But the air would do no harm to %s", mons->name(DESC_THE).c_str());
-        return spret::abort;
-    }
-
     if (!mons || mons->submerged())
     {
         fail_check();
         canned_msg(MSG_SPELL_FIZZLES);
         return spret::success; // still losing a turn
+    }
+
+    if (you.can_see(*mons) && mons->res_wind())
+    {
+        mprf("But the air would do no harm to %s", mons->name(DESC_THE).c_str());
+        return spret::abort;
     }
 
     if (stop_attack_prompt(mons, false, you.pos()))
