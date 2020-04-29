@@ -2179,6 +2179,11 @@ static spret _do_ability(const ability_def& abil, bool fail)
             m   = "You exhale a cleansing burst of sacred fire.";
             break;
 
+        case ABIL_BREATHE_MIASMA:
+            zap = ZAP_BREATHE_MIASMA;
+            m   = "You exhale a noxious wave of foul miasma.";
+            break;
+
         case ABIL_BREATHE_DRAIN:
             zap = ZAP_BREATHE_DRAIN;
             m   = "You exhale a bolt of negative energy.";
