@@ -52,6 +52,7 @@ struct cloud_damage
     int random; ///< Damage rolled on hit.
     bool extra_player_dam; //< HACK: does 4+random2(8) extra damage to players.
     // Yes, we really hate players, damn their guts.
+    // BCADDO: Consider removing this extra damage; eventually.
 };
 
 /// Damage for most damaging clouds.
@@ -310,7 +311,7 @@ static const cloud_data clouds[] = {
       ETC_INCARNADINE,                          // colour
       { TILE_CLOUD_BLOOD, CTVARY_DUR },         // tile
       BEAM_NEG,                                 // beam_effect
-      NORMAL_CLOUD_DAM,                         // base, random damage
+      { 0, 12, false },                         // base, random damage
     },
 };
 COMPILE_CHECK(ARRAYSZ(clouds) == NUM_CLOUD_TYPES);
@@ -995,6 +996,7 @@ static int _actor_cloud_resist(const actor *act, const cloud_struct &cloud)
         return act->res_acid();
     case CLOUD_STORM:
         return act->res_elec();
+    case CLOUD_BLOOD:
     case CLOUD_NEGATIVE_ENERGY:
         return act->res_negative_energy();
 
