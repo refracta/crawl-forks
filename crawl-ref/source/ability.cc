@@ -2153,6 +2153,7 @@ static spret _do_ability(const ability_def& abil, bool fail)
 
         case ABIL_BREATHE_FROST:
             zap = ZAP_BREATHE_FROST;
+            beam.origin_spell = SPELL_CHILLING_BREATH;
             m   = "You exhale a wave of freezing cold.";
             break;
 

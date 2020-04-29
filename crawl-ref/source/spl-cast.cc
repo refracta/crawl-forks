@@ -646,7 +646,7 @@ static int _draconian_spell_enhancement(spschools_type typeflags)
             return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
         return 0;
     case DR_PEARL:
-        if (typeflags & (spschool::earth | spschool::charms))
+        if (typeflags & (spschool::earth | spschool::charms | spschool::summoning))
             return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
         return 0;
     case DR_PINK:
