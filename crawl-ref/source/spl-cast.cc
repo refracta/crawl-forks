@@ -598,6 +598,91 @@ bool staff_enhances_spell(const item_def * staff, spell_type spell)
     return false;
 }
 
+static int _draconian_spell_enhancement(spschools_type typeflags)
+{
+    if (you.species != SP_DRACONIAN)
+        return 0;
+
+    switch (you.drac_colour)
+    {
+    case DR_BLACK:
+        if (typeflags & spschool::necromancy)
+            return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+        return 0;
+    case DR_BLOOD:
+        if (typeflags & (spschool::air | spschool::hexes | spschool::necromancy))
+            return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+        return 0;
+    case DR_BLUE:
+        if (typeflags & spschool::air)
+            return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+        return 0;
+    case DR_BONE:
+        if (typeflags & (spschool::earth | spschool::charms))
+            return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+        return 0;
+    case DR_CYAN:
+        if (typeflags & spschool::translocation)
+            return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+        return 0;
+    case DR_GOLDEN:
+        if (typeflags & (spschool::fire | spschool::ice | spschool::poison))
+            return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+        return 0;
+    case DR_GREEN:
+        if (typeflags & spschool::poison)
+            return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+        return 0;
+    case DR_LIME:
+        if (typeflags & spschool::transmutation)
+            return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+        return 0;
+    case DR_MAGENTA:
+        if (typeflags & spschool::charms)
+            return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+        return 0;
+    case DR_OLIVE:
+        if (typeflags & (spschool::poison | spschool::air))
+            return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+        return 0;
+    case DR_PEARL:
+        if (typeflags & (spschool::earth | spschool::charms))
+            return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+        return 0;
+    case DR_PINK:
+        if (typeflags & spschool::summoning)
+            return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+        return 0;
+    case DR_PLATINUM:
+        if (typeflags & (spschool::hexes | spschool::translocation | spschool::transmutation))
+            return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+        return 0;
+    case DR_PURPLE:
+        if (typeflags & spschool::hexes)
+            return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+        return 0;
+    case DR_SCINTILLATING:
+        if (one_chance_in(3))
+            return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+        return 0;
+    case DR_SILVER:
+        if (typeflags & spschool::earth)
+            return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+        return 0;
+    case DR_TEAL:
+        if (typeflags & (spschool::translocation | spschool::transmutation))
+            return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+        return 0;
+    case DR_WHITE:
+        if (typeflags & spschool::ice)
+            return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+        return 0;
+
+    case DR_BROWN:  default: 
+        return 0;
+    }
+}
+
 static int _spell_enhancement(spell_type spell)
 {
     const spschools_type typeflags = get_spell_disciplines(spell);
@@ -645,6 +730,8 @@ static int _spell_enhancement(spell_type spell)
         enhanced -= 2;
 
     enhanced += you.archmagi();
+
+    enhanced += _draconian_spell_enhancement(typeflags);
 
     // These are used in an exponential way, so we'll limit them a bit. -- bwr
     if (enhanced > 3)
