@@ -209,13 +209,15 @@ define(function () {
     fg_flags.flags.PINNED       = [0, 0x2000000];
     fg_flags.flags.VILE_CLUTCH  = [0, 0x4000000];
     fg_flags.flags.POSSESSABLE  = [0, 0x8000000];
+    fg_flags.flags.WRETCHED     = [0, 0x10000000];
+    fg_flags.flags.MUTE         = [0, 0x20000000];
 
     // Three levels of poison in 2 bits.
     fg_flags.exclusive_flags.push({
-        mask        : [0x00800000, 0x10000000],
+        mask        : [0x00800000, 0x80000000],
         POISON      : [0x00800000, 0],
-        MORE_POISON : [0, 0x10000000],
-        MAX_POISON  : [0x00800000, 0x10000000]
+        MORE_POISON : [0, 0x80000000],
+        MAX_POISON  : [0x00800000, 0x80000000]
     });
 
     // MDAM has 5 possibilities, so uses 3 bits.

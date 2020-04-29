@@ -845,6 +845,18 @@ function ($, view_data, main, tileinfo_player, icons, dngn, enums,
                 status_shift += 5;
             }
 
+            if (fg.WRETCHED)
+            {
+                this.draw_icon(icons.WRETCHED, x, y, -status_shift, 0);
+                status_shift += 7;
+            }
+
+            if (fg.MUTE)
+            {
+                this.draw_icon(icons.MUTE, x, y, -status_shift, 0);
+                status_shift += 9;
+            }
+
             if (fg.STICKY_FLAME)
             {
                 this.draw_icon(icons.STICKY_FLAME, x, y, -status_shift, 0);
