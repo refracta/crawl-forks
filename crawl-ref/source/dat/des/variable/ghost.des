@@ -2122,6 +2122,7 @@ FTILE:  -apQ = floor_nerves
 # 'P', using remaining instances for loot.
 NSUBST: P = P / S, Q = Q / R, R = R / k, S = S / .
 NSUBST: k = d / e / f / g / h / i / j / -
+NSUBST: q = yyyyq
 # Place some rocks and dispersal traps in the inner area and along the inner
 # wall, but with lower density along wall to make fewer choke points.
 SUBST:  a = x -:7 ^:1, p = x -:37 ^:1
@@ -2144,7 +2145,7 @@ kmons("H = orc warlord; " .. disto_weapon("knight", "randart") ..
 }}
 : if you.in_branch("D") then
 {{
-kmons("q = kobold; " .. disto_weapon("kobold",
+kmons("Z = kobold; " .. disto_weapon("kobold",
                crawl.one_chance_in(3) and "randart" or "good_item"))
 kmons("r = gnoll; " .. disto_weapon("gnoll",
                crawl.one_chance_in(3) and "randart" or "good_item"))
@@ -2154,7 +2155,7 @@ kmons("u = gnoll sergeant; " .. disto_weapon("sergeant",
                crawl.one_chance_in(3) and "randart" or "good_item") ..
       "    . leather armour good_item | ring mail good_item" ..
       "    . buckler good_item | heater shield good_item w:5")
-kmons("y = orc warrior ; " .. disto_weapon("warrior",
+kmons("Y = orc warrior ; " .. disto_weapon("warrior",
                crawl.one_chance_in(3) and "randart" or "good_item") ..
       "    . chain mail good_item | plate armour good_item")
 kmons("z = skeletal warrior ; " .. disto_weapon("warrior", "randart"))
@@ -2163,14 +2164,14 @@ kmons("z = skeletal warrior ; " .. disto_weapon("warrior", "randart"))
 MONS:   any lesser demon / small abomination
 MONS:   toenail golem / ancient zyme
 SUBST:  d = *%, e = %$, fghij= -
-NSUBST: - = qrs / 2=1 / 2=1. / 2... / .
+NSUBST: - = Zrs / 2=1 / 2=1. / 2... / .
 :     elseif you.depth() < 9 then
 MONS:   any lesser demon w:5 / small abomination
 MONS:   toenail golem / ancient zyme / any common demon / ugly thing
 MONS:   worldbinder / large abomination / raiju / shapeshifter / rakshasa \
         / wizard / hell hog / thrashing horror
 SUBST:  d = *, e = *%, f = %$, ghij= -
-NSUBST: - = suy / 2=1 / 2=1. / 2=2. / 3... / .
+NSUBST: - = suY / 2=1 / 2=1. / 2=2. / 3... / .
 :     elseif you.depth() < 12 then
 MONS:   small abomination / toenail golem / any common demon w:5
 MONS:   ugly thing / large abomination / raiju / shapeshifter / wizard \
@@ -2179,7 +2180,7 @@ MONS:   ancient zyme / worldbinder / rakshasa
 MONS:   great orb of eyes / glowing orange brain / very ugly thing \
         / lurking horror / wretched star / tentacled starspawn
 SUBST:  e = *, f = *%, g = %$--, hij= -
-NSUBST: - = uyz / 2=1 / 2=1. / 2 / 2. / 3. / 4... / .
+NSUBST: - = uYz / 2=1 / 2=1. / 2 / 2. / 3. / 4... / .
 :     elseif you.depth() < 14 then
 MONS:   any common demon / ugly thing / large abomination / worldbinder
 MONS:   raiju / shapeshifter / thrashing horror / wizard / hell hog \
@@ -2190,7 +2191,7 @@ MONS:   lurking horror / wretched star / tentacled starspawn / cacodemon \
         / tentacled monstrosity w:2 / starcursed mass w:2 / daeva god:Xom w:2 \
         / executioner w:2 / profane servitor w:2
 SUBST:  f = |*, g = *%, h = %$--, ij= -
-NSUBST: - = yzDF / 2=1 / 3=1. / 2 / 2=2. / 3 / 4. / .
+NSUBST: - = YzDF / 2=1 / 3=1. / 2 / 2=2. / 3 / 4. / .
 :     else
 MONS:   ugly thing / large abomination / worldbinder / raiju / shapeshifter \
         / rakshasa / thrashing horror / wizard
@@ -2201,11 +2202,11 @@ MONS:   glowing shapeshifter / crystal guardian / tentacled monstrosity \
         / starcursed mass / daeva god:Xom / executioner / profane servitor \
         / hell sentinel w:5 / hellephant w:5
 SUBST:  f = |*, g = *, h = %$, ij= -
-NSUBST: - = qDFH / 2=1 / 3=1. / 2 / 3=2. / 3 / 4 / .
+NSUBST: - = ZDFH / 2=1 / 3=1. / 2 / 3=2. / 3 / 4 / .
 :     end
 : elseif you.in_branch("Lair") then
 {{
-kmons("q = spriggan; " .. disto_weapon("spriggan",
+kmons("Z = spriggan; " .. disto_weapon("spriggan",
       crawl.one_chance_in(3) and "randart" or "good_item"))
 }}
 MONS:   any common demon / ugly thing
@@ -2216,7 +2217,7 @@ MONS:   great orb of eyes / glowing orange brain / very ugly thing \
         / lurking horror / tentacled starspawn / wretched star \
         / cacodemon / hellion / apocalypse crab / glowing shapeshifter
 SUBST:  f = *, g = %$, hij= -
-NSUBST: - = qE / 2=1 / 2=1. / 2 / 2=2. / 3. / 4. / .
+NSUBST: - = ZE / 2=1 / 2=1. / 2 / 2=2. / 3. / 4. / .
 : elseif you.in_branch("Orc") then
 MONS:   any common demon / ugly thing / large abomination / worldbinder / raiju
 MONS:   shapeshifter / rakshasa / thrashing horror / wizard / hell hog \
@@ -2244,27 +2245,27 @@ MONS:   glowing shapeshifter / crystal guardian / tentacled monstrosity \
 # Define any branch-specific disto warriors and other substitutions.
 :     if you.in_branch("Shoals") then
 {{
-kmons("q = merfolk impaler ; " .. disto_weapon("impaler", "randart") ..
+kmons("Z = merfolk impaler ; " .. disto_weapon("impaler", "randart") ..
       "    . robe good_item | leather armour good_item")
 }}
-NSUBST: - = q / -
+NSUBST: - = Z / -
 :     elseif you.in_branch("Snake") then
 {{
-kmons("q = naga warrior ; " .. disto_weapon("warrior", "randart") ..
+kmons("Z = naga warrior ; " .. disto_weapon("warrior", "randart") ..
       "    . nothing w:95 | robe good_item w:95 | naga barding good_item" ..
       "    . nothing w:40 | heater shield good_item | scutum good_item")
 kmons("r = nagaraja ; " .. disto_weapon("warrior", "randart") ..
       "    . robe good_item w:40 | naga barding good_item")
 }}
-NSUBST: - = qr / -
+NSUBST: - = Zr / -
 :     elseif you.in_branch("Swamp") then
 {{
-kmons("q = spriggan druid ; " .. disto_weapon("druid", "randart") ..
+kmons("Z = spriggan druid ; " .. disto_weapon("druid", "randart") ..
       "    . robe good_item")
 }}
 # Potential druids need some trees!
 SUBST:  x = txxx
-NSUBST: - = Eq / -
+NSUBST: - = EZ / -
 :     elseif you.in_branch("Spider") then
 # No good humanoids to wield distortion in Spider, so let's go with a narrative
 # of the player getting banished by a zot trap.
@@ -2276,7 +2277,7 @@ SUBST:  fg = |*, h = *%, i = $%--, j= -
 NSUBST: - = 2=1 / 4=1. / 2=2 / 2=2. / 3 / 4 / .
 : elseif you.in_branch("Elf") then
 {{
-kmons("q = deep elf blademaster; " .. disto_weapon("blademaster", "randart") ..
+kmons("Z = deep elf blademaster; " .. disto_weapon("blademaster", "randart") ..
       " . " .. disto_weapon("blademaster",
                    crawl.one_chance_in(3) and "randart" or "good_item") ..
       " . leather armour good_item")
@@ -2289,10 +2290,10 @@ MONS:   wretched star / lurking horror / hellion / apocalypse crab
 MONS:   tentacled monstrosity / starcursed mass / daeva god:Xom / executioner \
         / profane servitor / hellephant / hell sentinel
 SUBST:  fg = |*, h = *, i = $%, j= -
-NSUBST: - = Fq / 3=1 / 3=1. / 2=2 / 2=2. / 3 / 4 / 4. / .
+NSUBST: - = FZ / 3=1 / 3=1. / 2=2 / 2=2. / 3 / 4 / 4. / .
 : elseif you.in_branch("Crypt") then
 {{
-kmons("q = ancient champion ; " .. disto_weapon("warrior", "randart") ..
+kmons("Z = ancient champion ; " .. disto_weapon("warrior", "randart") ..
       "    . chain mail good_item | plate armour good_item")
 }}
 MONS:   thrashing horror / rakshasa / very ugly thing / great orb of eyes \
@@ -2302,10 +2303,10 @@ MONS:   lurking horror / wretched star / hellion / apocalypse crab
 MONS:   tentacled monstrosity / starcursed mass / daeva god:Xom / executioner \
         / profane servitor / hellephant / hell sentinel
 SUBST:  fgh = |*, i = *%, j= $%--
-NSUBST: - = q / 3=1 / 4=1. / 2=2 / 2=2. / 3 / 3. / 4 / 4. / .
+NSUBST: - = Z / 3=1 / 4=1. / 2=2 / 2=2. / 3 / 3. / 4 / 4. / .
 : elseif you.in_branch("Depths") then
 {{
-kmons("q = spriggan defender; " .. disto_weapon("defender", "randart") ..
+kmons("Z = spriggan defender; " .. disto_weapon("defender", "randart") ..
       "    . robe good_item  . buckler good_item")
 kmons("r = tengu reaver; " .. disto_weapon("knight", "randart") ..
       "    . scale mail good_item  . buckler good_item")
@@ -2318,10 +2319,10 @@ MONS:   lurking horror / wretched star / hellion / apocalypse crab \
         / starcursed mass
 MONS:   ancient lich / hellephant / hell sentinel
 SUBST:  fgh = |*, i = *, j= %$
-NSUBST: - = Hqr / 4=1 / 4=1. / 2=2 / 2=2. / 3 / 3. / 4 / 4. / .
+NSUBST: - = HZr / 4=1 / 4=1. / 2=2 / 2=2. / 3 / 3. / 4 / 4. / .
 : elseif you.in_branch("Zot") then
 {{
-kmons("q = draconian knight; " .. disto_weapon("knight", "randart") ..
+kmons("Z = draconian knight; " .. disto_weapon("knight", "randart") ..
       "    . cloak good_item . heater shield good_item | scutum good_item")
 kmons("r = killer klown; club ego:distortion plus:" ..
        tostring(8 + crawl.random2(5)))
@@ -2335,7 +2336,7 @@ MONS:   lurking horror / wretched star / hellion / apocalypse crab \
         / starcursed mass
 MONS:   ancient lich / hellephant / hell sentinel
 SUBST:  fghij = |*
-NSUBST: - = qr / 4=1 / 4=1. / 2=2 / 3=2. / 3 / 3. / 4 / 2=4. / .
+NSUBST: - = Zr / 4=1 / 4=1. / 2=2 / 3=2. / 3 / 3. / 4 / 2=4. / .
 : end
 MARKER: P = lua:transp_loc("abyssal_escape_entry")
 MARKER: Q = lua:transp_dest_loc("abyssal_escape_entry")
@@ -2348,21 +2349,21 @@ RTILE:  x = wall_abyss
 : ghost_setup(_G)
 MAP
      ....
-   ...cc..  ..P..
- ...Pcccc....cnc.
-..ccnc-pcc..ccQc.
-.cc-Q-a-QnP.cp-c..
-.c-aaappcc..cc-cc.
-.cc-apccc...cc-pc.
-..cc-pc....cc-apc.
-..ccp-ccPcccp-pcc.
-.ccpaa-cncpp-ccc..
-PnQ-aaa-Q-aaQnP..
-.cc-aaaaa-aa-cc..
-..cc-aap-Q--a-cc..
- ..c-aa-cnccpa-cc.
- .ccp--ccP.cppa-c.
- .cpQccc...cccQcc.
- .ccnc.......cnc..
+   ...qq..  ..P..
+ ...Pqqqq....qqq.
+..qqqq-pqq..qqQq.
+.qq-Q-a-QqP.qp-q..
+.q-aaappqq..qq-qq.
+.qq-apqqq...qq-pq.
+..qq-pq....qq-apq.
+..qqp-qqPqqqp-pqq.
+.qqpaa-qqqpp-qqq..
+PqQ-aaa-Q-aaQqP..
+.qq-aaaaa-aa-qq..
+..qq-aap-Q--a-qq..
+ ..q-aa-qqqqpa-qq.
+ .qqp--qqP.qppa-q.
+ .qpQqqq...qqqQqq.
+ .qqqq.......qqq..
  ...P..     ..P..
 ENDMAP
