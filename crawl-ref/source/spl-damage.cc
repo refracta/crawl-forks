@@ -3141,7 +3141,10 @@ spret cast_fragmentation(int pow, const actor *caster,
     bolt beam;
 
     if (!in_bounds(target))
+    {
+        mpr("The outer wall of the dungeon cannot be deconstructed...");
         return spret::abort;
+    }
 
     if (!setup_fragmentation_beam(beam, pow, caster, target, false, &what, hole, destroy))
     {

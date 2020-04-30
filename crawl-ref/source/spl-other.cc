@@ -476,6 +476,12 @@ spret cast_darkness(int pow, bool fail)
 
 spret cast_SMD(const coord_def& target, int pow, bool fail)
 {
+    if (!in_bounds(target))
+    {
+        mpr("The outer wall of the dungeon cannot be deconstructed...");
+        return spret::abort;
+    }
+
     fail_check();
 
     dungeon_feature_type grid = grd(target);
