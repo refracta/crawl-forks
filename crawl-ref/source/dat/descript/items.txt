@@ -1080,15 +1080,13 @@ A staff that increases the power of ice spells cast by its wielder, and
 protects them from the effects of cold. If the wielder is skilled in Evocations
 and Ice Magic, they can freeze those struck by it.
 %%%%
-staff of conjuration
-
-A staff that increases the power of conjurations cast by its wielder.
-%%%%
 staff of death
 
 A staff that increases the power of necromantic spells cast by its wielder, and
 protects them from negative energy. If the wielder is skilled in Evocations and
-Necromancy, they can inflict great pain on those living souls they strike.
+Necromancy, they can assert control over the undead they strike; charming on if 
+their power overwhelm's the undead's magic resistance and dealing direct damage
+on failure.
 %%%%
 staff of earth
 
@@ -1116,19 +1114,11 @@ protects them from the effects of poison. If the wielder is skilled in
 Evocations and Poison Magic, they can poison creatures struck by it — even if
 the victims are normally resistant.
 %%%%
-staff of power
-
-A staff that provides an increased reservoir of magical power to its wielder.
-%%%%
 staff of life
 
 A staff that increases the power of summonings cast by its wielder; those touched
 by the end of the staff by a sufficiently skilled wielder will be healed and if
 summoned, have their time on this plane extended.
-%%%%
-staff of wizardry
-
-A staff that increases the ability of its wielder to use magical spells.
 %%%%
 steam dragon scales
 
