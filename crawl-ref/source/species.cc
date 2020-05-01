@@ -256,6 +256,33 @@ bool species_recommends_weapon(species_type species, weapon_type wpn)
 
 monster_type player_species_to_mons_species(species_type species)
 {
+    if (you.species == SP_DRACONIAN)
+    {
+        switch (you.drac_colour)
+        {
+        case DR_BLACK:              return MONS_BLACK_DRACONIAN;
+        case DR_BLOOD:              return MONS_BLOOD_DRACONIAN;
+        case DR_BLUE:               return MONS_BLUE_DRACONIAN;
+        case DR_BONE:               return MONS_BONE_DRACONIAN;
+        case DR_BROWN:   default:   return MONS_DRACONIAN;
+        case DR_CYAN:               return MONS_CYAN_DRACONIAN;
+        case DR_GOLDEN:             return MONS_GOLDEN_DRACONIAN;
+        case DR_GREEN:              return MONS_GREEN_DRACONIAN;
+        case DR_LIME:               return MONS_LIME_DRACONIAN;
+        case DR_MAGENTA:            return MONS_MAGENTA_DRACONIAN;
+        case DR_OLIVE:              return MONS_OLIVE_DRACONIAN;
+        case DR_PEARL:              return MONS_PEARL_DRACONIAN;
+        case DR_PINK:               return MONS_PINK_DRACONIAN;
+        case DR_PLATINUM:           return MONS_PLATINUM_DRACONIAN;
+        case DR_PURPLE:             return MONS_PURPLE_DRACONIAN;
+        case DR_RED:                return MONS_RED_DRACONIAN;
+        case DR_SILVER:             return MONS_SILVER_DRACONIAN;
+        case DR_SCINTILLATING:      return MONS_SCINTILLATING_DRACONIAN;
+        case DR_TEAL:               return MONS_TEAL_DRACONIAN;
+        case DR_WHITE:              return MONS_WHITE_DRACONIAN;
+        }
+    }
+
     return get_species_def(species).monster_species;
 }
 

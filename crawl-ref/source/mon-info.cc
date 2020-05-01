@@ -1787,13 +1787,9 @@ bool monster_info::has_spells() const
     if (props.exists(SEEN_SPELLS_KEY))
         return true;
 
-    // Almost all draconians have breath spells.
-    if (mons_genus(draco_or_demonspawn_subspecies()) == MONS_DRACONIAN
-        && draco_or_demonspawn_subspecies() != MONS_GREY_DRACONIAN
-        && draco_or_demonspawn_subspecies() != MONS_DRACONIAN)
-    {
+    // All draconians have breath spells.
+    if (mons_genus(draco_or_demonspawn_subspecies()) == MONS_DRACONIAN)
         return true;
-    }
 
     const vector<mon_spellbook_type> books = get_spellbooks(*this);
 

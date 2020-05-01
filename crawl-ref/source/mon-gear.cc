@@ -604,14 +604,25 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
         { MONS_FRANCES,                 { NAGA_WEAPONS } },
         { MONS_HAROLD,                  { NAGA_WEAPONS } },
         { MONS_SKELETAL_WARRIOR,        { NAGA_WEAPONS } },
-        { MONS_PALE_DRACONIAN,          { NAGA_WEAPONS } },
+        { MONS_PINK_DRACONIAN,          { NAGA_WEAPONS } },
         { MONS_RED_DRACONIAN,           { NAGA_WEAPONS } },
         { MONS_WHITE_DRACONIAN,         { NAGA_WEAPONS } },
         { MONS_GREEN_DRACONIAN,         { NAGA_WEAPONS } },
         { MONS_BLACK_DRACONIAN,         { NAGA_WEAPONS } },
-        { MONS_YELLOW_DRACONIAN,        { NAGA_WEAPONS } },
+        { MONS_LIME_DRACONIAN,          { NAGA_WEAPONS } },
         { MONS_PURPLE_DRACONIAN,        { NAGA_WEAPONS } },
-        { MONS_GREY_DRACONIAN,          { NAGA_WEAPONS } },
+        { MONS_SILVER_DRACONIAN,        { NAGA_WEAPONS } },
+        { MONS_BLUE_DRACONIAN,          { NAGA_WEAPONS } },
+        { MONS_CYAN_DRACONIAN,          { NAGA_WEAPONS } },
+        { MONS_OLIVE_DRACONIAN,         { NAGA_WEAPONS } },
+        { MONS_BONE_DRACONIAN,          { NAGA_WEAPONS } },
+        { MONS_TEAL_DRACONIAN,          { NAGA_WEAPONS } },
+        { MONS_GOLDEN_DRACONIAN,        { NAGA_WEAPONS } },
+        { MONS_PEARL_DRACONIAN,         { NAGA_WEAPONS } },
+        { MONS_SCINTILLATING_DRACONIAN, { NAGA_WEAPONS } },
+        { MONS_BLOOD_DRACONIAN,         { NAGA_WEAPONS } },
+        { MONS_PLATINUM_DRACONIAN,      { NAGA_WEAPONS } },
+        { MONS_MAGENTA_DRACONIAN,       { NAGA_WEAPONS } },
         { MONS_TENGU,                   { NAGA_WEAPONS } },
         { MONS_NAGA_RITUALIST,
             { { { WPN_DAGGER,           12 },
@@ -695,6 +706,12 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
         { MONS_CENTAUR_WARRIOR,
             { { { WPN_SHORTBOW,         2 },
                 { WPN_LONGBOW,          1 },
+        } } },
+        { MONS_DRACONIAN_SHARPSHOOTER, 
+            { { { WPN_LONGBOW,          9 },
+                { WPN_FUSTIBALUS,       3 },
+                { WPN_TRIPLE_CROSSBOW,  1 },
+                { WPN_ARBALEST,         3 },
         } } },
         { MONS_FAUN,                    { FAUN_WEAPONS } },
         { MONS_SATYR,                   { FAUN_WEAPONS } },
@@ -1881,6 +1898,7 @@ int make_mons_armour(monster_type type, int level)
         item.sub_type  = ARM_ANIMAL_SKIN;
         break;
 
+    case MONS_DRACONIAN_SHARPSHOOTER:
     case MONS_DRACONIAN_SHIFTER:
     case MONS_DRACONIAN_SCORCHER:
     case MONS_DRACONIAN_ANNIHILATOR:

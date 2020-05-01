@@ -3793,27 +3793,73 @@ static string _describe_draconian(const monster_info& mi)
 
         switch (subsp)
         {
-        case MONS_BLACK_DRACONIAN:      description += "black ";   break;
-        case MONS_YELLOW_DRACONIAN:     description += "yellow ";  break;
-        case MONS_GREEN_DRACONIAN:      description += "green ";   break;
-        case MONS_PURPLE_DRACONIAN:     description += "purple ";  break;
-        case MONS_RED_DRACONIAN:        description += "red ";     break;
-        case MONS_WHITE_DRACONIAN:      description += "white ";   break;
-        case MONS_GREY_DRACONIAN:       description += "grey ";    break;
-        case MONS_PALE_DRACONIAN:       description += "pale ";    break;
-        default:
-            break;
+        case MONS_RED_DRACONIAN:            description += "fiery red";                 break;
+        case MONS_WHITE_DRACONIAN:          description += "icy white";                 break;
+        case MONS_GREEN_DRACONIAN:          description += "lurid green";               break;
+        case MONS_CYAN_DRACONIAN:           description += "empereal azure";            break;
+        case MONS_LIME_DRACONIAN:           description += "slimy lime-green";          break;
+        case MONS_SILVER_DRACONIAN:         description += "gleaming silver";           break;
+        case MONS_BLUE_DRACONIAN:           description += "flickering blue";           break;
+        case MONS_PURPLE_DRACONIAN:         description += "rich purple";               break;
+        case MONS_PINK_DRACONIAN:           description += "fierce pink";               break;
+        case MONS_MAGENTA_DRACONIAN:        description += "hazy amethyst";             break;
+        case MONS_BLACK_DRACONIAN:          description += "shadowy dark";              break;
+        case MONS_OLIVE_DRACONIAN:          description += "sickly drab";               break;
+        case MONS_DRACONIAN:                description += "plain brown";               break;
+        case MONS_TEAL_DRACONIAN:           description += "spectral turquoise";        break;
+        case MONS_GOLDEN_DRACONIAN:         description += "imposing gold";             break;
+        case MONS_PEARL_DRACONIAN:          description += "opalescent pearl";          break;
+        case MONS_SCINTILLATING_DRACONIAN:  description += "scintillating rainbow";     break;
+        case MONS_BLOOD_DRACONIAN:          description += "gory crimson";              break;
+        case MONS_PLATINUM_DRACONIAN:       description += "lustrous platinum";         break;
+        default:                                                                        break;
         }
 
         description += "scales. ";
+
+        if (subsp == MONS_BONE_DRACONIAN)
+            return "It is a strong animated skeleton. Bits of bone fall from its mouth.";
     }
 
     switch (subsp)
     {
+    case MONS_PLATINUM_DRACONIAN:
+        description += "Its sheen appears to make it somehow faster.";
+        break;
+    case MONS_BLOOD_DRACONIAN:
+        description += "Blood appears to drip from its mouth.";
+        break;
+    case MONS_SCINTILLATING_DRACONIAN:
+        description += "It crackles and sparks random colours.";
+        break;
+    case MONS_PEARL_DRACONIAN:
+        description += "It radiates holy energy.";
+        break;
+    case MONS_GOLDEN_DRACONIAN:
+        description += "It's nostrils seems to be covered in a strange mix of flames and frost.";
+        break;
+    case MONS_TEAL_DRACONIAN:
+        description += "It flickers in and out of reality.";
+        break;
+    case MONS_OLIVE_DRACONIAN:
+        if (you.can_smell())
+            description += "A horrid stench of rotten flesh comes from it.";
+        else
+            description += "It seems to attract flies.";
+        break;
     case MONS_BLACK_DRACONIAN:
+        description += "A foreboding aura of negative eminates from it.";
+        break;
+    case MONS_PINK_DRACONIAN:
+        description += "Tiny butterflies encircle and land upon it.";
+        break;
+    case MONS_CYAN_DRACONIAN:           
+        description += "The air seems to bend around it.";            
+        break;
+    case MONS_BLUE_DRACONIAN:
         description += "Sparks flare out of its mouth and nostrils.";
         break;
-    case MONS_YELLOW_DRACONIAN:
+    case MONS_LIME_DRACONIAN:
         description += "Acidic fumes swirl around it.";
         break;
     case MONS_GREEN_DRACONIAN:
@@ -3828,11 +3874,11 @@ static string _describe_draconian(const monster_info& mi)
     case MONS_WHITE_DRACONIAN:
         description += "Frost pours from its nostrils.";
         break;
-    case MONS_GREY_DRACONIAN:
-        description += "Its scales and tail are adapted to the water.";
+    case MONS_SILVER_DRACONIAN:
+        description += "It shines with Zin's blessed silver.";
         break;
-    case MONS_PALE_DRACONIAN:
-        description += "It is cloaked in a pall of superheated steam.";
+    case MONS_MAGENTA_DRACONIAN:
+        description += "It is cloaked in a thick magical fog.";
         break;
     default:
         break;
@@ -4748,17 +4794,29 @@ void get_monster_db_desc(const monster_info& mi, describe_info &inf,
 
     switch (mi.type)
     {
+    case MONS_BLACK_DRACONIAN:
+    case MONS_PINK_DRACONIAN:
+    case MONS_LIME_DRACONIAN:
+    case MONS_GREEN_DRACONIAN:
+    case MONS_PURPLE_DRACONIAN:
     case MONS_RED_DRACONIAN:
     case MONS_WHITE_DRACONIAN:
-    case MONS_GREEN_DRACONIAN:
-    case MONS_PALE_DRACONIAN:
-    case MONS_BLACK_DRACONIAN:
-    case MONS_YELLOW_DRACONIAN:
-    case MONS_PURPLE_DRACONIAN:
-    case MONS_GREY_DRACONIAN:
+    case MONS_SILVER_DRACONIAN:
+    case MONS_BLUE_DRACONIAN:
+    case MONS_CYAN_DRACONIAN:
+    case MONS_OLIVE_DRACONIAN:
+    case MONS_BONE_DRACONIAN:
+    case MONS_TEAL_DRACONIAN:
+    case MONS_GOLDEN_DRACONIAN:
+    case MONS_PEARL_DRACONIAN:
+    case MONS_SCINTILLATING_DRACONIAN:
+    case MONS_BLOOD_DRACONIAN:
+    case MONS_PLATINUM_DRACONIAN:
+    case MONS_MAGENTA_DRACONIAN:
     case MONS_DRACONIAN_SHIFTER:
     case MONS_DRACONIAN_SCORCHER:
     case MONS_DRACONIAN_ANNIHILATOR:
+    case MONS_DRACONIAN_SHARPSHOOTER:
     case MONS_DRACONIAN_STORMCALLER:
     case MONS_DRACONIAN_MONK:
     case MONS_DRACONIAN_KNIGHT:

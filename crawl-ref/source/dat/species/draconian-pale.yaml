@@ -1,5 +1,5 @@
 enum: SP_PALE_DRACONIAN
-monster: MONS_PALE_DRACONIAN
+monster: MONS_MAGENTA_DRACONIAN
 name: "Pale Draconian"
 short_name: "Dr"
 adjective: "Draconian"

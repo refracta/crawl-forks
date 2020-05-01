@@ -1143,15 +1143,26 @@ static int _draconian_colour(int race, int level)
     {
         switch (race)
         {
-        case MONS_DRACONIAN:        return 0;
-        case MONS_BLACK_DRACONIAN:  return 1;
-        case MONS_YELLOW_DRACONIAN: return 2;
-        case MONS_GREY_DRACONIAN:   return 3;
-        case MONS_GREEN_DRACONIAN:  return 4;
-        case MONS_PALE_DRACONIAN:   return 5;
-        case MONS_PURPLE_DRACONIAN: return 6;
-        case MONS_RED_DRACONIAN:    return 7;
-        case MONS_WHITE_DRACONIAN:  return 8;
+        case MONS_DRACONIAN:                    return 0;
+        case MONS_BLACK_DRACONIAN:              return 1;
+        case MONS_PINK_DRACONIAN:               return 2;
+        case MONS_LIME_DRACONIAN:               return 3;
+        case MONS_GREEN_DRACONIAN:              return 4;
+        case MONS_PURPLE_DRACONIAN:             return 5;
+        case MONS_RED_DRACONIAN:                return 6;
+        case MONS_WHITE_DRACONIAN:              return 7;
+        case MONS_SILVER_DRACONIAN:             return 8;
+        case MONS_BLUE_DRACONIAN:               return 9;
+        case MONS_CYAN_DRACONIAN:               return 10;
+        case MONS_OLIVE_DRACONIAN:              return 11;
+        case MONS_BONE_DRACONIAN:               return 12;
+        case MONS_TEAL_DRACONIAN:               return 13;
+        case MONS_GOLDEN_DRACONIAN:             return 14;
+        case MONS_PEARL_DRACONIAN:              return 15;
+        case MONS_SCINTILLATING_DRACONIAN:      return 16;
+        case MONS_BLOOD_DRACONIAN:              return 17;
+        case MONS_PLATINUM_DRACONIAN:           return 18;
+        case MONS_MAGENTA_DRACONIAN:            return 19;
         }
     }
     switch (you.drac_colour)

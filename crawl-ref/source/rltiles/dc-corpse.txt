@@ -322,6 +322,60 @@ base/octopode1 CORPSE_OCTOPODE
 %finish CORPSE_DRACONIAN_BLACK
 
 %start
+%compose drcwing/drcwing_pink
+%compose base/draconian_pink_m
+%compose drchead/drchead_pink
+%finish CORPSE_DRACONIAN_PINK
+
+%start
+%compose drcwing/drcwing_pearl
+%compose base/draconian_pearl_m
+%compose drchead/drchead_pearl
+%finish CORPSE_DRACONIAN_PEARL
+
+%start
+%compose drcwing/drcwing_platinum
+%compose base/draconian_platinum_m
+%compose drchead/drchead_platinum
+%finish CORPSE_DRACONIAN_PLATINUM
+
+%start
+%compose drcwing/drcwing_magenta
+%compose base/draconian_magenta_m
+%compose drchead/drchead_magenta
+%finish CORPSE_DRACONIAN_MAGENTA
+
+%start
+%compose drcwing/drcwing_scintillating
+%compose base/draconian_scintillating_m
+%compose drchead/drchead_scintillating
+%finish CORPSE_DRACONIAN_SCINTILLATING
+
+%start
+%compose drcwing/drcwing_blood
+%compose base/draconian_blood_m
+%compose drchead/drchead_blood
+%finish CORPSE_DRACONIAN_BLOOD
+
+%start
+%compose drcwing/drcwing_olive
+%compose base/draconian_olive_m
+%compose drchead/drchead_olive
+%finish CORPSE_DRACONIAN_OLIVE
+
+%start
+%compose drcwing/drcwing_gold
+%compose base/draconian_gold_m
+%compose drchead/drchead_gold
+%finish CORPSE_DRACONIAN_GOLDEN
+
+%start
+%compose drcwing/drcwing_blue
+%compose base/draconian_blue_m
+%compose drchead/drchead_blue
+%finish CORPSE_DRACONIAN_BLUE
+
+%start
 %compose drcwing/drcwing_brown
 %compose base/draconian_f
 %compose drchead/drchead_brown
@@ -337,13 +391,13 @@ base/octopode1 CORPSE_OCTOPODE
 %compose drcwing/drcwing_silver
 %compose base/draconian_silver_f
 %compose drchead/drchead_silver
-%finish CORPSE_DRACONIAN_GREY
+%finish CORPSE_DRACONIAN_SILVER
 
 %start
 %compose drcwing/drcwing_cyan
 %compose base/draconian_cyan_f
 %compose drchead/drchead_cyan
-%finish CORPSE_DRACONIAN_PALE
+%finish CORPSE_DRACONIAN_CYAN
 
 %start
 %compose drcwing/drcwing_purple
@@ -367,7 +421,7 @@ base/octopode1 CORPSE_OCTOPODE
 %compose drcwing/drcwing_lime
 %compose base/draconian_lime_f
 %compose drchead/drchead_lime
-%finish CORPSE_DRACONIAN_YELLOW
+%finish CORPSE_DRACONIAN_LIME
 
 # Demonspawn ('6')
 %sdir mon/humanoids/demonspawn

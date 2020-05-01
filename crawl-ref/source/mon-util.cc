@@ -2645,8 +2645,9 @@ static monster_type _random_mons_between(monster_type min, monster_type max)
 
 monster_type random_draconian_monster_species()
 {
+    // BCADDO: Random Choose Weighted?
     return _random_mons_between(MONS_FIRST_BASE_DRACONIAN,
-                                MONS_LAST_SPAWNED_DRACONIAN);
+                                MONS_LAST_BASE_DRACONIAN);
 }
 
 monster_type random_draconian_job()
@@ -2824,15 +2825,26 @@ mon_spell_slot drac_breath(monster_type drac_type)
     spell_type sp;
     switch (drac_type)
     {
-    case MONS_BLACK_DRACONIAN:   sp = SPELL_LIGHTNING_BOLT; break;
-    case MONS_YELLOW_DRACONIAN:  sp = SPELL_ACID_SPLASH; break;
-    case MONS_GREEN_DRACONIAN:   sp = SPELL_POISONOUS_CLOUD; break;
-    case MONS_PURPLE_DRACONIAN:  sp = SPELL_QUICKSILVER_BOLT; break;
-    case MONS_RED_DRACONIAN:     sp = SPELL_SEARING_BREATH; break;
-    case MONS_WHITE_DRACONIAN:   sp = SPELL_CHILLING_BREATH; break;
-    case MONS_DRACONIAN:
-    case MONS_GREY_DRACONIAN:    sp = SPELL_NO_SPELL; break;
-    case MONS_PALE_DRACONIAN:    sp = SPELL_STEAM_BALL; break;
+    case MONS_BLUE_DRACONIAN:           sp = SPELL_LIGHTNING_BOLT; break;
+    case MONS_BLACK_DRACONIAN:          sp = SPELL_BOLT_OF_DRAINING; break;
+    case MONS_CYAN_DRACONIAN:           sp = SPELL_WIND_BLAST; break;
+    case MONS_OLIVE_DRACONIAN:          sp = SPELL_MIASMA_BREATH; break;
+    case MONS_LIME_DRACONIAN:           sp = SPELL_ACID_SPLASH; break;
+    case MONS_PINK_DRACONIAN:           sp = SPELL_SUMMON_BUTTERFLIES; break;
+    case MONS_GREEN_DRACONIAN:          sp = SPELL_POISONOUS_CLOUD; break;
+    case MONS_PURPLE_DRACONIAN:         sp = SPELL_QUICKSILVER_BOLT; break;
+    case MONS_RED_DRACONIAN:            sp = SPELL_SEARING_BREATH; break;
+    case MONS_WHITE_DRACONIAN:          sp = SPELL_CHILLING_BREATH; break;
+    case MONS_DRACONIAN:                sp = SPELL_SLUG_DART; break; // BCADDO: (basically right but reflavour)
+    case MONS_SILVER_DRACONIAN:         sp = SPELL_METAL_SPLINTERS; break; // BCADDO: Silver Breath.
+    case MONS_BONE_DRACONIAN:           sp = SPELL_METAL_SPLINTERS; break; // BCADDO: (basically right but reflavour)
+    case MONS_TEAL_DRACONIAN:           sp = SPELL_SPECTRAL_CLOUD; break;
+    case MONS_GOLDEN_DRACONIAN:         sp = SPELL_CRYSTAL_BOLT; break; // Monster cheats! haha (Leave this or unique spell?)
+    case MONS_PEARL_DRACONIAN:          sp = SPELL_HOLY_BREATH; break;
+    case MONS_SCINTILLATING_DRACONIAN:  sp = SPELL_CHAOS_BREATH; break; // BCADDO: Chaos Bolt, not chaos clouds.
+    case MONS_BLOOD_DRACONIAN:          sp = SPELL_NO_SPELL; break; // BCADDO.
+    case MONS_PLATINUM_DRACONIAN:       sp = SPELL_NO_SPELL; break; // BCADDO.
+    case MONS_MAGENTA_DRACONIAN:        sp = SPELL_STEAM_BALL; break;
 
     default:
         die("Invalid draconian subrace: %d", drac_type);
@@ -3185,11 +3197,9 @@ void ugly_thing_apply_uniform_band_colour(mgen_data &mg,
 
 static const char *drac_colour_names[] =
 {
-    "black",
-#if TAG_MAJOR_VERSION == 34
-    "",
-#endif
-    "yellow", "green", "purple", "red", "white", "grey", "pale"
+    "black", "pink", "lime", "green", "purple", "red", "white", "silver", 
+    "blue", "cyan", "olive", "bone", "teal", "golden", "pearl", 
+    "scintillating", "blood", "platinum", "magenta"
 };
 
 string draconian_colour_name(monster_type mon_type)
@@ -3461,7 +3471,7 @@ static habitat_type _mons_class_habitat(monster_type mc,
         // XXX: No class equivalent of monster::body_size(PSIZE_BODY)!
         size_type st = (me ? me->size
                            : get_monster_data(MONS_PROGRAM_BUG)->size);
-        if (ht == HT_LAND && st >= SIZE_GIANT || mc == MONS_GREY_DRACONIAN)
+        if (ht == HT_LAND && st >= SIZE_GIANT)
             ht = HT_AMPHIBIOUS;
     }
     return ht;

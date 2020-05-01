@@ -60,12 +60,13 @@ void draconian_change_colour(monster* drac)
     if (mons_genus(drac->type) != MONS_DRACONIAN)
         return;
 
+    // BCADDO: Return here shortly.
     drac->base_monster = random_choose(MONS_RED_DRACONIAN,
                                        MONS_WHITE_DRACONIAN,
                                        MONS_BLACK_DRACONIAN,
                                        MONS_GREEN_DRACONIAN,
                                        MONS_PURPLE_DRACONIAN,
-                                       MONS_YELLOW_DRACONIAN);
+                                       MONS_LIME_DRACONIAN);
     drac->colour = mons_class_colour(drac->base_monster);
 
     // Get rid of the old breath weapon first.

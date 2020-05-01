@@ -1,5 +1,5 @@
 enum: SP_GREY_DRACONIAN
-monster: MONS_GREY_DRACONIAN
+monster: MONS_SILVER_DRACONIAN
 name: "Grey Draconian"
 short_name: "Dr"
 adjective: "Draconian"

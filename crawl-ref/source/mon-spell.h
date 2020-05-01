@@ -680,6 +680,14 @@ static const mon_spellbook mspell_list[] =
       }
     },
 
+    {  MST_DRACONIAN_SHARPSHOOTER,
+      {
+        { SPELL_PORTAL_PROJECTILE, 75, MON_SPELL_WIZARD },
+        { SPELL_DEFLECT_MISSILES, 15, MON_SPELL_WIZARD },
+        { SPELL_BLINK_RANGE, 15, MON_SPELL_WIZARD },
+      }
+    },
+
     // ('s') Spiders and insects.
     {  MST_JUMPING_SPIDER,
       {
