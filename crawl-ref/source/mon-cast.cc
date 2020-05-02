@@ -255,7 +255,6 @@ static const map<spell_type, mons_spell_logic> spell_to_logic = {
         _selfench_beam_setup(BEAM_TELEPORT),
     } },
     { SPELL_BREATHE_DART, _conjuration_logic(SPELL_BREATHE_DART) },
-    { SPELL_BREATHE_VAMPIRIC, _conjuration_logic(SPELL_BREATHE_VAMPIRIC) },
     { SPELL_VAMPIRIC_DRAINING, {
         [](const monster &caster)
         {

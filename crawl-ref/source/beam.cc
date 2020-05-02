@@ -431,7 +431,7 @@ void init_zap_index()
 
 static const zap_info* _seek_zap(zap_type z_type)
 {
-    //ASSERT_RANGE(z_type, 0, NUM_ZAPS);
+    ASSERT_RANGE(z_type, 0, NUM_ZAPS);
     if (zap_index[z_type] == -1)
         return nullptr;
     else
