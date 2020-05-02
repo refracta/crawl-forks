@@ -3518,6 +3518,8 @@ bool mi_wall_shielded(const monster_info& m)
 
 habitat_type mons_primary_habitat(const monster& mon)
 {
+    if (mons_is_draconian_job(mon.type))
+        return mons_class_primary_habitat(draco_or_demonspawn_subspecies(mon));
     return mons_class_primary_habitat(mons_base_type(mon));
 }
 
@@ -4270,9 +4272,9 @@ bool mons_class_can_pass(monster_type mc, const dungeon_feature_type grid)
         return mc == MONS_ELDRITCH_TENTACLE
                || mc == MONS_ELDRITCH_TENTACLE_SEGMENT;
     }
+
     if (mons_class_primary_habitat(mc) == HT_INCORPOREAL)
         return true;
-
 
     return !feat_is_solid(grid);
 }

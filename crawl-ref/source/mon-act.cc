@@ -3201,7 +3201,9 @@ bool mon_can_move_to_pos(const monster* mons, const coord_def& delta,
            && feat_is_solid(target_grid) && !feat_is_permarock(target_grid)
            && !feat_is_critical(target_grid)
         || (mons_class_primary_habitat(mons->type) == HT_INCORPOREAL 
-            || mons_class_primary_habitat(mons->type) == HT_STEEL)
+            || mons_class_primary_habitat(mons->type) == HT_STEEL
+            || mons_is_draconian_job(mons->type) 
+            && mons_class_primary_habitat(draco_or_demonspawn_subspecies(*mons)) == HT_INCORPOREAL)
             && !feat_is_permarock(target_grid) && !feat_is_endless(target_grid)
             && !cell_is_runed(targ)
         || feat_is_tree(target_grid) && mons_flattens_trees(*mons)

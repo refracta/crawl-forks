@@ -1064,7 +1064,9 @@ bool can_go_straight(const monster* mon, const coord_def& p1,
             return false;
     }
     else if (mons_class_primary_habitat (mon->type) == HT_STEEL
-          || mons_class_primary_habitat(mon->type) == HT_INCORPOREAL)
+          || mons_class_primary_habitat(mon->type) == HT_INCORPOREAL
+          || mons_is_draconian_job(mon->type)
+        && mons_class_primary_habitat(draco_or_demonspawn_subspecies(*mon)) == HT_INCORPOREAL)
     {
         if (!find_ray(p1, p2, ray, opacity_steel()))
             return false;
