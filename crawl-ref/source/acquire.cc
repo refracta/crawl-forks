@@ -735,8 +735,12 @@ static int _find_acquirement_subtype(object_class_type &class_wanted,
     COMPILE_CHECK(ARRAYSZ(_subtype_finders) == NUM_OBJECT_CLASSES);
     ASSERT(class_wanted != OBJ_RANDOM);
 
-    if (class_wanted == OBJ_ARMOURS && (you.species == SP_FELID || you.species == SP_FAIRY))
+    if (class_wanted == OBJ_ARMOURS &&
+        (you.species == SP_FELID || you.species == SP_FAIRY
+            || (you.species == SP_OCTOPODE && !you_can_wear(EQ_HELMET))))
+    {
         return OBJ_RANDOM;
+    }
 
     int type_wanted = OBJ_RANDOM;
 
