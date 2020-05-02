@@ -366,7 +366,8 @@ static bool _lightning_rod()
 
 /**
  * Spray lightning in all directions around the player.
- *
+ * BCADNOTE: This is no longer used; but I might consider restoring it as an evocable again.
+ * kept for that potential future use.
  * Quantity, range & power increase with level.
  */
 void black_drac_breath()

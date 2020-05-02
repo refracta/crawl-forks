@@ -3815,7 +3815,7 @@ static string _describe_draconian(const monster_info& mi)
         default:                                                                        break;
         }
 
-        description += "scales. ";
+        description += " scales. ";
 
         if (subsp == MONS_BONE_DRACONIAN)
             return "It is a strong animated skeleton. Bits of bone fall from its mouth.";

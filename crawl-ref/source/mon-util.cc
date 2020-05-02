@@ -2783,6 +2783,14 @@ unique_books get_unique_spells(const monster_info &mi,
                 drac_breath(mi.draco_or_demonspawn_subspecies());
             if (breath.flags & flags && breath.spell != SPELL_NO_SPELL)
                 slots.push_back(breath);
+
+            // Magenta Draconians Repel Missiles, Draconian Sharpshooters Deflect them. No need for both spells.
+            if (mi.draco_or_demonspawn_subspecies() == MONS_MAGENTA_DRACONIAN
+                && mi.type != MONS_DRACONIAN_SHARPSHOOTER)
+            {
+                slots.push_back(mon_spell_slot(SPELL_REPEL_MISSILES, 52, MON_SPELL_NATURAL));
+            }
+
             // No other spells; quit right away.
             if (book == MST_NO_SPELLS)
             {

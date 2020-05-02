@@ -392,8 +392,11 @@ void change_monster_type(monster* mons, monster_type targetc)
 
     mons->ench_countdown = old_ench_countdown;
 
-    if (mons_class_flag(mons->type, M_INVIS))
+    if (mons_class_flag(mons->type, M_INVIS) ||
+        (mons_is_draconian_job(mons->type) && draco_or_demonspawn_subspecies(*mons) == MONS_BLACK_DRACONIAN))
+    {
         mons->add_ench(ENCH_INVIS);
+    }
 
     mons->hit_points = mons->max_hit_points * old_hp / old_hp_max
                        + random2(mons->max_hit_points);

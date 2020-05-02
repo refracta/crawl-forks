@@ -486,8 +486,11 @@ static void _dispellable_monster_buffs(const monster &mon,
     }
 
     // special-case invis, to avoid hitting naturally invis monsters.
-    if (mon.has_ench(ENCH_INVIS) && !mons_class_flag(mon.type, M_INVIS))
+    if (mon.has_ench(ENCH_INVIS) && !mons_class_flag(mon.type, M_INVIS) &&
+        !(mons_is_draconian_job(mon.type) && draco_or_demonspawn_subspecies(mon) == MONS_BLACK_DRACONIAN))
+    {
         buffs.push_back(ENCH_INVIS);
+    }
 }
 
 

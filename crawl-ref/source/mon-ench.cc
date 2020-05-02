@@ -1591,8 +1591,11 @@ void monster::apply_enchantment(const mon_enchant &me)
         break;
 
     case ENCH_INVIS:
-        if (!mons_class_flag(type, M_INVIS))
+        if (!mons_class_flag(type, M_INVIS) &&
+            !(mons_is_draconian_job(type) && draco_or_demonspawn_subspecies(*this) == MONS_BLACK_DRACONIAN))
+        {
             decay_enchantment(en);
+        }
         break;
 
     case ENCH_SUBMERGED:
