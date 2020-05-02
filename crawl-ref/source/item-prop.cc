@@ -1841,6 +1841,9 @@ int get_vorpal_type(const item_def &item)
 {
     int ret = DVORP_NONE;
 
+    if (item.is_type(OBJ_ARMOURS, ARM_CLAW))
+        ret = DVORP_CLAWING;
+
     if (item.base_type == OBJ_WEAPONS)
         ret = (Weapon_prop[Weapon_index[item.sub_type]].dam_type & DAMV_MASK);
 
