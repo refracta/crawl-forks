@@ -2149,6 +2149,7 @@ static spret _do_ability(const ability_def& abil, bool fail)
         case ABIL_BREATHE_CHAOS:
             zap = ZAP_BREATHE_CHAOS;
             m   = "You breathe a bolt of seething chaos.";
+            beam.origin_spell = SPELL_BREATHE_CHAOTIC;
             break;
 
         case ABIL_BREATHE_FROST:

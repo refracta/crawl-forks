@@ -4004,7 +4004,7 @@ TILEG_ERROR,
 },
 
 {
-    SPELL_BREATHE_DART, "Breathe Dart Shot", "",
+    SPELL_BREATHE_DART, "Breathe Dart", "",
     spschool::earth | spschool::evocation,
     spflag::dir_or_target | spflag::needs_tracer | spflag::monster,
     1,

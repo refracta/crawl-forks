@@ -7656,9 +7656,12 @@ void mons_cast_noise(monster* mons, const bolt &pbolt,
 {
     bool force_silent = false;
 
-    if (mons->type == MONS_SHADOW_DRAGON)
+    if (mons->type == MONS_SHADOW_DRAGON ||
+        (mons_genus(mons->type) == MONS_DRACONIAN && draco_or_demonspawn_subspecies(*mons) == MONS_BLACK_DRACONIAN))
+    {
         // Draining breath is silent.
         force_silent = true;
+    }
 
     const bool unseen    = !you.can_see(*mons);
     const bool silent    = silenced(mons->pos()) || force_silent;

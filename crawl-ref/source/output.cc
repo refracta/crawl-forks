@@ -2712,7 +2712,9 @@ string mutation_overview()
                 current = "(" + current + ")";
             if (lowered)
                 current = "<darkgrey>" + current + "</darkgrey>";
-            mutations.push_back(current);
+
+            const string CONSTCURRENT = current;
+            mutations.push_back(CONSTCURRENT);
         }
     }
 

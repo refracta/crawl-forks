@@ -2858,6 +2858,16 @@ void bolt::affect_endpoint()
             place_cloud(CLOUD_FIRE, pos(), 5 + random2(5), agent());
         break;
 
+    case SPELL_BREATHE_CHAOTIC:
+        if (!path_taken.empty())
+            place_cloud(chaos_cloud(), pos(), 10 + random2(5), agent(), 3);
+        for (adjacent_iterator ai(pos()); ai; ++ai)
+        {
+            if (!one_chance_in(3))
+                place_cloud(chaos_cloud(), *ai, 5 + random2(5), agent(), 3);
+        }
+        break;
+
     case SPELL_MAGIC_CANDLE:
     {
         if (!hit_something)

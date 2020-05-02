@@ -285,6 +285,50 @@ Searing Breath cast
 
 @The_monster@ breathes @beam@ @at@ @target@.
 %%%%%
+Spectral Cloud natural cast
+
+@The_monster@ breathes a wave of spectral mist around @target@.
+%%%%
+Holy Breath natural cast
+
+@The_monster@ breathes a cleansing blast of sacred flames @at@ @target@.
+%%%%
+Bone Shards natural cast
+
+@The_monster@ violently exhales sharpened bits of bone @at@ @target@.
+%%%%
+Silver Splinters natural cast
+
+@The_monster@ violently exhales rough splinters of silver @at@ @target@.
+%%%%
+Triple Breath cast
+
+@The_monster@ exhales plumes of fire, frost and poison @at@ @target@.
+%%%%
+Miasma Breath natural cast
+
+@The_monster@ exhales a sickening wave of foul miasma around @target@.
+%%%%
+Summon Butterflies natural cast
+
+@The_monster@ exhales a sparkly dust that coalesces into butterflies.
+%%%%
+Chaotic Breath cast
+
+@The_monster@ exhales scintillating particles of pure chaos @at@ @target@.
+%%%%
+Vampiric Breath cast
+
+@The_monster@ exhales a wave of sinister vampiric fog around @target@.
+%%%%
+Radiation Breath draconian cast
+
+@The_monster@ exhales a wave of pure magical radiation @at@ @target@.
+%%%%
+Breathe Dart cast
+
+@The_monster@ spits out a magical stone dart @at@ @target@.
+%%%%
 Electrical Bolt cast
 
 @The_monster@ shoots out a bolt of @beam@ @at@ @target@!
