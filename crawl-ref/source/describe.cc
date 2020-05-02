@@ -2490,6 +2490,10 @@ string get_item_description(const item_def &item, bool verbose,
         }
         description << "\n\nIt falls into the 'Staves' category. ";
         description << _handedness_string(item);
+        description << "\n\n";
+        if (!is_artefact(item) && item.plus < 9)
+            description << "It can be maximally enchanted to +9. ";
+        description << "Its enchantment grants additive spellpower to the spells it enhances.";
         break;
 
     case OBJ_MISCELLANY:
