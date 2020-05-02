@@ -1212,7 +1212,8 @@ static void _shunt_monsters_out_of_walls()
                 {
                     if (mons_primary_habitat(m) == HT_ROCK ||
                         mons_primary_habitat(m) == HT_INCORPOREAL ||
-                        mons_primary_habitat(m) == HT_STEEL)
+                        mons_primary_habitat(m) == HT_STEEL ||
+                        m.type == MONS_SPECTRAL_THING)
                         break;
 
                     mprf(MSGCH_ERROR, "Error: monster %s in %s at (%d,%d)",
