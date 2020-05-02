@@ -853,6 +853,7 @@ static bool _cloud_has_negative_side_effects(cloud_type cloud)
     case CLOUD_CHAOS:
     case CLOUD_PETRIFY:
     case CLOUD_ACID:
+    case CLOUD_BLOOD:
     case CLOUD_NEGATIVE_ENERGY:
         return true;
     default:
@@ -927,6 +928,7 @@ bool actor_cloud_immune(const actor &act, cloud_type type)
             return act.res_acid() > 1;
         case CLOUD_STORM:
             return act.res_elec() >= 3;
+        case CLOUD_BLOOD:
         case CLOUD_NEGATIVE_ENERGY:
             return act.res_negative_energy() >= 3;
         case CLOUD_TORNADO:
@@ -1224,6 +1226,7 @@ static int _actor_cloud_damage(const actor *act,
     case CLOUD_SPECTRAL:
     case CLOUD_ACID:
     case CLOUD_NEGATIVE_ENERGY:
+    case CLOUD_BLOOD:
         final_damage =
             _cloud_damage_output(act, _cloud2beam(cloud.type),
                                  cloud_base_damage,
