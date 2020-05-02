@@ -6144,8 +6144,8 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
 
         if (you.can_see(*foe))
         {
-                mprf("The air %s twists around and %sstrikes %s%s%s",
-                        chaos ? "chaotically" : "",
+                mprf("The air %stwists around and %sstrikes %s%s%s",
+                        chaos ? "chaotically " : "",
                         foe->airborne() ? "violently " : "",
                         foe->name(DESC_THE).c_str(),
                         foe->airborne() ? " in flight" : "",
