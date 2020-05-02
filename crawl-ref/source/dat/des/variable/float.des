@@ -2506,7 +2506,7 @@ KMONS: P = green death / green draconian / nagaraja w:5 / swamp dragon / \
 KMONS: F = fire giant w:5 / fire dragon / fire elemental / red draconian / sun demon
 KMONS: I = frost giant w:5 / ice dragon / blizzard demon / white draconian / \
            ice dragon
-KMONS: E = titan w:5 / storm dragon / black draconian / ball lightning
+KMONS: E = titan w:5 / storm dragon / blue draconian / ball lightning
 KMONS: O = orc knight / orc sorcerer / orc warlord w:5 / orc high priest / \
            orc warrior
 KMONS: N = deep elf knight w:5 / deep elf archer w:5 / \
@@ -2701,7 +2701,7 @@ PLACE:   Depths:$
 WEIGHT:  5 (Depths:$, Geh), 10
 MONS:    hell knight
 : if you.where() == dgn.level_name(dgn.br_entrance("Zot")) then
-MONS:    yellow draconian, black draconian, ettin
+MONS:    teal draconian, bone draconian, ettin
 NSUBST:  2 = 2:2 / 2:3 / 2:4 / * = 222334
 : elseif you.in_branch("Depths") then
 MONS:    deep troll
@@ -3115,8 +3115,8 @@ KMONS:  7 = spriggan defender ; staff of fire | staff of cold | \
 KMONS:  8 = tengu reaver ; battleaxe ego:molten | great sword ego:freezing | \
                            halberd ego:electrocution | lajatang ego:vorpal . \
                            fire dragon scales | ice dragon scales
-KMONS:  9 = red draconian / white draconian / black draconian
-KMONS:  0 = red draconian monk / white draconian monk / black draconian monk
+KMONS:  9 = golden draconian / scintillating draconian / black draconian
+KMONS:  0 = golden draconian monk / scintillating draconian monk / black draconian monk
 KMONS:  ! = orb of fire / electric golem / ice fiend / iron giant
 KMONS:  & = ancient lich
 KITEM:  $ = $ no_pickup

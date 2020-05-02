@@ -248,13 +248,13 @@ SUBST:  - = ., D = +
 KFEAT:  O = enter_zot
 # easy: 1, 2
 : if crawl.coinflip() then
-MONS:   pale draconian, steam dragon
+MONS:   magenta draconian, steam dragon
 : else
-MONS:   grey draconian, wyvern
+MONS:   silver draconian, iron dragon
 : end
 # medium: 3, 4
 : if crawl.coinflip() then
-MONS:   yellow draconian, acid dragon
+MONS:   lime draconian, acid dragon
 : else
 MONS:   green draconian, swamp dragon
 : end
@@ -266,14 +266,14 @@ MONS:   white draconian, ice dragon
 : end
 # harder: 7, 8
 : if crawl.coinflip() then
-MONS:   black draconian
+MONS:   blue draconian
 KMONS:  8 = storm dragon
 : else
-MONS:   purple draconian
+MONS:   platinum draconian
 KMONS:  8 = quicksilver dragon
 : end
 # boss: 9, 0
-KMONS:  9 = nonbase draconian
+KMONS:  9 = golden draconian
 KMONS:  0 = golden dragon
 MAP
 ccc+ccccccccccccccccccc
@@ -786,7 +786,7 @@ NAME:   lemuel_draconian_sentries
 DEPTH:  Zot, !Zot:$
 ORIENT: float
 TAGS:   no_rotate uniq_draconian_sentries
-MONS:   red draconian scorcher / green draconian stormcaller / yellow draconian stormcaller
+MONS:   pearl draconian scorcher / bone draconian stormcaller / lime draconian stormcaller
 SUBST:  } = }:80 >, ) = ):80 > , ] = ]:80 >
 SUBST:  w:w., w=Ww
 KFEAT:  m = iron_grate
@@ -812,7 +812,7 @@ NAME:   lemuel_draconian_sentries_small
 DEPTH:  Zot, !Zot:$
 ORIENT: float
 TAGS:   no_rotate uniq_draconian_sentries
-MONS:   red draconian scorcher / green draconian stormcaller / yellow draconian stormcaller
+MONS:   golden draconian scorcher / pearl draconian stormcaller / lime draconian stormcaller
 SUBST:  } = }:80 >, ) = ):80 > , ] = ]:80 >
 SUBST:  w:w., w=Ww
 KFEAT:  m = iron_grate
@@ -838,8 +838,8 @@ ENDMAP
 NAME:   lemuel_acid_trip
 DEPTH:  Zot, !Zot:$
 ORIENT: centre
-MONS:   oklob plant, acid blob, jelly, yellow draconian
-MONS:   any nonbase yellow draconian
+MONS:   oklob plant, acid blob, jelly, lime draconian
+MONS:   any nonbase lime draconian
 SUBST:  1 = 1:2 .
 SUBST:  . = .:20 3:3 2:1
 SUBST:  } = }:80 >, ) = ):80 >, ] = ]:80 >
@@ -957,7 +957,14 @@ KMONS: M = patrolling red draconian att:neutral / \
       patrolling red draconian shifter att:neutral w:2 / \
       patrolling red draconian annihilator att:neutral w:2 / \
       patrolling red draconian knight att:neutral w:2 / \
-      patrolling red draconian monk att:neutral w:2
+      patrolling red draconian monk att:neutral w:2 / \
+	  patrolling golden draconian att:neutral / \
+      patrolling golden draconian scorcher att:neutral w:2 / \
+      patrolling golden draconian stormcaller att:neutral w:2 / \
+      patrolling golden draconian shifter att:neutral w:2 / \
+      patrolling golden draconian annihilator att:neutral w:2 / \
+      patrolling golden draconian knight att:neutral w:2 / \
+      patrolling golden draconian monk att:neutral w:2
 KFEAT: M = W
 KMONS: F = orb of fire att:neutral
 KFEAT: F = W
@@ -1717,8 +1724,8 @@ KMONS:   A = red very ugly thing
 KMONS:   B = red draconian
 KMONS:   C = balrug / nonbase red draconian w:6
 KMONS:   D = cyan very ugly thing
-KMONS:   E = black draconian
-KMONS:   F = electric golem / nonbase black draconian w:6
+KMONS:   E = blue draconian
+KMONS:   F = electric golem / nonbase blue draconian w:6
 KMONS:   G = green very ugly thing
 KMONS:   H = green draconian
 KMONS:   I = green death / nonbase green draconian w:6
@@ -1726,8 +1733,8 @@ KMONS:   J = white very ugly thing
 KMONS:   K = white draconian
 KMONS:   L = shard shrike / nonbase white draconian w:6
 KMONS:   M = brown very ugly thing
-KMONS:   N = yellow draconian
-KMONS:   O = acid blob / nonbase yellow draconian w:6
+KMONS:   N = lime draconian
+KMONS:   O = acid blob / nonbase lime draconian w:6
 KMONS:   Z = golden dragon / killer klown / Tiamat, golden dragon / killer klown band
 KITEM:   BEHKN = $ w:15 / % w:25 / *
 KITEM:   z = any good_item
@@ -2100,7 +2107,7 @@ DEPTH: Zot, !Zot:$
 ORIENT: float
 # The competitors:
 {{
-  local teams = { "black", "yellow", "green", "purple", "red", "white", }
+  local teams = { "black", "blue", "green", "purple", "red", "white", }
 
   local team1num = crawl.random2(#teams) + 1
   local team1 = teams[team1num]
@@ -2429,13 +2436,13 @@ NAME:   infiniplex_zot_generator
 TAGS:   no_pool_fixup no_item_gen no_monster_gen no_trap_gen
 DEPTH:  Zot, !Zot:$
 ORIENT: south
-MONS:   shock serpent w:12 / raiju / sixfirhy, black draconian
+MONS:   shock serpent w:12 / raiju / sixfirhy, blue draconian
 MONS:   war gargoyle / dancing weapon ; scimitar good_item / spark wasp w:5
-MONS:   black draconian monk / black draconian shifter / storm dragon
+MONS:   blue draconian monk / blue draconian shifter / storm dragon
 MONS:   ghost moth / moth of wrath / death cob / \
         tentacled monstrosity / killer klown band w:5
 MONS:   patrolling electric golem
-MONS:   patrolling black draconian annihilator ; cloak good_item . \
+MONS:   patrolling blue draconian annihilator ; cloak good_item . \
         rapier ego:electrocution
 KMONS:  zZ = ball lightning
 KMONS:  O = diamond obelisk
@@ -2685,10 +2692,10 @@ NSUBST:  A = 3 = 112 / 9 = 2. / *:.
 NSUBST:  B = 3 / 8 = 4. / *:.
 # The Magic act: An Ancient Lich and elec golems
 NSUBST:  C = 5 / 6 / 2 = 6. / *:.
-# The Acrobats: pale draconians, with some monks, and nets
+# The Acrobats: draconians, with some monks, and nets
 NSUBST:  D = 3 = qqp / 9 = p. / 9 = - / *:.
-KMONS:   p = grey draconian
-KMONS:   q = grey draconian monk
+KMONS:   p = base draconian
+KMONS:   q = draconian monk
 KFEAT:   - = net trap
 # The Beasts: moths and Dragons
 NSUBST:  E = 3 = r. / 6 = ss. / *:.
