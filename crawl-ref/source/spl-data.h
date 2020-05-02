@@ -1960,7 +1960,41 @@ static const struct spell_desc spelldata[] =
 },
 
 {
+    SPELL_SILVER_SPLINTERS, "Silver Splinters", "",
+    spschool::earth | spschool::evocation,
+    spflag::dir_or_target | spflag::monster | spflag::needs_tracer,
+    5,
+    0,
+    4, 4,
+    5, 0,
+    TILEG_METAL_SPLINTERS,
+},
+
+{
+    SPELL_BONE_SHARDS, "Bone Shards", "",
+    spschool::earth | spschool::evocation,
+    spflag::dir_or_target | spflag::monster | spflag::needs_tracer,
+    5,
+    0,
+    4, 4,
+    5, 0,
+    TILEG_METAL_SPLINTERS,
+},
+
+{
     SPELL_MIASMA_BREATH, "Miasma Breath", "",
+    spschool::necromancy | spschool::evocation,
+    spflag::dir_or_target | spflag::unclean | spflag::monster
+        | spflag::needs_tracer | spflag::cloud,
+    6,
+    0,
+    5, 5,
+    6, 0,
+    TILEG_MIASMA_BREATH,
+},
+
+{
+    SPELL_BREATHE_VAMPIRIC, "Vampiric Breath", "",
     spschool::necromancy | spschool::evocation,
     spflag::dir_or_target | spflag::unclean | spflag::monster
         | spflag::needs_tracer | spflag::cloud,
@@ -2099,10 +2133,46 @@ static const struct spell_desc spelldata[] =
 },
 
 {
+    SPELL_BREATHE_CHAOTIC, "Chaotic Breath", "",
+    spschool::random | spschool::evocation,
+    spflag::dir_or_target | spflag::monster | spflag::noisy
+        | spflag::needs_tracer,
+    5,
+    0,
+    5, 5,
+    5, 0,
+    TILEG_GENERIC_MONSTER_SPELL,
+},
+
+{
+    SPELL_BREATHE_RADIATION, "Radiation Breath", "",
+    spschool::random | spschool::evocation,
+    spflag::dir_or_target | spflag::monster | spflag::noisy
+        | spflag::needs_tracer,
+    5,
+    0,
+    5, 5,
+    5, 0,
+    TILEG_GENERIC_MONSTER_SPELL,
+},
+
+{
+    SPELL_TRIPLE_BREATH, "Triple Breath", "",
+    spschool::fire | spschool::ice | spschool::poison | spschool::evocation,
+    spflag::dir_or_target | spflag::monster | spflag::noisy
+        | spflag::needs_tracer | spflag::cloud,
+    5,
+    0,
+    5, 5,
+    5, 0,
+    TILEG_GENERIC_MONSTER_SPELL,
+},
+
+{
     SPELL_RADIATION_BREATH, "Radiation Breath", "",
     spschool::transmutation | spschool::evocation,
     spflag::dir_or_target | spflag::monster | spflag::noisy
-        | spflag::needs_tracer | spflag::cloud,
+        | spflag::needs_tracer,
     5,
     0,
     5, 5,
@@ -3934,7 +4004,7 @@ TILEG_ERROR,
 },
 
 {
-    SPELL_SLUG_DART, "Slug Dart", "",
+    SPELL_BREATHE_DART, "Breathe Dart Shot", "",
     spschool::earth | spschool::evocation,
     spflag::dir_or_target | spflag::needs_tracer | spflag::monster,
     1,

@@ -3228,7 +3228,7 @@ tileidx_t tileidx_bolt(const bolt &bolt)
         break;
 
     case CYAN:
-        if (bolt.name == "slug dart")
+        if (bolt.name == "dart")
             return TILE_BOLT_STONE_ARROW + dir;
         break;
 

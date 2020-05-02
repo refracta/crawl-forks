@@ -72,7 +72,7 @@ static pair<spell_type, zap_type> _spl_zaps[] =
     { SPELL_WAND_HASTING,           ZAP_WAND_HASTING },
 
     // monster-specific
-    { SPELL_SLUG_DART,              ZAP_SLUG_DART },
+    { SPELL_BREATHE_DART,           ZAP_BREATHE_DART },
     { SPELL_PRIMAL_WAVE,            ZAP_PRIMAL_WAVE },
     { SPELL_BLINKBOLT,              ZAP_BLINKBOLT },
     { SPELL_STEAM_BALL,             ZAP_BREATHE_STEAM },
@@ -84,6 +84,8 @@ static pair<spell_type, zap_type> _spl_zaps[] =
     { SPELL_DRAIN_MAGIC,            ZAP_DRAIN_MAGIC },
     { SPELL_HARPOON_SHOT,           ZAP_HARPOON_SHOT},
     { SPELL_THROW_PIE,              ZAP_THROW_PIE},
+    { SPELL_SILVER_SPLINTERS,       ZAP_BREATHE_SILVER},
+    { SPELL_BONE_SHARDS,            ZAP_BREATHE_BONE},
 
     // These are all for zap -> spell lookup.
     { SPELL_QUICKSILVER_BOLT,       ZAP_QUICKSILVER_BOLT },

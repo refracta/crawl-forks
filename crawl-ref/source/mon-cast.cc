@@ -254,7 +254,8 @@ static const map<spell_type, mons_spell_logic> spell_to_logic = {
         _fire_simple_beam,
         _selfench_beam_setup(BEAM_TELEPORT),
     } },
-    { SPELL_SLUG_DART, _conjuration_logic(SPELL_SLUG_DART) },
+    { SPELL_BREATHE_DART, _conjuration_logic(SPELL_BREATHE_DART) },
+    { SPELL_BREATHE_VAMPIRIC, _conjuration_logic(SPELL_BREATHE_VAMPIRIC) },
     { SPELL_VAMPIRIC_DRAINING, {
         [](const monster &caster)
         {
@@ -1510,6 +1511,43 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
         beam.is_explosion = true;
         break;
 
+    case SPELL_BREATHE_VAMPIRIC:
+        beam.name     = "vampiric fog";
+        beam.hit_verb = "engulf";
+        beam.damage   = dice_def(3, 4 + power / 24);
+        beam.colour   = RED;
+        beam.flavour  = BEAM_BLOOD;
+        beam.hit      = 17 + power / 20;
+        beam.pierce   = true;
+        break;
+
+    case SPELL_BREATHE_RADIATION:
+        beam.name     = "mutagenic blast";
+        beam.damage   = dice_def(3, 4 + power / 24);
+        beam.colour   = ETC_MUTAGENIC;
+        beam.flavour  = BEAM_IRRADIATE;
+        beam.hit      = 17 + power / 20;
+        beam.pierce   = true;
+        break;
+
+    case SPELL_TRIPLE_BREATH:
+        beam.name     = "elemental breath";
+        beam.damage   = dice_def(3, 4 + power / 24);
+        beam.colour   = ETC_CRYSTAL;
+        beam.flavour  = BEAM_PARADOXICAL;
+        beam.hit      = 17 + power / 20;
+        beam.pierce   = true;
+        break;
+
+    case SPELL_BREATHE_CHAOTIC:
+        beam.name     = "chaotic breath";
+        beam.damage   = dice_def(3, 4 + power / 24);
+        beam.colour   = ETC_JEWEL;
+        beam.flavour  = BEAM_CHAOTIC;
+        beam.hit      = 17 + power / 20;
+        beam.pierce   = true;
+        break;
+
     case SPELL_MIASMA_BREATH:      // death drake
         beam.name     = "foul vapour";
         beam.damage   = dice_def(3, 5 + power / 24);
@@ -1538,6 +1576,26 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
         beam.flavour    = BEAM_FRAG;
         beam.hit        = 19 + power / 30;
         beam.pierce     = true;
+        break;
+
+    case SPELL_SILVER_SPLINTERS:
+        beam.name = "spray of silver splinters";
+        beam.short_name = "silver splinters";
+        beam.damage = dice_def(3, 10 + power / 20);
+        beam.colour = ETC_SILVER;
+        beam.flavour = BEAM_SILVER_FRAG;
+        beam.hit = 19 + power / 30;
+        beam.pierce = true;
+        break;
+
+    case SPELL_BONE_SHARDS:
+        beam.name = "spray of bone shards";
+        beam.short_name = "bone shards";
+        beam.damage = dice_def(3, 12 + power / 20);
+        beam.colour = ETC_BONE;
+        beam.flavour = BEAM_FRAG;
+        beam.hit = 19 + power / 30;
+        beam.pierce = true;
         break;
 
     case SPELL_BLINK_OTHER:
@@ -8117,6 +8175,9 @@ static bool _ms_waste_of_time(monster* mon, mon_spell_slot slot)
     case SPELL_DEATH_RATTLE:
     case SPELL_MIASMA_BREATH:
         return !foe || foe->res_rotting() || no_clouds;
+
+    case SPELL_BREATHE_VAMPIRIC:
+        return !foe || _foe_should_res_negative_energy(foe) || no_clouds;
 
     case SPELL_DISPEL_UNDEAD:
         // [ds] How is dispel undead intended to interact with vampires?

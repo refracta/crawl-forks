@@ -105,6 +105,14 @@ int check_your_resists(int hurted, beam_type flavour, string source,
         kaux = beam->name;
     }
 
+    if (flavour == BEAM_PARADOXICAL)
+    {
+        if (grid_distance(coord_def(1, 1), you.pos()) % 2)
+            flavour = BEAM_FIRE;
+        else
+            flavour = BEAM_COLD;
+    }
+
     if (doEffects)
         maybe_melt_player_enchantments(flavour, hurted);
 
@@ -185,7 +193,7 @@ int check_your_resists(int hurted, beam_type flavour, string source,
 
     case BEAM_IRRADIATE:
         if (doEffects)
-            you.malmutate("magical radiation");
+            contaminate_player(2500 + random2(2500), true);
         break;
 
     case BEAM_POISON:

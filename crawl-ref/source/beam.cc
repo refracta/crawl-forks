@@ -431,7 +431,7 @@ void init_zap_index()
 
 static const zap_info* _seek_zap(zap_type z_type)
 {
-    ASSERT_RANGE(z_type, 0, NUM_ZAPS);
+    //ASSERT_RANGE(z_type, 0, NUM_ZAPS);
     if (zap_index[z_type] == -1)
         return nullptr;
     else
@@ -1607,6 +1607,16 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
     int original = hurted;
     string msg; // I hate putting this here since only one case uses it;
     // but it didn't play nice with putting it in the middle.
+    // BCADDO: We know how to fix this now...
+
+    if (pbolt.flavour == BEAM_PARADOXICAL)
+    {
+        pbolt.real_flavour = BEAM_PARADOXICAL;
+        if (grid_distance(coord_def(1, 1), you.pos()) % 2)
+            pbolt.flavour = BEAM_FIRE;
+        else
+            pbolt.flavour = BEAM_COLD;
+    }
 
     switch (pbolt.flavour)
     {
@@ -1953,6 +1963,10 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
                                                     : 2;
         mons->expose_to_element(pbolt.flavour, burn_power, false);
     }
+
+    // Reset!
+    if (pbolt.real_flavour == BEAM_PARADOXICAL)
+        pbolt.flavour = BEAM_PARADOXICAL;
 
     return hurted;
 }
@@ -2679,6 +2693,9 @@ cloud_type bolt::get_cloud_type() const
     if (origin_spell == SPELL_MIASMA_BREATH)
         return CLOUD_MIASMA;
 
+    if (origin_spell == SPELL_TRIPLE_BREATH)
+        return CLOUD_POISON;
+
     if (origin_spell == SPELL_FREEZING_CLOUD)
         return CLOUD_COLD;
 
@@ -3187,6 +3204,10 @@ void bolt::affect_place_clouds()
     if (flavour == BEAM_BLOOD)
         place_cloud(CLOUD_BLOOD, p, damage.roll() + 2, agent(), 2);
 
+    if (flavour == BEAM_PARADOXICAL)
+        place_cloud(grid_distance(coord_def(1, 1), p) % 2 ? CLOUD_COLD : CLOUD_FIRE, p, random2(5) + 2, agent());
+
+    // BCADDO: Beam Butterfly is still buggy. Replace.
     if (flavour == BEAM_BUTTERFLY && !defender)
         create_monster( mgen_data(MONS_BUTTERFLY, BEH_COPY, p, agent()->is_player() ? int{ MHITYOU } 
             : agent()->as_monster()->foe, MG_AUTOFOE).set_summoned(agent(), damage.roll(), SPELL_NO_SPELL, GOD_NO_GOD));
@@ -7137,6 +7158,7 @@ static string _beam_type_name(beam_type type)
     case BEAM_FRAG:                  return "fragments";
     case BEAM_SILVER_FRAG:           return "silver fragments";
     case BEAM_LAVA:                  return "magma";
+    case BEAM_PARADOXICAL:           return "freezing flame";
     case BEAM_ICE:                   // fallthrough
     case BEAM_FREEZE:                return "ice";
     case BEAM_ICY_DEVASTATION:       // fallthrough

@@ -2843,15 +2843,15 @@ mon_spell_slot drac_breath(monster_type drac_type)
     case MONS_PURPLE_DRACONIAN:         sp = SPELL_QUICKSILVER_BOLT; break;
     case MONS_RED_DRACONIAN:            sp = SPELL_SEARING_BREATH; break;
     case MONS_WHITE_DRACONIAN:          sp = SPELL_CHILLING_BREATH; break;
-    case MONS_DRACONIAN:                sp = SPELL_SLUG_DART; break; // BCADDO: (basically right but reflavour)
-    case MONS_SILVER_DRACONIAN:         sp = SPELL_METAL_SPLINTERS; break; // BCADDO: Silver Breath.
-    case MONS_BONE_DRACONIAN:           sp = SPELL_METAL_SPLINTERS; break; // BCADDO: (basically right but reflavour)
+    case MONS_DRACONIAN:                sp = SPELL_BREATHE_DART; break; 
+    case MONS_SILVER_DRACONIAN:         sp = SPELL_SILVER_SPLINTERS; break; 
+    case MONS_BONE_DRACONIAN:           sp = SPELL_BONE_SHARDS; break; 
     case MONS_TEAL_DRACONIAN:           sp = SPELL_SPECTRAL_CLOUD; break;
-    case MONS_GOLDEN_DRACONIAN:         sp = SPELL_CRYSTAL_BOLT; break; // Monster cheats! haha (Leave this or unique spell?)
+    case MONS_GOLDEN_DRACONIAN:         sp = SPELL_TRIPLE_BREATH; break;
     case MONS_PEARL_DRACONIAN:          sp = SPELL_HOLY_BREATH; break;
-    case MONS_SCINTILLATING_DRACONIAN:  sp = SPELL_CHAOS_BREATH; break; // BCADDO: Chaos Bolt, not chaos clouds.
-    case MONS_BLOOD_DRACONIAN:          sp = SPELL_NO_SPELL; break; // BCADDO.
-    case MONS_PLATINUM_DRACONIAN:       sp = SPELL_NO_SPELL; break; // BCADDO.
+    case MONS_SCINTILLATING_DRACONIAN:  sp = SPELL_BREATHE_CHAOTIC; break; 
+    case MONS_BLOOD_DRACONIAN:          sp = SPELL_BREATHE_VAMPIRIC; break; 
+    case MONS_PLATINUM_DRACONIAN:       sp = SPELL_BREATHE_RADIATION; break;
     case MONS_MAGENTA_DRACONIAN:        sp = SPELL_STEAM_BALL; break;
 
     default:
@@ -6052,26 +6052,23 @@ void set_ancestor_spells(monster &ancestor, bool notify)
         switch (you.drac_colour)
         {
         case DR_BLACK:          spell = SPELL_BOLT_OF_DRAINING;     break;
-        // case DR_BLOOD:           BCADDO.
+        case DR_BLOOD:          spell = SPELL_BREATHE_VAMPIRIC;     break;
         case DR_BLUE:           spell = SPELL_LIGHTNING_BOLT;       break;
-        // case DR_BONE:            BCADDO.
+        case DR_BONE:           spell = SPELL_BONE_SHARDS;          break;
         case DR_BROWN:          spell = SPELL_STONE_ARROW;          break;
         case DR_CYAN:           spell = SPELL_WIND_BLAST;           break;
-        case DR_GOLDEN:     // Special case, three breaths.
-            ancestor.spells.emplace_back(SPELL_SEARING_BREATH, 25, MON_SPELL_NATURAL | MON_SPELL_BREATH);
-            ancestor.spells.emplace_back(SPELL_CHILLING_BREATH, 25, MON_SPELL_NATURAL | MON_SPELL_BREATH);
-            // Fallthrough
+        case DR_GOLDEN:         spell = SPELL_TRIPLE_BREATH;        break;
         case DR_GREEN:          spell = SPELL_POISONOUS_CLOUD;      break;
         case DR_LIME:           spell = SPELL_ACID_SPLASH;          break;
-        //case DR_MAGENTA:          BCADDO.
+        case DR_MAGENTA:        spell = SPELL_STEAM_BALL;           break;
         case DR_OLIVE:          spell = SPELL_MIASMA_BREATH;        break;
         case DR_PEARL:          spell = SPELL_HOLY_BREATH;          break;
         case DR_PINK:           spell = SPELL_SUMMON_BUTTERFLIES;   break;
         case DR_PLATINUM:       spell = SPELL_IRRADIATE;            break;
         case DR_PURPLE:         spell = SPELL_QUICKSILVER_BOLT;     break;
         case DR_RED:            default:                            break;
-        //case DR_SCINTILLATING:    BCADDO.
-        case DR_SILVER:         spell = SPELL_METAL_SPLINTERS;      break;
+        case DR_SCINTILLATING:  spell = SPELL_BREATHE_CHAOTIC;      break;
+        case DR_SILVER:         spell = SPELL_SILVER_SPLINTERS;     break;
         case DR_TEAL:           spell = SPELL_GHOSTLY_FIREBALL;     break;
         case DR_WHITE:          spell = SPELL_CHILLING_BREATH;      break;
         }
