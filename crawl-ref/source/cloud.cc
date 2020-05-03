@@ -1358,7 +1358,7 @@ int actor_apply_cloud(actor *act)
              oppr_name.c_str(),
              cloud.cloud_name().c_str());
 
-        if (cloud.type == CLOUD_BLOOD && oppressor)
+        if (cloud.type == CLOUD_BLOOD && oppressor && (oppressor != act))
         {
             int healed = random2(final_damage);
             oppressor->heal(healed);

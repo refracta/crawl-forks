@@ -1145,7 +1145,45 @@ void cloud_strike(actor * caster, actor * foe, int damage)
         }
         break;
 
-    case CLOUD_BLOOD:   // BCADDO: Heal the cloud's agent?
+    case CLOUD_BLOOD:
+        damage = resist_adjust_damage(foe, BEAM_NEG, damage);
+        if (damage > 0)
+        {
+            foe->hurt(caster, damage, BEAM_NEG, KILLED_BY_BEAM,
+                "", "by the air");
+            if (foe->is_player())
+            {
+                actor * src = cloud_at(foe->pos())->agent();
+                string msg = make_stringf("You are stricken by the vampiric fog%s",
+                    attack_strength_punctuation(damage).c_str());
+                if (src)
+                {
+                    int heals = random2avg(damage, 3);
+                    src->heal(heals);
+                     msg += make_stringf(" %s draws strength from your wounds%s",
+                        src->name(DESC_THE).c_str(),
+                        attack_strength_punctuation(heals).c_str());
+                }
+                mpr(msg);
+            }
+            else
+            {
+                actor * src = cloud_at(foe->pos())->agent();
+                string msg = make_stringf(" is stricken by the vampiric fog%s",
+                    attack_strength_punctuation(damage).c_str());
+                if (src && src != foe)
+                {
+                    int heals = random2avg(damage, 3);
+                    src->heal(heals);
+                    msg += make_stringf(" %s draws strength from %s wounds%s",
+                        src->name(DESC_THE).c_str(),
+                        foe->pronoun(PRONOUN_POSSESSIVE).c_str(),
+                        attack_strength_punctuation(heals).c_str());
+                }
+                simple_monster_message(*foe->as_monster(), msg.c_str());
+            }
+        }
+        break;
     case CLOUD_NEGATIVE_ENERGY:
     case CLOUD_SPECTRAL:
         damage = resist_adjust_damage(foe, BEAM_NEG, damage);
