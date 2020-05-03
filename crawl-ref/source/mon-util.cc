@@ -2645,9 +2645,25 @@ static monster_type _random_mons_between(monster_type min, monster_type max)
 
 monster_type random_draconian_monster_species()
 {
-    // BCADDO: Random Choose Weighted?
-    return _random_mons_between(MONS_FIRST_BASE_DRACONIAN,
-                                MONS_LAST_BASE_DRACONIAN);
+    return random_choose_weighted(11, MONS_BLACK_DRACONIAN,
+                                   1, MONS_PINK_DRACONIAN,
+                                  11, MONS_LIME_DRACONIAN,
+                                   4, MONS_GREEN_DRACONIAN,
+                                  10, MONS_PURPLE_DRACONIAN,
+                                   8, MONS_RED_DRACONIAN,
+                                   8, MONS_WHITE_DRACONIAN,
+                                  10, MONS_SILVER_DRACONIAN,
+                                  12, MONS_BLUE_DRACONIAN,
+                                   3, MONS_CYAN_DRACONIAN,
+                                   8, MONS_OLIVE_DRACONIAN,
+                                   8, MONS_BONE_DRACONIAN,
+                                  12, MONS_TEAL_DRACONIAN,
+                                  12, MONS_GOLDEN_DRACONIAN,
+                                   8, MONS_PEARL_DRACONIAN,
+                                   8, MONS_SCINTILLATING_DRACONIAN,
+                                  12, MONS_BLOOD_DRACONIAN,
+                                  12, MONS_PLATINUM_DRACONIAN,
+                                   1, MONS_MAGENTA_DRACONIAN);
 }
 
 monster_type random_draconian_job()

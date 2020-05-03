@@ -1605,9 +1605,6 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
     // damage check only.
     // Do not print messages or apply any side effects!
     int original = hurted;
-    string msg; // I hate putting this here since only one case uses it;
-    // but it didn't play nice with putting it in the middle.
-    // BCADDO: We know how to fix this now...
 
     if (pbolt.flavour == BEAM_PARADOXICAL)
     {
@@ -1679,6 +1676,7 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
     {
         if (doFlavouredEffects)
         {
+            string msg;
             silver_damages_victim(mons, hurted, msg);
             if (!msg.empty())
                 mpr(msg);
