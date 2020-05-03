@@ -3461,6 +3461,9 @@ int mons_base_speed(const monster& mon, bool known)
         return mon.props[MON_SPEED_KEY];
     }
 
+    if (mons_is_draconian_job(mon.type))
+        return mons_class_base_speed(draco_or_demonspawn_subspecies(mon));
+
     if (mon.type == MONS_SPECTRAL_THING)
         return mons_class_base_speed(mons_zombie_base(mon));
 
@@ -6063,7 +6066,6 @@ void set_ancestor_spells(monster &ancestor, bool notify)
     if (you.species == SP_NAGA)
         ancestor.spells.emplace_back(SPELL_SPIT_POISON, 25, MON_SPELL_NATURAL | MON_SPELL_BREATH);
 
-    // BCADDO: Come back here after mirroring new draconians to enemy drakes to give correct breaths to ancestors.
     if (you.species == SP_DRACONIAN)
     {
         spell_type spell = SPELL_SEARING_BREATH; // Default for as of yet unhandled breaths.
