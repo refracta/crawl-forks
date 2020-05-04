@@ -380,7 +380,9 @@ static cglyph_t _get_cell_glyph_with_class(const map_cell& cell,
 
         if (cell.detected_monster())
         {
-            ASSERT(mi->type == MONS_SENSED);
+            // BCADDO: Restore this assert sometime.
+            if (mi->type != MONS_SENSED)
+                mpr("Minor Load Error.");
             if (mons_is_sensed(mi->base_type))
                 g.col = mons_class_colour(mi->base_type);
             else

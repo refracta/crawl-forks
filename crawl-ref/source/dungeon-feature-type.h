@@ -307,6 +307,7 @@ enum dungeon_feature_type
     DNGN_DEEP_SLIMY_WATER,
 
     DNGN_RUINED_PLINTH,
+    DNGN_ALTAR_B,
 
     NUM_FEATURES,
 };

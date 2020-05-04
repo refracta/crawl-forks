@@ -3225,6 +3225,7 @@ bool player_can_join_god(god_type which_god)
     if (you.species == SP_FAIRY && (which_god == GOD_DITHMENOS || which_god == GOD_TROG 
         || which_god == GOD_OKAWARU || which_god == GOD_WU_JIAN || which_god == GOD_YREDELEMNUL
         || which_god == GOD_HEPLIAKLQANA)) // Hep is temporary pending coding their special case.
+        // BCADDO: Hep for fairies.
         return false;
 
     if (which_god == GOD_GOZAG && you.gold < gozag_service_fee())

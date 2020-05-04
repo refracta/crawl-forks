@@ -3993,7 +3993,7 @@ TILEG_ERROR,
 },
 
 {
-    SPELL_ICEBLAST, "Iceblast Wand",  "",// If a Mon gets it as a non-wand spell; duplicate.
+    SPELL_ICEBLAST, "Iceblast Wand",  "", // If a Mon gets it as a non-wand spell; duplicate.
     spschool::ice | spschool::evocation,
     spflag::dir_or_target | spflag::needs_tracer,
     5,
