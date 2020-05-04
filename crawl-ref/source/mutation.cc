@@ -2288,8 +2288,7 @@ const char* mutation_name(mutation_type mut, bool allow_category, bool for_displ
 
     if (mut == MUT_MINOR_MARTIAL_APT_BOOST || mut == MUT_MAJOR_MARTIAL_APT_BOOST || mut == MUT_DEFENSIVE_APT_BOOST)
     {
-        // BCADNOTE: Another rework of this section to fix a scramble I can't figure out.
-        ostringstream ostr;
+        // BCADNOTE: Brute force fix.
         skill_type skill = you.defence_skill;
 
         if (mut == MUT_MINOR_MARTIAL_APT_BOOST)
@@ -2298,9 +2297,24 @@ const char* mutation_name(mutation_type mut, bool allow_category, bool for_displ
         if (mut == MUT_MAJOR_MARTIAL_APT_BOOST)
             skill = you.major_skill;
 
-        ostr << "boosted " << skill_name(skill) << " aptitude";
-
-        return ostr.str().c_str();
+        switch (skill)
+        {
+        case SK_ARMOUR:             return "boosted armour aptitude";
+        case SK_AXES_HAMMERS:       return "boosted axes & hammers aptitude";
+        case SK_BOWS:               return "boosted bows aptitude";
+        case SK_CROSSBOWS:          return "boosted crossbows aptitude";
+        case SK_DODGING:            return "boosted dodging aptitude";
+        case SK_LONG_BLADES:        return "boosted long blades aptitude";
+        case SK_MACES_STAVES:       return "boosted maces & staves aptitude";
+        case SK_POLEARMS:           return "boosted polearms aptitude";
+        case SK_SHIELDS:            return "boosted shields aptitude";
+        case SK_SHORT_BLADES:       return "boosted short blades aptitude";
+        case SK_SLINGS:             return "boosted slings aptitude";
+        case SK_STEALTH:            return "boosted stealth aptitude";
+        case SK_UNARMED_COMBAT:     return "boosted unarmed combat aptitude";
+        case SK_WHIPS_FLAILS:       return "boosted whips and flails aptitude";
+        default:                    return "bad aptitude boost (bug)";
+        }
     }
 
     if (mut == MUT_DRACONIAN_DEFENSE)
