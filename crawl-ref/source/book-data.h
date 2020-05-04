@@ -3,7 +3,7 @@ static const vector<spell_type> spellbook_templates[] =
 {
 
 {   // Book of Minor Magic
-    SPELL_STING,
+    SPELL_FLAME_TONGUE,
     SPELL_BLINK,
     SPELL_CALL_IMP,
     SPELL_SLOW,

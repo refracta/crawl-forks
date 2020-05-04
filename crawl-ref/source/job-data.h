@@ -283,9 +283,9 @@ static const map<job_type, job_def> job_data =
     "Dg", "Demigod",
     7, 7, 7,
     { SP_GNOLL, SP_SPRIGGAN, SP_TROLL, SP_MINOTAUR, SP_DRACONIAN },
-    { "leather armour" },
+    { "leather armour" , "book of Minor Magic" },
     WCHOICE_GOOD,
-    { { SK_DODGING, 3 } ,{ SK_STEALTH, 2 } ,{ SK_WEAPON,4 } ,{ SK_FIGHTING, 2 } , },
+    { { SK_DODGING, 3 } ,{ SK_STEALTH, 2 } ,{ SK_WEAPON,2 } ,{ SK_FIGHTING, 2 } , {SK_SPELLCASTING, 2} },
 } },
 
 { JOB_MUMMY,{
@@ -301,9 +301,9 @@ static const map<job_type, job_def> job_data =
     "Ds", "Demonspawn",
     6, 4, 4,
     { SP_HILL_ORC, SP_TROLL, SP_FELID, SP_LIGNIFITE, SP_DRACONIAN },
-    { "leather armour" },
+    { "leather armour"  , "book of Minor Magic" },
     WCHOICE_GOOD,
-    { { SK_DODGING, 3 } ,{ SK_STEALTH, 2 } ,{ SK_WEAPON,4 } ,{ SK_FIGHTING, 2 } ,{ SK_INVOCATIONS,3 } },
+    { { SK_DODGING, 3 } ,{ SK_STEALTH, 2 } ,{ SK_WEAPON,2 } ,{ SK_FIGHTING, 2 } ,{ SK_INVOCATIONS,3 } ,{ SK_SPELLCASTING, 2 } },
 } },
 
 #if TAG_MAJOR_VERSION == 34
