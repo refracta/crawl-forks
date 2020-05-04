@@ -1264,8 +1264,8 @@ static void _append_weapon_stats(string &description, const item_def &item)
         else
         {
 
-            skill_level  = (40 + _item_training_target(*you.weapon(0)));
-            skill_level1 = (40 + _item_training_target(*you.weapon(1)));
+            skill_level  = div_round_up(3 * _item_training_target(*you.weapon(0)), 2);
+            skill_level1 = div_round_up(3 * _item_training_target(*you.weapon(1)), 2);
             dual = true;
             could_set_dual_target = _dual_wield_target(*you.weapon(0), skill_level) || _dual_wield_target(*you.weapon(1), skill_level1);
 

@@ -906,10 +906,19 @@ int dual_wield_base_delay(const item_def &weap0, const item_def &weap1)
 {
     const int wpn0_delay = weapon_delay(weap0);
     const int wpn1_delay = weapon_delay(weap1);
+    const int wpn0_mindelay = weapon_min_delay(weap0);
+    const int wpn1_mindelay = weapon_min_delay(weap1);
+    const int delay_div0 = wpn0_delay - wpn0_mindelay;
+    const int delay_div1 = wpn1_delay - wpn1_mindelay;
 
-    const int mismatch_malus = (item_attack_skill(weap0) == item_attack_skill(weap1)) ? 0 : 4;
+    bool mismatch = (item_attack_skill(weap0) != item_attack_skill(weap1));
 
-    return max(wpn0_delay, wpn1_delay) + div_round_up(min(wpn0_delay, wpn1_delay) - min(weapon_min_delay(weap0), weapon_min_delay(weap1)),2) + mismatch_malus;
+    if (mismatch)
+        return max(wpn0_mindelay, wpn1_mindelay) + 3 * (delay_div0 + delay_div1) / 2;
+
+    if (delay_div0 > delay_div1)
+        return max(wpn0_mindelay, wpn1_mindelay) + delay_div0 + delay_div1 / 2;
+    return max(wpn0_mindelay, wpn1_mindelay) + delay_div1 + delay_div0 / 2;
 }
 
 /**

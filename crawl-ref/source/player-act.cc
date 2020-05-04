@@ -287,9 +287,9 @@ random_var player::attack_delay(const item_def *projectile, bool rescale) const
 
         else
         {
-            const int skill0 = min(you.skill(wpn_skill0, 10), 10 * (4 + weapon_min_delay_skill(*weap0)));
-            const int skill1 = min(you.skill(wpn_skill1, 10), 10 * (4 + weapon_min_delay_skill(*weap1)));
-            attk_delay -= div_rand_round(random_var((skill0 + skill1) / 2), DELAY_SCALE);
+            const int skill0 = min(you.skill(wpn_skill0, 10), 15 * weapon_min_delay_skill(*weap0));
+            const int skill1 = min(you.skill(wpn_skill1, 10), 15 * weapon_min_delay_skill(*weap1));
+            attk_delay -= div_rand_round(random_var(skill0 + skill1), DELAY_SCALE);
         }
 
         if (weap0->base_type == OBJ_WEAPONS && get_weapon_brand(*weap0) == SPWPN_SPEED)
