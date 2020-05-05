@@ -340,6 +340,18 @@ static const struct spell_desc spelldata[] =
 },
 
 {
+    SPELL_SONIC_WAVE, "Sonic Wave", "",
+    spschool::evocation | spschool::air,
+    spflag::dir_or_target | spflag::area
+        | spflag::needs_tracer | spflag::cloud,
+    6,
+    200,
+    4, 4,
+    3, 0,
+    TILEG_GENERIC_MONSTER_SPELL,
+},
+
+{
     SPELL_RING_OF_FLAMES, "Ring of Flames", "Entropic Flame Ring",
     spschool::charms | spschool::fire,
     spflag::area,
