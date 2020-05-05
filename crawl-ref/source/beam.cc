@@ -2861,7 +2861,7 @@ void bolt::affect_endpoint()
             place_cloud(chaos_cloud(), pos(), 10 + random2(5), agent(), 3);
         for (adjacent_iterator ai(pos()); ai; ++ai)
         {
-            if (!one_chance_in(3))
+            if (!cell_is_solid(*ai) && !one_chance_in(3))
                 place_cloud(chaos_cloud(), *ai, 5 + random2(5), agent(), 3);
         }
         break;
