@@ -6061,7 +6061,8 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
     ASSERT(!(flags & spflag::testing));
     // Targeted spells need a valid target.
     // Wizard-mode cast monster spells may target the boundary (shift-dir).
-    ASSERT(map_bounds(pbolt.target) || !(flags & spflag::targeting_mask));
+    if (!map_bounds(pbolt.target) && (flags & spflag::targeting_mask))
+        return;
     
     // Maybe cast abjuration instead of certain summoning spells.
     if (mons->can_see(you) && _mons_will_abjure(mons, spell_cast))
