@@ -3148,7 +3148,7 @@ ITEM:    randbook owner:Sif_Muna disc:hexes numspells:1 slevels:1 / \
          randbook owner:Sif_Muna disc:charms numspells:1 slevels:1 / \
          randbook owner:Sif_Muna disc:transmutation numspells:1 slevels:1 / \
          randbook owner:Sif_Muna disc:summoning numspells:1 slevels:1 / \
-         randbook owner:Sif_Muna disc:translocation numspells:1 slevels:1
+         randbook owner:Sif_Muna disc:translocation numspells:1 slevels:2
 SHUFFLE: AdB"C` / A'BeC` / A'B"Cf
 MAP
      xxxxx
