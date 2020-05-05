@@ -1058,7 +1058,8 @@ void bolt::digging_wall_effect()
     const dungeon_feature_type feat = grd(pos());
     if (feat_is_endless(feat) || feat_is_permarock(feat) 
         || feat_is_closed_door(feat) || feat_is_tree(feat)
-        || (feat_is_metal(feat) && feat != DNGN_GRATE))
+        || (feat_is_metal(feat) && feat != DNGN_GRATE)
+        || feat_is_runed(feat))
         stop_dig = true;
     else if (feat == DNGN_CLEAR_STONE_WALL || feat == DNGN_STONE_WALL
              || feat == DNGN_CRYSTAL_WALL || feat == DNGN_RUNED_CLEAR_STONE_WALL)
