@@ -963,13 +963,14 @@ spret cast_freeze(int pow, monster* mons, bool fail)
 
 void cloud_strike(actor * caster, actor * foe, int damage)
 {
-    if (!cloud_at(foe->pos()))
+    coord_def pos = foe->pos();
+    if (!cloud_at(pos))
         return;
     if (foe->is_player() && you.species == SP_FAIRY)
         return;
     if (foe->cloud_immune())
         return;
-    cloud_type cloud = cloud_at(foe->pos())->type;
+    cloud_type cloud = cloud_at(pos)->type;
 
     if (cloud == CLOUD_CHAOS)
     {
@@ -1151,9 +1152,9 @@ void cloud_strike(actor * caster, actor * foe, int damage)
         {
             foe->hurt(caster, damage, BEAM_NEG, KILLED_BY_BEAM,
                 "", "by the air");
+            actor * src = cloud_at(pos)->agent();
             if (foe->is_player())
             {
-                actor * src = cloud_at(foe->pos())->agent();
                 string msg = make_stringf("You are stricken by the vampiric fog%s",
                     attack_strength_punctuation(damage).c_str());
                 if (src)
@@ -1168,7 +1169,6 @@ void cloud_strike(actor * caster, actor * foe, int damage)
             }
             else
             {
-                actor * src = cloud_at(foe->pos())->agent();
                 string msg = make_stringf(" is stricken by the vampiric fog%s",
                     attack_strength_punctuation(damage).c_str());
                 if (src && src != foe)
@@ -1237,7 +1237,7 @@ void cloud_strike(actor * caster, actor * foe, int damage)
                     attack_strength_punctuation(damage).c_str());
                 simple_monster_message(*foe->as_monster(), msg.c_str());
             }
-            noisy(15, foe->pos());
+            noisy(15, pos);
         }
         break;
     default:
