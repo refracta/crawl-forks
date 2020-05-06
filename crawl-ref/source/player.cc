@@ -1951,6 +1951,11 @@ int player_spec_death()
     // species:
     sd += you.get_mutation_level(MUT_NECRO_ENHANCER);
 
+    // dragon skull:
+    item_def * skull = you.slot_item(EQ_HELMET);
+    if (skull->cursed() && skull->is_type(OBJ_ARMOURS, ARM_SKULL))
+        sd++;
+
     // transformations:
     if (you.form == transformation::lich)
         sd++;

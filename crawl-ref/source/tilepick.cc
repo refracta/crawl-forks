@@ -2382,10 +2382,8 @@ static tileidx_t _tileidx_armour_base(const item_def &item)
     case ARM_HAT:
         return TILE_THELM_HAT;
 
-#if TAG_MAJOR_VERSION == 34
-    case ARM_CAP:
-        return TILE_THELM_CAP;
-#endif
+    case ARM_SKULL:
+        return TILE_THELM_DRAGON_SKULL;
 
     case ARM_HELMET:
         return TILE_THELM_HELM;

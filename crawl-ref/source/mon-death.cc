@@ -2911,6 +2911,39 @@ item_def* monster_die(monster& mons, killer_type killer,
             _maybe_drop_monster_hide(*corpse, silent);
     }
 
+    else if (mons.type == MONS_BONE_DRAGON && !have_passive(passive_t::goldify_corpses) && !one_chance_in(3))
+    {
+        // Truncated copy of _maybe_drop_monster_hide since that function requires a corpse.
+        int o = items(false, OBJ_ARMOURS, ARM_SKULL, 0);
+        squash_plusses(o);
+
+        if (o != NON_ITEM)
+        {
+            item_def& item = mitm[o];
+
+            do_uncurse_item(item);
+            if (!one_chance_in(5))
+                do_curse_item(item);
+
+            const coord_def pos = mons.pos();
+            
+            if (pos.origin())
+                set_ident_flags(item, ISFLAG_IDENT_MASK);
+            else
+            {
+                move_item_to_grid(&o, pos);
+
+                // Don't display this message if the scales were dropped over
+                // lava/deep water, because then they are hardly intact.
+                if (you.see_cell(pos) && !silent && !feat_eliminates_items(grd(pos)))
+                    mpr("The bone dragon skull is intact enough to wear.");
+
+                // after messaging, for better results
+                set_ident_flags(item, ISFLAG_IDENT_MASK);
+            }
+        }
+    }
+
     if ((mons_genus(mons.type) == MONS_JELLY) && player_in_branch(BRANCH_SLIME) 
             && you.royal_jelly_dead && mons.type != MONS_ROYAL_JELLY)
     {

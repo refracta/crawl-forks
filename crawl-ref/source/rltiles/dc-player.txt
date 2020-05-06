@@ -1464,6 +1464,7 @@ turban_white TURBAN_WHITE
 turban_brown TURBAN_BROWN
 turban_purple TURBAN_PURPLE HAT_LAST_NORM
 pumpkin PUMPKIN
+dragon_skull DRAGON_SKULL
 
 ## Mutations
 horns1 HORNS1

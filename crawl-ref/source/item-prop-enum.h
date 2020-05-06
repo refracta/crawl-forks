@@ -28,9 +28,7 @@ enum armour_type
     ARM_SCARF,
 #endif
 
-#if TAG_MAJOR_VERSION == 34
-    ARM_CAP,
-#endif
+    ARM_SKULL,
     ARM_HAT,
     ARM_HELMET,
 

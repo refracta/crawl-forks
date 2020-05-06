@@ -962,7 +962,7 @@ static void _get_randart_properties(const item_def &item,
     if (curse)
     {
         good = 0;
-        bad = 1 + one_chance_in(3);
+        bad = 1 + one_chance_in(5);
     }
 
     // initialize a vector of weighted artefact properties to pick from

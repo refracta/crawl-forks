@@ -1253,7 +1253,6 @@ bool is_armour_brand_ok(int type, int brand, bool strict)
         return
 #if TAG_MAJOR_VERSION == 34
                type == ARM_HAT ||
-               type == ARM_CAP ||
 #endif
                type == ARM_SCARF || !strict;
 
@@ -2514,8 +2513,6 @@ void makeitem_tests()
                                 : random2(NUM_REAL_SPECIAL_ARMOURS);
         int type = coinflip() ? OBJ_RANDOM : random2(NUM_ARMOURS);
 #if TAG_MAJOR_VERSION == 34
-        if (type == ARM_CAP)
-            type = ARM_HAT;
         if (type == ARM_BUCKLER || type == ARM_SHIELD || type == ARM_LARGE_SHIELD)
             type = ARM_ROBE;
 #endif

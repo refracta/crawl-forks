@@ -486,6 +486,8 @@ hat1 THELM_HAT
 hat2
 hat3
 
+dragon_skull THELM_DRAGON_SKULL
+
 helmet1 THELM_HELM THELM_FIRST
 helmet2
 helmet3

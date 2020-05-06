@@ -95,6 +95,13 @@ blowgun
 A long, light tube, open at both ends, through which various types of needles
 are propelled by puffs of breath at enemies. It makes very little noise.
 %%%%
+bone dragon skull
+
+The skull of a massive creature. Makes an effective helmet for average and larger
+adventurers. Usually found cursed by the spirit of the bone dragon killed for its 
+skull; as long as it is cursed, the dragon's spirit also grants a necromancy 
+enhancer.
+%%%%
 bolt
 
 A metal projectile, shorter than an arrow, intended to be shot from a crossbow.

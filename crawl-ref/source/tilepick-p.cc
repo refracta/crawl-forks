@@ -937,9 +937,8 @@ tileidx_t tilep_equ_helm(const item_def &item)
 
     switch (item.sub_type)
     {
-#if TAG_MAJOR_VERSION == 34
-        case ARM_CAP:
-#endif
+        case ARM_SKULL:
+            return TILEP_HELM_DRAGON_SKULL;
         case ARM_HAT:
             return _modrng(item.rnd, TILEP_HELM_HAT_FIRST_NORM,
                            TILEP_HELM_HAT_LAST_NORM);

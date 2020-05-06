@@ -135,10 +135,8 @@ static const armour_def Armour_prop[] =
     { ARM_HELMET,               "helmet",                 1,   0,   45,
         EQ_HELMET,      SIZE_SMALL,  SIZE_MEDIUM, true },
         
-#if TAG_MAJOR_VERSION == 34
-    { ARM_CAP,                  "cap",                    0,   0,   45,
-        EQ_HELMET,      SIZE_LITTLE, SIZE_LARGE, true },
-#endif
+    { ARM_SKULL,                "bone dragon skull",      4,   0,  230,
+        EQ_HELMET,      SIZE_MEDIUM, SIZE_GIANT, false, ARMF_RES_NEG, 0 },
 
     { ARM_HAT,                  "hat",                    0,   0,   40,
         EQ_HELMET,      SIZE_TINY, SIZE_GIANT, true },
@@ -1473,6 +1471,8 @@ static map<monster_type, armour_type> _monster_hides = {
     { MONS_PEARL_DRAGON,        ARM_PEARL_DRAGON_ARMOUR },
     { MONS_SHADOW_DRAGON,       ARM_SHADOW_DRAGON_ARMOUR },
     { MONS_QUICKSILVER_DRAGON,  ARM_QUICKSILVER_DRAGON_ARMOUR },
+
+    { MONS_BONE_DRAGON,         ARM_SKULL },
 };
 
 /**
@@ -1522,7 +1522,8 @@ int armour_max_enchant(const item_def &item)
     int max_plus = MAX_SEC_ENCHANT;
     if (eq_slot == EQ_BODY_ARMOUR
         || item.sub_type == ARM_CENTAUR_BARDING
-        || item.sub_type == ARM_NAGA_BARDING)
+        || item.sub_type == ARM_NAGA_BARDING
+        || item.sub_type == ARM_SKULL)
     {
         max_plus = property(item, PARM_AC);
     }

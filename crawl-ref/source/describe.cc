@@ -466,7 +466,11 @@ string artefact_inscription(const item_def& item, bool curse)
         insc.erase(insc.length() - 1);
 
     if (curse)
+    {
+        if (item.is_type(OBJ_ARMOURS, ARM_SKULL))
+            insc += ", +Necro";
         insc += ")";
+    }
     return insc;
 }
 
@@ -652,6 +656,9 @@ static string _randart_descrip(const item_def &item, bool curse = false)
                  (stval < 0) ? "less" : "more");
         description += buf;
     }
+
+    if (curse && item.is_type(OBJ_ARMOURS, ARM_SKULL))
+        description += "\nThe necromantic curse makes you closer to the forces of death. (Necromancy Enhancer).";
 
     return description;
 }
