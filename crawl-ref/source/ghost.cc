@@ -665,7 +665,7 @@ const vector<ghost_demon> ghost_demon::find_ghosts(bool include_player)
 {
     vector<ghost_demon> gs;
 
-    if (include_player && you.undead_state(false) == US_ALIVE)
+    if (include_player && you.undead_state(false) == US_ALIVE && you.species != SP_FAIRY)
     {
         ghost_demon player;
         player.init_player_ghost();

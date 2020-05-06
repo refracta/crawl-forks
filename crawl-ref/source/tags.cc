@@ -6707,7 +6707,7 @@ void unmarshallMonster(reader &th, monster& m)
         m.xp_tracking = XP_VAULT;
     }
 
-    if (th.getMinorVersion() < TAG_MINOR_ZOT_DRACONIAN_COLOURS && m.type > 280)
+    if (th.getMinorVersion() < TAG_MINOR_ZOT_DRACONIAN_COLOURS && m.type > 280 && m.type < NUM_MONSTERS)
         m.type = (monster_type)(m.type + 19);
 #endif
 
