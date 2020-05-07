@@ -3930,6 +3930,8 @@ void melee_attack::do_minotaur_retaliation()
         return;
     if (!defender->is_player())
     {
+        if (you.wearing(EQ_HELMET, ARM_SKULL))
+            return;
         // monsters have no STR or DEX
         if (x_chance_in_y(2, 5))
         {
@@ -4175,7 +4177,7 @@ bool melee_attack::_extra_aux_attack(unarmed_attack_type atk)
         return you.get_mutation_level(MUT_BEAK) && !one_chance_in(3);
 
     case UNAT_HEADBUTT:
-        return you.get_mutation_level(MUT_HORNS) && !one_chance_in(3);
+        return you.get_mutation_level(MUT_HORNS) && !you.wearing(EQ_HELMET, ARM_SKULL) && !one_chance_in(3);
 
     case UNAT_TAILSLAP:
         return you.has_usable_tail() && coinflip();
