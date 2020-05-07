@@ -43,8 +43,8 @@ const Branch branches[NUM_BRANCHES] =
       nullptr,
       WHITE, ETC_ELVEN_BRICK,
       'E', {}, branch_noise::normal },
-#if TAG_MAJOR_VERSION == 34
 
+#if TAG_MAJOR_VERSION == 34
     { BRANCH_DWARF, BRANCH_ELF, -1, -1, 0, 17,
       brflag::none,
       DNGN_ENTER_DWARF, DNGN_EXIT_DWARF, NUM_FEATURES,
@@ -109,8 +109,8 @@ const Branch branches[NUM_BRANCHES] =
       nullptr,
       LIGHTGREY, BROWN,
       'V', { RUNE_VAULTS }, branch_noise::normal },
-#if TAG_MAJOR_VERSION == 34
 
+#if TAG_MAJOR_VERSION == 34
     { BRANCH_BLADE, BRANCH_VAULTS, 3, 4, 1, 21,
       brflag::no_items,
       DNGN_ENTER_BLADE, DNGN_EXIT_BLADE, NUM_FEATURES,
@@ -135,16 +135,6 @@ const Branch branches[NUM_BRANCHES] =
       nullptr,
       BROWN, BROWN,
       'W', { RUNE_TOMB }, branch_noise::quiet },
-#if TAG_MAJOR_VERSION > 34
-
-    { BRANCH_DEPTHS, BRANCH_DUNGEON, 15, 15, 5, 22,
-      brflag::none,
-      DNGN_ENTER_DEPTHS, DNGN_EXIT_DEPTHS, NUM_FEATURES,
-      "Depths", "the Depths", "Depths",
-      nullptr,
-      LIGHTGREY, BROWN,
-      'U', {}, branch_noise::normal },
-#endif
 
     { BRANCH_VESTIBULE, NUM_BRANCHES, 27, 27, 1, 27,
       brflag::no_items,
@@ -194,8 +184,8 @@ const Branch branches[NUM_BRANCHES] =
       "You feel the power of the Orb interfering with translocations here.",
       BLACK, BLACK, // set per-map
       'Z', {}, branch_noise::normal },
-#if TAG_MAJOR_VERSION == 34
 
+#if TAG_MAJOR_VERSION == 34
     { BRANCH_FOREST, BRANCH_VAULTS, 2, 3, 5, 19,
       brflag::spotty,
       DNGN_ENTER_FOREST, DNGN_EXIT_FOREST, NUM_FEATURES,
@@ -230,8 +220,8 @@ const Branch branches[NUM_BRANCHES] =
       "You land on top of a ziggurat so tall you cannot make out the ground.",
       BLACK, BLACK,
       'Q', {}, branch_noise::normal },
-#if TAG_MAJOR_VERSION == 34
 
+#if TAG_MAJOR_VERSION == 34
     { BRANCH_LABYRINTH, NUM_BRANCHES, -1, -1, 1, 15,
       brflag::no_x_level_travel | brflag::no_items,
       DNGN_ENTER_LABYRINTH, DNGN_EXIT_LABYRINTH, DNGN_EXIT_THROUGH_ABYSS,
@@ -280,16 +270,6 @@ const Branch branches[NUM_BRANCHES] =
       "You enter a bailey!",
       WHITE, LIGHTRED,
       '5', {}, branch_noise::normal },
-#if TAG_MAJOR_VERSION > 34
-
-    { BRANCH_GAUNTLET, NUM_BRANCHES, -1, -1, 1, 15,
-      brflag::no_x_level_travel | brflag::no_items,
-      DNGN_ENTER_GAUNTLET, DNGN_EXIT_GAUNTLET, DNGN_EXIT_THROUGH_ABYSS,
-      "Gauntlet", "a Gauntlet", "Gauntlet",
-      "You enter a gauntlet!",
-      BLACK, BLACK,
-      '6', {}, branch_noise::normal },
-#endif
 
     { BRANCH_ICE_CAVE, NUM_BRANCHES, -1, -1, 1, 15,
       brflag::no_x_level_travel | brflag::no_items,
@@ -297,12 +277,7 @@ const Branch branches[NUM_BRANCHES] =
       "Ice Cave", "an ice cave", "IceCv",
       "You enter an ice cave!",
       BLUE, WHITE,
-#if TAG_MAJOR_VERSION == 34
       '6', {}, branch_noise::normal },
-#endif
-#if TAG_MAJOR_VERSION > 34
-      '7', {}, branch_noise::normal },
-#endif
 
     { BRANCH_VOLCANO, NUM_BRANCHES, -1, -1, 1, 14,
       brflag::no_x_level_travel | brflag::no_items,
@@ -310,12 +285,7 @@ const Branch branches[NUM_BRANCHES] =
       "Volcano", "a volcano", "Volcano",
       "You enter a volcano!",
       RED, RED,
-#if TAG_MAJOR_VERSION == 34
       '7', {}, branch_noise::normal },
-#endif
-#if TAG_MAJOR_VERSION > 34
-      '8', {}, branch_noise::normal },
-#endif
 
     { BRANCH_WIZLAB, NUM_BRANCHES, -1, -1, 1, 24,
       brflag::no_x_level_travel | brflag::no_items,
@@ -323,13 +293,7 @@ const Branch branches[NUM_BRANCHES] =
       "Wizlab", "a wizard's laboratory", "WizLab",
       "You enter a wizard's laboratory!",
       LIGHTGREY, BROWN, // set per-map
-#if TAG_MAJOR_VERSION == 34
       '8', {}, branch_noise::normal },
-#endif
-#if TAG_MAJOR_VERSION > 34
-      '9', {}, branch_noise::normal },
-#endif
-#if TAG_MAJOR_VERSION == 34
 
     { BRANCH_DEPTHS, BRANCH_DUNGEON, 15, 15, 5, 22,
       brflag::none,
@@ -338,7 +302,6 @@ const Branch branches[NUM_BRANCHES] =
       nullptr,
       LIGHTGREY, BROWN,
       'U', {}, branch_noise::normal },
-#endif
 
     { BRANCH_DESOLATION, NUM_BRANCHES, -1, -1, 1, 20,
       brflag::no_x_level_travel | brflag::no_items,
@@ -346,12 +309,7 @@ const Branch branches[NUM_BRANCHES] =
       "Desolation", "the Desolation of Salt", "Desolation",
       "You enter a great desolation of salt!",
       LIGHTGREY, BROWN, // TODO
-#if TAG_MAJOR_VERSION == 34
       '9', {}, branch_noise::loud },
-#endif
-#if TAG_MAJOR_VERSION > 34
-      '0', {}, branch_noise::loud },
-#endif
 
     { BRANCH_START_TEMPLE, NUM_BRANCHES, -1, -1, 1, 4,
       brflag::no_x_level_travel | brflag::no_items,
@@ -369,8 +327,6 @@ const Branch branches[NUM_BRANCHES] =
       LIGHTGREY, BROWN,
       '-',{}, branch_noise::loud },
 
-#if TAG_MAJOR_VERSION == 34
-
     { BRANCH_GAUNTLET, NUM_BRANCHES, -1, -1, 1, 15,
       brflag::no_x_level_travel | brflag::no_items,
       DNGN_ENTER_GAUNTLET, DNGN_EXIT_GAUNTLET, DNGN_EXIT_THROUGH_ABYSS,
@@ -378,7 +334,6 @@ const Branch branches[NUM_BRANCHES] =
       "You enter a gauntlet!",
       BLACK, BLACK,
       '!', {}, branch_noise::normal },
-#endif
 };
 
 /*

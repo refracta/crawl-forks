@@ -22,9 +22,6 @@ enum branch_type                // you.where_are_you
 #endif
     BRANCH_CRYPT,
     BRANCH_TOMB,
-#if TAG_MAJOR_VERSION > 34
-    BRANCH_DEPTHS,
-#endif
     BRANCH_VESTIBULE,
     BRANCH_DIS,
     BRANCH_GEHENNA,
@@ -47,21 +44,14 @@ enum branch_type                // you.where_are_you
     BRANCH_SEWER,
     BRANCH_OSSUARY,
     BRANCH_BAILEY,
-#if TAG_MAJOR_VERSION > 34
-    BRANCH_GAUNTLET,
-#endif
     BRANCH_ICE_CAVE,
     BRANCH_VOLCANO,
     BRANCH_WIZLAB,
-#if TAG_MAJOR_VERSION == 34
     BRANCH_DEPTHS,
-#endif
     BRANCH_DESOLATION,
     BRANCH_START_TEMPLE,
     BRANCH_START_MARKET,
-#if TAG_MAJOR_VERSION == 34
     BRANCH_GAUNTLET,
-#endif
 
     NUM_BRANCHES,
 
