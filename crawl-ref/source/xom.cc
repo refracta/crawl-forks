@@ -1763,6 +1763,15 @@ static inline dungeon_feature_type _vitrified_feature(dungeon_feature_type feat)
         return DNGN_CLEAR_STONE_WALL;
     case DNGN_PERMAROCK_WALL:
         return DNGN_CLEAR_PERMAROCK_WALL;
+    case DNGN_RUNED_DOOR:
+        return DNGN_RUNED_CLEAR_DOOR;
+    case DNGN_OPEN_DOOR:
+        return DNGN_OPEN_CLEAR_DOOR;
+    case DNGN_CLOSED_DOOR:
+        return DNGN_CLOSED_CLEAR_DOOR;
+    case DNGN_SILVER_WALL:
+        return DNGN_RUNED_CLEAR_STONE_WALL;
+    // BCADDO: Transparent aluminium.
     default:
         return feat;
     }
