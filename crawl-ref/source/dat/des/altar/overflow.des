@@ -3518,6 +3518,25 @@ MAP
 .........
 ENDMAP
 
+NAME:    bcadren_lemuel_inverted_doored_altar
+TAGS:    transparent decor temple_overflow_generic_1
+DEPTH:   D:1-, Vaults, Lair, Elf, Crypt
+SHUFFLE: XY
+SUBST:   X = .
+KFEAT:   Y = closed_clear_door
+: altar_check(_G)
+MAP
+.........
+.mmmvmmm.
+.mmmvmmm.
+.mmmvmmm.
+.X.YCY.X.
+.mmmYmmm.
+.mmm.mmm.
+.mmmXmmm.
+.........
+ENDMAP
+
 NAME:   lemuel_coloured_pillars_altar
 TAGS:   no_rotate decor temple_overflow_generic_1
 DEPTH:  D:2-, Vaults, Elf
