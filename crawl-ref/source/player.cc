@@ -1953,7 +1953,7 @@ int player_spec_death()
 
     // dragon skull:
     item_def * skull = you.slot_item(EQ_HELMET);
-    if (skull->cursed() && skull->is_type(OBJ_ARMOURS, ARM_SKULL))
+    if (skull && skull->cursed() && skull->is_type(OBJ_ARMOURS, ARM_SKULL))
         sd++;
 
     // transformations:
