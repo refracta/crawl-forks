@@ -1033,7 +1033,7 @@ DEPTH:  D:3-, Crypt
 MONS:   w:50 human zombie/orc zombie/elf zombie/w:5 ogre zombie/w:5 troll zombie
 MONS:   w:50 human skeleton/orc skeleton/elf skeleton/w:5 ogre skeleton/\
         w:5 troll skeleton
-MONS:   mummy, wight, wraith, necrophage
+MONS:   mummy, vampire, wraith, necrophage
 NSUBST: ? = 1:_ / *:1
 SUBST:  1 = 1:25 2 3 4:8 5:7 6:5
 KFEAT:  _ = altar_kikubaaqudgha
@@ -1330,7 +1330,7 @@ NAME:    nemelex_dance_club_becter
 TAGS:    overflow_altar_nemelex_xobeh transparent
 TAGS:    no_rotate no_vmirror no_monster_gen no_item_gen
 DEPTH:   D:2-5
-: if you.depth() <= 4 then
+: if you.depth() <= 3 then
 MONS:    orc ; club
 : else
 MONS:    ogre ; giant club
@@ -2166,7 +2166,7 @@ ENDMAP
 ### Uskayaw overflow altars ###################################################
 
 NAME:   dancing_weapons_uskayaw
-DEPTH:  D:2-9
+DEPTH:  D:2-5
 TAGS:   temple_overflow_1 temple_overflow_uskayaw transparent
 MONS:   generate_awake dancing weapon ; dagger | hatchet
 KFEAT:  _ = altar_uskayaw
@@ -2188,7 +2188,7 @@ MAP
 ENDMAP
 
 NAME:   eat_drink_and_be_merry_uskayaw
-DEPTH:  D:2-9
+DEPTH:  D:2-5
 TAGS:   temple_overflow_1 temple_overflow_uskayaw transparent
 KFEAT:  _ = altar_uskayaw
 ITEM:   any potion q:1, any weapon
@@ -2211,7 +2211,7 @@ ENDMAP
 # on the altar properly is safe, and a cautious player can time their entrance
 # to take no damage.
 NAME:   fiery_altar_vehumet
-DEPTH:  D:2-10, Orc, !Orc:$
+DEPTH:  D:2-5, Orc, !Orc:$
 WEIGHT: 8
 TAGS:   temple_overflow_1 temple_overflow_vehumet
 MARKER: : = lua:fog_machine { cloud_type = "flame", \
@@ -2228,7 +2228,7 @@ MAP
 ENDMAP
 
 NAME:    vehumet_statue
-DEPTH:   D:4-10
+DEPTH:   D:2-5
 TAGS:    temple_overflow_1 temple_overflow_vehumet transparent
 SHUFFLE: 12
 MONS:    statue name:charred name_adjective tile:mons_statue_mage \
@@ -2247,7 +2247,7 @@ MAP
 ENDMAP
 
 NAME:    vehumet_crystals
-DEPTH:   D:2-10, Orc, !Orc:$
+DEPTH:   D:2-5, Orc, !Orc:$
 TAGS:    temple_overflow_1 temple_overflow_vehumet transparent
 KFEAT:   _ = altar_vehumet
 : interest_check(_G)
@@ -2266,7 +2266,7 @@ ENDMAP
 NAME:  vehumet_altar_wand_db
 TAGS:  uniq_altar_vehumet temple_overflow_1 temple_overflow_vehumet
 TAGS:  transparent patrolling
-DEPTH: D:4-9
+DEPTH: D:2-5
 KFEAT: _ = altar_vehumet
 MONS:  goblin; wand of flame /\
        hobgoblin; wand of flame /\
@@ -2283,6 +2283,7 @@ ENDMAP
 
 ### Xom overflow altars #######################################################
 
+# BCADDO: Another place to readd shafter to branch ends after shaft behavior tweak.
 NAME:   tgw_xom
 DEPTH:  D:2-, Depths
 TAGS:   no_item_gen no_monster_gen temple_overflow_1 temple_overflow_xom
@@ -2536,6 +2537,7 @@ xxxxAAAAAAAAxxxx
 xxxxxxxxxxxxxxxx
 ENDMAP
 
+# BCADDO: Make this more different than the Kiku version after Yred rework.
 NAME:   lemuel_mausoleum_altar_yredelemnul
 TAGS:   uniq_altar_yredelemnul temple_overflow_1 temple_overflow_yredelemnul
 TAGS:   uniq_mausoleum_altar decor
@@ -2543,7 +2545,7 @@ DEPTH:  D:7-, Crypt
 MONS:   w:50 human zombie/orc zombie/elf zombie/w:5 ogre zombie/w:5 troll zombie
 MONS:   w:50 human skeleton/orc skeleton/elf skeleton/w:5 ogre skeleton/\
         w:5 troll skeleton
-MONS:   mummy, wight, wraith, necrophage
+MONS:   mummy, wight, vampire, necrophage
 NSUBST: ? = 1:_ / *:1
 SUBST:  1 = 1:25 2 3 4:8 5:7 6:5
 KFEAT:  _ = altar_yredelemnul
@@ -3365,12 +3367,12 @@ DEPTH:  D
 WEIGHT: 2
 TAGS:   no_monster_gen no_trap_gen temple_overflow_2
 TAGS:   temple_overflow_kikubaaqudgha temple_overflow_yredelemnul
-: if you.depth() <= 4 then
+: if you.depth() <= 2 then
 MONS: zombie / skeleton
 MONS: mummy / shadow imp / wight / necrophage / phantom / hungry ghost
 KMONS: 3 = menkaure, necrophage / wight
 SUBST: 2 = 2---
-: elseif you.depth() <= 7 then
+: elseif you.depth() <= 4 then
 MONS: zombie / skeleton / mummy / shadow imp / wight / necrophage / phantom \
       / hungry ghost
 MONS: wraith / vampire
