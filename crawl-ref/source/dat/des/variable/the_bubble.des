@@ -61,7 +61,7 @@ end
 
 NAME:   gammafunk_the_bubble
 TAGS:   no_monster_gen no_trap_gen
-DEPTH:  D:7-, Shoals, Snake, Swamp, Spider, Elf, Crypt, Depths, Zot, Pan
+DEPTH:  D:3-, Shoals, Snake, Swamp, Spider, Elf, Crypt, Depths, Zot, Pan
 ORIENT: float
 : item(dgn.loot_scrolls .. " / " .. dgn.loot_potions)
 ITEM:   any jewellery good_item, any jewellery randart
@@ -71,9 +71,9 @@ ITEM:   cloak randart / helmet randart / hat randart / pair of gloves randart \
         / pair of boots randart
 # Set up increasing loot count and quality with depth.
 : if you.in_branch("D") then
-:   if you.depth() < 10 then
+:   if you.depth() < 5 then
 NSUBST: ' = ddeg / 3=|* / * / *% / 2=$ / .
-:   elseif you.depth() < 13 then
+:   elseif you.depth() < 7 then
 NSUBST: ' = d / eg / 3=|* / * / %$.. / 2=$ / .
 :   else
 NSUBST: ' = 2=d / eg / 3=|* / *% / %$.. / 2=$ / .
