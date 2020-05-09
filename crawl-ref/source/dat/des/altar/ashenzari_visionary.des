@@ -26,7 +26,7 @@ function callback.grunt_ashenzari_visionary_reveal(data,triggerable,triggerer,ma
 end
 }}
 
-default-depth: D:2-6
+default-depth: D:2-12
 
 NAME: grunt_ashenzari_visionary
 TAGS: temple_overflow_ashenzari uniq_altar_ashenzari no_trap_gen no_monster_gen
