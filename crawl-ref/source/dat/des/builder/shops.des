@@ -72,7 +72,7 @@ CHANCE: 20% (Shoals, Snake)
 hook("post_place", function()
     local num = num_shops()
 
-    if you.absdepth() > 10 and you.absdepth() <= 27
+    if you.absdepth() > 7 and you.absdepth() <= 27
       and crawl.one_chance_in(30 - (you.absdepth() - 1))
     then
         dgn.place_maps { tag = "bzr_entry", count = 1 }
