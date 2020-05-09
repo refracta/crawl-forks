@@ -30,7 +30,7 @@
 {{
 function interest_check(e)
   if you.in_branch("D") then
-    if you.absdepth() > 9 then
+    if you.absdepth() > 6 then
       e.tags('extra')
     end
   else
@@ -50,7 +50,7 @@ NAME:    jmf_multi_god_temple
 TAGS:    transparent
 SHUFFLE: abc
 SUBST:   a:+, b:x, c:x
-DEPTH:   D:8-, Vaults
+DEPTH:   D:4-, Vaults
 MAP
 ............
 .axxxxxxxxa.
@@ -68,7 +68,7 @@ ENDMAP
 
 NAME:  jmf_multi_god_temple2
 TAGS:  transparent
-DEPTH: D:8-, Vaults
+DEPTH: D:4-, Vaults
 MAP
 ............
 ..vvvvvvvv..
@@ -90,7 +90,7 @@ ENDMAP
 
 NAME:   basic_altar
 TAGS:   allow_dup extra no_monster_gen transparent decor
-DEPTH:  5-
+DEPTH:  2-
 CHANCE: 20% (Orc)
 CHANCE: 10% (Snake, Forest)
 CHANCE: 8% (D, Elf)
@@ -146,7 +146,7 @@ MAP
 ENDMAP
 
 NAME:  lemuel_oklob_altar
-DEPTH: D:6-, Lair, Snake, Shoals
+DEPTH: D:3-, Lair, Snake, Shoals
 MONS:  oklob plant, plant
 MAP
  2
@@ -177,7 +177,7 @@ ENDMAP
 NAME:  lemuel_statue_altar
 TAGS:  transparent decor
 DEPTH: D:2-, Orc, Depths, Vaults, Elf, Crypt
-: if you.absdepth() < 10 then
+: if you.absdepth() < 5 then
 SUBST: F = G
 : end
 SUBST: F = G:99 F:1
@@ -215,7 +215,7 @@ ENDMAP
 # This is the generic version. A special version may occur for Orc, almost always
 # to Beogh. Only one of these can come up.
 NAME:  david_defended_altar_elf
-DEPTH: D:7-14, Elf
+DEPTH: D:4-7, Elf
 MONS:  patrolling deep elf mage / w:30 nothing
 TAGS:  uniq_defended_altar transparent
 MAP
@@ -229,7 +229,7 @@ ENDMAP
 # The mix of deep and shallow water is intended to keep the centaurs from
 # escaping without requiring the player to be able to cross deep water.
 NAME:  lemuel_centaur_altar
-DEPTH: D:7-15, Shoals, Lair
+DEPTH: D:4-, Shoals, Lair
 TAGS:  no_pool_fixup no_monster_gen
 MONS:  patrolling centaur
 MAP
@@ -246,9 +246,9 @@ xxx...@..xxxx
 ENDMAP
 
 NAME:  lemuel_angel_altar
-DEPTH: D:3-, Vaults
+DEPTH: D:2-, Vaults
 TAGS:  no_trap_gen
-: if you.absdepth() > 12 then
+: if you.absdepth() > 5 then
 MONS: patrolling Daeva / patrolling Angel
 KFEAT:  n = iron_grate
 : else
@@ -284,7 +284,7 @@ ENDMAP
 #       access the altar early.
 #
 NAME:  lemuel_hellish_altar
-DEPTH: D:8-, Crypt, Geh
+DEPTH: D:4-, Crypt, Geh
 TAGS:  no_monster_gen
 MONS:  rust devil / orange demon
 MONS:  hell beast / red devil
@@ -293,7 +293,7 @@ MONS:  hellion
 SUBST: 2 = 23
 SUBST: 2 = 12
 SUBST: 3 = 3L
-: if you.absdepth() >14 then
+: if you.absdepth() > 7 then
 SUBST: 1 = 1:20 4
 : end
 SUBST: L = l.
@@ -365,7 +365,7 @@ ENDMAP
 ### Altars possibly to Beogh #################################################
 
 NAME:  david_defended_altar_orc
-DEPTH: D:7-14, Orc
+DEPTH: D:3-7, Orc
 MONS:  patrolling orc priest
 TAGS:  uniq_defended_altar transparent
 KFEAT: _ = altar_beogh / w:1 altar_okawaru / w:1 altar_makhleb / w:1 altar_trog
@@ -382,13 +382,13 @@ ENDMAP
 
 NAME:   jiyva_altar_1
 TAGS:   transparent
-DEPTH:  D:8-
+DEPTH:  D:4-
 KFEAT:  _ = altar_jiyva
-: if you.depth() > 9 then
+: if you.depth() > 4 then
 NSUBST: 1 = 3:1 / *:2
-: elseif you.depth() > 11 then
+: elseif you.depth() > 5 then
 NSUBST: 1 = 2:1 / *:2
-: elseif you.depth() > 13 then
+: elseif you.depth() > 6 then
 NSUBST: 1 = 1:1 / *:2
 : end
 MONS:  jelly, slime creature
@@ -403,7 +403,7 @@ ENDMAP
 ### Ecumenical altars ########################################################
 
 NAME:   chequers_ecumenical_altar_simple
-DEPTH:  D:2-3
+DEPTH:  D:2
 TAGS:  uniq_ecumenical_altar chance_ecumenical_altar transparent
 CHANCE: 10%
 KFEAT:  _ = altar_ecumenical
@@ -417,7 +417,7 @@ MAP
 ENDMAP
 
 NAME: chequers_ecumenical_altar_simple_redux
-DEPTH: D:2-3
+DEPTH: D:2
 TAGS:  uniq_ecumenical_altar chance_ecumenical_altar transparent
 CHANCE: 10%
 KFEAT:  _ = altar_ecumenical
@@ -433,7 +433,7 @@ MAP
 ENDMAP
 
 NAME:   chequers_ecumenical_altar_grove
-DEPTH:  D:2-3
+DEPTH:  D:2
 TAGS:   uniq_ecumenical_altar chance_ecumenical_altar transparent
 CHANCE: 10%
 WEIGHT: 5
@@ -464,7 +464,7 @@ MAP
 ENDMAP
 
 NAME: chequers_ecumenical_altar_lobes
-DEPTH: D:2-3
+DEPTH: D:2
 TAGS:  uniq_ecumenical_altar chance_ecumenical_altar
 CHANCE: 10%
 WEIGHT: 5
@@ -491,7 +491,7 @@ xxxtGpppp..ppppGtxxx
 ENDMAP
 
 NAME: chequers_ecumenical_altar_twisty
-DEPTH: D:2-3
+DEPTH: D:2
 TAGS:  uniq_ecumenical_altar chance_ecumenical_altar transparent
 CHANCE: 10%
 WEIGHT: 5
@@ -512,7 +512,7 @@ xx.x
 ENDMAP
 
 NAME: chequers_ecumenical_altar_island
-DEPTH: D:2-3
+DEPTH: D:2
 TAGS:  uniq_ecumenical_altar chance_ecumenical_altar
 CHANCE: 10%
 KFEAT: _ = altar_ecumenical
