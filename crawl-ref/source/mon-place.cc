@@ -381,45 +381,6 @@ static bool _is_banded_monster(monster_type mt)
     return _choose_band(mt) != BAND_NO_BAND;
 }
 
-// For effects such as alternating hell floors between old Cocytus, etc.
-// sets this adjusts which floor to pull monsters from based on an input
-// floor.
-static void _adjust_pop_place(level_id &place)
-{
-    switch (place.branch)
-    {
-    case BRANCH_DUNGEON:
-    {
-        switch (place.depth)
-        {
-        default:
-        case 1:
-        case 2:
-            break;
-        case 3:
-            place.depth = 4;
-            break;
-        case 4:
-            place.depth = 6;
-            break;
-        case 5:
-            place.depth = 9;
-            break;
-        case 6:
-            place.depth = 12;
-            break;
-        case 7:
-            place.depth = 15;
-            break;
-        case 8:
-            place.depth = 18;
-            break;
-        }
-    }
-    default: break;
-    }
-}
-
 // Caller must use !invalid_monster_type to check if the return value
 // is a real monster.
 monster_type pick_random_monster(level_id place,
@@ -433,8 +394,6 @@ monster_type pick_random_monster(level_id place,
         if (!_is_random_monster(type))
             return type;
     }
-
-    _adjust_pop_place(place);
 
     if (allow_ood)
         _apply_ood(place);
