@@ -26,10 +26,6 @@ function abyss_entry(e, glyph)
   e.depth_chance("Depths:1-3", 3333)
   e.depth_chance("Depths:4",   10000)
   e.depth_chance("Depths:5-",  3333)
--- D:21-27 entries for save compat, remove when TAG_MAJOR_VERSION > 34
-  e.depth_chance("D:21-24", 3333)
-  e.depth_chance("D:25",    10000)
-  e.depth_chance("D:26-",   3333)
   e.kfeat(glyph .. ' = enter_abyss')
 end
 }}
@@ -39,7 +35,7 @@ end
 # 1/3 chance to appear on Depths floors and guaranteed on Depths:4.
 ###############################################################################
 
-default-depth: Depths, D:21-
+default-depth: Depths
 
 # This one is the backup and the one used in encompass vaults.
 NAME: abyss_entry
@@ -776,7 +772,7 @@ ENDMAP
 
 NAME:   hangedman_abyss_or_decor_jellyfish_corner
 TAGS:   transparent decor
-DEPTH:  D:4-, Depths, Abyss
+DEPTH:  D:2-, Depths, Abyss
 WEIGHT: 5 (D), 10
 : if you.in_branch("Abyss") then
 SUBST:  x : XXCB, c : CB, X = xxxxcb, C = xccccb, B = xcbbbb
@@ -833,7 +829,7 @@ ENDMAP
 
 NAME:    hangedman_abyss_or_decor_clamps
 TAGS:    transparent no_pool_fixup decor
-DEPTH:   D:8-, Depths, Abyss
+DEPTH:   D:4-, Depths, Abyss
 KFEAT:   @ = +
 SHUFFLE: ABCDEFGH, '"
 : if you.in_branch("Abyss") then
@@ -865,7 +861,7 @@ ENDMAP
 
 NAME:    hangedman_abyss_or_decor_passed
 TAGS:    transparent no_pool_fixup decor
-DEPTH:   D:4-, Depths, Abyss
+DEPTH:   D:2-, Depths, Abyss
 : if you.in_branch("Abyss") then
 SUBST:   ' = 00., " = %%*..
 SUBST:   x = xxxxcb, XY = ww...
@@ -890,7 +886,7 @@ ENDMAP
 
 NAME:    hangedman_abyss_or_decor_stagger
 TAGS:    transparent no_pool_fixup decor
-DEPTH:   D:4-, Depths, Abyss
+DEPTH:   D:2-, Depths, Abyss
 : if you.in_branch("Abyss") then
 SUBST:   ' = 00., " = %%., X = xxcccb, x = xxxxxcccb
 SUBST:   yY = ...xxxcbw, zZ = ...xxxcbl
@@ -919,7 +915,7 @@ ENDMAP
 
 NAME:    hangedman_abyss_or_decor_slice
 TAGS:    transparent no_pool_fixup decor
-DEPTH:   D:4-, Depths, Abyss
+DEPTH:   D:2-, Depths, Abyss
 WEIGHT:  5 (D), 10
 : if you.in_branch("Abyss") then
 SUBST:   ' = 00., " = %%., x = xxxxxcccb, cX = xxccb

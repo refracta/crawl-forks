@@ -62,7 +62,7 @@ end
 # Gozag code uses it to find out where shops can normally place.
 NAME: serial_shops
 TAGS: allow_dup extra luniq
-DEPTH: D:4-, Depths, Orc, Elf, Shoals, Snake, Vaults
+DEPTH: D:2-, Depths, Orc, Elf, Shoals, Snake, Vaults
 CHANCE: 20% (D)
 CHANCE: 20% (Depths)
 CHANCE: 30% (Orc)
@@ -254,7 +254,7 @@ ENDMAP
 # shops.
 NAME:  kennysheep_mini
 TAGS:  shop temple_overflow_generic_1
-DEPTH: D:4-, Depths, !D:$, !Depths:$
+DEPTH: D:2-, Depths, !D:$, !Depths:$
 : ks_random_setup(_G)
 : ks_shop_vault(_G, '{}CC')
 MAP
@@ -265,7 +265,7 @@ ENDMAP
 
 NAME:  kennysheep_mini_moat
 TAGS:  shop temple_overflow_generic_1
-DEPTH: D:4-, Depths, !D:$, !Depths:$
+DEPTH: D:2-, Depths, !D:$, !Depths:$
 : ks_random_setup(_G)
 SUBST: . : @
 : ks_shop_vault(_G, '{}CC')
@@ -279,7 +279,7 @@ ENDMAP
 
 NAME:  kennysheep_little_box
 TAGS:  shop temple_overflow_generic_1
-DEPTH: D:4-, Depths, !D:$, !Depths:$
+DEPTH: D:2-, Depths, !D:$, !Depths:$
 : ks_random_setup(_G)
 : ks_shop_vault(_G, '{}C....')
 MAP
@@ -303,14 +303,14 @@ ENDMAP
 # Custom venom shop
 NAME:    guppyfry_shop_venom
 TAGS:    no_monster_gen transparent
-DEPTH:   D:4-, Depths
-MONS:    ball python w:5 / adder / water moccasin, place:Snake:1
+DEPTH:   D:2-, Depths
+MONS:    ball python w:5 / adder, place:Snake:1
 KFEAT:   v = general shop type:Serpentskin suffix:Sales count:7 ; \
          w:3 ring of poison resistance | w:6 randbook disc:poison | \
          w:2 staff of poison | w:4 any weapon ego:venom | \
          w:4 any armour ego:poison_resistance | w:1 swamp dragon scales
 SUBST:   ? = 2..
-: if you.absdepth() < 13 then
+: if you.absdepth() < 5 then
 SUBST:   2 = 1
 : end
 MAP
@@ -325,7 +325,7 @@ ENDMAP
 # Custom earth shop
 NAME:    guppyfry_shop_earth
 TAGS:    no_monster_gen transparent
-DEPTH:   D:11-, Depths
+DEPTH:   D:4-, Depths
 KMONS:   1 = gargoyle / basilisk / earth elemental / cyclops w:3
 KMONS:   2 = stone giant / catoblepas w:20 / deep troll earth mage /\
              iron dragon w:4
@@ -337,7 +337,7 @@ KFEAT:   v = general shop type:Pet suffix:Rocks count:7 ; \
          w:2 book of the earth | w:2 book of geomancy | w:4 staff of earth | \
          w:1 crystal plate
 SUBST:   ? = 2d.
-: if you.absdepth() < 16 then
+: if you.in_branch("D") then
 SUBST:   2 = 1
 : end
 MAP
@@ -354,16 +354,17 @@ ENDMAP
 # Custom blood shop
 NAME:    guppyfry_shop_blood
 TAGS:    no_monster_gen transparent
-DEPTH:   D:12-, Depths
-KMONS:   1 = vampire / bat
+DEPTH:   D:6-, Depths
+KMONS:   1 = vampire / vampire bat
 KMONS:   2 = vampire / vampire mage / vampire knight
 KFEAT:   v = general shop type:Blood suffix:Bar count:7 ; \
-         w:70 potion of blood | w:10 any weapon ego:vampirism | \
+         w:70 potion of blood | w:10 any weapon good_item ego:vampirism | \
          w:9 randbook disc:necromancy | w:1 book of annihilations
-SUBST:   ? = 2.Y
+SUBST:   ? = 2YY
 : if you.in_branch("D") then
 SUBST:   2 = 1
 : end
+KFEAT:   12 = fountain_blood
 MAP
 xxxxx
 x???x
@@ -377,7 +378,7 @@ ENDMAP
 NAME: nicolae_evil_shop
 WEIGHT: 2
 TAGS: transparent
-DEPTH: D:6-, Depths
+DEPTH: D:3-, Depths
 SUBST: G : YlG
 # I couldn't decide on just one alliterative name.
 : local shopname = util.random_from({"type:Blasphemy suffix:Boutique",
@@ -405,13 +406,14 @@ ENDMAP
 # etc.
 NAME: nicolae_good_shop
 WEIGHT: 2
-DEPTH: D:6-, Depths
+DEPTH: D:3-, Depths
 TAGS: no_monster_gen no_trap_gen transparent
 SHUFFLE: _s
-KFEAT: s = general shop type:Hallowed suffix:Reliquary ; \
+KFEAT: s = general shop type:Hallowed suffix:Reliquary count:7 ; \
    potion of heal wounds | potion of curing | \
    eudemon blade ego:silver | trishula ego:silver | \
-   any weapon ego:holy_wrath | scroll of holy word |\
+   any weapon good_item ego:holy_wrath | any weapon good_item ego:silver |\
+   scroll of holy word | pearl dragon scales w:1 |\
    amulet of faith w:2 | ring of positive energy w:5 |\
    any armour ego:positive_energy w:5
 KFEAT: _ = altar_the_shining_one / altar_zin / altar_elyvilon
@@ -430,13 +432,13 @@ ENDMAP
 #####################################################
 # All bardings, all the time.
 NAME: nicolae_barding_shop
-DEPTH: D:8-, Depths, Snake, !Snake:$
+DEPTH: D:4-, Depths, Snake, !Snake:$
 WEIGHT: 1
 TAGS: transparent
-: if you.in_branch("Snake") then
-KMONS: s = naga w:50 / naga warrior
+: if you.in_branch("Snake") or crawl.one_chance_in(2) then
+KMONS: s = naga warrior
 : else
-KMONS: s = centaur w:50 / centaur warrior
+KMONS: s = centaur warrior
 : end
 KFEAT: s = armour shop type:Specialty suffix:Armours count:6 use_all ; \
    naga barding | naga barding | naga barding good_item | \
@@ -454,7 +456,7 @@ ENDMAP
 #####################################################
 # Sells conjurations-heavy books, destructive wands, etc.
 NAME: nicolae_blasting_shop
-DEPTH: D:8-, Depths
+DEPTH: D:4-, Depths
 TAGS: no_monster_gen no_item_gen transparent extra
 MARKER: s = lua:fog_machine { cloud_type = "flame", \
              pow_min = 3, pow_max = 5, delay_min = 50, delay_max = 90, \
@@ -482,14 +484,16 @@ ENDMAP
 #####################################################
 # Contains only four items: an evocable item, a staff, a randbook, and a wand,
 # associated with one of each of the four elemental schools.
+# BCADDO: Maybe a statue specific to this?
 NAME: nicolae_elemental_shop
 TAGS: no_monster_gen no_item_gen no_pool_fixup transparent extra
-DEPTH: D:4-, Depths
+DEPTH: D:2-, Depths
 SHUFFLE: AB
-NSUBST: A = a / l / w / x
+NSUBST: A = a / l / w / G
+TILE: G = DNGN_CRUMBLED_COLUMN
 SUBST: B = .
 KPROP: l = no_cloud_gen
-MARKER: a = lua:fog_machine { cloud_type = "thin mist", \
+MARKER: a = lua:fog_machine { cloud_type = "thunder", \
             pow_min = 100, pow_max = 100, delay = 1, \
             size = 1, walk_dist = 0, start_clouds = 1 }
 {{
@@ -540,7 +544,7 @@ ENDMAP
 # Why not take a chance on an unidentified artefact?
 NAME: nicolae_antique_artefacts
 TAGS: transparent extra
-DEPTH: D:10-, Depths
+DEPTH: D:4-, Depths
 WEIGHT: 1
 SHUFFLE: -m
 SUBST: - = .
@@ -559,7 +563,7 @@ ENDMAP
 
 NAME: nicolae_shop_scaring_up_business
 TAGS: transparent
-DEPTH: D:7-
+DEPTH: D:3-
 WEIGHT: 1
 KFEAT: O = food shop
 KMONS: O = patrolling hungry ghost
@@ -571,7 +575,7 @@ ENDMAP
 
 # Get away from it all.
 NAME: nicolae_island_escapes
-DEPTH: D:7-, !D:$, Depths, !Depths:$, Shoals, !Shoals:$, Swamp, !Swamp:$
+DEPTH: D:3-, !D:$, Depths, !Depths:$, Shoals, !Shoals:$, Swamp, !Swamp:$
 TAGS: no_item_gen no_monster_gen water_ok no_tide no_pool_fixup
 WEIGHT: 5
 SHUFFLE: Aa/Bb
@@ -595,9 +599,10 @@ MAP
 ENDMAP
 
 # Eat the purple.
+# BCADDO: REALLY restore purple meat.
 NAME: nicolae_transmutations_shop
 TAGS: transparent no_item_gen no_monster_gen extra
-DEPTH: D:8-, Depths, Zot
+DEPTH: D:4-, Depths, Zot
 COLOUR: m = magenta
 TILE: m = dngn_transparent_wall_magenta
 KFEAT: S = general shop type:Changing suffix:Room count:7 ; \
@@ -620,7 +625,7 @@ MAP
 ENDMAP
 
 NAME:   doesnt_shop_hydraphobe
-DEPTH:  D:5-11
+DEPTH:  D:3-6
 WEIGHT: 5
 TAGS:   transparent no_pool_fixup
 KPROP:  -1wP = no_tele_into
@@ -653,7 +658,7 @@ ENDMAP
 NAME:    minmay_shop_damaged
 TAGS:    transparent extra
 # not interesting after Lair
-DEPTH:   D:4-10
+DEPTH:   D:2-5
 KFEAT:   S = general shop type:Lightly-Used suffix:Armoury ; \
              damaged ego:none demon whip | \
              damaged ego:none eveningstar | \
@@ -679,7 +684,7 @@ ENDMAP
 
 NAME:    minmay_shop_chei
 TAGS:    transparent extra
-DEPTH:   D:7-
+DEPTH:   D:3-
 WEIGHT:  5
 KFEAT:   _ = altar_cheibriados
 # Determine items and their enchantment for the shop.
@@ -725,31 +730,15 @@ MAP
  ...
 ENDMAP
 
-NAME:   minmay_shop_enchanted_jewellery
-DEPTH:  D:4-, Depths, Orc, Elf, Shoals, Snake, Vaults
-TAGS:   transparent extra
-WEIGHT: 5
-KFEAT:  S = jewellery shop ; \
-            ring of strength | \
-            ring of dexterity | \
-            ring of intelligence | \
-            amulet of reflection | \
-            ring of evasion | \
-            ring of protection | \
-            ring of slaying w:3
-MAP
-S
-ENDMAP
-
 NAME:   minmay_shop_mayhem
-DEPTH:  D:4-, Depths, Orc, Elf, Shoals, Snake, Vaults
+DEPTH:  D:2-, Depths, Orc, Elf, Shoals, Snake, Vaults
 TAGS:   transparent extra
 WEIGHT: 3
 # Only deals in items that damage multiple targets, only has spellbooks in which
 # ALL of the spells damage multiple targets.
 {{
 local kstr = "S = general shop type:Mayhem suffix:Merchandise ; " ..
-             "hatchet w:5 | " ..
+             "hammer w:5 | " ..
              "war axe | " ..
              "broad axe w:5 | " ..
              "battleaxe | " ..
@@ -776,7 +765,7 @@ S
 ENDMAP
 
 NAME:   minmay_shop_mass
-DEPTH:  D:4-, Depths, Orc, Elf, Shoals, Snake, Vaults
+DEPTH:  D:2-, Depths, Orc, Elf, Shoals, Snake, Vaults
 TAGS:   transparent extra
 WEIGHT: 3
 # Only deals in items that are probably really heavy.
@@ -804,7 +793,7 @@ ENDMAP
 # 3 shops
 NAME:    minmay_shop_grove
 TAGS:    extra luniq_floating_shops
-DEPTH:   D:4-, Depths, Elf, Snake
+DEPTH:   D:2-, Depths, Elf, Snake
 ORIENT:  float
 MONS:    plant / bush w:2
 KFEAT:   B = gadget shop
@@ -829,7 +818,7 @@ ENDMAP
 # 1 (33%) or 4 (66%) shops
 NAME:    minmay_shop_grid_forest
 TAGS:    extra luniq_floating_shops
-DEPTH:   D:4-, Depths, Elf, Snake
+DEPTH:   D:2-, Depths, Elf, Snake
 KFEAT:   A = any shop
 SHUFFLE: ABC
 SUBST:   t : t:11 x:1 c:1 b:1 v:1
@@ -850,7 +839,7 @@ ENDMAP
 # 1 (25%), 2 (25%), or 3 (50%) shops
 NAME:    minmay_shop_star
 TAGS:    extra luniq_floating_shops
-DEPTH:   D:4-, Depths, Elf, Snake
+DEPTH:   D:2-, Depths, Elf, Snake
 ORIENT:  float
 KFEAT:   A = any shop
 SHUFFLE: AB
@@ -880,7 +869,7 @@ ENDMAP
 # 2 (50%) or 4 (50%) shops
 NAME:    minmay_shoptagon
 TAGS:    extra luniq_floating_shops
-DEPTH:   D:4-, Depths, Elf, Snake
+DEPTH:   D:2-, Depths, Elf, Snake
 ORIENT:  float
 KFEAT:   A = any shop
 SUBST:   a : . m:1 G:1

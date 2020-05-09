@@ -1034,19 +1034,20 @@ MONS:   w:50 human zombie/orc zombie/elf zombie/w:5 ogre zombie/w:5 troll zombie
 MONS:   w:50 human skeleton/orc skeleton/elf skeleton/w:5 ogre skeleton/\
         w:5 troll skeleton
 MONS:   mummy, vampire, wraith, necrophage
+TILE:   c = wall_catacombs
 NSUBST: ? = 1:_ / *:1
 SUBST:  1 = 1:25 2 3 4:8 5:7 6:5
 KFEAT:  _ = altar_kikubaaqudgha
 KMONS:  _ = human zombie
 : interest_check(_G)
 MAP
-ccccccccccccccc
-c?c?c?c?c?c?ccG
-c+c+c+c+c+c+ccc
+ccccccccccccccc.
+c?c?c?c?c?c?ccG.
+c+c+c+c+c+c+ccc.
 c............+@
-c+c+c+c+c+c+ccc
-c?c?c?c?c?c?ccG
-ccccccccccccccc
+c+c+c+c+c+c+ccc.
+c?c?c?c?c?c?ccG.
+ccccccccccccccc.
 ENDMAP
 
 NAME:   kiku_gazebo_garden_becter
@@ -2546,19 +2547,20 @@ MONS:   w:50 human zombie/orc zombie/elf zombie/w:5 ogre zombie/w:5 troll zombie
 MONS:   w:50 human skeleton/orc skeleton/elf skeleton/w:5 ogre skeleton/\
         w:5 troll skeleton
 MONS:   mummy, wight, vampire, necrophage
+TILE:   c = wall_catacombs
 NSUBST: ? = 1:_ / *:1
 SUBST:  1 = 1:25 2 3 4:8 5:7 6:5
 KFEAT:  _ = altar_yredelemnul
 KMONS:  _ = human zombie
 : interest_check(_G)
 MAP
-ccccccccccccccc
-c?c?c?c?c?c?ccG
-c+c+c+c+c+c+ccc
+ccccccccccccccc.
+c?c?c?c?c?c?ccG.
+c+c+c+c+c+c+ccc.
 c............+@
-c+c+c+c+c+c+ccc
-c?c?c?c?c?c?ccG
-ccccccccccccccc
+c+c+c+c+c+c+ccc.
+c?c?c?c?c?c?ccG.
+ccccccccccccccc.
 ENDMAP
 
 NAME:   yredelemnul_forgotten_temple_becter
