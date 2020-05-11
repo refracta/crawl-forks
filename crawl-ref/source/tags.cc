@@ -1169,7 +1169,6 @@ void tag_write(tag_type tagID, writer &outf)
         CANARY;
         tag_construct_lost_monsters(th);
         CANARY;
-        if (th.getMinorVersion() < TAG_MINOR_GAUNTLET_TRAPPED)
         tag_construct_lost_items(th);
         CANARY;
         tag_construct_companions(th);
