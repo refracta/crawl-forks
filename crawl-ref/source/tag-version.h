@@ -236,6 +236,7 @@ enum tag_minor_version
     TAG_MINOR_CURSE_REWORK,        // Change from basic curses to negative artProp curses
     TAG_MINOR_DRACONIAN_REWORK,    // Save file changes related to the new Draconian mutation set.
     TAG_MINOR_ZOT_DRACONIAN_COLOURS, // Have to adjust the monster-type.h enum to allow more draconian colours...
+    TAG_MINOR_DUNGEON_SHORTENING,  // Shortening the dungeon also lots of clean-up and restoring the ability to drop items down shafts
 #endif
     NUM_TAG_MINORS,
     TAG_MINOR_VERSION = NUM_TAG_MINORS - 1
