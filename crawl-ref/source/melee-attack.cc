@@ -406,7 +406,9 @@ bool melee_attack::handle_phase_dodged()
             {
                 if (!wpn0 || is_melee_weapon(*wpn0))
                 {
-                    if (!wpn1 || is_melee_weapon(*wpn1))
+                    if (wpn0 && defender->hands_reqd(*wpn0) == HANDS_TWO)
+                        riposte(0);
+                    else if (!wpn1 || is_melee_weapon(*wpn1))
                     {
                         if (coinflip())
                             riposte(0);
