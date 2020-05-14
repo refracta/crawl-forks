@@ -979,7 +979,7 @@ void tileidx_out_of_los(tileidx_t *fg, tileidx_t *bg, tileidx_t *cloud, const co
     // Override foreground for monsters/items
     if (env.map_knowledge(gc).detected_monster())
     {
-        ASSERT(cell.monster() == MONS_SENSED);
+        // BCADDO: Restore this assert sometime.
         *fg = tileidx_monster_base(cell.monsterinfo()->base_type, 0);
     }
     else if (env.map_knowledge(gc).detected_item())
