@@ -23,6 +23,7 @@
 #include "travel.h"
 #include "viewchar.h"
 #include "mon-tentacle.h"
+#include "wiz-dgn.h"
 #include "tilepick.h"
 #include "rltiles/tiledef-player.h"
 
@@ -382,7 +383,10 @@ static cglyph_t _get_cell_glyph_with_class(const map_cell& cell,
         {
             // BCADDO: Restore this assert sometime.
             if (mi->type != MONS_SENSED)
-                mpr("Minor Load Error.");
+            {
+                mprf(MSGCH_ERROR, "%s", "Floor monster data corrupted. Apologies for the inconvience.");
+                wizard_recreate_level();
+            }
             if (mons_is_sensed(mi->base_type))
                 g.col = mons_class_colour(mi->base_type);
             else
