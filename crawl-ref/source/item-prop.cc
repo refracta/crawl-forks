@@ -1406,10 +1406,10 @@ void set_item_ego_type(item_def &item, int ego_type)
 
 brand_type get_weapon_brand(const item_def &item)
 {
-    // Weapon ego types are "brands", so we do the randart lookup here.
-    if (item.base_type != OBJ_WEAPONS && !item.is_type(OBJ_ARMOURS, ARM_CLAW))
+    if (!item.is_type(OBJ_ARMOURS, ARM_CLAW) && (!is_weapon(item) || item.base_type == OBJ_STAVES))
         return SPWPN_NORMAL;
 
+    // Weapon ego types are "brands", so we do the randart lookup here.
     if (is_artefact(item))
         return static_cast<brand_type>(artefact_property(item, ARTP_BRAND));
 
