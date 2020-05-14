@@ -390,9 +390,12 @@ bool melee_attack::handle_phase_dodged()
         if (!attacker->alive())
             return false;
 
-        const bool using_lbl0 = defender->weapon(0) && item_attack_skill(*defender->weapon(0)) == SK_LONG_BLADES;
+        const item_def * wpn0 = defender->weapon(0);
+        const item_def * wpn1 = defender->weapon(0);
+        const bool using_lbl0 = wpn0 && item_attack_skill(*wpn0) == SK_LONG_BLADES;
         const bool using_lbl1 = (defender->is_player() || mons_wields_two_weapons(*defender->as_monster()))
-            && defender->weapon(1) && item_attack_skill(*defender->weapon(1)) == SK_LONG_BLADES;
+            && wpn1 && item_attack_skill(*wpn1) == SK_LONG_BLADES;
+        // BCADNOTE: Monsters can't use fencers right now; should it be allowed? (Monsters usually don't pick up non-body armour anyways).
         const bool using_fencers
             = (defender->is_player()) && player_equip_unrand(UNRAND_FENCERS);
         const int chance = using_lbl0 + using_lbl1 + using_fencers;
@@ -401,9 +404,9 @@ bool melee_attack::handle_phase_dodged()
         {
             if (using_fencers)
             {
-                if (is_melee_weapon(*defender->weapon(0)))
+                if (!wpn0 || is_melee_weapon(*wpn0))
                 {
-                    if (is_melee_weapon(*defender->weapon(1)))
+                    if (!wpn1 || is_melee_weapon(*wpn1))
                     {
                         if (coinflip())
                             riposte(0);
@@ -413,7 +416,7 @@ bool melee_attack::handle_phase_dodged()
                     else
                         riposte(0);
                 }
-                else if (is_melee_weapon(*defender->weapon(1)))
+                else if (!wpn1 || is_melee_weapon(*wpn1))
                     riposte(1);
             }
             else if (using_lbl0)
@@ -4005,7 +4008,7 @@ void melee_attack::do_minotaur_retaliation()
 void melee_attack::riposte(int which_attack)
 {
     // Sanity Check 0
-    if (!is_melee_weapon(*defender->weapon(which_attack)))
+    if (defender->weapon(which_attack) && !is_melee_weapon(*defender->weapon(which_attack)))
         return;
 
     // Sanity Check 1
