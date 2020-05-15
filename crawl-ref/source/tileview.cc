@@ -93,6 +93,12 @@ void tile_default_flv(branch_type br, tile_flavour &flv)
     switch (br)
     {
     case BRANCH_DUNGEON:
+        if (you.depth == 2)
+        {
+            flv.wall  = TILE_WALL_PEBBLE_GREEN;
+            flv.floor = TILE_FLOOR_SLIME;
+            return;
+        }
         flv.wall  = TILE_WALL_NORMAL;
         flv.floor = TILE_FLOOR_NORMAL;
         return;
