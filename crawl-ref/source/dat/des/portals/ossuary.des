@@ -38,6 +38,7 @@ function ossuary_setup_features(e)
   e.kmons("3 = skeleton")
   e.kmons("6 = spectral thing")
   e.kmons("7 = simulacrum")
+  e.kmons("! = bog body")
   e.kfeat("GHI = sarcophagus")
   e.kfeat("J = granite_statue")
   e.tile("G = DNGN_SARCOPHAGUS_SEALED")
@@ -405,11 +406,11 @@ c333c'''''''''''c333c
 c333c'''1'''1'''c333c
 cKKKc'''''''''''cBBBc
 c~~~c'''''''''''c^^^c
-c~~~c+++ccccccccc^^^c
+c~~~c+++cccccqqqc^^^c
 c~~~c...cdddc...c.z^c
 c~~~+1d1+***q...+.^^c
 c~~~c...cdddc...c.z^c
-ccccccccccqqc+++ccccc
+cccccccccqqqc+++ccccc
              .@.
 ENDMAP
 
@@ -517,7 +518,8 @@ ENDMAP
 
 NAME:    ossuary_crypta
 WEIGHT:  20
-TAGS:    uniq_ossuary
+ORIENT:  north
+TAGS:    uniq_ossuary no_rotate no_hmirror
 # mix of good items with useless ones
 ITEM:    scroll of random uselessness w:20 / scroll of immolation / \
          scroll of bless item / \
@@ -529,37 +531,44 @@ ITEM:    scroll of attention / scroll of random uselessness w:20 / \
          scroll of immolation / potion of mutation w:5 / \
          potion of degeneration w:40
 # occasionally just use this
-ITEM:    any potion / any scroll w:5
+ITEM:    any potion / any scroll
+KITEM:   g = any manual / scroll of acquirement
 SHUFFLE: hjkl
 SUBST:   h:d, j:e, k:de, l:.de
 NSUBST:  f = 6:f / *:e
-NSUBST:  d = 2:M / *:d
-NSUBST:  e = 2:M / *:e
+NSUBST:  d = 1:} / 2:M / *:d
+NSUBST:  e = 1:} / 2:M / *:e
+NSUBST:  2 = 2:0 / *:2
 SUBST:   M = 1f, d = dddf, e = eeef
+NSUBST:   f = 2:g / *:f
+SUBST:   ' = 44~...
+SUBST:   4 = 23444
+NSUBST:  ~ = 4:~ / *:.
+KFEAT:   ~ = dispersal trap
 NSUBST:  . = 6:^ / *:.
 KFEAT:   ^ = alarm trap / floor w:20
 : ossuary_setup_features(_G)
 MAP
-          vvv
-        vvv1vvv
+         vvvvv
+         vI}Hv
+        vvfffvv
  ccccc vvfffffvv ccccc
- clllc vfff1fffv chhhc
+ clllc vf1GfG1fv chhhc
  clllc vvvv^vvvv chhhc
  cc^cc    c^c    cc^cc
 ccc.c   ccc+ccc   c.ccc
-c2+.cc cc.....cc cc.+2c
-ccc..ccc.......ccc..ccc
-c2+...c.........c...+2c
-ccc...+....Y....+...ccc
-c2+...c.........c...+2c
-ccc..ccc.......ccc..ccc
-c2+.cc cc.....cc cc.+2c
-ccc.c   ccc+ccc   c.ccc
- cc^cc    c.c    cc^cc
- ckkkc   cc.cc   cjjjc
- ckkkc   c...c   cjjjc
- ccccc   c.@.c   ccccc
-         c...c
+c2+.cc cc'''''cc cc.+2c
+cccc.ccc'''''''ccc.cccc
+ c2+..c'''''''''c..+2c
+ cccI.+''''Y''''+.Hccc
+ c2+..c'''''''''c..+2c
+cccc.ccc'''''''ccc.cccc
+c2+.cc cc'''''cc cc.+2c
+ccc.c   c@@@@@c   c.ccc
+ cc^cc           cc^cc
+ ckkkc           cjjjc
+ ckkkc           cjjjc
+ ccccc           ccccc
 ENDMAP
 
 # Scorpions, and lots of them. Hope you weren't expecting to breeze through
@@ -673,30 +682,33 @@ EEEEE                       DDDDD
 ENDMAP
 
 NAME:    ossuary_zaba_flooded
+ORIENT:  east
 WEIGHT:  20
-TAGS:    no_exits uniq_ossuary
+TAGS:    uniq_ossuary
+SHUFFLE: Yy% / Zz$ / Uu#
+SUBST:   U : @, u# = rw.
+SUBST:   YZyz : x, %$ : c
 {{
 local flood_x, flood_y, n = -1, -1, 0
 
 -- Find where to start the flood.
-for x = 0, width() - 1 do
-    for y = 0, height() - 1 do
-        if mapgrd[x][y] == '.' then
-            n = n + 1
-            if crawl.one_chance_in(n) then
-                flood_x, flood_y = x, y
-            end
+flood_x = 7
+for y = 0, height() - 1 do
+    if mapgrd[7][y] == '.' then
+        n = n + 1
+        if crawl.one_chance_in(n) then
+            flood_y = y
         end
     end
 end
 
 -- Flood it!
-flood(flood_x, flood_y, crawl.random_range(6, 16), function(x, y, distance)
+flood(flood_x, flood_y, crawl.random_range(12, 16), function(x, y, distance)
     local c = mapgrd[x][y]
 
     local replacements = {
-        ['.'] = { {'.', 1}, {'W', 2} },
-        ['x'] = { {'x', 5}, {'w', 5} },
+        ['.'] = { {'r', 1}, {'.', 1}, {'W', 4} },
+        ['x'] = { {'r', 1}, {'w', 5} },
         ['c'] = { {'c', 5}, {'w', 3}, {'W', 2}, {'x', 1} },
         ['+'] = { {'+', 10}, {'W', 5} },
         ['1'] = { {'2', 1} }
@@ -715,19 +727,18 @@ end)
 
 }}
 SHUFFLE: ABI/CDJ/EFK/GHL
-SUBST:   A : ., B : A, I : <
-SUBST:   EFKGHL : d
-SUBST:   CDJ = 1112
-MONS:    generate_awake zombie place:D:6 /\
-         w:5 generate_awake mummy
-MONS:    w:15 withered plant /\
-         mummy \
-         spells:throw_frost.18.wizard;slow.27.wizard \
-         name:bog n_adj col:green/\
-         w:5 nothing
+SUBST:   A : 1, BD : }, IJ : |
+SUBST:   EFKGHL : ddd*
+SUBST:   C = 1112
+SUBST:   2 = ppp!.
+SUBST:   1 = 123
+KFEAT:   r = floor
+KMONS:   p = withered plant
 ITEM:    any potion / any scroll / any jewellery w:1
 : ossuary_setup_features(_G)
-: lrockcol('brown')
+CLEAR:   x
+COLOUR:  r = brown
+FTILE:   r = FLOOR_SWAMP
 MAP
       xxxxxxxxxxxxxxx
    xxxxxxxxxxxxxxxxxxxxx
@@ -737,15 +748,15 @@ MAP
  xxxxxc1c1c1c1c1c1c1cxxxxx
 xxxxccc+c+c+c+c+c+c+cccxxxx
 xxxxc1+.............+1cxxxx
-xxxxccc.vv+vv+vv+vv.cccxxxx
+Yyyy%%%.vv+vv+vv+vv.cccxxxx
 xxxxc1+.vAAAv1vCCCv.+1cxxxx
 xxxxccc.vABAvvvCDCv.cccxxxx
 xxxxc1+.vAAIv1vJCCv.+1cxxxx
-xxxxccc.vvvvv+vvvvv.cccxxxx
-xxxxc1+.............+1cxxxx
+Zzzz$$$.vvvvv+vvvvv.cccxxxx
+xxxxc1+......}......+1cxxxx
 xxxxccc.vvvvv+vvvvv.cccxxxx
 xxxxc1+.vEEKv1vLGGv.+1cxxxx
-xxxxccc.vEFEvvvGHGv.cccxxxx
+Uuuu###.vEFEvvvGHGv.cccxxxx
 xxxxc1+.vEEEv1vGGGv.+1cxxxx
 xxxxccc.vv+vv+vv+vv.cccxxxx
 xxxxc1+.............+1cxxxx
@@ -772,29 +783,29 @@ ENDMAP
 # before the gold, but then I found out that zombies can't open doors anymore.
 NAME:   minmay_ossuary_gauntlet
 WEIGHT: 10
+ORIENT: east
 TAGS:   uniq_ossuary
 SUBST:  ' = '''''..
 CLEAR:  '
 NSUBST: 1 = 4:1 / *:2
 : ossuary_setup_features(_G)
 MAP
-       '''''''''''
-    ''''''''''''''''
-  '''''''''''''''''''''''''
-  '''ccccccccccccccccc'''ccccc
+    '''''
+  ''''''''''
+  '''ccccccccccccccccc   ccccc
  ''''c1H1H1H1H1H1H1H1cccccHHHcc 
-'''''@................$$$$$$$Gc
+'''J'@................$$$$$$$Gc
 '''''@...G...G...G...G$$$G$}$Gc
-'''''@................$$$$$$$Gc
+'''J'@................$$$$$$$Gc
  ''''c1I1I1I1I1I1I1I1cccccIIIcc
-  '''ccccccccccccccccc'''ccccc
-  '''''''''''''''''''''''''
-    ''''''''''''''''''
-       '''''''''''''
+  '''ccccccccccccccccc   ccccc
+  '''''''''''
+    '''''
 ENDMAP
 
 NAME:    ossuary_the_hunt_dpeg
 WEIGHT:  10
+ORIENT: east
 TAGS:   uniq_ossuary
 # loot: 8 items of which 6 should be good.
 # Most of the loot helps right here, if need be.
@@ -811,7 +822,7 @@ MAP
            ccccccccccccccccccccc
  ccccccccccc2c2c2c2c2c2c2ccddddccc
 cc1.....1.~~~~~~~~~~~~~~~~^....M}c
-@.........~~~~~~~~~~~~~~~~^....M}c
+@=...G....~~~~~~~~~~~~~~~~^....M}c
 cc1.....1.~~~~~~~~~~~~~~~~^....M}c
  ccccccccccc2c2c2c2c2c2c2ccddddccc
            ccccccccccccccccccccc
@@ -819,6 +830,7 @@ ENDMAP
 
 NAME:    ossuary_due_mausoleum
 WEIGHT:  10
+ORIENT: south
 TAGS:   uniq_ossuary
 NSUBST:  = = 1:+ / *:c
 SUBST:  . = ~3....
@@ -828,15 +840,16 @@ CLEAR:  '
 ITEM:    any scroll / any potion
 : ossuary_setup_features(_G)
 MAP
-      '''     '''
+       '''J  j''
+      ''''' '''''
     '''''''@'''''''
    '''ccccc+ccccc'''
   '''cc.........cc'''
  '''cc...cc=cc...cc'''
 '''cc...cm.d.mc...cc'''
- ''c...cm.ddd.mc...c''
+J''c...cm.ddd.mc...c''J
   @+...=.dd5dd.=...+@
- ''c...cm.ddd.mc...c''
+J''c...cm.ddd.mc...c''J
 '''cc...cm.}.mc...cc'''
  '''cc...cc=cc...cc'''
    ''cc.........cc''
@@ -862,50 +875,55 @@ ENDMAP
 # INDY: Oh, rats! ... He hates rats. He's scared to death of 'em.
 NAME:    ossuary_due_small_catacomb
 WEIGHT:  10
-TAGS:   uniq_ossuary
+DEPTH:   D:3-, !D:$, Lair, !Lair:$
+TAGS:    uniq_ossuary
+ORIENT:  east
 ITEM:    any scroll / any potion
-MONS:    kobold skeleton / goblin skeleton / gnoll skeleton / \
-         orc skeleton
-MONS:    mummy
 # Loot: 10-19
 # Some random content.
-SHUFFLE: Bb/Zz, Dd/Ww, Ee/Vv
-SUBST:   Z=c, z=c, W=c, w=c, V=c, v=c
-SUBST:   B=X, D=X, E=X
+SHUFFLE: Bb/Zz, Xx/Ww, Ee/Vv
+SUBST:   ZzWwVv : c, BXE : 1
+SUBST:   3 = 666777
 NSUBST:  b = 1:+ / c
-NSUBST:  d = 1:+ / c
+NSUBST:  x = 1:+ / c
 NSUBST:  e = 1:+ / c
-SUBST:   X = x2
 # Guaranteed 10 items and 10 mummies, two in hidden rooms.
 # 50/50 chance of loot for each of the eleven rats in the rat room.
-KITEM:   x = any scroll / any potion
-KMONS:   x = mummy
+SUBST:   x = 1
 NSUBST:  ' = 10:^ / *:.
-KFEAT:   ^ = arrow trap
+KFEAT:   ^ = spear trap
+NSUBST:  y = 1:Y / *:y
+SUBST:   ` = ddd*.........~
+KFEAT:   ~ = alarm trap
+NSUBST:  D = 3:} / 1:| / 2:* / *:d
+KITEM:   Y = scroll of acquirement / any manual / potion of experience w:2
+KMONS:   Y = hell hound
 KITEM:   y = any scroll w:5 / any potion w:5 / nothing w:10
-KMONS:   y = rat skeleton
+KMONS:   y = hell rat / spectral hell rat
 : ossuary_setup_features(_G)
 MAP
-           ccc
-         cccxccccc
+          ccccc
+          cGDGc
+         ccc1ccccc
        ccc.'''+''c      cccccc
-      cc.'.ccccc'c     cc.+.1cc
-     cc1.ccc  cc+cc   cc..cc..cc
-    cc..cc   cc...ccccc..cccc..ccc
-    cc+cc    c+.x.+.1''.cc  cc.'.cc
- @ccc...cc  ccb...cccxccc   cecc'cc
- @.+..1.+c  cBcc+cc ccc   cceEec+cc
- @ccc...cc  ccb..cc   cccccxccc...ccc
-    cc+cc   cc..+cccccc.'+''''+.x.+Xc
-     c.cc  cc1.cc'cdDd.1ccccccc...ccc
-     c1cc cc..cccc'cdd.cc     cc+cc
-     c..cccc+cc  cc'cc+cc      cXc
-     cc..cc...cccccc+yyyccccc  ccc
-      cc.+..x..+'''+yyyyy+.1cc
-       cccc...cccxcccyyyccc..cc
-          cc+cc ccc cc+cc cc..ccccc
-           cxc       ccc   cc.''+Xc
-           ccc              ccccccc
+      cc.'.ccccc'c     cc.+.3cc
+     cc3.ccccccc+cc   cc..cc..cc
+    cc..ccccccc```ccccc..cccc..ccc
+    cc+ccccccy+`3`+.3''.cccccc.'.cc
+ @ccc```ccccccb```ccc1cccccccecc'cc
+ @.+``3`+ccccBcc+cccGDGccccceEec+ccccc
+ @ccc```ccccccb..cccccccccc1ccc```ccGc
+    cc+ccccccc..+cccccc.'+''''+`3`+1Dc
+     c.cccccc1.cc'cxXx.3ccGDGcc```ccGc
+     c1ccccc..cccc'cxx.ccccccccc+ccccc
+     c..cccc+cccccc'cc+ccccccccc1cc
+     cc..cc```cccccc+yyycccccccGDGc
+      cc.+.`3`.+'''+yyyyy+.3ccccccc
+       cccc```ccc3cccyyyccc..ccccccc
+          cc+cccGDGccc+cc cc..ccccGc
+          cc1ccccccc ccc   cc.''+1Dc
+          cGDGc             ccccccGc
+          ccccc                  ccc
 ENDMAP
 
 # Menkaure's pyramid
@@ -1016,6 +1034,7 @@ ENDMAP
 #
 NAME:    ossuary_due_cavern
 WEIGHT:  10
+ORIENT:  south
 TAGS:    uniq_ossuary
 MONS:    centaur zombie w:1 / orc zombie / hobgoblin zombie /\
          kobold zombie / adder zombie / orc skeleton / hobgoblin skeleton /\
@@ -1066,78 +1085,83 @@ ENDMAP
 NAME:   ossuary_minmay_four_chambers
 WEIGHT: 10
 TAGS:   uniq_ossuary
-MONS:   human zombie / elf zombie / centaur zombie
-MONS:   mummy
+SHUFFLE: ABC
+SHUFFLE: sS / tT / uU / vV
+SUBST: s = 3334........
+SUBST: S = +
+SUBST: tuv = '
+SUBST: TUV = c
+SUBST: A = 2
+SUBST: B = 6
+SUBST: C = 7
+KFEAT: ~ = alarm trap / dispersal trap
+CLEAR: '
 ITEM:   any scroll / any potion / any scroll q:2 w:2 / any potion q:2 w:2
 : ossuary_setup_features(_G)
 MAP
-            ccc
-          cccdccc
-         ccdddddcc
-         c..ddd..c
-         c...d...c
-         c.......c
-         cc.....cc
-          ccc.ccc
-            c+c
-  ccccc   @@c.c@@   ccccc
- cc1.1cc c@.....@c cc1.1cc
- c.....c c.......c c.....c
-cc.....ccc.......ccc.....cc
-c2......+.........+......2c
-cc.....ccc.......ccc.....cc
- c.....c c.......c c.....c
- cc1.1cc c@.....@c cc1.1cc
-  ccccc   @@c.c@@   ccccc
-            c+c
-          ccc.ccc
-         cc.....cc
-         c1.....1c
-         c.......c
-         c1.....1c
-         cc.....cc
-          ccc2ccc
-            ccc
+          ccc
+         ccdcc
+        ccdddcc
+       sc.ddd.cv
+       sc.d~d.cv
+      sscc...ccvv
+     sssscc.ccvvvv
+   sssssssc+cvvvvvvv
+  ccccssscc.ccvvvcccc
+ ccAAccscS...VcvccBBcc
+ccA..Accc..4..cccB..Bcc
+cG1.~..+..4Y4..+..~.1Gc
+ccA..Accc..4..cccB..Bcc
+ ccAAcctcT...UcuccBBcc
+  cccctttcc.ccuuucccc
+   tttttttc+cuuuuuuu
+     ttttcc.ccuuuu
+      ttccC.Cccuu
+       tcC.~.Ccu
+       tcC...Ccu
+        ccC1Ccc
+         ccGcc
+          ccc
 ENDMAP
 
 # The intent is that the mummies chase the player through the whole ossuary,
 # forcing the player to either move quickly or soak up some death curses.
 NAME:   ossuary_minmay_chase
 WEIGHT: 10
-TAGS:   uniq_ossuary
-MONS:   rat zombie / quokka zombie / adder zombie /\
-        goblin zombie / hobgoblin zombie / kobold zombie / gnoll zombie w:2 /\
-        big kobold zombie w:1 / human zombie w:1 / elf zombie w:1 / orc zombie w:1
-MONS:   generate_awake mummy
+ORIENT: east
+TAGS:   uniq_ossuary no_rotate
 ITEM:   any scroll / any potion / gold w:4
-KFEAT:  ~ = arrow trap / needle trap
+KFEAT:  ~ = arrow trap / needle trap / dispersal trap w:4
+KITEM: D = scroll of acquirement
+SUBST: ' = 3..pppp
+SUBST: 2 = 24
+SUBST: 3 = 3334
+CLEAR: p
 : ossuary_setup_features(_G)
 MAP
-ccccc     ccc ccc ccc
-cdddccccccc1ccc1ccc1ccccccc
-cddd~~~~c.............c~~~c
-cd<d~~<~+.............+~<~c
-cddd~~~~c.............c~~~c
-cdddccccccc1ccc1ccc1cccc+cc
-ccccc     ccc ccc ccc c...c
-                     cc...cc
-                     c1...1c
-                     cc...cc
-                      c...c
-                     cc...cc
-                     c1...1c
-                     cc...cc
-                      c...c
-                     cc...cc
-                     c1...1c
-                     cc...cc
-cccc @@@  ccc ccc ccc c...c
-c2.cc+++ccc1ccc1ccc1cccc+cc
-cc......+.............c~~~c
-c2......+.............+~<~c
-cc......+.............c~~~c
-c2.cc+++ccc1ccc1ccc1ccccccc
-cccc @@@  ccc ccc ccc
+ccccc     ccccccccccc
+cdddccccccc2G2G2G2G2cccccc
+cdDd4.2.+...~.....~...+.4c
+cdDd.4.2+...~.....~...+4.c
+cdddccccccc2G2G2G2G2ccc++c
+ccccc     ccccccccccc c..c
+                     cc..cc
+                     c2..2c
+                     cI~~Hc
+                     c2..2c
+                     cI..Hc
+                     c2..2c
+                     cI..Hc
+                     c2..2c
+                     cI~~Hc
+   '''''''''         c2..2c
+ ''''''''''''''      cc..cc
+ ccc@@@...ccccccccccccc..c
+ c0c++ccccc2G2G2G2G2ccc++c
+ c1.....+...~.....~...+4.c
+ c1.....+...~.....~...+.4c
+ c0cccccccc2G2G2G2G2cccccc
+ ccc      ccccccccccc
 ENDMAP
 
 NAME:   ossuary_boxes_badplayer
