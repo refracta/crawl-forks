@@ -1479,6 +1479,9 @@ static int _shatter_walls(coord_def where, int /*pow*/, actor *agent)
 
         destroy_wall(where);
 
+        if (agent->is_player() && grid == DNGN_ORCISH_IDOL)
+            did_god_conduct(DID_DESTROY_ORCISH_IDOL, 8);
+
         return 1;
     }
 
@@ -3055,6 +3058,9 @@ bool setup_fragmentation_beam(bolt &beam, int pow, const actor *caster,
     {
     // Stone and rock terrain
     case DNGN_ORCISH_IDOL:
+        if (!caster->is_player())
+            return false; // don't let monsters blow up orcish idols
+
         if (what && *what == nullptr)
             *what = "stone idol";
         destroy = true;
@@ -3192,6 +3198,16 @@ spret cast_fragmentation(int pow, const actor *caster,
 
     if (caster->is_player())
     {
+        if (grid == DNGN_ORCISH_IDOL)
+        {
+            if (!yesno("Really insult Beogh by defacing this idol?",
+                       false, 'n'))
+            {
+                canned_msg(MSG_OK);
+                return SPRET_ABORT;
+            }
+        }
+
         bolt tempbeam;
         bool temp;
         setup_fragmentation_beam(tempbeam, pow, caster, target, true, nullptr,
@@ -3247,7 +3263,16 @@ spret cast_fragmentation(int pow, const actor *caster,
 
     beam.explode(true, hole);
 
+<<<<<<< HEAD
     return spret::success;
+=======
+    // Monsters shouldn't be able to blow up idols,
+    // but this check is here just in case...
+    if (caster->is_player() && grid == DNGN_ORCISH_IDOL)
+        did_god_conduct(DID_DESTROY_ORCISH_IDOL, 8);
+
+    return SPRET_SUCCESS;
+>>>>>>> parent of ff52c9bc72... Don't make Beogh smite players for destroying orcish idols
 }
 
 static bool _elec_not_immune(const actor *act)

@@ -1077,7 +1077,12 @@ void bolt::digging_wall_effect()
             {
                 if (!silenced(you.pos()))
                 {
-                    mprf(MSGCH_SOUND, "You hear a grinding noise.");
+                    if (feat == DNGN_GRATE)
+                        mprf(MSGCH_SOUND, "You hear a grinding noise.");
+                    else if (feat == DNGN_ORCISH_IDOL)
+                        mprf(MSGCH_SOUND, "You hear a hideous screaming!");
+                    else 
+                        mprf(MSGCH_SOUND, "You hear a grinding noise.");
                     obvious_effect = true; // You may still see the caster.
                     msg_generated = true;
                 }
@@ -1090,8 +1095,21 @@ void bolt::digging_wall_effect()
             string wall;
             if (feat == DNGN_GRATE)
             {
-                // XXX: should this change for monsters?
-                mpr("The damaged grate falls apart.");
+                if (!silenced(you.pos()))
+                    mprf(MSGCH_SOUND, "The grate screeches as it bends and collapses.");
+                else
+                    mpr("The grate bends and falls apart.");
+                return;
+            }
+            else if (feat == DNGN_ORCISH_IDOL)
+            {
+                if (!silenced(you.pos()))
+                    mprf(MSGCH_SOUND, "The idol screams as its substance crumbles away!";
+                else
+                    mpr("The idol twists and shakes as its substance crumbles away!");
+
+                if (agent() && agent()->is_player())
+                    did_god_conduct(DID_DESTROY_ORCISH_IDOL, 8);
                 return;
             }
             else if (feat == DNGN_SLIMY_WALL)
