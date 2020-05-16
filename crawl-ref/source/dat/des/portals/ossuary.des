@@ -31,11 +31,13 @@ function ossuary_setup_features(e)
 	e.kmons("5 = revenant")
   end
   e.tags("no_monster_gen")
-  e.ftile(".'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()|~{}+- = floor_sandstone")
+  e.ftile(".'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12345<>67890!@#$%^&*()|~{}+- = floor_sandstone")
   e.tile("c = wall_tomb")
   e.kmons("0 = guardian mummy")
   e.kmons("2 = zombie")
   e.kmons("3 = skeleton")
+  e.kmons("6 = spectral thing")
+  e.kmons("7 = simulacrum")
   e.kfeat("GHI = sarcophagus")
   e.kfeat("J = granite_statue")
   e.tile("G = DNGN_SARCOPHAGUS_SEALED")
@@ -66,13 +68,11 @@ KFEAT:  ~ = alarm trap / dispersal trap / net trap
 CLEAR:  p
 : ossuary_setup_features(_G)
 MAP
-JJJJJ
 .....
 .'''.
 .'}'.
 .'''.
 .....
-GGGGG
 ENDMAP
 
 NAME:    enter_ossuary_2
@@ -85,217 +85,232 @@ CLEAR:   z
 KFEAT:   ~ = alarm trap / dispersal trap
 : ossuary_setup_features(_G)
 MAP
- rrrrr
-.rGrGr.
-.rrrrr.
-.cc+cc.
-.c'''c.
-.c'}'c.
-.c'''c.
-.ccccc.
-.......
-ENDMAP
-
-NAME:   enter_ossuary_3
-TAGS:   transparent extra uniq_miniossuary
-SUBST:  . = ' .
-MONS:   rat zombie / jackal zombie / worm zombie
-MONS:   kobold zombie / goblin zombie / hobgoblin zombie
-MONS:   orc zombie / gnoll zombie / human zombie
-SUBST:  . = .:100 11 2 3
-: ossuary_setup_features(_G)
-MAP
-...
-.}.
-...
+  rrrrr
+ .rJrJr.
+ .rrrrr.
+..cc+cc.
+.cc'''cc.
+.cH'}'Hc.
+.cc'''cc.
+..ccccc..
+ .......
 ENDMAP
 
 NAME:   enter_ossuary_4
 TAGS:   transparent extra uniq_miniossuary
-COLOUR: 1 = yellow, x = white
-MONS:   rat zombie / quokka zombie / goblin zombie
-FTILE:  1 = floor_sandstone, x = floor_sandstone, O = floor_sandstone
+SUBST:  . = .3ppp
+SUBST:  ' = .$$
+NSUBST: ~ = 1:~ / 1:^
+KFEAT:  ~ = alarm trap
+KFEAT:  ^ = dispersal trap
+CLEAR:  p
 : ossuary_setup_features(_G)
 MAP
-.........
-.ccccccc.
-.c''}''c.
-.c'''''c.
-.c'c'c'c.
-.c1c'c1c.
-.ccc'ccc.
-....'....
+ ...........
+ ..ccccccc..
+...c'G}G'c...
+..cc'''''cc..
+..c'~c'c~'c..
+..cc1c'c1cc..
+...ccc'ccc...
+ ...J.@.J...
+  .........
+   .......
+    .....
 ENDMAP
 
 NAME:   enter_ossuary_5
 TAGS:   transparent extra uniq_miniossuary
-COLOUR: c = white, + = white, ' = yellow
+NSUBST:  ' = 2:1 / 1:~ / |
+SUBST: . = 334.pppp
+NSUBST: p = 1:0 / *:p
+CLEAR: p
+KFEAT: ~ = dispersal trap
 : ossuary_setup_features(_G)
 MAP
-   ...
-  ..c..
- ..cc+..
-..cc'cc..
-.cc'}'cc.
-..cc'cc..
- ..ccc..
-  ..c..
-   ...
+     .
+    ...
+   ..c..
+  ..ccc..
+ ..cc~=c..
+..cc1}|cc..
+ ..cc1cc..
+  ..ccc..
+   ..c..
+    ...
+     .
 ENDMAP
 
 NAME:   gup_ossuary_entry_pyramid
-TAGS:   transparent extra uniq_miniossuary
-KMONS:  O = mummy
+TAGS:   transparent extra uniq_miniossuary no_rotate no_vmirror no_hmirror
+KITEM: ' = *
+NSUBST: ' = 2:1 / 2:0 / 2:4 / *:.
+SUBST: . = 233..pppppppp
+CLEAR: p
 : ossuary_setup_features(_G)
 MAP
-     ...
-    ..c..
-   ..ccc..
-  ..cc}cc..
- ..cc...cc..
-..cc.....cc..
-.ccccc+ccccc.
-.............
+       .
+      ...
+     ..c..
+    ..ccc..
+   ..cc|cc..
+  ..cc'''cc..
+ ..ccI'''Hcc..
+..ccccc=ccccc..
+....J.....J....
+  .... @ ....
 ENDMAP
 
 NAME: nicolae_ossuary_entry_catacombs
 TAGS:  extra uniq_miniossuary
-COLOUR: 1s = yellow
-NSUBST: A = + / c, B = + / c, C = + / c, s = 1:} / 4:1 / *:1.....
-KMONS: O1 = orc skeleton / orc zombie w:5 / elf skeleton / elf zombie w:5 / \
-            human skeleton / human zombie w:5
+SUBST: . = 33..ppppp
+NSUBST: A = + / c, B = + / c, C = + / c, s = 1:| / 2:2 / 2:4 / *:4*ddd
+NSUBST: ` = 1:1 / 2:2 / 3:34 / *:...
+KFEAT: ~ = alarm trap / dispersal trap
+CLEAR: p
 : ossuary_setup_features(_G)
 MAP
-ccccccccc
-+'1'csAsc
-ccc+c+cAc
-cs+'''+sc
-ccc'''ccc
-cs+'''+sc
-cCc+c+cBc
-csCscsBsc
-ccccccccc
+........
+..........
+...ccccccccc
+..@+'0'csAsc
+...ccc+c+cAc
+...cs+```+sc
+...ccc`~`ccc
+ ..cs+```+sc
+ ..cCc+c+cBc
+   csCscsBsc
+   ccccccccc
 ENDMAP
 
 NAME: nicolae_ossuary_entry_false_entrances
 TAGS: extra uniq_miniossuary
-NSUBST: O = } / d
+NSUBST: O = 1:} / 1:| / *:d
 SHUFFLE: AB/AB/AB/BA
+SUBST: . = 3.ppp
+SUBST: ' = 234$$$..
 SUBST: A = m, B = c
+CLEAR: p
 : ossuary_setup_features(_G)
 MAP
-   xxxxx
- +ccccccc+
- c'''c'''c
-xc'O'A'O'cx
-xc'''B'''cx
-xccABBBAccx
-xc'''B'''cx
-xc'O'A'O'cx
- c'''c'''c
- +ccccccc+
-   xxxxx
+ ...     ...
+.@..xxxxx..@.
+..+ccccccc+..
+ .c'''c'''c.
+ xc'O'A'O'cx
+ xc''1B1''cx
+ xccABBBAccx
+ xc''1B1''cx
+ xc'O'A'O'cx
+ .c'''c'''c.
+..+ccccccc+..
+.@..xxxxx..@.
+ ...     ...
 ENDMAP
 
 NAME: nicolae_ossuary_entry_giza
-TAGS: transparent extra uniq_miniossuary
-NSUBST: M = 1:} / *:z
-KMONS: O = mummy
-KMONS: z = goblin zombie / hobgoblin zombie / kobold zombie / orc zombie
-FTILE: Oz = floor_sandstone
-COLOUR: z = yellow
+TAGS: transparent extra uniq_miniossuary no_rotate no_vmirror no_hmirror
+SUBST: . = 34.pppppp
+SUBST: ' = 34....pp
+CLEAR: p
+KITEM: 1 = *
 : ossuary_setup_features(_G)
 MAP
           .
          ...
         ..c..
        ..ccc..
-      ..ccMcc..
+      ..cc1cc..
      ..ccc+ccc..
-    ..c.......c..
-   ..ccc.....ccc..
-  ..ccMcc...ccMcc..
+    ..c.'''''.c..
+   ..ccc.'''.ccc..
+  ..cc1cc.'.cc1cc..
  ..ccc+ccc.ccc+ccc..
 .....................
 ENDMAP
 
 NAME: nicolae_ossuary_entry_monument
-TAGS: transparent extra uniq_miniossuary
-FTILE: G = floor_sandstone
-SUBST: - = '.
+TAGS: transparent extra decor
+NSUBST: ' = 1:4 / *:.
 : ossuary_setup_features(_G)
 MAP
-..G..
-.'''.
-G'O'G
-.'''.
-..G..
+  J
+  '
+J'G'J
+  '
+  J
 ENDMAP
 
 NAME: nicolae_ossuary_entry_plus
 TAGS: transparent  extra uniq_miniossuary
 : if crawl.coinflip() then
-SUBST: Dd = +, o = }, p = '
+SUBST: Dd = =, o = |, p = '
 : else
-SUBST: d = +, D = c, o = '
-NSUBST: p = } / '
+SUBST: d = =, D = c, o = '
+NSUBST: p = 1:| / *:'
 : end
-FTILE: + = floor_sandstone
+NSUBST: ' = 1:1 / 2:0 / *:4..
+SUBST: . = ppppp...3
+CLEAR: p
 : ossuary_setup_features(_G)
 MAP
-.........
-...cDc...
-..'cpc'..
-.ccc'ccc.
-.Dp'o''d.
-.ccc'ccc.
-..'cpc'..
-...cDc...
-.........
-ENDMAP
-
-NAME: nicolae_ossuary_entry_ruins
-TAGS: transparent extra uniq_miniossuary
-FTILE: GO = floor_sandstone
-SUBST: c = -c, - = ''., ^ = '..
-: ossuary_setup_features(_G)
-MAP
-.......
-.cc-cc.
-.c---c.
-.--}--.
-.c---c.
-.cc-cc.
-.......
+    .....
+    .J.J.
+    .....
+   ..cDc..
+....3cpc3....
+.J.ccc'ccc.J.
+...Dp'o''d...
+.J.ccc'ccc.J.
+....3cpc3....
+   ..cDc..
+    .....
+    .J.J.
+    .....
 ENDMAP
 
 NAME: lightli_ossuary_entry_decrepit_ruins
-TAGS: transparent ruin extra uniq_miniossuary
+TAGS: transparent extra uniq_miniossuary
+SUBST: . : .p
+SUBST: ' = 4~..
+: if crawl.coinflip() then
+TAGS: ruin
+SUBST: . = .ppp
+: end
+NSUBST: 4 = 1:1 / 2:0 / *:34
+KFEAT: ~ = alarm trap
 NSUBST: a = 1:' / *:c
+CLEAR: p
 : ossuary_setup_features(_G)
 MAP
-GcccccG
-cc'}'cc
-caaaaac
-c'''''c
-c'''''c
-cc'''cc
-Gcc'ccG
-   @
+ ..   ..
+.JcccccJ.
+.cc'*'cc.
+ caaaaac
+ c'''''c
+ c'''''c
+.cc'''cc.
+.Jcc'ccJ.
+ ...@...
 ENDMAP
 
 NAME: chequers_ossuary_entry_cave
-TAGS: transparent extra uniq_miniossuary
+TAGS: transparent extra uniq_miniossuary no_rotate no_vmirror no_hmirror
+ORIENT: north
+NSUBST: ' = 2:~ / 3:4 / *:$
+NSUBST: ~ = 1:^ / 1:~
+KFEAT: ~ = alarm trap / floor
+KFEAT: ^ = dispersal trap / floor
 : ossuary_setup_features(_G)
 MAP
  ccccccc
-cc'''''cc
-cG''}''Gc
-cc'''''cc
- ccc'ccc
-   c'c
-   cAc
-   @@@
+ccI'''Hcc
+cG1'|'1Gc
+ccI'.'Hcc
+ ccc.ccc
+   c.c
+   c.c
+   J@J
 ENDMAP
 
 #### The portal vaults ####################################
@@ -324,15 +339,15 @@ ITEM:    any scroll w:2 / any scroll q:2 w:3 / \
          any potion w:4 / any potion q:2 w:6
 : ossuary_setup_features(_G)
 MAP
-..cccccccccccccc..
-..c.22*c'''cdddc..
-..c1cccc'''cdddc..
-..c''''''''+cccc..
-..cccccc'''''''c..
-..c'zzzc'''2'''c..
-..c'cz}c.3'''3'c..
-..c'cccc'''2'''c..
-..c''''''''''''c..
+  cccccccccccccc
+  c.22*c'''cdddc
+  c1cccc'''cdddc
+  c''''''''+cccc
+  cccccc'''''''c
+  c'zzzc'''2'''c
+  c'cz}c'3'''3'c
+  c'cccc'''2'''c
+ .c''''''''''''c.
 ..c'ccccTTcccc'c..
 ..c'cy}cTTc}wc'c..
 ..c'yyycTTcwww'c..
@@ -399,21 +414,19 @@ ccccccccccqqc+++ccccc
 ENDMAP
 
 NAME:    ossuary_tomb_3
+ORIENT:  north
 WEIGHT:  40
-TAGS:    uniq_ossuary
+TAGS:    uniq_ossuary no_rotate no_hmirror no_vmirror
 # zombies should be awake, so they march downwards in a line
-
 NSUBST:  l = 2:l / .
 CLEAR:   l
-KFEAT:   HI = granite_statue
-KFEAT:   f = altar_yredelemnul
-ITEM:    nothing / any scroll w:5 / any potion
+ITEM:    any scroll w:5 / any potion
 : ossuary_setup_features(_G)
 MAP
    ccccccccccccccc
   cc.....1}1.....cc
  cc..0...ccc...0..cc
- c......ccfcc......c
+ c......cc|cc......c
  c.....cc...cc.....c
  c......1...1......c
  cc..3..0.G.0..3..cc
@@ -478,6 +491,20 @@ mmmmmmmmmmmmmmmmmmm
 mmmmmmmmmmmmmmmmmmm
 mmmmmmmmmmmmmmmmmmm
 mmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmm
   ''''cccccccc''''
  ''cccc3+ffc3cccc''
  'cc2.2.cccc.c$$cc'
@@ -502,7 +529,7 @@ ITEM:    scroll of attention / scroll of random uselessness w:20 / \
          scroll of immolation / potion of mutation w:5 / \
          potion of degeneration w:40
 # occasionally just use this
-ITEM:    any potion / any scroll w:5 / nothing
+ITEM:    any potion / any scroll w:5
 SHUFFLE: hjkl
 SUBST:   h:d, j:e, k:de, l:.de
 NSUBST:  f = 6:f / *:e
@@ -599,44 +626,50 @@ ENDMAP
 # Another ossuary (loosely) based on Tomb:2
 NAME:    ossuary_minmay_tomb_2a
 WEIGHT:  20
-TAGS:    transparent uniq_ossuary
-MONS:    rat zombie / jackal zombie / goblin zombie / hobgoblin zombie / \
-         adder zombie / gnoll zombie / orc zombie / kobold zombie / \
-         big kobold zombie / hound zombie / human zombie / elf zombie
-MONS:    mummy
+TAGS:    transparent uniq_ossuary no_rotate no_hmirror no_vmirror
 ITEM:    any scroll / any scroll q:2, any potion / any potion q:2
 SHUFFLE: $de*
 NSUBST:  B = 1:+ / *:n
 NSUBST:  C = 1:+ / *:n
 NSUBST:  D = 1:+ / *:n
 NSUBST:  E = 1:+ / *:n
-NSUBST:  X = 1:< / *:.
+NSUBST:  X = 1:{ / *:>
+SUBST: . = 4~.....p
+NSUBST: ~ = 15:~ / *:4...
+KFEAT: ~ = dispersal trap w:2 / net trap / spear trap
+SUBST: 0 = 045
+SUBST: 4 = 2344
+: if crawl.coinflip() then
+CLEAR: p
+: end
 : ossuary_setup_features(_G)
 MAP
-ccccccccccccccccccccccccccccccc
-c$$B.......................Cddc
-c$$B.......................Cddc
-cBBB.........ccccc.........CCCc
-c.............................c
-c....2.........1.........2....c
-c.....cc....1.....1....cc.....c
-c.....cc...............cc.....c
-c.........1.........1.........c
-c..c.......................c..c
-+..cc..........X..........cc..+
-+..cc....1....X{X....1....cc..+
-+..cc..........X..........cc..+
-c..c.......................c..c
-c.........1.........1.........c
-c.............................c
-c.....cc....1.....1....cc.....c
-c.....cc.......1.......cc.....c
-c....2...................2....c
-c.............................c
-cEEE.........ccccc.........DDDc
-c**E.......................Deec
-c**E.......................Deec
-ccccccccccccccccccccccccccccccc
+BBBBB                       CCCCC
+B$$$B                       CdddC
+B$$$B   .................   CdddC
+B$$$B.......................CdddC
+BBBBB.........ccccc.........CCCCC
+   .......G...........G.......
+   ...1.........0.........1... 
+  .....cc....0.....0....cc.....
+  ..J..cc...............cc..J..
+  .........0.........0.........
+  ..c.......................c..
+  ..cc..........X..........cc..
+  ..cI....0....{>{....0....Hc..
+  ..cc..........X..........cc..
+  ..c.......................c..
+  .........0.........0.........
+  ..J..........................
+  .....cc....0.....0....cc..J..
+  .....cc.......0.......cc.....
+   ...1...................1... 
+   .......G...........G...... 
+EEEEE.........ccccc.........DDDDD
+E***E...................... DeeeD
+E***E   .................   DeeeD
+E***E                       DeeeD
+EEEEE                       DDDDD
 ENDMAP
 
 NAME:    ossuary_zaba_flooded
@@ -925,53 +958,50 @@ NAME:   ossuary_zaba_two_paths
 # There is no way up in the end. This is to give the zombies in the beginning
 # more time to go for a walk and another chance to meet the player.
 WEIGHT: 10
-TAGS:   no_item_gen no_monster_gen no_rotate uniq_ossuary
+TAGS:   no_rotate uniq_ossuary
 #
-# Standard monsters: small zombies, large zombies, boss:
-MONS:   kobold zombie / goblin zombie / orc zombie / hobgoblin zombie
-MONS:   big kobold zombie / gnoll zombie
-MONS:   mummy
-#
-KFEAT:  F = floor
-COLOUR: F = cyan
-KMONS:  F = rat simulacrum / goblin simulacrum / kobold simulacrum /\
-            bat simulacrum / nothing w:80
-KFEAT:  S = floor
-COLOUR: S = green
-KMONS:  S = spectral rat / spectral goblin / spectral kobold /\
-            spectral bat / nothing w:80
+KFEAT:  O7 = ice
+COLOUR: O7 = cyan
+SUBST: 6 = NN6
+KFEAT: N6 = floor
+SUBST: 7 = OO7
 # Loot.
-ITEM:   any potion / any scroll / nothing w:1
+ITEM:   any potion / any scroll
 #
 # There are not always traps in corridors but they are guaranteed near the loot:
 KFEAT:  ' = arrow trap w:8 / alarm trap w:7 / floor w:85
-KFEAT:  " = spear trap w:1 / net trap w:3 / arrow trap w:15
-#
+KFEAT:  ~ = spear trap w:1 / net trap w:3 / arrow trap w:15
+KITEM:  3 = $
+SUBST: 2 = 22443
+SUBST: p = ...p
+CLEAR: p
 : ossuary_setup_features(_G)
+FTILE:  N6 = floor_nerves
+COLOUR: N6 = green
 MAP
-ccccccccccccccccccccccccccc
-c2c2c2cc...........cc2c2c2c
-c+c+c+c.............c+c+c+c
-c..........G...G..........c
-c.........................c
-c+c+ccccccccc+ccccccccc+c+c
-bScc'ccG2+.......+2Gcc'ccFv
-bSScc'ccGc.......cGcc'ccFFv
-bSSScc'ccc.12321.ccc'ccFFFv
-bSSSScc'cc.......cc'ccFFFFv
-bSSSSScc'c.......c'ccFFFFFv
-bSSSSSS+'c...G...c'+FFFFFFv
-bSSSSScc'c.......c'ccFFFFFv
-bSSSScc'cc.""""".cc'ccFFFFv
-bSSScc'ccc."ddd".ccc'ccFFFv
-bSScc'ccGc."ddd".cGcc'ccFFv
-bScc'ccG2+."ddd".+2Gcc'ccFv
-ccc+ccccccccccccccccccc+ccc
-c11111cc1c1c1c1c1c1cc11111c
-c......c+c+c+c+c+c+c......c
-c.........................c
-c.........................c
-cccccccccccc@@@cccccccccccc
+  c+c+c+ccpppppppppppcc+c+c+c
+ccc2c2c2cccpppppppppccc2c2c2ccc
++2ccccccc2+ppppppppp+2ccccccc2+
+ccc2c2c2cccpppppppppccc2c2c2ccc
+  c+c+c+cpppppppppppppc+c+c+c
+   ppppppppppJpppJpppppppppp
+   ppppppppppppppppppppppppp
+  c=ccccccccccqqqcccccccccc=c
+  b6cc3ccI3+.......+3Hcc3cc7v
+  b66cc3ccIc.......cHcc3cc77v
+  b666cc'ccc.30103.ccc'cc777v
+  b6666cc'cc.......cc'cc7777v
+  b66666cc'c.......c'cc77777v
+  b666666c'+...G...+'c777777v
+  b66666cc'c.......c'cc77777v
+  b6666cc'cc.~~~~~.cc'cc7777v
+  b666cc'ccc.~ddd~.ccc'cc777v
+  b66cc'ccIc.~ddd~.cHcc'cc77v
+  b6cc'ccI3+.~ddd~.+3Hcc'cc7v
+  c+c+ccccccccccccccccccc+c+c
+  c......c2c2c2c2c2c2c......c
+  c222225c+c+c+c+c+c+c522222c
+  ccccccccpppppppppppcccccccc
 ENDMAP
 
 # A larger ossuary than usual: there is a corridor with some monsters (and
