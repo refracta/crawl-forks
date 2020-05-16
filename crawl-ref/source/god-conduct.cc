@@ -6,6 +6,7 @@
 #include "fprop.h"
 #include "god-abil.h" // ru sac key
 #include "god-item.h" // is_*_spell
+#include "god-wrath.h" // beogh_idol_revenge()
 #include "libutil.h"
 #include "message.h"
 #include "monster.h"

@@ -1071,7 +1071,7 @@ void bolt::digging_wall_effect()
     if (!stop_dig)
     {
         destroy_wall(pos());
-        if (!msg_generated)
+        if (!msg_generated && feat != DNGN_ORCISH_IDOL)
         {
             if (!you.see_cell(pos()))
             {
@@ -1079,8 +1079,6 @@ void bolt::digging_wall_effect()
                 {
                     if (feat == DNGN_GRATE)
                         mprf(MSGCH_SOUND, "You hear a grinding noise.");
-                    else if (feat == DNGN_ORCISH_IDOL)
-                        mprf(MSGCH_SOUND, "You hear a hideous screaming!");
                     else 
                         mprf(MSGCH_SOUND, "You hear a grinding noise.");
                     obvious_effect = true; // You may still see the caster.
@@ -1101,17 +1099,6 @@ void bolt::digging_wall_effect()
                     mpr("The grate bends and falls apart.");
                 return;
             }
-            else if (feat == DNGN_ORCISH_IDOL)
-            {
-                if (!silenced(you.pos()))
-                    mprf(MSGCH_SOUND, "The idol screams as its substance crumbles away!";
-                else
-                    mpr("The idol twists and shakes as its substance crumbles away!");
-
-                if (agent() && agent()->is_player())
-                    did_god_conduct(DID_DESTROY_ORCISH_IDOL, 8);
-                return;
-            }
             else if (feat == DNGN_SLIMY_WALL)
                 wall = "slime";
             else if (feat_is_metal(feat))
@@ -1126,6 +1113,32 @@ void bolt::digging_wall_effect()
             mprf("%s %s shatters into small pieces.",
                  agent() && agent()->is_player() ? "The" : "Some",
                  wall.c_str());
+        }
+        // Orcish idols are important enough to send a second message even if a previous one has sent.
+        // Since otherwise (if it's the player's fault) they may have no idea how they were harmed.
+        else if (feat == DNGN_ORCISH_IDOL)
+        {
+            if (!you.see_cell(pos()))
+            {
+                if (!silenced(you.pos()))
+                {
+                    mprf(MSGCH_SOUND, "You hear a hideous screaming!");
+                    obvious_effect = true; // You may still see the caster.
+                    msg_generated = true;
+                }
+                return;
+            }
+
+            obvious_effect = true;
+            msg_generated = true;
+
+            if (!silenced(you.pos()))
+                mprf(MSGCH_SOUND, "The idol screams as its substance crumbles away!");
+            else
+                mpr("The idol twists and shakes as its substance crumbles away!");
+            if (agent() && agent()->is_player())
+                did_god_conduct(DID_DESTROY_ORCISH_IDOL, 8);
+            return;
         }
     }
     else if (feat_is_wall(feat))
@@ -1202,8 +1215,8 @@ void bolt::affect_wall()
                                   && can_burn_trees();
         const bool vetoed = env.markers.property_at(pos(), MAT_ANY, "veto_fire")
                             == "veto";
-        // XXX: should check env knowledge for feat_is_tree()
-        if (god_relevant && feat_is_tree(grd(pos())) && !vetoed
+
+        if (god_relevant && feat_is_tree(grd(pos())) && !vetoed && env.map_knowledge(pos()).known()
             && !is_targeting && YOU_KILL(thrower) && !dont_stop_trees)
         {
             const string prompt =
@@ -1214,6 +1227,17 @@ void bolt::affect_wall()
             if (yesno(prompt.c_str(), false, 'n'))
                 dont_stop_trees = true;
             else
+            {
+                canned_msg(MSG_OK);
+                beam_cancelled = true;
+                finish_beam();
+            }
+        }
+
+        if (grd(pos()) == DNGN_ORCISH_IDOL && !vetoed && env.map_knowledge(pos()).known()
+            && !is_targeting && YOU_KILL(thrower) && flavour == BEAM_DIGGING)
+        {
+            if (!yesno("Really insult Beogh by defacing this idol?", false, 'n'))
             {
                 canned_msg(MSG_OK);
                 beam_cancelled = true;
