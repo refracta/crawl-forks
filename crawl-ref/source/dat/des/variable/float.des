@@ -2800,14 +2800,12 @@ SUBST: M = 6
 : end
 SUBST:  C = c
 NSUBST: ~ = 2:~ / 1:~. / *:.
-COLOUR: G = yellow
-TILE:   G = dngn_sarcophagus_sealed
+KFEAT:  G = sarcophagus
 COLOUR: c = yellow
 TILE:   c = wall_tomb
 COLOUR: C = white
 TILE:   C = wall_lab_stone
 FTILE:  .~cCG1234567M$ = floor_sandstone
-: set_feature_name("granite_statue", "sealed sarcophagus")
 MAP
 xxxxxxxxxxxxxxxxxxxxx
 xcccccccccccccccccccx
@@ -3700,7 +3698,7 @@ NAME: cheibrodos_grave_circle
 DEPTH: D:7-11
 TAGS: no_item_gen no_monster_gen
 ORIENT: float
-MONS: place:D:14 skeleton w:5 / place:D:14 zombie, shadow imp, hellwing
+MONS: place:Depths:1 skeleton w:5 / place:Depths:1 zombie, shadow imp, hellwing
 NSUBST: . = 5:1 / 3=1. / 3:2 / 2=2., " = 1:*% / 4=$%.
 SUBST: . = .....--__tG
 KMONS: t = withered plant

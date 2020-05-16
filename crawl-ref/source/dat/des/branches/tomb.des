@@ -477,14 +477,13 @@ SUBST:    J = J:750 5, O = O:750 5
 SUBST:    K = K:550 5, P = P:550 5
 SUBST:    L = L:300 5, Q = Q:300 5
 : end
-SUBST:    FIJKLMNOPQ = G
+KFEAT:    FIJKLMNOPQ = sarcophagus
 # Add greater mummies and traps to the long hall. About 16 greater mummies and
 # 6 traps on-average.
 SUBST:    ' = 2:24 ^ .:210
 COLOUR:   FIJKLMNOPQ = yellow
 TILE:     FIJKL = dngn_sarcophagus_pedestal_left
 TILE:     MNOPQ = dngn_sarcophagus_pedestal_right
-: set_feature_name("granite_statue", "sarcophagus")
 : set_feature_name("escape_hatch_down", "one-way staircase leading down")
 MAP
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -598,11 +597,10 @@ TAGS:    tomb_1_centre unrand no_hmirror
 TILE:    F  = dngn_sarcophagus_pedestal_left
 TILE:    M  = dngn_sarcophagus_pedestal_right
 COLOUR:  FM = yellow
-SUBST:   FM = G
+KFEAT:   FM = sarcophagus
 SUBST:   _  = V:70 5
 NSUBST:  >  = > / | / * / _
 : tomb_1_centre_setup(_G)
-: set_feature_name("granite_statue", "sarcophagus")
 MAP
 >1..c..c.................c..c..1>
 1...c..c.4.............4.c..c...1
@@ -631,14 +629,13 @@ TAGS:    tomb_1_centre unrand no_hmirror
 TILE:    F  = dngn_sarcophagus_pedestal_left
 TILE:    M  = dngn_sarcophagus_pedestal_right
 COLOUR:  FM = yellow
-SUBST:   FM = G
+KFEAT:   FM = sarcophagus
 SUBST:   _  = V:70 5
 SHUFFLE: ABCD, EHIJ, de, fg, hi, jk
 SHUFFLE: NOPQRSTU, WXYZ6789
 SUBST:   AEdfhjNW = c, egik = +, BCDHIJOPQRSTUXYZ6789 = .
 NSUBST:  >  = > / | / * / _
 : tomb_1_centre_setup(_G)
-: set_feature_name("granite_statue", "sarcophagus")
 MAP
 ...D............3............E...
 .F.D....2.....F...M.....2....E.M.

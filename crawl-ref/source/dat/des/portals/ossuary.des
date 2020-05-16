@@ -12,47 +12,10 @@
 ##############################################################################
 
 {{
-function ossuary_portal(e)
-  local timeout_turns = crawl.random_range(600, 800)
-
-  local messager =
-    timed_msg {
-      initmsg = { "You smell dry bones and old scrolls.",
-                  "There is an entrance to an ossuary on this level. "
-                  .. "Hurry and find it before the portal is buried!" },
-      finalmsg = "The hiss of flowing sand is almost imperceptible now.",
-
-      verb = 'hiss',
-      -- This is always preceded by an article, so...
-      noisemaker = 'avalanche of sand',
-      ranges = {
-        { 5000, 'slow ' },  { 4000, '' },
-        { 2500, 'brisk ' }, { 1500, 'quick ' },
-        { 0, 'rapid ' }
-      }
-    }
-
-  e.lua_marker('O',
-      timed_marker {
-        disappear = "The portal collapses under the weight of sand.",
-        entity = 'staircase',
-        turns = timeout_turns,
-        single_timed = true,
-        floor = "expired_portal",
-        feat_tile = "dngn_portal_ossuary_gone",
-        msg = messager })
-  e.tags("uniq_ossuary no_monster_gen chance_ossuary")
-  e.chance(500)
-  e.kfeat("O = enter_ossuary")
-  e.colour("' = yellow")
-  e.ftile("' = floor_sandstone")
-  e.tile("c = wall_tomb")
-end
-
-
 function ossuary_setup_features(e)
   if you.in_branch("D") then
     e.kmons("4 = scorpion")
+	e.kmons("5 = wraith")
     if you.depth() < 6 then
       e.kmons("1 = guardian mummy")
 	else 
@@ -61,16 +24,23 @@ function ossuary_setup_features(e)
   elseif you.in_branch("Lair") or you.in_branch("Orc") then
     e.kmons("1 = mummy priest")
     e.kmons("4 = redback")
+	e.kmons("5 = eidolon")
   else
     e.kmons("1 = mummy priest")
 	e.kmons("4 = emperor scorpion")
+	e.kmons("5 = revenant")
   end
   e.tags("no_monster_gen")
-  e.ftile(".'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()~{}+- = floor_sandstone")
+  e.ftile(".'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()|~{}+- = floor_sandstone")
   e.tile("c = wall_tomb")
   e.kmons("0 = guardian mummy")
   e.kmons("2 = zombie")
   e.kmons("3 = skeleton")
+  e.kfeat("GHI = sarcophagus")
+  e.kfeat("J = granite_statue")
+  e.tile("G = DNGN_SARCOPHAGUS_SEALED")
+  e.tile("H = DNGN_SARCOPHAGUS_PEDESTAL_RIGHT")
+  e.tile("I = DNGN_SARCOPHAGUS_PEDESTAL_LEFT")
 end
 
 function callback.badplayer_boxes_open_up(data, triggerable, triggerer, marker,
@@ -89,56 +59,67 @@ end
 default-depth: D:2
 
 NAME:   enter_ossuary_1
-TAGS:   transparent
-SUBST:  . = . ':7
-: ossuary_portal(_G)
+TAGS:   transparent extra uniq_miniossuary
+NSUBST: . = 1:1 / 4:2 / *:p
+SUBST:  ' = ~..
+KFEAT:  ~ = alarm trap / dispersal trap / net trap
+CLEAR:  p
+: ossuary_setup_features(_G)
 MAP
+JJJJJ
 .....
 .'''.
-.'O'.
+.'}'.
 .'''.
 .....
+GGGGG
 ENDMAP
 
 NAME:    enter_ossuary_2
-TAGS:    transparent
-SHUFFLE: C+
-SUBST:   C = c
-: ossuary_portal(_G)
+TAGS:    transparent extra uniq_miniossuary
+SUBST:   . = zzz.
+SUBST:   r = ...z
+NSUBST:  ' = 2:~ / 1:1 / *:p
+SUBST:   p = 234..
+CLEAR:   z
+KFEAT:   ~ = alarm trap / dispersal trap
+: ossuary_setup_features(_G)
 MAP
-.......
+ rrrrr
+.rGrGr.
+.rrrrr.
 .cc+cc.
 .c'''c.
-.C'O'C.
+.c'}'c.
 .c'''c.
-.ccCcc.
+.ccccc.
 .......
 ENDMAP
 
 NAME:   enter_ossuary_3
-TAGS:   transparent
+TAGS:   transparent extra uniq_miniossuary
 SUBST:  . = ' .
 MONS:   rat zombie / jackal zombie / worm zombie
 MONS:   kobold zombie / goblin zombie / hobgoblin zombie
 MONS:   orc zombie / gnoll zombie / human zombie
 SUBST:  . = .:100 11 2 3
-: ossuary_portal(_G)
+: ossuary_setup_features(_G)
 MAP
 ...
-.O.
+.}.
 ...
 ENDMAP
 
 NAME:   enter_ossuary_4
-TAGS:   transparent
+TAGS:   transparent extra uniq_miniossuary
 COLOUR: 1 = yellow, x = white
 MONS:   rat zombie / quokka zombie / goblin zombie
 FTILE:  1 = floor_sandstone, x = floor_sandstone, O = floor_sandstone
-: ossuary_portal(_G)
+: ossuary_setup_features(_G)
 MAP
 .........
 .ccccccc.
-.c''O''c.
+.c''}''c.
 .c'''''c.
 .c'c'c'c.
 .c1c'c1c.
@@ -147,15 +128,15 @@ MAP
 ENDMAP
 
 NAME:   enter_ossuary_5
-TAGS:   transparent
+TAGS:   transparent extra uniq_miniossuary
 COLOUR: c = white, + = white, ' = yellow
-: ossuary_portal(_G)
+: ossuary_setup_features(_G)
 MAP
    ...
   ..c..
  ..cc+..
 ..cc'cc..
-.cc'O'cc.
+.cc'}'cc.
 ..cc'cc..
  ..ccc..
   ..c..
@@ -163,14 +144,14 @@ MAP
 ENDMAP
 
 NAME:   gup_ossuary_entry_pyramid
-TAGS:   transparent
+TAGS:   transparent extra uniq_miniossuary
 KMONS:  O = mummy
-: ossuary_portal(_G)
+: ossuary_setup_features(_G)
 MAP
      ...
     ..c..
    ..ccc..
-  ..ccOcc..
+  ..cc}cc..
  ..cc...cc..
 ..cc.....cc..
 .ccccc+ccccc.
@@ -178,12 +159,12 @@ MAP
 ENDMAP
 
 NAME: nicolae_ossuary_entry_catacombs
-FTILE: O1s+ABC = floor_sandstone
+TAGS:  extra uniq_miniossuary
 COLOUR: 1s = yellow
-NSUBST: A = + / c, B = + / c, C = + / c, s = 1:O / 4:1 / *:1.....
+NSUBST: A = + / c, B = + / c, C = + / c, s = 1:} / 4:1 / *:1.....
 KMONS: O1 = orc skeleton / orc zombie w:5 / elf skeleton / elf zombie w:5 / \
             human skeleton / human zombie w:5
-: ossuary_portal(_G)
+: ossuary_setup_features(_G)
 MAP
 ccccccccc
 +'1'csAsc
@@ -197,11 +178,11 @@ ccccccccc
 ENDMAP
 
 NAME: nicolae_ossuary_entry_false_entrances
-NSUBST: O = O / >
+TAGS: extra uniq_miniossuary
+NSUBST: O = } / d
 SHUFFLE: AB/AB/AB/BA
 SUBST: A = m, B = c
-FTILE: Om> = floor_sandstone
-: ossuary_portal(_G)
+: ossuary_setup_features(_G)
 MAP
    xxxxx
  +ccccccc+
@@ -217,13 +198,13 @@ xc'O'A'O'cx
 ENDMAP
 
 NAME: nicolae_ossuary_entry_giza
-TAGS: transparent
-NSUBST: M = 1:O / *:z
+TAGS: transparent extra uniq_miniossuary
+NSUBST: M = 1:} / *:z
 KMONS: O = mummy
 KMONS: z = goblin zombie / hobgoblin zombie / kobold zombie / orc zombie
 FTILE: Oz = floor_sandstone
 COLOUR: z = yellow
-: ossuary_portal(_G)
+: ossuary_setup_features(_G)
 MAP
           .
          ...
@@ -239,10 +220,10 @@ MAP
 ENDMAP
 
 NAME: nicolae_ossuary_entry_monument
-TAGS: transparent
+TAGS: transparent extra uniq_miniossuary
 FTILE: G = floor_sandstone
 SUBST: - = '.
-: ossuary_portal(_G)
+: ossuary_setup_features(_G)
 MAP
 ..G..
 .'''.
@@ -252,15 +233,15 @@ G'O'G
 ENDMAP
 
 NAME: nicolae_ossuary_entry_plus
-TAGS: transparent
+TAGS: transparent  extra uniq_miniossuary
 : if crawl.coinflip() then
-SUBST: Dd = +, o = O, p = '
+SUBST: Dd = +, o = }, p = '
 : else
 SUBST: d = +, D = c, o = '
-NSUBST: p = O / '
+NSUBST: p = } / '
 : end
 FTILE: + = floor_sandstone
-: ossuary_portal(_G)
+: ossuary_setup_features(_G)
 MAP
 .........
 ...cDc...
@@ -274,27 +255,27 @@ MAP
 ENDMAP
 
 NAME: nicolae_ossuary_entry_ruins
-TAGS: transparent
+TAGS: transparent extra uniq_miniossuary
 FTILE: GO = floor_sandstone
 SUBST: c = -c, - = ''., ^ = '..
-: ossuary_portal(_G)
+: ossuary_setup_features(_G)
 MAP
 .......
 .cc-cc.
 .c---c.
-.--O--.
+.--}--.
 .c---c.
 .cc-cc.
 .......
 ENDMAP
 
 NAME: lightli_ossuary_entry_decrepit_ruins
-TAGS: transparent ruin
+TAGS: transparent ruin extra uniq_miniossuary
 NSUBST: a = 1:' / *:c
-: ossuary_portal(_G)
+: ossuary_setup_features(_G)
 MAP
 GcccccG
-cc'O'cc
+cc'}'cc
 caaaaac
 c'''''c
 c'''''c
@@ -304,18 +285,17 @@ Gcc'ccG
 ENDMAP
 
 NAME: chequers_ossuary_entry_cave
-TAGS: transparent
-: ossuary_portal(_G)
+TAGS: transparent extra uniq_miniossuary
+: ossuary_setup_features(_G)
 MAP
-xxxxxcccccccxxxxx
-xxxxcc'''''ccxxxx
-xxxxcG''O''Gcxxxx
-xxxxcc'''''ccxxxx
-xxxxxccc'cccxxxxx
-xxxxxxxc'cxxxxxxx
-xxxxxxxcAcxxxxxxx
-.................
-@@@@@@@@@@@@@@@@@
+ ccccccc
+cc'''''cc
+cG''}''Gc
+cc'''''cc
+ ccc'ccc
+   c'c
+   cAc
+   @@@
 ENDMAP
 
 #### The portal vaults ####################################
@@ -330,6 +310,7 @@ default-depth: D:2
 
 NAME:    ossuary_tomb_1
 WEIGHT:  40
+TAGS:    uniq_ossuary
 KMASK:   ' = no_item_gen
 SHUFFLE: dwyz
 SHUFFLE: WYZ
@@ -364,7 +345,7 @@ ENDMAP
 NAME:    ossuary_tomb_2
 # Generally have rooms full of either monsters or traps.
 WEIGHT:  40
-TAGS:    transparent
+TAGS:    transparent uniq_ossuary
 KFEAT:   ~ = arrow trap w:2 / needle trap
 KFEAT:   ^ = arrow trap / floor w:5
 # Number of 1's is 53, number of ~'s is 57.
@@ -419,17 +400,14 @@ ENDMAP
 
 NAME:    ossuary_tomb_3
 WEIGHT:  40
-TAGS:    no_item_gen no_monster_gen no_rotate no_vmirror
+TAGS:    uniq_ossuary
 # zombies should be awake, so they march downwards in a line
-TILE:    G = DNGN_SARCOPHAGUS_SEALED
-TILE:    I = DNGN_SARCOPHAGUS_PEDESTAL_LEFT
-TILE:    H = DNGN_SARCOPHAGUS_PEDESTAL_RIGHT
+
 NSUBST:  l = 2:l / .
 CLEAR:   l
 KFEAT:   HI = granite_statue
 KFEAT:   f = altar_yredelemnul
 ITEM:    nothing / any scroll w:5 / any potion
-: set_feature_name("granite_statue", "sarcophagus")
 : ossuary_setup_features(_G)
 MAP
    ccccccccccccccc
@@ -460,7 +438,7 @@ ENDMAP
 
 NAME:    minmay_ossuary_two_tombs
 WEIGHT:  20
-TAGS:    no_item_gen no_monster_gen
+TAGS:    uniq_ossuary
 # Loot: between 5 scrolls/potions and 9 scrolls/potions, with some gold.
 # The tomb close to the player is a bit easier than the other one, and is
 # more likely to be the one with less loot, giving weak players a chance.
@@ -512,11 +490,7 @@ ENDMAP
 
 NAME:    ossuary_crypta
 WEIGHT:  20
-TAGS:    no_item_gen no_monster_gen no_rotate no_vmirror
-MONS:    mummy
-MONS:    gnoll zombie / hobgoblin zombie / orc zombie / \
-         human zombie / kobold zombie / goblin zombie / \
-         big kobold zombie / centaur zombie
+TAGS:    uniq_ossuary
 # mix of good items with useless ones
 ITEM:    scroll of random uselessness w:20 / scroll of immolation / \
          scroll of bless item / \
@@ -564,6 +538,7 @@ ENDMAP
 # Scorpions, and lots of them. Hope you weren't expecting to breeze through
 # the ossuary just because you found a mace of holy wrath!
 NAME:   minmay_ossuary_scorpions_multiroom
+TAGS:   uniq_ossuary
 WEIGHT: 20
 KFEAT:  ~ = needle trap / arrow trap / spear trap w:5
 KITEM:  1 = *
@@ -593,6 +568,7 @@ ccccccccc+++c'''
 ENDMAP
 
 NAME:   minmay_ossuary_scorpions_large_arena
+TAGS:   uniq_ossuary
 WEIGHT: 20
 KFEAT:  ~ = needle trap / arrow trap / spear trap w:5
 KITEM:  1 = *
@@ -623,7 +599,7 @@ ENDMAP
 # Another ossuary (loosely) based on Tomb:2
 NAME:    ossuary_minmay_tomb_2a
 WEIGHT:  20
-TAGS:    transparent
+TAGS:    transparent uniq_ossuary
 MONS:    rat zombie / jackal zombie / goblin zombie / hobgoblin zombie / \
          adder zombie / gnoll zombie / orc zombie / kobold zombie / \
          big kobold zombie / hound zombie / human zombie / elf zombie
@@ -665,7 +641,7 @@ ENDMAP
 
 NAME:    ossuary_zaba_flooded
 WEIGHT:  20
-TAGS:    no_item_gen no_monster_gen
+TAGS:    no_exits uniq_ossuary
 {{
 local flood_x, flood_y, n = -1, -1, 0
 
@@ -763,11 +739,7 @@ ENDMAP
 # before the gold, but then I found out that zombies can't open doors anymore.
 NAME:   minmay_ossuary_gauntlet
 WEIGHT: 10
-TILE:    G = DNGN_SARCOPHAGUS_SEALED
-TILE:    I = DNGN_SARCOPHAGUS_PEDESTAL_LEFT
-TILE:    H = DNGN_SARCOPHAGUS_PEDESTAL_RIGHT
-KFEAT:   HI = granite_statue
-: set_feature_name("granite_statue", "sarcophagus")
+TAGS:   uniq_ossuary
 SUBST:  ' = '''''..
 CLEAR:  '
 NSUBST: 1 = 4:1 / *:2
@@ -790,6 +762,7 @@ ENDMAP
 
 NAME:    ossuary_the_hunt_dpeg
 WEIGHT:  10
+TAGS:   uniq_ossuary
 # loot: 8 items of which 6 should be good.
 # Most of the loot helps right here, if need be.
 ITEM:    potion of curing / potion of heal wounds / potion of haste / \
@@ -798,75 +771,65 @@ ITEM:    potion of curing / potion of heal wounds / potion of haste / \
          scroll of blinking w:5 / scroll of holy word / \
          scroll of random uselessness
 SUBST:   M = 111.
-MONS:    mummy
-MONS:    centaur zombie / hobgoblin zombie / big kobold zombie / nothing w:20
 KFEAT:   ~ = net trap / alarm trap / dispersal trap w:5 / floor w:100
 KFEAT:   ^ = net trap w:20 / dispersal trap w:5 / floor w:25
 : ossuary_setup_features(_G)
 MAP
            ccccccccccccccccccccc
- ccccccccccc2c2c2c2c2c2c2ccddddcc
-cc1.....1.~~~~~~~~~~~~~~~~^.....cc
-@.........~~~~~~~~~~~~~~~~^.....Mcc
-@.........~~~~~~~~~~~~~~~~^.....M<c
-@.........~~~~~~~~~~~~~~~~^.....Mcc
-cc1.....1.~~~~~~~~~~~~~~~~^.....cc
- ccccccccccc2c2c2c2c2c2c2ccddddcc
+ ccccccccccc2c2c2c2c2c2c2ccddddccc
+cc1.....1.~~~~~~~~~~~~~~~~^....M}c
+@.........~~~~~~~~~~~~~~~~^....M}c
+cc1.....1.~~~~~~~~~~~~~~~~^....M}c
+ ccccccccccc2c2c2c2c2c2c2ccddddccc
            ccccccccccccccccccccc
 ENDMAP
 
 NAME:    ossuary_due_mausoleum
 WEIGHT:  10
-TAGS:    no_item_gen no_monster_gen no_rotate no_vmirror
-MONS:    orc skeleton / kobold skeleton / gnoll skeleton / orc skeleton
-MONS:    mummy
-MONS:    wraith
+TAGS:   uniq_ossuary
 NSUBST:  = = 1:+ / *:c
-ITEM:    any scroll / any potion / nothing
-KITEM:   x = any scroll / any potion
-KMONS:   x = wraith
+SUBST:  . = ~3....
+SUBST:  ' = .''''
+KFEAT:  ~ = net trap / alarm trap / dispersal trap w:5
+CLEAR:  '
+ITEM:    any scroll / any potion
 : ossuary_setup_features(_G)
 MAP
-ccccccccccccccccccccccccccccc
-ccccccccccccccccccccccccccccc
-cc1.1...................1.1cc
-cc.<.....................<.cc
-cc1.1....ccccc+ccccc....1.1cc
-cc......cc.........cc......cc
-cc.....cc...cc=cc...cc.....cc
-cc....cc...cm...mc...cc....cc
-cc....c...cm.ddd.mc...c....cc
-cc....+...=.ddxdd.=...+....cc
-cc....c...cm.ddd.mc...c....cc
-cc....cc...cm...mc...cc....cc
-cc.....cc...cc=cc...cc.....cc
-cc......cc.........cc......cc
-cc1.1....ccccc+ccccc....1.1cc
-cc.<.....................<.cc
-cc1.1...................1.1cc
-ccccccccccccc+++ccccccccccccc
-ccccccccccccc...ccccccccccccc
-ccccccccccdd+.2.+ddcccccccccc
-ccccccccccddc111cddcccccccccc
-ccccccccccccc111ccccccccccccc
-ccccccccccccc111ccccccccccccc
-ccccccccccccc...ccccccccccccc
-ccccccccccccc...ccccccccccccc
-ccccccccccccc...ccccccccccccc
-ccccccccccccc...ccccccccccccc
-ccccccccccccc+++ccccccccccccc
-cccccccccccc.....cccccccccccc
-ccccccccccc.......ccccccccccc
-cccccccc3o.........o3cccccccc
-ccccccccccc.......ccccccccccc
-cccccccccccc.....cccccccccccc
-ccccccccccccc@@@ccccccccccccc
+      '''     '''
+    '''''''@'''''''
+   '''ccccc+ccccc'''
+  '''cc.........cc'''
+ '''cc...cc=cc...cc'''
+'''cc...cm.d.mc...cc'''
+ ''c...cm.ddd.mc...c''
+  @+...=.dd5dd.=...+@
+ ''c...cm.ddd.mc...c''
+'''cc...cm.}.mc...cc'''
+ '''cc...cc=cc...cc'''
+   ''cc.........cc''
+    ''c..c+++c..c''
+     'cccc333cccc'
+      cdd+...+ddc    
+      cddc222cddc
+      cccc222cccc    
+         c222c      
+         c.1.c     
+         c...c    
+         c.}.c    
+         c...c    
+        cc+++cc    
+       cc4...4cc    
+      cc*.....*cc    
+     cc|..111..|cc    
+      cc*.....*cc     
+       cc4.}.4cc     
+        ccccccc
 ENDMAP
 
 # INDY: Oh, rats! ... He hates rats. He's scared to death of 'em.
 NAME:    ossuary_due_small_catacomb
 WEIGHT:  10
-TAGS:    no_item_gen no_monster_gen
+TAGS:   uniq_ossuary
 ITEM:    any scroll / any potion
 MONS:    kobold skeleton / goblin skeleton / gnoll skeleton / \
          orc skeleton
@@ -915,60 +878,54 @@ ENDMAP
 # Menkaure's pyramid
 NAME:    ossuary_due_pyramid
 WEIGHT:  10
-TAGS:    no_rotate no_vmirror transparent
+TAGS:    no_rotate no_vmirror transparent uniq_ossuary
 # Loot: 1-16 items
 ITEM:    any scroll / any potion / w:5 nothing
 KFEAT:   ^ = arrow trap w:20 / alarm trap
 KFEAT:   m = spear trap
 KFEAT:   ~ = alarm trap
-NSUBST:  ' = 2:m / 25:2 / 25:3 / 30:^ / .
-# 1KB: what's the point of these shortcuts?  Removed for now...
+NSUBST:  ' = 3:m / 30:2 / 30:3 / 30:^ / .
 SUBST:    X : c
 SUBST:    C = ccccpp.@
 SUBST:   ` = .pp
-TILE:    G = DNGN_SARCOPHAGUS_SEALED
-: set_feature_name("granite_statue", "sarcophagus")
 CLEAR:    p
-#SUBST:   X : XYc
-#NSUBST:  X = 6:= / *:c
-#NSUBST:  Y = 3:= / *:c
 : ossuary_setup_features(_G)
 MAP
-                      ```CC```
-                    ````CCCC````
-                   ````CCCCCC````
-                  ````CC''''CC````
-                 ````CC''cc''CC````
-                ````CC''cccc''CC````
-               ````CC''cXccXc''CC````
-              ````CC''cX''''Xc''CC````
-             ````CC''cX''cc''Xc''CC````
-            ````CC''cX''cccc''Xc''CC````
-           ````CC''cX''cXcccc''Xc''CC````
-          ````CC''cX''cX''''Xc''Xc''CC````
-         ````CC''cX''cX''cc''Xc''Xc''CC````
-        ````CC''cX''cX''cccc''Xc''Xc''CC````
-       ````CC''cX''cX''ccGdcc''Xc''Xc''CC````
-      ````CC''cX''cX''ccGdddcc''Xc''Xc''CC````
-     ````CC''cX''cX''ccG1dd1dcc''Xc''Xc''CC````
-    ````CC''cX''cX''ccG^d}dd..cc''Xc''Xc''CC````
-    ```CC''cX''cX''ccG^d1dd1^.^cc''Xc''Xc''CC```
-   ```CC''cX''cX''ccG^d^ddd^.~.~cc''Xc''Xc''CC```
-  ```CC''cX''cX''cccccccccccccc''cc''Xc''Xc''CC``
-  ``CC''cX''cX''''''''''''''''''''cc''Xc''Xc''CC``
- ``CC''cX''cccXcXcXcXcXcXcXcXcXcXcXcc''Xc''Xc''CC``
-``CC''cX''''''''''''''''''''''''''''''''Xc''Xc''CC``
-`CC''cccXcXcXcXcXcXcXcXcXcXcXcXcXcXcXcXcXcc''Xc''CC`
-CC''''''''''''''''''''''''''''''''''''''''''''Xc''CC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
- CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+                      ````
+                     ``````
+                    ````````
+                   ````CC````
+                  ````CCCC````
+                 ````CCccCC````
+                ````CC''''CC````
+               ````CC''cc''CC````
+              ````CC''cccc''CC````
+             ````CC''cccccc''CC````
+            ````CC''cc''''cc''CC````
+           ````CC''cc''cc''cc''CC````
+          ````CC''cc''cccc''cc''CC````
+         ````CC''cc''ccGdcc''cc''CC````
+        ````CC''cc''ccGdddcc''cc''CC````
+       ````CC''cc''ccG1dd1dcc''cc''CC````
+      ````CC''cc''ccG^d}dd..cc''cc''CC````
+     ````CC''cc''ccG^d1dd1^'^cc''cc''CC````
+    ````CC''cc''ccG^d^ddd^'~'~cc''cc''CC````
+   ````CC''cc''cccccccccccccc''cc''cc''CC````
+  ````CC''cc''''''''''''''''''''cc''cc''CC````
+ ````CC''cccccccccccccccccccccccccc''cc''CC````
+````CC''''''''''''''''''''''''''''''''cc''CC````
+````CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC````
+ ````CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC````
+   ````````````````````````````````````````````
+      `````````````````````````````````````
+          `````````````````````````````
 ENDMAP
 
 NAME:   ossuary_zaba_two_paths
 # There is no way up in the end. This is to give the zombies in the beginning
 # more time to go for a walk and another chance to meet the player.
 WEIGHT: 10
-TAGS:   no_item_gen no_monster_gen no_rotate
+TAGS:   no_item_gen no_monster_gen no_rotate uniq_ossuary
 #
 # Standard monsters: small zombies, large zombies, boss:
 MONS:   kobold zombie / goblin zombie / orc zombie / hobgoblin zombie
@@ -1029,7 +986,7 @@ ENDMAP
 #
 NAME:    ossuary_due_cavern
 WEIGHT:  10
-TAGS:    no_item_gen no_monster_gen
+TAGS:    uniq_ossuary
 MONS:    centaur zombie w:1 / orc zombie / hobgoblin zombie /\
          kobold zombie / adder zombie / orc skeleton / hobgoblin skeleton /\
          ball python skeleton / nothing w:5
@@ -1078,7 +1035,7 @@ ENDMAP
 # probably okay, but may turn out to be too easy.... -- dpeg
 NAME:   ossuary_minmay_four_chambers
 WEIGHT: 10
-TAGS:   no_item_gen no_monster_gen
+TAGS:   uniq_ossuary
 MONS:   human zombie / elf zombie / centaur zombie
 MONS:   mummy
 ITEM:   any scroll / any potion / any scroll q:2 w:2 / any potion q:2 w:2
@@ -1117,7 +1074,7 @@ ENDMAP
 # forcing the player to either move quickly or soak up some death curses.
 NAME:   ossuary_minmay_chase
 WEIGHT: 10
-TAGS:   no_item_gen no_monster_gen
+TAGS:   uniq_ossuary
 MONS:   rat zombie / quokka zombie / adder zombie /\
         goblin zombie / hobgoblin zombie / kobold zombie / gnoll zombie w:2 /\
         big kobold zombie w:1 / human zombie w:1 / elf zombie w:1 / orc zombie w:1
@@ -1155,7 +1112,7 @@ ENDMAP
 
 NAME:   ossuary_boxes_badplayer
 WEIGHT: 10
-TAGS:   no_item_gen no_monster_gen
+TAGS:   uniq_ossuary
 MONS:   rat zombie / quokka zombie / adder zombie /\
         goblin zombie / hobgoblin zombie / kobold zombie / gnoll zombie w:2 /\
         big kobold zombie w:1 / human zombie w:1 / elf zombie w:1 / orc zombie w:1
@@ -1216,7 +1173,7 @@ ENDMAP
 
 NAME:   ossuary_kennysheep_city_of_the_dead
 WEIGHT: 10
-TAGS:   no_exits
+TAGS:   no_exits uniq_ossuary
 KMONS:  1W = wraith
 KMONS:  2 = mummy
 KMONS:  3 = goblin zombie / hobgoblin zombie / kobold zombie / gnoll zombie w:2 /\

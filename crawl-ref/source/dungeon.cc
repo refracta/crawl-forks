@@ -5157,8 +5157,8 @@ static dungeon_feature_type _glyph_to_feat(int glyph)
            (glyph == '[') ? DNGN_STONE_STAIRS_UP_III :
            (glyph == 'A') ? DNGN_STONE_ARCH :
            (glyph == 'C') ? _pick_an_altar() :   // f(x) elsewhere {dlb}
-           (glyph == 'I') ? DNGN_ORCISH_IDOL :
            (glyph == 'G') ? DNGN_GRANITE_STATUE :
+           (glyph == 'I') ? DNGN_ORCISH_IDOL :
            (glyph == 'T') ? DNGN_FOUNTAIN_BLUE :
            (glyph == 'U') ? DNGN_FOUNTAIN_SPARKLING :
            (glyph == 'V') ? DNGN_DRY_FOUNTAIN :

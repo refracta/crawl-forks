@@ -3394,12 +3394,12 @@ MARKER: P = lua:transp_loc("temple_of_torment_entry")
 MARKER: Q = lua:transp_dest_loc("temple_of_torment_entry")
 MARKER: R = lua:transp_loc("temple_of_torment_exit")
 MARKER: S = lua:transp_dest_loc("temple_of_torment_exit")
+KFEAT:  G = sarcophagus
 TILE:   G = dngn_sarcophagus_pedestal_left
 TILE:   c = wall_tomb
 FTILE:  -QRVDE|*$123Gcn = floor_tomb
 COLOUR: G = yellow
 COLOUR: -QR|*$123 = brown
-: set_feature_name("granite_statue", "sarcophagus")
 MAP
  ...............
  .nnnnnnnnnnnnn.

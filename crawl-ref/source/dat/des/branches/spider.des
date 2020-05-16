@@ -1799,7 +1799,7 @@ NSUBST: N = 4:W / c
 TILE:   M = wall_tomb
 COLOUR: M = yellow
 KFEAT:  M = stone_wall
-KFEAT:  P = clear_rock_wall
+KFEAT:  P = sarcophagus
 TILE:   c = wall_sandstone
 TILE:   P = dngn_sarcophagus_pedestal_left
 FTILE:  23+$OEGHNPS. = floor_sandstone:20 / none
@@ -1817,7 +1817,6 @@ MONS:   emperor scorpion, ghost moth, moth of wrath
 NSUBST: S = 8:1 / ., H = 2:5 / 1:6 / 1:7 / K
 SUBST:  K = 2 5:4 6:2 7:2 E:20, E = 3 4:30
 SUBST:  Q = W:15 .
-: set_feature_name("clear_rock_wall", "sarcophagus")
 MAP
   .....xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
   .G.G.cccccccccccccccccccccccccccccccx

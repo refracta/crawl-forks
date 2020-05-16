@@ -1442,6 +1442,7 @@ static int _shatter_walls(coord_def where, int /*pow*/, actor *agent)
         break;
 
     case DNGN_ORCISH_IDOL:
+    case DNGN_SARCOPHAGUS:
     case DNGN_GRANITE_STATUE:
         chance = 100;
         break;

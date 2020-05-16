@@ -191,6 +191,8 @@ tileidx_t tileidx_feature_base(dungeon_feature_type feat)
         return TILE_DNGN_CRYSTAL_WALL;
     case DNGN_ORCISH_IDOL:
         return TILE_DNGN_ORCISH_IDOL;
+    case DNGN_SARCOPHAGUS:
+        return TILE_DNGN_SARCOPHAGUS_SEALED;
     case DNGN_TREE:
         return player_in_branch(BRANCH_SWAMP) ? TILE_DNGN_MANGROVE :
                player_in_branch(BRANCH_SLIME) ? (jiyva_is_dead() ? TILE_DNGN_DEADSHROOM : TILE_DNGN_SLIMESHROOM)
