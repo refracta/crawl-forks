@@ -1649,8 +1649,7 @@ bool attack::apply_damage_brand(const char *what)
 
     case SPWPN_VAMPIRISM:
     {
-        if (!weapon
-            || damage_done < 1
+        if (damage_done < 1
             || !actor_is_susceptible_to_vampirism(*defender)
             || attacker->stat_hp() == attacker->stat_maxhp()
             || attacker->is_player() && you.duration[DUR_DEATHS_DOOR])
@@ -1658,10 +1657,13 @@ bool attack::apply_damage_brand(const char *what)
             break;
         }
 
-        int hp_boost = is_unrandom_artefact(*weapon, UNRAND_VAMPIRES_TOOTH) || 
-                       is_unrandom_artefact(*weapon, UNRAND_LEECH)
-                       ? damage_done : max(div_rand_round(roll_dice(3,damage_done),6),1);
-        hp_boost = resist_adjust_damage(defender, BEAM_NEG, hp_boost);
+        int hp_boost = max(div_rand_round(roll_dice(3, damage_done), 6), 1);
+
+        if (weapon && (is_unrandom_artefact(*weapon, UNRAND_VAMPIRES_TOOTH) ||
+                       is_unrandom_artefact(*weapon, UNRAND_LEECH)))
+        {
+            hp_boost = damage_done;
+        }
 
         if (fae && hp_boost)
             hp_boost = 1; // Suck on my non-HP. :)
@@ -1671,18 +1673,27 @@ bool attack::apply_damage_brand(const char *what)
             obvious_effect = true;
 
             if (attacker->is_player())
-                canned_msg(MSG_GAIN_HEALTH);
+            {
+                special_damage_message = 
+                    make_stringf("You draw strength from %s wounds%s",
+                                 defender->pronoun(PRONOUN_POSSESSIVE).c_str(),
+                                 attack_strength_punctuation(hp_boost).c_str());
+            }
             else if (attacker_visible)
             {
                 if (defender->is_player())
                 {
-                    mprf("%s draws strength from your wounds!",
-                         attacker->name(DESC_THE).c_str());
+                    special_damage_message = 
+                        make_stringf("%s draws strength from your wounds%s",
+                                     attacker->name(DESC_THE).c_str(),
+                                     attack_strength_punctuation(hp_boost).c_str());
                 }
                 else
                 {
-                    mprf("%s is healed.",
-                         attacker->name(DESC_THE).c_str());
+                    special_damage_message = 
+                        make_stringf("%s is healed%s",
+                                     attacker->name(DESC_THE).c_str(),
+                                     attack_strength_punctuation(hp_boost).c_str());
                 }
             }
 
