@@ -3405,10 +3405,11 @@ void melee_attack::mons_apply_attack_flavour()
                 attacker->heal(healed);
                 if (needs_message)
                 {
-                    mprf("%s %s strength from %s injuries!",
+                    mprf("%s %s strength from %s injuries%s",
                          atk_name(DESC_THE).c_str(),
                          attacker->conj_verb("draw").c_str(),
-                         def_name(DESC_ITS).c_str());
+                         def_name(DESC_ITS).c_str(),
+                         attack_strength_punctuation(healed).c_str());
                 }
             }
         }
