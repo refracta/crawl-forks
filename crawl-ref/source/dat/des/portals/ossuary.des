@@ -1225,58 +1225,133 @@ MAP
 `````````````````````````````
 ENDMAP
 
-NAME:   ossuary_kennysheep_city_of_the_dead
+NAME:   ossuary_bcadren_kennysheep_ruined_city_of_the_dead
 WEIGHT: 10
-TAGS:   no_exits uniq_ossuary
-KMONS:  1W = wraith
-KMONS:  2 = mummy
-KMONS:  3 = goblin zombie / hobgoblin zombie / kobold zombie / gnoll zombie w:2 /\
-        big kobold zombie w:1 / human zombie w:1 / elf zombie w:1 / orc zombie w:1 /\
-                nothing w:36
-KITEM:  12d = any potion / any scroll / any jewellery w:1
-KFEAT:  . = needle trap / arrow trap / spear trap w:5 / floor w:600
-NSUBST: d = 1:1 / 3:2 / 4:. / *:d
+TAGS:   uniq_ossuary
+: if crawl.coinflip() then
+  SUBST: A = '
+  SUBST: B = .
+: else
+  SUBST: B = '
+  SUBST: A = .
+: end
+: if crawl.coinflip() then
+  SUBST: C = '
+  SUBST: D = .
+: else
+  SUBST: D = '
+  SUBST: C = .
+: end
+: if crawl.coinflip() then
+  SUBST: E = '
+  SUBST: F = .
+: else
+  SUBST: F = '
+  SUBST: E = .
+: end
+: if crawl.coinflip() then
+  SUBST: S = '
+  SUBST: H = .
+: else
+  SUBST: H = '
+  SUBST: S = .
+: end
+: if crawl.coinflip() then
+  SUBST: I = '
+  SUBST: J = .
+: else
+  SUBST: J = '
+  SUBST: I = .
+: end
+: if crawl.coinflip() then
+  SUBST: K = '
+  SUBST: L = .
+: else
+  SUBST: L = '
+  SUBST: K = .
+: end
+: if crawl.coinflip() then
+  SUBST: M = '
+  SUBST: N = .
+: else
+  SUBST: N = '
+  SUBST: M = .
+: end
+: if crawl.coinflip() then
+  SUBST: O = '
+  SUBST: P = .
+: else
+  SUBST: P = '
+  SUBST: O = .
+: end
+: if crawl.coinflip() then
+  SUBST: Q = '
+  SUBST: R = .
+: else
+  SUBST: R = '
+  SUBST: Q = .
+: end
+: if crawl.coinflip() then
+SUBST:  . = apwwww!xxx
+SUBST:  ' = .Wa
+KFEAT:  ! = deep_water
+: else
+SUBST:  . = xxxxxxx6
+KFEAT:  6 = rock_wall
+: end
+KMONS:  p = withered plant
+KFEAT:  . = needle trap / alarm trap / spear trap w:5 / floor w:200
+SUBST:  3 = 3.
+NSUBST: d = 3:5 / 3:1 / 4:3 / *:d
+KFEAT:  5 = }
+SUBST:  3 = 367
+: ossuary_setup_features(_G)
+KITEM:  15d = any potion / any scroll / any jewellery w:2
+FTILE:  a = FLOOR_SWAMP
+MAP
+  ccc  ccc  ccc  ccc  ccc  
+  cdc  cdc  cdc  cdc  cdc  
+..c+c..c+c..c+c..c+c..c+cK@
+.Kc@cJJc@cMMc@c..c@c.Pc@cKP
+K.KLJ.JN.M..MRQQQ.QRP.POOPK
+K.JJLLLJM.R.RMM..Q.PR..PPO@
+@JccccCL3R.RcccM..3RHccccKO
+.Jcd+@D3G3..cdc.M3G3S@+dcK.
+.JccccEO3NJ.c+c.N.3.FccccK.
+@J....OK.JNJc@cN...L....K..
+@OOOOO.K...NJNKN...L....K..
+.JccccKccccAN3NJccccLccccK.
+.Jcd+@Ecd+@B3G3L@+dcA@+dcK.
+@.ccccLccccCL3.KccccKccccK.
+.......L.LLLLMNKKK..AKAKAK@
+..DDDD..L...c@c.IIKAKAKAKA@
+@DccccD.3.F.c+cI..3K.ccccB.
+@Ecd+@C3G3.FcdcI.3G3A@+dcB.
+.EccccD.3.SFcccI..3BBccccB.
+..EEED....FS..H.IIH..BB.B..
+..C.DE.E.F..SH.H.HIJ..JBA..
+.Cc@cEEc@c..c@cHHc@cJJc@cA.
+@Cc+c..c+c..c+c..c+c..c+c.@
+  cdc  cdc  cdc  cdc  cdc
+  ccc  ccc  ccc  ccc  ccc
+ENDMAP
+
+NAME:   miniossuary_kennysheep_ghosthouse
+WEIGHT: 10
+TAGS:   uniq_miniossuary no_hmirror no_rotate
+ORIENT: south
+NSUBST: ' = 4:5 / 2:~ / 5:3 2:1 / 2:* / *:.
+SUBST:  3 = 367
+KFEAT:  ~ = dispersal trap
 : ossuary_setup_features(_G)
 MAP
-ccccccccccccccccccccccccccccc
-c...........................c
-c...........................c
-c..xxx..xxx..xxx..xxx..xxx..c
-c..xdx..xdx..xdx..xdx..xdx..c
-c..x+x..x+x..x+x..x+x..x+x..c
-c..x.x..x.x..x.x..x.x..x.x..c
-c...........................c
-c...........................c
-c..xxxx..3...xxx...3..xxxx..c
-c..xd+..3G3..xdx..3G3..+dx..c
-c..xxxx..3...x+x...3..xxxx..c
-c............x.x............c
-c...........................c
-c..xxxx.xxxx..3..xxxx.xxxx..c
-c..xd+..xd+..3G3..+dx..+dx..c
-c..xxxx.xxxx..3..xxxx.xxxx..c
-c...........................c
-c............x.x............c
-c..xxxx..3...x+x...3..xxxx..c
-c..xd+..3G3..xdx..3G3..+dx..c
-c..xxxx..3...xxx...3..xxxx..c
-c...........................c
-c...........................c
-c..x.x..x.x..x.x..x.x..x.x..c
-c..x+x..x+x..x+x..x+x..x+x..c
-c..xdx..xdx..xdx..xdx..xdx..c
-c..xxx..xxx..xxx..xxx..xxx..c
-c...........................c
-c...........................c
-ccccccccccccc+++ccccccccccccc
-           cc...cc
-          cc.....cc
-       cccc.......cccc
-       cWn.........nWc
-       cccc.......cccc
-          @@.....@@
-           @c...c@
-            ccncc
-             cWc
-             ccc
+          qq===qq
+         qqI'''Hqq
+        qqI'''''Hqq
+       qqI'''''''Hqq
+      qqI''''U''''Hqq
+       qqI'''''''Hqq
+        qqI'''''Hqq
+         qqI}}}Hqq
+          qqqqqqq
 ENDMAP
