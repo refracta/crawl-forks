@@ -178,7 +178,6 @@ static void _slime_connectivity_fixup();
 
 static void _dgn_postprocess_level();
 static void _calc_density();
-static void _mark_solid_squares();
 
 //////////////////////////////////////////////////////////////////////////
 // Static data
@@ -517,7 +516,6 @@ static void _dgn_postprocess_level()
     shoals_postprocess_level();
     _builder_assertions();
     _calc_density();
-    _mark_solid_squares();
 }
 
 void dgn_clear_vault_placements()
@@ -7279,13 +7277,4 @@ static void _calc_density()
 
     dprf(DIAG_DNGN, "Level density: %d", open);
     env.density = open;
-}
-
-// Mark all solid squares as no_tele so that digging doesn't influence
-// random teleportation.
-static void _mark_solid_squares()
-{
-    for (rectangle_iterator ri(0); ri; ++ri)
-        if (feat_is_solid(grd(*ri)))
-            env.pgrid(*ri) |= FPROP_NO_TELE_INTO;
 }
