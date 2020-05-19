@@ -4928,8 +4928,11 @@ monster* dgn_place_monster(mons_spec &mspec, coord_def where,
 
         const habitat_type habitat = mons_class_primary_habitat(montype);
 
-        if (in_bounds(where) && !monster_habitable_grid(montype, grd(where)))
+        if (in_bounds(where) && !monster_habitable_grid(montype, grd(where))
+            && type != MONS_SPECTRAL_THING)
+        {
             dungeon_terrain_changed(where, habitat2grid(habitat));
+        }
     }
 
     if (type == RANDOM_MONSTER)

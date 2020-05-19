@@ -125,7 +125,7 @@ bool monster_habitable_grid(const monster* mon,
                             dungeon_feature_type actual_grid, bool ai_check)
 {
     // Zombified monsters enjoy the same habitat as their original,
-    // except lava-based monsters.
+    // except simulacra in lava. Additionally spectrals can live in walls.
     const monster_type mt = fixup_zombie_type(mon->type,
                                               mons_base_type(*mon));
 
@@ -152,15 +152,9 @@ bool monster_habitable_grid(monster_type mt,
                             dungeon_feature_type wanted_grid,
                             bool ai_check)
 {
-    // No monster may be placed in walls etc.
     if (!mons_class_can_pass(mt, actual_grid))
         return false;
 
-#if TAG_MAJOR_VERSION == 34
-    // Monsters can't use teleporters, and standing there would look just wrong.
-    if (actual_grid == DNGN_TELEPORTER)
-        return false;
-#endif
     // The kraken is so large it cannot enter shallow water.
     // Its tentacles can, and will, though.
     if (actual_grid == DNGN_SHALLOW_WATER && mt == MONS_KRAKEN)
@@ -615,10 +609,16 @@ monster_type resolve_monster_type(monster_type mon_type,
 monster_type fixup_zombie_type(const monster_type cls,
                                          const monster_type base_type)
 {
-    return (mons_class_is_zombified(cls)
-            && mons_class_secondary_habitat(base_type) != HT_LAVA)
-            ? base_type
-            : cls;
+    if (!mons_class_is_zombified(cls))
+        return cls;
+
+    if (cls == MONS_SIMULACRUM && mons_class_secondary_habitat(base_type) == HT_LAVA)
+        return cls;
+
+    if (cls == MONS_SPECTRAL_THING && mons_class_primary_habitat(base_type) == HT_LAND)
+        return cls;
+
+    return base_type;
 }
 
 // Checks if the monster is ok to place at mg_pos. If force_location
@@ -1635,6 +1635,9 @@ bool zombie_picker::veto(monster_type mt)
         return true;
     if (!_good_zombie(corpse_type, zombie_kind, pos))
         return true;
+
+    if (zombie_kind == MONS_SPECTRAL_THING && mons_class_primary_habitat(corpse_type) == HT_LAND)
+        return false; // Overrides the rest of the process. Hacky.
     return positioned_monster_picker::veto(mt);
 }
 

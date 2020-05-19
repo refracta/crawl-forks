@@ -298,7 +298,6 @@ ENDMAP
 
 # I've revamped this vault to always place reasonably challenging monsters,
 # with monster/loot types and number scaling with depth. -gammafunk
-# BCADDO: Rock Worms?
 NAME:   worms_lemuel
 TAGS:   no_monster_gen no_pool_fixup transparent
 DEPTH:  D:3-, Lair, Spider, Swamp
@@ -384,17 +383,19 @@ MAP
   .... . . . ..
 ENDMAP
 
-# BCADDO: Rock Worms?
 NAME:    hangedman_stitches_earthworm
 TAGS:    no_monster_gen no_item_gen transparent no_pool_fixup
 DEPTH:   Depths, Spider:2-, Abyss
 KMONS:   0 = 0
-KMONS:   1 = tyrant leech
+KMONS:   1 = rock_worm
 KMONS:   2 = earth elemental
 KMONS:   3 = redback w:5 / orb spider w:5 / nothing
 KMONS:   4 = thrashing horror
-KITEM:   ' = scroll of random uselessness no_pickup q:1 w:5 / nothing
-KITEM:   01234 = % w:90 no_pickup / * no_pickup
+KFEAT:   1 = rock_wall
+# BCADNOTE: This used to place rocks, then it placed random uselessness;
+# but the former is removed and the latter is too goofy.
+FTILE:   ' = FLOOR_SWAMP
+KITEM:   0234 = % w:72 no_pickup / * no_pickup
 SHUFFLE: ABCDEF / ABCDEF / ABCCBA, ABC, DEF, 13 / 13 / 31, {`
 :  if you.in_branch("Abyss") then
 SUBST:   G = BEG, C : x:5 cvb, B : x:5 cvbw, A : xcvb w:4

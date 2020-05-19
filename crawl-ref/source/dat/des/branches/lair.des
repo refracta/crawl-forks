@@ -2516,6 +2516,7 @@ MONS:    torpor snail, tyrant leech, lindwurm, boulder beetle / hornet
 MONS:    fire dragon / ice dragon
 KMONS:   p = plant
 KMONS:   9 = generate_awake patrolling rock worm w:1 / nothing w:2
+KFEAT:   9 = rock_wall
 SHUFFLE: ABC
 NSUBST:  1 = 1:1 / *:., 4 = 3:4 / *:.
 NSUBST:  A = 3:4 / 1:23 / * = ....4
@@ -2658,6 +2659,7 @@ KMONS:   8 = water moccasin
 KMONS:   9 : spiny frog w:90 / hornet
 KMONS:   0 : black mamba w:90 / wolf spider
 KMONS:   F = generate_awake patrolling rock worm w:2 / nothing w:1
+KFEAT:   F = rock_wall
 KMONS:   A = elephant / boulder beetle
 KMONS:   B = death yak
 KMONS:   C = dream sheep

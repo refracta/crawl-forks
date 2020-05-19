@@ -378,7 +378,8 @@ void debug_mons_scan()
 
         if (feat_is_wall(grd(pos)) && mons_primary_habitat(*m) != HT_ROCK
             && mons_primary_habitat(*m) != HT_STEEL
-            && mons_primary_habitat(*m) != HT_INCORPOREAL)
+            && mons_primary_habitat(*m) != HT_INCORPOREAL
+            && m->type != MONS_SPECTRAL_THING)
         {
 #if defined(DEBUG_FATAL)
             // if we're going to dump, point out the culprit
