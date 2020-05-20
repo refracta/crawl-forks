@@ -955,6 +955,7 @@ SUBST:   4 = 23
 SUBST:   ' : aaa....
 NSUBST:  P = O / *|
 KMASK:   |O* = no_monster_gen
+KMASK:   C = no_pool_fixup
 KPROP:   |O* = no_jiyva
 KPROP:   |O* = no_tele_into
 KFEAT:   |O* = slimy_water

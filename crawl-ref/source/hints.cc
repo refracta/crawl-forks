@@ -3465,6 +3465,7 @@ static void _hints_describe_feature(int x, int y, ostringstream& ostr)
     switch (feat)
     {
     case DNGN_ORCISH_IDOL:
+    case DNGN_SARCOPHAGUS:
     case DNGN_GRANITE_STATUE:
         ostr << "It's just a harmless statue - or is it?\nEven if not "
                 "a danger by themselves, statues often mark special "

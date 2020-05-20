@@ -178,7 +178,6 @@ static void _slime_connectivity_fixup();
 
 static void _dgn_postprocess_level();
 static void _calc_density();
-static void _mark_solid_squares();
 
 //////////////////////////////////////////////////////////////////////////
 // Static data
@@ -422,7 +421,25 @@ static void _builder_assertions()
         if (!in_bounds(*ri))
             if (!feat_is_valid_border(grd(*ri)))
             {
-                grd(*ri) = DNGN_PERMAROCK_WALL;
+                switch (you.where_are_you)
+                {
+                case BRANCH_SWAMP:
+                    grd(*ri) = DNGN_TREE;
+                    break;
+                case BRANCH_SHOALS:
+                    grd(*ri) = DNGN_OPEN_SEA;
+                    break;
+                case BRANCH_VESTIBULE:
+                case BRANCH_GEHENNA:
+                    grd(*ri) = DNGN_LAVA_SEA;
+                    break;
+                case BRANCH_DESOLATION:
+                    grd(*ri) = DNGN_ENDLESS_SALT;
+                    break;
+                default:
+                    grd(*ri) = DNGN_PERMAROCK_WALL;
+                    break;
+                }
 
 //                die("invalid map border at (%d,%d): %s", ri->x, ri->y,
 //                    dungeon_feature_name(grd(*ri)));
@@ -517,7 +534,6 @@ static void _dgn_postprocess_level()
     shoals_postprocess_level();
     _builder_assertions();
     _calc_density();
-    _mark_solid_squares();
 }
 
 void dgn_clear_vault_placements()
@@ -1352,43 +1368,79 @@ void dgn_reset_level(bool enable_random_maps)
     update_portal_entrances();
 }
 
+// BCADDNOTE: Outside of the Dungeon this is default behavior right now.
 static int _num_items_wanted(int absdepth0)
 {
+    int dice_amt = 0;
     if (branches[you.where_are_you].branch_flags & brflag::no_items)
         return 0;
-    else if (absdepth0 > 5 && one_chance_in(500 - 5 * absdepth0))
-        return 10 + random2avg(90, 2); // rich level!
+    else if (absdepth0 > 3 && one_chance_in(300 - 3 * absdepth0))
+        dice_amt = 10; // rich level!
     else
-        return 3 + roll_dice(3, 11);
+    {
+        switch (you.where_are_you)
+        {
+        case BRANCH_DUNGEON:
+            return dice_amt = 7;
+        default:
+            return dice_amt = 3;
+        }
+    }
+    return dice_amt + roll_dice(dice_amt, 11);
 }
 
-// Return how many level monster are wanted for level generation.
-static int _num_mons_wanted()
+// BCADDNOTE: Outside of the Dungeon this is default behavior right now.
+static int _mon_count_base()
 {
-    const bool in_pan = player_in_branch(BRANCH_PANDEMONIUM);
-
     // No disconnected branches aside from Pan have level monsters.
-    if ((!player_in_connected_branch() && !in_pan)
+    if ((!player_in_connected_branch() 
+        && you.where_are_you != BRANCH_PANDEMONIUM)
         // Temple is connected but has no monsters.
         || !branch_has_monsters(you.where_are_you))
     {
         return 0;
     }
 
-    int size = 12;
+    switch (you.where_are_you)
+    {
+    case BRANCH_DUNGEON:
+        switch (you.depth)
+        {
+        case 1:
+            return 18;
+        case 2:
+        case 3:
+        case 4:
+            return 24;
+        case 5:
+        case 6:
+            return 36;
+        case 7:
+        case 8:
+            return 30;
+        }
+    case BRANCH_PANDEMONIUM:
+        return 8;
+    case BRANCH_CRYPT:
+        return 10;
+    case BRANCH_VESTIBULE:
+    case BRANCH_COCYTUS:
+    case BRANCH_DIS:
+    case BRANCH_GEHENNA:
+    case BRANCH_TARTARUS:
+        return 23;
+    default:
+        return 12;
+    }
+}
 
-    if (in_pan)
-        size = 8;
-    else if (player_in_branch(BRANCH_CRYPT))
-        size = 10;
-    else if (player_in_hell())
-        size = 23;
-
+// Return how many level monster are wanted for level generation.
+static int _num_mons_wanted()
+{
+    int size = _mon_count_base();
     int mon_wanted = roll_dice(3, size);
 
-    if (mon_wanted > 60)
-        mon_wanted = 60;
-
+    mon_wanted = min(mon_wanted, 90);
     return mon_wanted;
 }
 
@@ -3775,16 +3827,14 @@ static void _place_aquatic_in(vector<coord_def> &places, const pop_entry *pop,
 
 static void _place_aquatic_monsters()
 {
-    // Shoals relies on normal monster generation to place its monsters.
     // Abyss's nature discourages random movement-inhibited monsters.
     // Default liquid creatures are harmless in Pan or Zot, and
     // threatening ones are distracting from their sets.
-    // Random liquid monster placement is too vicious before D:6.
+    // Random liquid monster placement is too vicious before D:4.
     //
     if (player_in_branch(BRANCH_ABYSS)
         || player_in_branch(BRANCH_PANDEMONIUM)
-        || player_in_branch(BRANCH_ZOT)
-        || player_in_branch(BRANCH_DUNGEON) && you.depth < 6)
+        || player_in_branch(BRANCH_DUNGEON) && you.depth < 4)
     {
         return;
     }
@@ -4896,8 +4946,11 @@ monster* dgn_place_monster(mons_spec &mspec, coord_def where,
 
         const habitat_type habitat = mons_class_primary_habitat(montype);
 
-        if (in_bounds(where) && !monster_habitable_grid(montype, grd(where)))
+        if (in_bounds(where) && !monster_habitable_grid(montype, grd(where))
+            && type != MONS_SPECTRAL_THING)
+        {
             dungeon_terrain_changed(where, habitat2grid(habitat));
+        }
     }
 
     if (type == RANDOM_MONSTER)
@@ -5123,8 +5176,8 @@ static dungeon_feature_type _glyph_to_feat(int glyph)
            (glyph == '[') ? DNGN_STONE_STAIRS_UP_III :
            (glyph == 'A') ? DNGN_STONE_ARCH :
            (glyph == 'C') ? _pick_an_altar() :   // f(x) elsewhere {dlb}
-           (glyph == 'I') ? DNGN_ORCISH_IDOL :
            (glyph == 'G') ? DNGN_GRANITE_STATUE :
+           (glyph == 'I') ? DNGN_ORCISH_IDOL :
            (glyph == 'T') ? DNGN_FOUNTAIN_BLUE :
            (glyph == 'U') ? DNGN_FOUNTAIN_SPARKLING :
            (glyph == 'V') ? DNGN_DRY_FOUNTAIN :
@@ -7245,13 +7298,4 @@ static void _calc_density()
 
     dprf(DIAG_DNGN, "Level density: %d", open);
     env.density = open;
-}
-
-// Mark all solid squares as no_tele so that digging doesn't influence
-// random teleportation.
-static void _mark_solid_squares()
-{
-    for (rectangle_iterator ri(0); ri; ++ri)
-        if (feat_is_solid(grd(*ri)))
-            env.pgrid(*ri) |= FPROP_NO_TELE_INTO;
 }

@@ -31,7 +31,7 @@ function callback.kb_xom_exploding_sheep(data, triggerable,
   view.update_monsters()
   for i = 1, nsheep do
     local sheep = sheeparray[i]
-    sheep.add_ench("inner_flame", 1, 30000)
+    sheep.add_ench("entropic_burst", 1, 30000)
     sheep.add_ench("sticky_flame", 1, 30000)
     sheep.add_ench("fear", 1, 30000)
     sheep.beh = flee
@@ -64,7 +64,7 @@ lua_marker('+', props_marker {feat_remove = 1})
 lua_marker('+', restrict_door())
 
 if you.in_branch("D") then
-  if you.absdepth() > 9 then
+  if you.absdepth() > 5 then
     tags('extra')
   end
 else

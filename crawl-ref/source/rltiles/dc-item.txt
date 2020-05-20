@@ -643,22 +643,22 @@ i-scattershot WAND_SCATTERSHOT WAND_ID_LAST
 #################OBJ_FOOD
 %sdir item/food
 bread_ration FOOD_RATION UNSEEN_FOOD FOOD_RATION_FIRST FOOD_RATION_INVENTORY
-meat_ration
-cheese
+meat_ration FOOD_MEAT_RATION
+cheese FOOD_CHEESE
 honeycomb FOOD_HONEYCOMB
-sausage
+sausage FOOD_SAUSAGE
 pizza FOOD_PIZZA
-beef_jerky
+beef_jerky FOOD_JERKY
 apple FOOD_FRUIT_FIRST FOOD_APPLE
-apricot
-banana
-choko
-grape
-lemon
-orange
-pear
-snozzcumber
-strawberry FOOD_FRUIT_LAST
+apricot FOOD_APRICOT
+banana FOOD_BANANA
+choko FOOD_CHOKO
+grape FOOD_GRAPE
+lemon FOOD_LEMON
+orange FOOD_ORANGE
+pear FOOD_PEAR
+snozzcumber FOOD_SNOZZCUMBER
+strawberry FOOD_STRAWBERRY FOOD_FRUIT_LAST
 fruit FOOD_FRUIT_INVENTORY FOOD_RATION_LAST
 
 %rim 0

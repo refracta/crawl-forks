@@ -333,6 +333,7 @@ static void _reset_game()
     macro_clear_buffers();
     the_lost_ones.clear();
     shopping_list = ShoppingList();
+    transit_lists_clear();
     you = player();
     reset_hud();
     StashTrack = StashTracker();
@@ -2058,6 +2059,19 @@ static void _check_banished()
     }
 }
 
+static void _check_shafts()
+{
+    for (auto& entry : env.trap)
+    {
+        if (entry.second.type != TRAP_SHAFT)
+            continue;
+
+        ASSERT_IN_BOUNDS(entry.first);
+
+        handle_items_on_shaft(entry.first);
+    }
+}
+
 static void _check_sanctuary()
 {
     if (env.sanctuary_time <= 0)
@@ -2172,6 +2186,7 @@ void world_reacts()
 #endif
 
     _check_banished();
+    _check_shafts();
     _check_sanctuary();
 
     run_environment_effects();

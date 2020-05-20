@@ -1857,6 +1857,17 @@ static void _xom_pseudo_miscast(int /*sever*/)
     if (in_view[DNGN_ORCISH_IDOL])
         priority.emplace_back("The idol of Beogh turns to glare at you.");
 
+    if (in_view[DNGN_SARCOPHAGUS])
+    {
+        if (!silenced(you.pos()))
+        {
+            priority.emplace_back("You hear a mummy shouting to be let out of the sarcophagus!");
+            noisy(10, you.pos());
+        }
+        else
+            priority.emplace_back("The lid of the sarcophagus appears to shake.");
+    }
+
     if (in_view[DNGN_GRANITE_STATUE])
         priority.emplace_back("The granite statue turns to stare at you.");
 

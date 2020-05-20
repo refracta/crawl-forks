@@ -2,17 +2,17 @@
 # Helper function to weight the secondary food vaults properly.
 # We want each level in the range to have a roughly even chance of placing
 # the vault.
-# The uppermost level we place it on is D:7, and the lowermost is D:14;
-# thus the first level, D:7, has a 1 in 8 chance of placing it. If it
-# doesn't place on D:7, D:8 has a 1 in 7 chance of placing it; D:9 has a
-# 1 in 6 chance, etc. up until D:14 has a 100% chance.
+# The uppermost level we place it on is D:3, and the lowermost is D:7;
+# thus the first level, D:3, has a 1 in 5 chance of placing it. If it
+# doesn't place on D:3, D:4 has a 1 in 4 chance of placing it; D:5 has a
+# 1 in 3 chance, etc. up until D:7 has a 100% chance.
 # If the levels are traversed in order, there is therefore an even
 # distribution of where the food vault is placed.
 ##########################################################################
 {{
 function food_weight(e, top)
-  for i = 14, top, -1 do
-    e.depth_weight("D:" .. i, 10000 / (15 - i))
+  for i = 7, top, -1 do
+    e.depth_weight("D:" .. i, 10000 / (8 - i))
   end
 end
 }}
@@ -21,8 +21,8 @@ end
 ##########################################################################
 
 NAME:   first_ration
-DEPTH:  D:2-5
-CHANCE: 2500, 3333 (D:3), 5000 (D:4), 10000 (D:5)
+DEPTH:  D:1-3
+CHANCE: 2500, 5000 (D:2), 10000 (D:3)
 TAGS:   uniq_first_food extra transparent
 ITEM:   ration
 MAP
@@ -42,7 +42,7 @@ ENDMAP
 # [Ruined by wheals.]
 #
 # The "fruiting_plant" tag uses this as a subvault for food vaults.
-#
+# BCADDO: Fruit tree tile?
 # TODO: Using KMONS and KITEM, we could have fruits on the same
 #       square as a plant, though it'd change nutrition averages.
 NAME:   blue_anna_fruit_fields
@@ -50,26 +50,26 @@ TAGS:   fruiting_plant allow_dup unrand
 KMONS:  P = plant
 ITEM:   ration
 NSUBST: . = 1:d / *:., " = 2:d / *:.
-FTILE:  .dP = floor_grey_dirt / floor_grass w:20 / floor_dirt w:15
-COLOUR: .dP = lightgrey / green w:20 / brown w:15
+FTILE:  .dP = floor_grass w:20 / floor_dirt w:15
+COLOUR: .dP = green w:20 / brown w:15
 MAP
-.""".
-."P".
-.""".
+"""""
+""P""
+"""""
 .....
 ENDMAP
 
 NAME:   the_bakery
-DEPTH:  D:7-14
+DEPTH:  D:3-7
 # Previously this was a 25% CHANCE; I'm assuming this was meant to weight this
 # higher than the other food vaults, which mostly had a 15% CHANCE, but
 # placing by chance tag doesn't work that way. Hence, there's also a WEIGHT
 # tag to give it more weight than other food vaults.
-: food_weight(_G, 7)
+: food_weight(_G, 3)
 WEIGHT: 25
 TAGS:   uniq_second_food extra chance_second_food
 ITEM:   ration q:2
-: if crawl.one_chance_in(8) then
+: if crawl.one_chance_in(3) then
 :   dgn.delayed_decay(_G, 'e', 'spriggan name:baked n_adj n_spe n_des corpse')
 : else
 SUBST: =e = x
@@ -84,9 +84,43 @@ x.1xxx
 x+xxxx
 ENDMAP
 
+NAME:   bcadren_nooodl_food_pyramid
+DEPTH:  D:3-7
+: food_weight(_G, 3)
+WEIGHT: 15
+TAGS:   uniq_second_food extra chance_second_food
+TAGS:   no_rotate no_vmirror no_hmirror
+NSUBST: R = 1:9 / 00$
+SUBST:  M = BCDEEEFGGGH
+SUBST:  O = IIJJJKL
+TILE:   c = wall_tomb 
+KITEM:  A = ration tile:food_ration
+KITEM:  B = ration tile:food_choko
+KITEM:  C = ration tile:food_apricot
+KITEM:  D = ration tile:food_banana
+KITEM:  E = ration tile:food_fruit_inventory
+KITEM:  F = ration tile:food_strawberry
+KITEM:  G = ration tile:food_grape
+KITEM:  H = ration tile:food_pear
+KITEM:  I = ration tile:food_cheese
+KITEM:  J = ration tile:food_pizza
+KITEM:  K = ration tile:food_meat_ration
+KITEM:  L = ration tile:food_jerky
+KITEM:  P = ration tile:food_honeycomb
+MAP
+       c
+      ccc
+     ccRcc
+    ccRPRcc
+   ccROOORcc
+  ccRMMMMMRcc
+ ccRAAAAAAARcc
+ccccccc+ccccccc
+ENDMAP
+
 NAME:   david_nohive_1
-DEPTH:  D:8-14
-: food_weight(_G, 8)
+DEPTH:  D:4-7
+: food_weight(_G, 4)
 WEIGHT: 15
 TAGS:   uniq_second_food extra chance_second_food
 MONS:   queen bee, killer bee
@@ -112,8 +146,8 @@ MAP
 ENDMAP
 
 NAME:     blue_anna_alchemist
-DEPTH:    D:8-14
-: food_weight(_G, 8)
+DEPTH:    D:3-, !D:$
+: food_weight(_G, 3)
 WEIGHT: 15
 TAGS:     uniq_second_food extra chance_second_food
 SUBVAULT: X : fruiting_plant
@@ -136,8 +170,8 @@ ENDMAP
 # Not really a fish farm now that fish are gone...
 # BCADDO: Readd fish.
 NAME:   hangedman_fish_farm
-DEPTH:  D:9-14
-: food_weight(_G, 7)
+DEPTH:  D:4-7
+: food_weight(_G, 4)
 WEIGHT: 15
 TAGS:   uniq_second_food extra chance_second_food no_monster_gen no_pool_fixup \
         patrolling
@@ -154,8 +188,8 @@ xxxxxx
 ENDMAP
 
 NAME:   hangedman_pestilent_swarm
-DEPTH:  D:8-14
-: food_weight(_G, 8)
+DEPTH:  D:4-7
+: food_weight(_G, 4)
 WEIGHT: 15
 TAGS:   uniq_second_food extra chance_second_food no_monster_gen patrolling
 MONS:   hornet / worm w:5 / worker ant
@@ -170,14 +204,15 @@ MAP
  xxxxxxx
 ENDMAP
 
+# BCADDO: Pie?
 NAME:   hangedman_little_slice_of_home
-DEPTH:  D:8-14
-: food_weight(_G, 8)
+DEPTH:  D:4-7
+: food_weight(_G, 4)
 WEIGHT: 10
 TAGS:   uniq_second_food extra chance_second_food
 KMONS:  A = jelly
 KMONS:  B = ooze
-: if you.absdepth() > 10 then
+: if you.absdepth() > 5 then
 KMONS:  C = slime creature
 : end
 KITEM:  C = ration q:4
@@ -195,8 +230,8 @@ MAP
 ENDMAP
 
 NAME:     hangedman_ranch
-DEPTH:    D:8-14
-: food_weight(_G, 8)
+DEPTH:    D:4-7
+: food_weight(_G, 4)
 WEIGHT:   10
 TAGS:     uniq_second_food extra chance_second_food no_monster_gen patrolling
 SUBVAULT: Z : fruiting_plant
@@ -226,8 +261,8 @@ xxxxx@xxxx
 ENDMAP
 
 NAME:    hangedman_stone_soup
-DEPTH:   D:10-14
-: food_weight(_G, 8)
+DEPTH:   D:5-7
+: food_weight(_G, 5)
 WEIGHT:  10
 TAGS:    uniq_second_food extra chance_second_food patrolling no_rotate no_vmirror
 # Branch representatives working together to cook some soup:
@@ -240,7 +275,7 @@ KMONS:   E = merfolk
 KMONS:   F = human
 KMONS:   G = necrophage
 KMONS:   H = crimson imp
-KITEM:   1 = mundane hatchet w:1 no_pickup
+KITEM:   1 = mundane hatchet w:1
 KITEM:   Ya = ration
 KITEM:   b = ration / nothing w:12
 KFEAT:   1Yab = shallow_water
@@ -265,8 +300,8 @@ ENDMAP
 
 # A tengu has staked out a little piece of the dungeon.
 NAME:   grunt_tengu_nest
-DEPTH:  D:10-14
-: food_weight(_G, 10)
+DEPTH:  D:5-7
+: food_weight(_G, 5)
 WEIGHT: 15
 TAGS:   uniq_second_food extra chance_second_food no_monster_gen patrolling
 MONS:   tengu warrior / tengu conjurer, plant
@@ -284,8 +319,8 @@ ENDMAP
 
 # An ogre roasts intruders over his little campfire.
 NAME:   grunt_ogre_cave
-DEPTH:  D:7-14
-: food_weight(_G, 7)
+DEPTH:  D:3-7
+: food_weight(_G, 3)
 WEIGHT: 15
 TAGS:   uniq_second_food extra chance_second_food no_monster_gen no_trap_gen \
         patrolling
@@ -321,8 +356,8 @@ xx.xxx.
 ENDMAP
 
 NAME:   grunt_livestock
-DEPTH:  D:7-14
-: food_weight(_G, 7)
+DEPTH:  D:3-7
+: food_weight(_G, 3)
 WEIGHT: 15
 TAGS:   uniq_second_food extra chance_second_food no_monster_gen no_trap_gen \
         patrolling
@@ -351,9 +386,10 @@ ENDMAP
 
 # Welcome to Pandemonium Pizzeria; is this for carry-out or delivery?
 # (Ideally the cashier would have a silly hat, but they can't wear hats.)
+# BCADDO: Give cashier silly hat.
 NAME:   grunt_pizzeria
-DEPTH:  D:8-14
-: food_weight(_G, 8)
+DEPTH:  D:4-7
+: food_weight(_G, 4)
 WEIGHT: 10
 TAGS:   uniq_second_food extra chance_second_food no_monster_gen no_trap_gen \
         patrolling

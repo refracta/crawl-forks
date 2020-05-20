@@ -198,6 +198,13 @@ static feature_def feat_defs[] =
 },
 
 {
+    DNGN_SARCOPHAGUS, "sarcophagus", "sarcophagus",
+    DCHAR_STATUE, NUM_DCHAR_TYPES,
+    COLOUR_IS(YELLOW),
+    FFT_SOLID, MF_WALL,
+},
+
+{
     DNGN_MALIGN_GATEWAY, "portal to somewhere", "malign_gateway",
     DCHAR_ARCH, NUM_DCHAR_TYPES,
     COLOURS(ETC_SHIMMER_BLUE, LIGHTGREY),

@@ -12,7 +12,7 @@ const Branch branches[NUM_BRANCHES] =
     //  floor colour, rock colour
     //  travel shortcut, runes, ambient noise level
 
-    { BRANCH_DUNGEON, NUM_BRANCHES, 0, 0, 15, 0,
+    { BRANCH_DUNGEON, NUM_BRANCHES, 0, 0, 8, 0,
       brflag::none,
       NUM_FEATURES, DNGN_EXIT_DUNGEON, NUM_FEATURES,
       "Dungeon", "the Dungeon", "D",
@@ -20,7 +20,7 @@ const Branch branches[NUM_BRANCHES] =
       LIGHTGREY, BROWN,
       'D', {}, branch_noise::normal },
 
-    { BRANCH_TEMPLE, BRANCH_DUNGEON, 4, 7, 1, 5,
+    { BRANCH_TEMPLE, BRANCH_DUNGEON, 4, 4, 1, 5,
       brflag::no_items,
       DNGN_ENTER_TEMPLE, DNGN_EXIT_TEMPLE, NUM_FEATURES,
       "Temple", "the Ecumenical Temple", "Temple",
@@ -28,7 +28,7 @@ const Branch branches[NUM_BRANCHES] =
       LIGHTGREY, BROWN,
       'T', {}, branch_noise::normal },
 
-    { BRANCH_ORC, BRANCH_DUNGEON, 9, 12, 2, 10,
+    { BRANCH_ORC, BRANCH_DUNGEON, 5, 6, 2, 10,
       brflag::spotty,
       DNGN_ENTER_ORC, DNGN_EXIT_ORC, NUM_FEATURES,
       "Orcish Mines", "the Orcish Mines", "Orc",
@@ -54,7 +54,7 @@ const Branch branches[NUM_BRANCHES] =
       'K', {}, branch_noise::normal },
 #endif
 
-    { BRANCH_LAIR, BRANCH_DUNGEON, 8, 11, 6, 10,
+    { BRANCH_LAIR, BRANCH_DUNGEON, 5, 6, 6, 10,
       brflag::none,
       DNGN_ENTER_LAIR, DNGN_EXIT_LAIR, NUM_FEATURES,
       "Lair", "the Lair of Beasts", "Lair",
@@ -102,7 +102,7 @@ const Branch branches[NUM_BRANCHES] =
       GREEN, BROWN,
       'M', { RUNE_SLIME }, branch_noise::quiet },
 
-    { BRANCH_VAULTS, BRANCH_DUNGEON, 13, 14, 5, 19,
+    { BRANCH_VAULTS, BRANCH_DUNGEON, 7, 7, 5, 19,
       brflag::dangerous_end,
       DNGN_ENTER_VAULTS, DNGN_EXIT_VAULTS, NUM_FEATURES,
       "Vaults", "the Vaults", "Vaults",
@@ -295,7 +295,7 @@ const Branch branches[NUM_BRANCHES] =
       LIGHTGREY, BROWN, // set per-map
       '8', {}, branch_noise::normal },
 
-    { BRANCH_DEPTHS, BRANCH_DUNGEON, 15, 15, 5, 22,
+    { BRANCH_DEPTHS, BRANCH_DUNGEON, 8, 8, 5, 22,
       brflag::none,
       DNGN_ENTER_DEPTHS, DNGN_EXIT_DEPTHS, NUM_FEATURES,
       "Depths", "the Depths", "Depths",

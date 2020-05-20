@@ -45,7 +45,7 @@ function callback.grunt_crypt_arrival_guards_awaken(data,triggerable,trigger,mar
         crawl.mpr("You hear grinding stone!", "warning");
     end
     for slave in iter.slave_iterator("trap_sarcophagus", 1) do
-        if dgn.feature_name(dgn.grid(slave.x, slave.y)) == "granite_statue" then
+        if dgn.feature_name(dgn.grid(slave.x, slave.y)) == "sarcophagus" then
             dgn.terrain_changed(slave.x, slave.y, "floor", false)
             dgn.colour_at(slave.x, slave.y, "lightgray")
             dgn.create_monster(slave.x, slave.y,
@@ -419,9 +419,8 @@ SUBST:  HI = G
   lua_marker('G', props_marker {trap_sarcophagus=1,
                                 veto_dig="veto",
                                 veto_shatter="veto"})
-  set_feature_name("granite_statue", "sarcophagus")
 }}
-KFEAT:  G = granite_statue
+KFEAT:  G = sarcophagus
 SUBST:  J = V
 SUBST:  C = c
 MAP

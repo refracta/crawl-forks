@@ -1366,11 +1366,8 @@ static bool _give_pakellas_gift()
 static bool _give_equipment_gift()
 {
     // Break early if giving a gift now means it would be lost.
-    if (!(feat_has_solid_floor(grd(you.pos()))
-        || feat_is_watery(grd(you.pos())) && species_likes_water(you.species)))
-    {
+    if (feat_eliminates_items(grd(you.pos())) || grd(you.pos()) == DNGN_TRAP_SHAFT)
         return false;
-    }
 
     // Should gift catnip instead.
     // BCADDO: Catnip.
@@ -1487,7 +1484,7 @@ static bool _gift_sif_kiku_gift(bool forced)
     bool success = false;
     book_type gift = NUM_BOOKS;
     // Break early if giving a gift now means it would be lost.
-    if (!feat_has_solid_floor(grd(you.pos())))
+    if (feat_eliminates_items(grd(you.pos())) || grd(you.pos()) == DNGN_TRAP_SHAFT)
         return false;
 
     // Kikubaaqudgha gives the lesser Necromancy books in a quick

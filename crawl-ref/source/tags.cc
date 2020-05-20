@@ -38,6 +38,7 @@
 #endif
 #include "colour.h"
 #include "coordit.h"
+#include "dactions.h"
 #include "dbg-scan.h"
 #include "dbg-util.h"
 #include "describe.h"
@@ -298,6 +299,7 @@ static void tag_construct_you(writer &th);
 static void tag_construct_you_items(writer &th);
 static void tag_construct_you_dungeon(writer &th);
 static void tag_construct_lost_monsters(writer &th);
+static void tag_construct_lost_items(writer &th);
 static void tag_construct_companions(writer &th);
 static void tag_read_you(reader &th);
 static void tag_read_you_items(reader &th);
@@ -1072,6 +1074,19 @@ static dungeon_feature_type unmarshallFeatureType_Info(reader &th)
 #endif
 
 #if TAG_MAJOR_VERSION == 34
+static void _clear_downstairs()
+{
+    for (rectangle_iterator ri(1); ri; ++ri)
+        if (orig_terrain(*ri) == DNGN_STONE_STAIRS_DOWN_I 
+            || orig_terrain(*ri) == DNGN_STONE_STAIRS_DOWN_II 
+            || orig_terrain(*ri) == DNGN_STONE_STAIRS_DOWN_III
+            || orig_terrain(*ri) == DNGN_ESCAPE_HATCH_DOWN)
+        {
+            mprf("Turning bad downstairs into dry fountains...");
+            grd(*ri) = DNGN_DRY_FOUNTAIN;
+        }
+}
+
 static void _ensure_entry(branch_type br)
 {
     dungeon_feature_type entry = branches[br].entry_stairs;
@@ -1106,11 +1121,11 @@ static void _add_missing_branches()
         _ensure_entry(BRANCH_VAULTS);
     if (brentry[BRANCH_ZOT] == lc)
         _ensure_entry(BRANCH_ZOT);
-    if (lc == level_id(BRANCH_DEPTHS, 2) || lc == level_id(BRANCH_DUNGEON, 21))
+    if (lc == level_id(BRANCH_DEPTHS, 2))
         _ensure_entry(BRANCH_VESTIBULE);
-    if (lc == level_id(BRANCH_DEPTHS, 3) || lc == level_id(BRANCH_DUNGEON, 24))
+    if (lc == level_id(BRANCH_DEPTHS, 3))
         _ensure_entry(BRANCH_PANDEMONIUM);
-    if (lc == level_id(BRANCH_DEPTHS, 4) || lc == level_id(BRANCH_DUNGEON, 25))
+    if (lc == level_id(BRANCH_DEPTHS, 4))
         _ensure_entry(BRANCH_ABYSS);
     if (player_in_branch(BRANCH_VESTIBULE))
     {
@@ -1167,6 +1182,8 @@ void tag_write(tag_type tagID, writer &outf)
         tag_construct_you_dungeon(th);
         CANARY;
         tag_construct_lost_monsters(th);
+        CANARY;
+        tag_construct_lost_items(th);
         CANARY;
         tag_construct_companions(th);
         break;
@@ -1256,14 +1273,11 @@ void tag_read(reader &inf, tag_type tag_id)
         EAT_CANARY;
         tag_read_lost_monsters(th);
         EAT_CANARY;
-#if TAG_MAJOR_VERSION == 34
-        if (th.getMinorVersion() < TAG_MINOR_NO_ITEM_TRANSIT)
+        if (th.getMinorVersion() > TAG_MINOR_DUNGEON_SHORTENING)
         {
             tag_read_lost_items(th);
             EAT_CANARY;
         }
-        if (th.getMinorVersion() >= TAG_MINOR_COMPANION_LIST)
-#endif
         tag_read_companions(th);
 
         // If somebody SIGHUP'ed out of the skill menu with every skill
@@ -1286,6 +1300,19 @@ void tag_read(reader &inf, tag_type tag_id)
 #if TAG_MAJOR_VERSION == 34
         _add_missing_branches();
 #endif
+        if (you.where_are_you == BRANCH_DUNGEON
+            && th.getMinorVersion() < TAG_MINOR_DUNGEON_SHORTENING)
+        {
+            if (you.depth >= 8)
+                _clear_downstairs();
+            if (you.depth == 8)
+            {
+                _ensure_entry(BRANCH_LAIR);
+                _ensure_entry(BRANCH_ORC);
+                _ensure_entry(BRANCH_DEPTHS);
+                _ensure_entry(BRANCH_VAULTS);
+            }
+        }
         _shunt_monsters_out_of_walls();
         // The Abyss needs to visit other levels during level gen, before
         // all cells have been filled. We mustn't crash when it returns
@@ -1909,6 +1936,14 @@ static void marshall_follower_list(writer &th, const m_transit_list &mlist)
         marshall_follower(th, follower);
 }
 
+static void marshall_item_list(writer &th, const i_transit_list &ilist)
+{
+    marshallShort(th, ilist.size());
+
+    for (const auto &item : ilist)
+        marshallItem(th, item);
+}
+
 static m_transit_list unmarshall_follower_list(reader &th)
 {
     m_transit_list mlist;
@@ -1931,7 +1966,6 @@ static m_transit_list unmarshall_follower_list(reader &th)
     return mlist;
 }
 
-#if TAG_MAJOR_VERSION == 34
 static i_transit_list unmarshall_item_list(reader &th)
 {
     i_transit_list ilist;
@@ -1947,7 +1981,6 @@ static i_transit_list unmarshall_item_list(reader &th)
 
     return ilist;
 }
-#endif
 
 static void marshall_level_map_masks(writer &th)
 {
@@ -2203,6 +2236,12 @@ static void tag_construct_lost_monsters(writer &th)
 {
     marshallMap(th, the_lost_ones, marshall_level_id,
                  marshall_follower_list);
+}
+
+static void tag_construct_lost_items(writer &th)
+{
+    marshallMap(th, transiting_items, marshall_level_id,
+                 marshall_item_list);
 }
 
 static void tag_construct_companions(writer &th)
@@ -4403,15 +4442,13 @@ static void tag_read_lost_monsters(reader &th)
                   unmarshall_level_id, unmarshall_follower_list);
 }
 
-#if TAG_MAJOR_VERSION == 34
 static void tag_read_lost_items(reader &th)
 {
-    items_in_transit transiting_items;
+    transiting_items.clear();
 
     unmarshallMap(th, transiting_items,
                   unmarshall_level_id, unmarshall_item_list);
 }
-#endif
 
 static void tag_read_companions(reader &th)
 {

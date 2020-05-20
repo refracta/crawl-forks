@@ -274,7 +274,7 @@ function trove.spell_skills (e)
 end
 }}
 
-default-depth: D:10-, Depths, Elf, Vaults
+default-depth: D:5-, Depths, Elf, Vaults
 
 ##############################################################################
 #
@@ -331,7 +331,7 @@ CHANCE: 5%
 : trove.portal(_G)
 COLOUR: e = blue
 FTILE:  e = floor_marble
-: if you.absdepth() <= 15 then
+: if you.absdepth() <= 7 then
 # Got drafted in from Vaults:$, while the mages try and close the portal down.
 KMONS:  e = vault guard
 : else

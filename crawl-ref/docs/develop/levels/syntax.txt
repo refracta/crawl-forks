@@ -27,6 +27,7 @@ Terrain
  m - clear rock wall                                (DNGN_CLEAR_ROCK_WALL)
  n - clear stone wall                              (DNGN_CLEAR_STONE_WALL)
  o - clear permanent rock wall - always undiggable (DNGN_CLEAR_PERMAROCK_WALL)
+ q - clear runed stone wall - player sees through, monsters don't (DNGN_CLEAR_RUNED_STONE_WALL)
  v - metal wall - grounds electricity                    (DNGN_METAL_WALL)
  y - silver wall - Zin-blessed metal (use sparingly)    (DNGN_SILVER_WALL)
  b - crystal wall - reflects cold and fire             (DNGN_CRYSTAL_WALL)
@@ -34,7 +35,7 @@ Terrain
 
  . - floor                                                    (DNGN_FLOOR)
  + - closed door                                        (DNGN_CLOSED_DOOR)
- = - runed door                                          (DNGN_RUNED_DOOR)
+ = - clear runed door                               (DNGN_RUNED_CLEAR_DOOR)
 
  W - shallow water
  w - deep water - can be randomly turned into shallow water by the

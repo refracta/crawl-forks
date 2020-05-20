@@ -8,8 +8,6 @@
 function hell_entry_feature(e, glyph)
     e.tags("extra luniq_enter_hell chance_enter_hell")
     e.depth_chance("Depths", 10000)
--- D:21-27 entries for save compat, remove when TAG_MAJOR_VERSION > 34
-    e.depth_chance("D:21-", 10000)
     e.kfeat(glyph .. " = enter_hell")
 end
 
@@ -50,14 +48,13 @@ function hell_lava_spawns(e)
 end
 }}
 
-default-depth: Depths, D:21-
+default-depth: Depths
 
 ##############################################################################
 # Vestibule entries
 ##############################################################################
-
-# This replaces the hardcoded placement of a hell entrance on D:21-27;
-# it also acts as the backup entrance and the entrance for encompass vault
+#
+# Acts as the backup entrance and the entrance for encompass vault
 # placements.
 NAME:   hell_entry
 TAGS:   allow_dup overwrite_floor_cell no_exits replace_portal transparent

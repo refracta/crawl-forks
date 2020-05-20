@@ -235,7 +235,7 @@ ENDMAP
 #  -> This layout regenerates a lot.  Figure out why and fix it.
 #
 NAME:   layout_gridville
-DEPTH:  D:4-, Depths, Zot, Dis, Pan
+DEPTH:  D:2-, Depths, Zot, Dis, Pan
 WEIGHT: 10 (D), 10 (Depths), 5 (Zot), 15 (Dis), 10 (Pan)
 ORIENT: encompass
 TAGS:   overwritable layout allow_dup unrand layout_type_passages

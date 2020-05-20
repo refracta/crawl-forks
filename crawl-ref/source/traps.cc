@@ -30,6 +30,7 @@
 #include "mon-util.h"
 #include "message.h"
 #include "mon-place.h"
+#include "mon-transit.h"
 #include "nearby-danger.h"
 #include "random.h"
 #include "religion.h"
@@ -1360,8 +1361,10 @@ bool is_valid_shaft_level()
     return (brdepth[place.branch] - place.depth) >= 1;
 }
 
-level_id generic_shaft_dest(level_id place)
+level_id generic_shaft_dest()
 {
+    level_id place = level_id::current();
+
     if (!is_connected_branch(place))
         return place;
 
@@ -1388,6 +1391,56 @@ level_id generic_shaft_dest(level_id place)
     }
 
     return place;
+}
+
+/**
+ * When an items are dropped on a shaft, disperse those items on the target level.
+ *
+ * @param pos The location.
+*/
+void handle_items_on_shaft(const coord_def& pos)
+{
+    if (!is_valid_shaft_level())
+        return;
+
+    level_id dest = generic_shaft_dest();
+
+    if (dest == level_id::current())
+        return;
+
+    int o = igrd(pos);
+
+    if (o == NON_ITEM)
+        return;
+
+    while (o != NON_ITEM)
+    {
+        int next = mitm[o].link;
+
+        if (mitm[o].defined() && !item_is_stationary_net(mitm[o]))
+        {
+            if (env.map_knowledge(pos).visible())
+            {
+                mprf("%s fall%s through the shaft.",
+                     mitm[o].name(DESC_INVENTORY).c_str(),
+                     mitm[o].quantity == 1 ? "s" : "");
+
+                env.map_knowledge(pos).clear_item();
+                StashTrack.update_stash(pos);
+            }
+
+            // Item will be randomly placed on the destination level.
+            unlink_item(o);
+            mitm[o].pos = INVALID_COORD;
+            add_item_to_transit(dest, mitm[o]);
+
+            mitm[o].base_type = OBJ_UNASSIGNED;
+            mitm[o].quantity = 0;
+            mitm[o].props.clear();
+        }
+
+        o = next;
+    }
 }
 
 /**

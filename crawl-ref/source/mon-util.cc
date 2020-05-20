@@ -4292,8 +4292,21 @@ bool mons_class_can_pass(monster_type mc, const dungeon_feature_type grid)
                || mc == MONS_ELDRITCH_TENTACLE_SEGMENT;
     }
 
-    if (mons_class_primary_habitat(mc) == HT_INCORPOREAL)
-        return true;
+    if (_mons_class_habitat(mc) == HT_INCORPOREAL ||
+        _mons_class_habitat(mc) == HT_ROCK ||
+        mc == MONS_SPECTRAL_THING) // BCADNOTE: Hacky...
+    {
+        // Permanent walls can't be passed through.
+        return !feat_is_permarock(grid);
+    }
+
+    if (_mons_class_habitat(mc) == HT_ROCK)
+    {
+        return !feat_is_solid(grid)
+            || grid == DNGN_ROCK_WALL
+            || grid == DNGN_SLIMY_WALL
+            || grid == DNGN_CLEAR_ROCK_WALL;
+    }
 
     return !feat_is_solid(grid);
 }

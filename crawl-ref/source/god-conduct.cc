@@ -6,6 +6,7 @@
 #include "fprop.h"
 #include "god-abil.h" // ru sac key
 #include "god-item.h" // is_*_spell
+#include "god-wrath.h" // beogh_idol_revenge()
 #include "libutil.h"
 #include "message.h"
 #include "monster.h"
@@ -76,8 +77,8 @@ static const char *conducts[] =
     "Kill Priest", "Kill Holy", "Kill Fast", "Banishment", "Spell Memorise",
     "Spell Cast", "Spell Practise", "Cannibalism", "Eat Souled Being",
     "Deliberate Mutation", "Cause Glowing", "Use Unclean", "Use Chaos",
-    "Desecrate Orcish Remains", "Kill Slime", "Kill Plant", "Was Hasty",
-    "Corpse Violation", "Carrion Rot", "Souled Friend Died",
+    "Desecrate Orcish Remains", "Destroy Orcish Idol", "Kill Slime", "Kill Plant", 
+    "Was Hasty", "Corpse Violation", "Carrion Rot", "Souled Friend Died",
     "Attack In Sanctuary", "Kill Artificial", "Exploration",
     "Desecrate Holy Remains", "Seen Monster", "Sacrificed Love", "Channel",
     "Hurt Foe",
@@ -411,6 +412,7 @@ static peeve_map divine_peeves[] =
     {
         { DID_CANNIBALISM, RUDE_CANNIBALISM_RESPONSE },
         { DID_DESECRATE_ORCISH_REMAINS, { "you desecrate orcish remains", true, 1 } },
+        { DID_DESTROY_ORCISH_IDOL, { "you destroy orcish idols", true, 1, 3 } },
         { DID_ATTACK_FRIEND, _on_attack_friend("you attack allied orcs") },
     },
     // GOD_JIYVA,
@@ -1045,6 +1047,13 @@ static void _handle_your_gods_response(conduct_type thing_done, int level,
         (*like)(thing_done, level, known, victim);
 }
 
+// a sad and shrunken function.
+static void _handle_other_gods_response(conduct_type thing_done)
+{
+    if (thing_done == DID_DESTROY_ORCISH_IDOL)
+        beogh_idol_revenge();
+}
+
 /**
  * Handle god conducts triggered by killing a monster.
  *
@@ -1063,6 +1072,7 @@ void did_god_conduct(conduct_type thing_done, int level, bool known,
     ASSERT(!crawl_state.game_is_arena());
 
     _handle_your_gods_response(thing_done, level, known, victim);
+    _handle_other_gods_response(thing_done);
 }
 
 // A Beogh worshipper zapping an orc with lightning might cause it to become a
