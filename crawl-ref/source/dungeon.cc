@@ -421,7 +421,25 @@ static void _builder_assertions()
         if (!in_bounds(*ri))
             if (!feat_is_valid_border(grd(*ri)))
             {
-                grd(*ri) = DNGN_PERMAROCK_WALL;
+                switch (you.where_are_you)
+                {
+                case BRANCH_SWAMP:
+                    grd(*ri) = DNGN_TREE;
+                    break;
+                case BRANCH_SHOALS:
+                    grd(*ri) = DNGN_OPEN_SEA;
+                    break;
+                case BRANCH_VESTIBULE:
+                case BRANCH_GEHENNA:
+                    grd(*ri) = DNGN_LAVA_SEA;
+                    break;
+                case BRANCH_DESOLATION:
+                    grd(*ri) = DNGN_ENDLESS_SALT;
+                    break;
+                default:
+                    grd(*ri) = DNGN_PERMAROCK_WALL;
+                    break;
+                }
 
 //                die("invalid map border at (%d,%d): %s", ri->x, ri->y,
 //                    dungeon_feature_name(grd(*ri)));
