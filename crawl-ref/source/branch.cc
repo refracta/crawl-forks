@@ -278,7 +278,8 @@ bool branch_is_unfinished(branch_type branch)
     if (branch == BRANCH_DWARF
         || branch == BRANCH_FOREST
         || branch == BRANCH_BLADE
-        || branch == BRANCH_LABYRINTH)
+        || branch == BRANCH_LABYRINTH
+        || branch == BRANCH_OSSUARY)
     {
         return true;
     }
