@@ -1306,12 +1306,13 @@ void tag_read(reader &inf, tag_type tag_id)
             if (you.depth >= 8)
                 _clear_downstairs();
             if (you.depth == 8)
-            {
-                _ensure_entry(BRANCH_LAIR);
-                _ensure_entry(BRANCH_ORC);
                 _ensure_entry(BRANCH_DEPTHS);
+            if (you.depth == 7)
                 _ensure_entry(BRANCH_VAULTS);
-            }
+            if (you.depth == 6)
+                _ensure_entry(BRANCH_ORC);
+            if (you.depth == 5)
+                _ensure_entry(BRANCH_LAIR);
         }
         _shunt_monsters_out_of_walls();
         // The Abyss needs to visit other levels during level gen, before

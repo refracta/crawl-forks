@@ -28,7 +28,7 @@ const Branch branches[NUM_BRANCHES] =
       LIGHTGREY, BROWN,
       'T', {}, branch_noise::normal },
 
-    { BRANCH_ORC, BRANCH_DUNGEON, 5, 6, 2, 10,
+    { BRANCH_ORC, BRANCH_DUNGEON, 6, 6, 2, 10,
       brflag::spotty,
       DNGN_ENTER_ORC, DNGN_EXIT_ORC, NUM_FEATURES,
       "Orcish Mines", "the Orcish Mines", "Orc",
@@ -54,7 +54,7 @@ const Branch branches[NUM_BRANCHES] =
       'K', {}, branch_noise::normal },
 #endif
 
-    { BRANCH_LAIR, BRANCH_DUNGEON, 5, 6, 6, 10,
+    { BRANCH_LAIR, BRANCH_DUNGEON, 5, 5, 6, 10,
       brflag::none,
       DNGN_ENTER_LAIR, DNGN_EXIT_LAIR, NUM_FEATURES,
       "Lair", "the Lair of Beasts", "Lair",
