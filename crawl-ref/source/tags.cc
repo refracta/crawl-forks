@@ -38,6 +38,7 @@
 #endif
 #include "colour.h"
 #include "coordit.h"
+#include "dactions.h"
 #include "dbg-scan.h"
 #include "dbg-util.h"
 #include "describe.h"
@@ -1073,6 +1074,19 @@ static dungeon_feature_type unmarshallFeatureType_Info(reader &th)
 #endif
 
 #if TAG_MAJOR_VERSION == 34
+static void _clear_downstairs()
+{
+    for (rectangle_iterator ri(1); ri; ++ri)
+        if (orig_terrain(*ri) == DNGN_STONE_STAIRS_DOWN_I 
+            || orig_terrain(*ri) == DNGN_STONE_STAIRS_DOWN_II 
+            || orig_terrain(*ri) == DNGN_STONE_STAIRS_DOWN_III
+            || orig_terrain(*ri) == DNGN_ESCAPE_HATCH_DOWN)
+        {
+            mprf("Turning bad downstairs into dry fountains...");
+            grd(*ri) = DNGN_DRY_FOUNTAIN;
+        }
+}
+
 static void _ensure_entry(branch_type br)
 {
     dungeon_feature_type entry = branches[br].entry_stairs;
@@ -1107,11 +1121,11 @@ static void _add_missing_branches()
         _ensure_entry(BRANCH_VAULTS);
     if (brentry[BRANCH_ZOT] == lc)
         _ensure_entry(BRANCH_ZOT);
-    if (lc == level_id(BRANCH_DEPTHS, 2) || lc == level_id(BRANCH_DUNGEON, 21))
+    if (lc == level_id(BRANCH_DEPTHS, 2))
         _ensure_entry(BRANCH_VESTIBULE);
-    if (lc == level_id(BRANCH_DEPTHS, 3) || lc == level_id(BRANCH_DUNGEON, 24))
+    if (lc == level_id(BRANCH_DEPTHS, 3))
         _ensure_entry(BRANCH_PANDEMONIUM);
-    if (lc == level_id(BRANCH_DEPTHS, 4) || lc == level_id(BRANCH_DUNGEON, 25))
+    if (lc == level_id(BRANCH_DEPTHS, 4))
         _ensure_entry(BRANCH_ABYSS);
     if (player_in_branch(BRANCH_VESTIBULE))
     {
@@ -1259,7 +1273,7 @@ void tag_read(reader &inf, tag_type tag_id)
         EAT_CANARY;
         tag_read_lost_monsters(th);
         EAT_CANARY;
-        if (th.getMinorVersion() >= TAG_MINOR_COMPANION_LIST)
+        if (th.getMinorVersion() > TAG_MINOR_DUNGEON_SHORTENING)
         {
             tag_read_lost_items(th);
             EAT_CANARY;
@@ -1286,6 +1300,19 @@ void tag_read(reader &inf, tag_type tag_id)
 #if TAG_MAJOR_VERSION == 34
         _add_missing_branches();
 #endif
+        if (you.where_are_you == BRANCH_DUNGEON
+            && th.getMinorVersion() < TAG_MINOR_DUNGEON_SHORTENING)
+        {
+            if (you.depth >= 8)
+                _clear_downstairs();
+            if (you.depth == 8)
+            {
+                _ensure_entry(BRANCH_LAIR);
+                _ensure_entry(BRANCH_ORC);
+                _ensure_entry(BRANCH_DEPTHS);
+                _ensure_entry(BRANCH_VAULTS);
+            }
+        }
         _shunt_monsters_out_of_walls();
         // The Abyss needs to visit other levels during level gen, before
         // all cells have been filled. We mustn't crash when it returns
