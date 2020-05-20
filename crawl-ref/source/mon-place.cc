@@ -1666,6 +1666,8 @@ monster_type pick_local_zombifiable_monster(level_id place,
                                             const coord_def& pos,
                                             bool for_corpse)
 {
+    _adjust_pop_place(place);
+
     const bool really_in_d = place.branch == BRANCH_DUNGEON;
 
     if (place.branch == BRANCH_ZIGGURAT)

@@ -299,7 +299,7 @@ tier1_gauntlet_arenas = {
   {
     first  = {mons = "spiny frog simulacrum / wyvern simulacrum " ..
                       "/ hornet simulacrum", min = 1, max = 1},
-    second = {mons = "simulacrum place:D:12", min = 2, max = 4},
+    second = {mons = "simulacrum place:D:8", min = 2, max = 4},
     liquid = "water",
     plant  = "withered",
   },
@@ -402,7 +402,7 @@ tier1_gauntlet_arenas = {
   },
   {
     first  = {mons = "death scarab", min = 1, max = 1},
-    second = {mons = "spectre place:Lair:6", min = 1, max = 1},
+    second = {mons = "spectre place:Lair:4", min = 1, max = 1},
     liquid = "water",
     plant  = "withered",
   },
@@ -456,7 +456,7 @@ tier2_gauntlet_arenas = {
   {
     first  = {mons = "hydra simulacrum / harpy simulacrum " ..
                       "/ ice dragon simulacrum", min = 1, max = 1},
-    second = {mons = "simulacrum place:D:15", min = 2, max = 4},
+    second = {mons = "simulacrum place:D:8", min = 2, max = 4},
     liquid = "water",
     plant  = "withered",
   },
@@ -564,7 +564,7 @@ tier2_gauntlet_arenas = {
   },
   {
     first  = {mons = "death drake", min = 1, max = 1},
-    second = {mons = "zombie place:D:15 / spectre place:D:15", min = 2,
+    second = {mons = "zombie place:D:8 / spectre place:D:8", min = 2,
               max = 4},
     liquid = "water",
     plant  = "withered"
@@ -631,7 +631,7 @@ tier2_gauntlet_arenas = {
   },
   {
     second = {mons = "death scarab", min = 2, max = 2},
-    third  = {mons = "spectre place:Lair:6", min = 2, max = 4},
+    third  = {mons = "spectre place:Lair:4", min = 2, max = 4},
     liquid = "water",
     plant  = "withered",
   },
