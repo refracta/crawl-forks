@@ -455,20 +455,20 @@ KMONS:  O = player ghost
 # Progressive depth/numbers of zombies and type/amount of loot.
 : if you.in_branch("D") then
 :     if you.depth() < 6 then
-MONS:   skeleton place:D:6 / zombie place:D:6
+MONS:   skeleton place:D:3 / zombie place:D:3
 SUBST:  d = *%, e = %$, fghij = -
 NSUBST: 1 = 2=1 / 1---
-:     elseif you.depth() < 9 then
-MONS:   skeleton place:D:9 / zombie place:D:9 / spectre place:D:9 / \
-        simulacrum place:D:9
+:     elseif you.depth() < 3 then
+MONS:   skeleton place:D:4 / zombie place:D:4 / spectre place:D:5 / \
+        simulacrum place:D:5
 SUBST:  d = *, e = *%, f = %$--, ghij = -
 NSUBST: 1 = 2=1 / 1-
-:     elseif you.depth() < 12 then
-MONS:   w:5 zombie place:D:12 / spectre place:D:12 / simulacrum place:D:12
+:     elseif you.depth() < 6 then
+MONS:   w:5 zombie place:D:6 / spectre place:D:6 / simulacrum place:D:6
 SUBST:  e = *, f = %$, ghij = -
 NSUBST: 1 = 3=1 / 1-, - = 1- / -
-:     elseif you.depth() < 14 then
-MONS:   w:5 zombie place:D:15 / spectre place:D:15 / simulacrum place:D:15
+:     elseif you.depth() < 7 then
+MONS:   w:5 zombie place:D:$ / spectre place:D:$ / simulacrum place:D:$
 SUBST:  f = |*, g = *%, h = %$--, ij = -
 NSUBST: - = 4=1- / -
 :     else
@@ -625,27 +625,27 @@ ORIENT: float
 KMONS:  O = player ghost
 : ghost_good_loot(_G)
 : if you.in_branch("D") then
-:     if you.depth() < 6 then
-MONS:   skeleton place:D:6 / zombie place:D:6
+:     if you.depth() < 3 then
+MONS:   skeleton place:D:3 / zombie place:D:3
 MONS:   mummy / shadow imp / wight / necrophage / phantom / hungry ghost
 SUBST:  d = *%, e = %$, f = %$--, ghij = -
 NSUBST: D = 2=1 / 2=1- / 2- / -
-:     elseif you.depth() < 9 then
-MONS:   skeleton place:D:9 / zombie place:D:9 / spectre place:D:9 / \
-        simulacrum place:D:9 / mummy / shadow imp / wight / necrophage / \
+:     elseif you.depth() < 5 then
+MONS:   skeleton place:D:5 / zombie place:D:5 / spectre place:D:5 / \
+        simulacrum place:D:5 / mummy / shadow imp / wight / necrophage / \
         phantom / hungry ghost
 MONS:   wraith / vampire
 SUBST:  d = *, e = *%, f = %$,  ghi = -
 NSUBST: D = 2=1 / 3=1- / 2- / 2--- / -
-:     elseif you.depth() < 12 then
-MONS:   mummy / wight / zombie place:D:12 / spectre place:D:12 / \
-        simulacrum place:D:12 / phantom / hungry ghost / wraith / vampire
+:     elseif you.depth() < 6 then
+MONS:   mummy / wight / zombie place:D:6 / spectre place:D:6 / \
+        simulacrum place:D:6 / phantom / hungry ghost / wraith / vampire
 MONS:   vampire mosquito band / shadow / death knight / skeletal warrior / \
         freezing wraith w:5
 SUBST:  e = *, f = *%,  g = %$--, hi = -
 NSUBST: D = 2=1 / 4=1- / 2=2- / -
-:     elseif you.depth() < 14 then
-MONS:   zombie place:D:15 / spectre place:D:15 / simulacrum place:D:15 / \
+:     elseif you.depth() < 7 then
+MONS:   zombie place:D:$ / spectre place:D:$ / simulacrum place:D:$ / \
         vampire mosquito band / death knight / skeletal warrior
 MONS:   freezing wraith / necromancer / shadow wraith / vampire knight / \
         phantasmal warrior / flayed ghost
@@ -854,7 +854,7 @@ ORIENT: float
 KMONS:  O = player_ghost
 : if you.in_branch("D") then
 MONS:   skeletal warrior / vampire
-MONS:   wraith / simulacrum place:D:15
+MONS:   wraith / simulacrum place:D:$
 MONS:   necromancer
 MONS:   lich
 : else

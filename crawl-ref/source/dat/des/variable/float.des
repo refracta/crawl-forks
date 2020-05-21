@@ -4461,7 +4461,7 @@ ITEM:   potion of resistance ident:type, potion of cancellation ident:type q:2
 # cloud_types and come in pairs. Some levels define a more difficult monster on
 # '2', otherwise the monster is repeated.
 : if you.in_branch("D") then
-:   if you.depth() <= 6 then
+:   if you.depth() <= 3 then
 :       cloud_types = {"flame", "freezing vapour", "poison gas"}
 KMONS:  1 = fire bat
 KMONS:  2 = nothing
@@ -4474,10 +4474,10 @@ KMONS:  56 = ogre zombie ; giant club ego:venom | giant spiked club ego:venom \
 # In earliest 3 levels, thin out monsters and downgrade loot a bit.
 SUBST:  | = %, ' = -
 NSUBST: 1 = 1 / 2 / 1- / 1---- / -
-:   elseif you.depth() <= 9 then
+:   elseif you.depth() <= 4 then
 :      cloud_types = {"flame", "freezing vapour", "poison gas", "acidic fog"}
 MONS:   fire bat, fire elemental / hell hound
-MONS:   ice beast, simulacrum place:D:15
+MONS:   ice beast, simulacrum place:D:$
 MONS:   water moccasin
 KMONS:  6 = ogre zombie ; giant club ego:venom | giant spiked club ego:venom \
            / orc warrior zombie ; hatchet ego:venom | war axe ego:venom \
@@ -4488,7 +4488,7 @@ KMONS:  7 = jelly
 KMONS:  8 = acid dragon
 SUBST:  | = *
 NSUBST: 1 = 2=1 / 2 / 12-, $ = f / $
-:   elseif you.depth() <= 12 then
+:   elseif you.depth() <= 6 then
 :     cloud_types = {"flame", "poison gas", "acidic fog"}
 MONS: fire bat / fire elemental, hell hound w:20 / fire crab
 MONS: water moccasin w:40 / spiny frog / black mamba
