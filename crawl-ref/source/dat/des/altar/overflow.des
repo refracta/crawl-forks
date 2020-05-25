@@ -845,8 +845,8 @@ MONS:   bush, plant, necrophage, zombie
 KFEAT:  _ = altar_fedhas
 FTILE:  '!12@ = floor_moss
 COLOUR: '!@ = green
+# BCADDO: check jobclass here.
 : if you.race() ~= "Mummy" and you.race() ~= "Ghoul"
-:   and you.race() ~= "Vampire"
 : then
 MARKER:  ! = lua:message_at_spot("Fedhas urges you to decompose the vile \
                                  beasts imprisoned behind the altar.", \
@@ -2003,7 +2003,7 @@ ENDMAP
 NAME:   trog_ov_bears_minmay
 TAGS:   temple_overflow_1 temple_overflow_trog uniq_altar_trog
 TAGS:   transparent
-DEPTH:  D:3-
+DEPTH:  D:4-
 : if you.absdepth() < 5 then
 MONS:   black bear
 : else
@@ -2423,7 +2423,7 @@ MAP
 ENDMAP
 
 NAME:   led_xom_imps
-DEPTH:  D:3-5
+DEPTH:  D:4-5
 TAGS:   temple_overflow_1 temple_overflow_xom uniq_altar_xom
 KFEAT:  _ = altar_xom
 KFEAT:  T = known teleport trap / dispersal trap
@@ -2964,6 +2964,9 @@ TAGS:  no_monster_gen
 MONS:  crimson imp ; dagger ego:chaos ident:type
 KFEAT: A = altar_makhleb
 KFEAT: B = altar_xom
+: if you.depth() < 4 then
+SUBST: + : =
+: end
 MAP
 xxxxx
 xA.Bx
@@ -3033,7 +3036,10 @@ TAGS:  temple_overflow_2 temple_overflow_makhleb temple_overflow_vehumet
 DEPTH: D:3-9
 KFEAT: A = altar_makhleb
 KFEAT: B = altar_vehumet
-MONS:  crimson imp ; wand of flame charges:1
+MONS:  crimson imp ; wand of flame
+: if you.depth() < 4 then
+SUBST: + : =
+: end
 MAP
  xxxxx
 xxA.Bxx

@@ -625,8 +625,9 @@ MAP
 ENDMAP
 
 NAME:   doesnt_shop_hydraphobe
-DEPTH:  D:3-6
-WEIGHT: 5
+DEPTH:  D:4-5
+# BCADDNOTE: Increased weight since available on very few floors.
+WEIGHT: 25 
 TAGS:   transparent no_pool_fixup
 KPROP:  -1wP = no_tele_into
 KMASK:  -w = no_monster_gen

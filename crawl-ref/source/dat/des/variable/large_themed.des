@@ -56,7 +56,7 @@ default-depth: D:12-, !D:$, Depths, !Depths:$
 NAME:    minmay_goblin_kobold_castle
 TAGS:    no_rotate
 ORIENT:  north
-DEPTH:   D:3-6
+DEPTH:   D:3
 MONS:    goblin; hunting sling / hobgoblin w:2; hunting sling / nothing
 MONS:    goblin; club / hobgoblin; club / gnoll w:3; club | spear / nothing
 MONS:    kobold
@@ -97,7 +97,7 @@ ENDMAP
 #
 NAME:    statuecave_lemuel
 ORIENT:  northeast
-DEPTH:   D:7-, Lair, Crypt:1-4
+DEPTH:   D:4-, Lair, Crypt:1-4
 : if you.in_branch("Crypt") then
 MONS:    orange crystal statue
 : else
@@ -135,7 +135,7 @@ NAME:   black_bear_nest_1
 ORIENT: northwest
 WEIGHT: 5
 TAGS:   uniq_black_bear_nest
-DEPTH:  D:4-8
+DEPTH:  D:3-4
 NSUBST: ' = 1:1 / 1:R / *:.
 KITEM:  R = ration
 MONS:   patrolling black bear
@@ -153,7 +153,7 @@ NAME:   black_bear_nest_2
 ORIENT: southeast
 WEIGHT: 5
 TAGS:   uniq_black_bear_nest
-DEPTH:  D:4-8
+DEPTH:  D:3-4
 NSUBST: ' = 1:1 / 1:R / *:.
 KITEM:  R = ration
 MONS:   patrolling black bear
@@ -181,7 +181,7 @@ ENDMAP
 #
 NAME:    dragon1_lemuel
 ORIENT:  northeast
-DEPTH:   D:9-, Lair
+DEPTH:   D:4-, Lair
 MONS:    patrolling fire dragon, patrolling ice dragon
 ITEM:    scroll of random uselessness / scroll of teleportation
 SUBST:   ! : ?x
@@ -211,7 +211,7 @@ ENDMAP
 # Steading of the Giant Chief
 #
 NAME:    giant_chief_lemuel
-DEPTH:   D:11-, Orc, Depths:2-, !Depths:$
+DEPTH:   D:5-, Orc, Depths:2-, !Depths:$
 ORIENT:  north
 SUBST:   ; = .'
 : if you.branch() == "Depths" then
@@ -265,7 +265,8 @@ ENDMAP
 
 NAME:   minmay_smoke_and_mirrors
 ORIENT: northwest
-DEPTH:  D:10-
+DEPTH:  D:5-
+FTILE:  b1.*F = FLOOR_NERVES_MAGENTA
 MONS:   wizard
 ITEM:   warlock's_mirror no_pickup
 MARKER: F = lua:fog_machine { cloud_type="purple smoke", \
@@ -275,6 +276,7 @@ MARKER: F = lua:fog_machine { cloud_type="purple smoke", \
 SUBST:  F = .
 SUBST:  1 = 1.
 NSUBST: * = 1:d / *:*
+COLOUR: b = magenta
 MAP
 xxxxxxxxxxxxxxxxxxxxxxxxxx
 xbbbbbbbbbbbbbbbbbbbbbbbbb
@@ -307,7 +309,7 @@ ENDMAP
 NAME:   minmay_elf_outpost
 TAGS:   no_rotate
 ORIENT: northwest
-DEPTH:  D:12-
+DEPTH:  D:6-
 MONS:   deep elf mage / nothing, deep elf knight / deep elf archer
 MONS:   deep elf mage w:30 / nothing
 MAP
@@ -340,7 +342,7 @@ ENDMAP
 NAME:   minmay_ice_pillars
 TAGS:   no_rotate no_pool_fixup no_monster_gen no_tele_into
 ORIENT: north
-DEPTH:  D:11-, !D:$
+DEPTH:  D:5-, !D:$
 WEIGHT: 5
 MONS:   ice beast / nothing w:3, ice statue, ice dragon / nothing
 SUBST:  y : y:48 w:1 W:1, Y : Y:48 W:1 .:1, y = wwW, Y = WW.
@@ -473,7 +475,7 @@ ENDMAP
 NAME:   orc_temple
 ORIENT: southwest
 TAGS:   no_rotate
-DEPTH:  D:12-, !D:$, Orc
+DEPTH:  D:6-, !D:$, Orc
 MONS:   orc warlord, patrolling orc priest, patrolling orc high priest
 MONS:   orc warrior, orc wizard, orc knight, orc sorcerer
 KFEAT:  C = altar_beogh
@@ -510,7 +512,7 @@ ENDMAP
 NAME:   fort_yaktaur
 TAGS:   no_pool_fixup
 ORIENT: southeast
-DEPTH:  D:11-, !D:$
+DEPTH:  D:5-, !D:$
 MONS:   gnoll, yak, death yak, yaktaur, minotaur
 MAP
 .........@....wwwwwwwwwwwwwwwwwxxx
@@ -548,12 +550,10 @@ ENDMAP
 # Rubicon
 #
 NAME:    erik_rubicon_a
-DEPTH:   D:10-, !D:$
+DEPTH:   D:5-, !D:$
 ORIENT:  south
 TAGS:    no_pool_fixup no_rotate uniq_rubicon
 WEIGHT:  6
-ITEM:    scroll of random uselessness
-ITEM:    scroll of random uselessness
 SHUFFLE: {[(, )gh
 SUBST:   ?:?.w, ?=w., w:lw, ':'.c, '=cx.
 MAP
@@ -570,21 +570,19 @@ xxxxxcccccc????w??.w????xw??w??...?wwww???w????w?w???w???w??cccccxxxxxxxx
 xxxxxxxxxcxx...''....?..xx........??w??...c''....??.....???..cxccxxxxxxxx
 xxxxxxxxxcx..(cc[.''..'xx...x.''.x..?xx.xcc..cxcx...xxx.'...chxxcxxxxxxxx
 xxxxxxxxxcx..cc{c..xx.....xx...cc..xx....xcc....''xxx..x.xxc...cxxxxxxxxx
-xxxxxxxxxccx....e.xx....x..x.....c....cx..x...x......c......cxcxxxxxxxxxx
-xxxxxxxxxxcxexxx.x.x.xx.x.xx.xcc.xx.xccxx....xx.x.xxxccxx.xcccxxxxxxxxxxx
-xxxxxxxxxxccx.gxxx..x..xdx..x.xxxx.x...xx.xx...xx.xxxx)..xxcxxxxxxxxxxxxx
+xxxxxxxxxccx......xx....x..x.....c....cx..x...x......c......cxcxxxxxxxxxx
+xxxxxxxxxxcx.xxx.x.x.xx.x.xx.xcc.xx.xccxx....xx.x.xxxccxx.xcccxxxxxxxxxxx
+xxxxxxxxxxccx.gxxx..x..x.x..x.xxxx.x...xx.xx...xx.xxxx)..xxcxxxxxxxxxxxxx
 xxxxxxxxxxxcxxxxxxxx...xxxxxxxxxccccccc..xxxxccccccccxxxccccxxxxxxxxxxxxx
 xxxxxxxxxxxcccccccccccccccccccccccccccccccccccxxxxxcccccccxxxxxxxxxxxxxxx
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ENDMAP
 
 NAME:    erik_rubicon_b
-DEPTH:   D:10-, !D:$
+DEPTH:   D:5-, !D:$
 ORIENT:  south
 TAGS:    no_rotate uniq_rubicon
 WEIGHT:  4
-ITEM:    scroll of random uselessness
-ITEM:    scroll of random uselessness
 SHUFFLE: {[(, fgW, )hi
 SUBST:   ?:?.wW, ?=wW., ':'.c, '=c.
 MAP
@@ -601,9 +599,9 @@ xccccccwffwg??fw?ww?gx??ww?..??wwwww??w?fwgw?fwgw??fg??gcccccxxxx
 xxxxxcxx...'''...?..xx.....''.?ww??...c.'....??...'.?gg.xcxccxxxx
 xxxxxcx..(cc[.'.'.xx..'.x.'..x..?...xcc..cxcx.x..x..''..cxhxcxxxx
 xxxxxxcc..c{c..x.x...c.xxx.x.xx.'.'xx..cc..c.xx''.cc..xxx...xxxxx
-xxxxxccx....e.xx...x...x.....c...c....cc....x...x....x....cxxxxxx
-xxxxxxcxexxxxx.x.xxxx.x..xcc.xx..cc.x....xx.x.x.xccxx.xcccxxxxxxx
-xxxxxxccx..xi.x.x.xxdxxxx...x..xx..xxxxx...x).xx..xc.xxcxxxxxxxxx
+xxxxxccx......xx...x...x.....c...c....cc....x...x....x....cxxxxxx
+xxxxxxcx.xxxxx.x.xxxx.x..xcc.xx..cc.x....xx.x.x.xccxx.xcccxxxxxxx
+xxxxxxccx..xi.x.x.xx.xxxx...x..xx..xxxxx...x).xx..xc.xxcxxxxxxxxx
 xxxxxxxcxxxxxx...x....xxxxxxcccccccxxxxxxccccccccx..ccccxxxxxxxxx
 xxxxxxxcccccccccccccccccccccccccccccccccccxxxxxcccccccxxxxxxxxxxx
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -721,7 +719,7 @@ ENDMAP
 #
 NAME:   minmay_goldmine
 ORIENT: southeast
-DEPTH:  D:8-, Orc
+DEPTH:  D:4-, Orc
 MONS:   orc / orc wizard w:3 / orc priest w:2 / orc warrior w:2
 SUBST:  X = xxxZ
 KPROP:  Z = no_tele_into
@@ -822,7 +820,7 @@ ENDMAP
 
 NAME:   minmay_twisted_water
 ORIENT: north
-DEPTH:  D:9-
+DEPTH:  D:5-
 SUBST:  W = wW
 MONS:   ice statue, patrolling ice dragon, patrolling frost giant, ice beast
 KMONS:  w = w:490 nothing / ice beast
@@ -1065,7 +1063,7 @@ ENDMAP
 #
 NAME:   evilmike_library_of_no_secrets
 ORIENT: southeast
-DEPTH:  D:11-, Depths
+DEPTH:  D:5-, Depths
 TAGS:   no_pool_fixup no_monster_gen
 TILE:   c = DNGN_STONE_WALL_BLUE
 COLOUR: c" = lightblue
@@ -1132,7 +1130,7 @@ ENDMAP
 NAME:    evilmike_iron_armoury
 TAGS:    no_monster_gen no_item_gen
 ORIENT:  southeast
-DEPTH:   D:11-, Depths
+DEPTH:   D:5-, Depths
 : if you.absdepth() < 16 then
 MONS:    orc warrior / deep elf knight w:1 / deep elf archer w:1
 MONS:    orc warrior w:20 / centaur warrior
@@ -1424,7 +1422,7 @@ ENDMAP
 ################################################################################
 # Based off Zaba's beehive_diamond.
 NAME:    hangedman_what_comes_after_a
-DEPTH:   D:11-, Lair:2-, !Lair:$
+DEPTH:   D:5-, Lair:2-, !Lair:$
 ORIENT:  north
 WEIGHT:  8
 MONS:    killer bee, meliai, queen bee, oklob plant
@@ -1514,7 +1512,7 @@ ENDMAP
 NAME:   kennysheep_seaside_town
 ORIENT: northeast
 TAGS:   no_monster_gen
-DEPTH:  D:7-14
+DEPTH:  D:4-7
 KFEAT:  W = open_sea
 MONS:   ogre, orc warrior, gnoll shaman, centaur, big kobold
 KMONS:  8 = orc warrior band
@@ -1564,7 +1562,7 @@ ENDMAP
 NAME:   kennysheep_kobold_camp
 ORIENT: north
 TAGS:   no_monster_gen no_trap_gen
-DEPTH:  D:4-9
+DEPTH:  D:2-5
 MONS:   big kobold, kobold
 MARKER:  F = lua:fog_machine { cloud_type = "flame", pow_min = 100, \
                                pow_max = 100, delay = 10, size = 1, \
@@ -1604,7 +1602,7 @@ ENDMAP
 NAME:   kennysheep_goblin_castle
 TAGS:   no_monster_gen no_pool_fixup
 ORIENT: northwest
-DEPTH:  D:3-4
+DEPTH:  D:3
 ## this gives a chance for Ijyb and Robin to appear as the boss if they
 ## haven't been placed, selecting from who is available.
 {{
@@ -1664,7 +1662,7 @@ ENDMAP
 NAME:   kennysheep_tiny_hell
 TAGS:   no_monster_gen
 ORIENT: centre
-DEPTH:  D:13-14
+DEPTH:  D:7
 WEIGHT: 5
 FTILE:  *|c.12${} = floor_infernal_blank
 TILE:   c = dngn_stone_dark
@@ -1719,7 +1717,7 @@ ENDMAP
 NAME:   kennysheep_housing_project
 ORIENT: north
 TAGS:   no_monster_gen
-DEPTH:  D:6-9
+DEPTH:  D:3-5
 MONS:   kobold / hound w:5 / gnoll / hobgoblin, \
         big kobold / orc warrior w:5 / ogre / gnoll sergeant, \
         orc priest / orc wizard / gnoll shaman / centaur
@@ -1748,7 +1746,7 @@ ppptc.......c..........c...c...ctpt''
 ENDMAP
 
 NAME: cheibrodos_hippocracy
-DEPTH: D:12-
+DEPTH: D:6-
 TAGS: no_item_gen no_monster_gen no_pool_fixup
 ORIENT: north
 MONS: glowing orange brain, small abomination, floating eye, demonic crawler
@@ -1789,7 +1787,7 @@ xxxwxxxx......xxxw.xx..xxx..xxx
 ENDMAP
 
 NAME:    kennysheep_kobold_grotto
-DEPTH:   D:13-, !D:$
+DEPTH:   D:6-, !D:$
 TAGS:    no_monster_gen
 ORIENT:  northwest
 MONS:    big kobold, patrolling kobold demonologist, kobold, plant
@@ -1828,7 +1826,7 @@ ENDMAP
 
 # Based off of hive_mumbra_combs, for the old proposed portal.
 NAME:    regret_index_combs_of_tragedy
-DEPTH:   D:11-, Lair:2-, !Lair:$
+DEPTH:   D:5-, Lair:2-, !Lair:$
 ORIENT:  south
 WEIGHT:  8
 MONS:    killer bee, meliai, queen bee
@@ -1843,8 +1841,8 @@ NSUBST:  g = 1:. / *:aa., h = 1:. / *:aa., i = 1:. / *:aa.
 NSUBST:  j = 1:. / *:aa., k = 1:. / *:aa., l = 1:. / *:aa.
 NSUBST:  m = 1:. / *:aa., n = 1:. / *:aa., o = 1:. / *:aa.
 NSUBST:  p = 1:. / *:aa., q = 1:. / *:aa.
-: if (you.branch() == "Lair" and you.absdepth() < 14)
-:  or you.absdepth() < 12 then
+: if (you.branch() == "Lair" and you.depth() < 3)
+:  or you.depth() < 6 then
 SUBST:   9 = 990, 8 = 9
 : else
 NSUBST:  " = 3:2 / *:1
@@ -1894,7 +1892,7 @@ ENDMAP
 # Very loosely based off of linley's beehive.
 NAME:    regret_index_wax_grids
 TAGS:    no_pool_fixup
-DEPTH:   D:11-, Lair:2-, !Lair:$
+DEPTH:   D:5-, Lair:2-, !Lair:$
 ORIENT:  northwest
 WEIGHT:  6
 MONS:    killer bee, meliai, queen bee
@@ -1953,7 +1951,7 @@ ENDMAP
 
 # Loosely based off of R1's beehive2.
 NAME:    regret_index_bee_streams
-DEPTH:   D:11-, Lair:2-, !Lair:$
+DEPTH:   D:5-, Lair:2-, !Lair:$
 ORIENT:  south
 WEIGHT:  6
 MONS:    killer bee, meliai, queen bee
@@ -1965,8 +1963,8 @@ SUBST:   E : x.., F : xx., G : xx., H : xx.
 SUBST:   I : aa., J : aa., K : aa., L : aa.
 SUBST:   y = xx., z = xx!
 CLEAR:   !
-: if (you.branch() == "Lair" and you.absdepth() < 14)
-:  or you.absdepth() < 12 then
+: if (you.branch() == "Lair" and you.depth() < 3)
+:  or you.depth() < 6 then
 SUBST:   9 = 990, 8 = 9, ~ = .
 : else
 NSUBST:  ~ = 3:2 / *:1
@@ -2013,7 +2011,7 @@ ENDMAP
 # Very loosely based off of minmay's beehive_corners.
 NAME:    regret_index_harrowing_hell_hive
 TAGS:    no_pool_fixup
-DEPTH:   D:11-, Lair:2-, !Lair:$
+DEPTH:   D:5-, Lair:2-, !Lair:$
 ORIENT:  southwest
 WEIGHT:  4
 MONS:    killer bee, meliai, queen bee, oklob plant
@@ -2023,8 +2021,8 @@ SHUFFLE: ABCD
 SUBST:   A = a, B : aa., C : a.., D = .
 SUBST:   y = xxx., Y = xxw, z = xx!
 CLEAR:   !
-: if (you.branch() == "Lair" and you.absdepth() < 14)
-:  or you.absdepth() < 12 then
+: if (you.branch() == "Lair" and you.depth() < 3)
+:  or you.depth() < 6 then
 SUBST:   9 = 990, 8 = 9, ~ = .
 : else
 NSUBST:  ~ = 3:2 / *:1
@@ -2079,7 +2077,7 @@ ENDMAP
 # ...not even recognizable as beehive_tunnels anymore. Oh well.
 NAME:    regret_index_tunnel_blossom
 TAGS:    no_pool_fixup
-DEPTH:   D:11-, Lair:2-, !Lair:$
+DEPTH:   D:5-, Lair:2-, !Lair:$
 ORIENT:  float
 WEIGHT:  6
 MONS:    killer bee, meliai, queen bee
@@ -2088,8 +2086,8 @@ NSUBST:  " = 12:0 / 4 = 001.. / *:.
 SHUFFLE: BCDEFGH
 NSUBST:  A = 1:. / * = a
 SUBST:   B = ., C : a., DEFGH = a, X = xxPw
-: if (you.branch() == "Lair" and you.absdepth() < 14)
-:  or you.absdepth() < 12 then
+: if (you.branch() == "Lair" and you.depth() < 3)
+:  or you.depth() < 6 then
 SUBST:   9 = 990, 8 = 9, ~ = .
 : else
 NSUBST:  ~ = 3:2 / *:1
@@ -2194,13 +2192,13 @@ ENDMAP
 
 NAME:   argonaut_augean_stables
 TAGS:   no_pool_fixup
-DEPTH:  D:8-
+DEPTH:  D:4-
 ORIENT: south
 KMONS:  12 = yak
 KMONS:  34 = death yak
 KITEM:  24 = *, $
 KFEAT:  _ = open_door
-: if you.absdepth() < 12 then
+: if you.depth() < 6 then
 NSUBST: Y = 1:42 / 1:2 / * = 1:50 .
 SUBST:  - = .:30 +, ~ = W:40 w
 : else
@@ -2247,7 +2245,7 @@ ENDMAP
 
 NAME:    doesnt_quadruple_sword
 TAGS:    no_monster_gen no_item_gen
-DEPTH:   D:13-
+DEPTH:   D:6-
 ORIENT:  north
 MONS:    dancing weapon ; long sword
 ITEM:    double sword, triple sword
@@ -2307,7 +2305,7 @@ ENDMAP
 
 NAME:   cheibrodos_body_horror
 TAGS:   no_item_gen no_monster_gen
-DEPTH:  D:12-
+DEPTH:  D:6-
 ORIENT: north
 MONS:   small abomination, demonic crawler, ugly thing, chaos spawn, neqoxec
 MONS:   large abomination / very ugly thing

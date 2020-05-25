@@ -104,7 +104,7 @@ KMONS:   1 = killer bee
 KMONS:   2 = meliai
 KITEM:   1 = %
 KITEM:   2 = *
-: if you.absdepth() < 12 then
+: if you.absdepth() < 6 then
 NSUBST:  1 = 1:1 / * = 11.
 : else
 NSUBST:  1 = 1:2 / 2 = 21 / 1:. / * = 11.
@@ -300,7 +300,7 @@ ENDMAP
 # with monster/loot types and number scaling with depth. -gammafunk
 NAME:   worms_lemuel
 TAGS:   no_monster_gen no_pool_fixup transparent
-DEPTH:  D:3-, Lair, Spider, Swamp
+DEPTH:  D:4-, Lair, Spider, Swamp
 KMONS:  1 = swamp worm
 KMONS:  2 = tyrant leech
 KMONS:  3 = demonic crawler
@@ -1044,7 +1044,7 @@ ENDMAP
 
 NAME:    hangedman_misty_isle
 TAGS:    transparent no_monster_gen no_pool_fixup patrolling
-DEPTH:   D:3-6
+DEPTH:   D:4-6
 KMONS:   123 = sky beast
 KMONS:   45 = insubstantial wisp
 KMONS:   6 = steam dragon
@@ -1580,7 +1580,7 @@ ENDMAP
 # Centaur isle (Lemuel)
 NAME:   centaur_isle
 TAGS:   no_monster_gen no_pool_fixup no_rotate
-DEPTH:  D:3-6, Shoals
+DEPTH:  D:4-6, Shoals
 MONS:   centaur, yaktaur, faun, centaur warrior
 : if you.absdepth() > 5 then
 NSUBST: 1 = 1:4 / 1:123 / *:1
@@ -1858,7 +1858,7 @@ MAP
 ENDMAP
 
 NAME:  guppyfry_early_elven_hall
-DEPTH: D:3-5
+DEPTH: D:4-5
 TAGS:  patrolling no_monster_gen transparent
 MONS:  deep elf mage, plant
 ITEM:  any scroll / any food / any book
@@ -3410,7 +3410,7 @@ MAP
 ENDMAP
 
 NAME:    minmay_three_doors
-DEPTH:   D:3-, Depths
+DEPTH:   D:4-, Depths
 SHUFFLE: 089, ABC
 SUBST:   AB = ., C = *
 MARKER:  G = lua:props_marker { stop_explore = "statue" }
@@ -3438,7 +3438,7 @@ ENDMAP
 
 NAME:  kb_rosetta
 TAGS:  vaults_hard transparent
-DEPTH: D:3-, Depths, Vaults, Elf
+DEPTH: D:4-, Depths, Vaults, Elf
 SUBST: x : xcvmnt
 SUBST: X : GtTU
 MAP
@@ -4513,7 +4513,7 @@ ENDMAP
 
 NAME:  grunt_potential
 TAGS:  no_pool_fixup
-DEPTH: D:3-, Depths, Zot, Pan
+DEPTH: D:4-, Depths, Zot, Pan
 : init_hm_decor_walldepth(_G, 'x')
 SHUFFLE: wlvbn
 : if you.absdepth() > 20 then
@@ -6308,7 +6308,7 @@ MAP
 ENDMAP
 
 NAME:   minmay_shattered_shrine
-DEPTH:  D:3-, Depths, Lair
+DEPTH:  D:4-, Depths, Lair
 TAGS:   transparent
 KMONS:  p = plant
 SUBST:  9 = 9., " = .:190 0:5 %:5, ' = .:30 0:5 %:5
@@ -6410,7 +6410,7 @@ MAP
 ENDMAP
 
 NAME:   minmay_microvault
-DEPTH:  D:3-, Depths
+DEPTH:  D:4-, Depths
 MAP
 c9c
 c*c
@@ -6826,33 +6826,37 @@ ENDMAP
 
 NAME:    minmay_guarded_unrand_staff_of_olgreb
 DEPTH:   D:3-5
-TAGS:    no_monster_gen no_trap_gen transparent
+TAGS:    no_monster_gen no_trap_gen transparent no_rotate no_vmirror
 MONS:    worker ant / soldier ant
 MONS:    killer bee
 MONS:    adder / water moccasin
 ITEM:    staff_of_olgreb no_pickup ident:type
+FTILE:   bd123c*q = FLOOR_NERVES_GREEN
+TILE:    1 = DNGN_TRANSPARENT_RUNED_STONE_GREEN
+COLOUR:  bd+123c*q = GREEN
 NSUBST:  1 = 5:1 / 6=1.. / ., 2 = 5:2 / 9=2.. / ., 3 = 5:3 / 6=1.. / .
+KFEAT:   c = runed_clear_door
 MAP
       ...
       .b.
       .b.
      ..b..
      .bbb.
-     .ndn.
-    ..b+b..
+     .qdq.
+    ..bcb..
     .bb2bb.
-   ..n222n..
+   ..q222q..
   ..bb222bb..
  ..bb22222bb..
 ..bb2222222bb..
-.bb=bb222bb=bb.
-.n111bbnbb333n.
-.b1111n*n3333b.
+.bbcbb222bbcbb.
+.q111bbqbb333q.
+.b1111q*q3333b.
 .b1111b*b3333b.
-.n1111===3333n.
+.q1111ccc3333q.
 .bb111b.b333bb.
 ..bbb1b.b3bbb..
- ...bnb.bnb...
+ ...bqb.bqb...
    .........
 ENDMAP
 
@@ -6869,14 +6873,16 @@ MONS:    vampire mosquito / tyrant leech / vampire, vampire knight
 MONS:    vampire knight, vampire mage
 : end
 ITEM:    vampires_tooth no_pickup
+TILE:    c = WALL_CRYPT
+FTILE:   '2Yd = FLOOR_CRYPT
 MAP
 .........
-.ccc.ccc.
-.1c...c1.
-.cc...cc.
+.ccc'ccc.
+.1c'''c1.
+.cc'''cc.
 .1c2Y2c1.
-.cc.d.cc.
-.1c...c1.
+.cc'd'cc.
+.1c'''c1.
 .ccccccc.
 .........
 ENDMAP
@@ -6944,26 +6950,30 @@ MAP
     ...........
 ENDMAP
 
+# BCADDO: Make a later guarded finisher that gives it to a reaper.
 NAME:    minmay_guarded_unrand_finisher
 TAGS:    transparent
+FTILE:   'Axc1Bd = FLOOR_DEMONIC_DARKGRAY
 DEPTH:   D:3-6
 MONS:    wraith
 ITEM:    finisher no_pickup ident:type
 SUBST:   1 = 1.
 NSUBST:  A = 1:. / *:c, B = 1:. / *:c
 SUBST:   c = c .:2
+TILE:    c = WALL_COBALT_ROCK
+TILE:    x = WALL_COBALT_STONE
 MAP
 .............
 .AxxAxAxAxxA.
-.x..xc1cx..x.
-.x.c..x..c.x.
-.Ax.BxBxB.xA.
-.xc.x1c1x.cx.
+.x''xc1cx''x.
+.x'c''x''c'x.
+.Ax'BxBxB'xA.
+.xc'x1c1x'cx.
 .A1xBcdcBx1A.
-.xc.x1c1x.cx.
-.Ax.BxBxB.xA.
-.x.c..x..c.x.
-.x..xc1cx..x.
+.xc'x1c1x'cx.
+.Ax'BxBxB'xA.
+.x'c''x''c'x.
+.x''xc1cx''x.
 .AxxAxAxAxxA.
 .............
 ENDMAP
@@ -7001,11 +7011,11 @@ MAP
 -c1.....1c-
 -c.c...c.c-
 -c.......c-
--n...d...n-
+-q...d...q-
 -c.......c-
 -c.c...c.c-
 -c1.....1c-
--cncc=cccc-
+-cqcc=cccc-
 -----------
 ENDMAP
 

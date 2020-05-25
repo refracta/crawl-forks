@@ -125,7 +125,7 @@ DEPTH:  D:5-6, Orc
 : place_unique(_G, "Erolcha")
 
 NAME:   uniq_eustachio
-DEPTH:  D:3
+DEPTH:  D:2-3
 : place_unique(_G, "Eustachio")
 
 NAME:   uniq_frances
@@ -150,7 +150,7 @@ DEPTH:  D:3
 : place_unique(_G, "Grinder")
 
 NAME:   uniq_harold
-DEPTH:  D:3-5, Orc:1, Lair:1-2
+DEPTH:  D:4-6, Orc:1, Lair:1-2
 : place_unique(_G, "Harold")
 
 NAME:   uniq_ijyb

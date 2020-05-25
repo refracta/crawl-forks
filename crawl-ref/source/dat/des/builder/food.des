@@ -60,7 +60,7 @@ MAP
 ENDMAP
 
 NAME:   the_bakery
-DEPTH:  D:3-7
+DEPTH:  D:4-7
 # Previously this was a 25% CHANCE; I'm assuming this was meant to weight this
 # higher than the other food vaults, which mostly had a 15% CHANCE, but
 # placing by chance tag doesn't work that way. Hence, there's also a WEIGHT
@@ -325,14 +325,10 @@ WEIGHT: 15
 TAGS:   uniq_second_food extra chance_second_food no_monster_gen no_trap_gen \
         patrolling
 {{
-  local twochance = you.absdepth() - 8
-  local onechance = 7 - twochance
-  if twochance <= 0 then
+  if you.depth() < 6 then
     mons("ogre")
-  elseif onechance <= 0 then
-    mons("two-headed ogre")
   else
-    mons("ogre w:" .. onechance .. " / two-headed ogre w:" .. twochance)
+    mons("two-headed ogre")
   end
   dgn.delayed_decay(_G, 'g', 'orc skeleton / human skeleton / elf skeleton'
                              .. ' / dwarf skeleton')
@@ -356,7 +352,7 @@ xx.xxx.
 ENDMAP
 
 NAME:   grunt_livestock
-DEPTH:  D:3-7
+DEPTH:  D:4-7
 : food_weight(_G, 3)
 WEIGHT: 15
 TAGS:   uniq_second_food extra chance_second_food no_monster_gen no_trap_gen \

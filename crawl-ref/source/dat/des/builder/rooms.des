@@ -38,16 +38,12 @@ function fill_special_room(e, mon, lord_mon, pack)
 end
 
 function sroom_kobold_lair(e)
-    local level = you.absdepth() - 1
-
     -- Return early if we're being called during map validation.
     if e.is_validating() then return end
 
     local level_mons = 6
 
-    if level < 3 then
-        level_mons = 2
-    elseif level < 5 then
+    if you.absdepth() < 5 then
         level_mons = 4
     end
 
@@ -367,9 +363,9 @@ end
 ###########################
 
 NAME:   special_room_kobold
-DEPTH:  D:3-5, Orc, !Orc:$
+DEPTH:  D:4-5, Orc, !Orc:$
 TAGS:   special_room unrand
-WEIGHT: 11
+WEIGHT: 22
 : sroom_kobold_lair(_G)
 MAP
 ENDMAP

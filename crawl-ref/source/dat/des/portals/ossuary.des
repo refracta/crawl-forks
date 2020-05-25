@@ -50,7 +50,7 @@ function ossuary_setup_features(e)
     e.kmons("0 = guardian mummy")
     e.kmons("1 = mummy priest / guardian mummy")
     e.kmons("4 = redback / wolf spider")
-	e.kmons("5 = eidolon")
+	e.kmons("5 = eidolon / freezing wraith")
 	e.kmons(") = guardian mummy / mummy")
 	e.kmons("% = wraith / phantom")
 	e.kmons("# = scorpion / redback / nothing w:30")
@@ -60,7 +60,7 @@ function ossuary_setup_features(e)
 	e.kmons("4 = emperor scorpion")
 	e.kmons("5 = revenant w:30")
 	e.kmons(") = guardian mummy")
-	e.kmons("% = eidolon / wraith")
+	e.kmons("% = eidolon / freezing wraith / wraith")
 	e.kmons("# = scorpion / emperor scorpion / nothing w:30")
   end
   if you.in_branch("Shoals") or you.in_branch("Swamp") then
@@ -130,7 +130,7 @@ function ossuary_setup_features(e)
 	e.kmons(": = death scarab band")
     e.kmons("1 = mummy priest / entropy weaver")
   end
-  e.tags("no_monster_gen")
+  e.tags("no_monster_gen water_ok")
   e.ftile(".'abcdefghijklmnopqstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12345<>67890!@#$%^&*()|~{}+- = floor_sandstone")
   e.tile("c = wall_tomb")
   e.kmons("2 = zombie")
@@ -157,7 +157,6 @@ function callback.badplayer_boxes_open_up(data, triggerable, triggerer, marker,
 end
 }}
 
-#### Portal entry vaults.
 default-depth: D:3-, !D:$, Lair, !Lair:$, Spider, !Spider:$, Swamp, !Swamp:$, Shoals, !Shoals:$
 
 NAME:   enter_ossuary_1

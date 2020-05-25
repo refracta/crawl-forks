@@ -118,7 +118,7 @@ function the_grid_main_setup(e,no_doors)
 end
 }}
 
-default-depth: D:3-, Depths, Elf
+default-depth: D:5-, Depths, Elf
 
 ################################################################################
 # Original (9x9 square) main vaults
@@ -246,7 +246,7 @@ MAP
 ENDMAP
 
 NAME:     minmay_the_grid_3x2
-DEPTH:    D:4-, Depths, Elf
+DEPTH:    D:5-, Depths, Elf
 ORIENT:   float
 SUBVAULT: A : the_grid
 SUBVAULT: B : the_grid
@@ -282,7 +282,7 @@ MAP
 ENDMAP
 
 NAME:     minmay_the_grid_net
-DEPTH:    D:4-, Depths, Elf
+DEPTH:    D:5-, Depths, Elf
 ORIENT:   float
 SUBVAULT: A : the_grid
 SUBVAULT: B : the_grid
@@ -328,7 +328,7 @@ MAP
 ENDMAP
 
 NAME:     minmay_the_grid_4x2
-DEPTH:    D:4-, Depths, Elf
+DEPTH:    D:5-, Depths, Elf
 ORIENT:   float
 SUBVAULT: A : the_grid
 SUBVAULT: B : the_grid
@@ -366,7 +366,7 @@ MAP
 ENDMAP
 
 NAME:     minmay_the_grid_3x3
-DEPTH:    D:4-, Depths, Elf
+DEPTH:    D:5-, Depths, Elf
 ORIENT:   float
 SUBVAULT: A : the_grid
 SUBVAULT: B : the_grid
@@ -419,7 +419,7 @@ ENDMAP
 #
 NAME:       minmay_the_grid_triangle_9x9_recursive_2
 ORIENT:     float
-DEPTH:      D:3-, Depths, Elf
+DEPTH:      D:5-, Depths, Elf
 SUBVAULT:   A : the_grid_triangle_9x9_prize
 SUBVAULT:   B : the_grid_triangle_9x9
 SUBVAULT:   C : the_grid_triangle_9x9
@@ -459,7 +459,7 @@ ENDMAP
 
 NAME:       minmay_the_grid_triangle_9x9_recursive_2_mashed
 ORIENT:     float
-DEPTH:      D:4-, Depths, Elf
+DEPTH:      D:5-, Depths, Elf
 SUBVAULT:   A : the_grid_triangle_9x9_prize
 SUBVAULT:   B : the_grid_triangle_9x9
 SUBVAULT:   C : the_grid_triangle_9x9
@@ -529,7 +529,7 @@ ENDMAP
 
 NAME:       minmay_the_grid_triangle_9x9_rhombus_thin_mashed
 ORIENT:     float
-DEPTH:      D:4-, Depths, Elf
+DEPTH:      D:5-, Depths, Elf
 SUBVAULT:   A : the_grid_triangle_9x9
 SUBVAULT:   B : the_grid_triangle_9x9_prize
 SUBVAULT:   C : the_grid_triangle_9x9
@@ -564,7 +564,7 @@ ENDMAP
 
 NAME:       minmay_the_grid_triangle_9x9_line_8_mashed
 ORIENT:     float
-DEPTH:      D:5-, Depths, Elf
+DEPTH:      D:6-, Depths, Elf
 SUBVAULT:   A : the_grid_triangle_9x9
 SUBVAULT:   B : the_grid_triangle_9x9
 SUBVAULT:   C : the_grid_triangle_9x9
@@ -933,7 +933,7 @@ ENDMAP
 
 NAME:       minmay_the_grid_square_5x5_4x4
 ORIENT:     float
-DEPTH:      D:4-, Depths, Elf
+DEPTH:      D:5-, Depths, Elf
 SUBVAULT:   A : the_grid_square_5x5
 SUBVAULT:   B : the_grid_square_5x5
 SUBVAULT:   C : the_grid_square_5x5
@@ -1232,7 +1232,7 @@ ENDMAP
 
 NAME:       minmay_the_grid_four_pointed_star_mashed
 ORIENT:     float
-DEPTH:      D:4-, Depths, Elf
+DEPTH:      D:5-, Depths, Elf
 SUBVAULT:   A : the_grid_triangle_9x9
 SUBVAULT:   B : the_grid_triangle_9x9
 SUBVAULT:   C : the_grid_triangle_9x9
@@ -1631,7 +1631,7 @@ MONS:    steam dragon / acid dragon
 MONS:    fire dragon / ice dragon / swamp dragon w:5
 MONS:    shadow dragon / iron dragon / golden dragon / storm dragon / \
          quicksilver dragon / pearl dragon
-: if you.absdepth() < 5 then
+: if you.absdepth() < 6 then
 SUBST:   $ = $$$$$%
 : elseif you.absdepth() < 8 then
 SUBST:   1 = 2, $ = $$$$$*
@@ -1656,7 +1656,7 @@ MONS:    steam dragon / acid dragon
 MONS:    fire dragon / ice dragon / swamp dragon w:5
 MONS:    shadow dragon / iron dragon / golden dragon / storm dragon / \
          quicksilver dragon / pearl dragon
-: if you.absdepth() < 5 then
+: if you.absdepth() < 6 then
 SUBST:   $ = $$$$$%
 : elseif you.absdepth() < 8 then
 SUBST:   1 = 2, $ = $$$$$*
@@ -1683,9 +1683,9 @@ MONS:   deep elf sorcerer / deep elf annihilator / lich / ancient lich w:5
 ITEM:   any wand / any jewellery / any book / any magical staff
 ITEM:   any randart jewellery / any misc / any weapon good_item w:5 / \
         any armour good_item w:5
-: if you.absdepth() < 4 then
+: if you.absdepth() < 6 then
 NSUBST: d = 1:d / *:.
-: elseif you.absdepth() < 7 then
+: elseif you.absdepth() < 8 then
 SUBST:  1 = 2
 NSUBST: d = 1:e / *:.
 : else
