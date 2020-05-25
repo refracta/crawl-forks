@@ -34,22 +34,34 @@ function ossuary_setup_features(e)
   e.depth_weight("Swamp:1", 3333)
   e.depth_weight("Swamp:2", 5000)
   e.depth_weight("Swamp:3", 10000)
+  e.nsubst("1 = 2:1 / *:0")
+  e.nsubst("0 = 4:0 / *:)")
+  e.nsubst("5 = 2:5 / *:%")
+  e.nsubst("4 = 5:4 / */#")
   if you.in_branch("D") then
+    e.kmons("0 = mummy")
+    e.kmons("1 = guardian mummy")
     e.kmons("4 = scorpion")
 	e.kmons("5 = wraith")
-    if you.depth() < 6 then
-      e.kmons("1 = guardian mummy")
-	else 
-      e.kmons("1 = mummy priest / guardian mummy")
-    end
+	e.kmons(") = mummy")
+	e.kmons("% = phantom")
+	e.kmons("# = jackal / scorpion / nothing w:30")
   elseif you.in_branch("Lair") or you.in_branch("Orc") then
+    e.kmons("0 = guardian mummy")
     e.kmons("1 = mummy priest / guardian mummy")
     e.kmons("4 = redback / wolf spider")
 	e.kmons("5 = eidolon")
+	e.kmons(") = guardian mummy / mummy")
+	e.kmons("% = wraith / phantom")
+	e.kmons("# = scorpion / redback / nothing w:30")
   else
+    e.kmons("0 = guardian mummy")
     e.kmons("1 = mummy priest")
 	e.kmons("4 = emperor scorpion")
-	e.kmons("5 = revenant w:30 / eidolon / wraith")
+	e.kmons("5 = revenant w:30")
+	e.kmons(") = guardian mummy")
+	e.kmons("% = eidolon / wraith")
+	e.kmons("# = scorpion / emperor scorpion / nothing w:30")
   end
   if you.in_branch("Shoals") or you.in_branch("Swamp") then
     local flood_x, flood_y, n = -1, -1, 0
@@ -99,7 +111,7 @@ function ossuary_setup_features(e)
   if you.in_branch("Shoals") then
     e.subst("? = 67")
 	e.subst("& = &7")
-	e.kmons("& = merfolk siren")
+	e.kmons("& = merfolk / merfolk siren / merfolk impaler w:5 / merfolk javelineer w:5")
 	e.subst(": = cx")
 	e.subst("< = W")
 	e.orient("float")
@@ -121,7 +133,6 @@ function ossuary_setup_features(e)
   e.tags("no_monster_gen")
   e.ftile(".'abcdefghijklmnopqstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12345<>67890!@#$%^&*()|~{}+- = floor_sandstone")
   e.tile("c = wall_tomb")
-  e.kmons("0 = guardian mummy")
   e.kmons("2 = zombie")
   e.kmons("3 = skeleton")
   e.kmons("6 = spectral thing")
@@ -324,7 +335,7 @@ TAGS: transparent extra decor
 NSUBST: ' = 1:4 / *:$
 FTILE:  4.GH = FLOOR_SANDSTONE
 KFEAT: H = sarcophagus
-: if you.in_branch("D") and you.depth() < 7 then
+: if you.in_branch("D")  then
   KMONS: 4 = scorpion
 : else
   KMONS: 4 = emperor scorpion
