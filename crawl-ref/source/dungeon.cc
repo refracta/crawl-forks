@@ -1381,9 +1381,11 @@ static int _num_items_wanted(int absdepth0)
         switch (you.where_are_you)
         {
         case BRANCH_DUNGEON:
-            return dice_amt = 7;
+            if (you.depth() < 3)
+                dice_amt = 9; // Be extra nice early.
+            dice_amt = 7;
         default:
-            return dice_amt = 3;
+            dice_amt = 3;
         }
     }
     return dice_amt + roll_dice(dice_amt, 11);
@@ -1409,15 +1411,18 @@ static int _mon_count_base()
         case 1:
             return 18;
         case 2:
-        case 3:
-        case 4:
             return 24;
+        case 3:
+            return 12;
+        case 4:
+            return 18;
         case 5:
         case 6:
-            return 36;
+            return 24;
         case 7:
+            return 18;
         case 8:
-            return 30;
+            return 12;
         }
     case BRANCH_PANDEMONIUM:
         return 8;
