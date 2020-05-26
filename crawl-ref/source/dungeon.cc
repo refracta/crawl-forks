@@ -1381,7 +1381,7 @@ static int _num_items_wanted(int absdepth0)
         switch (you.where_are_you)
         {
         case BRANCH_DUNGEON:
-            if (you.depth() < 3)
+            if (you.depth < 3)
                 dice_amt = 9; // Be extra nice early.
             dice_amt = 7;
         default:
