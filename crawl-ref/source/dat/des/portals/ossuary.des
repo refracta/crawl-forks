@@ -738,11 +738,12 @@ NSUBST:  E = 1:+ / *:n
 NSUBST:  X = 1:{ / *:>
 SUBST: . = 4~.....p
 NSUBST: ~ = 15:~ / *:4...
-KFEAT: ~ = dispersal trap w:2 / net trap / spear trap
+KFEAT: ~ = needle trap / net trap / spear trap
 SUBST: 0 = 045
 SUBST: 4 = 2344
 : if crawl.coinflip() then
-CLEAR: p
+# Clearing it was letting nasty stuff that's not part of the vault appear too often.
+SUBST: p = x
 : end
 : ossuary_setup_features(_G)
 MAP
