@@ -96,7 +96,6 @@ function trove.get_trove_item(e, value, base_item)
   -- base is item.base_type, type is item.sub_type, quant is an additional parameter (quantity, charges, etc)
   -- currently 20% armour, 15% weapon, 50% consumable, 15% miscellaneous
   local prices = {
-       {base="scroll", type="acquirement", quant=2},
        {base="miscellaneous", type="rune of Zot", quant=3, name="slimy rune of Zot"},
        {base="miscellaneous", type="rune of Zot", quant=11, name="abyssal rune of Zot"},
        {base="miscellaneous", type="horn of Geryon"} }
@@ -106,7 +105,15 @@ function trove.get_trove_item(e, value, base_item)
        {base="weapon", type="demon trident", quant=2+d(3)+d(3)},
        {base="weapon", type="demon blade", quant=2+d(3)+d(3)} }
 
-  if you.race() ~= "Felid" then
+  local scroll = { {base="scroll", type="acquirement", quant=2}, { base="scroll", type="bless item",  quant=3} }
+
+  if you.race() ~= "Silent Spectre" then
+    for _, toll in ipairs(scroll) do
+      table.insert(prices, toll)
+    end
+  end
+
+  if you.race() ~= "Felid" and you.race() ~= "Fairy" then
     for _, toll in ipairs(wpn) do
       table.insert(prices, toll)
     end
@@ -119,7 +126,7 @@ function trove.get_trove_item(e, value, base_item)
        {base="armour", type="fire dragon scales", quant=d(3)+d(3)},
        {base="armour", type="ice dragon scales", quant=d(3)+d(3)} }
 
-  if you.race() ~= "Felid" and you.race() ~= "Octopode" then
+  if you.race() ~= "Felid" and you.race() ~= "Draconian" and you.race() ~= "Fairy" and you.race() ~= "Octopode" then
     for _, toll in ipairs(arm) do
       table.insert(prices, toll)
     end
@@ -133,7 +140,7 @@ function trove.get_trove_item(e, value, base_item)
        {base="potion", type="curing", quant=12+d(4)+d(4)},
        {base="potion", type="heal wounds", quant=8+d(3)+d(3)} }
 
-  if you.race() ~= "Mummy" then
+  if you.class() ~= "Mummy" then
     if you.race() ~= "Vine Stalker" then
       for _, toll in ipairs(heal_pots) do
         table.insert(pots, toll)
@@ -152,7 +159,7 @@ function trove.get_trove_item(e, value, base_item)
        {base="scroll", type="blinking", quant=2+d(3)+d(3)},
        {base="scroll", type="teleportation", quant=10+d(4)+d(4)} }
 
-  if you.race() ~= "Formicid" then
+  if you.race() ~= "Formicid" and you.race() ~= "Silent Spectre" then
     for _, toll in ipairs(stasis_tolls) do
       table.insert(prices, toll)
     end
