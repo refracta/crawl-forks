@@ -1179,7 +1179,7 @@ void torment_cell(coord_def where, actor *attacker, torment_source_type taux)
 
     god_conduct_trigger conducts[3];
     int hploss = max(0, mons->hit_points *
-                        (50 - mons->res_negative_energy() * 5) / 100 - 1);
+                        (50 - mons->res_negative_energy() * 10) / 100 - 1);
 
     if (hploss)
     {
