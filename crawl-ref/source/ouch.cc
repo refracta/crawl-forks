@@ -135,6 +135,16 @@ int check_your_resists(int hurted, beam_type flavour, string source,
         }
         break;
 
+    case BEAM_SILVER_FRAG:
+        if (doEffects)
+        {
+            string msg;
+            silver_damages_victim(&you, hurted, msg);
+            if (!msg.empty())
+                mpr(msg);
+        }
+        break;
+
     case BEAM_FIRE:
         hurted = resist_adjust_damage(&you, flavour, hurted);
         if (hurted < original && doEffects)
