@@ -25,7 +25,7 @@ bool is_armour_brand_ok(int type, int brand, bool strict);
 bool is_missile_brand_ok(int type, int brand, bool strict);
 bool is_staff_brand_ok(int type, int brand, bool strict = true);
 
-special_armour_type defensive_shield_brand();
+special_armour_type defensive_shield_brand(int force_brand = 0);
 special_armour_type generate_armour_type_ego(armour_type type);
 facet_type generate_staff_facet(const item_def& item, int item_level);
 

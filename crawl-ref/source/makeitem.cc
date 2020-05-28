@@ -599,8 +599,11 @@ static void _generate_weapon_item(item_def& item, bool allow_uniques,
     }
 }
 
-special_armour_type defensive_shield_brand ()
+special_armour_type defensive_shield_brand (int force_brand)
 {
+    if (force_brand > 0)
+        return (special_armour_type)force_brand;
+
     return random_choose_weighted(1, SPARM_RESISTANCE,
                                   3, SPARM_FIRE_RESISTANCE,
                                   3, SPARM_COLD_RESISTANCE,
@@ -676,7 +679,7 @@ static void _generate_shield_item(item_def& item, bool allow_uniques,
             if (is_hybrid(item.sub_type))
                 item.brand = determine_weapon_brand(item, 2 + 2 * env.absdepth0);
             else
-                item.brand = defensive_shield_brand();
+                item.brand = defensive_shield_brand(item.brand);
         }
         item.plus -= 1 + random2(3);
 
@@ -693,7 +696,7 @@ static void _generate_shield_item(item_def& item, bool allow_uniques,
             if (is_hybrid(item.sub_type))
                 item.brand = determine_weapon_brand(item, item_level);
             else
-                item.brand = defensive_shield_brand();
+                item.brand = defensive_shield_brand(item.brand);
         }
 
         // if acquired item still not ego... enchant it up a bit.

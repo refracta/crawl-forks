@@ -5009,33 +5009,6 @@ int str_to_ego(object_class_type item_type, string ego_str)
     };
     COMPILE_CHECK(ARRAYSZ(weapon_brands) == NUM_REAL_SPECIAL_WEAPONS);
 
-    const char* missile_brands[] =
-    {
-        "flame",
-        "frost",
-        "poisoned",
-        "curare",
-        "returning",
-        "chaos",
-        "penetration",
-        "dispersal",
-        "exploding",
-        "steel",
-        "silver",
-        "petrification",
-#if TAG_MAJOR_VERSION == 34
-        "slow",
-#endif
-        "sleep",
-        "confusion",
-#if TAG_MAJOR_VERSION == 34
-        "sickness",
-#endif
-        "frenzy",
-        nullptr
-    };
-    COMPILE_CHECK(ARRAYSZ(missile_brands) == NUM_REAL_SPECIAL_MISSILES);
-
     const char* staff_facets[] =
     {
         "shielded",
@@ -5052,17 +5025,17 @@ int str_to_ego(object_class_type item_type, string ego_str)
     };
     COMPILE_CHECK(ARRAYSZ(staff_facets) == NUM_SPECIAL_STAVES);
 
-    const char** name_lists[4] = {armour_egos, weapon_brands, missile_brands, staff_facets};
+    const char** name_lists[4] = {armour_egos, weapon_brands, staff_facets};
 
-    int armour_order[4]  = {0, 1, 2, 3};
-    int weapon_order[4]  = {1, 0, 2, 3};
-    int missile_order[4] = {2, 0, 1, 3};
-    int staff_order[4]   = {3, 1, 0, 2};
+    int armour_order[4]  = {0, 1, 2};
+    int weapon_order[4]  = {1, 0, 2};
+    int staff_order[4]   = {2, 0, 1};
 
     int *order;
 
     switch (item_type)
     {
+    case OBJ_SHIELDS:
     case OBJ_ARMOURS:
         order = armour_order;
         break;
@@ -5073,15 +5046,6 @@ int str_to_ego(object_class_type item_type, string ego_str)
 
     case OBJ_STAVES:
         order = staff_order;
-        break;
-
-    case OBJ_MISSILES:
-#if TAG_MAJOR_VERSION == 34
-        // HACK to get an old save to load; remove me soon?
-        if (ego_str == "sleeping")
-            return SPMSL_SLEEP;
-#endif
-        order = missile_order;
         break;
 
     default:
@@ -5097,8 +5061,19 @@ int str_to_ego(object_class_type item_type, string ego_str)
             return i + 1;
     }
 
+    if (item_type == OBJ_SHIELDS)
+    {
+        const char** allow2 = name_lists[order[1]];
+
+        for (int i = 0; allow2[i] != nullptr; i++)
+        {
+            if (ego_str == allow2[i])
+                return i + 1;
+        }
+    }
+
     // Incompatible or non-existent ego type
-    for (int i = 1; i <= 3; i++)
+    for (int i = 1; i <= 2; i++)
     {
         const char** list = name_lists[order[i]];
 
@@ -5639,7 +5614,7 @@ bool item_list::parse_single_spec(item_spec& result, string s)
         && result.base_type != OBJ_SHIELDS
         && result.base_type != OBJ_STAVES)
     {
-        error = "An ego can only be applied to a weapon, missile, "
+        error = "An ego can only be applied to a weapon, "
             "shield, staff or armour.";
         return false;
     }
@@ -5652,15 +5627,7 @@ bool item_list::parse_single_spec(item_spec& result, string s)
 
     int ego = 0;
 
-    if (result.base_type == OBJ_SHIELDS)
-    {
-        if (is_hybrid(result.sub_type))
-            ego = str_to_ego(OBJ_WEAPONS, ego_str);
-        else
-            ego = str_to_ego(OBJ_ARMOURS, ego_str);
-    }
-    else 
-        ego = str_to_ego(result.base_type, ego_str);
+    ego = str_to_ego(result.base_type, ego_str);
 
     if (ego == 0)
     {

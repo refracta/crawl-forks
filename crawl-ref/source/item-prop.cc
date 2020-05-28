@@ -245,13 +245,13 @@ static const shield_def Shield_prop[] =
     // Hybrid Shield/Weapons
     { SHD_SAI, "sai",
         5, 3, 12, SK_SHORT_BLADES, DAMV_PIERCING,
-        3, -5, SIZE_TINY, SIZE_LITTLE, SIZE_MEDIUM, 5, 130 },
+        3, -5, SIZE_TINY, SIZE_LITTLE, SIZE_MEDIUM, 5, 60 },
     { SHD_TARGE, "targe",
         7, 0, 13, SK_SHIELDS, DAMV_CRUSHING,
-        7, -35, SIZE_LITTLE, SIZE_SMALL, SIZE_GIANT, 10, 130 },
+        7, -35, SIZE_LITTLE, SIZE_SMALL, SIZE_GIANT, 10, 45 },
     { SHD_NUNCHAKU, "nunchaku",
         9, 2, 12, SK_WHIPS_FLAILS, DAMV_CRUSHING,
-        4, -15, SIZE_LITTLE, SIZE_LITTLE, SIZE_LARGE, 5, 200 },
+        4, -15, SIZE_LITTLE, SIZE_LITTLE, SIZE_LARGE, 5, 90 },
 };
 
 typedef pair<brand_type, int> brand_weight_tuple;
