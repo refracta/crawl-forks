@@ -2123,7 +2123,11 @@ static spret _do_ability(const ability_def& abil, bool fail)
     {
         beam.range = _calc_breath_ability_range(abil.ability);
         
-        if (!spell_direction(abild, beam))
+        direction_chooser_args args;
+        args.top_prompt = "Breath at?";
+        args.self = confirm_prompt_type::cancel;
+
+        if (!spell_direction(abild, beam, &args))
             return spret::abort;
 
         string m;
