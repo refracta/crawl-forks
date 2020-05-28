@@ -92,11 +92,9 @@ function ch_stash_search_annotate_item(it)
       ["air"] = "rElec",
       ["cold"] = "rC+",
       ["death"] = "rN+",
-      ["energy"] = "channel",
       ["fire"] = "rF+",
       ["poison"] = "rPois",
-      ["power"] = "MP+",
-      ["wizardry"] = "Wiz"
+	  ["earth"] = "AC+ protection"
     }
     if props[it.subtype()] then
       annot = annot .. "{" .. props[it.subtype()] .. "} "
@@ -106,6 +104,9 @@ function ch_stash_search_annotate_item(it)
   if it.class(true) == "armour" and not it.artefact then
     local props = {
       ["troll"] = "Regen+",
+	  ["iron"] = "Regen+",
+	  ["deep"] = "Regen+",
+	  ["salamander"] = "+Berserk rF+",
       ["steam"] = "rSteam",
       ["acid"] = "rCorr",
       ["quicksilver"] = "MR+",
