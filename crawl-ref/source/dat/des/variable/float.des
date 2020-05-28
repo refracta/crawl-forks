@@ -8883,6 +8883,9 @@ DEPTH: D:2-6
 ORIENT: float
 NSUBST: " = 1:9 / 2:0 / 2=0., ; = 2:0 / 2=0.
 NSUBST: ' = 2:0 / 2=0. , _ = 2:0 / 2=0.
+: if you.depth() < 3 then
+SUBST: 9 = 0
+: end
 MAP
 .......@.......
 .xxxx.....xxxx.
