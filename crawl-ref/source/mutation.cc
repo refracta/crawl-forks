@@ -1273,6 +1273,10 @@ bool physiology_mutation_conflict(mutation_type mutat, bool ds_roll)
             return true; // Poison Resist is redundant and undeads can't berserk.
     }
 
+    // Don't give felids or trolls claws, etc.
+    if (ds_roll && you.innate_mutation[mutat] > 0)
+        return true;
+
     if (you.species == SP_FAIRY && (mutat == MUT_CLAWS || mutat == MUT_HORNS))
         return true;
 

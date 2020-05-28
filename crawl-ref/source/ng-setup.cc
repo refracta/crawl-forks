@@ -516,7 +516,7 @@ static void _setup_generic(const newgame_def& ng,
 
     _unfocus_stats();
 
-    // Needs to be done before handing out food.
+    // Needs to be done before handing out food and rolling Demonspawn mutations.
     give_basic_mutations(you.species);
 
     // This function depends on stats and mutations being finalised.
