@@ -2394,22 +2394,7 @@ static void _gain_piety_point()
         return;
     }
     else if (you.gift_timeout > 0)
-    {
         you.gift_timeout--;
-
-        // Slow down piety gain to account for the fact that gifts
-        // no longer have a piety cost for getting them.
-        // Jiyva is an exception because there's usually a time-out and
-        // the gifts aren't that precious.
-        if (!one_chance_in(4) && !you_worship(GOD_JIYVA)
-            && !you_worship(GOD_NEMELEX_XOBEH))
-        {
-#ifdef DEBUG_PIETY
-            mprf(MSGCH_DIAGNOSTICS, "Piety slowdown due to gift timeout.");
-#endif
-            return;
-        }
-    }
 
     // slow down gain at upper levels of piety
     if (!you_worship(GOD_RU))
