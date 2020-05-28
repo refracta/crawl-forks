@@ -1983,6 +1983,8 @@ static spret _do_ability(const ability_def& abil, bool fail)
         direction_chooser_args args;
         args.mode = TARG_HOSTILE;
         args.hitfunc = &hitfunc;
+        args.top_prompt = "Breath at?";
+        args.self = confirm_prompt_type::cancel;
 
         if (!spell_direction(abild, beam, &args))
             return spret::abort;
@@ -2021,6 +2023,9 @@ static spret _do_ability(const ability_def& abil, bool fail)
         direction_chooser_args args;
         args.mode = TARG_HOSTILE;
         args.hitfunc = &hitfunc;
+        args.top_prompt = "Spit at?";
+        args.self = confirm_prompt_type::cancel;
+
         if (!spell_direction(abild, beam, &args))
           return spret::abort;
 
@@ -2125,6 +2130,7 @@ static spret _do_ability(const ability_def& abil, bool fail)
         
         direction_chooser_args args;
         args.top_prompt = "Breath at?";
+        args.mode = TARG_HOSTILE;
         args.self = confirm_prompt_type::cancel;
 
         if (!spell_direction(abild, beam, &args))
