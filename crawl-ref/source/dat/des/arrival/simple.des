@@ -1921,9 +1921,9 @@ ORIENT: float
 TAGS:   arrival no_monster_gen
 MAP
 xxxxxxxxxxxxxxxxxxxxxxxxxx
-x{.......................x
+@........................x
 xxxxxxxxxxxxxxxxxxxxxxxx.x
-x........................x
+x...........{............x
 x.xxxxxxxxxxxxxxxxxxxxxxxx
 x........................@
 xxxxxxxxxxxxxxxxxxxxxxxxxx
