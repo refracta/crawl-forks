@@ -1311,8 +1311,14 @@ int acquirement_create_item(object_class_type class_wanted,
         if (agent == GOD_TROG && !one_chance_in(3))
             want_arts = false;
 
+        int lvl = ITEM_LEVEL;
+        int x = 1 + random2(9);
+
+        if ((agent == GOD_TROG || agent == GOD_OKAWARU) && !x_chance_in_y(you.num_total_gifts[you.religion], x + you.num_total_gifts[you.religion]))
+            lvl = ISPEC_DAMAGED;
+
         thing_created = items(want_arts, class_wanted, type_wanted,
-                              ITEM_LEVEL, 0, agent);
+                              lvl, 0, agent);
 
         if (thing_created == NON_ITEM)
         {
@@ -1446,6 +1452,13 @@ int acquirement_create_item(object_class_type class_wanted,
             // God gifts (except Xom's) never have a negative enchantment
             if (divine && agent != GOD_XOM)
                 acq_item.plus = max(static_cast<int>(acq_item.plus), 0);
+        }
+
+        if (lvl = ISPEC_DAMAGED)
+        {
+            acq_item.plus -= random2(3);
+            if (!one_chance_in(3) && !is_artefact(acq_item))
+                acq_item.brand = 0;
         }
 
         // Last check: don't acquire items your god hates.

@@ -3469,6 +3469,15 @@ static void _set_initial_god_piety()
         you.props[RU_SACRIFICE_PENALTY_KEY] = 0;
         break;
 
+    case GOD_TROG:
+    case GOD_OKAWARU:
+        you.piety = 15;
+        if (you.piety_max[you.religion] < 15)
+            you.piety_max[you.religion] = 15;
+        you.piety_hysteresis = 0;
+        you.gift_timeout = 10 + random2(10);
+        break;
+
     default:
         you.piety = 15; // to prevent near instant excommunication
         if (you.piety_max[you.religion] < 15)

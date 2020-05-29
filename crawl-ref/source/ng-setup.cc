@@ -208,6 +208,7 @@ void give_items_skills(const newgame_def& ng)
     case JOB_BERSERKER:
         you.religion = GOD_TROG;
         you.piety = 35;
+        you.gift_timeout = 10 + random2(10);
 
         if (you_can_wear(EQ_BODY_ARMOUR))
             you.skills[SK_ARMOUR] += 2;
