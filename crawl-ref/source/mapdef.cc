@@ -5025,11 +5025,39 @@ int str_to_ego(object_class_type item_type, string ego_str)
     };
     COMPILE_CHECK(ARRAYSZ(staff_facets) == NUM_SPECIAL_STAVES);
 
-    const char** name_lists[4] = {armour_egos, weapon_brands, staff_facets};
+    const char* missile_brands[] =
+    {
+        "flame",
+        "frost",
+        "poisoned",
+        "curare",
+        "returning",
+        "chaos",
+        "penetration",
+        "dispersal",
+        "exploding",
+        "steel",
+        "silver",
+        "petrification",
+#if TAG_MAJOR_VERSION == 34
+        "slow",
+#endif
+        "sleep",
+        "confusion",
+#if TAG_MAJOR_VERSION == 34
+        "sickness",
+#endif
+        "frenzy",
+        nullptr
+    };
+    COMPILE_CHECK(ARRAYSZ(missile_brands) == NUM_REAL_SPECIAL_MISSILES);
 
-    int armour_order[4]  = {0, 1, 2};
-    int weapon_order[4]  = {1, 0, 2};
-    int staff_order[4]   = {2, 0, 1};
+    const char** name_lists[4] = {armour_egos, weapon_brands, staff_facets, missile_brands};
+
+    int armour_order[4]  = {0, 1, 2, 3};
+    int weapon_order[4]  = {1, 0, 2, 3};
+    int staff_order[4]   = {2, 0, 1, 3};
+    int missile_order[4] = {3, 0, 1, 2};
 
     int *order;
 
@@ -5048,8 +5076,11 @@ int str_to_ego(object_class_type item_type, string ego_str)
         order = staff_order;
         break;
 
+    case OBJ_MISSILES:
+        order = missile_order;
+        break;
+
     default:
-        die("Bad base_type for ego'd item.");
         return 0;
     }
 
@@ -5073,7 +5104,7 @@ int str_to_ego(object_class_type item_type, string ego_str)
     }
 
     // Incompatible or non-existent ego type
-    for (int i = 1; i <= 2; i++)
+    for (int i = 1; i <= 3; i++)
     {
         const char** list = name_lists[order[i]];
 
