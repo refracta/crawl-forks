@@ -487,7 +487,7 @@ static void _wanderer_good_equipment(skill_type & skill)
         else
         {
             newgame_make_item(OBJ_ARMOURS, ARM_LEATHER_ARMOUR);
-            newgame_make_item(OBJ_MISSILES, MI_THROWING_NET, 2 + random2(3));
+            newgame_make_item(OBJ_WANDS, WAND_ENSNARE, 1, 15);
         }
         break;
 
