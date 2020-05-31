@@ -1183,6 +1183,9 @@ slimy_bord_bl SLIMY_WAVE_SW
 slimy_bord_lft SLIMY_WAVE_W
 slimy_bord_tl SLIMY_WAVE_NW
 
+endless_sludge ENDLESS_SLUDGE
+endless_sludge1
+
 %weight 10
 shoals_deep_water0 SHOALS_DEEP_WATER
 shoals_deep_water1

@@ -436,6 +436,10 @@ static void _builder_assertions()
                 case BRANCH_DESOLATION:
                     grd(*ri) = DNGN_ENDLESS_SALT;
                     break;
+                case BRANCH_DUNGEON:
+                    if (you.depth == 2)
+                        grd(*ri) = DNGN_ENDLESS_SLUDGE;
+                    // Fallthrough
                 default:
                     grd(*ri) = DNGN_PERMAROCK_WALL;
                     break;
@@ -1449,9 +1453,103 @@ static int _num_mons_wanted()
     return mon_wanted;
 }
 
+static bool _sewer_check(coord_def coord)
+{
+    return (grd(coord) == DNGN_STONE_WALL || grd(coord) == DNGN_METAL_WALL 
+         || grd(coord) == DNGN_PERMAROCK_WALL || grd(coord) == DNGN_ENDLESS_SLUDGE);
+}
+
+static void _sewer_water()
+{
+    if (!(you.where_are_you == BRANCH_DUNGEON && you.depth == 2))
+        return;
+
+    for (rectangle_iterator ri(coord_def(0, 0), coord_def(GXM - 1, GYM - 1)); ri; ++ri)
+    {
+        if (_sewer_check(*ri))
+        {
+            if (ri->x == 0 || ri->x == 1 || ri->x == GXM - 1 || ri->x == GXM - 2)
+            {
+                if (_sewer_check(coord_def(ri->x, ri->y + 1)) && _sewer_check(coord_def(ri->x, ri->y - 1)))
+                {
+                    grd(*ri) = DNGN_ENDLESS_SLUDGE;
+                    if (ri->x == 1)
+                        grd(coord_def(0, ri->y)) = DNGN_ENDLESS_SLUDGE;
+                    if (ri->x == GXM - 2)
+                        grd(coord_def(GXM - 1, ri->y)) = DNGN_ENDLESS_SLUDGE;
+                }
+            }
+            if (ri->y == 0 || ri->y == 1 || ri->y == GYM - 1 || ri->y == GYM - 2)
+            {
+                if (_sewer_check(coord_def(ri->x + 1, ri->y)) && _sewer_check(coord_def(ri->x - 1, ri->y)))
+                {
+                    grd(*ri) = DNGN_ENDLESS_SLUDGE;
+                    if (ri->y == 1)
+                        grd(coord_def(ri->x, 0)) = DNGN_ENDLESS_SLUDGE;
+                    if (ri->y == GYM - 2)
+                        grd(coord_def(ri->x, GYM - 1)) = DNGN_ENDLESS_SLUDGE;
+                }
+            }
+        }
+
+        if ((grd(*ri) == DNGN_FLOOR))
+        {
+            int water = 0;
+            int solid = 0;
+            for (adjacent_iterator ai(*ri); ai; ++ai)
+            {
+                if (grd(*ai) == DNGN_SHALLOW_WATER || grd(*ai) == DNGN_DEEP_WATER)
+                    water++;
+                if (grd(*ai) == DNGN_ROCK_WALL || grd(*ai) == DNGN_STONE_WALL || grd(*ai) == DNGN_METAL_WALL)
+                    solid++;
+            }
+
+            if (x_chance_in_y(solid, 8) || (water > 3 && solid + water >= 6))
+                grd(*ri) = DNGN_SHALLOW_WATER;
+        }
+
+        if ((grd(*ri) == DNGN_DEEP_WATER || grd(*ri) == DNGN_SHALLOW_WATER))
+        {
+            if (!actor_at(*ri))
+            {
+                bool clumping = false;
+                for (adjacent_iterator ai(*ri); ai; ++ai)
+                {
+                    if (monster_at(*ai) && monster_at(*ai)->type == MONS_WITHERED_PLANT)
+                        clumping = true;
+                }
+                if (one_chance_in(30) || clumping && !one_chance_in(3))
+                {
+                    mgen_data mg;
+                    mg.cls = MONS_WITHERED_PLANT;
+                    mg.pos = *ri;
+                    mg.flags = MG_FORCE_PLACE;
+                    mons_place(mgen_data(mg));
+                }
+            }
+        }
+
+        if ((grd(*ri) == DNGN_DEEP_WATER))
+        {
+#ifdef USE_TILE
+            env.tile_bk_bg(*ri) = TILE_DNGN_DEEP_WATER_MURKY;
+#endif
+            env.grid_colours(*ri) = GREEN;
+        }
+
+        if ((grd(*ri) == DNGN_SHALLOW_WATER))
+        {
+#ifdef USE_TILE
+            env.tile_bk_bg(*ri) = TILE_DNGN_SHALLOW_WATER_MURKY;
+#endif
+            env.grid_colours(*ri) = LIGHTGREEN;
+        }
+    }
+}
+
 static void _slimify_water()
 {
-    if (!(you.where_are_you == BRANCH_SLIME))
+    if (you.where_are_you != BRANCH_SLIME)
         return;
 
     dgn_replace_area(0, 0, GXM - 1, GYM - 1, DNGN_SHALLOW_WATER, DNGN_SLIMY_WATER);
@@ -2640,6 +2738,7 @@ static void _build_dungeon_level()
     {
         _prepare_water();
         _slimify_water();
+        _sewer_water();
     }
 
     if (player_in_hell())

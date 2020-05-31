@@ -213,6 +213,8 @@ tileidx_t tileidx_feature_base(dungeon_feature_type feat)
         return TILE_DNGN_SLIMY_WATER;
     case DNGN_OPEN_SEA:
         return TILE_DNGN_OPEN_SEA;
+    case DNGN_ENDLESS_SLUDGE:
+        return TILE_ENDLESS_SLUDGE;
     case DNGN_TOXIC_BOG:
         return TILE_DNGN_TOXIC_BOG;
     case DNGN_QUAGMIRE:
@@ -619,6 +621,9 @@ tileidx_t tileidx_feature(const coord_def &gc)
         {
             return TILE_DNGN_DEEP_WATER_MURKY;
         }
+        else if (player_in_branch(BRANCH_DUNGEON) && you.depth == 2)
+            return TILE_DNGN_DEEP_WATER_MURKY;
+
         else if (player_in_branch(BRANCH_SHOALS))
             return TILE_SHOALS_DEEP_WATER;
 
@@ -631,6 +636,8 @@ tileidx_t tileidx_feature(const coord_def &gc)
             {
                 t = TILE_DNGN_SHALLOW_WATER_MURKY;
             }
+            else if (player_in_branch(BRANCH_DUNGEON) && you.depth == 2)
+                t = TILE_DNGN_SHALLOW_WATER_MURKY;
             else if (player_in_branch(BRANCH_SHOALS))
                 t = TILE_SHOALS_SHALLOW_WATER;
 

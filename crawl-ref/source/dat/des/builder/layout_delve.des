@@ -61,6 +61,7 @@ TAGS: overwritable layout unrand no_exits water_ok
 	local a = 0
 	local b = 0
 	local c = crawl.random_range(20, 50);
+	local d = 'a'
 
 	for x = 1, columns do
 	  if crawl.coinflip() then
@@ -70,7 +71,12 @@ TAGS: overwritable layout unrand no_exits water_ok
 	    a = 5
 		b = 4
 	  end
-	  fill_area{x1 = gxm/(columns + 1) * x - a, y1 = 1, x2 = gxm/(columns + 1) * x + b, y2 = gym - 1, fill = 'W', border = 'a'}
+	  if crawl.coinflip() then
+	    d = 'a'
+	  else
+	    d = 'b'
+	  end
+	  fill_area{x1 = gxm/(columns + 1) * x - a, y1 = 1, x2 = gxm/(columns + 1) * x + b, y2 = gym - 1, fill = 'W', border = d}
 	end
 
     if crawl.coinflip() then
@@ -80,13 +86,30 @@ TAGS: overwritable layout unrand no_exits water_ok
 	  a = 6
 	  b = 5
 	end
-	fill_area{x1 = 1, y1 = c - a, x2 = gxm - 1, y2 = c + b, fill = 'W', border = 'a'}
+	if crawl.coinflip() then
+	  d = 'a'
+	else
+	  d = 'b'
+	end
+	fill_area{x1 = 1, y1 = c - a, x2 = gxm - 1, y2 = c + b, fill = 'W', border = d}
 	
-	sewer_iterate();
+	sewer_iterate()
 
-	kfeat('b = open_sea');
+	subst("W = d")
+
+	local pool_contents = {}
+    pool_contents["w"] = 80
+    add_pools { replace = "d",
+			    pool_size = 32 + crawl.random2(16),
+			    contents = pool_contents,
+			    frequency = 5 }
+
+	kfeat("pd = shallow_water")
+	kmons("p = withered_plant")
+	kfeat("h = open_sea")
 	colour("w = green")
-    colour("W = lightgreen")
+	colour("cv  = red")
+    colour("Wpd = lightgreen")
 
 	subst("X = x")
 }}

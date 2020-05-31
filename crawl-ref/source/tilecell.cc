@@ -407,11 +407,13 @@ static void _pack_default_waves(const coord_def &gc, crawl_view_buffer& vbuf)
     if (!feat_is_water(feat) && !feat_is_lava(feat))
         return;
 
-    if ((feat == DNGN_DEEP_WATER || feat == DNGN_DEEP_SLIMY_WATER) && (colour == BLACK || colour == GREEN))
+    if ((feat == DNGN_DEEP_WATER || feat == DNGN_DEEP_SLIMY_WATER || feat == DNGN_ENDLESS_SLUDGE) && (colour == BLACK || colour == GREEN))
     {
         // +7 and -- reverse the iteration order
         if (feat == DNGN_DEEP_SLIMY_WATER)
             colour = MAGENTA; // HACK
+        if (feat == DNGN_ENDLESS_SLUDGE)
+            colour = GREEN; // HACK
         int tile = _base_wave_tile(colour) + 7;
         for (adjacent_iterator ai(gc); ai; ++ai, --tile)
         {

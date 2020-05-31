@@ -472,7 +472,7 @@ bool feat_is_permarock(dungeon_feature_type feat)
 bool feat_is_endless(dungeon_feature_type feat)
 {
     return feat == DNGN_OPEN_SEA || feat == DNGN_LAVA_SEA
-           || feat == DNGN_ENDLESS_SALT;
+           || feat == DNGN_ENDLESS_SALT || feat == DNGN_ENDLESS_SLUDGE;
 }
 
 /** Can this feature be dug?
@@ -507,6 +507,7 @@ bool feat_is_water(dungeon_feature_type feat)
     return feat == DNGN_SHALLOW_WATER
            || feat == DNGN_DEEP_WATER
            || feat == DNGN_OPEN_SEA
+           || feat == DNGN_ENDLESS_SLUDGE
            || feat == DNGN_TOXIC_BOG
            || feat == DNGN_QUAGMIRE
            || feat == DNGN_SLIMY_WATER
@@ -672,6 +673,7 @@ bool feat_is_valid_border(dungeon_feature_type feat)
     return feat_is_wall(feat)
            || feat_is_tree(feat)
            || feat == DNGN_OPEN_SEA
+           || feat == DNGN_ENDLESS_SLUDGE
            || feat == DNGN_LAVA_SEA
            || feat == DNGN_ENDLESS_SALT;
 }

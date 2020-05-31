@@ -242,6 +242,7 @@ dungeon_feature_type magic_map_base_feat(dungeon_feature_type feat)
             return DNGN_FLOOR;
         case DNGN_OPEN_SEA:
         case DNGN_LAVA_SEA:
+        case DNGN_ENDLESS_SLUDGE:
             return DNGN_SHALLOW_WATER;
         default:
             break;

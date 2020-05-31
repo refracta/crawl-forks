@@ -895,6 +895,13 @@ void move_player_action(coord_def move)
             canned_msg(MSG_CANNOT_MOVE);
         else if (grd(targ) == DNGN_OPEN_SEA)
             mpr("The ferocious winds and tides of the open sea thwart your progress.");
+        else if (grd(targ) == DNGN_ENDLESS_SLUDGE)
+        {
+            if (you.can_smell())
+                mpr("The horrid stench of the seemingly endless sewage repels you from going further.");
+            else
+                mpr("The rot and filth of the seemingly endless sewage repels you from going further.");
+        }
         else if (grd(targ) == DNGN_LAVA_SEA)
             mpr("The endless sea of lava is not a nice place.");
         else if (feat_is_tree(grd(targ)) && you_worship(GOD_FEDHAS))
