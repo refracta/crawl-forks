@@ -2211,6 +2211,61 @@ LUAFN(dgn_delve)
     return 0;
 }
 
+LUAFN(dgn_sewer_iterate)
+{
+    LINES(ls, 1, map, lines);
+
+    UNUSED(ls);
+
+    ASSERT(lines.width() <= GXM);
+    ASSERT(lines.height() <= GYM);
+
+    int water_count = 0;
+    int floor_count = 0;
+    int solid_count = 0;
+    const char *sewerwall = "a";
+    const char *water     = "wW";
+    const char *floor     = ".";
+    const char *solid     = "avxc";
+    bool metal = coinflip();
+
+    for (int x = lines.width(); x >= 0; x--)
+        for (int y = lines.height(); y >= 0; y--)
+        {
+            coord_def c(x, y);
+            if (_valid_coord(ls, lines, x, y, false))
+            {
+                if (strchr(sewerwall, lines(c)))
+                {
+                    for (adjacent_iterator ai(c); ai; ++ai)
+                    {
+                        if (_valid_coord(ls, lines, ai->x, ai->y, false))
+                        {
+                            if (strchr(water, lines(*ai)))
+                                water_count++;
+                            else if (strchr(floor, lines(*ai))) 
+                                floor_count++;
+                            else if (strchr(solid, lines(*ai)))
+                                solid_count++;
+                        }
+                    }
+                    if (water_count > 4)
+                        lines(c) = 'W';
+                    else if (floor_count >= 2 && coinflip())
+                        lines(c) = '.';
+                    else if (metal)
+                        lines(c) = 'v';
+                    else
+                        lines(c) = 'c';
+                }
+                floor_count = 0;
+                water_count = 0;
+                solid_count = 0;
+            }
+        }
+    return 0;
+}
+
 LUAFN(dgn_farthest_from)
 {
     LINES(ls, 1, map, lines);
@@ -2323,6 +2378,7 @@ const struct luaL_reg dgn_build_dlib[] =
     { "primary_vault_dimensions", &dgn_primary_vault_dimensions },
     { "join_the_dots", &dgn_join_the_dots },
     { "make_circle", &dgn_make_circle },
+    { "sewer_iterate", &dgn_sewer_iterate },
     { "make_diamond", &dgn_make_diamond },
     { "make_rounded_square", &dgn_make_rounded_square },
     { "make_square", &dgn_make_square },
