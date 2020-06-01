@@ -726,6 +726,15 @@ snake8
 %weight 10
 snake9
 
+sewer0 WALL_SEWER
+sewer1
+sewer2
+sewer3
+sewer4
+sewer5
+sewer6
+sewer7
+
 %weight 10
 spider00 WALL_SPIDER
 spider01

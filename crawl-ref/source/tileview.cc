@@ -95,8 +95,8 @@ void tile_default_flv(branch_type br, tile_flavour &flv)
     case BRANCH_DUNGEON:
         if (you.depth == 2)
         {
-            flv.wall  = TILE_WALL_PEBBLE_GREEN;
-            flv.floor = TILE_FLOOR_SLIME;
+            flv.wall  = TILE_WALL_PEBBLE_CYAN;
+            flv.floor = TILE_FLOOR_ROUGH_GREEN;
             return;
         }
         flv.wall  = TILE_WALL_NORMAL;
@@ -1294,6 +1294,13 @@ void apply_variations(const tile_flavour &flv, tileidx_t *bg,
             orig = TILE_WALL_LAB_METAL;
         else if (orig == TILE_WALL_PERMAROCK)
             orig = TILE_WALL_PERMAROCK_BROWN;
+    }
+    else if (player_in_branch(BRANCH_DUNGEON) && you.depth == 2)
+    {
+        if (orig == TILE_DNGN_STONE_WALL)
+            orig = TILE_WALL_SEWER;
+        if (orig == TILE_DNGN_METAL_WALL)
+            orig = TILE_DNGN_METAL_WALL_GREEN;
     }
     else if (player_in_branch(BRANCH_CRYPT))
     {

@@ -439,7 +439,9 @@ static void _builder_assertions()
                 case BRANCH_DUNGEON:
                     if (you.depth == 2)
                         grd(*ri) = DNGN_ENDLESS_SLUDGE;
-                    // Fallthrough
+                    else
+                        grd(*ri) = DNGN_PERMAROCK_WALL;
+                    break;
                 default:
                     grd(*ri) = DNGN_PERMAROCK_WALL;
                     break;
@@ -1415,7 +1417,7 @@ static int _mon_count_base()
         case 1:
             return 18;
         case 2:
-            return 24;
+            return 30;
         case 3:
             return 12;
         case 4:

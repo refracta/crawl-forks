@@ -35,6 +35,8 @@ int branch_ood_cap(branch_type branch)
     case BRANCH_CRYPT:
     case BRANCH_TOMB:
         return 5;
+    case BRANCH_SEWER:
+        return 3;
     default:
         return branches[branch].numlevels;
     }

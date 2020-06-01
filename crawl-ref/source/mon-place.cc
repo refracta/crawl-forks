@@ -235,6 +235,7 @@ static void _apply_ood(level_id &place)
     // OODs do not apply to any portal vaults, any 1-level branches, Zot and
     // hells. What with newnewabyss?
     if (!is_connected_branch(place)
+        || place.branch == BRANCH_SEWER
         || place.branch == BRANCH_ZOT
         || is_hell_subbranch(place.branch)
         || brdepth[place.branch] <= 1)
@@ -388,7 +389,10 @@ static void _adjust_pop_place(level_id &place)
         {
         default:
         case 1:
+            break;
         case 2:
+            place.depth = 1;
+            place.branch = BRANCH_SEWER;
             break;
         case 3:
             place.depth = 4;
@@ -1866,7 +1870,7 @@ static const map<monster_type, band_set> bands_by_leader = {
     { MONS_SAINT_ROKA,      { {}, {{ BAND_ORC_KNIGHT, {8, 16}, true }}}},
     { MONS_ORC_KNIGHT,      { {}, {{ BAND_ORC_KNIGHT, {3, 7}, true }}}},
     { MONS_ORC_HIGH_PRIEST, { {}, {{ BAND_ORC_KNIGHT, {4, 8}, true }}}},
-    { MONS_BIG_KOBOLD,      { {0, 4}, {{ BAND_KOBOLDS, {2, 8} }}}},
+    { MONS_BIG_KOBOLD,      { {}, {{ BAND_KOBOLDS, {2, 8}, true }}}},
     { MONS_KILLER_BEE,      { {}, {{ BAND_KILLER_BEES, {2, 6} }}}},
     { MONS_CAUSTIC_SHRIKE,  { {}, {{ BAND_CAUSTIC_SHRIKE, {2, 5} }}}},
     { MONS_SHARD_SHRIKE,    { {}, {{ BAND_SHARD_SHRIKE, {1, 4} }}}},
@@ -1874,7 +1878,7 @@ static const map<monster_type, band_set> bands_by_leader = {
     { MONS_SLIME_CREATURE,  { {}, {{ BAND_SLIME_CREATURES, {2, 6} }}}},
     { MONS_YAK,             { {}, {{ BAND_YAKS, {2, 6} }}}},
     { MONS_VERY_UGLY_THING, { {0, 19}, {{ BAND_VERY_UGLY_THINGS, {2, 6} }}}},
-    { MONS_UGLY_THING,      { {0, 13}, {{ BAND_UGLY_THINGS, {2, 6} }}}},
+    { MONS_UGLY_THING,      { {0, 6}, {{ BAND_UGLY_THINGS, {2, 6} }}}},
     { MONS_HELL_HOUND,      { {}, {{ BAND_HELL_HOUNDS, {2, 5} }}}},
     { MONS_JACKAL,          { {}, {{ BAND_JACKALS, {1, 4} }}}},
     { MONS_MARGERY,         { {}, {{ BAND_HELL_KNIGHTS, {4, 8}, true }}}},
@@ -2030,7 +2034,7 @@ static const map<monster_type, band_set> bands_by_leader = {
     { MONS_SPARK_WASP,      { {0, 0, []() {
         return you.where_are_you == BRANCH_DEPTHS;
     }},                           {{ BAND_SPARK_WASPS, {1, 4} }}}},
-    { MONS_HOWLER_MONKEY,   { {2, 6}, {{ BAND_HOWLER_MONKEY, {1, 3} }}}},
+    { MONS_HOWLER_MONKEY,   { {2, 3}, {{ BAND_HOWLER_MONKEY, {1, 3} }}}},
     { MONS_FLOATING_EYE,   { {0, 0, []() {
         return branch_has_monsters(you.where_are_you)
             || !vault_mon_types.empty();
@@ -2216,7 +2220,6 @@ static const map<band_type, vector<member_possibilites>> band_membership = {
     { BAND_HOWLER_MONKEY,       {{{MONS_HOWLER_MONKEY, 1}}}},
     { BAND_CAUSTIC_SHRIKE,      {{{MONS_CAUSTIC_SHRIKE, 1}}}},
     { BAND_DANCING_WEAPONS,     {{{MONS_DANCING_WEAPON, 1}}}},
-    { BAND_SLIME_CREATURES,     {{{MONS_SLIME_CREATURE, 1}}}},
     { BAND_SPRIGGAN_RIDERS,     {{{MONS_SPRIGGAN_RIDER, 1}}}},
     { BAND_MOLTEN_GARGOYLES,    {{{MONS_MOLTEN_GARGOYLE, 1}}}},
     { BAND_SKELETAL_WARRIORS,   {{{MONS_SKELETAL_WARRIOR, 1}}}},
@@ -2496,6 +2499,10 @@ static monster_type _band_member(band_type band, int which,
         else
             return one_chance_in(7) ? MONS_SALAMANDER : MONS_NAGA;
 
+    case BAND_SLIME_CREATURES:
+        if (env.absdepth0 >= 4)
+            return MONS_SLIME_CREATURE;
+        return random_choose_weighted ( 3, MONS_OOZE, 1, MONS_JELLY);
 
     case BAND_DRACONIAN:
         if (env.absdepth0 >= 24 && x_chance_in_y(13, 40))

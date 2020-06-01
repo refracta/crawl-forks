@@ -996,14 +996,22 @@ static const pop_entry pop_desolation[] =
 
 static const pop_entry pop_sewer[] =
 { // Sewer
-  {  1,  1, 1000, FLAT, MONS_FRILLED_LIZARD },
-  {  1,  1,  515, FLAT, MONS_LEOPARD_GECKO },
-  {  1,  1, 1000, FLAT, MONS_BAT },
-  {  1,  1,  515, FLAT, MONS_BALL_PYTHON },
-  {  1,  1,  515, FLAT, MONS_ADDER },
-  {  1,  1,  515, FLAT, MONS_WORM },
-  {  1,  1,  515, FLAT, MONS_OOZE },
-  {  1,  1,  515, FLAT, MONS_GIANT_COCKROACH },
+  {  1,  3,  515, FALL, MONS_FRILLED_LIZARD },
+  {  1,  3,  515, FALL, MONS_LEOPARD_GECKO },
+  {  1,  3, 1000, FALL, MONS_BAT },
+  {  1,  3,  515, FALL, MONS_BALL_PYTHON },
+  {  1,  3,  255, FALL, MONS_RAT },
+  {  1,  3,  515, FLAT, MONS_ADDER },
+  {  1,  3,  515, FALL, MONS_WORM },
+  {  1,  3,  515, FALL, MONS_OOZE },
+  {  1,  2, 1000, FALL, MONS_GIANT_COCKROACH },
+  {  1,  2, 1000, FLAT, MONS_RIVER_RAT },
+  {  1,  4, 1000, RISE, MONS_BIG_KOBOLD },
+  {  1,  2, 1000, FLAT, MONS_SKELETON },
+  {  1,  4,  255, RISE, MONS_JELLY },
+  {  1,  4,  255, RISE, MONS_CROCODILE },
+  {  1,  4,  255, RISE, MONS_SLIME_CREATURE },
+  {  1,  4,  255, RISE, MONS_BULLFROG },
   { 0,0,0,FLAT,MONS_0 }
 };
 
@@ -1298,7 +1306,7 @@ static const population_list population_zombie[] =
 #endif
     POP(bazaar),
     POP(trove),
-    POP(sewer),
+    POP(d), // Sewer
     POP(ossuary),
     POP(bailey),
 #if TAG_MAJOR_VERSION > 34
