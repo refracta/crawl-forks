@@ -228,7 +228,7 @@ DEPTH:  D:4-6
 
 NAME:   uniq_purgy
 DEPTH:  D:2
-WEIGHT: 1
+WEIGHT: 30
 : place_unique(_G, "Purgy")
 
 NAME:   uniq_robin
