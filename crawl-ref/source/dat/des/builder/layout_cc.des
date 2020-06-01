@@ -12,7 +12,7 @@
 # TODO: Fill disconnected areas as per [Mantis->9044].
 #
 NAME:   layout_basic
-DEPTH:  D, Snake, Crypt, Depths, Zot, Pan
+DEPTH:  D, !D:2, Snake, Crypt, Depths, Zot, Pan
 WEIGHT: 35 (D), 15 (Snake), 10 (Crypt), 20 (Depths), 20 (Zot), 15 (Pan)
 ORIENT: encompass
 TAGS:   overwritable layout allow_dup unrand layout_type_rooms

@@ -18,7 +18,7 @@
 # functions from weighted selections and draw them overwritten.
 #
 NAME:   layout_layer_cave
-DEPTH:  D:2-, Lair, Snake
+DEPTH:  D:3-, Lair, Snake
 WEIGHT: 5, 15 (Snake)
 ORIENT: encompass
 TAGS:   overwritable layout allow_dup unrand layout_type_narrow_caves
@@ -290,7 +290,7 @@ validate {{
 # TODO: Wider the paths, then add to Spider at weight 10.
 #
 NAME:   layout_cave_pods
-DEPTH:  D:2-, Lair, Snake
+DEPTH:  D:3-, Lair, Snake
 WEIGHT: 5, 15 (Lair)
 ORIENT: encompass
 TAGS:   overwritable layout allow_dup unrand layout_type_open_caves

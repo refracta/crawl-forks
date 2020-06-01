@@ -258,7 +258,7 @@ TAGS:   no_hmirror no_vmirror layout_type_passages
 # Attempting to use this layout causes LUA runtime errors.
 #
 NAME:   layout_layered_grid
-DEPTH:  D, Depths, Crypt, Lair
+DEPTH:  D, !D:2, Depths, Crypt, Lair
 WEIGHT: 0
 ORIENT: encompass
 TAGS:   overwritable layout allow_dup unrand no_pool_fixup layout_type_passages

@@ -1202,7 +1202,7 @@ end
 #  can be difficult to see in the final map.
 #
 NAME:   layout_loops_ring
-DEPTH:  D, Elf, Lair
+DEPTH:  D, !D:2, Elf, Lair
 WEIGHT: 15 (D), 5 (Elf), 8 (Lair)
 ORIENT: encompass
 TAGS:   overwritable layout allow_dup unrand layout_type_corridors
@@ -1324,7 +1324,7 @@ ENDMAP
 #  another (random) arm of the cross.
 #
 NAME:   layout_loops_cross
-DEPTH:  D, Elf
+DEPTH:  D, !D:2, Elf
 WEIGHT: 5 (D), 10 (Elf)
 ORIENT: encompass
 TAGS:   overwritable layout allow_dup unrand layout_type_corridors
@@ -1599,7 +1599,7 @@ ENDMAP
 #  generated around the central rooms.
 #
 NAME:   layout_loops_corners
-DEPTH:  D, Elf
+DEPTH:  D, !D:2, Elf
 WEIGHT: 5 (D), 15 (Elf)
 ORIENT: encompass
 TAGS:   overwritable layout allow_dup unrand layout_type_corridors
