@@ -6293,8 +6293,7 @@ void unmarshallMonster(reader &th, monster& m)
     if (m.type == MONS_NO_MONSTER)
         return;
 
-    if (invalid_monster_type(m.type))
-        m.type = MONS_GHOST;
+    ASSERT(!invalid_monster_type(m.type));
 
 #if TAG_MAJOR_VERSION == 34
     uint32_t parts    = 0;
