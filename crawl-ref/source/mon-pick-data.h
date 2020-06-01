@@ -1005,7 +1005,7 @@ static const pop_entry pop_sewer[] =
   {  1,  3,  515, FALL, MONS_WORM },
   {  1,  3,  515, FALL, MONS_OOZE },
   {  1,  2, 1000, FALL, MONS_GIANT_COCKROACH },
-  {  1,  2, 1000, FLAT, MONS_RIVER_RAT },
+  {  1,  2, 1000, FLAT, MONS_SEWER_RAT },
   {  1,  4, 1000, RISE, MONS_BIG_KOBOLD },
   {  1,  2, 1000, FLAT, MONS_SKELETON },
   {  1,  4,  255, RISE, MONS_JELLY },

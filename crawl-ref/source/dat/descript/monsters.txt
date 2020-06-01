@@ -2034,10 +2034,10 @@ rime drake
 
 A small but dangerous dragon. Its breath is visible even on the warmest days.
 %%%%
-river rat
+sewer rat
 
-A rodent with hair of a most peculiar green colour, and a powerful bite. It
-tends to form great swarms with its kin.
+A rodent with fur of a most peculiar green colour and a powerful bite. It takes 
+to like a fish the putrid waters of the sewers and forms large swarms with its kin.
 %%%%
 the Royal Jelly
 

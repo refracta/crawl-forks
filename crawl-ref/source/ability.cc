@@ -2313,7 +2313,7 @@ static spret _do_ability(const ability_def& abil, bool fail)
 
         for (int i = 0; i < (coinflip() + 1); ++i)
         {
-            monster_type mon = coinflip() ? MONS_HELL_RAT : MONS_RIVER_RAT;
+            monster_type mon = coinflip() ? MONS_HELL_RAT : MONS_SEWER_RAT;
 
             mgen_data mg(mon, BEH_FRIENDLY, you.pos(), MHITYOU);
             if (monster *m = create_monster(mg))
