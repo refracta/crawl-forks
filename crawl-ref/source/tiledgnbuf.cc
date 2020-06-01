@@ -128,7 +128,7 @@ void DungeonCellBuffer::add_dngn_tile(int tileidx, int x, int y,
         m_buf_wall.add(tileidx, x, y);
     else if (in_water)
     {
-        m_buf_floor.add(TILE_DNGN_SHALLOW_WATER, x, y);
+        m_buf_floor.add(TILE_DNGN_SHALLOW_WATER_MURKY, x, y);
         m_buf_feat_trans.add(tileidx, x, y, 0, true, false);
     }
     else if (in_slime)

@@ -623,6 +623,8 @@ tileidx_t tileidx_feature(const coord_def &gc)
         }
         else if (player_in_branch(BRANCH_DUNGEON) && you.depth == 2)
             return TILE_DNGN_DEEP_WATER_MURKY;
+        else if (player_in_branch(BRANCH_SWAMP))
+            return TILE_DNGN_DEEP_WATER_MURKY;
 
         else if (player_in_branch(BRANCH_SHOALS))
             return TILE_SHOALS_DEEP_WATER;
@@ -637,6 +639,8 @@ tileidx_t tileidx_feature(const coord_def &gc)
                 t = TILE_DNGN_SHALLOW_WATER_MURKY;
             }
             else if (player_in_branch(BRANCH_DUNGEON) && you.depth == 2)
+                t = TILE_DNGN_SHALLOW_WATER_MURKY;
+            else if (player_in_branch(BRANCH_SWAMP))
                 t = TILE_DNGN_SHALLOW_WATER_MURKY;
             else if (player_in_branch(BRANCH_SHOALS))
                 t = TILE_SHOALS_SHALLOW_WATER;
