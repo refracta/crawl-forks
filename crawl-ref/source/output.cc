@@ -1433,6 +1433,9 @@ static string _level_description_string_hud()
     const PlaceInfo& place = you.get_place_info();
     string short_name = branches[place.branch].shortname;
 
+    if (place.branch == BRANCH_DUNGEON && you.depth == 2)
+        return "D:2 (Sewer)";
+
     if (brdepth[place.branch] > 1)
         short_name += make_stringf(":%d", you.depth);
     // Indefinite articles

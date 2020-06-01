@@ -983,6 +983,8 @@ void TilesFramework::_send_player(bool force_full)
             short_name = article_a(short_name);
         }
     }
+    if (place.branch == BRANCH_DUNGEON && you.depth == 2)
+        short_name = "D:2 (Sewer)";
     _update_string(force_full, c.place, short_name, "place");
     _update_int(force_full, c.depth, brdepth[place.branch] > 1 ? you.depth : 0, "depth");
 
