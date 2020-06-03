@@ -3370,7 +3370,7 @@ void level_change(bool skip_attribute_increase)
 
                     _draconian_skill_check();
 
-                    if (!(you.experience_level % 5))
+                    if (!(you.experience_level % 3))
                     {
                         mprf(MSGCH_INTRINSIC_GAIN, "Your scales feel tougher.");
                         you.redraw_armour_class = true;
@@ -6389,11 +6389,11 @@ int player::racial_ac(bool temp) const
         && (!player_is_shapechanged() || form == transformation::dragon
             || !temp))
     {
-        int AC = 900 + 100 * (experience_level / 5);  // max 14
+        int AC = 500 + 100 * (experience_level / 3);  // max 14
         if (you.drac_colour == DR_BONE)
-            AC *= 3;
-        if (you.drac_colour == DR_PEARL || you.drac_colour == DR_SILVER)
             AC *= 2;
+        if (you.drac_colour == DR_PEARL || you.drac_colour == DR_SILVER)
+            AC = div_round_up(AC * 3, 2);
         if (you.drac_colour == DR_SCINTILLATING)
             AC += 3;
         return AC;
