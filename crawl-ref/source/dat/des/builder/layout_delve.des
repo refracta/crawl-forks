@@ -111,6 +111,10 @@ TAGS: overwritable layout unrand no_exits water_ok
 	colour("cv  = red")
     colour("Wpd = lightgreen")
 
+    connect_adjacent_rooms { max = crawl.random_range(200, 450),
+		min = 50, replace = 'W' }
+    zonify.map_fill_zones(_G, 1, 'x')
+
 	subst("X = x")
 }}
 
