@@ -146,12 +146,12 @@ Their magical reserves absorb damage, and they pack a magic-restoring bite.
 %%%%
 Silent Spectre
 
-Ephermal spirits surrounded by an uncanny silence. They cannot read scrolls
+Ephemeral spirits surrounded by an uncanny silence. They cannot read scrolls
 aloud, but are adept at casting with gestures.
 %%%%
 Goblin
 
-Small creatures, adept at all skills; but physically and mentally 
+Small creatures, adept at all skills, but physically and mentally 
 deficient. Gods take pity on them, granting greater invocations power.
 They have an increased resistance to mutagenic effects.
 %%%%
