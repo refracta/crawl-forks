@@ -578,7 +578,7 @@ function ($, view_data, main, tileinfo_player, icons, dngn, enums,
             var renderer = this;
 
             if (cell.mangrove_water && bg_idx > dngn.DNGN_UNSEEN)
-                this.draw_dngn(dngn.DNGN_SHALLOW_WATER, x, y);
+                this.draw_dngn(dngn.DNGN_SHALLOW_WATER_MURKY, x, y);
             else if (cell.mushroom_slime && bg_idx > dngn.DNGN_UNSEEN)
                 this.draw_dngn(dngn.DNGN_SLIMY_WATER, x, y);
             else if (bg_idx >= dngn.DNGN_FIRST_TRANSPARENT)
