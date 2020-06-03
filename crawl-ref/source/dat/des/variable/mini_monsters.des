@@ -84,7 +84,7 @@ default-depth: D:4-, Depths, Elf
 NAME:  minmay_lizard_pond
 TAGS:  transparent
 DEPTH: D:1-2
-KMONS: 1 = frilled lizard
+KMONS: 1 = cinder newt
 KFEAT: 1 = W
 SUBST: W = WWW1
 MAP
@@ -1011,7 +1011,7 @@ NAME:    hangedman_parallel_progression
 TAGS:    patrolling no_monster_gen transparent
 TAGS:    layout_rooms layout_corridors
 DEPTH:   D:5-
-MONS:    rat, bat, frilled lizard / leopard gecko, worm, ooze
+MONS:    rat, bat, cinder newt / leopard gecko, worm, ooze
 MONS:    giant cockroach, jackal
 KMONS:   8 = ball python / adder w:8
 KMONS:   A = sewer rat
@@ -1154,7 +1154,7 @@ ENDMAP
 NAME:   wander_ebering_terrifying_dragon_lair
 TAGS:   no_monster_gen
 DEPTH:  D:1
-MONS:   frilled lizard / leopard gecko
+MONS:   cinder newt / leopard gecko
 NSUBST:  $ = $ / 4=$.. / *:.
 NSUBST:  D = 3:d / 3=d.. / *:.
 NSUBST:  E = e / 2=e. / .
@@ -4406,7 +4406,7 @@ ENDMAP
 
 NAME:    minmay_lizard_king
 DEPTH:   D:1-6
-MONS:    frilled lizard, leopard gecko, iguana, crocodile, basilisk, plant
+MONS:    cinder newt, leopard gecko, iguana, crocodile, basilisk, plant
 SUBST:   6 = 61, 1 = 1.
 : if you.absdepth() > 4 then
 SUBST:   1 = 433221

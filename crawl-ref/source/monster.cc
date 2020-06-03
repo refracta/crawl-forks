@@ -5393,7 +5393,8 @@ static bool _mons_is_fiery(int mc)
            || mc == MONS_SALAMANDER
            || mc == MONS_SALAMANDER_MYSTIC
            || mc == MONS_MOLTEN_GARGOYLE
-           || mc == MONS_ORB_OF_FIRE;
+           || mc == MONS_ORB_OF_FIRE
+           || mc == MONS_CINDER_NEWT;
 }
 
 bool monster::is_fiery() const

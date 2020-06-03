@@ -124,7 +124,7 @@ meliai MONS_MELIAI
 %sdir mon/animals
 
 ## Lizards ('l')
-frilled_lizard MONS_FRILLED_LIZARD
+frilled_lizard MONS_CINDER_NEWT
 leopard_gecko MONS_LEOPARD_GECKO
 iguana MONS_IGUANA
 basilisk MONS_BASILISK

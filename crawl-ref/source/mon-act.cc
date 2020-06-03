@@ -4042,6 +4042,9 @@ static bool _monster_move(monster* mons)
             place_cloud(CLOUD_FIRE, mons->pos(), 2 + random2(4), mons);
         }
 
+        if (mons->type == MONS_CINDER_NEWT && feat_is_watery(grd(mons->pos())))
+            place_cloud(CLOUD_STEAM, mons->pos(), 2 + random2(4), mons);
+
         if (mons->type == MONS_EPHEMERAL_SPIRIT)
             check_place_cloud(CLOUD_EPHEMERAL, mons->pos(), 2, mons);
 

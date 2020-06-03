@@ -1154,10 +1154,11 @@ freed slave
 A human who has just been released from magical enslavement. It tries to stand
 proudly, despite its lingering fear and unkempt appearance.
 %%%%
-frilled lizard
+cinder newt
 
-A lizard with a giant and colourful fringe folded around its neck. It flares
-its impressive frill at its victims while hissing angrily.
+A small amphibian with a somewhat paradoxical association with both water and fire. 
+Spots on its back glow like hot embers and it shrouds itself in steam as it passes 
+through water.
 %%%%
 formicid
 

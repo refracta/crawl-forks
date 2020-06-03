@@ -4192,6 +4192,10 @@ bool monster_shover(const monster& m)
         return false;
     }
 
+    // Veto Cinder Newts when they would leave steam.
+    if (m.type == MONS_CINDER_NEWT && feat_is_watery(grd(m.pos())))
+        return false;
+
     // Monsters too stupid to use stairs (e.g. non-spectral zombified undead)
     // are also disqualified.
     // However, summons *can* push past pals & cause trouble.

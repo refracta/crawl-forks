@@ -6381,10 +6381,12 @@ default electric golem
 
 SOUND:@The_monster@ crackles and sizzles.
 %%%%
-################## Frilled lizard ##############################
-frilled lizard
+################## cinder newt ##############################
+cinder newt
 
-@The_monster@ unfolds @possessive@ giant frill.
+@The_monster@ exhales a small puff of smoke.
+
+@The_monster@ makes @possessive@ spots glow like burning embers. A small amount of steam evaporates from @possessive@ back.
 
 @The_monster@ hisses @at_foe@.
 %%%%
