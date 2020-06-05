@@ -650,6 +650,9 @@ bool is_noxious(const item_def &food)
     if (food.base_type != OBJ_FOOD && food.base_type != OBJ_CORPSES)
         return false;
 
+    if (food.is_type(OBJ_FOOD, FOOD_RATION))
+        return false;
+
     return determine_chunk_effect(food) == CE_NOXIOUS;
 }
 

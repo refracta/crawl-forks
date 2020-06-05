@@ -413,13 +413,6 @@ static int _acquirement_food_subtype(bool /*divine*/, int& quantity,
     // Food is a little less predictable now. - bwr
     if (you.species == SP_GHOUL)
         type_wanted = FOOD_CHUNK;
-    else if (you.species == SP_VAMPIRE)
-    {
-        // Vampires really don't want any OBJ_FOOD but OBJ_CORPSES
-        // but it's easier to just give them a potion of blood
-        // class type is set elsewhere
-        type_wanted = POT_BLOOD;
-    }
     else
         type_wanted = FOOD_RATION;
 
@@ -428,8 +421,6 @@ static int _acquirement_food_subtype(bool /*divine*/, int& quantity,
     // giving more of the lower food value items
     if (type_wanted == FOOD_CHUNK)
         quantity += 2 + random2avg(10, 2);
-    else if (type_wanted == POT_BLOOD)
-        quantity = 8 + random2(5);
 
     return type_wanted;
 }
@@ -714,7 +705,7 @@ static const acquirement_subtype_finder _subtype_finders[] =
     _acquirement_food_subtype,
     0, // no scrolls
     _acquirement_jewellery_subtype,
-    _acquirement_food_subtype, // potion acquirement = food for vampires
+    0, // no potions
     _acquirement_book_subtype,
     _acquirement_staff_subtype,
     0, // no, you can't acquire the orb
@@ -751,10 +742,6 @@ static int _find_acquirement_subtype(object_class_type &class_wanted,
         // Wands and misc have a common acquirement class.
         if (class_wanted == OBJ_MISCELLANY)
             class_wanted = random_choose(OBJ_WANDS, OBJ_MISCELLANY);
-
-        // Vampires acquire blood, not food.
-        if (class_wanted == OBJ_FOOD && you.species == SP_VAMPIRE)
-            class_wanted = OBJ_POTIONS;
 
         if (_subtype_finders[class_wanted])
         {
