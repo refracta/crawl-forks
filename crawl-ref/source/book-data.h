@@ -41,7 +41,6 @@ static const vector<spell_type> spellbook_templates[] =
 {   // Book of Summonings
     SPELL_RECALL,
     SPELL_AURA_OF_ABJURATION,
-    SPELL_SUMMON_DEMON,
     SPELL_SUMMON_FOREST,
     SPELL_SUMMON_MANA_VIPER,
     SPELL_SHADOW_CREATURES,
@@ -168,7 +167,6 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_SUMMON_SMALL_MAMMAL,
     SPELL_CALL_IMP,
     SPELL_CALL_CANINE_FAMILIAR,
-    SPELL_SUMMON_GUARDIAN_GOLEM,
     SPELL_SUMMON_ICE_BEAST,
     SPELL_SUMMON_LIGHTNING_SPIRE,
 },
@@ -354,7 +352,6 @@ static const vector<spell_type> spellbook_templates[] =
 
 {   // Grand Grimoire
     SPELL_MONSTROUS_MENAGERIE,
-    SPELL_SUMMON_GREATER_DEMON,
     SPELL_MALIGN_GATEWAY,
     SPELL_SUMMON_HORRIBLE_THINGS,
 },
