@@ -1657,6 +1657,7 @@ ENDMAP
 NAME:    kb_tengu_band
 DEPTH:   D:6-, Shoals, Swamp
 WEIGHT:  5
+KFEAT:   t = mangrove
 TAGS:    no_pool_fixup transparent
 MONS:    tengu warrior, tengu conjurer
 MAP

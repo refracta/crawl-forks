@@ -424,7 +424,7 @@ static void _builder_assertions()
                 switch (you.where_are_you)
                 {
                 case BRANCH_SWAMP:
-                    grd(*ri) = DNGN_TREE;
+                    grd(*ri) = DNGN_MANGROVE;
                     break;
                 case BRANCH_SHOALS:
                     grd(*ri) = DNGN_OPEN_SEA;
@@ -1572,7 +1572,7 @@ static void _slimify_water()
                 grd(*ri) = DNGN_SLIMY_WATER;
                 if (env.map_knowledge(*ri).seen())
                 {
-                    env.map_knowledge(*ri).set_feature(DNGN_TREE, 0,
+                    env.map_knowledge(*ri).set_feature(DNGN_SLIMESHROOM, 0,
                         get_trap_type(*ri));
 #ifdef USE_TILE
                     env.tile_bk_bg(*ri) = DNGN_SLIMY_WATER;
@@ -1588,18 +1588,18 @@ static void _slimify_water()
                 bool clumping = false;
                 for (adjacent_iterator ai(*ri); ai; ++ai)
                 {
-                    if (grd(*ai) == DNGN_TREE)
+                    if (grd(*ai) == DNGN_SLIMESHROOM)
                         clumping = true;
                 }
                 if (one_chance_in(25) || clumping && !one_chance_in(3))
                 {
-                    grd(*ri) = DNGN_TREE;
+                    grd(*ri) = DNGN_SLIMESHROOM;
                     if (env.map_knowledge(*ri).seen())
                     {
-                        env.map_knowledge(*ri).set_feature(DNGN_TREE, 0,
+                        env.map_knowledge(*ri).set_feature(DNGN_SLIMESHROOM, 0,
                             get_trap_type(*ri));
 #ifdef USE_TILE
-                        env.tile_bk_bg(*ri) = DNGN_TREE;
+                        env.tile_bk_bg(*ri) = DNGN_SLIMESHROOM;
 #endif
                     }
                 }
@@ -1614,12 +1614,12 @@ static void _slimify_water()
 
         if (in_bounds(item.pos))
         {
-            if (grd(item.pos) == DNGN_TREE)
+            if (grd(item.pos) == DNGN_SLIMESHROOM)
             {
                 grd(item.pos) = DNGN_SLIMY_WATER;
                 if (env.map_knowledge(item.pos).seen())
                 {
-                    env.map_knowledge(item.pos).set_feature(DNGN_TREE, 0,
+                    env.map_knowledge(item.pos).set_feature(DNGN_SLIMESHROOM, 0,
                         get_trap_type(item.pos));
 #ifdef USE_TILE
                     env.tile_bk_bg(item.pos) = DNGN_SLIMY_WATER;
@@ -2814,6 +2814,11 @@ static void _prepare_water()
         if (map_masked(*ri, MMT_NO_POOL) || grd(*ri) != DNGN_DEEP_WATER)
             continue;
 
+        bool green = false;
+
+        if (env.grid_colours(*ri) == LIGHTGREEN || env.grid_colours(*ri) == GREEN)
+            green = true;
+
         for (adjacent_iterator ai(*ri); ai; ++ai)
         {
             const dungeon_feature_type which_grid = grd(*ai);
@@ -2821,7 +2826,12 @@ static void _prepare_water()
             if (which_grid == DNGN_SHALLOW_WATER && one_chance_in(20)
                 || feat_has_dry_floor(which_grid) && x_chance_in_y(2, 5))
             {
-                _set_grd(*ri, DNGN_SHALLOW_WATER);
+                grd(*ri) = DNGN_SHALLOW_WATER;
+                if (green)
+                {
+                    env.tile_flv(*ri).feat = TILE_DNGN_SHALLOW_WATER_MURKY;
+                    env.grid_colours(*ri) = LIGHTGREEN;
+                }
                 break;
             }
         }
@@ -4495,13 +4505,13 @@ static const vault_placement *_build_vault_impl(const map_def *vault,
     if (!build_only && (placed_vault_orientation != MAP_ENCOMPASS || is_layout)
         && player_in_branch(BRANCH_SWAMP))
     {
-        _process_disconnected_zones(0, 0, GXM-1, GYM-1, true, DNGN_TREE);
+        _process_disconnected_zones(0, 0, GXM-1, GYM-1, true, DNGN_MANGROVE);
         // do a second pass to remove tele closets consisting of deep water
         // created by the first pass -- which will not fill in deep water
         // because it is treated as impassable.
         // TODO: get zonify to prevent these?
         // TODO: does this come up anywhere outside of swamp?
-        _process_disconnected_zones(0, 0, GXM-1, GYM-1, true, DNGN_TREE,
+        _process_disconnected_zones(0, 0, GXM-1, GYM-1, true, DNGN_MANGROVE,
                                     _dgn_square_is_ever_passable);
     }
 

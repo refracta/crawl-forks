@@ -1030,6 +1030,14 @@ static dungeon_feature_type rewrite_feature(dungeon_feature_type x,
         x = DNGN_CLEAR_STONE_WALL;
     }
 
+    if (minor_version < TAG_MINOR_MANGROVE_MUSHROOM && x == DNGN_TREE)
+    {
+        if (you.where_are_you == BRANCH_SLIME)
+            x = DNGN_SLIMESHROOM;
+        else if (you.where_are_you == BRANCH_SWAMP)
+            x = DNGN_MANGROVE;
+    }
+
     if (x == DNGN_ENTER_LABYRINTH)
         x = DNGN_ENTER_GAUNTLET;
 #endif

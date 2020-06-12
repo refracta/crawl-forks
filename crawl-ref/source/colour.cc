@@ -12,6 +12,7 @@
 #include "cloud.h"
 #include "dgn-height.h"
 #include "options.h"
+#include "religion.h" // jiyva_is_dead()
 #include "stringutil.h"
 #include "tiles-build-specific.h"
 #include "libutil.h" // map_find
@@ -252,8 +253,19 @@ static int _etc_tree(int, const coord_def& loc)
     h+=h<<10; h^=h>>6;
     h+=h<<3; h^=h>>11; h+=h<<15;
     return (h>>30) ? GREEN :
-        player_in_branch(BRANCH_SWAMP) ? BROWN  :
-        player_in_branch(BRANCH_SLIME) ? LIGHTMAGENTA : LIGHTGREEN; // Swamp trees are mangroves.
+        grd(loc) == DNGN_MANGROVE ? BROWN  : LIGHTGREEN;
+}
+
+static int _etc_slimeshroom(int, const coord_def& loc)
+{
+    if (jiyva_is_dead())
+        return LIGHTGREY;
+    int x = (loc.x + loc.y) % 3;
+    if (x == 1)
+        return MAGENTA;
+    if (x == 2)
+        return LIGHTMAGENTA;
+    return GREEN;
 }
 
 bool get_tornado_phase(const coord_def& loc)
@@ -589,6 +601,9 @@ void init_element_colours()
                        ));
     add_element_colour(new element_colour_calc(
                             ETC_TREE, "tree", _etc_tree
+                       ));
+    add_element_colour(new element_colour_calc(
+                            ETC_SLIMESHROOM, "slimeshroom", _etc_slimeshroom
                        ));
     add_element_colour(new element_colour_calc(
                             ETC_TORNADO, "tornado", _etc_tornado

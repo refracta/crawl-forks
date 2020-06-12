@@ -311,6 +311,9 @@ enum dungeon_feature_type
 
     DNGN_ENDLESS_SLUDGE,
 
+    DNGN_MANGROVE,
+    DNGN_SLIMESHROOM,
+
     NUM_FEATURES,
 };
 COMPILE_CHECK(NUM_FEATURES <= 256);

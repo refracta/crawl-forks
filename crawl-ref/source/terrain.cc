@@ -612,7 +612,7 @@ bool feat_is_player_altar(dungeon_feature_type grid)
  */
 bool feat_is_tree(dungeon_feature_type feat)
 {
-    return feat == DNGN_TREE;
+    return feat == DNGN_TREE || feat == DNGN_MANGROVE || feat == DNGN_SLIMESHROOM;
 }
 
 /** Is this feature made of metal?
@@ -2254,17 +2254,28 @@ void temp_change_terrain(coord_def pos, dungeon_feature_type newfeat, int dur,
     dungeon_terrain_changed(pos, newfeat, false, true, true);
 }
 
-/// What terrain type do destroyed feats become, in the current branch?
-static dungeon_feature_type _destroyed_feat_type()
+/// What terrain type does this feat become when destroyed?
+static dungeon_feature_type _destroyed_feat_type(dungeon_feature_type oldfeat)
 {
-    return                          player_in_branch(BRANCH_SWAMP) ? DNGN_SHALLOW_WATER :
-           player_in_branch(BRANCH_SLIME) && !you.royal_jelly_dead ? DNGN_SLIMY_WATER   :
-                                                                     DNGN_FLOOR;
+    switch (oldfeat)
+    {
+    case DNGN_MANGROVE:
+        return DNGN_SHALLOW_WATER;
+    case DNGN_SLIMY_WALL:
+        if (!one_chance_in(3))
+            return DNGN_FLOOR;
+        // fallthrough
+    case DNGN_SLIMESHROOM:
+        return you.royal_jelly_dead ? DNGN_FLOOR : DNGN_SLIMY_WATER;
+    default:
+        break;
+    }
+    return DNGN_FLOOR;
 }
 
 static bool _revert_terrain_to_floor(coord_def pos)
 {
-    dungeon_feature_type newfeat = _destroyed_feat_type();
+    dungeon_feature_type newfeat = _destroyed_feat_type(grd(pos));
     for (map_marker *marker : env.markers.get_markers_at(pos))
     {
         if (marker->get_type() == MAT_TERRAIN_CHANGE)
@@ -2275,9 +2286,8 @@ static bool _revert_terrain_to_floor(coord_def pos)
             // Don't revert sealed doors to normal doors if we're trying to
             // remove the door altogether
             // Same for destroyed trees
-            if ((tmarker->change_type == TERRAIN_CHANGE_DOOR_SEAL
+            if (tmarker->change_type == TERRAIN_CHANGE_DOOR_SEAL
                 || tmarker->change_type == TERRAIN_CHANGE_FORESTED)
-                && newfeat == _destroyed_feat_type())
             {
                 env.markers.remove(tmarker);
             }

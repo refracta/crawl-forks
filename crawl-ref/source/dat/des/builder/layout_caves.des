@@ -239,6 +239,7 @@ DEPTH:  Swamp, !Swamp:$
 WEIGHT: 10
 ORIENT: encompass
 TAGS:   overwritable layout allow_dup unrand no_pool_fixup layout_type_swamp
+KFEAT: t = mangrove
 {{
   if is_validating() then return end
 

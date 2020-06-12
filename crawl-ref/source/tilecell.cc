@@ -357,7 +357,7 @@ static dungeon_feature_type _safe_feat(coord_def gc, crawl_view_buffer& vbuf)
 
 static bool _feat_is_mangrove(dungeon_feature_type feat)
 {
-    return feat == DNGN_TREE && (player_in_branch(BRANCH_SWAMP) || (!jiyva_is_dead() && player_in_branch(BRANCH_SLIME)));
+    return feat == DNGN_MANGROVE || (!jiyva_is_dead() && feat == DNGN_SLIMESHROOM);
 }
 
 static bool _is_seen_land(coord_def gc, crawl_view_buffer& vbuf)
@@ -382,7 +382,6 @@ static tileidx_t _base_wave_tile(colour_t colour)
 {
     switch (colour)
     {
-        case BLACK:   return TILE_DNGN_WAVE_N;
         case GREEN:   return TILE_MURKY_WAVE_N;
         case MAGENTA: return TILE_SLIMY_WAVE_N;
         default: die("no %s deep water wave tiles", colour_to_str(colour).c_str());
@@ -398,16 +397,16 @@ static void _pack_default_waves(const coord_def &gc, crawl_view_buffer& vbuf)
     auto colour = cell.map_knowledge.feat_colour();
 
     // Treat trees in Swamp as though they were shallow water.
-    if (cell.mangrove_water && feat == DNGN_TREE)
+    if (cell.mangrove_water && feat == DNGN_MANGROVE)
         feat = DNGN_SHALLOW_WATER;
 
-    if (cell.mushroom_slime && feat == DNGN_TREE)
+    if (cell.mushroom_slime && feat == DNGN_SLIMESHROOM)
         feat = DNGN_SLIMY_WATER;
 
     if (!feat_is_water(feat) && !feat_is_lava(feat))
         return;
 
-    if ((feat == DNGN_DEEP_WATER || feat == DNGN_DEEP_SLIMY_WATER || feat == DNGN_ENDLESS_SLUDGE) && (colour == BLACK || colour == GREEN))
+    if ((feat == DNGN_DEEP_WATER || feat == DNGN_DEEP_SLIMY_WATER || feat == DNGN_ENDLESS_SLUDGE) && (colour == GREEN || you.where_are_you == BRANCH_SWAMP))
     {
         // +7 and -- reverse the iteration order
         if (feat == DNGN_DEEP_SLIMY_WATER)
@@ -449,7 +448,7 @@ static bool _is_seen_wall(coord_def gc, crawl_view_buffer& vbuf)
 {
     const auto feat = _safe_feat(gc, vbuf);
     return (feat_is_opaque(feat) || feat_is_wall(feat))
-           && feat != DNGN_TREE && feat != DNGN_UNSEEN;
+           && !feat_is_tree(feat) && feat != DNGN_UNSEEN;
 }
 
 static void _pack_wall_shadows(const coord_def &gc, crawl_view_buffer& vbuf,

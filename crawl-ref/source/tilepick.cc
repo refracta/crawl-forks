@@ -194,9 +194,11 @@ tileidx_t tileidx_feature_base(dungeon_feature_type feat)
     case DNGN_SARCOPHAGUS:
         return TILE_DNGN_SARCOPHAGUS_SEALED;
     case DNGN_TREE:
-        return player_in_branch(BRANCH_SWAMP) ? TILE_DNGN_MANGROVE :
-               player_in_branch(BRANCH_SLIME) ? (jiyva_is_dead() ? TILE_DNGN_DEADSHROOM : TILE_DNGN_SLIMESHROOM)
-                                              : TILE_DNGN_TREE;
+        return TILE_DNGN_TREE;
+    case DNGN_MANGROVE:
+        return TILE_DNGN_MANGROVE;
+    case DNGN_SLIMESHROOM:
+        return jiyva_is_dead() ? TILE_DNGN_DEADSHROOM : TILE_DNGN_SLIMESHROOM;
     case DNGN_GRANITE_STATUE:
         return TILE_DNGN_GRANITE_STATUE;
     case DNGN_LAVA:
@@ -532,24 +534,20 @@ tileidx_t tileidx_feature(const coord_def &gc)
     switch (feat)
     {
     case DNGN_FLOOR:
-        // branches that can have slime walls (premature optimization?)
-        if (player_in_branch(BRANCH_SLIME)
-            || player_in_branch(BRANCH_TEMPLE)
-            || player_in_branch(BRANCH_LAIR))
+    {
+        bool slimy = false;
+        for (adjacent_iterator ai(gc); ai; ++ai)
         {
-            bool slimy = false;
-            for (adjacent_iterator ai(gc); ai; ++ai)
+            if (env.map_knowledge(*ai).feat() == DNGN_SLIMY_WALL)
             {
-                if (env.map_knowledge(*ai).feat() == DNGN_SLIMY_WALL)
-                {
-                    slimy = true;
-                    break;
-                }
+                slimy = true;
+                break;
             }
-            if (slimy)
-                return TILE_FLOOR_SLIME_ACIDIC;
         }
+        if (slimy)
+            return TILE_FLOOR_SLIME_ACIDIC;
         // deliberate fall-through
+    }
     case DNGN_ROCK_WALL:
     case DNGN_STONE_WALL:
     case DNGN_CRYSTAL_WALL:
@@ -559,9 +557,9 @@ tileidx_t tileidx_feature(const coord_def &gc)
         unsigned colour = env.map_knowledge(gc).feat_colour();
         if (colour == 0)
         {
-            colour = feat == DNGN_FLOOR     ? env.floor_colour :
-                     feat == DNGN_ROCK_WALL ? env.rock_colour
-                                            : 0; // meh
+            colour = feat == DNGN_FLOOR ? env.floor_colour :
+                feat == DNGN_ROCK_WALL ? env.rock_colour
+                : 0; // meh
         }
         if (colour >= ETC_FIRST)
         {
@@ -616,6 +614,7 @@ tileidx_t tileidx_feature(const coord_def &gc)
         return tileidx_shop(shop_at(gc));
 
     case DNGN_DEEP_WATER:
+    {
         if (env.map_knowledge(gc).feat_colour() == GREEN
             || env.map_knowledge(gc).feat_colour() == LIGHTGREEN)
         {
@@ -626,10 +625,39 @@ tileidx_t tileidx_feature(const coord_def &gc)
         else if (player_in_branch(BRANCH_SWAMP))
             return TILE_DNGN_DEEP_WATER_MURKY;
 
-        else if (player_in_branch(BRANCH_SHOALS))
+        for (adjacent_iterator ai(gc); ai; ++ai)
+        {
+            if (!in_bounds(*ai))
+                continue;
+
+            dungeon_feature_type ft = env.map_knowledge(*ai).feat();
+
+            if (ft == DNGN_MANGROVE || ((ft == DNGN_SHALLOW_WATER || ft == DNGN_DEEP_WATER)
+                && (env.map_knowledge(*ai).feat_colour() == GREEN || env.map_knowledge(*ai).feat_colour() == LIGHTGREEN)))
+            {
+                return TILE_DNGN_DEEP_WATER_MURKY;
+            }
+        }
+
+        if (player_in_branch(BRANCH_SHOALS))
             return TILE_SHOALS_DEEP_WATER;
 
+        // BCADDO: This.
+        /*
+        int tile = TILE_DNGN_WAVE_N + 7;
+        for (adjacent_iterator ai(gc); ai; ++ai, --tile)
+        {
+            if (!in_bounds(*ai))
+                continue;
+
+            dungeon_feature_type ft = grd(*ai);
+
+            if (ft == DNGN_SHALLOW_WATER || ft == DNGN_SLIMY_WATER || ft == DNGN_MANGROVE)
+                return tile;
+        }
+        */
         return TILE_DNGN_DEEP_WATER;
+    }
     case DNGN_SHALLOW_WATER:
         {
             tileidx_t t = TILE_DNGN_SHALLOW_WATER;
@@ -644,6 +672,23 @@ tileidx_t tileidx_feature(const coord_def &gc)
                 t = TILE_DNGN_SHALLOW_WATER_MURKY;
             else if (player_in_branch(BRANCH_SHOALS))
                 t = TILE_SHOALS_SHALLOW_WATER;
+
+            if (t != TILE_DNGN_SHALLOW_WATER_MURKY)
+            {
+                for (adjacent_iterator ai(gc); ai; ++ai)
+                {
+                    if (!in_bounds(*ai))
+                        continue;
+
+                    dungeon_feature_type ft = env.map_knowledge(*ai).feat();
+
+                    if (ft == DNGN_MANGROVE || ((ft == DNGN_SHALLOW_WATER || ft == DNGN_DEEP_WATER)
+                        && (env.map_knowledge(*ai).feat_colour() == GREEN || env.map_knowledge(*ai).feat_colour() == LIGHTGREEN)))
+                    {
+                        t = TILE_DNGN_SHALLOW_WATER_MURKY;
+                    }
+                }
+            }
 
             if (env.map_knowledge(gc).invisible_monster())
             {

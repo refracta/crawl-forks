@@ -1024,6 +1024,7 @@ NAME:   kennysheep_cross_landing
 ORIENT: centre
 TAGS:   no_pool_fixup extra decor
 SUBST:  c:ccxxbvt
+KFEAT:  t = mangrove
 DEPTH:  D:5-, Depths
 MAP
           cc+cc

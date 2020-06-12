@@ -37,6 +37,13 @@ function swamp_ruins(e)
 end
 }}
 
+{{
+function swamp_entrance(e)
+	e.kfeat('t = mangrove')
+	e.colour('sTWw12 = green')
+end
+}}
+
 ###############################################################################
 # Swamp entries
 ###############################################################################
@@ -60,6 +67,7 @@ MARKER: O = lua:fog_machine { \
              pow_min = 8, pow_max = 12, delay = 25, \
              size = 2, walk_dist = 1, spread_rate= 33 }
 SUBST:  '= t.., "= tw, t=ttw, w=Ww
+: swamp_entrance (_G)
 validate {{ return glyphs_connected("O", "@") }}
 MAP
        @
@@ -83,6 +91,7 @@ KFEAT:  O = enter_swamp
 MARKER: O = lua:fog_machine { \
              pow_min = 8, pow_max = 12, delay = 25, \
              size = 2, walk_dist = 1, spread_rate= 33 }
+: swamp_entrance (_G)
 MAP
    ttttt
   tTTTTTt
@@ -110,21 +119,6 @@ MAP
 111
 ENDMAP
 
-NAME:   minmay_swamp_entry_reptiles
-TAGS:   swamp_entry transparent
-WEIGHT: 5
-MONS:   swamp drake / komodo dragon / hydra / swamp dragon
-MONS:   crocodile / iguana
-KFEAT:  O = enter_swamp
-MARKER: O = lua:fog_machine { \
-             pow_min = 8, pow_max = 12, delay = 25, \
-             size = 2, walk_dist = 1, spread_rate= 33 }
-MAP
-2.1
-.O.
-2.2
-ENDMAP
-
 NAME:   minmay_swamp_entry_worms
 TAGS:   swamp_entry
 SUBST:  T = tww
@@ -134,6 +128,7 @@ KFEAT:  O = enter_swamp
 MARKER: O = lua:fog_machine { \
              pow_min = 8, pow_max = 12, delay = 25, \
              size = 2, walk_dist = 1, spread_rate= 33 }
+: swamp_entrance (_G)
 MAP
  ttttt
 ttTTTtt
@@ -153,6 +148,7 @@ KFEAT:  O = enter_swamp
 MARKER: O = lua:fog_machine { \
              pow_min = 8, pow_max = 12, delay = 25, \
              size = 2, walk_dist = 1, spread_rate= 33 }
+: swamp_entrance (_G)
 MAP
   .....
  .......
@@ -165,6 +161,7 @@ MAP
   .....
 ENDMAP
 
+# BCADDO: Murky water fountain?
 NAME: nicolae_swamp_entry_splash_gauntlet
 TAGS: swamp_entry patrolling transparent
 KFEAT: O = enter_swamp
@@ -176,6 +173,7 @@ NSUBST: L = tt. / .
 KMONS: 1 = swamp worm / bog body / nothing
 KMONS: 2 = electric eel
 KFEAT: 12 = w
+: swamp_entrance (_G)
 MAP
     ......tttttttt
   ...ttttttttttttttttt
@@ -197,6 +195,7 @@ NSUBST:  W = 4:t / *:W
 MARKER:  O = lua:fog_machine { \
              pow_min = 8, pow_max = 12, delay = 25, \
              size = 2, walk_dist = 1, spread_rate= 33 }
+: swamp_entrance (_G)
 MAP
  .....
 ..WWW..
@@ -219,6 +218,7 @@ KFEAT:  T = .
 MARKER: T = lua:fog_machine { \
              pow_min = 8, pow_max = 12, delay = 25, \
              size = 2, walk_dist = 1, spread_rate= 33 }
+: swamp_entrance (_G)
 MAP
  ttttttt@@tt
  twwWWWW...tt
@@ -251,6 +251,7 @@ TAGS:   no_pool_fixup allow_dup extra luniq_pool
 WEIGHT: 1000
 {{ smear_map({iterations=5, smear='w', onto='wwt"', boxy=false}) }}
 SUBST:  "=ttw
+KFEAT:  t = mangrove
 MAP
      ""
    "www"
@@ -265,6 +266,7 @@ NAME:   swamp_pool2
 TAGS:   no_pool_fixup allow_dup extra luniq_pool
 WEIGHT: 500
 SUBST:  "=ttttw
+KFEAT:  t = mangrove
 MAP
      ""
    "www"
@@ -279,6 +281,7 @@ NAME:   swamp_pool3
 TAGS:   no_pool_fixup allow_dup extra luniq_pool no_exits
 WEIGHT: 500
 SUBST:  '=Wt, "=wwt
+KFEAT:  t = mangrove
 MAP
 "'ttt'
 '""w"tt
@@ -292,6 +295,7 @@ NAME:   swamp_pool4
 TAGS:   no_pool_fixup allow_dup extra luniq_pool
 WEIGHT: 500
 SUBST:  "=ttttw
+KFEAT:  t = mangrove
 MAP
   t""tt
  ""www"t
@@ -308,6 +312,7 @@ KMONS:  1 = patrolling swamp drake
 KFEAT:  1 = deep_water
 WEIGHT: 500
 SUBST:  "=ttttw, '=ttW
+KFEAT:  t = mangrove
 MAP
   't't'
  tt"""t'
@@ -359,6 +364,7 @@ NAME: nicolae_swamp_fairy_circle
 TAGS: transparent extra decor
 SUBST: W = .W, w = wwwW, q = w
 MONS: fungus / nothing w:7
+KFEAT:  t = mangrove
 MAP
     ...
   ..111..
@@ -376,6 +382,7 @@ ENDMAP
 NAME: nicolae_swamp_treefoil
 TAGS: transparent extra decor
 SUBST: T = t.
+KFEAT:  t = mangrove
 KFEAT: . = . w:30 / W
 MAP
 tt       @     tt
@@ -396,6 +403,7 @@ ENDMAP
 NAME: nicolae_swamp_feature_on_the_river_bank
 TAGS: transparent no_pool_fixup decor
 SUBST: T = t., W = .Ww t:5, Q = tw, f = .GTV U:5 C:5
+KFEAT:  t = mangrove
 MAP
      tttQ..@..Qttt
     ttQQQ.....QQQtt
@@ -418,6 +426,7 @@ TAGS: extra decor
 DEPTH: Swamp:2-, !Swamp:$
 SHUFFLE: {}[]()
 SUBST: W = w., T = t.
+KFEAT:  t = mangrove
 MAP
 tttttt
 t...TTtt
@@ -438,6 +447,7 @@ ENDMAP
 NAME: nicolae_swamp_round_clearing
 TAGS: transparent luniq_swclearing extra decor
 SUBST: T = ttt.., E = .e, e = W.., t = ttttt.
+KFEAT:  t = mangrove
 MAP
     eeeee
    eEEEEEee
@@ -460,6 +470,7 @@ NAME: nicolae_swamp_rocky_clearing
 TAGS: transparent luniq_swclearing extra decor
 WEIGHT: 3
 SUBST: X = xxxtt.., E = .e, e = W..
+KFEAT:  t = mangrove
 MAP
        eeeee
   eeeeeEEEEEeeeee
@@ -478,6 +489,7 @@ ENDMAP
 NAME: nicolae_swamp_trees_clearing
 TAGS: transparent luniq_swclearing extra decor
 SUBST: w = Te, T = ttt.., E = .e, e = W..
+KFEAT:  t = mangrove
 MAP
       tttweeee
     wtttTwEEEEeee
@@ -498,6 +510,7 @@ TAGS:    transparent extra no_pool_fixup decor
 SHUFFLE: BC, DEF
 SUBST:   A : ttw, B : tttww, D : w., E : w..., C = t, F = .
 KMASK:   wW = no_monster_gen
+KFEAT:  t = mangrove
 MAP
   ...   ..    ..
  .WWW....WW....w.
@@ -525,6 +538,7 @@ SHUFFLE: AB, CD, EF, GH, IJ / IJ / JI
 SUBST:   A : tww.., C : tww.., E : t., G = t.
 SUBST:   I = wt1GT., BDF = t, H = .
 KMASK:   wW = no_monster_gen
+KFEAT:  t = mangrove
 MAP
    tt.tt@tt@tt.tt
    tt.tt.tt.tt.tt
@@ -545,6 +559,7 @@ ttttttt
 ttttttt
 ENDMAP
 
+# BCADDO: Give this a tile.
 NAME: wheals_swamp_sinkhole
 TAGS: extra no_monster_gen decor
 DEPTH: Swamp:1-2
@@ -552,6 +567,7 @@ WEIGHT: 5
 KFEAT: ^ = known shaft trap
 SUBST: u = Ww
 KPROP: wW^ = no_tele_into
+KFEAT:  t = mangrove
 MAP
 ttttttttt
 twwwwwwwt
@@ -568,6 +584,7 @@ NAME: nicolae_swamp_triple_paths
 TAGS: transparent extra decor
 SUBST: T = t_
 CLEAR: _
+KFEAT:  t = mangrove
 MAP
          Tt@tT
          Tt.tT
@@ -590,6 +607,7 @@ ENDMAP
 
 NAME: nicolae_swamp_godswood
 TAGS: transparent extra decor
+KFEAT:  t = mangrove
 MAP
 ttt     ttt
 ..ttttttt..
@@ -624,6 +642,7 @@ KITEM: w = mundane quarterstaff
 KITEM: s = ration
 KFEAT: 'o = W
 CLEAR:  _
+KFEAT:  t = mangrove
 MAP
        TTTTT
      TTtttttTTT
@@ -650,6 +669,7 @@ SHUFFLE: ABCDEF
 SUBST:   AB : w, C : ww., D : w.., EF = ., G : ttw., H : wtt``, I : wtt``
 CLEAR:   `
 KMASK:   wW = no_monster_gen
+KFEAT:  t = mangrove
 MAP
 t@......
 t.ttttG.H
@@ -671,6 +691,7 @@ MONS:    plant
 SHUFFLE: ABCDE
 SUBST:   AB : w, C : wwW1, D : wWW1, E : W1
 KMASK:   wW = no_monster_gen
+KFEAT:   t = mangrove
 MAP
         ... ...
      .............
@@ -698,6 +719,7 @@ SHUFFLE: AB / AB / BA, CD / CD / DC, EF / EF / FE
 SUBST:   A = t, B = ., C : Pt~.., D = ., E = t, F = P
 KMASK:   ~ = no_monster_gen
 SUBST:   ~ = w
+KFEAT:  t = mangrove
 MAP
    .www.www.
   .w...w...w.
@@ -726,6 +748,7 @@ SUBST:  yx = xxxxx-, - = ----.
 NSUBST: - = 1:d / *:-
 : dgn.delayed_decay(_G, 'd', 'human skeleton')
 : swamp_ruins(_G)
+KFEAT:  t = mangrove
 MAP
   ........
  ..........
@@ -744,6 +767,7 @@ ENDMAP
 NAME:   evilmike_swamp_ruin_house_2
 SUBST:  x = xxxxx-, - = ----.
 : swamp_ruins(_G)
+KFEAT:  t = mangrove
 MAP
  ..
  .xxx
@@ -763,6 +787,7 @@ SUBST:  y = x, x = xxxxx-, - = ----.
 NSUBST: - = 1:d / *:-
 : dgn.delayed_decay(_G, 'd', 'human skeleton')
 : swamp_ruins(_G)
+KFEAT:  t = mangrove
 MAP
     .....
    .......
@@ -782,6 +807,7 @@ ENDMAP
 NAME:   evilmike_swamp_ruin_house_4
 SUBST:  x = xxxxx-, - = ----.
 : swamp_ruins(_G)
+KFEAT:  t = mangrove
 MAP
   .......
  ..xxxxx..
@@ -801,6 +827,7 @@ SUBST:  yx = xxxxx-, - = ----.
 NSUBST: - = 2:d / *:-
 : dgn.delayed_decay(_G, 'd', 'human skeleton')
 : swamp_ruins(_G)
+KFEAT:  t = mangrove
 MAP
   ............
  ..............
@@ -821,6 +848,7 @@ ENDMAP
 NAME:   evilmike_swamp_ruin_house_6
 SUBST:  x = xxxxx-, - = ----.
 : swamp_ruins(_G)
+KFEAT:  t = mangrove
 MAP
 .....
 .xxxxxxx x
@@ -839,6 +867,7 @@ ENDMAP
 NAME:   evilmike_swamp_ruin_rubble_1
 SUBST:  x = xxxx-, - = -----.
 : swamp_ruins(_G)
+KFEAT:  t = mangrove
 MAP
    .......
   ......x..
@@ -858,6 +887,7 @@ ENDMAP
 NAME:   evilmike_swamp_ruin_rubble_2
 SUBST:  x = xxxx-, - = -----.
 : swamp_ruins(_G)
+KFEAT:  t = mangrove
 MAP
    .........
   ..xx..xxx..
@@ -879,6 +909,7 @@ ENDMAP
 NAME:   evilmike_swamp_ruin_wall
 SUBST:  x = xxxx-, - = -----.
 : swamp_ruins(_G)
+KFEAT:  t = mangrove
 WEIGHT: 4
 MAP
         x
@@ -902,6 +933,7 @@ ENDMAP
 NAME:   hangedman_swamp_ruin_wall
 SUBST:  x = xxxx-, - = -----.
 : swamp_ruins(_G)
+KFEAT:  t = mangrove
 WEIGHT: 4
 MAP
   x
@@ -923,6 +955,7 @@ SHUFFLE: yYzZ / yYzZ / zZyY
 NSUBST:  - = 2:d- / *:-, z = 1:+ / *:X, Z = 1:. / *:X
 SUBST:   XyY = xxxx-, - = -----.
 : swamp_ruins(_G)
+KFEAT:  t = mangrove
 WEIGHT:  2
 MAP
   ....  ....
@@ -953,6 +986,7 @@ KFEAT:   123 = deep_water
 SHUFFLE: })
 SUBST:   T = w:3 t, M = ~:4 t, W = W:3 w, . = .:3 W, } = }:20 >, ) = ):25 <>
 CLEAR:   ~
+KFEAT:  t = mangrove
 MAP
   Mtttttt  @tt
  Mttttttttt..ttM
@@ -973,6 +1007,7 @@ KMONS:   2 = tyrant leech
 KFEAT:   12 = shallow_water
 SHUFFLE: })
 SUBST:   } = }>, ) = <)>, } = }:20 >, ) = ):25 <>, 4 = 23
+KFEAT:  t = mangrove
 MAP
       @tttttt
      WttwWwwtt
@@ -994,6 +1029,7 @@ KFEAT:   % = shallow_water / .
 SHUFFLE: jJ / lL, })
 SUBST:   JLT = w:4 t, M = ~:4 t, } = }:20 >, ) = ):25 <>
 CLEAR:   ~
+KFEAT:  t = mangrove
 : dgn.delayed_decay(_G, '%', 'any corpse')
 MAP
  MMtttttt
@@ -1019,6 +1055,7 @@ KFEAT:   12 = shallow_water
 SHUFFLE: })
 SUBST:   T = w:4 t, M = ~:4 t, } = }:20 >, ) = ):25 <>
 CLEAR:   ~
+KFEAT:  t = mangrove
 MAP
  MtttttttttM
 MttW3}2)3wttM
@@ -1063,6 +1100,7 @@ KMONS:   % = ugly thing / orange demon
 KMONS:   *d = swamp dragon w:8 / seven-headed hydra w:5 \
               / eight-headed hydra w:5
 KMONS:   | = large abomination / tentacled monstrosity w:5
+KFEAT:  t = mangrove
 SHUFFLE: AB%| / abd*
 : end
 SUBST:   < : <:1 .:9
@@ -1099,6 +1137,7 @@ DEPTH:   Swamp, !Swamp:$
 MONS:    bog body w:20 / necrophage w:5 / ghoul w:5 / nothing w:25, shadow
 KMONS:   P = withered plant
 SUBST:   p = Pp, p = PP., o = P..
+KFEAT:  t = mangrove
 MAP
    oo.oooo
   pppp.pppp
@@ -1121,6 +1160,7 @@ KMONS:   1 = hydra
 KMONS:   2 = swamp dragon
 KFEAT:   12 = shallow_water
 SUBST:   . = wW., 0:34, 3=112..., 4=122...
+KFEAT:  t = mangrove
 MAP
 .......
 .cc.cc.
@@ -1139,6 +1179,7 @@ KMONS:   3 = swamp drake
 KFEAT:   123 = shallow_water
 SUBST:   . = wwwWWW...t, c = c:17 .:1 t:1 w:1 W:1, C:GC., G=GG., C=cc.
 SUBST:   0:45, 4=1112...., 5=1222...., 6=3.
+KFEAT:  t = mangrove
 MAP
 ...C.C.C.C...
 .cc...6...cc.
@@ -1163,6 +1204,7 @@ KMONS:   3 = swamp drake
 KFEAT:   123 = shallow_water
 SUBST:   . = wwwWWW...t, c = c:15 .:1 t:1 w:1 W:1, C=c.
 SUBST:   0:45, 4=11123....., 5=12223.....
+KFEAT:  t = mangrove
 MAP
     ......
   ..........
@@ -1189,6 +1231,7 @@ KFEAT:   123 = shallow_water
 SHUFFLE: cC
 SUBST:   . = wwwWWW...t, c = c:12 .:1 t:1 w:1 W:1, C:GC., G=GG., C=cc.
 SUBST:   0:45, 4=1112...., 5=1222...., 6=3., y = wW.tt
+KFEAT:  t = mangrove
 MAP
     yyyyyyyyyyyyy
  ...................
@@ -1210,6 +1253,7 @@ KFEAT:   123 = shallow_water
 SHUFFLE: cC
 SUBST:   . = wwwWWW...t, c = c:12 .:1 t:1 w:1 W:1, C=c., *=**%
 SUBST:   0:45, 4=112...., 5=122...., 6=3., y = wwWWW.tt
+KFEAT:  t = mangrove
 MAP
          yyyyy
     yyyyy.....yyyyy
@@ -1243,6 +1287,7 @@ SUBST: w = w t:10
 SUBST: d = c
 SUBST: c = ccx
 KPROP: w = no_tele_into
+KFEAT:  t = mangrove
 MAP
     wwww
   wwwwwwww
@@ -1271,6 +1316,7 @@ SUBST: w = w:10 t:10
 KFEAT: K = shallow_water
 KITEM: K = potion of degeneration w:20 / potion of mutation
 KPROP: w = no_tele_into
+KFEAT:  t = mangrove
 MARKER: K = lua:fog_machine { cloud_type="black smoke", \
                               pow_min = 10, pow_max = 30, delay = 50, \
                               size = 1, walk_dist = 2, spread_rate = 25 }
@@ -1303,6 +1349,7 @@ KITEM: O = great sword good_item w:20 / \
            double sword good_item w:2 / \
            triple sword good_item w:1
 KFEAT: K = deep_water
+KFEAT:  t = mangrove
 KPROP: wK = no_tele_into
 {{
   local cf = TriggerableFunction:new{
@@ -1340,6 +1387,7 @@ SUBST: G = Gg
 KITEM: g = gold q:1
 KFEAT: g = floor
 KFEAT: _ = altar_yredelemnul / altar_kikubaaqudgha
+KFEAT:  t = mangrove
 MAP
   --------------------
  -CCCCCCCCCCcccCCCcCCc-
@@ -1365,6 +1413,7 @@ KMONS: z = crocodile zombie / swamp drake zombie / swamp worm zombie / \
         hydra zombie / tyrant leech zombie / hydra zombie / \
         alligator simulacrum w:1 / swamp drake simulacrum w:1 / \
         swamp dragon simulacrum w:1 / hydra simulacrum w:1
+KFEAT:  t = mangrove
 KFEAT: z = shallow_water
 MAP
   ttttttt
@@ -1383,6 +1432,7 @@ TAGS: layout_swamp
 NSUBST: T = 2:W / *:t
 KMONS: 1 = alligator / nothing w:5
 KFEAT: 1@ = W
+KFEAT:  t = mangrove
 MAP
    tttt
   tt11tt
@@ -1400,6 +1450,7 @@ KMONS: 2 = adder / ball python / water moccasin / black mamba
 SUBST: T = ..ttw
 SUBST: . = .:20 2:3
 KFEAT: .12 = . / W w:2
+KFEAT:  t = mangrove
 MAP
        t.@.tttt
 tttt   tt....Tt
@@ -1423,6 +1474,7 @@ SUBST: a:@, bcd:t, T = .Wt, . = ...W
 KMONS: 1 = 1-headed hydra
 KMONS: 2 = 2-headed hydra / 3-headed hydra / 4-headed hydra
 KFEAT: 12 = . / W
+KFEAT:  t = mangrove
 MAP
              taat
             tt..b
@@ -1441,6 +1493,7 @@ ENDMAP
 
 NAME: lightli_tree_ring
 KPROP: *w = no_tele_into
+KFEAT:  t = mangrove
 MAP
 tttttttttt
 tttttttttt
@@ -1460,6 +1513,7 @@ SUBST: T = t., B = tt_
 NSUBST: d = D / d
 KMONS: D = swamp dragon
 KMONS: d = swamp drake w:12 / nothing w:3
+KFEAT:  t = mangrove
 MAP
         BBBBBB
       .TtttttBB
@@ -1494,6 +1548,7 @@ KMONS: p = plant
 KITEM: g = any weapon good_item / any armour good_item / any jewellery good_item
 : dgn.delayed_decay(_G, 'c', 'human corpse')
 CLEAR: _
+KFEAT:  t = mangrove
 MAP
    ZZZZZZ
   ZZttttZZ
@@ -1521,6 +1576,7 @@ SUBST:   $ = $%%*, * = **d, T = tww
 SHUFFLE: 12 / 12 / 34 / 34 / 56 / 56 / 56
 NSUBST:  2 = 1 : 2:9 .:1 / *:2, 4 = 1 : 4:9 .:1 / *:4, 6 = 1 : 6:9 .:1 / *:6
 NSUBST:  1 = 1 : 1:9 2:1 / *:1, 3 = 1 : 3:9 4:1 / *:3, 5 = 1 : 5:9 6:1 / *:5
+KFEAT:  t = mangrove
 MAP
    ttttt             ttttt
   tttt.tt           tt.tttt
@@ -1557,6 +1613,7 @@ MARKER:  V = lua:fog_machine { cloud_type = "thin mist", pow_min = 1, \
              pow_max = 3, delay = 20, start_clouds = 1, size_min = 2, \
              size_max = 4, spread_rate = -1 }
 SUBST:   u = V
+KFEAT:  t = mangrove
 MAP
  tttttt   tttttttttt
  ttt..tt t~tt.tt.t.tttt
@@ -1595,6 +1652,7 @@ DEPTH: Swamp, !Swamp:$
 MONS:  kobold demonologist
 ITEM:  book of callings, book of summonings
 SUBST: ' = %:20 d:1 e:1
+KFEAT:  t = mangrove
 MAP
         WWW
        WxxxW
@@ -1617,6 +1675,7 @@ MONS:  vampire ; potion of blood . long sword . robe, tyrant leech
 KPROP: e' = no_tele_into
 KPROP: .21 = bloody / w:30 nothing
 KPROP: e = bloody
+KFEAT:  t = mangrove
 : dgn.delayed_decay(_G, 'e', 'human corpse')
 MAP
  ttttt
@@ -1635,6 +1694,7 @@ DEPTH: Swamp, !Swamp:$
 KMONS: - = bog body w:20 / troll zombie / troll skeleton / shadow w:5
 KITEM: - = w:5 gold / w:2 any jewellery / w:20 nothing
 SUBST: ' = .W
+KFEAT:  t = mangrove
 MAP
   W@WWtW
 tWWWWtxW
@@ -1654,6 +1714,7 @@ NAME:  cheibrodos_swamp_slimy
 TAGS:  no_item_gen no_monster_gen
 DEPTH: Swamp, !Swamp:$
 MONS:  slime creature
+KFEAT:  t = mangrove
 MAP
    tcGct
 tttc111cttt
@@ -1695,6 +1756,7 @@ SUBST: abcde = w, fghi = t, ABCDE = .wW, FGHI = .t, ' = ':100 $$$%%, \
        _ = .._, . = ......W
 KFEAT: ^ = permanent teleport trap
 KMONS: o = oklob plant
+KFEAT:  t = mangrove
 CLEAR: _
 MAP
        _____
@@ -1726,6 +1788,7 @@ MONS: spiny frog / ugly thing / hydra / hornet
 MONS: spriggan rider, spriggan berserker, deep elf knight, spriggan druid
 KMONS: P = plant
 KFEAT: P = W
+KFEAT:  t = mangrove
 NSUBST: 25 = 1:.
 MAP
                               ttt
@@ -1756,6 +1819,7 @@ KFEAT: - = .
 SUBST: " = ---Wtt1, t = ttt-, - = -:50 .
 TILE: x = wall_brick_vines
 FTILE: -Wt1 = floor_sandstone
+KFEAT:  t = mangrove
 MAP
    .........
   ..xxxxxxx..
@@ -1781,6 +1845,7 @@ NSUBST: X = - / x
 SUBST: T = t-, - = ....P, z = WWw, _ = __w
 KMONS: P = plant
 CLEAR: _
+KFEAT:  t = mangrove
 MAP
    ttt___
   ttTwwww___
@@ -1805,6 +1870,7 @@ NAME: nicolae_swamp_dense_foliage
 TAGS: decor transparent
 SUBST: _ = ._, - = t_, t = tttttt., . = ......W
 CLEAR: _
+KFEAT:  t = mangrove
 MAP
          -_-
       -_-.t.---
@@ -1831,6 +1897,7 @@ NAME: nicolae_swamp_very_dense_foliage
 TAGS: decor transparent
 SUBST: _ = ._, - = t_, t = tttttt., . = ......W
 CLEAR: _
+KFEAT:  t = mangrove
 MAP
        -_-
       tt.----_
@@ -1875,6 +1942,7 @@ KITEM: f = ration / nothing
 KITEM: b = Fen Folio ident:type
 KFEAT: ^, = .
 CLEAR: _
+KFEAT:  t = mangrove
 MAP
               @
               ,
@@ -1915,6 +1983,7 @@ ORIENT: float
 MONS: tentacled monstrosity
 NSUBST: " = 1=*| / 3=%$, - = ..twW
 SUBST: ' = t:20 W
+KFEAT:  t = mangrove
 MAP
    ''''''''
   'tttttttt'
@@ -1963,6 +2032,7 @@ NSUBST:  2 = 5:2 / 2:. / * = 2.., 3 = 7:3 / 3:. / * = 3..
 : if crawl.one_chance_in(11) then
 SUBST:   4 = .:999 4:1, O = &
 : end
+KFEAT:  t = mangrove
 MAP
       -t-t-
      2-2-2-2
@@ -2005,6 +2075,7 @@ KPROP:   ` = no_tele_into
 : if crawl.one_chance_in(11) then
 SUBST:   6 = .:999 6:1, OP = &
 : end
+KFEAT:  t = mangrove
 MAP
     1- -1---
    2.3.2''3-2--
@@ -2042,6 +2113,7 @@ NSUBST:  2 = 2:. / 2:2 / * = 2222.
 SUBST:   3 = 3333.
 KITEM:   O = decaying rune of Zot
 CLEAR:   `
+KFEAT:  t = mangrove
 MAP
                t
 @@''x   "t     t`   x        t
@@ -2090,6 +2162,7 @@ KFEAT:   XR = lava
 KITEM:   O = decaying rune of Zot
 NSUBST:  O = 1:O / *:l
 SUBST:   - = WW.
+KFEAT:  t = mangrove
 MAP
      --'--
    ------4-     ...3
@@ -2127,6 +2200,7 @@ NSUBST:  2 = 4 = 2. / * = 2, 0 = 1:412 / 3:2 / 2:. / * = 2., 3 = 1:. / *:3
 MARKER:  Q = lua:fog_machine { cloud_type = "freezing vapour", \
              pow_min = 8, pow_max = 12, delay_min = 30, delay_max = 40, \
              size = 2, walk_dist = 1, spread_rate= 30, excl_rad = 0 }
+KFEAT:  t = mangrove
 MAP
 @@             wwttttttttt
 @.  ..        wwttcccccctt
@@ -2192,6 +2266,7 @@ MARKER:  O = lua:fog_machine { cloud_type = "foul pestilence", \
              pow_min = 3, pow_max = 4, delay_min = 35, delay_max = 45, \
              size = 3, walk_dist = 1, excl_rad = 0}
 COLOUR:  YO = green
+KFEAT:  t = mangrove
 MAP
 @@
 @....
@@ -2242,6 +2317,7 @@ SHUFFLE: yz, '", ~`
 SUBST:   yX = x:20 t:4 W:1, z = ..wwwWWW, ' = ....W, " = wWWW, 5 : 59
 NSUBST:  7 = 1:4 / 1:8 / *:7, 0 = 6:1 / 3:. / *:2
 NSUBST:  5 = 1:5 / 1:6 / * = 56 &:2, 9 = 1 = 9 &:1 / *:.
+KFEAT:  t = mangrove
 MAP
 @@ "' Xxccxcxcct
 @'"'XWXW""'..Wcct
@@ -2293,6 +2369,7 @@ SUBST:   C = cc., = = +.
 SHUFFLE: def, 123
 NSUBST:  : = 6:1 / 6:2 / 6:3 / 9:4 / 3 = 0.... / 20:5 / * = '
 SUBST:   ' = .....WW, G = Gg
+KFEAT:  t = mangrove
 MAP
  cccccWWW'''''WWWccccc
 cc%..ccCC=C=C=CCcc..%cc
@@ -2339,6 +2416,7 @@ NSUBST:  O = 1:O / *:*
      KMONS: O* = thorn hunter / shambling mangrove / spriggan berserker
      KITEM: * = *
 : end
+KFEAT:  t = mangrove
 MAP
    tt  tt
   ttttttttt @@@   tt  tt
@@ -2395,6 +2473,7 @@ KPROP:   q = bloody
 TILE:    E = WALL_UNDEAD, T = DNGN_TREE_DEAD, G = DNGN_GRAVESTONE, x = WALL_BRICK_VINES
 SUBST:   T = t
 SUBST:   E = c
+KFEAT:  t = mangrove
 {{
 dgn.delayed_decay_extra(_G, 'q', 'hydra corpse')
 }}

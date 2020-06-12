@@ -252,8 +252,7 @@ void DungeonCellBuffer::pack_background(int x, int y, const packed_cell &cell)
     const tileidx_t bg = cell.bg;
     const tileidx_t bg_idx = cell.bg & TILE_FLAG_MASK;
 
-    if (bg_idx >= TILE_DNGN_FIRST_TRANSPARENT)
-        add_dngn_tile(cell.flv.floor, x, y);
+    add_dngn_tile(cell.flv.floor, x, y);
 
     // Draw blood beneath feature tiles.
     if (bg_idx > TILE_WALL_MAX)

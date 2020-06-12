@@ -622,7 +622,7 @@ ENDMAP
 NAME:   kennysheep_town
 TAGS:   uniq_d_encompass
 ORIENT: encompass
-DEPTH:  D:8-11
+DEPTH:  D:4-6
 WEIGHT: 5
 KMONS:  op = plant
 KMONS:  P = bush
@@ -633,13 +633,15 @@ KMONS:  4 = orc / hound / kobold / goblin / hobgoblin / gnoll
 KMONS:  5 = yak / hog / bullfrog w:40
 KMONS:  6 = wyvern w:5 / manticore w:2 / hippogriff w:2 / black bear w:19
 KITEM:  o5 = ration / nothing w:1000
-SUBST:  M = tww.!, p = pP!!!!!
+SUBST:  M = Mww.!, p = pP!!!!!
 NSUBST: 1 = 1:1 / *:., H = 20:H / 5:% / 160:. / * = .:25 %:1 4
 NSUBST: F = 5:5 / 5 = 55o / * = o:100 R:57
 NSUBST: ' = 2:6 / 3 = 66... / *:., " = 2:6 / 3 = 66... / *:.
 NSUBST: ` = 3:6 / 4 = 66... / *:., - = 1:6 / 2 = 6.. / *:.
 NSUBST: } = 1:] / 1:) / 1:} / * = **23..
 TILE:   x = wall_pebble_brown
+KFEAT:  M = mangrove
+COLOUR: w = green
 FTILE:  !pPt = floor_grass / floor_dirt w:1
 FTILE:  5oR = floor_dirt
 SUBST:  ! = .

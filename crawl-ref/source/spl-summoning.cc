@@ -1476,7 +1476,17 @@ spret cast_summon_forest(actor* caster, int pow, god_type god, bool fail)
                 || (grd(*di) == DNGN_FLOOR && x_chance_in_y(pow, 1250)
                     && !actor_at(*di) && !plant_forbidden_at(*di, true)))
             {
-                temp_change_terrain(*di, DNGN_TREE, duration,
+                if (player_in_branch(BRANCH_SLIME))
+                    temp_change_terrain(*di, DNGN_TREE, duration,
+                            TERRAIN_CHANGE_FORESTED);
+                else if (player_in_branch(BRANCH_SWAMP))
+                    temp_change_terrain(*di, DNGN_MANGROVE, duration,
+                        TERRAIN_CHANGE_FORESTED);
+                else if (player_in_branch(BRANCH_SLIME) && !jiyva_is_dead())
+                    temp_change_terrain(*di, DNGN_SLIMESHROOM, duration,
+                        TERRAIN_CHANGE_FORESTED);
+                else
+                    temp_change_terrain(*di, DNGN_TREE, duration,
                         TERRAIN_CHANGE_FORESTED);
             }
         }

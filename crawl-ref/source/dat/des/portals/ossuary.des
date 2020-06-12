@@ -123,6 +123,7 @@ function ossuary_setup_features(e)
 	e.subst(": = tw")
 	e.ftile("r = FLOOR_SWAMP")
 	e.subst("X = t")
+	e.kfeat("t = mangrove")
   end
   if you.in_branch("Spider") then
     e.subst("3 = 2")

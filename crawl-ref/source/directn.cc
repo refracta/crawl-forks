@@ -2858,9 +2858,7 @@ static string _base_feature_desc(dungeon_feature_type grid, trap_type trap)
 
     if (grid == DNGN_ROCK_WALL && player_in_branch(BRANCH_PANDEMONIUM))
         return "wall of the weird stuff which makes up Pandemonium";
-    if (grid == DNGN_TREE && player_in_branch(BRANCH_SWAMP))
-        return "mangrove";
-    if (grid == DNGN_TREE && player_in_branch(BRANCH_SLIME))
+    if (grid == DNGN_SLIMESHROOM)
     {
         if (jiyva_is_dead())
             return "dead mushroom stump";
@@ -3023,6 +3021,8 @@ string feature_description_at(const coord_def& where, bool covering,
                    "UNAMED PORTAL VAULT ENTRY");
 #endif
 
+    case DNGN_SLIMESHROOM:    // Intentional fallthrough.
+    case DNGN_MANGROVE:       // Intentional fallthrough.
     case DNGN_TREE:
     {
         string desc = "";

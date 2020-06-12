@@ -765,6 +765,7 @@ TAGS:   no_rotate no_vmirror no_hmirror
 				  contents = pool_contents,
 				  frequency = 20 }
 	  subst("+ = t")
+	  kfeat("t = slimeshroom")
 	end
 
     -- remove doors in Lair, increasingly with depth

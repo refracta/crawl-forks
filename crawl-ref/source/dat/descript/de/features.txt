@@ -421,6 +421,13 @@ Frost-covered floor
 
 Frostbedeckter Boden. Es knirscht genugtuend unter den Füßen.
 %%%%
+A mangrove
+
+Dieser Baum ist speziell für das Wachsen unter sumpfigen Bedingungen angepasst.
+Das Licht ist allerdings nicht gleichmäßig, und es gibt auch hier unten Stellen, an
+denen mit Fedhas Segen einige Bäume, so groß wie die an der Erdoberfläche,
+wachsen können.
+%%%%
 A golden statue
 
 Eine solide Goldstatue eines Heiligen.

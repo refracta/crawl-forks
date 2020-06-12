@@ -314,11 +314,17 @@ of fire.
 %%%%
 A mangrove
 
-<A tree>
+This tree is specially adapted for growing in swampy conditions.
+While in most places the dim light of the dungeon is not bright
+enough to sustain large plants, there are spots where, with the grace of
+Fedhas, trees as big as those on the surface can grow underground.
+
+While too large to be felled with an axe, it is susceptible to bolts of
+lightning and to sufficiently intense sources of fire. 
 %%%%
 An awoken mangrove
 
-<A mangrove>
+<An awoken tree>
 %%%%
 An awoken autumnal tree
 

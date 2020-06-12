@@ -328,32 +328,31 @@ static void _apply_daction(daction_type act)
             if (grd(*ri) == DNGN_ALTAR_JIYVA)
                 grd(*ri) = DNGN_RUINED_PLINTH;
 
+            if (grd(*ri) == DNGN_SLIMY_WALL)
+            {
+                grd(*ri) = DNGN_ROCK_WALL;
+                env.grid_colours(*ri) = LIGHTGRAY;
+                env.tile_flv(*ri).feat_idx =
+                    store_tilename_get_index("wall_ruined_slime");
+                env.tile_flv(*ri).feat = TILE_WALL_RUINED_SLIME;
+            }
+
+            if (grd(*ri) == DNGN_SLIMESHROOM)
+            {
+                env.tile_flv(*ri).feat_idx =
+                    store_tilename_get_index("dngn_deadshroom");
+                env.tile_flv(*ri).feat = TILE_DNGN_DEADSHROOM;
+            }
+
+            if (grd(*ri) == DNGN_SLIMY_WATER || grd(*ri) == DNGN_DEEP_SLIMY_WATER)
+                grd(*ri) = DNGN_FLOOR;
+
             if (you.where_are_you == BRANCH_SLIME)
             {
                 env.grid_colours(*ri) = WHITE;
                 env.tile_flv(*ri).floor_idx =
                     store_tilename_get_index("floor_ruined_slime");
                 env.tile_flv(*ri).floor = TILE_FLOOR_RUINED_SLIME;
-
-                if (grd(*ri) == DNGN_SLIMY_WALL)
-                {
-                    grd(*ri) = DNGN_ROCK_WALL;
-                    env.grid_colours(*ri) = LIGHTGRAY;
-                    env.tile_flv(*ri).feat_idx =
-                        store_tilename_get_index("wall_ruined_slime");
-                    env.tile_flv(*ri).feat = TILE_WALL_RUINED_SLIME;
-                }
-
-                if (grd(*ri) == DNGN_TREE)
-                {
-                    env.grid_colours(*ri) = LIGHTGRAY;
-                    env.tile_flv(*ri).feat_idx =
-                        store_tilename_get_index("dngn_deadshroom");
-                    env.tile_flv(*ri).feat = TILE_DNGN_DEADSHROOM;
-                }
-
-                if (grd(*ri) == DNGN_SLIMY_WATER || grd(*ri) == DNGN_DEEP_SLIMY_WATER)
-                    grd(*ri) = DNGN_FLOOR;
 
                 if (grd(*ri) == DNGN_STONE_WALL)
                 {

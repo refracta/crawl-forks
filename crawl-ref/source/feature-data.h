@@ -79,6 +79,20 @@ static feature_def feat_defs[] =
 },
 
 {
+    DNGN_MANGROVE, "mangrove", "mangrove",
+    DCHAR_TREE, DCHAR_WALL_MAGIC,
+    COLOUR_IS(ETC_TREE),
+    FFT_OPAQUE | FFT_SOLID, MF_WALL,
+},
+
+{
+    DNGN_SLIMESHROOM, "giant mushroom", "slimeshroom",
+    DCHAR_TREE, DCHAR_WALL_MAGIC,
+    COLOUR_IS(ETC_SLIMESHROOM),
+    FFT_OPAQUE | FFT_SOLID, MF_WALL,
+},
+
+{
     DNGN_METAL_WALL, "metal wall", "metal_wall",
     DCHAR_WALL, DCHAR_WALL_MAGIC,
     COLOUR_IS(CYAN),

@@ -1274,7 +1274,7 @@ static bool _needs_flavour(const packed_cell &cell)
     if (bg_idx >= TILE_DNGN_FIRST_TRANSPARENT)
         return true; // Needs flv.floor
     if (cell.is_liquefied || cell.is_bloody ||
-        cell.is_moldy || cell.glowing_mold)
+        cell.is_moldy || cell.glowing_mold || _in_water(cell))
     {
         return true; // Needs flv.special
     }
