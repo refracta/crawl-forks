@@ -382,11 +382,15 @@ static tileidx_t _base_wave_tile(colour_t colour)
 {
     switch (colour)
     {
-        case BLACK:   return TILE_DNGN_WAVE_N;
         case GREEN:   return TILE_MURKY_WAVE_N;
         case MAGENTA: return TILE_SLIMY_WAVE_N;
         default: die("no %s deep water wave tiles", colour_to_str(colour).c_str());
     }
+}
+
+static bool _bounds_check(coord_def coord, crawl_view_buffer& vbuf)
+{
+    return (coord.x < 0 || coord.x >= vbuf.size().x || coord.y < 0 || coord.y >= vbuf.size().y);
 }
 
 static void _pack_default_waves(const coord_def &gc, crawl_view_buffer& vbuf)
@@ -416,17 +420,140 @@ static void _pack_default_waves(const coord_def &gc, crawl_view_buffer& vbuf)
             colour = GREEN; // HACK
         if (you.where_are_you == BRANCH_SWAMP)
             colour = GREEN; // HACK
-        int tile = _base_wave_tile(colour) + 7;
-        int tile2 = TILE_DEEP_WAVE_N + 7;
-        for (adjacent_iterator ai(gc); ai; ++ai, --tile)
+        if (colour != BLACK)
         {
-            if (ai->x < 0 || ai->x >= vbuf.size().x || ai->y < 0 || ai->y >= vbuf.size().y)
-                continue;
-            if (_is_seen_shallow(*ai, vbuf))
-                _add_overlay(tile, cell);
-            else if (colour == BLACK)
-                _add_overlay(tile2, cell);
-            tile2--;
+            int tile = _base_wave_tile(colour) + 7;
+            for (adjacent_iterator ai(gc); ai; ++ai, --tile)
+            {
+                if (_bounds_check(*ai, vbuf))
+                    continue;
+                if (_is_seen_shallow(*ai, vbuf))
+                    _add_overlay(tile, cell);
+            }
+        }
+        else // if (colour == black)
+        {
+            // Manually hardcoded because of needing overlap.
+
+            coord_def S = coord_def(gc.x, gc.y + 1);
+            coord_def N = coord_def(gc.x, gc.y - 1);
+            coord_def W = coord_def(gc.x - 1, gc.y);
+            coord_def E = coord_def(gc.x + 1, gc.y);
+
+            coord_def SE = coord_def(gc.x + 1, gc.y + 1);
+            coord_def SW = coord_def(gc.x - 1, gc.y + 1);
+            coord_def NE = coord_def(gc.x + 1, gc.y - 1);
+            coord_def NW = coord_def(gc.x - 1, gc.y - 1);
+            bool ne = false;
+            bool nw = false;
+            bool se = false;
+            bool sw = false;
+
+            // Shallow: TILE_DNGN_WAVE_N;
+            // Deep:    TILE_DEEP_WAVE_N;
+
+            // North
+            if (!_bounds_check(N, vbuf))
+            {
+                if (_is_seen_shallow(N, vbuf))
+                {
+                    _add_overlay(TILE_DNGN_WAVE_N , cell);
+                    _add_overlay(TILE_DNGN_WAVE_NE, cell);
+                    _add_overlay(TILE_DNGN_WAVE_NW, cell);
+                    ne = true;
+                    nw = true;
+                }
+                else
+                {
+                    _add_overlay(TILE_DEEP_WAVE_N , cell);
+
+                    if (!_bounds_check(NW, vbuf) && _is_seen_shallow(NW, vbuf))
+                    {
+                        _add_overlay(TILE_DNGN_WAVE_NW, cell);
+                        nw = true;
+                    }
+                    if (!_bounds_check(NE, vbuf) && _is_seen_shallow(NE, vbuf))
+                    {
+                        _add_overlay(TILE_DNGN_WAVE_NE, cell);
+                        ne = true;
+                    }
+                }
+            }
+
+            // East
+            if (!_bounds_check(E, vbuf))
+            {
+                if (_is_seen_shallow(E, vbuf))
+                {
+                    _add_overlay(TILE_DNGN_WAVE_E, cell);
+                    if (!ne)
+                        _add_overlay(TILE_DNGN_WAVE_NE, cell);
+                    _add_overlay(TILE_DNGN_WAVE_SE, cell);
+                    ne = true;
+                    se = true;
+                }
+                else
+                {
+                    _add_overlay(TILE_DEEP_WAVE_E, cell);
+
+                    if (!_bounds_check(SE, vbuf) && _is_seen_shallow(SE, vbuf))
+                    {
+                        _add_overlay(TILE_DNGN_WAVE_SE, cell);
+                        se = true;
+                    }
+                }
+            }
+
+            // South 
+            if (!_bounds_check(S, vbuf))
+            {
+                if (_is_seen_shallow(S, vbuf))
+                {
+                    _add_overlay(TILE_DNGN_WAVE_S, cell);
+                    if (!se)
+                        _add_overlay(TILE_DNGN_WAVE_SE, cell);
+                    _add_overlay(TILE_DNGN_WAVE_SW, cell);
+                    sw = true;
+                    se = true;
+                }
+                else
+                {
+                    _add_overlay(TILE_DEEP_WAVE_S, cell);
+
+                    if (!_bounds_check(SW, vbuf) && _is_seen_shallow(SW, vbuf))
+                    {
+                        _add_overlay(TILE_DNGN_WAVE_SW, cell);
+                        sw = true;
+                    }
+                }
+            }
+
+            // West
+            if (!_bounds_check(W, vbuf))
+            {
+                if (_is_seen_shallow(W, vbuf))
+                {
+                    _add_overlay(TILE_DNGN_WAVE_W, cell);
+                    if (!sw)
+                        _add_overlay(TILE_DNGN_WAVE_SW, cell);
+                    if (!nw)
+                        _add_overlay(TILE_DNGN_WAVE_NW, cell);
+                    sw = true;
+                    nw = true;
+                }
+                else
+                    _add_overlay(TILE_DEEP_WAVE_W, cell);
+            }
+
+            // Corners
+            if (!nw && !_bounds_check(NW, vbuf))
+                _add_overlay(TILE_DEEP_WAVE_NW, cell);
+            if (!ne && !_bounds_check(NE, vbuf))
+                _add_overlay(TILE_DEEP_WAVE_NE, cell);
+            if (!sw && !_bounds_check(SW, vbuf))
+                _add_overlay(TILE_DEEP_WAVE_SW, cell);
+            if (!se && !_bounds_check(SE, vbuf))
+                _add_overlay(TILE_DEEP_WAVE_SE, cell);
         }
     }
 
