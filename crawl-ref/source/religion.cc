@@ -2162,6 +2162,10 @@ string god_name(god_type which_god, bool long_name, bool sidebar)
         else
             space += strwidth(god_name(which_god));
 
+        // Gold display is wider Gold: 99999 vs. 6* [200]
+        if (which_god == GOD_GOZAG)
+            space += 4;
+
         // If too long for sidebar; abbreviate (Max 6 characters).
         // Otherwise return normal name.
         if (space > 29)
@@ -2181,7 +2185,7 @@ string god_name(god_type which_god, bool long_name, bool sidebar)
             case GOD_TROG:          return "Trog";
             case GOD_NEMELEX_XOBEH: return "Neme";
             case GOD_ELYVILON:      return "Ely";
-            case GOD_LUGONU:        return "Lucy";
+            case GOD_LUGONU:        return "Lugonu";
             case GOD_BEOGH:         return "Beogh";
             case GOD_FEDHAS:        return "Fedhas";
             case GOD_CHEIBRIADOS:   return "Chei";
@@ -2244,7 +2248,7 @@ string god_name(god_type which_god, bool long_name, bool sidebar)
     case GOD_XOM:           return "Xom";
     case GOD_ASHENZARI:     return "Ashenzari";
     case GOD_DITHMENOS:     return "Dithmenos";
-    case GOD_GOZAG:         return "Gozag";
+    case GOD_GOZAG:         return "Gozag Ym Sagoz";
     case GOD_QAZLAL:        return "Qazlal";
     case GOD_RU:            return "Ru";
 #if TAG_MAJOR_VERSION == 34
