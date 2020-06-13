@@ -411,7 +411,7 @@ bool chardump_parser::_check_stats2(const vector<string> &tokens)
                                                (god_type) 1, NUM_GODS,
                                                always_true<god_type>,
                                                bind(god_name, placeholders::_1,
-                                                    false));
+                                                    false, false));
             if (!you_worship(god))
             {
                 if (god == GOD_GOZAG)

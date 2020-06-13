@@ -1268,8 +1268,7 @@ static void _redraw_title()
     else
     {
         string god = " of ";
-        god += you_worship(GOD_JIYVA) ? god_name_jiyva(true)
-                                      : god_name(you.religion);
+        god += god_name(you.religion, false, true);
         NOWRAP_EOL_CPRINTF("%s", god.c_str());
 
         string piety = _god_asterisks();
@@ -2121,12 +2120,6 @@ static string _god_powers()
               _god_status_colour(god_colour(you.religion)));
 }
 
-static string _god_asterion()
-{
-    const int prank = piety_rank();
-    return string(prank, '*') + string(NUM_PIETY_STARS - prank, '.');
-}
-
 static string _god_asterisks()
 {
     if (you_worship(GOD_NO_GOD))
@@ -2150,7 +2143,7 @@ static string _god_asterisks()
             return string(NUM_PIETY_STARS, '.'); // very special plaything
     }
     else
-        return make_stringf("%s (%d)", _god_asterion().c_str(), you.piety);
+        return make_stringf("%d* [%d]", piety_rank(), you.piety);
 }
 
 /**

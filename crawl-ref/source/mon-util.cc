@@ -4463,7 +4463,7 @@ static string _replace_god_name(god_type god, bool need_verb = false,
         result = capital ? "Your god" : "your god";
     else
     {
-        const string godname = god_name(god, false);
+        const string godname = god_name(god);
         result = capital ? uppercase_first(godname) : godname;
     }
 

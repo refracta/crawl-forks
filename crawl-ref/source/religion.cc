@@ -70,6 +70,7 @@
 #include "stringutil.h"
 #include "terrain.h"
 #include "transform.h"
+#include "unicode.h"
 #include "view.h"
 #include "xom.h"
 
@@ -2151,17 +2152,71 @@ bool do_god_gift(bool forced)
     return success;
 }
 
-string god_name(god_type which_god, bool long_name)
+string god_name(god_type which_god, bool long_name, bool sidebar)
 {
+    if (sidebar)
+    {
+        int space = strwidth(display_sp_name());
+        if (which_god == GOD_JIYVA)
+            space += strwidth(god_name_jiyva(true));
+        else
+            space += strwidth(god_name(which_god));
+
+        // If too long for sidebar; abbreviate (Max 6 characters).
+        // Otherwise return normal name.
+        if (space > 29)
+        {
+            switch (which_god)
+            {
+            case GOD_NO_GOD:        return "No God";
+            case GOD_RANDOM:        return "Random";
+            case GOD_ZIN:           return "Zin";
+            case GOD_SHINING_ONE:   return "TSOne";
+            case GOD_KIKUBAAQUDGHA: return "Kiku";
+            case GOD_YREDELEMNUL:   return "Yred";
+            case GOD_VEHUMET:       return "Vehu";
+            case GOD_OKAWARU:       return "Oka";
+            case GOD_MAKHLEB:       return "Makh";
+            case GOD_SIF_MUNA:      return "Sif";
+            case GOD_TROG:          return "Trog";
+            case GOD_NEMELEX_XOBEH: return "Neme";
+            case GOD_ELYVILON:      return "Ely";
+            case GOD_LUGONU:        return "Lucy";
+            case GOD_BEOGH:         return "Beogh";
+            case GOD_FEDHAS:        return "Fedhas";
+            case GOD_CHEIBRIADOS:   return "Chei";
+            case GOD_XOM:           return "Xom";
+            case GOD_ASHENZARI:     return "Ash";
+            case GOD_DITHMENOS:     return "Dith";
+            case GOD_GOZAG:         return "Gozag";
+            case GOD_QAZLAL:        return "Qazlal";
+            case GOD_RU:            return "Ru";
+#if TAG_MAJOR_VERSION == 34
+            case GOD_PAKELLAS:      return "Pak";
+#endif
+            case GOD_USKAYAW:       return "Usk";
+            case GOD_HEPLIAKLQANA:  return "Hep";
+            case GOD_WU_JIAN:       return "Wu";
+            case GOD_JIYVA:         return "Jiyva";
+            case GOD_NAMELESS:
+            case GOD_ECUMENICAL:    return "???";
+            case NUM_GODS: default: break;
+            }
+        }
+    }
+
     if (which_god == GOD_JIYVA)
     {
+        if (sidebar)
+            return god_name_jiyva(true);
+
         return god_name_jiyva(long_name) +
                (long_name? " the Shapeless" : "");
     }
 
     if (long_name)
     {
-        const string shortname = god_name(which_god, false);
+        const string shortname = god_name(which_god);
         const string longname = getMiscString(shortname + " lastname");
         return longname.empty()? shortname : longname;
     }
@@ -2184,7 +2239,7 @@ string god_name(god_type which_god, bool long_name)
     case GOD_ELYVILON:      return "Elyvilon";
     case GOD_LUGONU:        return "Lugonu";
     case GOD_BEOGH:         return "Beogh";
-    case GOD_FEDHAS:        return "Fedhas";
+    case GOD_FEDHAS:        return "Fedhas Madash";
     case GOD_CHEIBRIADOS:   return "Cheibriados";
     case GOD_XOM:           return "Xom";
     case GOD_ASHENZARI:     return "Ashenzari";
@@ -2197,12 +2252,12 @@ string god_name(god_type which_god, bool long_name)
 #endif
     case GOD_USKAYAW:       return "Uskayaw";
     case GOD_HEPLIAKLQANA:  return "Hepliaklqana";
-    case GOD_WU_JIAN:     return "Wu Jian";
+    case GOD_WU_JIAN:       return "Wu Jian";
     case GOD_JIYVA: // This is handled at the beginning of the function
     case GOD_ECUMENICAL:    return "an unknown god";
-    case NUM_GODS:          return "Buggy";
+    case NUM_GODS: default: break;
     }
-    return "";
+    return "buggy";
 }
 
 string god_name_jiyva(bool second_name)
@@ -2243,7 +2298,7 @@ god_type str_to_god(const string &_name, bool exact)
     for (god_iterator it; it; ++it)
     {
         god_type god = *it;
-        string name = lowercase_string(god_name(god, false));
+        string name = lowercase_string(god_name(god));
 
         if (name == target)
             return god;
@@ -3892,7 +3947,7 @@ god_type choose_god(god_type def_god)
 
     return find_earliest_match(spec, GOD_NO_GOD, NUM_GODS,
                                always_true<god_type>,
-                               bind(god_name, placeholders::_1, false));
+                               bind(god_name, placeholders::_1, false, false));
 }
 
 int had_gods()
@@ -4721,7 +4776,7 @@ static bool _is_nontemple_god(god_type god)
 
 static bool _cmp_god_by_name(god_type god1, god_type god2)
 {
-    return god_name(god1, false) < god_name(god2, false);
+    return god_name(god1) < god_name(god2);
 }
 
 // Vector of temple gods.

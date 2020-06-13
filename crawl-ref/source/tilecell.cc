@@ -418,7 +418,7 @@ static void _pack_default_waves(const coord_def &gc, crawl_view_buffer& vbuf)
             colour = MAGENTA; // HACK
         if (feat == DNGN_ENDLESS_SLUDGE)
             colour = GREEN; // HACK
-        if (you.where_are_you == BRANCH_SWAMP)
+        if (you.where_are_you == BRANCH_SWAMP || (you.where_are_you == BRANCH_DUNGEON && you.depth == 2))
             colour = GREEN; // HACK
         if (colour != BLACK)
         {

@@ -39,7 +39,7 @@ bool is_unavailable_god(god_type god);
 god_type random_god();
 
 int piety_breakpoint(int i);
-string god_name(god_type which_god, bool long_name = false);
+string god_name(god_type which_god, bool long_name = false, bool sidebar = false);
 string god_name_jiyva(bool second_name = false);
 string wu_jian_random_sifu_name();
 god_type str_to_god(const string &name, bool exact = true);

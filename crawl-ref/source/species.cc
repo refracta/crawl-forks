@@ -69,29 +69,29 @@ species_type str_to_species(const string &species)
 */
 string display_sp_name()
 {
-    string norm_name = species_name(you.species);
+    string name = species_name(you.species);
 
     switch (you.char_class)
     {
     case JOB_MUMMY:
         if (you.species == SP_HUMAN)
-            return "Mummy";
-        if (you.species != SP_DRACONIAN || you.experience_level < 7)
-            return make_stringf("Mummified %s", norm_name.c_str());
+            name = "Mummy";
+        else if (you.species != SP_DRACONIAN || you.experience_level < 7)
+            name = make_stringf("Mummified %s", name.c_str());
         break;
     case JOB_DEMIGOD:
         if (you.species == SP_HUMAN)
-            return "Demigod";
-        if (you.species == SP_NAGA)
-            return "Nagaraja";
+            name = "Demigod";
+        else if (you.species == SP_NAGA)
+            name = "Nagaraja";
         break;
     case JOB_DEMONSPAWN:
         if (you.species == SP_HUMAN)
-            return "Demonspawn";
+            name = "Demonspawn";
     default: break;
     }
 
-    return norm_name;
+    return name;
 }
 
 /**

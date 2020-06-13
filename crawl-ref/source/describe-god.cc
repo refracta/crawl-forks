@@ -507,7 +507,7 @@ static string _describe_god_wrath_causes(god_type which_god)
                    " later take up the worship of an evil god will be"
                    " punished. (" +
                    comma_separated_fn(begin(evil_gods), end(evil_gods),
-                                      bind(god_name, placeholders::_1, false)) +
+                                      bind(god_name, placeholders::_1, false, false)) +
                    " are evil gods.)";
 
         case GOD_ZIN:
@@ -516,10 +516,10 @@ static string _describe_god_wrath_causes(god_type which_god)
                    " later take up the worship of an evil or chaotic god will"
                    " be scourged. (" +
                    comma_separated_fn(begin(evil_gods), end(evil_gods),
-                                      bind(god_name, placeholders::_1, false)) +
+                                      bind(god_name, placeholders::_1, false, false)) +
                    " are evil, and " +
                    comma_separated_fn(begin(chaotic_gods), end(chaotic_gods),
-                                      bind(god_name, placeholders::_1, false)) +
+                                      bind(god_name, placeholders::_1, false, false)) +
                    " are chaotic.)";
         default:
             return uppercase_first(god_name(which_god)) +
