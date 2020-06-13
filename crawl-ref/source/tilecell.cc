@@ -382,6 +382,7 @@ static tileidx_t _base_wave_tile(colour_t colour)
 {
     switch (colour)
     {
+        case BLACK:   return TILE_DNGN_WAVE_N;
         case GREEN:   return TILE_MURKY_WAVE_N;
         case MAGENTA: return TILE_SLIMY_WAVE_N;
         default: die("no %s deep water wave tiles", colour_to_str(colour).c_str());
@@ -406,7 +407,7 @@ static void _pack_default_waves(const coord_def &gc, crawl_view_buffer& vbuf)
     if (!feat_is_water(feat) && !feat_is_lava(feat))
         return;
 
-    if ((feat == DNGN_DEEP_WATER || feat == DNGN_DEEP_SLIMY_WATER || feat == DNGN_ENDLESS_SLUDGE) && (colour == GREEN || you.where_are_you == BRANCH_SWAMP))
+    if ((feat == DNGN_DEEP_WATER || feat == DNGN_DEEP_SLIMY_WATER || feat == DNGN_ENDLESS_SLUDGE) && (colour == GREEN || colour == BLACK))
     {
         // +7 and -- reverse the iteration order
         if (feat == DNGN_DEEP_SLIMY_WATER)
@@ -416,12 +417,16 @@ static void _pack_default_waves(const coord_def &gc, crawl_view_buffer& vbuf)
         if (you.where_are_you == BRANCH_SWAMP)
             colour = GREEN; // HACK
         int tile = _base_wave_tile(colour) + 7;
+        int tile2 = TILE_DEEP_WAVE_N + 7;
         for (adjacent_iterator ai(gc); ai; ++ai, --tile)
         {
             if (ai->x < 0 || ai->x >= vbuf.size().x || ai->y < 0 || ai->y >= vbuf.size().y)
                 continue;
             if (_is_seen_shallow(*ai, vbuf))
                 _add_overlay(tile, cell);
+            else if (colour == BLACK)
+                _add_overlay(tile2, cell);
+            tile2--;
         }
     }
 

@@ -641,21 +641,6 @@ tileidx_t tileidx_feature(const coord_def &gc)
 
         if (player_in_branch(BRANCH_SHOALS))
             return TILE_SHOALS_DEEP_WATER;
-
-        // BCADDO: This.
-        /*
-        int tile = TILE_DNGN_WAVE_N + 7;
-        for (adjacent_iterator ai(gc); ai; ++ai, --tile)
-        {
-            if (!in_bounds(*ai))
-                continue;
-
-            dungeon_feature_type ft = grd(*ai);
-
-            if (ft == DNGN_SHALLOW_WATER || ft == DNGN_SLIMY_WATER || ft == DNGN_MANGROVE)
-                return tile;
-        }
-        */
         return TILE_DNGN_DEEP_WATER;
     }
     case DNGN_SHALLOW_WATER:
