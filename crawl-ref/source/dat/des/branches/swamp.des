@@ -2454,7 +2454,7 @@ MONS:    hydra skeleton / swamp dragon skeleton / death drake skeleton
 MONS:    hydra zombie / swamp dragon zombie / death drake zombie
 MONS:    spectral hydra / hydra simulacrum
 MONS:    patrolling thorn hunter / patrolling shambling mangrove
-MONS:    patrolling spriggan druid god:fedhas
+MONS:    patrolling spriggan druid god:fedhas_madash
 KITEM:   O = decaying rune of Zot
 KFEAT:   _ = altar_fedhas
 KFEAT:   - = altar_yredelemnul
@@ -2474,6 +2474,7 @@ TILE:    E = WALL_UNDEAD, T = DNGN_TREE_DEAD, G = DNGN_GRAVESTONE, x = WALL_BRIC
 SUBST:   T = t
 SUBST:   E = c
 KFEAT:  t = mangrove
+KFEAT:  q = floor
 {{
 dgn.delayed_decay_extra(_G, 'q', 'hydra corpse')
 }}
@@ -2490,7 +2491,7 @@ MAP
  ccccP....TccccccE333sEcccc
 cccc..t....ccccEEEE333TEEEcc
 ccc........cccE2T3333EE2Eccc
-ccP....o.t.PccEE533G5333Eccc
+ccP....P.t.PccEE533G5333Eccc
 cct6..P_P.6tcccE3T33q3T5Eccc
 cc6.P.7P7.P6cccE3333-333Eccc
 ccPppPpppPppcccE33G3qG3EEccc
