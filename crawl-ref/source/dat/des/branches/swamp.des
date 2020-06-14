@@ -2446,8 +2446,7 @@ ENDMAP
 NAME:    byrel_swamp_growth_death_and_undeath
 TAGS:    no_monster_gen
 PLACE:   Swamp:$
-ORIENT:  float
-TAGS:    no_rotate
+ORIENT:  south
 MONS:    swamp dragon / swamp drake / hydra
 MONS:    freezing wraith / flayed ghost / phantasmal warrior / ghoul
 MONS:    hydra skeleton / swamp dragon skeleton / death drake skeleton
@@ -2473,10 +2472,11 @@ KPROP:   q = bloody
 TILE:    E = WALL_UNDEAD, T = DNGN_TREE_DEAD, G = DNGN_GRAVESTONE, x = WALL_BRICK_VINES
 SUBST:   T = t
 SUBST:   E = c
-KFEAT:  t = mangrove
-KFEAT:  q = floor
+KFEAT:   t = mangrove
+KFEAT:   q = floor
 {{
 dgn.delayed_decay_extra(_G, 'q', 'hydra corpse')
+set_feature_name("granite_statue", "a gravestone")
 }}
 MAP
          xxxx@@xx
@@ -2485,19 +2485,19 @@ MAP
        xxxx11T11xxxx
       xxxx1111t11xxxx
      xxxt111t1111T1Txx
-    ccct.11111T1111ccx
-   cccct..ttTxLxT..ccccc
-  ccccct6.txxxxxxE5EEEEcc
- ccccP....TccccccE333sEcccc
-cccc..t....ccccEEEE333TEEEcc
-ccc........cccE2T3333EE2Eccc
-ccP....P.t.PccEE533G5333Eccc
-cct6..P_P.6tcccE3T33q3T5Eccc
-cc6.P.7P7.P6cccE3333-333Eccc
-ccPppPpppPppcccE33G3qG3EEccc
-ccccppppppcccccEEEE335EEcccc
-cccccccOcccccccccE235332Eccc
-  cccccccccccccccEEOEEEEEcc
-    ccccccc    cccEEEcccccc
-      cc        ccccccc cc
+    tttt.11111T1111ttx
+   ttttt..ttTxLxT..ttttt
+  tttttt6.txxxxxxE5EEEEtt
+ ttttP....TttttttE333sEtttt
+tttt..t....ttttEEEE333TEEEtt
+ttt........tttE2T3333EE2Ettt
+ttP....P.t.PttEE533G5333Ettt
+ttt6..P_P.6ttttE3T33q3T5Ettt
+tt6.P.7P7.P6tttE3333-333Ettt
+ttPppPpppPpptttE33G3qG3EEttt
+ttttpppppptttttEEEE335EEtttt
+tttttttOtttttttttE235332Ettt
+  tttttttttttttttEEOEEEEEtt
+    ttttttt    tttEEEtttttt
+      tt        ttttttt tt
 ENDMAP
