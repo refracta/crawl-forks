@@ -219,30 +219,32 @@ ENDMAP
 NAME:   erik_arrival_gehennom
 TAGS:   arrival no_monster_gen no_rotate
 ORIENT: float
-ITEM:   scroll of random uselessness
-MONS:   rat, goblin, kobold, ooze
+ITEM:   obsidian rune of zot mimic
+MONS:   rat, goblin, kobold, cinder newt
+COLOUR: clx.234d = red
+FTILE:  c{lx.234d+ = FLOOR_ROUGH_RED
 MAP
 xxxxxxxxxxx@xxxxxxxxxxxxxxxxxx
-x.........l.l................x
-x.....lllll.lllllllllllll....x
-x.....l....1............l....x
-x.....l.cc+ccccccccccc..l....x
-x.....l.cc..........cc..l....x
-x.....l.ccc.........cc..l....x
-x.....ll.cc.....2.3.cc.ll....x
-x.....l..cccccccc.cccc..l....x
-x.....l..cccccccc+cccc..l....x
-x.....ll..cc......cc...ll....x
-x.....l...ccd{....cc.4..l....x
-x.....l...cc......cc....l....x
-x.....ll..cccccccccc...ll....x
-x.....lll.cccccccccc.llll....x
-x.....lll............llll....x
-x.....lllll..4....lllllll....x
-x.....llllll....lllllll......x
-x.....lllllllllllll..........x
-x.........lllllll............x
-x>..........................>x
+x'''''''''l.l''''''''''''''''x
+x'''''lllll.lllllllllllll''''x
+x'''''l....4............l''''x
+x'''''l.cc+ccccccccccc..l''''x
+x'''''l.cc..........cc..l''''x
+x'''''l.ccc.........cc..l''''x
+x'''''ll.cc.....2.3.cc.ll''''x
+x'''''l..cccccccc.cccc..l''''x
+x'''''l..cccccccc+cccc..l''''x
+x'''''ll..cc......cc...ll''''x
+x'''''l...cc.{..d.cc.4..l''''x
+x'''''l...cc......cc....l''''x
+x'''''ll..cccccccccc...ll''''x
+x'''''lll.cccccccccc.llll''''x
+x'''''lll............llll''''x
+x'''''lllll..4....lllllll''''x
+x'''''llllll....lllllll''''''x
+x'''''lllllllllllll''''''''''x
+x''1''''''lllllll'''''''1''''x
+x>''''''''''''''''''''''''''>x
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ENDMAP
 

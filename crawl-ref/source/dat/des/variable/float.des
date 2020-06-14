@@ -4788,6 +4788,85 @@ xx*.1..xx..2.*xx
 ENDMAP
 
 ##############################################################################
+# Split out of an entry vault as its own thing
+# Guarded early non-temple god altar.
+NAME:    erik_temple
+PLACE:   D:1-3
+ORIENT:  float
+TAGS:    no_trap_gen extra
+NSUBST:  ' = 12:1 / 4:2 / 1:3 / *:'
+KPROP:   'tCD> = no_tele_into
+KMASK:   'tCD> = no_item_gen
+: local rnd = crawl.random2(3)
+: if rnd == 0 then
+KFEAT:   C = altar_beogh
+SUBST:   DG = I
+KMONS:   1 = orc / nothing
+KMONS:   2 = orc wizard / orc priest / orc / nothing
+KMONS:   3 = orc warrior
+: elseif rnd == 1 then
+KFEAT:   C = altar_lugonu
+KFEAT:   D = enter_abyss
+KMONS:   1 = ufetubus / iron imp
+KMONS:   2 = quasit
+KMONS:   3 = demonic crawler
+KFEAT:   t = shallow_water
+KMONS:   t = demonic plant
+: elseif rnd == 2 then
+KFEAT:   C = altar_jiyva
+SUBST:   D = '
+KFEAT:   123 = slimy_water w:30 / floor
+KFEAT:   ' = slimeshroom / slimy_water
+KFEAT:   t = slimeshroom
+KMONS:   1 = ooze
+KMONS:   2 = jelly
+KMONS:   3 = slime creature
+: else
+SUBST:   D = V
+KMONS:   1 : gnoll / orc / 0 w:20
+KMONS:   2 : big kobold / ogre / 0 w:60
+KMONS:   3 : troll / 0 w:70
+SUBST:   t = T
+: end
+MAP
+............
+...xxxxxxxx.
+..xxxxt't>x.
+.xxxxx''''x.
+.G.x$q'C''x.
+...+0=''''x.
+...+0=''''x.
+.G.x$q'D''x.
+.xxxxx''''x.
+..xxxxt't>x.
+...xxxxxxxx.
+............
+ENDMAP
+
+##############################################################################
+# Split out of an entry vault as its own thing
+NAME:    erik_hall
+ORIENT:  float
+TAGS:    extra
+PLACE:   D:1-3
+SHUFFLE: TTGGVY
+NSUBST:  x = 1:+ / *:c
+MAP
+...T....ccc.
+.......ccccc
+.......ccccc
+.cxxc...ccc.
+cc00cc......
+c>cc%x...T..
+ccc%xc......
+.cxxc...ccc.
+.......ccccc
+.......ccccc
+...T....ccc.
+ENDMAP
+
+
+##############################################################################
 # Statue gallery
 NAME:    minmay_statue_hallways
 DEPTH:   D:4-

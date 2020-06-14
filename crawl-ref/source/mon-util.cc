@@ -112,6 +112,8 @@ static habitat_type _grid2habitat(dungeon_feature_type grid)
 
     switch (grid)
     {
+    case DNGN_SLIMY_WATER:
+        return HT_SLIME;
     case DNGN_LAVA:
         return HT_LAVA;
     case DNGN_ROCK_WALL:
@@ -131,6 +133,8 @@ dungeon_feature_type habitat2grid(habitat_type ht)
 {
     switch (ht)
     {
+    case HT_SLIME:
+        return DNGN_SLIMY_WATER;
     case HT_WATER:
         return DNGN_DEEP_WATER;
     case HT_LAVA:
@@ -3547,6 +3551,7 @@ habitat_type mons_class_secondary_habitat(monster_type mc)
     habitat_type ht = _mons_class_habitat(mc);
     switch (ht)
     {
+        case HT_SLIME:
         case HT_AMPHIBIOUS:
             return HT_WATER;
         case HT_AMPHIBIOUS_LAVA:

@@ -271,6 +271,15 @@ bool feat_is_traversable_now(dungeon_feature_type grid, bool try_fallback)
             return true;
         }
 
+        if (grid == DNGN_SLIMY_WATER)
+            return you.permanent_flight() || you.religion == GOD_JIYVA;
+
+        if (grid == DNGN_DEEP_SLIMY_WATER)
+        {
+            return you.permanent_flight() || (you.religion == GOD_JIYVA
+                && (player_likes_water(true) || have_passive(passive_t::water_walk)));
+        }
+
         // Permanently flying players can cross most hostile terrain.
         if (grid == DNGN_DEEP_WATER || grid == DNGN_LAVA)
             return you.permanent_flight();

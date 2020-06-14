@@ -58,26 +58,42 @@ TAGS:   slime_entry
 WEIGHT: 30
 KFEAT:  Z = altar_jiyva
 KFEAT:  O = enter_slime_pits
+NSUBST: . = 8:b / *:a
+KFEAT:  b = slimeshroom
+KFEAT:  a = slimy_water
+KFEAT:  A = floor
 MAP
-....
-.OZ.
-....
+  ......
+ ........
+..........
+...bAAb...
+...AOZA...
+...bAAb...
+.....A....
+ .....A..
+  ...@..
 ENDMAP
 
 NAME:   slime_altar_2
 TAGS:   slime_entry
 KFEAT:  _ = altar_jiyva
-SUBST:  1 : 111223
-NSUBST: 1 = 1 / 1. , 2 = 2 / 2... , 3 = 3 / 3....
-MONS:   jelly / ooze
-MONS:   acid blob / slime creature w:5
-MONS:   azure jelly
+KMONS:  0 = jelly / ooze
+KMONS:  1 = acid blob / slime creature w:5
+KMONS:  O = azure jelly
+: if crawl.coinflip() then
+SUBST:  _ = 1
+SUBST:  - = _
+: else
+SUBST:  - = 0
+: end
 KFEAT:  O = enter_slime_pits
+KFEAT:  01 = slimy_water
+KFEAT:  t = slimeshroom
 MAP
 ccccc
-c111m.
-cO1_=@
-c111m.
+ct10q.
+cO_-=@
+ct10q.
 ccccc
 ENDMAP
 
@@ -86,13 +102,16 @@ TAGS:  slime_entry
 KFEAT: O = enter_slime_pits
 KFEAT: S = slimy_wall
 KFEAT: _ = altar_jiyva
+NSUBST: ' = 4:s / *:'
+KFEAT: ' = slimy_water
+KFEAT: s = slimeshroom
 MAP
   .....
  .ccccc.
 .ccSSScc.
-.cS...Sc.
-.cS.O.cc.
-.cS.._.+@
+.cS'''Sc.
+.cS'O'cc.
+.cS''_.+@
 .ccScccc.
 .ccccccc.
  .ccccc.
@@ -104,18 +123,22 @@ TAGS:   slime_entry ruin_lair
 WEIGHT: 2
 MONS:   eye of devastation, eye of draining
 KFEAT:  O = enter_slime_pits
+SUBST:  x = xxS
+SUBST:  ' = aaab..
+KFEAT:  a = slimy_water
+KFEAT:  b = slimeshroom
 KFEAT:  S = slimy_wall
 MAP
  ....   ....
 ..xx..x..xx..
 .xxxx.x.xxxx.
-.xxx.....xxx.
-..x.S...S.x..
- ...........
- xxS.1O2.Sxx
- ...........
-..x.S...S.x..
-.xxx.....xxx.
+.xxx'''''xxx.
+..x'S'''S'x..
+ ..'''''''..
+ xxS'1O2'Sxx
+ ..'''''''..
+..x'S'''S'x..
+.xxx'''''xxx.
 .xxxx.x.xxxx.
 ..xx..x..xx..
  ....   ....

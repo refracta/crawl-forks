@@ -3186,7 +3186,7 @@ SUBST:  de = ', f = t, gh = ., ij = -, kpqr = x, s = @, uy = A
 : else
 SUBST: dhjsy = x, gfru = -, ep = A, iq = ., k = @
 : end
-FTILE:  -G = floor_dirt, 'Tt = floor_grass
+FTILE:  -Gw = floor_dirt, 'Tt = floor_grass
 COLOUR: ' = green, - = brown
 MAP
                xkx

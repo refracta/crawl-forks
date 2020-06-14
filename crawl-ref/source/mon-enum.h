@@ -179,6 +179,7 @@ enum habitat_type
     HT_ROCK,             // Rock critters
     HT_STEEL,            // Metal critters
     HT_INCORPOREAL,      // Incorporeal critters
+    HT_SLIME,            // Safe for slimy tiles
 
     NUM_HABITATS
 };

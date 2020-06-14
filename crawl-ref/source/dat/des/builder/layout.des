@@ -898,13 +898,15 @@ TAGS:   overwritable layout allow_dup unrand layout_type_open_caves
 	pool_contents["w"] = 75
 	pool_contents["W"] = 20
 	pool_contents["x"] = 20
-	pool_contents["t"] = 5
+	pool_contents["r"] = 5
 	if you.in_branch("slime") then
 	  add_pools { replace = ".",
 				  pool_size = 8 + crawl.random2(8),
 				  contents = pool_contents,
 				  frequency = 20 }
 	end
+
+	kfeat("r = slimeshroom")
 
     -- For Orc branch end, fill in all but the largest zone
     if connected then

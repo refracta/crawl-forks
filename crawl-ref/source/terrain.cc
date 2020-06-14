@@ -1781,7 +1781,7 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
             ouch(actual, KILLED_BY_ACID, MID_NOBODY, "Slime Pit");
         }
 
-        else if (act->is_monster() && !(mons_genus(mon->type) == MONS_JELLY))
+        else if (act->is_monster() && !(mons_primary_habitat(*mon) == HT_SLIME) && !(mon->res_acid() > 2))
         {
             mprf("The acidic ooze burns %s%s%s%s", act->name(DESC_THE).c_str(), original > hurted ? " terribly" : "",
                 attack_strength_punctuation(actual).c_str(), original < hurted ? " It resists." : "");
