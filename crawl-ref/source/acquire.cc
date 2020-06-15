@@ -219,7 +219,7 @@ static int _acquirement_shield_subtype(bool /*divine*/, int& /*quantity*/, int /
     if (random2(you.skill(SK_SHORT_BLADES, 10, false, false, false)) + 1 > random2(you.skill(SK_SHIELDS, 10, false, false, false)))
         return SHD_SAI;
 
-    if (random2(you.skill(SK_WHIPS_AND_FLAILS, 10, false, false, false)) + 1 > random2(you.skill(SK_SHIELDS, 10, false, false, false)))
+    if (random2(you.skill(SK_WHIPS_FLAILS, 10, false, false, false)) + 1 > random2(you.skill(SK_SHIELDS, 10, false, false, false)))
         return SHD_NUNCHAKU;
 
     if (random2(you.skill(SK_SHIELDS, 10, false, false, false)) < 50 || one_chance_in(5))
