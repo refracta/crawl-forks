@@ -262,6 +262,15 @@ slime_overlay_NE
 slime_overlay_SE
 slime_overlay_SW
 
+lava_overlay_N LAVA_OVERLAY
+lava_overlay_E
+lava_overlay_S
+lava_overlay_W
+lava_overlay_NW
+lava_overlay_NE
+lava_overlay_SE
+lava_overlay_SW
+
 %weight 10
 snake-a0 FLOOR_SNAKE_A
 %weight 3

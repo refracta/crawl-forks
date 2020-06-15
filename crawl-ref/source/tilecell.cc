@@ -629,6 +629,13 @@ static bool _is_seen_slimy_wall(const coord_def& gc, crawl_view_buffer &vbuf)
     return feat == DNGN_SLIMY_WALL;
 }
 
+static bool _is_seen_lava(const coord_def& gc, crawl_view_buffer &vbuf)
+{
+    const auto feat = _safe_feat(gc, vbuf);
+
+    return feat == DNGN_LAVA;
+}
+
 void pack_cell_overlays(const coord_def &gc, crawl_view_buffer &vbuf)
 {
     auto& cell = vbuf(gc).tile;
@@ -643,18 +650,19 @@ void pack_cell_overlays(const coord_def &gc, crawl_view_buffer &vbuf)
     else
         _pack_default_waves(gc, vbuf);
 
-    if (player_in_branch(BRANCH_SLIME) &&
-        cell.map_knowledge.feat() != DNGN_SLIMY_WALL)
+    if (cell.map_knowledge.feat() != DNGN_LAVA)
+    {
+        _add_directional_overlays(gc, vbuf, TILE_LAVA_OVERLAY,
+            _is_seen_lava);
+    }
+    if (cell.map_knowledge.feat() != DNGN_SLIMY_WALL)
     {
         _add_directional_overlays(gc, vbuf, TILE_SLIME_OVERLAY,
                                   _is_seen_slimy_wall);
     }
-    else
-    {
-        tileidx_t shadow_tile = TILE_DNGN_WALL_SHADOW;
-        if (player_in_branch(BRANCH_CRYPT) || player_in_branch(BRANCH_DEPTHS))
-            shadow_tile = TILE_DNGN_WALL_SHADOW_DARK;
-        _pack_wall_shadows(gc, vbuf, shadow_tile);
-    }
+    tileidx_t shadow_tile = TILE_DNGN_WALL_SHADOW;
+    if (player_in_branch(BRANCH_CRYPT) || player_in_branch(BRANCH_DEPTHS))
+        shadow_tile = TILE_DNGN_WALL_SHADOW_DARK;
+    _pack_wall_shadows(gc, vbuf, shadow_tile);
 }
 #endif //TILECELL.CC
