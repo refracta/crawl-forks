@@ -46,7 +46,7 @@ end
 
 # Weight balancer
 NAME:  slime_dummy
-TAGS:  slime_entry
+TAGS:  slime_entry extra
 KFEAT: O = enter_slime_pits
 MAP
 O
@@ -54,7 +54,22 @@ ENDMAP
 
 # Slime entries featuring an altar to Jiyva
 NAME:   slime_altar_1
-TAGS:   slime_entry
+TAGS:   slime_entry extra
+WEIGHT: 30
+KFEAT:  Z = altar_jiyva
+KFEAT:  O = enter_slime_pits
+KFEAT:  b = slimeshroom
+KFEAT:  a = slimy_water
+SHUFFLE: OZ
+SHUFFLE: ab
+MAP
+baab
+.OZ.
+....
+ENDMAP
+
+NAME:   slime_island
+TAGS:   slime_entry extra
 WEIGHT: 30
 KFEAT:  Z = altar_jiyva
 KFEAT:  O = enter_slime_pits
@@ -75,7 +90,7 @@ MAP
 ENDMAP
 
 NAME:   slime_altar_2
-TAGS:   slime_entry
+TAGS:   slime_entry extra
 KFEAT:  _ = altar_jiyva
 KMONS:  0 = jelly / ooze
 KMONS:  1 = acid blob / slime creature w:5
@@ -98,7 +113,7 @@ ccccc
 ENDMAP
 
 NAME:  dpeg_slime_entry_enclosed_altar
-TAGS:  slime_entry
+TAGS:  slime_entry extra
 KFEAT: O = enter_slime_pits
 KFEAT: S = slimy_wall
 KFEAT: _ = altar_jiyva
@@ -119,7 +134,7 @@ MAP
 ENDMAP
 
 NAME:   minmay_slime_entry_eyes
-TAGS:   slime_entry ruin_lair
+TAGS:   slime_entry ruin_lair extra
 WEIGHT: 2
 MONS:   eye of devastation, eye of draining
 KFEAT:  O = enter_slime_pits
@@ -144,91 +159,122 @@ MAP
  ....   ....
 ENDMAP
 
-NAME:   minmay_slime_entry_pillars
-TAGS:   slime_entry ruin_lair
-MONS:   jelly / slime creature
-KFEAT:  O = enter_slime_pits
+NAME:    bcadren_minmay_slime_entry_pools
+TAGS:    slime_entry ruin_lair extra
+MONS:    jelly / slime creature
+KFEAT:   O = enter_slime_pits
+SHUFFLE: ABCD
+SUBST:   A = c
+SUBST:   B = d
+SUBST:   C = aa.
+SUBST:   D = bba
+KFEAT:   a = slimeshroom
+KFEAT:   b = slimy_water
+KFEAT:   d = slimy_wall
+MAP
+..A.....D..
+.AAA...DDD.
+AAAAA1DDDDD
+.AAA...DDD.
+..A.....D..
+..1..O..1..
+..B.....C..
+.BBB...CCC.
+BBBBB1CCCCC
+.BBB...CCC.
+..B.....C..
+ENDMAP
+
+NAME:    minmay_slime_entry_pillars
+TAGS:    slime_entry ruin_lair extra
+MONS:    jelly / slime creature
+KFEAT:   O = enter_slime_pits
+SUBST:   A : cd , B : cd , C : cd , D : cd
+KFEAT:   d = slimy_wall
 MAP
 ...........
-.ccc...ccc.
-.ccc.1.ccc.
-.ccc...ccc.
+.AAA...DDD.
+.AAA.1.DDD.
+.AAA...DDD.
 ...........
 ..1..O..1..
 ...........
-.ccc...ccc.
-.ccc.1.ccc.
-.ccc...ccc.
+.BBB...CCC.
+.BBB.1.CCC.
+.BBB...CCC.
 ...........
 ENDMAP
 
 # In-game the boxes rarely stay closed due to ruination; this is intentional.
 NAME:   minmay_slime_entry_jelly_boxes
-TAGS:   slime_entry ruin_lair
+TAGS:   slime_entry ruin_lair extra
 WEIGHT: 5
-MONS:   jelly / ooze w:1 / nothing w:1
+KMONS:  b = jelly
+NSUBST: ABCD = 1:a / 3:b
+KFEAT:  a = slimy_water
+KFEAT:  b = slimeshroom
+KFEAT:  s = slimy_wall
 KFEAT:  O = enter_slime_pits
 MAP
 .............
 .xxxxx.xxxxx.
-.xxx1x.x11xx.
-.xx11x.xx1xx.
-.xx1x...x1xx.
-.xxxx....xxx.
+.xxxAx.xDDxx.
+.xxAAx.sxDxx.
+.xxAs...sDxx.
+.xxss....sxx.
 ......O......
-.xxxx...xxxx.
-.xx1.x.x.1xx.
-.x11x.xx11xx.
-.xx1x.xxxxxx.
+.xxss...ssxx.
+.xxB.s.s.Cxx.
+.xBBx.xxCCxx.
+.xxBx.xxxCxx.
 .xxxxx.xxxxx.
 .............
 ENDMAP
 
 NAME:   minmay_slime_entry_oklob_open
-TAGS:   slime_entry
+TAGS:   slime_entry extra
 WEIGHT: 5
-MONS:   oklob plant / nothing w:20
+KMONS:  1 = oklob plant
+KFEAT:  1c = slimy_water
 KFEAT:  O = enter_slime_pits
+NSUBST: 1 = 2:1 / *:c
+NSUBST: c = 2:b / *:c
+KFEAT:  b = slimeshroom
 MAP
  .....
-.......
-..111..
-..1O1..
-..111..
-.......
+..ccc@.
+.c11@c.
+.c1O1c.
+.c111c.
+..ccc..
  .....
 ENDMAP
 
 NAME:   minmay_slime_entry_oklob_enclosed
-TAGS:   slime_entry ruin_lair
+TAGS:   slime_entry extra
 ORIENT: northeast
 WEIGHT: 5
-MONS:   oklob plant / nothing w:20
-KFEAT:  O = enter_slime_pits
+KMONS:  1 = oklob plant
+NSUBST: 1 = 2:1 / *:s
 KFEAT:  S = slimy_wall
-KFEAT:  a = slimy_water
-{{
-local pool_contents = {}
-pool_contents["a"] = 75
-add_pools { replace = ".b",
-			pool_size = 4 + crawl.random2(4),
-			contents = pool_contents,
-			frequency = 1 }
-}}
+SUBST:  s = sssb
+KFEAT:  b = slimeshroom
+KFEAT:  1s = slimy_water
+KFEAT:  O = enter_slime_pits
 MAP
 xxxxxxxxxxxxxxxxxxxxxxx
 xxxxxxxxxxxxxxxxxxxxxxx
 xxxxxxxxxxxxxxxxxxxxxxx
-xxxxxxxxx......xxxxxxxx
-xxSSxx...........xxxxxx
-xxS111......xx....xxxxx
-xSS.11....xxxx....xxxxx
-xS..O11.xxxxx....xxxxxx
-xSS..1xxxxxx.....xxxxxx
-xxSSSSxxxxx.....xxxxxxx
-xxxxxxxxxx.....xxxxxxxx
-xxxxxxxx.....xxxxxxxxxx
-xxxxxxx.@..xxxxxxxxxxxx
+xxxSSSSxx.......xxxxxxx
+xxSS11....ssssss.xxxxxx
+xSS1...ssss....ss.xxxxx
+xS1.sss....xx..ss.xxxxx
+xSssOs..11xx..ss.xxxxxx
+xSSss.11Sxx.ssss.xxxxxx
+xxSSSSSSxx.ssss.xxxxxxx
+xxxxxxxxx.sss..xxxxxxxx
+xxxxxxxx.ss..xxxxxxxxxx
+xxxxxxx@ss@xxxxxxxxxxxx
 ENDMAP
 
 NAME:   dpeg_slime_entry_corner
@@ -237,13 +283,14 @@ ORIENT: northwest
 WEIGHT: 5
 KFEAT:  O = enter_slime_pits
 KFEAT:  S = slimy_wall
+KFEAT:  s = slimy_water w:2 / floor w:1
 MAP
 xxxxxxxxxxx
 xSSSxxxxxx
-xS...xxxx
-xS.O...xx
+xSsssxxxx
+xSsO..sxx
 xxxxxx.xx
-xxxx....x
+xxxxs..sx
 xxx...xx.
 xx..
 ENDMAP
@@ -252,10 +299,15 @@ NAME: nicolae_slime_entry_slimehenge
 TAGS: slime_entry transparent
 NSUBST: A = . / A, B = . / B, C = . / C
 SHUFFLE: ABCD
-SUBST: A = x, BCD = .
 KFEAT: O = enter_slime_pits
 KMONS: 1 = ooze / jelly / nothing
-KFEAT: x = slimy_wall
+KFEAT: A = slimy_wall
+: if crawl.one_chance_in(3) then
+KFEAT: BCD = floor
+:else
+KFEAT: B = slimeshroom
+KFEAT: CD = slimy_water
+:end
 MAP
   .........
  ...........
