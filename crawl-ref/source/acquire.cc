@@ -172,7 +172,7 @@ static armour_type _acquirement_armour_for_slot(equipment_type slot_type,
                 return random_choose(ARM_CLOAK, ARM_SCARF);
             return ARM_SCARF;
         case EQ_GLOVES:
-            if (x_chance_in_y(you.skill(SK_UNARMED_COMBAT, 1, true, false, false), 50))
+            if (x_chance_in_y(you.skill(SK_UNARMED_COMBAT, 1, true, false, false) + 1, 40))
                 return ARM_CLAW;
             return ARM_GLOVES;
         case EQ_BOOTS:
@@ -216,8 +216,11 @@ static int _acquirement_shield_subtype(bool /*divine*/, int& /*quantity*/, int /
 {
     const int scale = 256;
 
-    if (random2(you.skill(SK_SHORT_BLADES, 10, false, false, false)) > random2(you.skill(SK_SHIELDS, 10, false, false, false)))
+    if (random2(you.skill(SK_SHORT_BLADES, 10, false, false, false)) + 1 > random2(you.skill(SK_SHIELDS, 10, false, false, false)))
         return SHD_SAI;
+
+    if (random2(you.skill(SK_WHIPS_AND_FLAILS, 10, false, false, false)) + 1 > random2(you.skill(SK_SHIELDS, 10, false, false, false)))
+        return SHD_NUNCHAKU;
 
     if (random2(you.skill(SK_SHIELDS, 10, false, false, false)) < 50 || one_chance_in(5))
     {
@@ -433,7 +436,7 @@ static int _acquirement_food_subtype(bool /*divine*/, int& quantity,
  *                  tailored to the player's skills.
  * @return          An appropriate weapon skill; e.g. SK_LONG_BLADES.
  */
-static skill_type _acquirement_weapon_skill(bool divine, int agent)
+static skill_type _acquirement_weapon_skill(int agent)
 {
     // reservoir sample.
     int count = 0;
@@ -445,9 +448,6 @@ static skill_type _acquirement_weapon_skill(bool divine, int agent)
         // Adding a small constant allows for the occasional
         // weapon in an untrained skill.
         int weight = _skill_rdiv(sk) + 1;
-        // Exaggerate the weighting if it's a scroll acquirement.
-        if (!divine)
-            weight = (weight + 1) * (weight + 2);
         count += weight;
 
         if (x_chance_in_y(weight, count))
@@ -459,34 +459,14 @@ static skill_type _acquirement_weapon_skill(bool divine, int agent)
 
 static int _acquirement_weapon_subtype(bool divine, int & /*quantity*/, int agent)
 {
-    const skill_type skill = _acquirement_weapon_skill(divine, agent);
-
-    int best_sk = 0;
-    for (int i = SK_FIRST_WEAPON;
-         i <= (agent == GOD_TROG ? SK_LAST_MELEE_WEAPON : SK_LAST_WEAPON);
-         i++)
-    {
-        best_sk = max(best_sk, _skill_rdiv((skill_type)i));
-    }
-    best_sk = max(best_sk, _skill_rdiv(SK_UNARMED_COMBAT));
+    const skill_type skill = _acquirement_weapon_skill(agent);
 
     // Now choose a subtype which uses that skill.
     int result = OBJ_RANDOM;
     int count = 0;
     item_def item_considered;
     item_considered.base_type = OBJ_WEAPONS;
-    // Let's guess the percentage of shield use the player did, this is
-    // based on empirical data where pure-shield MDs get skills like 17 sh
-    // 25 m&f and pure-shield Spriggans 7 sh 18 m&f. Pretend formicid
-    // shield skill is 0 so they always weight towards 2H.
-    const int shield_sk = you.species == SP_FORMICID
-        ? 0
-        : _skill_rdiv(SK_SHIELDS) * species_apt_factor(SK_SHIELDS);
-    const int want_shield = min(2 * shield_sk, best_sk) + 10;
-    const int dont_shield = max(best_sk - shield_sk, 0) + 10;
-    // At XL 10, weapons of the handedness you want get weight *2, those of
-    // opposite handedness 1/2, assuming your shields usage is respectively
-    // 0% or 100% in the above formula. At skill 25 that's *3.5 .
+
     for (int i = 0; i < NUM_WEAPONS; ++i)
     {
         const int wskill = item_attack_skill(OBJ_WEAPONS, i);
@@ -519,11 +499,6 @@ static int _acquirement_weapon_subtype(bool divine, int & /*quantity*/, int agen
             damage *= damage * damage;
             acqweight *= damage / property(item_considered, PWPN_SPEED);
         }
-
-        if (two_handed)
-            acqweight = acqweight * dont_shield / want_shield;
-        else
-            acqweight = acqweight * want_shield / dont_shield;
 
         if (!you.seen_weapon[i])
             acqweight *= 5; // strong emphasis on type variety, brands go only second

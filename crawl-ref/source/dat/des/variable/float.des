@@ -4831,14 +4831,14 @@ SUBST:   t = T
 MAP
 ............
 ...xxxxxxxx.
-..xxxxt't>x.
+..xxxxt''tx.
 .xxxxx''''x.
 .G.x$q'C''x.
 ...+0=''''x.
 ...+0=''''x.
 .G.x$q'D''x.
 .xxxxx''''x.
-..xxxxt't>x.
+..xxxxt''tx.
 ...xxxxxxxx.
 ............
 ENDMAP
