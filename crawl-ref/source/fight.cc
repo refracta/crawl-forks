@@ -587,6 +587,9 @@ static bool _dragonskin_affected (beam_type flavour)
  */
 int resist_adjust_damage(const actor* defender, beam_type flavour, int rawdamage)
 {
+    if (defender->is_fairy())
+        return rawdamage;
+
     int res = _beam_to_resist(defender, flavour);
     const bool is_mon = defender->is_monster();
 

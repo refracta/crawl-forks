@@ -401,6 +401,7 @@ public:
     bool antimagic_susceptible() const override;
 
     bool stasis() const override;
+    bool is_fairy() const override;
     bool cloud_immune(bool calc_unid = true, bool items = true) const override;
 
     bool airborne() const override;

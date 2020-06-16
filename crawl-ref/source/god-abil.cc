@@ -6757,15 +6757,12 @@ bool hepliaklqana_choose_ancestor_type(int ancestor_choice)
     if (monster* ancestor = hepliaklqana_ancestor_mon())
     {
         ancestor->type = ancestor_type;
-        if (you.species != SP_FELID && you.species != SP_TROLL)
+        if (you.species != SP_FAIRY && you.species != SP_FELID && you.species != SP_TROLL)
         {
             give_weapon(ancestor, -1);
             ASSERT(ancestor->weapon());
         }
-        if (you.species != SP_FELID)
-        {
-            give_shield(ancestor);
-        }
+        give_shield(ancestor);
         set_ancestor_spells(*ancestor);
     }
 

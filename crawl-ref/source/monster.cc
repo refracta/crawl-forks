@@ -3237,6 +3237,8 @@ int monster::base_armour_class() const
     // Also special cases for non-armoured races.
     if (mons_is_hepliaklqana_ancestor(type))
     {
+        if (you.species == SP_FAIRY)
+            return 1;
         if (you.species == SP_FELID || you.species == SP_OCTOPODE)
             return 3;
         if (species_is_draconian(you.species))
@@ -4447,7 +4449,7 @@ int monster::hurt(const actor *agent, int amount, beam_type flavour,
                 flags |= MF_EXPLODE_KILL;
         }
 
-        if (mons_genus(this->type) == MONS_FAIRY)
+        if (is_fairy())
             amount = 1;
 
         amount = min(amount, hit_points);
@@ -6624,6 +6626,13 @@ bool monster::stasis() const
     return mons_genus(type) == MONS_FORMICID
            || type == MONS_PLAYER_GHOST && ghost->species == SP_FORMICID
            || mons_is_hepliaklqana_ancestor(type) && you.species == SP_FORMICID;
+}
+
+bool monster::is_fairy() const
+{
+    return mons_genus(type) == MONS_FAIRY
+        || type == MONS_PLAYER_GHOST && ghost->species == SP_FAIRY
+        || mons_is_hepliaklqana_ancestor(type) && you.species == SP_FAIRY;
 }
 
 bool monster::cloud_immune(bool calc_unid, bool items) const

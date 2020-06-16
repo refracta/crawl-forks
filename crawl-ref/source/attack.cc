@@ -563,7 +563,7 @@ bool attack::distortion_affects_defender()
     switch (choice)
     {
     case SMALL_DMG:
-        if (defender->is_player() && you.species == SP_FAIRY)
+        if (defender->is_fairy())
             return false;
         special_damage += 1 + random2avg(7, 2);
         // No need to call attack_strength_punctuation here,
@@ -645,8 +645,7 @@ void attack::pain_affects_defender()
         special_damage += resist_adjust_damage(defender, BEAM_NEG,
                               random2(1 + user->skill_rdiv(SK_NECROMANCY)));
 
-        if (special_damage && defender->is_player() 
-                           && you.species == SP_FAIRY && x_chance_in_y(30 - special_damage, 30))
+        if (special_damage && defender->is_fairy() && x_chance_in_y(30 - special_damage, 30))
             special_damage = 0;
 
         if (special_damage && defender_visible)
@@ -1572,7 +1571,7 @@ bool attack::apply_damage_brand(const char *what)
         return false;
     }
     
-    const bool fae = (defender->is_player() && you.species == SP_FAIRY);
+    const bool fae = defender->is_fairy();
 
     switch (brand)
     {

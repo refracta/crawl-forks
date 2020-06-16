@@ -3946,6 +3946,11 @@ bool player::stasis() const
     return (species == SP_FORMICID || you.attribute[ATTR_ROOTED]);
 }
 
+bool player::is_fairy() const
+{
+    return species == SP_FAIRY;
+}
+
 bool player::cloud_immune(bool calc_unid, bool items) const
 {
     if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE) && you.drac_colour == DR_CYAN)

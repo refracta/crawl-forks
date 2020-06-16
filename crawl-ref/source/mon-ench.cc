@@ -193,6 +193,15 @@ void monster::add_enchantment_effect(const mon_enchant &ench, bool quiet)
     // Check for slow/haste.
     switch (ench.ench)
     {
+    case ENCH_IDEALISED:
+        if (!is_fairy())
+            scale_hp(3, 2);
+        else if (type == MONS_ANCESTOR_KNIGHT)
+            scale_hp(2, 1);
+        else
+            scale_hp(5, 3);
+        break;
+
     case ENCH_BERSERK:
         // Inflate hp.
         scale_hp(3, 2);
@@ -450,6 +459,18 @@ void monster::remove_enchantment_effect(const mon_enchant &me, bool quiet)
     case ENCH_BERSERK:
         scale_hp(2, 3);
         calc_speed();
+        break;
+
+    case ENCH_IDEALISED:
+        if (!is_fairy())
+            scale_hp(2, 3);
+        else if (type == MONS_ANCESTOR_KNIGHT)
+            scale_hp(1, 2);
+        else
+            scale_hp(3, 5);
+
+        if (!quiet)
+            simple_monster_message(*this, " loses the glow of perfection.");
         break;
 
     case ENCH_HASTE:
@@ -1019,11 +1040,6 @@ void monster::remove_enchantment_effect(const mon_enchant &me, bool quiet)
     case ENCH_EMPOWERED_SPELLS:
         if (!quiet)
             simple_monster_message(*this, " seems less brilliant.");
-        break;
-
-    case ENCH_IDEALISED:
-        if (!quiet)
-            simple_monster_message(*this, " loses the glow of perfection.");
         break;
 
     case ENCH_BOUND_SOUL:

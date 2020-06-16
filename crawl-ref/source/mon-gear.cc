@@ -1563,7 +1563,7 @@ static void _give_shield(monster* mon, int level)
         upgrade_hepliaklqana_shield(*mon, shld);
 
         // Embedding a Nikola Hack, hope this works.
-        if (you.species == SP_FELID && mon->get_experience_level() >= 12)
+        if ((you.species == SP_FELID || you.species == SP_FAIRY) && mon->get_experience_level() >= 12)
             make_item_for_monster(mon, OBJ_JEWELLERY, AMU_REFLECTION, 6, 0, ISFLAG_KNOW_TYPE | ISFLAG_SUMMONED);
 
         if (!shld.defined())

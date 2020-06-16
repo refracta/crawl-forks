@@ -568,6 +568,12 @@ static int _mons_class_halo_radius(monster_type type)
     // The values here depend on 1. power, 2. sentience. Thus, high-ranked
     // sentient celestials have really big haloes, while holy animals get
     // little or none.
+    if (mons_is_hepliaklqana_ancestor(type))
+    {
+        if (you.species == SP_FAIRY)
+            return 2;
+        return -1;
+    }
     switch (type)
     {
     case MONS_FAIRY:
@@ -585,7 +591,7 @@ static int _mons_class_halo_radius(monster_type type)
     case MONS_HOLY_SWINE:
         return 1;  // only notionally holy
     case MONS_MENNAS:
-        return 5;  // ???  Low on grace or what?
+        return 5;
     default:
         return -1;
     }

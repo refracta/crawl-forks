@@ -2022,6 +2022,9 @@ static mon_attack_def _mutant_beast_attack(const monster &mon, int attk_number)
 static mon_attack_def _hepliaklqana_ancestor_attack(const monster &mon,
                                                      int attk_number)
 {
+    if (you.species == SP_FAIRY)
+        return {};
+
     const int HD = mon.get_experience_level();
     const int dam = HD + 3; // 4 at 1 HD, 21 at 18 HD (max)
     
@@ -5997,6 +6000,12 @@ void set_ancestor_spells(monster &ancestor, bool notify)
             _add_ancestor_spell(ancestor.spells, SPELL_OZOCUBUS_ARMOUR);
             _add_ancestor_spell(ancestor.spells, SPELL_CONDENSATION_SHIELD);
         }
+        if (you.species == SP_FAIRY)
+        {
+            _add_ancestor_spell(ancestor.spells, HD >= 14 ? SPELL_IRRADIATE : SPELL_FREEZE);
+            _add_ancestor_spell(ancestor.spells, SPELL_STICKY_FLAME);
+            _add_ancestor_spell(ancestor.spells, SPELL_CONDENSATION_SHIELD);
+        }
         else if (you.species == SP_OCTOPODE || species_is_draconian(you.species))
             _add_ancestor_spell(ancestor.spells, SPELL_OZOCUBUS_ARMOUR);
         break;
@@ -6078,6 +6087,13 @@ void set_ancestor_spells(monster &ancestor, bool notify)
                                                       : SPELL_SLOW);
         _add_ancestor_spell(ancestor.spells, HD >= 13 ? SPELL_MASS_CONFUSION
                                                       : SPELL_CONFUSE);
+        if (you.species == SP_FAIRY)
+            _add_ancestor_spell(ancestor.spells, HD >= 15 ? SPELL_SUMMON_GREATER_DEMON :
+                                                 HD >= 10 ? SPELL_SUMMON_DEMON
+                                                          : SPELL_CALL_IMP);
+        break;
+    case MONS_ANCESTOR:
+        _add_ancestor_spell(ancestor.spells, SPELL_FREEZE);
         break;
     default:
         break;

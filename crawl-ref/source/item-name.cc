@@ -3706,8 +3706,6 @@ bool is_useless_item(const item_def &item, bool temp)
             return you_worship(GOD_TROG);
         case SCR_ENCHANT:
             return ((you.species == SP_FELID || you.species == SP_FAIRY) && you.get_mutation_level(MUT_NO_ARTIFICE));
-        case SCR_BLESS_ITEM:
-            return you.species == SP_FELID;
         case SCR_SUMMONING:
             return you.get_mutation_level(MUT_NO_LOVE) > 0;
         case SCR_FOG:

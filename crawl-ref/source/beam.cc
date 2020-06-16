@@ -2387,7 +2387,7 @@ int silver_damages_victim(actor* victim, int damage, string &dmg_msg)
 
         ret = div_rand_round(damage * multiplier, 20);
 
-        if (you.species == SP_FAIRY && x_chance_in_y(20 - multiplier, 20))
+        if (you.is_fairy() && x_chance_in_y(20 - multiplier, 20))
             ret = 0;
     }
     else
@@ -4094,7 +4094,7 @@ void bolt::affect_player_enchantment(bool resistible)
     case BEAM_DRAIN_MAGIC:
     {
         int amount = random2avg(ench_power / 8, 3);
-        if (you.species == SP_FAIRY)
+        if (you.is_fairy())
             amount = div_rand_round(amount, 6);
         amount = min(you.magic_points, amount);
         if (!amount)

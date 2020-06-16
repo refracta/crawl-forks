@@ -331,6 +331,7 @@ public:
     virtual bool no_cast(bool calc_unid = true, bool items = true) const;
     virtual bool reflection(bool calc_unid = true, bool items = true) const;
     virtual bool extra_harm(bool calc_unid = true, bool items = true) const;
+    virtual bool is_fairy() const = 0;
 
     virtual bool rmut_from_item(bool calc_unid = true) const;
     virtual bool evokable_berserk(bool calc_unid = true) const;

@@ -1724,10 +1724,18 @@ static int _hepliaklqana_ally_hd()
  *                AND the opposite for lower than standard HP 
  *              (it's fair now that they have bonus MR/EV)
  */
-int hepliaklqana_ally_hp()
+int hepliaklqana_ally_hp(bool knight_boost)
 {
+    if (you.is_fairy())
+    {
+        if (knight_boost)
+            return 5;
+        return 3;
+    }
     const int HD = _hepliaklqana_ally_hd();
     int HP_MOD = species_hp_modifier(you.species);
+    if (knight_boost)
+        HP_MOD += 1;
     return HP_MOD * HD + HD * 6 + max(0, (HD - 12) * 6);
 }
 
@@ -1748,7 +1756,7 @@ mgen_data hepliaklqana_ancestor_gen_data()
     mgen_data mg(type, BEH_FRIENDLY, you.pos(), MHITYOU, MG_AUTOFOE);
     mg.set_summoned(&you, 0, 0, GOD_HEPLIAKLQANA);
     mg.hd = _hepliaklqana_ally_hd();
-    mg.hp = hepliaklqana_ally_hp();
+    mg.hp = hepliaklqana_ally_hp(type == MONS_ANCESTOR_KNIGHT);
     mg.extra_flags |= MF_NO_REWARD;
     mg.mname = hepliaklqana_ally_name();
     mg.props[MON_GENDER_KEY]
@@ -1832,7 +1840,7 @@ void upgrade_hepliaklqana_ancestor(bool quiet_force)
         return; // assume nothing changes except at different HD
 
     const int old_mhp = ancestor->max_hit_points;
-    ancestor->max_hit_points = hepliaklqana_ally_hp();
+    ancestor->max_hit_points = hepliaklqana_ally_hp(ancestor->type == MONS_ANCESTOR_KNIGHT);
     ancestor->hit_points =
         div_rand_round(ancestor->hit_points * ancestor->max_hit_points,
                        old_mhp);
@@ -1845,7 +1853,7 @@ void upgrade_hepliaklqana_ancestor(bool quiet_force)
 
         // Hacky, but there isn't even handling for monsters getting jewellery at all, so...
 
-        if (you.species == SP_FELID && hd == 12 && ancestor->type == MONS_ANCESTOR_KNIGHT)
+        if ((you.species == SP_FELID || you.species == SP_FAIRY) && hd == 12 && ancestor->type == MONS_ANCESTOR_KNIGHT)
             mprf("%s remembers %s Amulet of Reflection.",
                 ancestor->name(DESC_YOUR, true).c_str(),
                 ancestor->pronoun(PRONOUN_POSSESSIVE, true).c_str());
@@ -2006,8 +2014,8 @@ void upgrade_hepliaklqana_weapon(monster_type mtyp, item_def &item)
     if (mtyp == MONS_ANCESTOR)
         return; // bare-handed!
 
-    if (you.species == SP_FELID || you.species == SP_TROLL)
-        return; // prefer claws.
+    if (you.species == SP_FELID || you.species == SP_TROLL || you.species == SP_FAIRY)
+        return; // felids/trolls prefer claws and fairies can't use anything.
 
     item.base_type = OBJ_WEAPONS;
     item.sub_type = _hepliaklqana_weapon_type(mtyp,
@@ -2027,7 +2035,7 @@ void upgrade_hepliaklqana_weapon(monster_type mtyp, item_def &item)
  */
 static shield_type _hepliaklqana_shield_type(monster_type mc, int HD)
 {
-    if (you.species == SP_FELID)
+    if (you.species == SP_FELID || you.species == SP_FAIRY)
         return NUM_SHIELDS;
     else if (mc != MONS_ANCESTOR_KNIGHT)
     {
@@ -3264,9 +3272,7 @@ bool player_can_join_god(god_type which_god)
     // Fairies natural halo cuts them out of Dith; lack of melee cuts them out of Trog, Oka and Wu.
     // Being considered "Holy" cuts them out of Yred.
     if (you.species == SP_FAIRY && (which_god == GOD_DITHMENOS || which_god == GOD_TROG 
-        || which_god == GOD_OKAWARU || which_god == GOD_WU_JIAN || which_god == GOD_YREDELEMNUL
-        || which_god == GOD_HEPLIAKLQANA)) // Hep is temporary pending coding their special case.
-        // BCADDO: Hep for fairies.
+        || which_god == GOD_OKAWARU || which_god == GOD_WU_JIAN || which_god == GOD_YREDELEMNUL))
         return false;
 
     if (which_god == GOD_GOZAG && you.gold < gozag_service_fee())

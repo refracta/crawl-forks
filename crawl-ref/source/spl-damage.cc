@@ -387,7 +387,7 @@ spret cast_chain_spell(spell_type spell_cast, int pow,
             beam.damage.size = max(3, beam.damage.size / 2);
 
             // Fairies aren't hurt by their own arcs 2/3 times or at all if rElec.
-            if (caster->is_player() && you.species == SP_FAIRY && (you.res_elec() || !one_chance_in(3)))
+            if (caster->is_fairy() && (caster->res_elec() || !one_chance_in(3)))
             {
                 beam.real_flavour = BEAM_VISUAL;
                 beam.flavour      = BEAM_VISUAL;
@@ -966,9 +966,7 @@ void cloud_strike(actor * caster, actor * foe, int damage)
     coord_def pos = foe->pos();
     if (!cloud_at(pos))
         return;
-    if (foe->is_player() && you.species == SP_FAIRY)
-        return;
-    if (foe->cloud_immune())
+    if (foe->is_fairy() || foe->cloud_immune())
         return;
     cloud_type cloud = cloud_at(pos)->type;
 
@@ -2714,19 +2712,20 @@ static int _discharge_monsters(const coord_def &where, int pow,
     if (victim->is_player() || victim->res_elec() <= 0)
         beam.draw(where);
 
+    if (victim->is_fairy())
+    {
+        // Elec resist is full resist for fairy.
+        if (victim->res_elec())
+            return 0;
+        // Fairies are protected against most their own arcs.
+        else if ((agent.mid == victim->mid) && !one_chance_in(4))
+            return 0;
+    }
+
     if (victim->is_player())
     {
         damage = 1 + random2(3 + pow / 15);
         dprf("You: static discharge damage: %d", damage);
-        if (you.species == SP_FAIRY)
-        {
-            // Elec resist is full resist for fairy.
-            if (you.res_elec())
-                return 0;
-            // Fairies are protected against most their own arcs.
-            else if (agent.is_player() && !one_chance_in(4))
-                return damage;
-        }
         damage = check_your_resists(damage, BEAM_ELECTRICITY,
                                     "static discharge");
         mprf("You are struck by an arc of %s%s",
