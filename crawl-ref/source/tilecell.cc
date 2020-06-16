@@ -652,8 +652,20 @@ void pack_cell_overlays(const coord_def &gc, crawl_view_buffer &vbuf)
 
     if (cell.map_knowledge.feat() != DNGN_LAVA)
     {
-        _add_directional_overlays(gc, vbuf, TILE_LAVA_OVERLAY,
-            _is_seen_lava);
+        int variation = ((gc.x + gc.y) % 4);
+
+        if (!variation)
+            _add_directional_overlays(gc, vbuf, TILE_LAVA_OVERLAY,
+                _is_seen_lava);
+        else if (variation == 1)
+            _add_directional_overlays(gc, vbuf, TILE_LAVA_OVERLAY1,
+                _is_seen_lava);
+        else if (variation == 2)
+            _add_directional_overlays(gc, vbuf, TILE_LAVA_OVERLAY2,
+                _is_seen_lava);
+        else
+            _add_directional_overlays(gc, vbuf, TILE_LAVA_OVERLAY3,
+                _is_seen_lava);
     }
     if (cell.map_knowledge.feat() != DNGN_SLIMY_WALL)
     {

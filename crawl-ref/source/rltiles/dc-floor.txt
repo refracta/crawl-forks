@@ -271,6 +271,33 @@ lava_overlay_NE
 lava_overlay_SE
 lava_overlay_SW
 
+lava_overlay_N1 LAVA_OVERLAY1
+lava_overlay_E1
+lava_overlay_S1
+lava_overlay_W1
+lava_overlay_NW1
+lava_overlay_NE1
+lava_overlay_SE1
+lava_overlay_SW1
+
+lava_overlay_N2 LAVA_OVERLAY2
+lava_overlay_E2
+lava_overlay_S2
+lava_overlay_W2
+lava_overlay_NW2
+lava_overlay_NE2
+lava_overlay_SE2
+lava_overlay_SW2
+
+lava_overlay_N3 LAVA_OVERLAY3
+lava_overlay_E3
+lava_overlay_S3
+lava_overlay_W3
+lava_overlay_NW3
+lava_overlay_NE3
+lava_overlay_SE3
+lava_overlay_SW3
+
 %weight 10
 snake-a0 FLOOR_SNAKE_A
 %weight 3
