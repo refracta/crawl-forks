@@ -2730,6 +2730,9 @@ bool monster::go_berserk(bool intentional, bool /* potion */)
 void monster::expose_to_element(beam_type flavour, int strength,
                                 bool slow_cold_blood)
 {
+    if (!alive())
+        return;
+
     switch (flavour)
     {
     case BEAM_COLD:

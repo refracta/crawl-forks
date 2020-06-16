@@ -3104,8 +3104,8 @@ bool mon_avoids_terrain(const monster* mons, dungeon_feature_type terrain)
     {
     case HT_WATER:              return (!feat_is_watery (terrain));
     case HT_AMPHIBIOUS_LAVA:    return (feat_is_watery (terrain));
-    case HT_AMPHIBIOUS:         return (feat_is_lava(terrain));
     case HT_SLIME:
+    case HT_AMPHIBIOUS:         return (feat_is_lava(terrain));
     case HT_LAVA:               return (!feat_is_lava(terrain));
     case HT_ROCK:
     case HT_STEEL:

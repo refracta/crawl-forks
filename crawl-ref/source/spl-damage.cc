@@ -1332,10 +1332,11 @@ spret cast_airstrike(int pow, const dist &beam, bool fail)
         attack_strength_punctuation(hurted).c_str());
     _player_hurt_monster(*mons, hurted, pbeam.flavour);
 
-    mons->expose_to_element(damtype, 2);
-
     if (mons->alive())
+    {
+        mons->expose_to_element(damtype, 2);
         cloud_strike(&you, mons, dam);
+    }
 
     return spret::success;
 }
