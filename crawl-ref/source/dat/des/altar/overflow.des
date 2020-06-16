@@ -646,7 +646,7 @@ ENDMAP
 ### Fedhas overflow altars ####################################################
 
 NAME:   fedhas_altar_1
-TAGS:   uniq_altar_fedhas temple_overflow_1 temple_overflow_fedhas
+TAGS:   uniq_altar_fedhas temple_overflow_1 temple_overflow_fedhas_madash
 TAGS:   transparent decor
 DEPTH:  D:2-
 KFEAT:  C = altar_fedhas
@@ -661,7 +661,7 @@ MAP
 ENDMAP
 
 NAME:   fedhas_altar_2
-TAGS:   uniq_altar_fedhas temple_overflow_1 temple_overflow_fedhas
+TAGS:   uniq_altar_fedhas temple_overflow_1 temple_overflow_fedhas_madash
 TAGS:   transparent decor
 DEPTH:  D:2-
 KFEAT:  C = altar_fedhas
@@ -678,7 +678,7 @@ MAP
 ENDMAP
 
 NAME:   fedhas_altar_3
-TAGS:   uniq_altar_fedhas temple_overflow_1 temple_overflow_fedhas
+TAGS:   uniq_altar_fedhas temple_overflow_1 temple_overflow_fedhas_madash
 TAGS:   transparent decor
 DEPTH:  D:2-
 KFEAT:  C = altar_fedhas
@@ -694,7 +694,7 @@ MAP
 ENDMAP
 
 NAME:   fedhas_altar_4
-TAGS:   uniq_altar_fedhas temple_overflow_1 temple_overflow_fedhas
+TAGS:   uniq_altar_fedhas temple_overflow_1 temple_overflow_fedhas_madash
 TAGS:   decor
 DEPTH:  D:2-
 KFEAT:  C = altar_fedhas
@@ -718,7 +718,7 @@ ENDMAP
 # The oklob plant may be abusable (if so, remove it).
 NAME:    tgw_fedhas
 TAGS:    no_item_gen no_monster_gen
-TAGS:    temple_overflow_1 temple_overflow_fedhas uniq_altar_fedhas
+TAGS:    temple_overflow_1 temple_overflow_fedhas_madash uniq_altar_fedhas
 DEPTH:   Lair, D:2-
 KFEAT:   _ = altar_fedhas
 KPROP:   xzd3P = no_tele_into
@@ -764,7 +764,7 @@ ccccccccccc@ccccccccccc
 ENDMAP
 
 NAME:  fedhas_ov_isle_minmay
-TAGS:  temple_overflow_1 temple_overflow_fedhas uniq_altar_fedhas no_monster_gen
+TAGS:  temple_overflow_1 temple_overflow_fedhas_madash uniq_altar_fedhas no_monster_gen
 TAGS:  transparent
 DEPTH: D:2-5
 MONS:  plant / bush w:5
@@ -790,7 +790,7 @@ MAP
 ENDMAP
 
 NAME:   fedhas_altar_fruit_tree
-TAGS:   uniq_altar_fedhas temple_overflow_1 temple_overflow_fedhas
+TAGS:   uniq_altar_fedhas temple_overflow_1 temple_overflow_fedhas_madash
 TAGS:   no_item_gen no_rotate no_vmirror decor
 DEPTH:  D:2-
 NSUBST: g = 4:f/*:.
@@ -821,7 +821,7 @@ xtttttdd@ddtttttx
 ENDMAP
 
 NAME:  fedhas_bush_and_centaur_altar
-TAGS:  temple_overflow_1 temple_overflow_fedhas uniq_altar_fedhas transparent
+TAGS:  temple_overflow_1 temple_overflow_fedhas_madash uniq_altar_fedhas transparent
 DEPTH: D:2-
 KFEAT: _ = altar_fedhas
 MONS:  centaur, bush
@@ -838,7 +838,7 @@ x.22_22.x
 ENDMAP
 
 NAME:   fedhas_altar_decomposition
-TAGS:   uniq_altar_fedhas temple_overflow_1 temple_overflow_fedhas
+TAGS:   uniq_altar_fedhas temple_overflow_1 temple_overflow_fedhas_madash
 TAGS:   no_item_gen no_monster_gen no_trap_gen
 DEPTH:  D:3-6
 MONS:   bush, plant, necrophage, zombie
@@ -874,7 +874,7 @@ ENDMAP
 NAME:   grunt_gozag_statues
 DEPTH:  D:2-
 TAGS:   transparent no_item_gen no_monster_gen no_trap_gen temple_overflow_1
-TAGS:   temple_overflow_gozag uniq_altar_gozag
+TAGS:   temple_overflow_gozag_ym_sagoz uniq_altar_gozag
 KFEAT:  _ = altar_gozag
 TILE:   G = dngn_golden_statue
 FTILE:  _-G = floor_limestone
@@ -899,7 +899,7 @@ ENDMAP
 NAME:   grunt_gozag_breadcrumbs
 DEPTH:  D:2-
 TAGS:   transparent no_item_gen no_monster_gen no_trap_gen temple_overflow_1
-TAGS:   temple_overflow_gozag uniq_altar_gozag
+TAGS:   temple_overflow_gozag_ym_sagoz uniq_altar_gozag
 KFEAT:  _ = altar_gozag
 ITEM:   gold q:1
 KITEM:  e = gold q:1
@@ -918,7 +918,7 @@ MAP
 ENDMAP
 
 NAME:  nicolae_gozag_cash_rules_everything_around_me
-TAGS:  temple_overflow_gozag temple_overflow_1 uniq_altar_gozag \
+TAGS:  temple_overflow_gozag_ym_sagoz temple_overflow_1 uniq_altar_gozag \
        no_hmirror no_vmirror no_rotate no_item_gen transparent decor
 DEPTH: D:2-
 KFEAT: _ = altar_gozag
@@ -936,7 +936,7 @@ ENDMAP
 # No, you probably can't afford any of it.
 # You should have thought of that before being poor.
 NAME:  nicolae_gozag_zags_fifth_avenue
-TAGS:  temple_overflow_gozag temple_overflow_1 uniq_altar_gozag
+TAGS:  temple_overflow_gozag_ym_sagoz temple_overflow_1 uniq_altar_gozag
 TAGS:  no_pool_fixup no_item_gen no_monster_gen decor transparent
 DEPTH: D:2-
 WEIGHT: 5
@@ -956,7 +956,7 @@ wwwwwww....
 ENDMAP
 
 NAME:  nicolae_gozag_seed_capital
-TAGS:  temple_overflow_gozag temple_overflow_1 uniq_altar_gozag decor
+TAGS:  temple_overflow_gozag_ym_sagoz temple_overflow_1 uniq_altar_gozag decor
 TAGS:  transparent no_item_gen
 DEPTH: D:2-
 ITEM:  gold q:1 / gold q:2
@@ -2977,7 +2977,7 @@ ENDMAP
 
 NAME:  grunt_temple_overflow_growth_and_decay
 DEPTH: D:2-9
-TAGS:  temple_overflow_2 temple_overflow_fedhas temple_overflow_kikubaaqudgha
+TAGS:  temple_overflow_2 temple_overflow_fedhas_madash temple_overflow_kikubaaqudgha
 TAGS:  transparent
 KFEAT: A = altar_fedhas
 KFEAT: B = altar_kikubaaqudgha
@@ -3211,7 +3211,7 @@ ENDMAP
 
 NAME:    grunt_temple_overflow_opulence
 DEPTH:   D:2-9
-TAGS:    temple_overflow_2 temple_overflow_gozag temple_overflow_nemelex_xobeh
+TAGS:    temple_overflow_2 temple_overflow_gozag_ym_sagoz temple_overflow_nemelex_xobeh
 TAGS:    transparent
 SHUFFLE: GU, _O
 KFEAT:   _ = altar_gozag
@@ -3235,7 +3235,7 @@ ENDMAP
 
 NAME:   grunt_temple_overflow_gold_and_silver
 DEPTH:  D:2-9
-TAGS:   temple_overflow_2 temple_overflow_gozag temple_overflow_zin
+TAGS:   temple_overflow_2 temple_overflow_gozag_ym_sagoz temple_overflow_zin
 TAGS:   transparent
 KITEM:  $ = gold q:1 / gold q:2
 KFEAT:  _ = altar_gozag
@@ -3255,7 +3255,7 @@ ENDMAP
 
 NAME:   grunt_temple_overflow_forces_of_nature
 DEPTH:  D:2-9
-TAGS:   temple_overflow_2 temple_overflow_fedhas temple_overflow_qazlal
+TAGS:   temple_overflow_2 temple_overflow_fedhas_madash temple_overflow_qazlal
 TAGS:   transparent
 MONS:   fungus / plant / bush
 SUBST:  2 = 1.
