@@ -44,6 +44,7 @@
 #include "spl-transloc.h"
 #include "state.h"
 #include "stringutil.h"
+#include "tiledef-dngn.h"
 #include "tileview.h"
 #include "transform.h"
 #include "traps.h"
@@ -2275,7 +2276,8 @@ static dungeon_feature_type _destroyed_feat_type(dungeon_feature_type oldfeat)
 
 static bool _revert_terrain_to_floor(coord_def pos)
 {
-    dungeon_feature_type newfeat = _destroyed_feat_type(grd(pos));
+    dungeon_feature_type oldfeat = grd(pos);
+    dungeon_feature_type newfeat = _destroyed_feat_type(oldfeat);
     for (map_marker *marker : env.markers.get_markers_at(pos))
     {
         if (marker->get_type() == MAT_TERRAIN_CHANGE)
@@ -2294,20 +2296,28 @@ static bool _revert_terrain_to_floor(coord_def pos)
             else
             {
                 newfeat = tmarker->old_feature;
-                if (tmarker->new_feature == grd(pos))
+                if (tmarker->new_feature == oldfeat)
                     env.markers.remove(tmarker);
             }
         }
     }
 
-    if (grd(pos) == DNGN_RUNED_DOOR && newfeat != DNGN_RUNED_DOOR
-        || grd(pos) == DNGN_RUNED_CLEAR_DOOR
-           && newfeat != DNGN_RUNED_CLEAR_DOOR)
+    if (oldfeat == DNGN_RUNED_DOOR && newfeat != DNGN_RUNED_DOOR
+        || oldfeat == DNGN_RUNED_CLEAR_DOOR 
+        && newfeat != DNGN_RUNED_CLEAR_DOOR)
     {
         explored_tracked_feature(grd(pos));
     }
 
     grd(pos) = newfeat;
+
+    if (oldfeat == DNGN_SLIMESHROOM && jiyva_is_dead())
+    {
+        env.grid_colours(pos) = WHITE;
+        env.tile_flv(pos).floor_idx =
+            store_tilename_get_index("floor_ruined_slime");
+        env.tile_flv(pos).floor = TILE_FLOOR_RUINED_SLIME;
+    }
 
     set_terrain_changed(pos);
 
