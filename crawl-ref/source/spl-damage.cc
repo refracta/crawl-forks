@@ -945,7 +945,7 @@ spret cast_freeze(int pow, monster* mons, bool fail)
     else
         orig_hurted = roll_dice(1, 3 + pow / 3);
     if (chaos)
-        orig_hurted *= div_rand_round(orig_hurted * 5, 4);
+        orig_hurted = div_rand_round(orig_hurted * 5, 4);
     int hurted = mons_adjust_flavoured(mons, beam, orig_hurted);
     mprf("You %s %s%s%s",
          dam_verb.c_str(),
