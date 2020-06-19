@@ -364,7 +364,7 @@ bool check_moveto_exclusion(const coord_def& p, const string &move_verb,
 bool player::drowning()
 {
     return ((env.grid(you.position) == DNGN_DEEP_WATER || env.grid(you.position) == DNGN_DEEP_SLIMY_WATER) 
-        && !you.can_swim() && !you.airborne() && (you.species != SP_GREY_DRACONIAN) && !you.can_water_walk());
+        && !you.can_swim() && !you.airborne() && !you.can_water_walk());
 }
 
 bool check_moveto(const coord_def& p, const string &move_verb, const string &msg)

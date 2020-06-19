@@ -278,12 +278,62 @@ bool i_feel_safe(bool announce, bool want_move, bool just_monsters,
             return false;
         }
 
-        if (grd(you.pos()) == DNGN_SLIMY_WATER && !you_worship(GOD_JIYVA))
+        if (!you.permanent_flight())
         {
-            if (announce)
-                mprf(MSGCH_WARN, "You're standing in acidic ooze!");
+            if ((grd(you.pos()) == DNGN_SLIMY_WATER || grd(you.pos()) == DNGN_DEEP_SLIMY_WATER) && !you_worship(GOD_JIYVA))
+            {
+                if (announce)
+                {
+                    if (you.airborne())
+                        mprf(MSGCH_WARN, "The terrain you're above will be dangerous once your flight expires!");
+                    mprf(MSGCH_WARN, "You're standing in acidic ooze!");
+                }
+                return false;
+            }
 
-            return false;
+            if (feat_is_lava(grd(you.pos())))
+            {
+                if (announce)
+                {
+                    if (you.airborne())
+                        mprf(MSGCH_WARN, "The terrain you're above will be dangerous once your flight expires!");
+                    mprf(MSGCH_WARN, "You're standing in boiling hot magma!");
+                }
+                return false;
+            }
+
+            if ((grd(you.pos()) == DNGN_DEEP_WATER || grd(you.pos()) == DNGN_DEEP_SLIMY_WATER) && !you.can_swim() && !you.can_water_walk())
+            {
+                if (announce)
+                {
+                    if (you.airborne())
+                        mprf(MSGCH_WARN, "The terrain you're above will be dangerous once your flight expires!");
+                    mprf(MSGCH_WARN, "You're struggling to keep your head above water!");
+                }
+                return false;
+            }
+
+            if (grd(you.pos()) == DNGN_TOXIC_BOG)
+            {
+                if (announce)
+                {
+                    if (you.airborne())
+                        mprf(MSGCH_WARN, "The terrain you're above will be dangerous once your flight expires!");
+                    mprf(MSGCH_WARN, "You're standing in a festering bog!");
+                }
+                return false;
+            }
+
+            if (grd(you.pos()) == DNGN_QUAGMIRE)
+            {
+                if (announce)
+                {
+                    if (you.airborne())
+                        mprf(MSGCH_WARN, "The terrain you're above will be dangerous once your flight expires!");
+                    mprf(MSGCH_WARN, "You're standing in a chaotic quagmire!");
+                }
+                return false;
+            }
         }
     }
 
