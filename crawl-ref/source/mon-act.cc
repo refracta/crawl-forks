@@ -2892,7 +2892,7 @@ static bool _handle_pickup(monster* mons)
     // being tornadoed, and with *that* low life expectancy let's not care.
     dungeon_feature_type feat = grd(mons->pos());
 
-    if ((feat == DNGN_LAVA || feat == DNGN_DEEP_WATER || feat == DNGN_SLIMY_WATER) && mons->airborne())
+    if ((feat == DNGN_LAVA || feat == DNGN_DEEP_WATER || feat == DNGN_DEEP_SLIMY_WATER) && mons->airborne())
         return false;
 
     int count_pickup = 0;
@@ -3093,57 +3093,74 @@ static bool _check_slime_walls(const monster *mon,
     return mon->hit_points < mon->max_hit_points / 2;
 }
 
-// BCADDO: Refactor this to be feat first, then HT type, instead of the other way around.
 // Does the monster consider the terrain dangerous enough to avoid or 
 // will it path through it to get to you faster?
 bool mon_avoids_terrain(const monster* mons, dungeon_feature_type terrain)
 {
-    habitat_type habitat = mons_primary_habitat(*mons);
-    
-    switch (habitat)
+    if (mons->airborne())
+        return false;
+
+    habitat_type habitat  = mons_primary_habitat(*mons);
+    habitat_type habitat2 = mons_secondary_habitat(*mons);
+
+    if (feat_has_solid_floor(terrain) && !feat_is_water(terrain))
+        return (habitat == HT_WATER || habitat == HT_LAVA);
+
+    if ((mons_intel(*mons) <= I_BRAINLESS) && you.can_see(*mons))
+        return false;
+
+    if (feat_is_lava(terrain))
     {
-    case HT_WATER:              return (!feat_is_watery (terrain));
-    case HT_AMPHIBIOUS_LAVA:    return (feat_is_watery (terrain));
-    case HT_SLIME:
-    case HT_AMPHIBIOUS:         return (feat_is_lava(terrain));
-    case HT_LAVA:               return (!feat_is_lava(terrain));
-    case HT_ROCK:
-    case HT_STEEL:
-    case HT_LAND: 
-        if (mons->airborne())
+        if (habitat == HT_LAVA || habitat2 == HT_LAVA)
             return false;
-        if (mons_intel(*mons) <= I_BRAINLESS && you.can_see(*mons))
+        if (feat_is_lava(env.grid(mons->pos())))
             return false;
-        if (terrain == DNGN_SLIMY_WATER)
-        {
-            if (mons->god == GOD_JIYVA || mons->res_acid() > 2)
-                return false;
-            return (resist_adjust_damage(mons, BEAM_ACID, 120) < mons->stat_hp() && you.can_see(*mons));
-        }
-        if (terrain == DNGN_DEEP_SLIMY_WATER)
-            return (mon_avoids_terrain(mons, DNGN_SLIMY_WATER) || mon_avoids_terrain(mons, DNGN_DEEP_WATER));
-        if (feat_is_lava(terrain))
-        {
-            if (feat_is_lava(env.grid(mons->pos())))
-                return false;
-            if (mons->res_fire() > 2)
-                return false;
-            return (resist_adjust_damage(mons, BEAM_LAVA, 120) < mons->stat_hp() && you.can_see(*mons));
-        }
-        if (terrain == DNGN_DEEP_WATER)
-        {
-            if (mons->body_size(PSIZE_BODY) >= SIZE_GIANT)
-                return false;
-            if (mons->res_water_drowning())
-                return false;
-            if (env.grid(mons->pos()) == DNGN_DEEP_WATER)
-                return false;
-            else
-                return (60 < mons->stat_hp() && you.can_see(*mons));
-        }
-    default:                    return false;
+        if (mons->res_fire() > 2)
+            return false;
+        return ((resist_adjust_damage(mons, BEAM_LAVA, 80) < mons->stat_hp()) && you.can_see(*mons));
     }
 
+    if (terrain == DNGN_SLIMY_WATER)
+    {
+        if (habitat == HT_SLIME)
+            return false;
+        if (mons->god == GOD_JIYVA || mons->res_acid() > 2)
+            return false;
+        if (env.grid(mons->pos()) == DNGN_SLIMY_WATER || env.grid(mons->pos()) == DNGN_DEEP_SLIMY_WATER)
+            return false;
+        return ((resist_adjust_damage(mons, BEAM_ACID, 60) < mons->stat_hp()) && you.can_see(*mons));
+    }
+    
+    if (terrain == DNGN_DEEP_SLIMY_WATER)
+        return (mon_avoids_terrain(mons, DNGN_SLIMY_WATER) || mon_avoids_terrain(mons, DNGN_DEEP_WATER));
+
+    if (terrain == DNGN_DEEP_WATER)
+    {
+        if (habitat == HT_WATER || habitat2 == HT_WATER || habitat == HT_SLIME)
+            return false;
+        if (mons->body_size(PSIZE_BODY) >= SIZE_GIANT)
+            return false;
+        if (mons->res_water_drowning())
+            return false;
+        if (env.grid(mons->pos()) == DNGN_DEEP_WATER)
+            return false;
+        else
+            return ((60 < mons->stat_hp()) && you.can_see(*mons));
+    }
+
+    if (terrain == DNGN_TOXIC_BOG)
+        return ((resist_adjust_damage(mons, BEAM_POISON_ARROW, 80) < mons->stat_hp()) && you.can_see(*mons));
+
+    if (terrain == DNGN_QUAGMIRE)
+        return ((120 < mons->stat_hp()) && you.can_see(*mons));
+
+    if (feat_is_watery(terrain))
+    {
+        if (habitat == HT_LAVA || habitat2 == HT_LAVA)
+            return true;
+    }
+
+    return false;
 }
 
 // Check whether a monster can move to given square (described by its relative
