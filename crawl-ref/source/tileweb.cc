@@ -1266,21 +1266,6 @@ static bool _in_water(const packed_cell &cell)
     return (cell.bg & TILE_FLAG_WATER) && !(cell.fg & TILE_FLAG_FLYING);
 }
 
-static bool _needs_flavour(const packed_cell &cell)
-{
-    tileidx_t bg_idx = cell.bg & TILE_FLAG_MASK;
-    if (bg_idx >= TILE_DNGN_FIRST_TRANSPARENT)
-        return true; // Needs flv.floor
-    if (bg_idx == TILE_DNGN_SHALLOW_WATER || bg_idx == TILE_DNGN_DEEP_WATER)
-        return true; // Needs flv.floor
-    if (cell.is_liquefied || cell.is_bloody ||
-        cell.is_moldy || cell.glowing_mold || _in_water(cell))
-    {
-        return true; // Needs flv.special
-    }
-    return false;
-}
-
 static inline unsigned _get_brand(int col)
 {
     return (col & COLFLAG_FRIENDLY_MONSTER) ? Options.friend_brand :
@@ -1427,11 +1412,9 @@ void TilesFramework::_send_cell(const coord_def &gc,
         if (next_pc.travel_trail != current_pc.travel_trail)
             json_write_int("travel_trail", next_pc.travel_trail);
 
-        if (_needs_flavour(next_pc) &&
-            (next_pc.flv.floor != current_pc.flv.floor
+        if (next_pc.flv.floor != current_pc.flv.floor
              || next_pc.flv.special != current_pc.flv.special
-             || !_needs_flavour(current_pc)
-             || force_full))
+             || force_full)
         {
             json_open_object("flv");
             json_write_int("f", next_pc.flv.floor);
