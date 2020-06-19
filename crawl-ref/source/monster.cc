@@ -3063,7 +3063,7 @@ int monster::shield_bonus() const
     if (incapacitated())
         return -100;
 
-    int sh = -100;
+    int sh = 0;
     const item_def *shld = shield();
     if (shld && shld->base_type == OBJ_SHIELDS)
     {
@@ -3090,7 +3090,6 @@ int monster::shield_bonus() const
     const item_def *amulet = mslot_item(MSLOT_JEWELLERY);
     if (amulet && amulet->sub_type == AMU_REFLECTION)
         sh += 10;
-
 
     return sh;
 }

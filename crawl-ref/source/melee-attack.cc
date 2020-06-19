@@ -697,7 +697,7 @@ static void _handle_staff_shield(beam_type flavour, int str, bool player, monste
 
 bool melee_attack::handle_phase_blocked()
 {
-    if (defender->is_player() && player_staff_shielding() && you.staff()->sub_type == STAFF_FIRE
+    if (defender->is_player() && player_staff_shielding() && you.staff() && you.staff()->sub_type == STAFF_FIRE
             && x_chance_in_y(you.skill(SK_FIRE_MAGIC), 18))
     {
         int orig = 1 + random2(you.skill(SK_FIRE_MAGIC));
@@ -710,6 +710,23 @@ bool melee_attack::handle_phase_blocked()
             mprf("%s completely resists.", attacker->pronoun(PRONOUN_SUBJECTIVE).c_str());
         else if (orig > dam)
             mprf("%s resists.", attacker->pronoun(PRONOUN_SUBJECTIVE).c_str());
+        attacker->hurt(&you, dam);
+    }
+
+    else if (defender->is_monster() && defender->staff() && defender->staff()->sub_type == STAFF_FIRE
+        && defender->staff()->brand == SPSTF_SHIELD && x_chance_in_y(defender->as_monster()->spell_hd(), 18))
+    {
+        int orig = 1 + random2(defender->as_monster()->spell_hd());
+        int dam = resist_adjust_damage(attacker, BEAM_FIRE, orig);
+        mprf("A bit of lava splashes out of %s protective magma ball and hits %s%s",
+            defender->name(DESC_ITS).c_str(), attacker->name(DESC_THE).c_str(), attack_strength_punctuation(dam).c_str());
+        if (dam > orig)
+            mprf("The lava burns %s terribly.", attacker->pronoun(PRONOUN_OBJECTIVE).c_str());
+        else if (!dam)
+            mprf("%s completely resists.", attacker->pronoun(PRONOUN_SUBJECTIVE).c_str());
+        else if (orig > dam)
+            mprf("%s resists.", attacker->pronoun(PRONOUN_SUBJECTIVE).c_str());
+        attacker->hurt(defender, dam);
     }
 
     bool vamp_tendril = false;
