@@ -800,9 +800,9 @@ ring mail
 A light leather suit reinforced with a covering of metal rings. It is
 protective in combat, but slightly uncomfortable due to the added weight.
 %%%%
-ring of chaos
+amulet of chaos
 
-A ring that infuses the wearer with chaos. While wearing two out of three spells 
+An amulet, which infuses the wearer with chaos. While wearing two out of three spells 
 cast will be chaos versions of the spell, with higher maximum damage and randomized 
 damage type or more unique effects for certain spells. Additionally has a one in 
 three chance to add additional protection against any elemental attack against the 

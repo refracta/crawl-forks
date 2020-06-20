@@ -3933,6 +3933,13 @@ static void tag_read_you_items(reader &th)
             continue;
         }
 
+        if (item && i != EQ_AMULET && i != EQ_FAIRY_JEWEL && item->is_type(OBJ_JEWELLERY, AMU_CHAOS))
+        {
+            you.equip[i] = -1;
+            you.melded.set(i, false);
+            continue;
+        }
+
         if (item && is_unrandom_artefact(*item))
         {
 #if TAG_MAJOR_VERSION == 34
@@ -5125,6 +5132,9 @@ void unmarshallItem(reader &th, item_def &item)
         if (initial_type != item.sub_type)
             set_item_ego_type(item, SPWPN_HOLY_WRATH);
     }
+
+    if (item.is_type(OBJ_JEWELLERY, RING_CHAOS))
+        item.sub_type = AMU_CHAOS;
 
     if (th.getMinorVersion() < TAG_MINOR_CONSUM_APPEARANCE)
     {

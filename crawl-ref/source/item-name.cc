@@ -811,7 +811,7 @@ const char* jewellery_effect_name(int jeweltype, bool terse)
         case RING_REGENERATION:          return "obsoleteness";
 #endif
         case RING_PROTECTION:            return "protection";
-        case RING_CHAOS:                 return "chaos";
+        case AMU_CHAOS:                  return "chaos";
         case RING_POISON_RESISTANCE:     return "poison resistance";
 #if TAG_MAJOR_VERSION == 34
         case RING_PROTECTION_FROM_COLD:  return "obsoleteness";
@@ -835,6 +835,7 @@ const char* jewellery_effect_name(int jeweltype, bool terse)
         case RING_MAGICAL_POWER:         return "magical power";
 #if TAG_MAJOR_VERSION == 34
         case RING_FLIGHT:                return "flight";
+        case RING_CHAOS:                 return "chaos";
 #endif
         case RING_LIFE_PROTECTION:       return "positive energy";
         case RING_PROTECTION_FROM_MAGIC: return "protection from magic";
@@ -849,7 +850,6 @@ const char* jewellery_effect_name(int jeweltype, bool terse)
         case AMU_THE_GOURMAND:      return "gourmand";
         case AMU_ACROBAT:           return "the acrobat";
 #if TAG_MAJOR_VERSION == 34
-        case AMU_CONSERVATION:      return "conservation";
         case AMU_CONTROLLED_FLIGHT: return "controlled flight";
 #endif
         case AMU_INACCURACY:        return "reduced vision";
@@ -871,7 +871,7 @@ const char* jewellery_effect_name(int jeweltype, bool terse)
         case RING_REGENERATION:          return "obsoleteness";
 #endif
         case RING_PROTECTION:            return "AC";
-        case RING_CHAOS:                 return "Chaos";
+        case AMU_CHAOS:                  return "Chaos";
         case RING_POISON_RESISTANCE:     return "rPois";
 #if TAG_MAJOR_VERSION == 34
         case RING_PROTECTION_FROM_COLD:  return "obsoleteness";
@@ -890,6 +890,7 @@ const char* jewellery_effect_name(int jeweltype, bool terse)
         case RING_MAGICAL_POWER:         return "MP+9";
 #if TAG_MAJOR_VERSION == 34
         case RING_FLIGHT:                return "+Fly";
+        case RING_CHAOS:                 return "chaos";
 #endif
         case RING_LIFE_PROTECTION:       return "rN+";
         case RING_PROTECTION_FROM_MAGIC: return "MR+";

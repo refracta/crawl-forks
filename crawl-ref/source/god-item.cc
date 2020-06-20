@@ -478,7 +478,7 @@ bool god_likes_item_type(const item_def &item, god_type which_god)
 
         case GOD_ZIN:
             // Lawful God: No Chaos.
-            if (item.is_type(OBJ_JEWELLERY, RING_CHAOS))
+            if (item.is_type(OBJ_JEWELLERY, AMU_CHAOS))
                 return false;
             break;
 

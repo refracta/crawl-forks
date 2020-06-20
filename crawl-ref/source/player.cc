@@ -1628,8 +1628,8 @@ int player_res_cold(bool calc_unid, bool temp, bool items)
         // randart weapons:
         rc += you.scan_artefacts(ARTP_COLD, calc_unid);
 
-        // rings of chaos
-        if (calc_unid && you.wearing(EQ_RINGS, RING_CHAOS) && one_chance_in(3))
+        // amulet of chaos
+        if (calc_unid && you.wearing(EQ_AMULET, AMU_CHAOS) && one_chance_in(3))
             rc++;
 
         // dragonskin cloak: 0.5 to draconic resistances
@@ -1677,8 +1677,8 @@ bool player::res_corr(bool calc_unid, bool items) const
 
     if (calc_unid && items)
     {
-        // rings of chaos
-        if (you.wearing(EQ_RINGS, RING_CHAOS) && one_chance_in(3))
+        // amulet of chaos
+        if (you.wearing(EQ_AMULET, AMU_CHAOS) && one_chance_in(3))
             return true;
 
         // dragonskin cloak: 0.5 to draconic resistances
@@ -1730,8 +1730,8 @@ int player_res_electricity(bool calc_unid, bool temp, bool items)
 
         if (calc_unid)
         {
-            // rings of chaos
-            if (you.wearing(EQ_RINGS, RING_CHAOS) && one_chance_in(3))
+            // amulet of chaos
+            if (you.wearing(EQ_AMULET, AMU_CHAOS) && one_chance_in(3))
                 re++;
 
             // dragonskin cloak: 0.5 to draconic resistances
@@ -1794,8 +1794,8 @@ bool player_res_torment(bool random)
           && coinflip())
             return true;
 
-        // rings of chaos
-        if (you.wearing(EQ_RINGS, RING_CHAOS) && one_chance_in(3))
+        // amulet of chaos
+        if (you.wearing(EQ_AMULET, AMU_CHAOS) && one_chance_in(3))
             return true;
 
         // draconian scales:
@@ -1865,8 +1865,8 @@ int player_res_poison(bool calc_unid, bool temp, bool items)
 
         if (calc_unid)
         {
-            // rings of chaos
-            if (you.wearing(EQ_RINGS, RING_CHAOS) && one_chance_in(3))
+            // amulet of chaos
+            if (you.wearing(EQ_AMULET, AMU_CHAOS) && one_chance_in(3))
                 return true;
 
             // dragonskin cloak: 0.5 to draconic resistances
@@ -1922,7 +1922,7 @@ int player_res_sticky_flame(bool calc_unid, bool temp, bool items)
     int rsf = 0;
 
     // rings of chaos
-    if (items && calc_unid && you.wearing(EQ_RINGS, RING_CHAOS) && one_chance_in(3))
+    if (items && calc_unid && you.wearing(EQ_AMULET, AMU_CHAOS) && one_chance_in(3))
         rsf++;
 
     // draconian scales:
@@ -2084,8 +2084,8 @@ int player_prot_life(bool calc_unid, bool temp, bool items)
 
         if (calc_unid)
         {
-            // rings of chaos
-            if (you.wearing(EQ_RINGS, RING_CHAOS) && one_chance_in(3))
+            // amulet of chaos
+            if (you.wearing(EQ_AMULET, AMU_CHAOS) && one_chance_in(3))
                 pl++;
 
             // dragonskin cloak: 0.5 to draconic resistances

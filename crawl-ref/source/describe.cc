@@ -238,7 +238,7 @@ const char* jewellery_base_ability_string(int subtype)
     case RING_FIRE:               return "Fire";
     case RING_ICE:                return "Ice";
     case RING_TELEPORTATION:      return "*Tele";
-    case RING_CHAOS:              return "Chaos";
+    case AMU_CHAOS:              return "Chaos";
 #if TAG_MAJOR_VERSION == 34
     case RING_TELEPORT_CONTROL:   return "+cTele";
 #endif
@@ -247,7 +247,6 @@ const char* jewellery_base_ability_string(int subtype)
     case AMU_THE_GOURMAND:        return "Gourm";
     case AMU_ACROBAT:             return "Acrobat";
 #if TAG_MAJOR_VERSION == 34
-    case AMU_CONSERVATION:        return "Cons";
     case AMU_CONTROLLED_FLIGHT:   return "cFly";
 #endif
     case AMU_GUARDIAN_SPIRIT:     return "Spirit";
@@ -497,7 +496,7 @@ static const char* _jewellery_base_ability_description(int subtype)
 #endif
     case RING_WIZARDRY:
         return "It improves your spell success rate.";
-    case RING_CHAOS:
+    case AMU_CHAOS:
         return "It infuses your magic with chaos; buffing its maximum damage and randomizing its effects. "
             "Additionally it randomly provides additional protection from elemental components of attacks.";
     case RING_FIRE:
@@ -518,10 +517,6 @@ static const char* _jewellery_base_ability_description(int subtype)
         return "It allows you to eat raw meat even when not hungry.";
     case AMU_ACROBAT:
         return "It helps you evade while moving and waiting.";
-#if TAG_MAJOR_VERSION == 34
-    case AMU_CONSERVATION:
-        return "It protects your inventory from destruction.";
-#endif
     case AMU_GUARDIAN_SPIRIT:
         return "It causes incoming damage to be split between your health and "
                "magic.";

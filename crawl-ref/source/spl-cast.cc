@@ -521,7 +521,7 @@ bool determine_chaos(const actor *agent, spell_type spell)
         && !(spell == SPELL_HAILSTORM)) // Yay for special cases.
         return false;
 
-    if (agent->is_player() && you.wearing(EQ_RINGS, RING_CHAOS))
+    if (agent->is_player() && you.wearing(EQ_AMULET, AMU_CHAOS))
         return true;
 
     if (agent->is_player() && you.drac_colour == DR_SCINTILLATING)
@@ -534,7 +534,7 @@ bool determine_chaos(const actor *agent, spell_type spell)
 
         item_def * ring = agent->as_monster()->mslot_item(MSLOT_JEWELLERY);
 
-        if (ring && ring->is_type(OBJ_JEWELLERY, RING_CHAOS))
+        if (ring && ring->is_type(OBJ_JEWELLERY, AMU_CHAOS))
             return true;
     }
 

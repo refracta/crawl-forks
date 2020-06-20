@@ -587,12 +587,12 @@ static const char *_spell_title(spell_type spell, const actor * caster)
     if (!chaos)
     {
         // Check for chaos rings.
-        if (caster->is_player() && you.wearing(EQ_RINGS, RING_CHAOS))
+        if (caster->is_player() && you.wearing(EQ_AMULET, AMU_CHAOS))
             chaos = true;
         else if (caster->is_monster())
         {
             const item_def * ring = caster->as_monster()->mslot_item(MSLOT_JEWELLERY);
-            if (ring && ring->is_type(OBJ_JEWELLERY, RING_CHAOS))
+            if (ring && ring->is_type(OBJ_JEWELLERY, AMU_CHAOS))
                 chaos = true;
         }
     }
@@ -617,7 +617,7 @@ const char *mi_spell_title(spell_type spell, const monster_info * mi)
     if (!chaos)
     {
         const item_def * ring = mi->inv[MSLOT_JEWELLERY].get();
-        if (ring && ring->is_type(OBJ_JEWELLERY, RING_CHAOS))
+        if (ring && ring->is_type(OBJ_JEWELLERY, AMU_CHAOS))
             chaos = true;
     }
 
