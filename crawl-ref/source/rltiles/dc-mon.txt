@@ -196,6 +196,8 @@ ghost_moth MONS_GHOST_MOTH
 moth_of_wrath MONS_MOTH_OF_WRATH
 giant_firefly MONS_GIANT_FIREFLY
 %rim 0
+giant_blowfly MONS_GIANT_BLOWFLY
+chaos_butterfly MONS_CHAOS_BUTTERFLY
 
 ## Aquatics (';')
 %sdir mon/aquatic

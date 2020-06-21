@@ -115,6 +115,7 @@ enum band_type
     BAND_MOLTEN_GARGOYLES,
     BAND_GRUM,
     BAND_BALLOON,
+    BAND_BLOWFLIES,
     NUM_BANDS                   // always last
 };
 

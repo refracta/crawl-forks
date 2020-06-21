@@ -16,6 +16,8 @@
 #include "item-prop.h"
 #include "items.h"
 #include "god-conduct.h"
+#include "mon-place.h"
+#include "mon-util.h"
 #include "player-equip.h"
 #include "religion.h"
 #include "shopping.h"
@@ -181,6 +183,27 @@ static bool _item_needs_rot_check(const item_def &item)
            && item.sub_type <= CORPSE_SKELETON; // XXX: is this needed?
 }
 
+static void _maybe_spawn_flies(item_def item)
+{
+    const coord_def &p = item.pos;
+
+    if (!x_chance_in_y(max_corpse_chunks(item.mon_type), 40))
+        return;
+
+    int num_flies = 1;
+    
+    int x = random2(max_corpse_chunks(item.mon_type));
+    num_flies += div_rand_round(x, 3);
+
+    for (int i = 0; i <= num_flies; ++i)
+        create_monster(mgen_data(MONS_GIANT_BLOWFLY, BEH_NEUTRAL, p, MHITNOT));
+
+    if (you.see_cell(p))
+    {
+        mprf("%s forth from the corpse!", num_flies > 1 ? "Flies burst" : "A fly bursts");
+    }
+}
+
 /**
  * Rot a corpse or skeleton lying on the floor.
  *
@@ -196,6 +219,9 @@ static void _rot_corpse(item_def &it, int mitm_index, int rot_time)
     it.freshness -= rot_time;
     if (it.freshness > 0 || is_being_butchered(it))
         return;
+
+    if (it.sub_type == CORPSE_BODY)
+        _maybe_spawn_flies(it);
 
     if (it.sub_type == CORPSE_SKELETON || !mons_skeleton(it.mon_type))
     {

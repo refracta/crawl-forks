@@ -1220,6 +1220,13 @@ giant cockroach
 A big brown insect that makes a nasty hissing noise. Contrary to popular myth,
 it is in fact quite susceptible to mutagenic energies.
 %%%%
+giant blowfly
+
+A big saprovorous insect, whose exoskeleton shines random shades of green and 
+purple in the light. They lay their eggs in corpses and keep the dungeon clean 
+of blood and rot. A bit gross, due to their diet and habits, but ultimately 
+harmless.
+%%%%
 glowing orange brain
 
 A huge wrinkled brain, floating just off the floor and glowing with mutagenic

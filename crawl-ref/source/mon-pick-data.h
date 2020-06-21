@@ -281,6 +281,7 @@ static const pop_entry pop_swamp[] =
   {  1,  4,  915, FLAT, MONS_HYDRA },
   {  1,  4,  825, FLAT, MONS_TYRANT_LEECH },
   {  1,  4,  665, FLAT, MONS_VAMPIRE_MOSQUITO },
+  { -6,  4,   40, FLAT, MONS_GIANT_BLOWFLY },
   {  1,  4,  500, FLAT, MONS_SWAMP_DRAGON },
   {  1,  4,  335, FLAT, MONS_INSUBSTANTIAL_WISP },
   {  1,  4,  192, FLAT, MONS_HORNET },
@@ -1001,6 +1002,7 @@ static const pop_entry pop_sewer[] =
   {  1,  1,  500, FLAT, MONS_BAT },
   {  1,  1,  500, FLAT, MONS_BALL_PYTHON },
   {  1,  1,  125, FLAT, MONS_RAT },
+  {  1,  1,  125, FLAT, MONS_GIANT_BLOWFLY },
   {  1,  3,  500, FLAT, MONS_ADDER },
   {  1,  2,  500, FLAT, MONS_WORM },
   {  1,  2,  500, FLAT, MONS_OOZE },
@@ -1336,6 +1338,7 @@ static const pop_entry pop_water_generic[] =
 static const pop_entry pop_water_sewer[] =
 { // Sewer water monsters
   {  1,  27,  150, FLAT, MONS_SLIMEHEAD },
+  {  1,  27,  450, FLAT, MONS_GIANT_BLOWFLY},
   { 0,0,0,FLAT,MONS_0 }
 };
 
