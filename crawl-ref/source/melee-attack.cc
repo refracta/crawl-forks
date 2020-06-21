@@ -107,6 +107,10 @@ bool melee_attack::handle_phase_attempted()
         return false;
     }
 
+    // Passive things don't attack unless the player provokes them out of passiveness. (ME_WHACK/ME_ANNOY)
+    if (attacker->is_monster() && attacker->as_monster()->attitude == ATT_PASSIVE)
+        return false;
+
     if (attacker->is_player() && defender && defender->is_monster())
     {
         // Don't waste a turn hitting a rock worm when you know it

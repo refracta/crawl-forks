@@ -211,6 +211,7 @@ jellyfish5
 jellyfish6
 jellyfish7
 giant_goldfish MONS_GIANT_GOLDFISH
+slimehead MONS_SLIMEHEAD
 %rim 1
 
 %include dc-tentacles.txt

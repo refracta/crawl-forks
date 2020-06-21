@@ -1333,6 +1333,12 @@ static const pop_entry pop_water_generic[] =
   { 0,0,0,FLAT,MONS_0 }
 };
 
+static const pop_entry pop_water_sewer[] =
+{ // Sewer water monsters
+  {  1,  27,  150, FLAT, MONS_SLIMEHEAD },
+  { 0,0,0,FLAT,MONS_0 }
+};
+
 static const pop_entry pop_water_shoals[] =
 { // Shoals water monsters
   { 1, 4, 1000, FLAT, MONS_JELLYFISH },
@@ -1425,7 +1431,7 @@ static const population_list population_water[] =
 #endif
     POP(water_generic), // Bazaar
     POP(water_generic), // Trove
-    POP(water_generic), // Sewer
+    POP(water_sewer), // Sewer
     POP(water_generic), // Ossuary
     POP(water_generic), // Bailey
 #if TAG_MAJOR_VERSION > 34

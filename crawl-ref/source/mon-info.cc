@@ -1361,6 +1361,9 @@ void monster_info::to_string(int count, string& desc, int& desc_colour,
     // Friendliness
     switch (attitude)
     {
+    case ATT_PASSIVE:
+        out << " (passive)";
+        // fallthrough
     case ATT_FRIENDLY:
         //out << " (friendly)";
         colour_type = _MLC_FRIENDLY;

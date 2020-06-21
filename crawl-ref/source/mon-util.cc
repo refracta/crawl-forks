@@ -2633,6 +2633,8 @@ int mi_exper_value(const monster_info& mi)
 
 int mon_exper_value(const monster& mon)
 {
+    if (mon.flags & MF_NO_REWARD)
+        return 0;
     return _exper_value(mon.type, mon.get_experience_level(), mon.stat_maxhp(), 
                         mon.blob_size, mon.has_ench(ENCH_BERSERK), mon.has_spells(), mon.spells);
 }
@@ -3632,7 +3634,7 @@ bool mons_self_destructs(const monster& m)
 bool mons_att_wont_attack(mon_attitude_type fr)
 {
     return fr == ATT_FRIENDLY || fr == ATT_GOOD_NEUTRAL
-           || fr == ATT_STRICT_NEUTRAL;
+           || fr == ATT_STRICT_NEUTRAL || fr == ATT_PASSIVE;
 }
 
 mon_attitude_type mons_attitude(const monster& m)

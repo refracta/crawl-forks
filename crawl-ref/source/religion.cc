@@ -4480,7 +4480,7 @@ int get_monster_tension(const monster& mons, god_type god)
     }
 
     const mon_attitude_type att = mons_attitude(mons);
-    if (att == ATT_GOOD_NEUTRAL || att == ATT_NEUTRAL)
+    if (att == ATT_GOOD_NEUTRAL || att == ATT_NEUTRAL || att == ATT_PASSIVE)
         return 0;
 
     if (mons.cannot_act() || mons.asleep() || mons_is_fleeing(mons))

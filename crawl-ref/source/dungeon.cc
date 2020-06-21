@@ -3918,6 +3918,11 @@ static void _place_aquatic_in(vector<coord_def> &places, const pop_entry *pop,
         mgen_data mg;
         mg.behaviour = BEH_SLEEP;
         mg.flags    |= MG_PERMIT_BANDS | MG_FORCE_PLACE;
+        if (mon == MONS_SLIMEHEAD)
+        {
+            mg.behaviour   = BEH_PASSIVE;
+            mg.extra_flags = MF_NO_REWARD;
+        }
         mg.map_mask |= MMT_NO_MONS;
         mg.cls = mon;
         mg.pos = places[i];
@@ -3950,12 +3955,12 @@ static void _place_aquatic_monsters()
     //
     if (player_in_branch(BRANCH_ABYSS)
         || player_in_branch(BRANCH_PANDEMONIUM)
-        || player_in_branch(BRANCH_DUNGEON) && you.depth < 4)
+        || player_in_branch(BRANCH_DUNGEON) && you.depth != 2 && you.depth < 4)
     {
         return;
     }
 
-    int level = level_id::current().depth;
+    int level = you.depth;
 
     vector<coord_def> water;
     vector<coord_def> lava;
@@ -3972,9 +3977,16 @@ static void _place_aquatic_monsters()
             lava.push_back(*ri);
     }
 
-    _place_aquatic_in(water, fish_population(you.where_are_you, false), level,
+    branch_type place = you.where_are_you;
+    if (place == BRANCH_DUNGEON && you.depth == 2)
+    {
+        place = BRANCH_SEWER;
+        level = 1;
+    }
+
+    _place_aquatic_in(water, fish_population(place, false), level,
                       true);
-    _place_aquatic_in(lava, fish_population(you.where_are_you, true), level,
+    _place_aquatic_in(lava, fish_population(place, true), level,
                       false);
 }
 
@@ -5097,6 +5109,9 @@ monster* dgn_place_monster(mons_spec &mspec, coord_def where,
         break;
     case ATT_GOOD_NEUTRAL:
         mg.behaviour = BEH_GOOD_NEUTRAL;
+        break;
+    case ATT_PASSIVE:
+        mg.behaviour = BEH_PASSIVE;
         break;
     case ATT_STRICT_NEUTRAL:
         mg.behaviour = BEH_STRICT_NEUTRAL;

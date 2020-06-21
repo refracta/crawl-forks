@@ -120,6 +120,7 @@ meliai CORPSE_MELIAI
 electric_eel CORPSE_ELECTRIC_EEL
 lava_snake CORPSE_LAVA_SNAKE
 shark CORPSE_SHARK
+slimehead CORPSE_SLIMEHEAD
 giant_goldfish CORPSE_GIANT_GOLDFISH
 kraken_head CORPSE_KRAKEN /*'x'*/
 %back blood_green blood_green1 blood_green2 blood_green3 blood_green4

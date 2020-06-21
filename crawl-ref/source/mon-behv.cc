@@ -445,6 +445,10 @@ void handle_behaviour(monster* mon)
     if (mon->foe == mon->mindex())
         mon->foe = MHITNOT;
 
+    // Passive monsters don't attack anything unless provoked.
+    if (mon->attitude == ATT_PASSIVE)
+        mon->foe = MHITNOT;
+
     // Friendly and good neutral monsters do not attack other friendly
     // and good neutral monsters.
     if (!mons_is_avatar(mon->type) && mon->foe != MHITNOT && mon->foe != MHITYOU
@@ -1144,7 +1148,8 @@ void behaviour_event(monster* mon, mon_event_type event, const actor *src,
         // issue, though. -cao
         if (!mons_is_threatening(*mon)
             && mon->attitude != ATT_FRIENDLY
-            && mon->attitude != ATT_GOOD_NEUTRAL)
+            && mon->attitude != ATT_GOOD_NEUTRAL
+            && mon->attitude != ATT_PASSIVE)
         {
             return;
         }
@@ -1425,6 +1430,8 @@ beh_type attitude_creation_behavior(mon_attitude_type att)
 {
     switch (att)
     {
+    case ATT_PASSIVE:
+        return BEH_PASSIVE;
     case ATT_NEUTRAL:
         return BEH_NEUTRAL;
     case ATT_GOOD_NEUTRAL:

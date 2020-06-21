@@ -3175,7 +3175,7 @@ static vector<string> _get_monster_desc_vector(const monster_info& mi)
 
     if (mi.attitude == ATT_FRIENDLY)
         descs.emplace_back("friendly");
-    else if (mi.attitude == ATT_GOOD_NEUTRAL)
+    else if (mi.attitude == ATT_GOOD_NEUTRAL || mi.attitude == ATT_PASSIVE)
         descs.emplace_back("peaceful");
     else if (mi.attitude != ATT_HOSTILE && !mi.is(MB_INSANE))
     {
@@ -3275,7 +3275,7 @@ static string _get_monster_desc(const monster_info& mi)
         text += pronoun + " " + conjugate_verb("are", mi.pronoun_plurality())
                 + " friendly.\n";
     }
-    else if (mi.attitude == ATT_GOOD_NEUTRAL)
+    else if (mi.attitude == ATT_GOOD_NEUTRAL || mi.attitude == ATT_PASSIVE)
     {
         text += pronoun + " " + conjugate_verb("seem", mi.pronoun_plurality())
                 + " to be peaceful towards you.\n";
@@ -3418,6 +3418,8 @@ string get_monster_equipment_desc(const monster_info& mi,
                 attributes.emplace_back("friendly");
             else if (mi.attitude == ATT_GOOD_NEUTRAL)
                 attributes.emplace_back("peaceful");
+            else if (mi.attitude == ATT_PASSIVE)
+                attributes.emplace_back("passive");
             else if (mi.is(MB_INSANE))
                 attributes.emplace_back("insane");
             else if (mi.attitude != ATT_HOSTILE)

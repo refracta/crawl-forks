@@ -2185,6 +2185,11 @@ An icky glob of slime that slithers along the ground. It can merge with other
 slime creatures to become dramatically more dangerous, and is especially likely
 to do so in confined spaces.
 %%%%
+slimehead
+
+A massive, mutated, slimy, benthic fish, which feeds on the detritus in the murky 
+waters of the sewers. It's not interested in fighting unless provoked.
+%%%%
 small abomination
 
 A hideous mass of body parts. Each varies in speed and durability by the nature

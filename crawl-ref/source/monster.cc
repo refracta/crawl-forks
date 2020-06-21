@@ -3025,7 +3025,7 @@ bool monster::neutral() const
 {
     mon_attitude_type att = temp_attitude();
     return att == ATT_NEUTRAL || att == ATT_GOOD_NEUTRAL
-           || att == ATT_STRICT_NEUTRAL;
+           || att == ATT_STRICT_NEUTRAL || att == ATT_PASSIVE;
 }
 
 bool monster::good_neutral() const
@@ -6710,7 +6710,7 @@ void monster::align_summons()
     // Neutral monsters don't need avatars, and in same cases would attack their
     // own avatars if they had them.
     if (new_att == ATT_NEUTRAL || new_att == ATT_STRICT_NEUTRAL
-        || new_att == ATT_GOOD_NEUTRAL)
+        || new_att == ATT_GOOD_NEUTRAL || new_att == ATT_PASSIVE)
         destroy_avatars = true;
 
     monster* avatar = find_spectral_weapon(this);

@@ -21,6 +21,7 @@ enum beh_type
     BEH_FRIENDLY,                      //  used during creation only
     BEH_GOOD_NEUTRAL,                  //  creation only
     BEH_STRICT_NEUTRAL,
+    BEH_PASSIVE,                       //  creation only
     BEH_NEUTRAL,                       //  creation only
     BEH_HOSTILE,                       //  creation only
     BEH_GUARD,                         //  creation only - monster is guard

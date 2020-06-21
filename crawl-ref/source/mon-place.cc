@@ -1396,6 +1396,9 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
         if (mg.behaviour == BEH_GOOD_NEUTRAL)
             mon->attitude = ATT_GOOD_NEUTRAL;
 
+        if (mg.behaviour == BEH_PASSIVE)
+            mon->attitude = ATT_PASSIVE;
+
         if (mg.behaviour == BEH_NEUTRAL)
             mon->attitude = ATT_NEUTRAL;
 

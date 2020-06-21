@@ -305,7 +305,7 @@ struct monster_info : public monster_info_base
 
     inline bool neutral() const
     {
-        return attitude == ATT_NEUTRAL || attitude == ATT_GOOD_NEUTRAL || attitude == ATT_STRICT_NEUTRAL;
+        return attitude == ATT_NEUTRAL || attitude == ATT_GOOD_NEUTRAL || attitude == ATT_STRICT_NEUTRAL || attitude == ATT_PASSIVE;
     }
 
     string db_name() const;

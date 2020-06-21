@@ -154,7 +154,8 @@ bool mons_is_safe(const monster* mon, const bool want_move,
                            // Only seen through glass walls or within water?
                            // Assuming that there are no water-only/lava-only
                            // monsters capable of throwing or zapping wands.
-                           || !mons_can_hurt_player(mon, want_move)));
+                           || !mons_can_hurt_player(mon, want_move))
+                    || mon->attitude == ATT_PASSIVE);
 
 #ifdef CLUA_BINDINGS
     if (consider_user_options)
