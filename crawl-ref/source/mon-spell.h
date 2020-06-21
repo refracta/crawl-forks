@@ -1535,14 +1535,15 @@ static const mon_spellbook mspell_list[] =
        { SPELL_ENERGY_BOLT, 13, MON_SPELL_MAGICAL },
        { SPELL_SLOW, 13, MON_SPELL_MAGICAL },
        { SPELL_CONFUSE, 13, MON_SPELL_MAGICAL },
-       { SPELL_MALMUTATE, 13, MON_SPELL_MAGICAL },
+       { SPELL_IRRADIATE, 48, MON_SPELL_MAGICAL },
        { SPELL_DIG, 13, MON_SPELL_MAGICAL },
       }
     },
 
     {  MST_HELLION,
       {
-       { SPELL_CALL_DOWN_DAMNATION, 57, MON_SPELL_MAGICAL },
+       { SPELL_CALL_DOWN_DAMNATION, 70, MON_SPELL_MAGICAL },
+       { SPELL_BLINK_RANGE, 15, MON_SPELL_MAGICAL },
       }
     },
 
