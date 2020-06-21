@@ -3214,6 +3214,9 @@ int monster::base_armour_class() const
     if (mons_is_ghost_demon(type))
         return ghost->ac;
 
+    if (mons_genus(type) == MONS_PLANT)
+        return 3 + random2(env.absdepth0);
+
     // zombie, skeleton, etc ac mods
     if (mons_class_is_zombified(type))
     {

@@ -3036,6 +3036,9 @@ void define_monster(monster& mons)
         break;
     }
 
+    if (mons_genus(mcls) == MONS_PLANT)
+        hp = hit_points(45 + env.absdepth0 * 15);
+
     if (mons_is_draconian_job(mcls))
     {
         // Professional draconians still have a base draconian type.
