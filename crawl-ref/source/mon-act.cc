@@ -1953,7 +1953,7 @@ void handle_monster_move(monster* mons)
         return;
     }
 
-    if (mons->has_ench(ENCH_DAZED) && one_chance_in(4))
+    if (mons->has_ench(ENCH_DAZED) && one_chance_in(3))
     {
         simple_monster_message(*mons, " is lost in a daze.");
         mons->speed_increment -= non_move_energy;
