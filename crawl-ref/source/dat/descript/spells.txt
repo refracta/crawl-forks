@@ -372,7 +372,8 @@ Corpse Rot spell
 
 Rapidly accelerates the decomposition of any corpses lying around the caster,
 emitting in the process a foul miasmic vapour, which eats away at the life
-force of any creature it envelops.
+force of most living creatures it envelops. The rapid decay additionally has 
+a high chance of spawning giant blowflies which feed on rot and decay.
 %%%%
 Corrosive Bolt spell
 
