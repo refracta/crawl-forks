@@ -18,6 +18,7 @@
 #include "bloodspatter.h"
 #include "chardump.h"
 #include "cloud.h"
+#include "coordit.h"
 #include "delay.h"
 #include "directn.h"
 #include "english.h"
@@ -108,8 +109,22 @@ bool melee_attack::handle_phase_attempted()
     }
 
     // Passive things don't attack unless the player provokes them out of passiveness. (ME_WHACK/ME_ANNOY)
-    if (attacker->is_monster() && attacker->as_monster()->attitude == ATT_PASSIVE)
+    if (attacker->is_monster() && attacker->as_monster()->attitude == ATT_PASSIVE && !(defender->is_monster() && mons_genus(defender->as_monster()->type) == MONS_PLANT))
+    {
+        int adjacent_count = 0;
+        for (adjacent_iterator ai(attacker->pos()); ai; ++ai)
+        {
+            if (!in_bounds(*ai))
+                adjacent_count++;
+            else if (!attacker->can_pass_through(*ai))
+                adjacent_count++;
+            else if (actor_at(*ai))
+                adjacent_count++;
+        }
+        if (adjacent_count >= 7)
+            attacker->lose_energy(EUT_MOVE);
         return false;
+    }
 
     if (attacker->is_player() && defender && defender->is_monster())
     {
