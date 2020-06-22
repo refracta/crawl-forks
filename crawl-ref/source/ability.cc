@@ -1938,7 +1938,7 @@ static spret _do_ability(const ability_def& abil, bool fail)
             break;
         }
 
-        const int power = _drac_breath_power();
+        const int power = div_rand_round(5 * _drac_breath_power(), 2);
 
         targeter_shotgun hitfunc(&you, shotgun_beam_count(power), beam.range);
         direction_chooser_args args;
