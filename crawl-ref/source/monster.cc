@@ -5551,14 +5551,17 @@ void monster::apply_location_effects(const coord_def &oldpos,
     {
         monster_type genus = mons_genus(type);
 
-        if (genus == MONS_JELLY || genus == MONS_ELEPHANT_SLUG || type == MONS_WATER_ELEMENTAL)
+        if (genus == MONS_JELLY || genus == MONS_ELEPHANT_SLUG || type == MONS_WATER_ELEMENTAL || type == MONS_GIANT_BLOWFLY)
         {
             prop &= ~FPROP_BLOODY;
             if (you.see_cell(pos()) && !visible_to(&you))
             {
                 string desc =
                     feature_description_at(pos(), false, DESC_THE, false);
-                mprf("The bloodstain on %s disappears!", desc.c_str());
+                if (type == MONS_GIANT_BLOWFLY)
+                    mprf("The blowfly sucks up the blood from %s!", desc.c_str());
+                else
+                    mprf("The bloodstain on %s disappears!", desc.c_str());
             }
         }
     }
