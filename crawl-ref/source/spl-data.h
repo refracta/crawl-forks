@@ -355,7 +355,7 @@ static const struct spell_desc spelldata[] =
     SPELL_RING_OF_FLAMES, "Ring of Flames", "Entropic Flame Ring",
     spschool::charms | spschool::fire,
     spflag::area,
-    7,
+    6,
     200,
     -1, -1,
     6, 0,
