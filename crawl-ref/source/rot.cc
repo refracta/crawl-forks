@@ -183,25 +183,30 @@ static bool _item_needs_rot_check(const item_def &item)
            && item.sub_type <= CORPSE_SKELETON; // XXX: is this needed?
 }
 
-static void _maybe_spawn_flies(item_def item)
+void spawn_flies(item_def item, bool msg)
 {
     const coord_def &p = item.pos;
 
-    if (!x_chance_in_y(max_corpse_chunks(item.mon_type), 40))
-        return;
-
     int num_flies = 1;
-    
+
     int x = random2(max_corpse_chunks(item.mon_type));
     num_flies += div_rand_round(x, 3);
 
     for (int i = 0; i <= num_flies; ++i)
         create_monster(mgen_data(MONS_GIANT_BLOWFLY, BEH_NEUTRAL, p, MHITNOT));
 
-    if (you.see_cell(p))
+    if (you.see_cell(p) && msg)
     {
         mprf("%s forth from the corpse!", num_flies > 1 ? "Flies burst" : "A fly bursts");
     }
+}
+
+static void _maybe_spawn_flies(item_def item)
+{
+    if (!x_chance_in_y(max_corpse_chunks(item.mon_type), 200))
+        return;
+
+    spawn_flies(item);
 }
 
 /**

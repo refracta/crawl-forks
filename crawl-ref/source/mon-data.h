@@ -385,7 +385,7 @@ static monsterentry mondata[] =
 {
     MONS_GIANT_BLOWFLY, 'b', DARKGREY, "giant blowfly",
     M_CONFUSED | M_NOT_DANGEROUS | M_FLIES,
-    MR_VUL_POISON | MR_RES_ACID,
+    mrd(MR_RES_ROTTING, 3) | mrd(MR_RES_POISON, 3) | MR_RES_ACID,
     10, MONS_GIANT_BLOWFLY, MONS_GIANT_BLOWFLY, MH_NATURAL, 10,
     { AT_NO_ATK, AT_NO_ATK, AT_NO_ATK, AT_NO_ATK },
     2, 300,

@@ -26,6 +26,7 @@
 #include "prompt.h"
 #include "random-pick.h"
 #include "religion.h"
+#include "rot.h"
 #include "shout.h"
 #include "spl-cast.h"
 #include "spl-util.h"
@@ -378,6 +379,7 @@ void corpse_rot(actor* caster)
     // If there is no caster (god wrath), centre the effect on the player.
     const coord_def center = caster ? caster->pos() : you.pos();
     bool saw_rot = false;
+    int flies_count = 0;
 
     for (radius_iterator ri(center, LOS_NO_TRANS); ri; ++ri)
     {
@@ -385,6 +387,13 @@ void corpse_rot(actor* caster)
             for (stack_iterator si(*ri); si; ++si)
                 if (si->is_type(OBJ_CORPSES, CORPSE_BODY))
                 {
+                    if (coinflip())
+                    {
+                        spawn_flies(*si, false);
+                        if (you.see_cell(*ri))
+                            flies_count++;
+                    }
+
                     // Found a corpse. Skeletonise it if possible.
                     if (!mons_skeleton(si->mon_type))
                     {
@@ -408,6 +417,9 @@ void corpse_rot(actor* caster)
         mprf("You %s decay.", you.can_smell() ? "smell" : "sense");
     else
         canned_msg(MSG_NOTHING_HAPPENS);
+
+    if (flies_count)
+        mprf("Flies burst forth from the corpse%s.", flies_count > 1 ? "s" : "");
 }
 
 void holy_flames(monster* caster, actor* defender)
