@@ -654,7 +654,7 @@ void move_player_action(coord_def move)
                 moving = false;
             }
         }
-        else if ((targ_monst->temp_attitude() == ATT_NEUTRAL || targ_monst->temp_attitude() == ATT_PASSIVE) 
+        else if ((targ_monst->temp_attitude() == ATT_NEUTRAL) 
             && !you.confused() && targ_monst->visible_to(&you))
         {
             simple_monster_message(*targ_monst, " refuses to make way for you. "

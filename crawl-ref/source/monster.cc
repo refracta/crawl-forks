@@ -3040,7 +3040,7 @@ bool monster::strict_neutral() const
 
 bool monster::wont_attack() const
 {
-    return friendly() || good_neutral() || strict_neutral();
+    return friendly() || good_neutral() || strict_neutral() || attitude == ATT_PASSIVE;
 }
 
 bool monster::pacified() const
