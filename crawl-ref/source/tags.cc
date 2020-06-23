@@ -1584,6 +1584,17 @@ static void tag_construct_you(writer &th)
         marshallInt(th, you.drac_colour);
     }
 
+    if (you.religion == GOD_YREDELEMNUL && you.duration[DUR_ANCESTOR_DELAY])
+    {
+        marshallInt(th, you.enslaved_soul);
+        marshallShort(th, you.soul_hd_boost);
+    }
+    else
+    {
+        you.enslaved_soul = MONS_NO_MONSTER;
+        you.soul_hd_boost = 0;
+    }
+
     // set up sacrifice piety by ability
     marshallShort(th, 1 + ABIL_FINAL_SACRIFICE - ABIL_FIRST_SACRIFICE);
     for (int j = ABIL_FIRST_SACRIFICE; j <= ABIL_FINAL_SACRIFICE; ++j)
@@ -3343,6 +3354,12 @@ static void tag_read_you(reader &th)
 
             change_species_to(SP_DRACONIAN);
         }
+    }
+
+    if (you.religion == GOD_YREDELEMNUL && you.duration[DUR_ANCESTOR_DELAY])
+    {
+        you.enslaved_soul = (monster_type)unmarshallInt(th);
+        you.soul_hd_boost = unmarshallShort(th);
     }
 
 #if TAG_MAJOR_VERSION == 34

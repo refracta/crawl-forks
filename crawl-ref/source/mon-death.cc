@@ -619,7 +619,8 @@ void record_monster_defeat(const monster* mons, killer_type killer)
     if (mons->has_ench(ENCH_FAKE_ABJURATION) || mons->is_summoned())
         return;
     if (mons->is_named() && mons->friendly()
-        && !mons_is_hepliaklqana_ancestor(mons->type))
+        && !mons_is_hepliaklqana_ancestor(mons->type)
+        && !mons_enslaved_soul(*mons))
     {
         take_note(Note(NOTE_ALLY_DEATH, 0, 0, mons->mname));
     }
@@ -676,7 +677,7 @@ int exp_rate(int killer)
 {
     // Damage by the spectral weapon is considered to be the player's damage ---
     // so the player does not lose any exp from dealing damage with a spectral weapon summon
-    // ditto hep ancestors (sigh)
+    // ditto hep ancestors
     if (!invalid_monster_index(killer)
         && (menv[killer].type == MONS_SPECTRAL_WEAPON
             || mons_is_hepliaklqana_ancestor(menv[killer].type))
@@ -2962,7 +2963,17 @@ item_def* monster_die(monster& mons, killer_type killer,
         && killer != KILL_RESET
         && !(mons.flags & MF_BANISHED))
     {
+        if (mons_enslaved_soul(mons))
+        {
+            if (!you.can_see(mons))
+                mprf("%s has temporarily lost its spectral form.", mons.name(DESC_YOUR).c_str());
+            you.duration[DUR_ANCESTOR_DELAY] = random_range(900, 1200);
+            you.enslaved_soul = mons.base_monster;
+            you.soul_hd_boost = mons.props[YRED_HD_KEY];
+        }
+
         remove_companion(&mons);
+
         if (mons_is_hepliaklqana_ancestor(mons.type))
         {
             ASSERT(hepliaklqana_ancestor() == MID_NOBODY);

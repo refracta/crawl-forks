@@ -788,11 +788,18 @@ static void _decrement_durations()
     if (!env.sunlight.empty())
         process_sunlights();
 
-    if (!you.duration[DUR_ANCESTOR_DELAY]
-        && in_good_standing(GOD_HEPLIAKLQANA)
-        && hepliaklqana_ancestor() == MID_NOBODY)
+    if (!you.duration[DUR_ANCESTOR_DELAY])
     {
-        _try_to_respawn_ancestor();
+        if (in_good_standing(GOD_HEPLIAKLQANA)
+            && hepliaklqana_ancestor() == MID_NOBODY)
+        {
+            _try_to_respawn_ancestor();
+        }
+        if (in_good_standing(GOD_YREDELEMNUL)
+            && (you.enslaved_soul != MONS_NO_MONSTER))
+        {
+            yred_respawn_enslaved_soul();
+        }
     }
 
     const bool sanguine_armour_is_valid = sanguine_armour_valid();

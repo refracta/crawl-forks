@@ -23,6 +23,7 @@ const int KRAKEN_TENTACLE_RANGE = 3;
 #define CUSTOM_SPELLS_KEY "custom_spells"
 #define SEEN_SPELLS_KEY "seen_spells"
 #define VAULT_HD_KEY "vault_hd"
+#define YRED_HD_KEY "yred_hd" // Used for figuring how much HD has been gained from experience on an enslaved soul.
 
 #define FAKE_BLINK_KEY "fake_blink"
 #define CEREBOV_DISARMED_KEY "cerebov_disarmed"

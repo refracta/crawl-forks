@@ -327,6 +327,7 @@ bool mons_enslaved_body_and_soul(const monster& mon);
 bool mons_enslaved_soul(const monster& mon);
 void name_zombie(monster& mon, monster_type mc, const string &mon_name);
 void name_zombie(monster& mon, const monster& orig);
+void mi_name_zombie(monster& mon, const monster_info mi);
 
 int mons_power(monster_type mc);
 

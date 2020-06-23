@@ -286,6 +286,10 @@ public:
     skill_type defence_skill;
     draconian_colour drac_colour;
 
+    // Yred Enslaved Soul Information (In case a save is in a state where it'd need revival)
+    monster_type enslaved_soul;
+    int soul_hd_boost;
+
     int magic_contamination;
 
     FixedVector<uint32_t, NUM_WEAPONS> seen_weapon;

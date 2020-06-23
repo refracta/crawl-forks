@@ -1831,6 +1831,64 @@ bool yred_can_enslave_soul(monster* mon)
            && mon->type != MONS_PANDEMONIUM_LORD;
 }
 
+void yred_respawn_enslaved_soul()
+{
+    coord_def respawn_point;
+
+    // Nowhere to respawn to; try again shortly.
+    if (!find_habitable_spot_near(you.pos(), MONS_SPECTRAL_THING, 4, false, respawn_point))
+    {
+        you.increase_duration(DUR_ANCESTOR_DELAY, 4 + random2(16));
+        return;
+    }
+
+    monster* mon = get_free_monster();
+
+    define_zombie(mon, you.enslaved_soul, MONS_SPECTRAL_THING);
+    monster_info mi = monster_info(you.enslaved_soul);
+    int hd = mi.hd;
+    hd += you.soul_hd_boost;
+    mon->props[YRED_HD_KEY] = you.soul_hd_boost;
+    hd += apply_invo_enhancer(div_rand_round(you.skill(SK_INVOCATIONS), 3), true);
+
+    mon->set_hit_dice(hd);
+    roll_zombie_hp(mon);
+
+    mon->colour = ETC_UNHOLY;
+    mon->attitude = ATT_FRIENDLY;
+
+    mon->flags |= MF_NO_REWARD;
+    mon->flags |= MF_ENSLAVED_SOUL;
+
+    if (mi.wields_two_weapons())
+        mon->flags |= MF_TWO_WEAPONS;
+    
+    if (mons_class_flag(mi.type, M_FIGHTER))
+        mon->flags |= MF_FIGHTER;
+
+    if (mons_class_flag(mi.type, M_ARCHER))
+        mon->flags |= MF_ARCHER;
+
+    monster_spells spl = mi.spells;
+    for (const mon_spell_slot &slot : spl)
+        if (!(get_spell_flags(slot.spell) & spflag::holy))
+            mon->spells.push_back(slot);
+    if (mon->spells.size())
+        mon->props[CUSTOM_SPELLS_KEY] = true;
+
+    mi_name_zombie(*mon, mi);
+
+    mons_make_god_gift(*mon, GOD_YREDELEMNUL);
+    add_companion(mon);
+
+    mon->set_position(respawn_point);
+    if (!cell_is_solid(respawn_point))
+        place_cloud(CLOUD_RANDOM_SMOKE, respawn_point, 2 + random2(4), &you, 2);
+
+    you.enslaved_soul = MONS_NO_MONSTER;
+    you.soul_hd_boost = 0;
+}
+
 void yred_make_enslaved_soul(monster* mon, bool force_hostile)
 {
     ASSERT(mon); // XXX: change to monster &mon
@@ -1872,18 +1930,8 @@ void yred_make_enslaved_soul(monster* mon, bool force_hostile)
     // the proper stats from it.
     define_zombie(mon, mon->type, MONS_SPECTRAL_THING);
 
-    // If the original monster has been levelled up, its HD might be different
-    // from its class HD, in which case its HP should be rerolled to match.
-    if (player_spec_invo() > 0)
-    {
-        mon->set_hit_dice(apply_invo_enhancer(max(orig.get_experience_level(), 1), true));
-        roll_zombie_hp(mon);
-    }
-    else if (mon->get_experience_level() != orig.get_experience_level())
-    {
-        mon->set_hit_dice(max(orig.get_experience_level(), 1));
-        roll_zombie_hp(mon);
-    }
+    mon->set_hit_dice(max(orig.get_experience_level(), 1) + apply_invo_enhancer(div_rand_round(you.skill(SK_INVOCATIONS), 3), true));
+    roll_zombie_hp(mon);
 
     mon->colour = ETC_UNHOLY;
 

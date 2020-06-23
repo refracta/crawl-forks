@@ -1920,6 +1920,24 @@ void name_zombie(monster& mon, const monster& orig)
                                  | MF_NAME_DESCRIPTOR);
 }
 
+void mi_name_zombie(monster& mon, const monster_info mi)
+{
+    if (!mons_is_unique(mi.type) && mi.mname.empty())
+        return;
+
+    string name;
+
+    if (!mi.mname.empty())
+        name = mi.mname;
+    else
+        name = mons_type_name(mi.type, DESC_PLAIN);
+
+    name_zombie(mon, mi.type, name);
+    
+    mon.flags |= (MF_NAME_SUFFIX | MF_NAME_ADJECTIVE
+                                 | MF_NAME_DESCRIPTOR);
+}
+
 // Derived undead deal 80% of the damage of the base form.
 static int _downscale_zombie_damage(int damage)
 {
