@@ -193,7 +193,10 @@ void spawn_flies(item_def item, bool msg)
     num_flies += div_rand_round(x, 3);
 
     for (int i = 0; i <= num_flies; ++i)
-        create_monster(mgen_data(MONS_GIANT_BLOWFLY, BEH_PASSIVE, p, MHITNOT));
+    {
+        monster * fly = create_monster(mgen_data(MONS_GIANT_BLOWFLY, BEH_PASSIVE, p, MHITNOT));
+        fly->flags |= MF_WAS_NEUTRAL;
+    }
 
     if (you.see_cell(p) && msg)
     {

@@ -3918,10 +3918,12 @@ static void _place_aquatic_in(vector<coord_def> &places, const pop_entry *pop,
         mgen_data mg;
         mg.behaviour = BEH_SLEEP;
         mg.flags    |= MG_PERMIT_BANDS | MG_FORCE_PLACE;
-        if (mon == MONS_SLIMEHEAD)
+
+        // BCADDO: Make into a flag?
+        if (mon == MONS_SLIMEHEAD || mon == MONS_BUTTERFLY || mon == MONS_GIANT_BLOWFLY)
         {
             mg.behaviour   = BEH_PASSIVE;
-            mg.extra_flags = MF_NO_REWARD;
+            mg.extra_flags = MF_NO_REWARD | MF_WAS_NEUTRAL;
         }
         mg.map_mask |= MMT_NO_MONS;
         mg.cls = mon;
