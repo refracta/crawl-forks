@@ -207,8 +207,6 @@ void mirror_damage_fineff::fire()
 
         if (attack->alive())
             print_wounds(*monster_by_mid(att));
-
-        lose_piety(isqrt_ceil(damage));
     }
     else
     {

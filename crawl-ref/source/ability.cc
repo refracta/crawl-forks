@@ -399,7 +399,7 @@ static const ability_def Ability_List[] =
 
     // Yredelemnul
     { ABIL_YRED_INJURY_MIRROR, "Injury Mirror",
-      0, 0, 0, 0, {fail_basis::invo, 40, 4, 20}, abflag::piety },
+      4, 0, 0, 20, {fail_basis::invo, 40, 4, 20}, abflag::none },
     { ABIL_YRED_ANIMATE_REMAINS, "Animate Remains",
       4, 0, 200, 0, {fail_basis::invo, 40, 4, 20}, abflag::none },
     { ABIL_YRED_RECALL_UNDEAD_SLAVES, "Recall Undead Slaves",
@@ -2497,8 +2497,8 @@ static spret _do_ability(const ability_def& abil, bool fail)
     case ABIL_YRED_INJURY_MIRROR:
         fail_check();
 
-        you.duration[DUR_MIRROR_DAMAGE] = apply_invo_enhancer(9 * BASELINE_DELAY
-            + random2avg(you.piety * BASELINE_DELAY, 2) / 10, true);
+        you.duration[DUR_MIRROR_DAMAGE] += (apply_invo_enhancer(3
+            + random2avg(you.skill(SK_INVOCATIONS, 2), 2), true) * BASELINE_DELAY);
 
         if (yred_injury_mirror())
             mpr("Another wave of unholy energy enters you.");
