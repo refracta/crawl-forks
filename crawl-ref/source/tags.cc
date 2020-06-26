@@ -691,39 +691,6 @@ coord_def unmarshallCoord(reader &th)
     return c;
 }
 
-#if TAG_MAJOR_VERSION == 34
-// Between TAG_MINOR_OPTIONAL_PARTS and TAG_MINOR_FIXED_CONSTRICTION
-// we neglected to marshall the constricting[] map of monsters. Fix
-// those up.
-static void _fix_missing_constrictions()
-{
-    for (int i = -1; i < MAX_MONSTERS; ++i)
-    {
-        const actor* m = i < 0 ? (actor*)&you : (actor*)&menv[i];
-        if (!m->alive())
-            continue;
-        if (!m->constricted_by)
-            continue;
-        actor *h = actor_by_mid(m->constricted_by);
-        // Not a known bug, so don't fix this up.
-        if (!h)
-            continue;
-
-        if (!h->constricting)
-            h->constricting = new actor::constricting_t;
-        if (h->constricting->find(m->mid) == h->constricting->end())
-        {
-            dprf("Fixing missing constriction for %s (mindex=%d mid=%d)"
-                 " of %s (mindex=%d mid=%d)",
-                 h->name(DESC_PLAIN, true).c_str(), h->mindex(), h->mid,
-                 m->name(DESC_PLAIN, true).c_str(), m->mindex(), m->mid);
-
-            (*h->constricting)[m->mid] = 0;
-        }
-    }
-}
-#endif
-
 static void _marshall_constriction(writer &th, const actor *who)
 {
     marshallInt(th, who->constricted_by);
@@ -2266,9 +2233,6 @@ static void tag_construct_lost_items(writer &th)
 
 static void tag_construct_companions(writer &th)
 {
-#if TAG_MAJOR_VERSION == 34
-    fixup_bad_companions();
-#endif
     marshallMap(th, companion_list, _marshall_as_int<mid_t>,
                  marshall_companion);
 }
@@ -2664,6 +2628,9 @@ static void tag_read_you(reader &th)
                 a = ABIL_STOP_FLYING;
             found_stop_flying = true;
         }
+
+        if (a == ABIL_YRED_ANIMATE_DEAD)
+            a = ABIL_YRED_ANIMATE_REMAINS;
 
         if (th.getMinorVersion() < TAG_MINOR_NO_JUMP)
         {
@@ -6828,31 +6795,6 @@ static void tag_read_level_monsters(reader &th)
 
         monster *dup_m = monster_by_mid(m.mid);
 
-#if TAG_MAJOR_VERSION == 34
-        // clear duplicates of followers who got their god cleared as the result
-        // of a bad polymorph prior to e6d7efa92cb0. This only fires on level
-        // load *when there are duplicate mids*, because otherwise the clones
-        // aren't uniquely identifiable. This fix may still result in duplicate
-        // mid errors from time to time, but should never crash; saving and
-        // loading will fix up the duplicate errors. A similar check also
-        // happens in follower::place (since that runs after the level is
-        // loaded).
-        if (dup_m)
-        {
-            if (maybe_bad_priest_monster(*dup_m))
-                fixup_bad_priest_monster(*dup_m);
-            else if (maybe_bad_priest_monster(m))
-            {
-                fixup_bad_priest_monster(m);
-                env.mid_cache[dup_m->mid] = dup_m->mindex();
-                // dup_m should already be placed, so nothing else is needed.
-                continue;
-            }
-            // we could print an error on the else case, but this is already
-            // going to be handled by debug_mons_scan.
-        }
-#endif
-
         // companion_is_elsewhere checks the mid cache
         env.mid_cache[m.mid] = i;
         if (m.is_divine_companion() && companion_is_elsewhere(m.mid))
@@ -6895,39 +6837,6 @@ static void tag_read_level_monsters(reader &th)
 #endif
         mgrd(m.pos()) = i;
     }
-#if TAG_MAJOR_VERSION == 34
-    // This relies on TAG_YOU (including lost monsters) being unmarshalled
-    // on game load before the initial level.
-    if (th.getMinorVersion() < TAG_MINOR_FIXED_CONSTRICTION
-        && th.getMinorVersion() >= TAG_MINOR_OPTIONAL_PARTS)
-    {
-        _fix_missing_constrictions();
-    }
-    if (th.getMinorVersion() < TAG_MINOR_TENTACLE_MID)
-    {
-        for (monster_iterator mi; mi; ++mi)
-        {
-            if (mi->props.exists("inwards"))
-            {
-                const int old_midx = mi->props["inwards"].get_int();
-                if (invalid_monster_index(old_midx))
-                    mi->props["inwards"].get_int() = MID_NOBODY;
-                else
-                    mi->props["inwards"].get_int() = menv[old_midx].mid;
-            }
-            if (mi->props.exists("outwards"))
-            {
-                const int old_midx = mi->props["outwards"].get_int();
-                if (invalid_monster_index(old_midx))
-                    mi->props["outwards"].get_int() = MID_NOBODY;
-                else
-                    mi->props["outwards"].get_int() = menv[old_midx].mid;
-            }
-            if (mons_is_tentacle_or_tentacle_segment(mi->type))
-                mi->tentacle_connect = menv[mi->tentacle_connect].mid;
-        }
-    }
-#endif
 }
 
 static void _debug_count_tiles()

@@ -25,6 +25,7 @@
 #include "env.h"
 #include "fight.h"
 #include "fprop.h"
+#include "god-companions.h"
 #include "god-conduct.h"
 #include "god-item.h"
 #include "invent.h"
@@ -2259,12 +2260,26 @@ bool twisted_resurrection(actor *caster, int pow, beh_type beha,
         else
             montype = MONS_CRAWLING_CORPSE;
 
+        if (caster->is_player())
+        {
+            if (montype == MONS_ABOMINATION_LARGE && !player_allowed_abom(true))
+                montype = MONS_ABOMINATION_SMALL;
+            if (montype == MONS_ABOMINATION_SMALL && !player_allowed_abom())
+                montype = MONS_MACABRE_MASS;
+        }
+
         mgen_data mg(montype, beha, *ri, foe, MG_FORCE_BEH | MG_AUTOFOE);
         mg.set_summoned(caster, 0, 0, god);
         if (monster *mons = create_monster(mg))
         {
             // Set hit dice, AC, and HP.
-            init_abomination(*mons, hd);
+            init_abomination(*mons, hd, caster->is_player());
+
+            if (caster->is_player())
+            {
+                mons_make_god_gift(*mons, GOD_YREDELEMNUL);
+                add_companion(mons);
+            }
 
             if (num_corpses > 1)
             {

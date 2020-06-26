@@ -134,9 +134,8 @@ const vector<god_power> god_powers[NUM_GODS] =
     },
 
     // Yredelemnul
-    { { 1, ABIL_YRED_ANIMATE_REMAINS, "animate remains" },
+    { { 1, ABIL_YRED_ANIMATE_REMAINS, "reanimate corpses into twisted abominations" },
       { 2, ABIL_YRED_RECALL_UNDEAD_SLAVES, "recall your undead slaves" },
-      { 3, ABIL_YRED_ANIMATE_DEAD, "animate legions of the dead" },
       { 3, "Yredelemnul will now gift you servants as you gain piety.",
            "Yredelemnul will no longer gift you servants.",
            "Yredelemnul will gift you servants as you gain piety." },
@@ -2510,13 +2509,6 @@ static void _gain_piety_point()
                 redraw_screen();
 #endif
                 learned_something_new(HINT_NEW_ABILITY_GOD);
-                // Preserve the old hotkey
-                if (power.abil == ABIL_YRED_ANIMATE_DEAD)
-                {
-                    replace(begin(you.ability_letter_table),
-                            end(you.ability_letter_table),
-                            ABIL_YRED_ANIMATE_REMAINS, ABIL_YRED_ANIMATE_DEAD);
-                }
             }
         }
         if (rank == rank_for_passive(passive_t::halo))
@@ -2675,13 +2667,6 @@ void lose_piety(int pgn)
                    && !you.one_time_ability_used[you.religion])
             {
                 power.display(false, "You can no longer %s.");
-                // Preserve the old hotkey
-                if (power.abil == ABIL_YRED_ANIMATE_DEAD)
-                {
-                    replace(begin(you.ability_letter_table),
-                            end(you.ability_letter_table),
-                            ABIL_YRED_ANIMATE_DEAD, ABIL_YRED_ANIMATE_REMAINS);
-                }
                 // Deactivate the toggle
                 if (power.abil == ABIL_SIF_MUNA_DIVINE_ENERGY)
                     you.attribute[ATTR_DIVINE_ENERGY] = 0;
@@ -3381,9 +3366,6 @@ void set_god_ability_slots()
     for (const god_power& power : god_powers[you.religion])
     {
         if (power.abil != ABIL_NON_ABILITY
-            // Animate Dead doesn't have its own hotkey; it steals
-            // Animate Remains'
-            && power.abil != ABIL_YRED_ANIMATE_DEAD
             // hep ident goes to G, so don't take b for it (hack alert)
             && power.abil != ABIL_HEPLIAKLQANA_IDENTITY
             && find(begin(you.ability_letter_table),

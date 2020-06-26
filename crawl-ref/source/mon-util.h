@@ -342,7 +342,7 @@ monster_type random_draconian_job();
 monster_type random_demonspawn_monster_species();
 monster_type random_demonspawn_job();
 
-bool init_abomination(monster& mon, int hd);
+bool init_abomination(monster& mon, int hd, bool player = false);
 void define_monster(monster& mons);
 
 void mons_pacify(monster& mon, mon_attitude_type att = ATT_GOOD_NEUTRAL,

@@ -27,6 +27,8 @@
 #include "english.h"
 #include "env.h"
 #include "fprop.h"
+#include "god-abil.h"
+#include "god-companions.h"
 #include "item-prop.h"
 #include "libutil.h"
 #include "message.h"
@@ -153,6 +155,11 @@ void merge_ench_durations(monster& initial, monster& merge_to, bool usehd)
         if (!entry.second.duration)
             entry.second.duration = 1;
 
+        // BCADNOTE: A bit hacky; but we gave crawlies slowly dying to get rid of them
+        // if they don't merge for awhile, we don't want things they merge into to inherit it.
+        if (entry.second.ench == ENCH_SLOWLY_DYING)
+            continue;
+
         if (no_initial)
             merge_to.add_ench(entry.second);
         else
@@ -266,6 +273,10 @@ static void _lose_turn(monster* mons, bool has_gone)
 // abomination.
 static bool _do_merge_crawlies(monster* crawlie, monster* merge_to)
 {
+    bool player = (crawlie->friendly() && you.religion == GOD_YREDELEMNUL);
+    bool allow_large = (!player || player_allowed_abom(true));
+    bool allow_small = (!player || player_allowed_abom());
+
     const int orighd = merge_to->get_experience_level();
     int addhd = crawlie->get_experience_level();
 
@@ -311,6 +322,20 @@ static bool _do_merge_crawlies(monster* crawlie, monster* merge_to)
 
         // Recompute in case we limited newhd.
         addhd = newhd - orighd;
+
+        if (!allow_large && (new_type == MONS_ABOMINATION_LARGE)
+                         && (merge_to->type != MONS_ABOMINATION_LARGE))
+        {
+            new_type = MONS_ABOMINATION_SMALL;
+            newhd = min(newhd, 15);
+        }
+        
+        if (!allow_small && (new_type == MONS_ABOMINATION_SMALL)
+                         && (merge_to->type != MONS_ABOMINATION_SMALL))
+        {
+            new_type = MONS_MACABRE_MASS;
+            newhd = min(newhd, 8);
+        }
 
         if (merge_to->type == MONS_ABOMINATION_SMALL)
         {

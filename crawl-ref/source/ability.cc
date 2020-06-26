@@ -400,12 +400,10 @@ static const ability_def Ability_List[] =
     // Yredelemnul
     { ABIL_YRED_INJURY_MIRROR, "Injury Mirror",
       4, 0, 0, 20, {fail_basis::invo, 40, 4, 20}, abflag::none },
-    { ABIL_YRED_ANIMATE_REMAINS, "Animate Remains",
+    { ABIL_YRED_ANIMATE_REMAINS, "Twisted Reanimation",
       4, 0, 200, 0, {fail_basis::invo, 40, 4, 20}, abflag::none },
     { ABIL_YRED_RECALL_UNDEAD_SLAVES, "Recall Undead Slaves",
       3, 0, 0, 0, {fail_basis::invo, 50, 4, 20}, abflag::none },
-    { ABIL_YRED_ANIMATE_DEAD, "Animate Dead",
-      4, 0, 200, 0, {fail_basis::invo, 40, 4, 20}, abflag::none },
     { ABIL_YRED_DRAIN_LIFE, "Drain Life",
       6, 0, 200, 8, {fail_basis::invo, 60, 4, 25}, abflag::none },
     { ABIL_YRED_ENSLAVE_SOUL, "Enslave Soul",
@@ -915,9 +913,6 @@ ability_type fixup_ability(ability_type ability)
     switch (ability)
     {
     case ABIL_YRED_ANIMATE_REMAINS:
-        // suppress animate remains once animate dead is unlocked (ugh)
-        if (in_good_standing(GOD_YREDELEMNUL, 2))
-            return ABIL_NON_ABILITY;
         return ability;
 
     case ABIL_YRED_RECALL_UNDEAD_SLAVES:
@@ -2512,20 +2507,8 @@ static spret _do_ability(const ability_def& abil, bool fail)
 
     case ABIL_YRED_ANIMATE_REMAINS:
         fail_check();
-        canned_msg(MSG_ANIMATE_REMAINS);
-        if (animate_remains(you.pos(), CORPSE_BODY, BEH_FRIENDLY,
-                            MHITYOU, &you, "", GOD_YREDELEMNUL) < 0)
-        {
-            mpr("There are no remains here to animate!");
-            return spret::abort;
-        }
-        break;
-
-    case ABIL_YRED_ANIMATE_DEAD:
-        fail_check();
         canned_msg(MSG_CALL_DEAD);
-        animate_dead(&you, you.skill_rdiv(SK_INVOCATIONS) + 1,
-                     BEH_FRIENDLY, MHITYOU, &you, "", GOD_YREDELEMNUL);
+        twisted_resurrection(&you, 200, BEH_FRIENDLY, MHITYOU, GOD_YREDELEMNUL);
         break;
 
     case ABIL_YRED_RECALL_UNDEAD_SLAVES:

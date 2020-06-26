@@ -1693,6 +1693,8 @@ void monster::apply_enchantment(const mon_enchant &me)
                     mprf("%s crumbles away.", name(DESC_THE, false).c_str());
                 else if (type == MONS_BLOCK_OF_ICE)
                     mprf("%s melts away.", name(DESC_THE, false).c_str());
+                else if (type == MONS_CRAWLING_CORPSE || type == MONS_MACABRE_MASS)
+                    mprf("%s collapses into a bloody pulp.", name(DESC_THE, false).c_str());
                 else
                 {
                     mprf("A nearby %s withers and dies.",

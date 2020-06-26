@@ -1844,6 +1844,7 @@ void yred_respawn_enslaved_soul()
 
     monster* mon = get_free_monster();
 
+    mon->set_new_monster_id();
     define_zombie(mon, you.enslaved_soul, MONS_SPECTRAL_THING);
     monster_info mi = monster_info(you.enslaved_soul);
     int hd = mi.hd;
@@ -1881,7 +1882,11 @@ void yred_respawn_enslaved_soul()
     mons_make_god_gift(*mon, GOD_YREDELEMNUL);
     add_companion(mon);
 
-    mon->set_position(respawn_point);
+    env.mid_cache[mon->mid] = mon->mindex();
+    mon->hit_points = mon->max_hit_points;
+    mon->inv.init(NON_ITEM);
+
+    mon->move_to_pos(respawn_point);
     if (!cell_is_solid(respawn_point))
         place_cloud(CLOUD_RANDOM_SMOKE, respawn_point, 2 + random2(4), &you, 2);
 

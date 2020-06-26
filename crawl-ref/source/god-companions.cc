@@ -61,6 +61,46 @@ void remove_enslaved_soul_companion()
     }
 }
 
+// How many abominations total (small and large) can the player have?
+// Uses invocations since Twisted is now a Yred power.
+static int _player_abomination_cap()
+{
+    return 3 + you.skill(SK_INVOCATIONS) / 6;
+}
+
+// How many large abominations can the player have?
+// Uses invocations since Twisted is now a Yred power.
+static int _player_large_abom_cap()
+{
+    if (you.skill(SK_INVOCATIONS) < 3)
+        return 0;
+    return (1 + (you.skill(SK_INVOCATIONS) - 3 / 6));
+}
+
+// Can the player get an additional abomination?
+// If large is true checks if additional small abominations can be allowed to
+// upgrade to larges instead.
+bool player_allowed_abom(bool large)
+{
+    int abom_count = 0;
+    for (auto &entry : companion_list)
+    {
+        monster* mons = monster_by_mid(entry.first);
+        if (!mons)
+            mons = &entry.second.mons.mons;
+        if (!large && mons->type == MONS_ABOMINATION_SMALL)
+            abom_count++;
+        if (mons->type == MONS_ABOMINATION_LARGE)
+            abom_count++;
+    }
+
+    if (abom_count >= _player_abomination_cap())
+        return false;
+    if (large && (abom_count >= _player_large_abom_cap()))
+        return false;
+    return true;
+}
+
 void remove_all_companions(god_type god)
 {
     for (auto i = companion_list.begin(); i != companion_list.end();)

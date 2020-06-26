@@ -32,6 +32,7 @@
 #include "food.h"
 #include "fprop.h"
 #include "ghost.h"
+#include "god-companions.h"
 #include "god-item.h"
 #include "god-passive.h"
 #include "item-name.h"
@@ -2048,7 +2049,6 @@ static mon_attack_def _hepliaklqana_ancestor_attack(const monster &mon,
     
     if (attk_number == 0)
     {
-        
         int dam_mult = 1;
         if (you.species == SP_FELID || you.species == SP_TROLL)
         {
@@ -2057,7 +2057,6 @@ static mon_attack_def _hepliaklqana_ancestor_attack(const monster &mon,
         }
         dam_mult = mon.type == MONS_ANCESTOR_BATTLEMAGE ? 2 : 1;
         return { AT_HIT, AF_PLAIN, dam * dam_mult };
-
     }   
     else if (attk_number == 1)
     {
@@ -2949,12 +2948,13 @@ colour_t random_monster_colour()
     return col;
 }
 
-bool init_abomination(monster& mon, int hd)
+bool init_abomination(monster& mon, int hd, bool player)
 {
-    if (mon.type == MONS_CRAWLING_CORPSE
-        || mon.type == MONS_MACABRE_MASS)
+    if (mon.type == MONS_CRAWLING_CORPSE || mon.type == MONS_MACABRE_MASS)
     {
         mon.set_hit_dice(mon.hit_points = mon.max_hit_points = hd);
+        if (player)
+            mon.add_ench(mon_enchant(ENCH_SLOWLY_DYING, 1, 0, 80 + random2(you.skill(SK_INVOCATIONS, 10))));
         return true;
     }
     else if (mon.type != MONS_ABOMINATION_LARGE
