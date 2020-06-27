@@ -447,6 +447,10 @@ bool monster_polymorph(monster* mons, monster_type targetc,
         return false;
     ASSERT(!(mons->flags & MF_BANISHED) || player_in_branch(BRANCH_ABYSS));
 
+    // Don't polymorph things that are in walls (Shorter list of valid monsters to exist inside walls makes this problematic).
+    if (cell_is_solid(mons->pos()))
+        return false;
+
     int source_power, target_power, relax;
     int source_tier, target_tier;
     int tries = 1000;
