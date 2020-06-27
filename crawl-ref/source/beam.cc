@@ -5432,6 +5432,12 @@ void bolt::affect_monster(monster* mon)
         {
             if (testbits(mon->flags, MF_DEMONIC_GUARDIAN))
                 mpr("Your demonic guardian avoids your attack.");
+            else if (mons_is_hepliaklqana_ancestor(mon->type))
+                mpr("Your ancestor avoids your attack.");
+            else if (mons_enslaved_soul(*mon))
+                mprf("%s avoids your attack.", mon->name(DESC_YOUR).c_str());
+            else if (mons_is_avatar(mon->type))
+                mprf("Your attack phases harmlessly through %s.", mon->name(DESC_YOUR).c_str());
             else if (!bush_immune(*mon))
             {
                 simple_god_message(
@@ -7423,14 +7429,24 @@ bool shoot_through_monster(const bolt& beam, const monster* victim)
         origin_attitude = temp->attitude;
     }
 
-    return (origin_worships_fedhas
-            && fedhas_protects(victim))
-           || (originator->is_player()
-               && testbits(victim->flags, MF_DEMONIC_GUARDIAN))
+    if (origin_worships_fedhas && fedhas_protects(victim))
+        return true;
+    
+    bool player_shoots_thru = originator->is_player()
+            && (testbits(victim->flags, MF_DEMONIC_GUARDIAN)
+                || mons_is_avatar(victim->type)
+                || mons_is_hepliaklqana_ancestor(victim->type)
+                || mons_enslaved_soul(*victim));
+
+    if (player_shoots_thru
            && !beam.is_enchantment()
            && beam.origin_spell != SPELL_CHAIN_LIGHTNING
-           && (mons_atts_aligned(victim->attitude, origin_attitude)
-               || victim->neutral());
+           && (mons_atts_aligned(victim->attitude, origin_attitude) || victim->neutral()))
+    {
+        return true;
+    }
+
+    return false;
 }
 
 /**
