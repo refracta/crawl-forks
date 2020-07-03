@@ -4313,6 +4313,36 @@ static pie_effect _random_pie_effect(const actor &defender)
     return *random_choose_weighted(weights);
 }
 
+void impale_player_with_barbs()
+{
+    if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
+        mpr("The barbed spikes sting slightly as they fall through your immaterial body.");
+    else {
+        mpr("The barbed spikes become lodged in your body.");
+        if (!you.duration[DUR_BARBS])
+            you.set_duration(DUR_BARBS, random_range(4, 8));
+        else
+            you.increase_duration(DUR_BARBS, random_range(2, 4), 12);
+
+        if (you.attribute[ATTR_BARBS_POW])
+        {
+            you.attribute[ATTR_BARBS_POW] =
+                min(6, you.attribute[ATTR_BARBS_POW]++);
+        }
+        else
+            you.attribute[ATTR_BARBS_POW] = 4;
+    }
+}
+
+void impale_monster_with_barbs(monster* mon, actor* agent)
+{
+    if (mon->is_insubstantial() || mons_genus(mon->type) == MONS_JELLY)
+        return;
+    mprf("The barbed spikes become lodged in %s.", mon->name(DESC_THE).c_str());
+    mon->add_ench(mon_enchant(ENCH_BARBS, 1, agent,
+        random_range(5, 7) * BASELINE_DELAY));
+}
+
 void bolt::affect_player()
 {
     hit_count[MID_PLAYER]++;
@@ -4531,25 +4561,7 @@ void bolt::affect_player()
 
     // Manticore spikes
     if (origin_spell == SPELL_THROW_BARBS && final_dam > 0)
-    {
-        if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
-            mpr("The barbed spikes sting slightly as they fall through your immaterial body.");
-        else {
-            mpr("The barbed spikes become lodged in your body.");
-            if (!you.duration[DUR_BARBS])
-                you.set_duration(DUR_BARBS, random_range(4, 8));
-            else
-                you.increase_duration(DUR_BARBS, random_range(2, 4), 12);
-
-            if (you.attribute[ATTR_BARBS_POW])
-            {
-                you.attribute[ATTR_BARBS_POW] =
-                    min(6, you.attribute[ATTR_BARBS_POW]++);
-            }
-            else
-                you.attribute[ATTR_BARBS_POW] = 4;
-        }
-    }
+        impale_player_with_barbs();
 
     if (origin_spell == SPELL_QUICKSILVER_BOLT)
         debuff_player();
@@ -5177,12 +5189,8 @@ void bolt::monster_post_hit(monster* mon, int dmg)
     if (origin_spell == SPELL_CHILLING_BREATH && dmg > 0)
         do_slow_monster(*mon, agent(), max(random2(10), dmg / 3));
 
-    if (origin_spell == SPELL_THROW_BARBS && dmg > 0
-        && !(mon->is_insubstantial() || mons_genus(mon->type) == MONS_JELLY))
-    {
-        mon->add_ench(mon_enchant(ENCH_BARBS, 1, agent(),
-                                  random_range(5, 7) * BASELINE_DELAY));
-    }
+    if (origin_spell == SPELL_THROW_BARBS && dmg > 0)
+        impale_monster_with_barbs(mon, agent());
 
     if (origin_spell == SPELL_THROW_PIE && dmg > 0)
     {

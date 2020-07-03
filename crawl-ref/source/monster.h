@@ -165,7 +165,7 @@ public:
     bool needs_berserk(bool check_spells = true, bool ignore_distance = false) const;
 
     // Has a hydra-like variable number of attacks based on num_heads.
-    bool has_hydra_multi_attack() const;
+    bool has_hydra_multi_attack(int attk_num = -1) const;
     int  heads() const override;
     bool has_multitargeting() const;
 
@@ -571,6 +571,7 @@ public:
     bool search_slots(function<bool (const mon_spell_slot &)> func) const;
 
     bool has_facet(int facet) const;
+    bool has_abom_facet(abom_facet_type facet) const;
     bool angered_by_attacks() const;
 
 private:

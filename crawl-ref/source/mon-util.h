@@ -25,6 +25,42 @@ struct mon_attack_def
     int             damage;
 };
 
+#define ABOM_DEF "abomination_definition"
+
+enum abom_facet_type
+{
+    FAC_NON_FACET,
+    FAC_THAGOMIZER,
+    FAC_WINGS,
+    FAC_HYDRA,
+    FAC_TRAMPLE,
+    FAC_DRAINBLADE,
+    FAC_VILEORIFACE,
+    FAC_SPINY,
+    FAC_BEAK,
+    FAC_PLATED,
+    FAC_CLASSIC,
+    FAC_EYEBASH,
+    FAC_GOOEY,
+    FAC_INTESTINES,
+    NUM_ABOM_FACETS
+};
+
+struct abom_def
+{
+    int HD;
+    int HP;
+    int AC;
+    int EV;
+    int atk;
+    int spd;
+    abom_facet_type facets[MAX_NUM_ATTACKS];
+};
+
+abom_def mi_read_def(const monster_info & mi);
+abom_def read_def(const monster & mon);
+void write_def(monster & mon, abom_def def);
+
 // Amount of mons->speed_increment used by different actions; defaults
 // to 10.
 #define DEFAULT_ENERGY {10, 10, 10, 10, 10, 10, 10, 100}

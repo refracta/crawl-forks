@@ -212,7 +212,8 @@ static bool _is_public_key(string key)
      || key == DOOM_HOUND_HOWLED_KEY
      || key == MON_GENDER_KEY
      || key == SEEN_SPELLS_KEY
-     || key == VAULT_HD_KEY )
+     || key == VAULT_HD_KEY
+     || key == ABOM_DEF)
     {
         return true;
     }
@@ -328,10 +329,12 @@ monster_info::monster_info(monster_type p_type, monster_type p_base_type)
                 : mons_is_demonspawn_job(type) ? MONS_DEMONSPAWN
                 : type;
 
-    if (_is_hydra(*this))
-        num_heads = 1;
-    else
-        number = 0;
+    if (mons_genus(type) == MONS_SERPENT_OF_HELL)
+        num_heads = 3;
+    if (type == MONS_LERNAEAN_HYDRA)
+        num_heads = 27;
+    else // Hydrae and Abominations; nothing else uses this count anyways.
+        num_heads = 8;
 
     dur = 0;
 
@@ -475,11 +478,8 @@ monster_info::monster_info(const monster* m, int milev)
         slime_size = m->blob_size;
     else if (type == MONS_BALLISTOMYCETE)
         is_active = !!m->ballisto_activity;
-    else if (_is_hydra(*this))
-        num_heads = m->num_heads;
-    // others use number for internal information
     else
-        number = 0;
+        num_heads = m->num_heads;
 
     _colour = m->colour;
 
@@ -705,11 +705,7 @@ monster_info::monster_info(const monster* m, int milev)
         props[SPELL_HD_KEY] = spellhd;
 
     for (int i = 0; i < MAX_NUM_ATTACKS; ++i)
-    {
-        // hydras are a mess!
-        const int atk_index = m->has_hydra_multi_attack() ? 0 : i;
-        attack[i] = mons_attack_spec(*m, atk_index, true);
-    }
+        attack[i] = mons_attack_spec(*m, i, true);
 
     for (unsigned i = 0; i <= MSLOT_LAST_VISIBLE_SLOT; ++i)
     {
@@ -1702,19 +1698,21 @@ int monster_info::res_magic() const
 
 string monster_info::speed_description() const
 {
+    string part;
     if (mbase_speed < 7)
-        return "very slow";
+        part = "very slow";
     else if (mbase_speed < 10)
-        return "slow";
+        part = "slow";
     else if (mbase_speed > 20)
-        return "extremely fast";
+        part = "extremely fast";
     else if (mbase_speed > 15)
-        return "very fast";
+        part = "very fast";
     else if (mbase_speed > 10)
-        return "fast";
+        part = "fast";
+    else 
+        part = "average";
 
-    // This only ever displays through Lua.
-    return "normal";
+    return make_stringf("%s (%d)", part.c_str(), mbase_speed);
 }
 
 bool monster_info::wields_two_weapons() const

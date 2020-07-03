@@ -758,6 +758,7 @@ bool melee_attack::handle_phase_blocked()
     case AF_REACH_STING:
     case AF_POISON_PETRIFY:
     case AF_POISON_STR:
+    case AF_MIASMATA:
         _handle_staff_shield(BEAM_POISON, 1, defender->is_player(), defender->as_monster());
         break;
 
@@ -2404,7 +2405,8 @@ static bool actor_can_lose_heads(const actor* defender)
     if (defender->is_monster()
         && defender->as_monster()->has_hydra_multi_attack()
         && defender->type != MONS_SPECTRAL_THING
-        && defender->as_monster()->mons_species() != MONS_SERPENT_OF_HELL)
+        && defender->as_monster()->mons_species() != MONS_SERPENT_OF_HELL
+        && mons_genus(defender->as_monster()->mons_species()) != MONS_ABOMINATION_SMALL)
     {
         return true;
     }
@@ -3095,6 +3097,48 @@ string melee_attack::mons_attack_desc()
         ret = " from afar";
     }
 
+    // Gross Flavour!
+    if (mons_genus(attacker->type) == MONS_ABOMINATION_SMALL)
+    {
+        switch (attk_type)
+        {
+            case AT_PECK:
+                ret += " with a deformed face";
+                break;
+            case AT_CLAMP:
+                ret += " with an open ribcage";
+                break;
+            case AT_ENGULF:
+                ret += " in a gooey mixture of blood and acidic bile";
+                break;
+            case AT_GORE:
+                ret += " on sharp bone spines";
+                break;
+            case AT_HIT:
+                ret += " with a whip of exposed bone";
+                break;
+            case AT_KICK:
+                ret += " with several mutilated limbs at once";
+                break;
+            case AT_BITE:
+                ret += " with a mutilated jaw";
+                break;
+            case AT_RAKE:
+                ret += " with exposed bone on the tip of a wing";
+                break;
+            case AT_TAIL_SLAP:
+                ret += " with a thagomizer made of fractured bones";
+                break;
+            case AT_SLAP:
+                ret += " with a mass of organs, mostly eyeballs";
+                break;
+            case AT_CLAW:
+                ret += " with a sternum";
+            default:
+                break;
+        }
+    }
+
     if (weapon && attacker->type != MONS_DANCING_WEAPON && attacker->type != MONS_SPECTRAL_WEAPON)
         ret += " with " + weapon->name(DESC_A);
 
@@ -3422,6 +3466,13 @@ void melee_attack::mons_apply_attack_flavour()
         defender->expose_to_element(BEAM_ELECTRICITY, 2);
         break;
 
+    case AF_MIASMATA:
+        if (defender->is_player())
+            miasma_player(attacker, "vile bite");
+        else
+            miasma_monster(defender->as_monster(), attacker);
+        break;
+
         // Combines drain speed and vampiric.
     case AF_SCARAB:
         if (x_chance_in_y(3, 5))
@@ -3560,6 +3611,13 @@ void melee_attack::mons_apply_attack_flavour()
         defender->corrode_equipment(atk_name(DESC_THE).c_str());
         break;
 
+    case AF_BARBS:
+        if (defender->is_player())
+            impale_player_with_barbs();
+        else
+            impale_monster_with_barbs(defender->as_monster(), attacker);
+        break;
+
     case AF_DISTORT:
         distortion_affects_defender();
         break;
@@ -3657,10 +3715,12 @@ void melee_attack::mons_apply_attack_flavour()
     case AF_CRUSH:
         if (needs_message)
         {
-            mprf("%s %s %s.",
+            mprf("%s %s %s%s.",
                  atk_name(DESC_THE).c_str(),
                  attacker->conj_verb("grab").c_str(),
-                 defender_name(true).c_str());
+                 defender_name(true).c_str(),
+                 attacker->is_monster() 
+                     && (mons_genus(attacker->as_monster()->type) == MONS_ABOMINATION_SMALL) ? "and wraps up in its own intestines" : "");
         }
         attacker->start_constricting(*defender);
         // if you got grabbed, interrupt stair climb and passwall

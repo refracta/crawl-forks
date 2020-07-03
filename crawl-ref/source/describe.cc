@@ -933,7 +933,76 @@ static string _describe_mutant_beast_facets(const CrawlVector &facets)
                           return facet_descs[facet];
                       }, ", and it", ", it")
            + ".";
+}
 
+static string _describe_abomination(const monster_info &mi)
+{
+    string retval;
+
+    if (!mi.props.exists(ABOM_DEF))
+        return "";
+
+    abom_def def = mi_read_def(mi);
+    
+    for (int i = 0; i < 4; i++)
+    {
+        abom_facet_type facet = def.facets[i];
+        if ((i > 0) && (facet > FAC_NON_FACET))
+            retval += "\n";
+        switch (facet)
+        {
+        case FAC_BEAK: 
+            retval += "It has a distended neck ending a deformed horn or beak.";
+            break;
+        case FAC_CLASSIC:
+            retval += "Part of its body is fashioned into a whiplike tendril, ending in exposed bone. This tendril appears to ground it somewhat.";
+            break;
+        case FAC_DRAINBLADE:
+            retval += "A sharped blade of rough bone protrudes from its abdomen; the jagged blade exudes a dark aura.";
+            break;
+        case FAC_EYEBASH:
+            retval += "It seems to have fashioned several eyes, lungs and other organs into a gorey flail. The sight of the teeth sticking from its eyeballs is rather haunting.";
+            retval += " Apparently having these organs on the outside protects it from burns.";
+            break;
+        case FAC_GOOEY:
+            retval += "A gooey mixture of acidic bile and blood coats its flesh.";
+            break;
+        case FAC_HYDRA:
+            retval += "In the middle of its body; there's a chattering of "; 
+            retval += number_in_words(mi.num_heads);
+            retval += " partially exposed cracked skulls and deformed faces.";
+            retval += "Somehow; bits of exposed brain on the surface increase its magical resistance.";
+            break;
+        case FAC_INTESTINES:
+            retval += "It's completely disemboweled, somehow having organs on the outside helps keep it cool.";
+            retval += " It wields a rope made of twisted intestines and senews still pulsating with a foul mockery of life.";
+            break;
+        case FAC_PLATED:
+            retval += "Foul plates; perhaps of former scales or exoskeletons protrude from its 'skin', they are coated in some kind of slime that weakens those that touch it and provide it with some 'shielding' to the abomination.";
+            break;
+        case FAC_SPINY:
+            retval += "Sharp spines of bone protude like bleeding compound fractures all over its flesh. These are rather cold to the touch.";
+            break;
+        case FAC_THAGOMIZER:
+            retval += "A spiky ball of various bits of bone is on the end of its 'tail' being struck with this ball will likely lead to bone shards being impaled in the victim's flesh.";
+            break;
+        case FAC_TRAMPLE:
+            retval += "Bulkier than the average abomination; the sheer amount of fat hanging off of it protect from cold attacks and it can push around foes by striking them with several 'limbs' at once.";
+            break;
+        case FAC_VILEORIFACE:
+            retval += "Somewhere towards the middle of the pulsing abomination is an open ribcage, which now serves as a giant gaping maw. Bits of rotting flesh drip from the edges; badly poisoning those it clamps down on.";
+            break;
+        case FAC_WINGS:
+            retval += "Flesh stretched thinly over several limbs has formed a wretched, yet functional pair of wings. As well as providing flight; being raked over by the sharp edges of the wings will drain the speed of those they hit.";
+            break;
+        case FAC_NON_FACET:
+        default: // Shouldn't happen but...
+            retval += "";
+            break;
+        }
+    }
+
+    return retval;
 }
 
 /**
@@ -4037,6 +4106,7 @@ static string _flavour_base_desc(attack_flavour flavour)
         { AF_DRAIN_XP,          "drain skills" },
         { AF_ELEC,              "deal up to %d extra electric damage" },
         { AF_FIRE,              "deal up to %d extra fire damage" },
+        { AF_BARBS,             "impale with sharp barbs" },
         { AF_HUNGER,            "cause hunger" },
         { AF_MUTATE,            "cause mutations" },
         { AF_POISON_PETRIFY,    "poison and cause petrification" },
@@ -4069,6 +4139,7 @@ static string _flavour_base_desc(attack_flavour flavour)
         { AF_DROWN,             "deal drowning damage" },
         { AF_CORRODE,           "cause corrosion" },
         { AF_SCARAB,            "drain speed and drain health" },
+        { AF_MIASMATA,          "inject with foul rotting flesh" },
         { AF_TRAMPLE,           "knock back the defender" },
         { AF_REACH_STING,       "cause poisoning" },
         { AF_WEAKNESS,          "cause weakness" },
@@ -4110,6 +4181,20 @@ static string _flavour_effect(attack_flavour flavour, int HD)
     return " to " + flavour_desc;
 }
 
+static string _heads_desc(attack_type type, int heads)
+{
+    if (type != AT_MULTIBITE)
+        return "";
+    return make_stringf(" up to %s times,", number_in_words(heads).c_str());
+}
+
+static string _head_append(attack_type type, int heads)
+{
+    if (type != AT_MULTIBITE)
+        return "";
+    return heads > 1 ? " each" : "";
+}
+
 struct mon_attack_info
 {
     mon_attack_def definition;
@@ -4146,7 +4231,6 @@ static const item_def* _weapon_for_attack(const monster_info& mi, int atk)
 static string _monster_attacks_description(const monster_info& mi)
 {
     ostringstream result;
-    map<mon_attack_info, int> attack_counts;
     brand_type special_flavour = SPWPN_NORMAL;
 
     if (mi.props.exists(SPECIAL_WEAPON_KEY))
@@ -4155,27 +4239,15 @@ static string _monster_attacks_description(const monster_info& mi)
         special_flavour = (brand_type) mi.props[SPECIAL_WEAPON_KEY].get_int();
     }
 
+    vector<string> attack_descs;
     for (int i = 0; i < MAX_NUM_ATTACKS; ++i)
     {
-        const mon_attack_def &attack = mi.attack[i];
-        if (attack.type == AT_NONE)
+        const mon_attack_def &atk = mi.attack[i];
+        if (atk.type == AT_NONE)
             break; // assumes there are no gaps in attack arrays
 
         const item_def* weapon = _weapon_for_attack(mi, i);
-        mon_attack_info attack_info = { attack, weapon };
-
-        ++attack_counts[attack_info];
-    }
-
-    // Hydrae have only one explicit attack, which is repeated for each head.
-    if (mons_genus(mi.base_type) == MONS_HYDRA)
-        for (auto &attack_count : attack_counts)
-            attack_count.second = mi.num_heads;
-
-    vector<string> attack_descs;
-    for (const auto &attack_count : attack_counts)
-    {
-        const mon_attack_info &info = attack_count.first;
+        const mon_attack_info &info = { atk, weapon };
         const mon_attack_def &attack = info.definition;
 
         const string weapon_name =
@@ -4185,11 +4257,6 @@ static string _monster_attacks_description(const monster_info& mi)
             make_stringf(" plus %s %s",
                         mi.pronoun(PRONOUN_POSSESSIVE), weapon_name.c_str())
             : "";
-
-        const string count_desc =
-              attack_count.second == 1 ? "" :
-              attack_count.second == 2 ? " twice" :
-              " " + number_in_words(attack_count.second) + " times";
 
         // XXX: hack alert
         if (attack.flavour == AF_PURE_FIRE)
@@ -4208,7 +4275,7 @@ static string _monster_attacks_description(const monster_info& mi)
             make_stringf("%sfor up to %d damage%s%s%s",
                          has_flavour ? "(" : "",
                          attack.damage,
-                         attack_count.second > 1 ? " each" : "",
+                         _head_append(attack.type, mi.num_heads).c_str(),
                          weapon_note.c_str(),
                          has_flavour ? ")" : "");
 
@@ -4217,7 +4284,7 @@ static string _monster_attacks_description(const monster_info& mi)
                          _special_flavour_prefix(attack.flavour),
                          mon_attack_name(attack.type, false).c_str(),
                          _flavour_range_desc(attack.flavour),
-                         count_desc.c_str(),
+                         _heads_desc(attack.type, mi.num_heads).c_str(),
                          damage_desc.c_str(),
                          _flavour_effect(attack.flavour, mi.hd).c_str()));
     }
@@ -4257,20 +4324,21 @@ static const char *_speed_description(int speed)
 {
     // These thresholds correspond to the player mutations for fast and slow.
     ASSERT(speed != 10);
+    string part = "buggily";
     if (speed < 7)
-        return "extremely slowly";
+        part = "extremely slowly";
     else if (speed < 8)
-        return "very slowly";
+        part = "very slowly";
     else if (speed < 10)
-        return "slowly";
+        part = "slowly";
     else if (speed > 15)
-        return "extremely quickly";
+        part = "extremely quickly";
     else if (speed > 13)
-        return "very quickly";
+        part = "very quickly";
     else if (speed > 10)
-        return "quickly";
+        part = "quickly";
 
-    return "buggily";
+    return make_stringf("%s (%d)", part.c_str(), speed).c_str();
 }
 
 static void _add_energy_to_string(int speed, int energy, string what,
@@ -4336,7 +4404,7 @@ static void _describe_monster_ac(const monster_info& mi, ostringstream &result)
 static void _describe_monster_ev(const monster_info& mi, ostringstream &result)
 {
     string msg = "";
-    if (mi.is(MB_SLEEPING) || mi.is(MB_PETRIFIED) || mi.is(MB_PARALYSED))
+    if (mi.ev < mi.base_ev)
         msg = " (incap)";
     result << "EV: " << mi.ev << msg << "\n";
 }
@@ -4562,7 +4630,7 @@ static string _monster_stat_description(const monster_info& mi)
     // Unusual monster speed.
     const int speed = mi.base_speed();
     bool did_speed = false;
-    if (speed != 10 && speed != 0)
+    if (speed != 0)
     {
         did_speed = true;
         result << uppercase_first(pronoun) << " "
@@ -4862,6 +4930,11 @@ void get_monster_db_desc(const monster_info& mi, describe_info &inf,
         // vault renames get their own descriptions
         if (mi.mname.empty() || !mi.is(MB_NAME_REPLACE))
             inf.body << _describe_mutant_beast(mi) << "\n";
+        break;
+
+    case MONS_ABOMINATION_SMALL:
+    case MONS_ABOMINATION_LARGE:
+        inf.body << _describe_abomination(mi) << "\n";
         break;
 
     case MONS_BLOCK_OF_ICE:

@@ -224,9 +224,7 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
         return true;
     }
 
-    const int nrounds = attacker->as_monster()->has_hydra_multi_attack()
-        ? attacker->heads() + MAX_NUM_ATTACKS - 1
-        : MAX_NUM_ATTACKS;
+    const int nrounds = MAX_NUM_ATTACKS;
     coord_def pos = defender->pos();
 
     // Melee combat, tell attacker to wield its melee weapon.
@@ -234,11 +232,28 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
 
     int effective_attack_number = 0;
     int attack_number;
+    bool multiattacking = false;
+    int repeats = attacker->heads();
+    int held_attack_num = 0;
     for (attack_number = 0; attack_number < nrounds && attacker->alive();
          ++attack_number, ++effective_attack_number)
     {
         if (!attacker->alive())
             return false;
+
+        if (attacker->is_monster() && attacker->as_monster()->has_hydra_multi_attack(attack_number))
+        {
+            multiattacking = true;
+            held_attack_num = attack_number;
+        }
+
+        if (multiattacking)
+        {
+            repeats--;
+            if (repeats <= 0)
+                multiattacking = false;
+            attack_number = held_attack_num;
+        }
 
         // Monster went away?
         if (!defender->alive()

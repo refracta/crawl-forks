@@ -1053,6 +1053,8 @@ int main(int argc, char* argv[])
                 case AF_TRAMPLE:
                     monsterattacks += colour(BROWN, "(trample)");
                     break;
+                case AF_BARBS:
+                    monsterattacks += color(LIGHTRED, "(barbs)");
                 case AF_WEAKNESS:
                     monsterattacks += colour(LIGHTRED, "(weakness)");
                     break;
@@ -1062,7 +1064,6 @@ int main(int argc, char* argv[])
                 case AF_PLAIN:
                     break;
 #if TAG_MAJOR_VERSION == 34
-                case AF_DISEASE:
                 case AF_PLAGUE:
                 case AF_STEAL_FOOD:
                 case AF_POISON_MEDIUM:

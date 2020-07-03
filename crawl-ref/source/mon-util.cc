@@ -402,6 +402,25 @@ resists_t get_mons_resists(const monster& m)
         for (auto facet : mon.props[MUTANT_BEAST_FACETS].get_vector())
             resists |= _beast_facet_resists((beast_facet)facet.get_int());
 
+    if (mon.props.exists(ABOM_DEF))
+    {
+        if (mon.has_abom_facet(FAC_CLASSIC))
+            resists |= MR_RES_ELEC;
+        if (mon.has_abom_facet(FAC_EYEBASH))
+        {
+            if (mon.has_abom_facet(FAC_INTESTINES))
+                resists |= mrd(MR_RES_FIRE, 2);
+            else
+                resists |= MR_RES_FIRE;
+        }
+        else if (mon.has_abom_facet(FAC_INTESTINES))
+            resists |= MR_RES_FIRE;
+        if (mon.has_abom_facet(FAC_GOOEY))
+            resists |= mrd(MR_RES_ACID, 2);
+        if (mon.has_abom_facet(FAC_TRAMPLE))
+            resists |= mrd(MR_RES_COLD, 2);
+    }
+
     // This is set from here in case they're undead due to the
     // MF_FAKE_UNDEAD flag. See the comment in get_mons_class_resists.
     return _apply_holiness_resists(resists, mon.holiness());
@@ -2079,6 +2098,82 @@ static mon_attack_def _hepliaklqana_ancestor_attack(const monster &mon,
         return {};
 }
 
+static mon_attack_def _abom_facet_attack(abom_facet_type facet, int multiplier, int heads)
+{
+    mon_attack_def retval;
+
+    switch (facet)
+    {
+    case FAC_BEAK:
+        retval = { AT_PECK, AF_REACH, 30 };
+        break;
+    case FAC_CLASSIC:
+        retval = { AT_HIT, AF_PLAIN, 40 };
+        break;
+    case FAC_DRAINBLADE:
+        retval = { AT_SLASH, AF_DRAIN_XP, 25 };
+        break;
+    case FAC_EYEBASH:
+        retval = { AT_SLAP, AF_FIRE, 20 };
+        break;
+    case FAC_GOOEY:
+        retval = { AT_ENGULF, AF_ACID, 20 };
+        break;
+    case FAC_HYDRA:
+        retval = { AT_MULTIBITE, AF_PLAIN, 100 / heads };
+        break;
+    case FAC_INTESTINES:
+        retval = { AT_CONSTRICT, AF_CRUSH, 5 };
+        break;
+    case FAC_PLATED:
+        retval = { AT_CLAW, AF_WEAKNESS, 10 };
+        break;
+    case FAC_SPINY:
+        retval = { AT_GORE, AF_COLD, 20 };
+        break;
+    case FAC_THAGOMIZER:
+        retval = { AT_TAIL_SLAP, AF_BARBS, 20 };
+        break;
+    case FAC_TRAMPLE:
+        retval = { AT_KICK, AF_TRAMPLE, 20 };
+        break;
+    case FAC_VILEORIFACE:
+        retval = { AT_CLAMP, AF_MIASMATA, 20 };
+        break;
+    case FAC_WINGS:
+        retval = { AT_RAKE, AF_DRAIN_SPEED, 10 };
+        break;
+    case FAC_NON_FACET:
+    default:
+        retval = { AT_NONE, AF_PLAIN, 0 };
+        break;
+    }
+
+    if (multiplier > 10)
+    {
+        retval.damage *= multiplier;
+        retval.damage /= 10;
+    }
+    else if (multiplier < 10)
+    {
+        retval.damage *= 10 + multiplier;
+        retval.damage /= 20;
+    }
+    // If it is 10; do nothing.
+
+    return retval;
+}
+
+static int _facet_count(abom_def def)
+{
+    for (int i = 0; i < 4; i++)
+    {
+        if (def.facets[i] == FAC_NON_FACET)
+            return i;
+    }
+    return 4;
+}
+
 /** Get the attack type, attack flavour and damage for a monster attack.
  *
  * @param mon The monster to look at.
@@ -2097,9 +2192,6 @@ mon_attack_def mons_attack_spec(const monster& m, int attk_number,
 
     const bool zombified = mons_is_zombified(mon);
 
-    if (mon.has_hydra_multi_attack())
-        attk_number -= mon.heads() - 1;
-
     if (attk_number < 0 || attk_number >= MAX_NUM_ATTACKS)
         attk_number = 0;
 
@@ -2111,7 +2203,21 @@ mon_attack_def mons_attack_spec(const monster& m, int attk_number,
                      mon.ghost->damage };
         }
 
+        // BCADDO: really player ghosts and pan lords can never have multiple attacks. Fix this shit.
+
         return { AT_NONE, AF_PLAIN, 0 };
+    }
+    else if (mons_genus(mc) == MONS_ABOMINATION_SMALL)
+    {
+        if (mon.props.exists(ABOM_DEF))
+        {
+            abom_def def = read_def(mon);
+            return _abom_facet_attack(def.facets[attk_number], def.atk, m.heads());
+        }
+        else if (attk_number == 0)
+            return _abom_facet_attack(FAC_CLASSIC, 10, 4);
+        else
+            return { AT_NONE, AF_PLAIN, 0 };
     }
     else if (mc == MONS_MUTANT_BEAST)
         return _mutant_beast_attack(mon, attk_number);
@@ -2159,6 +2265,9 @@ mon_attack_def mons_attack_spec(const monster& m, int attk_number,
 
     if (!base_flavour)
     {
+        if (attk.type == AT_MULTIBITE)
+            attk.type = AT_BITE;
+
         // TODO: randomization here is not the greatest way of doing any of
         // these...
         if (attk.type == AT_RANDOM)
@@ -2168,7 +2277,7 @@ mon_attack_def mons_attack_spec(const monster& m, int attk_number,
             attk.type = random_choose(AT_HIT, AT_BITE, AT_PECK, AT_GORE);
 
         if (attk.flavour == AF_DRAIN_STAT)
-            attk.flavour = random_choose(AF_DRAIN_STR, AF_DRAIN_INT,AF_DRAIN_DEX);
+            attk.flavour = random_choose(AF_DRAIN_STR, AF_DRAIN_INT, AF_DRAIN_DEX);
     }
 
     // Slime creature attacks are multiplied by the number merged.
@@ -2219,18 +2328,16 @@ string mon_attack_name(attack_type attack, bool with_object)
         "constrict",
         "trample",
         "trunk-slap",
-#if TAG_MAJOR_VERSION == 34
-        "snap closed at",
-        "splash",
-#endif
+        "slap",
+        "slash",
+        "rake",
+        "clamp down on",
         "pounce on",
 #if TAG_MAJOR_VERSION == 34
         "sting",
 #endif
         "hit, bite, peck, or gore", // AT_CHERUB
-#if TAG_MAJOR_VERSION == 34
-        "hit", // AT_SHOOT
-#endif
+        "bite", // AT_MULTIBITE
         "hit", // AT_WEAP_ONLY,
         "hit or gore", // AT_RANDOM
     };
@@ -2471,13 +2578,18 @@ int mons_max_hp(monster_type mc, monster_type mbase_type)
 }
 
 static int _exper_value(const monster_type mc, const int hd, int maxhp, const int slimesize, 
-                    const bool berserk, const bool spellcaster, const monster_spells spells)
+                    const bool berserk, const bool spellcaster, const monster_spells spells, const int facet_count)
 {
     int x_val = 0;
 
     // Short circuit this.
     if (mons_class_flag(mc, M_CANT_SPAWN))
         return 0;
+
+    bool abom = (mons_genus(mc) == MONS_ABOMINATION_SMALL);
+
+    if (abom)
+        maxhp = 50; // This gets overvalued since higher HP means lower attack for them.
 
     if (berserk)
         maxhp = (maxhp * 2 + 1) / 3;
@@ -2497,7 +2609,18 @@ static int _exper_value(const monster_type mc, const int hd, int maxhp, const in
     if (!mons_class_gives_xp(mc))
         return 0;
 
-    x_val = (16 + maxhp) * hd * hd / 10;
+    x_val = (16 + maxhp) * hd / 10;
+
+    if (spellcaster)
+        x_val *= hd;
+    else
+        x_val *= 7;
+
+    if (abom)
+    {
+        x_val *= facet_count;
+        x_val /= 4;
+    }
 
     // Let's calculate a simple difficulty modifier. - bwr
     int diff = 0;
@@ -2645,7 +2768,8 @@ static int _exper_value(const monster_type mc, const int hd, int maxhp, const in
 int mi_exper_value(const monster_info& mi)
 {
     return _exper_value(mi.type, mi.hd, mi.max_hp, mi.slime_size,
-                        mi.is(MB_BERSERK), mi.has_spells(), mi.spells);
+                        mi.is(MB_BERSERK), mi.has_spells(), mi.spells,
+        mi.props.exists(ABOM_DEF) ? _facet_count(mi_read_def(mi)) : 0);
 }
 
 int mon_exper_value(const monster& mon)
@@ -2653,7 +2777,8 @@ int mon_exper_value(const monster& mon)
     if (mon.flags & MF_NO_REWARD)
         return 0;
     return _exper_value(mon.type, mon.get_experience_level(), mon.stat_maxhp(), 
-                        mon.blob_size, mon.has_ench(ENCH_BERSERK), mon.has_spells(), mon.spells);
+                        mon.blob_size, mon.has_ench(ENCH_BERSERK), mon.has_spells(), mon.spells,
+        mon.props.exists(ABOM_DEF) ? _facet_count(read_def(mon)) : 0);
 }
 
 static monster_type _random_mons_between(monster_type min, monster_type max)
@@ -2948,6 +3073,114 @@ colour_t random_monster_colour()
     return col;
 }
 
+static abom_def _read_def(const CrawlVector &def)
+{
+    abom_def retval;
+
+    retval.HD = def[0];
+    retval.HP = def[1];
+    retval.AC = def[2];
+    retval.EV = def[3];
+    retval.atk = def[4];
+    retval.spd = def[5];
+
+    retval.facets[0] = (abom_facet_type)(int)def[6];
+    retval.facets[1] = (abom_facet_type)(int)def[7];
+    retval.facets[2] = (abom_facet_type)(int)def[8];
+    retval.facets[3] = (abom_facet_type)(int)def[9];
+
+    return retval;
+}
+
+// Don't you love monster/monster_info split!? 
+abom_def mi_read_def(const monster_info & mi)
+{
+    const CrawlVector &def = mi.props[ABOM_DEF].get_vector();
+    return _read_def(def);
+}
+
+abom_def read_def(const monster & mon)
+{
+    const CrawlVector &def = mon.props[ABOM_DEF].get_vector();
+    return _read_def(def);
+}
+
+void write_def(monster & mon, abom_def def)
+{
+    if (!mon.props.exists(ABOM_DEF))
+        mon.props[ABOM_DEF].new_vector(SV_SHORT).resize(10);
+
+    CrawlVector &rap = mon.props[ABOM_DEF].get_vector();
+
+    rap[0] = static_cast<short>(def.HD);
+    rap[1] = static_cast<short>(def.HP);
+    rap[2] = static_cast<short>(def.AC);
+    rap[3] = static_cast<short>(def.EV);
+    rap[4] = static_cast<short>(def.atk);
+    rap[5] = static_cast<short>(def.spd);
+    rap[6] = static_cast<short>(def.facets[0]);
+    rap[7] = static_cast<short>(def.facets[1]);
+    rap[8] = static_cast<short>(def.facets[2]);
+    rap[9] = static_cast<short>(def.facets[3]);
+}
+
+static int _max_abom_HD (bool large, bool player)
+{
+    if (large)
+    {
+        if (player)
+            return 12 + 2 * (you.skill(SK_INVOCATIONS) / 3);
+        return 30;
+    }
+    if (player)
+        return 6 + (you.skill(SK_INVOCATIONS) / 3);
+    return 15;
+}
+
+static int _calc_abom_HP(bool large, bool player, int hp_mult, int hd)
+{
+    monsterentry *m;
+    if (large)
+        m = get_monster_data(MONS_ABOMINATION_LARGE);
+    else
+        m = get_monster_data(MONS_ABOMINATION_SMALL);
+
+    // Average.
+    int retval = hit_points(div_rand_round(m->avg_hp_10x * hd, m->HD));
+
+    // Random Multiplier
+    retval *= hp_mult;
+    retval = div_rand_round(retval, 10);
+
+    if (!player)
+        return retval;
+
+    // Invocations boost (player)
+    retval *= 10000 + you.skill(SK_INVOCATIONS, 100);
+    retval = div_rand_round(retval, 10000);
+
+    return retval;
+}
+
+// Roll a new (non-repeated) facet.
+static abom_facet_type _gen_new_facet(abom_def & def)
+{
+    abom_facet_type new_facet = FAC_NON_FACET;
+    bool has_trample = ((def.facets[0] == FAC_TRAMPLE) || (def.facets[1] == FAC_TRAMPLE) || (def.facets[2] == FAC_TRAMPLE));
+    bool has_constrict = ((def.facets[0] == FAC_INTESTINES) || (def.facets[1] == FAC_INTESTINES) || (def.facets[2] == FAC_INTESTINES));
+    // Trample would break constriction so combining them makes no sense.
+
+    while (new_facet == def.facets[0] || new_facet == def.facets[1]
+        || new_facet == def.facets[2] || new_facet == def.facets[3]
+        || new_facet == FAC_NON_FACET || (has_trample && new_facet == FAC_INTESTINES)
+        || (new_facet == FAC_TRAMPLE && has_constrict))
+    {
+        new_facet = (abom_facet_type)random2(NUM_ABOM_FACETS - 1);
+    }
+
+    return new_facet;
+}
+
 bool init_abomination(monster& mon, int hd, bool player)
 {
     if (mon.type == MONS_CRAWLING_CORPSE || mon.type == MONS_MACABRE_MASS)
@@ -2963,15 +3196,247 @@ bool init_abomination(monster& mon, int hd, bool player)
         return false;
     }
 
-    const int max_hd = mon.type == MONS_ABOMINATION_LARGE ? 30 : 15;
+    const bool large = (mon.type == MONS_ABOMINATION_LARGE);
+    const int max_hd = _max_abom_HD(large, player);
 
-    mon.set_hit_dice(min(max_hd, hd));
+    if (hd <= 6)
+        hd = large ? (12 + random2(18)) : (6 + random2(9));
 
-    const monsterentry *m = get_monster_data(mon.type);
-    const int hp = hit_points(div_rand_round(hd * m->avg_hp_10x, m->HD));
+    hd = min(max_hd, hd);
+
+    if (mon.props.exists(ABOM_DEF))
+    {
+        // Upgrading an existing abom instead of making a new one...
+
+        abom_def def = read_def(mon);
+
+        if (def.HD != hd)
+        {
+            // Increase HD and Max HP.
+
+            def.HD = hd;
+            mon.set_hit_dice(hd);
+            int newHP = _calc_abom_HP(large, player, def.HP, hd);
+            mon.max_hit_points = newHP;
+        }
+
+        // Heal (but not fully as we aren't truly a new monster).
+
+        mon.heal(roll_dice(2, hd));
+
+
+        if (large && (def.facets[1] != FAC_NON_FACET) && (def.facets[2] != FAC_NON_FACET) && (def.facets[3] == FAC_NON_FACET)
+            && (!player || you.skill(SK_INVOCATIONS) > 20 + random2(5))
+            && x_chance_in_y(hd - 12, 30))
+        {
+            def.facets[3] = _gen_new_facet(def);
+        }
+
+        else
+        {
+            def.facets[3] = FAC_NON_FACET;
+            if (large && (def.facets[1] != FAC_NON_FACET) && (def.facets[2] == FAC_NON_FACET)
+                && (!player || you.skill(SK_INVOCATIONS) > 11 + random2(5))
+                && x_chance_in_y(hd - 8, 25))
+            {
+                def.facets[2] = _gen_new_facet(def);
+            }
+            else
+            {
+                def.facets[2] = FAC_NON_FACET;
+
+                if ((def.facets[1] == FAC_NON_FACET)
+                    && (!player || you.skill(SK_INVOCATIONS) > 5 + random2(5))
+                    && x_chance_in_y(hd - 6, 20))
+                {
+                    def.facets[1] = _gen_new_facet(def);
+                }
+                else
+                    def.facets[1] = FAC_NON_FACET;
+            }
+        }
+
+        write_def(mon, def);
+
+        return true;
+    }
+
+    mon.set_hit_dice(hd);
+
+    abom_def new_def;
+
+    new_def.HD = hd;
+    new_def.HP  = 3 + random2(17);
+    new_def.AC  = random2(24);
+    new_def.EV  = random2(24);
+    new_def.atk = random2(20);
+    new_def.spd = random2(24);
+    int sum     = new_def.HP + new_def.AC + new_def.EV + new_def.atk + new_def.spd;
+
+    while (sum != 58)
+    {
+        if (sum > 58)
+        {
+            sum--;
+            switch (random2(4))
+            {
+                // Fallthroughs are intentional; the randomness is basically changing which one we check first.
+                // Similarly we are repeating ourselves a bit here in order to not randomly loop as much (don't want to hang).
+            case 0:
+                if (new_def.HP > 3)
+                {
+                    new_def.HP--;
+                    break;
+                }
+            case 1:
+                if (new_def.AC > 0)
+                {
+                    new_def.AC--;
+                    break;
+                }
+            case 2:
+                if (new_def.EV > 0)
+                {
+                    new_def.EV--;
+                    break;
+                }
+            case 3:
+                if (new_def.atk > 0)
+                {
+                    new_def.atk--;
+                    break;
+                }
+            default:
+                if (new_def.spd > 5)
+                {
+                    new_def.spd--;
+                    break;
+                }
+                if (new_def.HP > 3)
+                {
+                    new_def.HP--;
+                    break;
+                }
+                if (new_def.AC > 0)
+                {
+                    new_def.AC--;
+                    break;
+                }
+                if (new_def.EV > 0)
+                {
+                    new_def.EV--;
+                    break;
+                }
+                if (new_def.atk > 0)
+                    new_def.atk--;
+                break;
+            }
+        }
+        else
+        {
+            sum++;
+            switch (random2(4))
+            {
+            case 0:
+                if (new_def.HP < 20)
+                {
+                    new_def.HP++;
+                    break;
+                }
+            case 1:
+                if (new_def.AC < 24)
+                {
+                    new_def.AC++;
+                    break;
+                }
+            case 2:
+                if (new_def.EV < 24)
+                {
+                    new_def.EV++;
+                    break;
+                }
+            case 3:
+                if (new_def.atk < 20)
+                {
+                    new_def.atk++;
+                    break;
+                }
+            default:
+                if (new_def.spd < 20)
+                {
+                    new_def.spd++;
+                    break;
+                }
+                if (new_def.HP < 20)
+                {
+                    new_def.HP++;
+                    break;
+                }
+                if (new_def.AC < 24)
+                {
+                    new_def.AC++;
+                    break;
+                }
+                if (new_def.EV < 24)
+                {
+                    new_def.EV++;
+                    break;
+                }
+                if (new_def.atk < 20)
+                    new_def.atk++;
+                break;
+            }
+        }
+    }
+
+    int hp = _calc_abom_HP(large, player, new_def.HP, hd);
 
     mon.max_hit_points = hp;
-    mon.hit_points     = hp;
+    mon.hit_points = hp;
+    mon.num_heads = 4 + random2(12);
+
+    new_def.facets[0] = _gen_new_facet(new_def);
+
+    if (player)
+    {
+        if ((you.skill(SK_INVOCATIONS) > 8) && x_chance_in_y(hd - 6, 30))
+        {
+            new_def.facets[1] = _gen_new_facet(new_def);
+
+            if (large && you.skill(SK_INVOCATIONS) > 14
+                && x_chance_in_y(hd - 8, 50))
+            {
+                new_def.facets[2] = _gen_new_facet(new_def);
+
+                if (you.skill(SK_INVOCATIONS) > 21
+                    && x_chance_in_y(hd - 12, 60))
+                {
+                    new_def.facets[3] = _gen_new_facet(new_def);
+                }
+            }
+        }
+    }
+    else
+    {
+        if (!large && one_chance_in(3))
+            new_def.facets[1] = _gen_new_facet(new_def);
+
+        if (large)
+        {
+            if (x_chance_in_y(3, 4))
+            {
+                new_def.facets[1] = _gen_new_facet(new_def);
+                if (coinflip())
+                {
+                    new_def.facets[2] = _gen_new_facet(new_def);
+                    if (coinflip())
+                        new_def.facets[3] = _gen_new_facet(new_def);
+                }
+            }
+        }
+    }
+
+    write_def(mon, new_def);
 
     return true;
 }
@@ -2996,15 +3461,9 @@ void define_monster(monster& mons)
     switch (mcls)
     {
     case MONS_ABOMINATION_SMALL:
-        hd = 4 + random2(4);
-        mons.props[MON_SPEED_KEY] = 7 + random2avg(9, 2);
-        init_abomination(mons, hd);
-        break;
-
     case MONS_ABOMINATION_LARGE:
-        hd = 8 + random2(4);
-        mons.props[MON_SPEED_KEY] = 6 + random2avg(7, 2);
-        init_abomination(mons, hd);
+        hd = 1;
+        init_abomination(mons, hd, mons.friendly());
         break;
 
     case MONS_SLIME_CREATURE:
@@ -3087,16 +3546,19 @@ void define_monster(monster& mons)
     if (col == COLOUR_UNDEF) // but never give out darkgrey to monsters
         col = random_monster_colour();
 
-    // Some calculations.
-    if (hp == 0)
-        hp = hit_points(m->avg_hp_10x);
-    const int hp_max = hp;
+    if (mons_genus(mons.type) != MONS_ABOMINATION_SMALL)
+    {
+        // Some calculations.
+        if (hp == 0)
+            hp = hit_points(m->avg_hp_10x);
+        const int hp_max = hp;
 
-    // So let it be written, so let it be done.
-    mons.set_hit_dice(hd);
-    mons.hit_points      = hp;
-    mons.max_hit_points  = hp_max;
-    mons.speed_increment = 70;
+        // So let it be written, so let it be done.
+        mons.set_hit_dice(hd);
+        mons.hit_points = hp;
+        mons.max_hit_points = hp_max;
+        mons.speed_increment = 70;
+    }
 
     if (mons.base_monster == MONS_NO_MONSTER
         || mons.base_monster == MONS_PROGRAM_BUG) // latter is zombie gen
@@ -3484,6 +3946,14 @@ int mons_base_speed(const monster& mon, bool known)
 {
     if (mon.ghost)
         return mon.ghost->speed;
+
+    if (mons_genus(mon.type) == MONS_ABOMINATION_SMALL)
+    {
+        if (known)
+            return 7 + (read_def(mon).spd / 3);
+        else
+            return 7 + div_rand_round(read_def(mon).spd, 3);
+    }
 
     if (mon.props.exists(MON_SPEED_KEY)
         && (!known || mon.type == MONS_MUTANT_BEAST))

@@ -40,10 +40,10 @@ enum attack_type
     AT_CONSTRICT,
     AT_TRAMPLE,
     AT_TRUNK_SLAP,
-#if TAG_MAJOR_VERSION == 34
-    AT_SNAP,
-    AT_SPLASH,
-#endif
+    AT_SLAP,
+    AT_SLASH,
+    AT_RAKE,
+    AT_CLAMP,
     AT_POUNCE,
 #if TAG_MAJOR_VERSION == 34
     AT_REACH_STING,
@@ -53,9 +53,7 @@ enum attack_type
 #endif
 
     AT_CHERUB,
-#if TAG_MAJOR_VERSION == 34
-    AT_SHOOT,
-#endif
+    AT_MULTIBITE,
     AT_WEAP_ONLY,   // AT_HIT if wielding a melee weapon, AT_NONE otherwise
     AT_RANDOM,      // Anything but AT_SHOOT and AT_WEAP_ONLY.
     NUM_ATTACK_TYPES,
@@ -70,9 +68,7 @@ enum attack_flavour
     AF_BLINK,
     AF_COLD,
     AF_CONFUSE,
-#if TAG_MAJOR_VERSION == 34
-    AF_DISEASE,
-#endif
+    AF_BARBS,
     AF_DRAIN_STR,
     AF_DRAIN_INT,
     AF_DRAIN_DEX,

@@ -52,6 +52,7 @@
 #include "mon-poly.h"
 #include "mon-tentacle.h"
 #include "mon-transit.h"
+#include "mon-util.h"
 #include "religion.h"
 #include "rot.h"
 #include "shout.h"
@@ -3078,6 +3079,9 @@ int monster::shield_bonus() const
     else if (has_ench(ENCH_CONDENSATION_SHIELD))
         sh += spell_hd(SPELL_CONDENSATION_SHIELD);
 
+    if (has_abom_facet(FAC_PLATED))
+        sh += get_hit_dice();
+
     item_def * staff = this->staff();
 
     if (!has_ench(ENCH_STFSHIELD_COOLDOWN) && staff && 
@@ -3216,6 +3220,9 @@ int monster::base_armour_class() const
 
     if (mons_genus(type) == MONS_PLANT)
         return 3 + random2(env.absdepth0);
+
+    if (mons_genus(type) == MONS_ABOMINATION_SMALL)
+        return read_def(*this).AC;
 
     // zombie, skeleton, etc ac mods
     if (mons_class_is_zombified(type))
@@ -3359,6 +3366,9 @@ int monster::base_evasion() const
     // ghost demon struct overrides the monster values.
     if (mons_is_ghost_demon(type))
         return ghost->ev;
+
+    if (mons_genus(type) == MONS_ABOMINATION_SMALL)
+        return read_def(*this).EV;
 
     // zombie, skeleton, etc ac mods
     if (mons_class_is_zombified(type))
@@ -4009,7 +4019,7 @@ bool monster::res_corr(bool calc_unid, bool items) const
 int monster::res_acid(bool calc_unid) const
 {
     int u = get_mons_resist(*this, MR_RES_ACID);
-    
+
     if (res_corr(calc_unid))
     {
         u++;
@@ -4086,6 +4096,9 @@ int monster::res_magic(bool calc_unid) const
     if (has_ench(ENCH_RAISED_MR)) //trog's hand
         u += 80;
 
+    if (has_abom_facet(FAC_HYDRA))
+        u += 40;
+
     if (has_ench(ENCH_LOWERED_MR))
         u /= 2;
 
@@ -4142,6 +4155,7 @@ bool monster::airborne() const
            // check both so spectral humans and zombified dragons both fly
            || mons_class_flag(mons_base_type(*this), M_FLIES)
            || mons_class_flag(type, M_FLIES)
+           || has_abom_facet(FAC_WINGS)
            || has_facet(BF_BAT)
            || scan_artefacts(ARTP_FLY) > 0
            || has_ench(ENCH_FLIGHT);
@@ -4249,6 +4263,7 @@ bool monster::shift(coord_def p)
 
     return count > 0;
 }
+
 void monster::blink()
 {
     monster_blink(this);
@@ -4967,22 +4982,24 @@ void monster::load_ghost_spells()
     }
 }
 
-bool monster::has_hydra_multi_attack() const
+bool monster::has_hydra_multi_attack(int attk_num) const
 {
-    return mons_genus(mons_base_type(*this)) == MONS_HYDRA
-        || mons_species(true) == MONS_SERPENT_OF_HELL;
+    if (attk_num == -1)
+    {
+        // no number provided check all numbers
+        for (int x = 0; x < 4; x++)
+        {
+            if (has_hydra_multi_attack(x))
+                return true;
+        }
+    }
+
+    return (mons_attack_spec(*this, attk_num).type == AT_MULTIBITE);
 }
 
 int monster::heads() const
 {
-    if (has_hydra_multi_attack())
-        return num_heads;
-    else if (mons_shouts(mons_species(true)) == S_SHOUT2)
-        return 2;
-    // There are lots of things with more or fewer heads, but the return value
-    // here doesn't actually matter for non-hydra-type monsters.
-    else
-        return 1;
+    return num_heads;
 }
 
 bool monster::has_multitargeting() const
@@ -5435,6 +5452,9 @@ bool monster::is_skeletal() const
  */
 bool monster::is_spiny() const
 {
+    if (has_abom_facet(FAC_SPINY))
+        return true;
+
     return mons_class_flag(mons_is_job(type) ? base_monster : type,
                            M_SPINY);
 }
@@ -6788,6 +6808,24 @@ bool monster::has_facet(int facet) const
     for (auto facet_val : props[MUTANT_BEAST_FACETS].get_vector())
         if (facet_val.get_int() == facet)
             return true;
+    return false;
+}
+
+bool monster::has_abom_facet(abom_facet_type facet) const
+{
+    if ((mons_genus(type) != MONS_ABOMINATION_SMALL) || !props.exists(ABOM_DEF))
+        return false;
+
+    abom_def def = read_def(*this);
+
+    for (int i = 0; i < 4; ++i)
+    {
+        if (def.facets[i] == facet)
+            return true;
+        if (def.facets[i] == FAC_NON_FACET)
+            return false;
+    }
+
     return false;
 }
 
