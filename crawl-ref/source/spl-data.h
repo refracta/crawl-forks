@@ -646,6 +646,17 @@ static const struct spell_desc spelldata[] =
 },
 
 {
+    SPELL_SUMMON_JUNGLE, "Summon Jungle", "",
+    spschool::summoning,
+    spflag::mons_abjure,
+    8,
+    200,
+    -1, -1,
+    8, 0,
+    TILEG_GENERIC_MONSTER_SPELL, // BCADDO: Tile.
+},
+
+{
     SPELL_MALIGN_GATEWAY, "Malign Gateway", "",
     spschool::summoning | spschool::translocation,
     spflag::unholy | spflag::chaotic,
@@ -689,19 +700,6 @@ static const struct spell_desc spelldata[] =
     1, 0,
     TILEG_PAIN,
 },
-
-#if TAG_MAJOR_VERSION == 34
-{
-    SPELL_CONTROL_UNDEAD, "Control Undead", "",
-    spschool::necromancy,
-    spflag::MR_check,
-    4,
-    200,
-    -1, -1,
-    3, 0,
-    TILEG_ERROR,
-},
-#endif
 
 {
     SPELL_ANIMATE_SKELETON, "Animate Skeleton", "",

@@ -1435,6 +1435,126 @@ static bool _water_adjacent(coord_def p)
     return false;
 }
 
+spret cast_summon_jungle(int pow, god_type god, bool fail)
+{
+    fail_check();
+
+    int num_hunters = coinflip() + x_chance_in_y(pow, 150);
+    int num_animals = div_rand_round(pow, 40) + random2(3);
+
+    int count = 0;
+
+    while (num_hunters-- > 0)
+    {
+        const mgen_data hunter = _pal_data(MONS_THORN_HUNTER, 3, god,
+            SPELL_SUMMON_JUNGLE);
+        if (monster * hu = create_monster(hunter))
+        {
+            chaos_summon(SPELL_SUMMON_JUNGLE, hu, &you);
+            ++count;
+        }
+    }
+
+    while (num_animals-- > 0)
+    {
+        if (coinflip())
+        {
+            const mgen_data elephant = _pal_data(MONS_DIRE_ELEPHANT, 3, god,
+                SPELL_SUMMON_JUNGLE);
+            if (monster * el = create_monster(elephant))
+            {
+                chaos_summon(SPELL_SUMMON_JUNGLE, el, &you);
+                ++count;
+            }
+        }
+
+        else
+        {
+            const mgen_data anaconda = _pal_data(MONS_ANACONDA, 3, god,
+                SPELL_SUMMON_JUNGLE);
+            if (monster * an = create_monster(anaconda))
+            {
+                chaos_summon(SPELL_SUMMON_JUNGLE, an, &you);
+                ++count;
+            }
+        }
+    }
+
+    if (!count)
+        canned_msg(MSG_NOTHING_HAPPENS);
+    else
+    {
+        if (you.duration[DUR_JUNGLE])
+            mpr("The dungeon cannot take anymore flooding right now.");
+        else
+        {
+            const int duration = random_range(120 + pow, 200 + pow * 3 / 2);
+
+            // Make a lake
+            coord_def pond = you.pos();
+
+            for (distance_iterator di(you.pos(), false, true,
+                6 + div_rand_round(pow, 50)); di; ++di)
+            {
+                if ((feat_is_wall(grd(*di)) && !feat_is_permarock(grd(*di))))
+                {
+                    if (one_chance_in(3))
+                    {
+                        temp_change_terrain(*di, DNGN_SHALLOW_WATER, duration,
+                            TERRAIN_CHANGE_FORESTED);
+                        env.grid_colours(*di) = GREEN;
+                    }
+                    else
+                        temp_change_terrain(*di, DNGN_MANGROVE, duration,
+                            TERRAIN_CHANGE_FORESTED);
+                }
+                else if (grd(*di) == DNGN_FLOOR && x_chance_in_y(pow, 750)
+                    && !actor_at(*di) && !plant_forbidden_at(*di, true))
+                {
+                    temp_change_terrain(*di, DNGN_MANGROVE, duration,
+                        TERRAIN_CHANGE_FORESTED);
+                }
+            }
+
+            you.duration[DUR_JUNGLE] = duration;
+            int num = random_range(30, 66);
+            int deep = div_rand_round(num, 3);
+
+            for (distance_iterator di(pond, true, false, 7); di && num > 0; ++di)
+            {
+                if (grd(*di) == DNGN_FLOOR
+                    && (di.radius() == 0 || _water_adjacent(*di))
+                    && x_chance_in_y(4, di.radius() + 3))
+                {
+                    num--;
+                    deep--;
+
+                    dungeon_feature_type feat = DNGN_SHALLOW_WATER;
+                    if (deep > 0 && *di != you.pos())
+                    {
+                        monster* mon = monster_at(*di);
+                        if (!mon || mon->is_habitable_feat(DNGN_DEEP_WATER))
+                            feat = DNGN_DEEP_WATER;
+                    }
+
+                    if (player_in_branch(BRANCH_SLIME))
+                    {
+                        if (jiyva_is_dead())
+                            feat = DNGN_FLOOR;
+                        else
+                            feat = DNGN_SLIMY_WATER;
+                    }
+
+                    temp_change_terrain(*di, feat, duration, TERRAIN_CHANGE_FORESTED);
+                    env.grid_colours(*di) = GREEN;
+                }
+            }
+        }
+    }
+
+    return spret::success;
+}
+
 /**
  * Cast summon forest.
  *
@@ -3438,6 +3558,7 @@ static const map<spell_type, summon_cap> summonsdata =
     { SPELL_SUMMON_ICE_BEAST,           { 3, 3 } },
     { SPELL_SUMMON_HYDRA,               { 3, 2 } },
     { SPELL_SUMMON_MANA_VIPER,          { 2, 2 } },
+    { SPELL_SUMMON_JUNGLE,              { 8, 8 } },
     // Demons
     { SPELL_CALL_IMP,                   { 3, 3 } },
     { SPELL_SUMMON_DEMON,               { 3, 2 } },
@@ -3544,6 +3665,9 @@ void summoned_monster(const monster *mons, const actor *caster,
                                                               : max_this_time * 1 / 4);
     }
 
+    if (spell == SPELL_SUMMON_JUNGLE && mons->type == MONS_THORN_HUNTER)
+        max_this_time = 2;
+
     monster* oldest_summon = 0;
     int oldest_duration = 0;
 
@@ -3564,6 +3688,13 @@ void summoned_monster(const monster *mons, const actor *caster,
         {
             // Count large abominations and tentacled monstrosities separately
             if (spell == SPELL_SUMMON_HORRIBLE_THINGS && mi->type != mons->type)
+                continue;
+
+            // Summon jungle has two caps 8 for Elephants and Anacondas; 2 for Thorn Hunters.
+            if (spell == SPELL_SUMMON_JUNGLE && mons->type == MONS_THORN_HUNTER && mi->type != MONS_THORN_HUNTER)
+                continue;
+
+            if (spell == SPELL_SUMMON_JUNGLE && mons->type != MONS_THORN_HUNTER && mi->type == MONS_THORN_HUNTER)
                 continue;
 
             if (_spell_has_variable_cap(spell) && mi->props.exists("summon_id"))

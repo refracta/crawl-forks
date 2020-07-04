@@ -169,9 +169,7 @@ enum duration_type
     DUR_QAZLAL_ELEC_RES,
     DUR_QAZLAL_AC,
     DUR_CORROSION,
-#if TAG_MAJOR_VERSION == 34
-    DUR_FORTITUDE,
-#endif
+    DUR_JUNGLE,
     DUR_HORROR,
     DUR_NO_SCROLLS,
 #if TAG_MAJOR_VERSION == 34

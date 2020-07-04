@@ -2037,6 +2037,9 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
     case SPELL_SUMMON_HORRIBLE_THINGS:
         return cast_summon_horrible_things(powc, god, fail);
 
+    case SPELL_SUMMON_JUNGLE:
+        return cast_summon_jungle(powc, god, fail);
+
     case SPELL_MALIGN_GATEWAY:
         return cast_malign_gateway(&you, powc, god, fail);
 
@@ -2584,7 +2587,6 @@ const set<spell_type> removed_spells =
     SPELL_PHASE_SHIFT,
     SPELL_MASS_CONFUSION,
     SPELL_CURE_POISON,
-    SPELL_CONTROL_UNDEAD,
     SPELL_CIGOTUVIS_EMBRACE,
     SPELL_DELAYED_FIREBALL,
 #endif

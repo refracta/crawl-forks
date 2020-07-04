@@ -1987,6 +1987,7 @@ bool setup_mons_cast(const monster* mons, bolt &pbolt, spell_type spell_cast,
     case SPELL_CONJURE_BALL_LIGHTNING:
     case SPELL_SUMMON_DRAKES:
     case SPELL_SUMMON_HORRIBLE_THINGS:
+    case SPELL_SUMMON_JUNGLE:
     case SPELL_MALIGN_GATEWAY:
     case SPELL_SYMBOL_OF_TORMENT:
     case SPELL_CAUSE_FEAR:
@@ -2093,9 +2094,6 @@ bool setup_mons_cast(const monster* mons, bolt &pbolt, spell_type spell_cast,
     case SPELL_HUNTING_CRY:
 #endif
     case SPELL_CONDENSATION_SHIELD:
-#if TAG_MAJOR_VERSION == 34
-    case SPELL_CONTROL_UNDEAD:
-#endif
     case SPELL_CLEANSING_FLAME:
     case SPELL_DRAINING_GAZE:
     case SPELL_CONFUSION_GAZE:
@@ -4553,6 +4551,13 @@ static monster_type _pick_horrible_thing()
                             : MONS_ABOMINATION_LARGE;
 }
 
+static monster_type _pick_jungle_animal()
+{
+    return one_chance_in(4) ? MONS_THORN_HUNTER :
+                 coinflip() ? MONS_ANACONDA
+                            : MONS_DIRE_ELEPHANT;
+}
+
 static monster_type _pick_undead_summon()
 {
     static monster_type undead[] =
@@ -6484,6 +6489,11 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
                               random_range(3, 5), god);
         return;
 
+    case SPELL_SUMMON_JUNGLE:
+        _do_high_level_summon(mons, spell_cast, _pick_jungle_animal,
+            random_range(6, 8), god);
+        return;
+
     case SPELL_MALIGN_GATEWAY:
         if (!can_cast_malign_gateway())
         {
@@ -6510,9 +6520,6 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         return;
     }
 
-#if TAG_MAJOR_VERSION == 34
-    case SPELL_CONTROL_UNDEAD:
-#endif
     case SPELL_SUMMON_UNDEAD:
         _do_high_level_summon(mons, spell_cast, _pick_undead_summon,
                               2 + random2(mons->spell_hd(spell_cast) / 5 + 1),
@@ -8608,7 +8615,6 @@ static bool _ms_waste_of_time(monster* mon, mon_spell_slot slot)
     case SPELL_CONTROL_WINDS:
     case SPELL_DEATHS_DOOR:
     case SPELL_FULMINANT_PRISM:
-    case SPELL_CONTROL_UNDEAD:
     case SPELL_MAGIC_DART:
     case SPELL_SMD:
     case SPELL_FORCEFUL_DISMISSAL:
