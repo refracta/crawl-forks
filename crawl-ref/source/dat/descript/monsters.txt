@@ -1227,6 +1227,13 @@ purple in the light. They lay their eggs in corpses and keep the dungeon clean
 of blood and rot. A bit gross, due to their diet and habits, but ultimately 
 harmless.
 %%%%
+giraffe
+
+Far more aggressive than those found outside the dungeon, these giraffes defend 
+their territory by trampling their foes under their long legs and whipping their 
+own heads to inflict a headbutt from a distance. Their large size and stout frame
+make them fast and quite the intimidating foe.
+%%%%
 glowing orange brain
 
 A huge wrinkled brain, floating just off the floor and glowing with mutagenic
