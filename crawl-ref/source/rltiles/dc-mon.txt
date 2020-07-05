@@ -256,6 +256,7 @@ catoblepas MONS_CATOBLEPAS
 elephant MONS_ELEPHANT
 elephant_dire MONS_DIRE_ELEPHANT
 elephant_demonic MONS_HELLEPHANT
+giraffe MONS_GIRAFFE
 %sdir mon/unique
 nellie MONS_NELLIE
 %sdir mon/holy
