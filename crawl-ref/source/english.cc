@@ -91,6 +91,11 @@ string pluralise(const string &name, const char * const qualifiers[],
         else
             return name.substr(0, name.length() - 1) + "ies";
     }
+    else if (ends_with(name, "ffe"))
+    {
+        // exception for giraffes
+        return name.substr(0, name.length()) + "s";
+    }
     else if (ends_with(name, "fe"))
     {
         // knife -> knives
