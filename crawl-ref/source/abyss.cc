@@ -589,7 +589,7 @@ static void _abyss_lose_monster(monster& mons)
     if (mons.needs_abyss_transit())
         mons.set_transit(level_id(BRANCH_ABYSS));
     // make sure we don't end up with an invalid hep ancestor
-    else if (hepliaklqana_ancestor() == mons.mid)
+    else if (hepliaklqana_ancestor() == mons.mid || mons_enslaved_soul(mons))
     {
         simple_monster_message(mons, " is pulled into the Abyss.",
                 MSGCH_BANISHMENT);
@@ -632,7 +632,8 @@ static void _place_displaced_monsters()
         {
             maybe_bloodify_square(mon->pos());
             // hep messaging is done in _abyss_lose_monster
-            if (you.can_see(*mon) && hepliaklqana_ancestor() != mon->mid)
+            if (you.can_see(*mon) && hepliaklqana_ancestor() != mon->mid 
+                                  && !mons_enslaved_soul(*mon))
             {
                 simple_monster_message(*mon, " is pulled into the Abyss.",
                         MSGCH_BANISHMENT);

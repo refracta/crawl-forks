@@ -112,7 +112,7 @@ void start_recall(recall_t type)
         rlist.push_back(m);
     }
 
-    if (type != recall_t::spell && branch_allows_followers(you.where_are_you))
+    if (type != recall_t::spell)
         populate_offlevel_recall_list(rlist);
 
     if (!rlist.empty())
