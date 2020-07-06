@@ -4985,6 +4985,12 @@ void monster::load_ghost_spells()
 
 bool monster::has_hydra_multi_attack(int attk_num) const
 {
+    if (type == MONS_NO_MONSTER)
+        return false;
+
+    if (!alive())
+        return false;
+
     if (attk_num == -1)
     {
         // no number provided check all numbers
