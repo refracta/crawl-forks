@@ -788,6 +788,15 @@ static const mon_spellbook mspell_list[] =
       }
     },
 
+    {  MST_CHAOS_BUTTERFLY,
+      {
+       { SPELL_AIRSTRIKE, 22, MON_SPELL_NATURAL },
+       { SPELL_VORTICES, 44, MON_SPELL_NATURAL },
+       { SPELL_POLYMOTH, 66, MON_SPELL_NATURAL },
+       { SPELL_BLINK_RANGE, 11, MON_SPELL_NATURAL },
+      }
+    },
+
     // ('z') Corporeal semi-humanoid undead.
     {  MST_ANCIENT_CHAMPION_I,
       {

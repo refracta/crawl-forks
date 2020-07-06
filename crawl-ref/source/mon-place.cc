@@ -1837,6 +1837,7 @@ struct band_set
 static const band_conditions centaur_band_condition
     = { 3, 10, []() { return !player_in_branch(BRANCH_SHOALS); }};
 
+
 // warrior & mage spawn alone more frequently at shallow depths of Snake
 static const band_conditions naga_band_condition
     = { 0, 0, []() { return !player_in_branch(BRANCH_SNAKE)
@@ -2138,6 +2139,20 @@ static band_type _choose_band(monster_type mon_type, int *band_size_p,
         }
         break;
 
+    case MONS_CHAOS_BUTTERFLY:
+        if (player_in_branch(BRANCH_LAIR))
+            band = random_choose_weighted(3, BAND_YAKS, 1, BAND_ELEPHANT, 1, BAND_HELL_HOUNDS);
+        else if (player_in_branch(BRANCH_SPIDER))
+            band = BAND_TARANTELLA;
+        else if (player_in_branch(BRANCH_SWAMP))
+            band = BAND_SWAMP_BUTTERFLY;
+        else // Depths, Abyss
+            band = BAND_CHAOS_BUTTERFLY;
+
+        natural_leader = true;
+        band_size = 4 + random2(4);
+        break;
+
     case MONS_SPRIGGAN_DRUID:
         if (band != BAND_NO_BAND)
             band_size = (one_chance_in(4) ? 3 : 2);
@@ -2351,6 +2366,23 @@ static const map<band_type, vector<member_possibilites>> band_membership = {
     { BAND_FAUN_PARTY,          {{{MONS_MERFOLK_SIREN, 1}},
 
                                  {{MONS_FAUN, 1}}}},
+                                      
+    { BAND_CHAOS_BUTTERFLY,     {{{MONS_GHOST_CRAB, 1},
+                                  {MONS_APOCALYPSE_CRAB, 3}},
+
+                                 {{MONS_HYDRA, 1},
+                                  {MONS_DEATH_YAK, 1},
+                                  {MONS_HELL_HOUND, 1},
+                                  {MONS_ANACONDA, 1},
+                                  {MONS_TYRANT_LEECH, 1}}}},
+
+    { BAND_SWAMP_BUTTERFLY,     {{{MONS_GHOST_CRAB, 1},
+                                  {MONS_HYDRA, 2}},
+
+                                 {{MONS_HYDRA, 2},
+                                  {MONS_SPINY_FROG, 1},
+                                  {MONS_SWAMP_DRAKE, 3},
+                                  {MONS_VAMPIRE_MOSQUITO, 1}}}},
 
     { BAND_TENGU,               {{{MONS_TENGU_WARRIOR, 1},
                                   {MONS_TENGU_CONJURER, 1}}}},

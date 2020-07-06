@@ -1977,7 +1977,6 @@ bool setup_mons_cast(const monster* mons, bolt &pbolt, spell_type spell_cast,
     case SPELL_SUMMON_MINOR_DEMON:
 #if TAG_MAJOR_VERSION == 34
     case SPELL_SUMMON_SCORPIONS:
-    case SPELL_SUMMON_SWARM:
 #endif
     case SPELL_SUMMON_UFETUBUS:
     case SPELL_SUMMON_HELL_BEAST:  // Geryon
@@ -1986,6 +1985,7 @@ bool setup_mons_cast(const monster* mons, bolt &pbolt, spell_type spell_cast,
     case SPELL_SUMMON_MUSHROOMS:
     case SPELL_CONJURE_BALL_LIGHTNING:
     case SPELL_SUMMON_DRAKES:
+    case SPELL_VORTICES:
     case SPELL_SUMMON_HORRIBLE_THINGS:
     case SPELL_SUMMON_JUNGLE:
     case SPELL_MALIGN_GATEWAY:
@@ -2079,6 +2079,7 @@ bool setup_mons_cast(const monster* mons, bolt &pbolt, spell_type spell_cast,
     case SPELL_WARNING_CRY:
     case SPELL_SEAL_DOORS:
     case SPELL_BERSERK_OTHER:
+    case SPELL_POLYMOTH:
     case SPELL_SPELLFORGED_SERVITOR:
 #if TAG_MAJOR_VERSION == 34
     case SPELL_THROW:
@@ -2445,6 +2446,9 @@ static bool _mons_call_of_chaos(const monster& mon, bool check_only = false)
                                                     15, BEAM_VULNERABILITY,
                                                     15, BEAM_MALMUTATE,
                                                     15, BEAM_POLYMORPH);
+
+        if (mon.type == MONS_CHAOS_BUTTERFLY && flavour == BEAM_POLYMORPH)
+            flavour = BEAM_VULNERABILITY;
 
         enchant_actor_with_flavour(*mi,
                                    flavour == BEAM_BLINK_CLOSE
@@ -2875,6 +2879,179 @@ static bool _make_monster_angry(const monster* mon, monster* targ, bool actual)
     }
 
     targ->go_berserk(false);
+
+    return true;
+}
+
+static bool _polymorph_ally(const monster* mon, bool actual)
+{
+    if (is_sanctuary(you.pos()) || is_sanctuary(mon->pos()))
+        return false;
+
+    // Only things both in LOS of the polymorpher and within radius 5.
+    const int radius = 5;
+
+    const monster_type polymorph_list[] =
+    {
+        // Beasts
+        MONS_HELL_RAT,
+        MONS_DREAM_SHEEP,
+        MONS_SKY_BEAST,
+        MONS_YAK,
+        MONS_HIPPOGRIFF,
+        MONS_ICE_BEAST,
+        MONS_GIRAFFE,
+        MONS_ELEPHANT,
+        MONS_DEATH_YAK,
+        MONS_MANTICORE,
+        MONS_DIRE_ELEPHANT,
+        MONS_CATOBLEPAS,
+        // Lizards, Drakes and Dragons
+        MONS_CROCODILE,
+        MONS_KOMODO_DRAGON,
+        MONS_STEAM_DRAGON,
+        MONS_WYVERN,
+        MONS_RIME_DRAKE,
+        MONS_ALLIGATOR,
+        MONS_SWAMP_DRAKE,
+        MONS_BASILISK,
+        MONS_HYDRA,
+        MONS_WIND_DRAKE,
+        MONS_LINDWURM,
+        MONS_SWAMP_DRAGON,
+        MONS_ACID_DRAGON,
+        MONS_FIRE_DRAGON,
+        MONS_ICE_DRAGON,
+        MONS_DEATH_DRAKE,
+        // Dogs and Bears
+        MONS_WOLF,
+        MONS_BLACK_BEAR,
+        MONS_PORCUPINE,
+        MONS_POLAR_BEAR,
+        MONS_HELL_HOUND,
+        MONS_GRIZZLY_BEAR,
+        MONS_RAIJU,
+        // Insects and Arachnids
+        MONS_WORKER_ANT,
+        MONS_SCORPION,
+        MONS_VAMPIRE_MOSQUITO,
+        MONS_SOLDIER_ANT,
+        MONS_KILLER_BEE,
+        MONS_REDBACK,
+        MONS_BOULDER_BEETLE,
+        MONS_TARANTELLA,
+        MONS_JUMPING_SPIDER,
+        MONS_TYRANT_LEECH,
+        MONS_ORB_SPIDER,
+        MONS_HORNET,
+        MONS_WOLF_SPIDER,
+        MONS_DEMONIC_CRAWLER,
+        MONS_EMPEROR_SCORPION,
+        MONS_SPARK_WASP,
+        MONS_DEATH_SCARAB,
+        // Crabs
+        MONS_FIRE_CRAB,
+        MONS_GHOST_CRAB,
+        MONS_APOCALYPSE_CRAB,
+        MONS_PLUTONIUM_CRAB,
+        // Snakes and Frogs
+        MONS_ADDER,
+        MONS_BULLFROG,
+        MONS_BLINK_FROG,
+        MONS_MANA_VIPER,
+        MONS_WATER_MOCCASIN,
+        MONS_SPINY_FROG,
+        MONS_SEA_SNAKE,
+        MONS_BLACK_MAMBA,
+        MONS_ANACONDA,
+        MONS_SHOCK_SERPENT,
+    };
+
+    const int lengths[] = { 12, 16, 7, 17, 4, 10 };
+
+    const int total_length = lengths[0] + lengths[1] + lengths[2]
+                           + lengths[3] + lengths[4] + lengths[5];
+
+    monster * target = nullptr;
+    int target_num  = -1;
+    int target_list_start = 0;
+    int target_list_end   = -1;
+
+    for (monster_near_iterator mi(mon->pos(), LOS_NO_TRANS); mi; ++mi)
+    {
+        if (is_sanctuary(mi->pos()))
+            continue;
+
+        if (grid_distance(mon->pos(), mi->pos()) > radius)
+            continue;
+
+        for (int i = 0; i < total_length; ++i)
+        {
+            if (mi->type == polymorph_list[i])
+            {
+                if (!actual)
+                    return true;
+
+                int list_start = 0;
+                int list_end   = -1;
+
+                for (int j = 0; j < 6; j++)
+                {
+                    list_end += lengths[j];
+
+                    if (i <= list_end)
+                        j += 70;
+                    else
+                        list_start += lengths[j];
+                }
+
+                // Pick first target in case there's only one.
+                // Prioritize injured (polymorph fully heals).
+                // Prioritize lower on the monster list (try to polymorph to stronger monster)
+                // Small chance of screwing the priority since it's chaos.
+                if (!target
+                    || x_chance_in_y(mi->max_hit_points - mi->hit_points, mi->max_hit_points)
+                    || one_chance_in(20))
+                {
+                    target            = *mi;
+                    target_num        = i;
+                    target_list_start = list_start;
+                    target_list_end   = list_end;
+                }
+            }
+        }
+    }
+
+    if (!target)
+        return false;
+
+    monster_type new_type = target->type;
+
+    // True Random Form
+    if (one_chance_in(3))
+    {
+        while (new_type == target->type)
+        {
+            new_type = polymorph_list[random_range(target_list_start, target_list_end)];
+        }
+    }
+    // Slightly nerfed form.
+    else if (one_chance_in(4))
+        new_type = polymorph_list[max(target_list_start, target_num - random2(3))];
+    // Slightly buffed form
+    else
+        new_type = polymorph_list[min(target_list_end, target_num + random2(3))];
+
+    // Slightly Nerfed/Buffed form ended in same mon (beginning/end of list)? Fall back to true random.
+    while (new_type == target->type)
+    {
+        new_type = polymorph_list[random_range(target_list_start, target_list_end)];
+    }
+
+    if (you.see_cell(target->pos()))
+        mprf("A scintillating breeze blows around %s.", target->name(DESC_THE).c_str());
+    monster_polymorph(target, new_type);
+    behaviour_event(target, ME_ANNOY, mon, you.pos());
 
     return true;
 }
@@ -6590,6 +6767,28 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         chaos_summon(spell_cast, x, mons);
         return;
 
+    case SPELL_VORTICES:
+    {
+        const int num = 3 + random2(5);
+
+        mpr("The chaotic winds form chaos vortices.");
+
+        for (int i = 0; i < num; i++)
+        {
+            coord_def pos = find_gateway_location(mons);
+
+            if (pos != coord_def(0, 0))
+            {
+                x = create_monster(
+                    mgen_data(MONS_CHAOS_VORTEX,
+                        SAME_ATTITUDE(mons), pos, mons->foe));
+                x->add_ench(mon_enchant(ENCH_FAKE_ABJURATION, 0,
+                    0, (5 + random2(10)) * BASELINE_DELAY));
+            }
+        }
+        return;
+    }
+
     // Journey -- Added in Summon Lizards
     case SPELL_SUMMON_DRAKES:
         sumcount2 = 1 + random2(mons->spell_hd(spell_cast) / 5 + 1);
@@ -7169,6 +7368,10 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
 
     case SPELL_BERSERK_OTHER:
         _incite_monsters(mons, true);
+        return;
+
+    case SPELL_POLYMOTH:
+        _polymorph_ally(mons, true);
         return;
 
     case SPELL_SPELLFORGED_SERVITOR:
@@ -8174,6 +8377,25 @@ static bool _ms_waste_of_time(monster* mon, mon_spell_slot slot)
                || (grd(mon->pos()) == DNGN_DEEP_WATER
                    && grd(foe->pos()) == DNGN_DEEP_WATER);
 
+    // Never REALLY a waste of time; but decrease odds of using it
+    // the more vortices that are already around.
+    // And prevent trying to cast without necessary space.
+    case SPELL_VORTICES:
+    {
+        coord_def pos = find_gateway_location(mon);
+
+        if (pos == coord_def(0, 0))
+            return false;
+
+        int vort_count = 0;
+        for (monster_near_iterator mni(mon, LOS_NO_TRANS); mni; ++mni)
+        {
+            if (mni->type == MONS_CHAOS_VORTEX)
+                vort_count++;
+        }
+        return x_chance_in_y(vort_count, 12);
+    }
+
     case SPELL_BRAIN_FEED:
         return !foe || !foe->is_player();
 
@@ -8439,6 +8661,9 @@ static bool _ms_waste_of_time(monster* mon, mon_spell_slot slot)
     case SPELL_BERSERK_OTHER:
         return !_incite_monsters(mon, false);
 
+    case SPELL_POLYMOTH:
+        return !_polymorph_ally(mon, false);
+
     case SPELL_CAUSE_FEAR:
         return mons_cause_fear(mon, false) < 0;
 
@@ -8600,7 +8825,6 @@ static bool _ms_waste_of_time(monster* mon, mon_spell_slot slot)
     case SPELL_SHAFT_SELF:
     case SPELL_MISLEAD:
     case SPELL_SUMMON_SCORPIONS:
-    case SPELL_SUMMON_SWARM:
     case SPELL_SUMMON_ELEMENTAL:
     case SPELL_EPHEMERAL_INFUSION:
     case SPELL_SINGULARITY:

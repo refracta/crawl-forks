@@ -380,6 +380,10 @@ Slug Dart cast
 Petrification Gaze cast
 
 @The_monster@ gazes piercingly through @target@!
+%%%%
+chaos butterfly cast
+
+@The_monster@ beats its wings. A gust of chaos comes forth.
 ########################################################################
 # Unique monsters
 ########################################################################

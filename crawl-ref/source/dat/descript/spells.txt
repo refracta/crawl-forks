@@ -18,7 +18,8 @@ Airstrike spell
 Causes the air around a creature to twist itself into a whirling vortex of
 meteorological fury. It is especially effective against flying enemies. Clouds
 bolster the damage of this effect further and add their elemental components
-to its wrath.
+to its wrath. When used by certain agents of chaos it always has some random 
+chaotic components.
 %%%%
 Atmospheric Torsion spell
 
@@ -27,6 +28,15 @@ meteorological fury; entropic energy infuses the strike with random elemental
 damage and allows it to buff or debuff the target randomly It is especially 
 effective against flying enemies. Clouds bolster the damage of this effect 
 further and add their elemental components to its wrath.
+%%%%
+Chaos Vortices spell
+
+Chaotically places several vortexes of swirling chaos around the environment.
+%%%%
+Polymorph Ally spell
+
+Turns a random ally into a random related creature in an attempt to buff it. 
+Always fully heals the ally in the process.
 %%%%
 Alistair's Intoxication spell
 

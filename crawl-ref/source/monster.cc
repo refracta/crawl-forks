@@ -6665,7 +6665,7 @@ bool monster::cloud_immune(bool calc_unid, bool items) const
 {
     // Cloud Mage is also checked for in (so stay in sync with)
     // monster_info::monster_info(monster_type, monster_type).
-    return type == MONS_CLOUD_MAGE || type == MONS_CHAOS_VORTEX 
+    return type == MONS_CLOUD_MAGE || type == MONS_CHAOS_VORTEX  || type == MONS_CHAOS_BUTTERFLY
         || flags & MF_CLOUD_IMMUNE || actor::cloud_immune(calc_unid, items);
 }
 

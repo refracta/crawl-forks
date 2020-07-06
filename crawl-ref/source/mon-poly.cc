@@ -438,9 +438,10 @@ void change_monster_type(monster* mons, monster_type targetc)
 // power of the new monster, relative to the current monster.
 // Relaxation still takes effect when needed, no matter what relpower
 // says.
+// Polymoth/chaos butterfly ignores some of the normal rules.
 bool monster_polymorph(monster* mons, monster_type targetc,
                        poly_power_type power,
-                       bool force_beh)
+                       bool force_beh, bool moth_rules)
 {
     // Don't attempt to polymorph a monster that is busy using the stairs.
     if (mons->flags & MF_TAKING_STAIRS)
@@ -520,7 +521,7 @@ bool monster_polymorph(monster* mons, monster_type targetc,
         targetc = target_types[random2(target_types.size())];
     }
 
-    if (!_valid_morph(mons, targetc))
+    if (!moth_rules && !_valid_morph(mons, targetc))
         return simple_monster_message(*mons, " looks momentarily different.");
 
     change_monster_type(mons, targetc);

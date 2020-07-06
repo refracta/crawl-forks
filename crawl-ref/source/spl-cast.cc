@@ -510,6 +510,10 @@ bool determine_chaos(const actor *agent, spell_type spell)
     if (get_spell_disciplines(spell) & spschool::evocation)
         return false;
 
+    // Special case for Chaos Butterfly's Chaos Airstrike.
+    if (agent->is_monster() && agent->as_monster()->type == MONS_CHAOS_BUTTERFLY)
+        return true;
+
     if (you_worship(GOD_XOM) && one_chance_in(12))
         return true;
 
@@ -2570,7 +2574,6 @@ const set<spell_type> removed_spells =
     SPELL_FIRE_BRAND,
     SPELL_FORCEFUL_DISMISSAL,
     SPELL_FREEZING_AURA,
-    SPELL_FULSOME_DISTILLATION,
     SPELL_INSULATION,
     SPELL_LETHAL_INFUSION,
     SPELL_POISON_WEAPON,
@@ -2583,7 +2586,6 @@ const set<spell_type> removed_spells =
     SPELL_SURE_BLADE,
     SPELL_FLY,
     SPELL_STONESKIN,
-    SPELL_SUMMON_SWARM,
     SPELL_PHASE_SHIFT,
     SPELL_MASS_CONFUSION,
     SPELL_CURE_POISON,

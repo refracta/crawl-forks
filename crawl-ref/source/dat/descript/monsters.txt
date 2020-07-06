@@ -753,6 +753,12 @@ centaur warrior
 A muscular centaur, veteran of numerous battles, armed with well-made weapons
 and able to use them skillfully.
 %%%%
+chaos butterfly
+
+Rumoured to have been created by a mad wizard that took 'chaos theory' too seriously;
+chaos butterflies are infused with pure chaos, they can use fine movements of their wings 
+to cast terrifying chaos spells. 
+%%%%
 chaos spawn
 
 A being of pure chaos, its form is constantly shifting, growing and then losing

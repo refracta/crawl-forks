@@ -180,6 +180,17 @@ static const struct spell_desc spelldata[] =
 },
 
 {
+    SPELL_POLYMOTH, "Polymorph Ally", "",
+    spschool::transmutation | spschool::charms,
+    spflag::chaotic | spflag::monster,
+    4,
+    200,
+    LOS_RADIUS, LOS_RADIUS,
+    3, 0,
+    TILEG_POLYMORPH,
+},
+
+{
     SPELL_WAND_POLYMORPH, "Polymorph Wand", "",
     spschool::transmutation | spschool::hexes | spschool::evocation,
     spflag::dir_or_target | spflag::chaotic | spflag::monster
@@ -621,19 +632,6 @@ static const struct spell_desc spelldata[] =
     TILEG_ISKENDERUNS_MYSTIC_BLAST,
 },
 
-#if TAG_MAJOR_VERSION == 34
-{
-    SPELL_SUMMON_SWARM, "Summon Swarm", "",
-    spschool::summoning,
-    spflag::none,
-    5,
-    200,
-    -1, -1,
-    4, 0,
-    TILEG_ERROR,
-},
-#endif
-
 {
     SPELL_SUMMON_HORRIBLE_THINGS, "Summon Horrible Things", "",
     spschool::summoning,
@@ -870,19 +868,6 @@ static const struct spell_desc spelldata[] =
     4, 0,
     TILEG_DISPEL_UNDEAD,
 },
-
-#if TAG_MAJOR_VERSION == 34
-{
-    SPELL_FULSOME_DISTILLATION, "Fulsome Distillation", "",
-    spschool::transmutation | spschool::necromancy,
-    spflag::corpse_violating,
-    1,
-    0,
-    -1, -1,
-    1, 0,
-    TILEG_ERROR,
-},
-#endif
 
 {
     SPELL_POISON_ARROW, "Poison Arrow", "Chaotic Arrow",
@@ -2024,6 +2009,17 @@ static const struct spell_desc spelldata[] =
     -1, -1,
     5, 0,
     TILEG_SUMMON_DRAKES,
+},
+
+{
+    SPELL_VORTICES, "Chaos Vortices", "",
+    spschool::air | spschool::random,
+    spflag::monster | spflag::chaotic,
+    6,
+    0,
+    -1, -1,
+    5, 0,
+    TILEG_GENERIC_MONSTER_SPELL,
 },
 
 {
