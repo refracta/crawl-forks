@@ -793,7 +793,6 @@ static const mon_spellbook mspell_list[] =
        { SPELL_AIRSTRIKE, 22, MON_SPELL_NATURAL },
        { SPELL_VORTICES, 44, MON_SPELL_NATURAL },
        { SPELL_POLYMOTH, 66, MON_SPELL_NATURAL },
-       { SPELL_BLINK_RANGE, 11, MON_SPELL_NATURAL },
       }
     },
 

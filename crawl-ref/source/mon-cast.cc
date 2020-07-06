@@ -3011,7 +3011,8 @@ static bool _polymorph_ally(const monster* mon, bool actual)
                 // Small chance of screwing the priority since it's chaos.
                 if (!target
                     || x_chance_in_y(mi->max_hit_points - mi->hit_points, mi->max_hit_points)
-                    || one_chance_in(20))
+                    || x_chance_in_y(list_end - i, list_end - list_start)
+                    || one_chance_in(10))
                 {
                     target            = *mi;
                     target_num        = i;

@@ -612,7 +612,8 @@ const char *mi_spell_title(spell_type spell, const monster_info * mi)
         return _seekspell(spell)->title; // No need for chaos check on spells without a chaos name.
 
     const item_def * staff = mi->staff();
-    bool chaos = staff && staff_enhances_spell(staff, spell) && get_staff_facet(*staff) == SPSTF_CHAOS;
+    bool chaos = staff && staff_enhances_spell(staff, spell) && get_staff_facet(*staff) == SPSTF_CHAOS
+                || mi->type == MONS_CHAOS_BUTTERFLY;
 
     if (!chaos)
     {
