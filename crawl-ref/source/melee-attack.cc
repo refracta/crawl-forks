@@ -2353,13 +2353,13 @@ bool melee_attack::consider_decapitation(int dam, int damage_type)
 {
     const int dam_type = (damage_type != -1) ? damage_type :
                                                attacker->damage_type();
+    if (!defender->alive())
+        return true;
+
     if (!attack_chops_heads(dam, dam_type))
         return false;
 
     decapitate(dam_type);
-
-    if (!defender->alive())
-        return true;
 
     // Only living hydras get to regenerate heads.
     if (!(defender->holiness() & MH_NATURAL))
