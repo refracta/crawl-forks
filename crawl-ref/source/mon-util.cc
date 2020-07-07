@@ -2614,7 +2614,7 @@ static int _exper_value(const monster_type mc, const int hd, int maxhp, const in
     if (spellcaster)
         x_val *= hd;
     else
-        x_val *= 7;
+        x_val *= min(hd, 7);
 
     if (abom)
     {
