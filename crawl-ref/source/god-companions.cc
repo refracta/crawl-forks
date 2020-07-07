@@ -147,6 +147,7 @@ void update_companions()
 
 void populate_offlevel_recall_list(vector<pair<mid_t, int> > &recall_list)
 {
+    vector <int> lost_monsters;
     for (auto &entry : companion_list)
     {
         int mid = entry.first;
@@ -154,12 +155,21 @@ void populate_offlevel_recall_list(vector<pair<mid_t, int> > &recall_list)
         if (companion_is_elsewhere(mid, true))
         {
             // Recall can't pull monsters out of the Abyss
-            if (comp.level.branch == BRANCH_ABYSS)
+            if (comp.level.branch == BRANCH_ABYSS && !one_chance_in(4))
+            {
+                lost_monsters.emplace_back(mid);
                 continue;
+            }
 
             recall_list.emplace_back(mid, comp.mons.mons.get_experience_level());
         }
     }
+
+    if (lost_monsters.size() > 0)
+        mprf("You sense %s been permanently lost in the Abyss.", lost_monsters.size() > 1 ? "some allies have" : "an ally has");
+
+    for (int mid : lost_monsters)
+        companion_list.erase(mid);
 }
 
 /**
@@ -222,12 +232,7 @@ bool recall_offlevel_ally(mid_t mid)
 bool companion_is_elsewhere(mid_t mid, bool must_exist)
 {
     if (companion_list.count(mid))
-    {
-        return companion_list[mid].level != level_id::current()
-               || (player_in_branch(BRANCH_PANDEMONIUM)
-                   && companion_list[mid].level.branch == BRANCH_PANDEMONIUM
-                   && !monster_by_mid(mid));
-    }
+        return companion_list[mid].level != level_id::current();
 
     return !must_exist;
 }
