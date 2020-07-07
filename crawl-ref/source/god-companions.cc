@@ -154,8 +154,7 @@ void populate_offlevel_recall_list(vector<pair<mid_t, int> > &recall_list)
         companion &comp = entry.second;
         if (companion_is_elsewhere(mid, true))
         {
-            // Recall can't pull monsters out of the Abyss
-            if (comp.level.branch == BRANCH_ABYSS && !one_chance_in(4))
+            if (comp.level.branch == BRANCH_ABYSS && coinflip())
             {
                 lost_monsters.emplace_back(mid);
                 continue;
@@ -169,7 +168,10 @@ void populate_offlevel_recall_list(vector<pair<mid_t, int> > &recall_list)
         mprf("You sense %s been permanently lost in the Abyss.", lost_monsters.size() > 1 ? "some allies have" : "an ally has");
 
     for (int mid : lost_monsters)
+    {
+        remove_monster_from_transit(companion_list[mid].level, mid);
         companion_list.erase(mid);
+    }
 }
 
 /**
