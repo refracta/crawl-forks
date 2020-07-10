@@ -419,7 +419,6 @@ bool direction_chooser::targets_enemies() const
     switch (mode)
     {
         case TARG_HOSTILE:
-        case TARG_HOSTILE_SUBMERGED:
             return true;
         default:
             return false;
@@ -2306,10 +2305,6 @@ static bool _mons_is_valid_target(const monster* mon, targ_mode_type mode,
         return false;
     }
 
-    // Don't target submerged monsters.
-    if (mode != TARG_HOSTILE_SUBMERGED && mon->submerged())
-        return false;
-
     // Don't usually target unseen monsters...
     if (!mon->visible_to(&you))
     {
@@ -2333,7 +2328,6 @@ static bool _want_target_monster(const monster *mon, targ_mode_type mode,
     case TARG_ANY:
         return true;
     case TARG_HOSTILE:
-    case TARG_HOSTILE_SUBMERGED:
         return mons_attitude(*mon) == ATT_HOSTILE;
     case TARG_FRIEND:
         return mon->friendly();

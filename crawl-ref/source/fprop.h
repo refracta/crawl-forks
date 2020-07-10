@@ -19,7 +19,7 @@ enum feature_property_type
 
     // Squares that the tide should not affect.
     FPROP_NO_TIDE       = (1 << 10),
-    FPROP_NO_SUBMERGE   = (1 << 11),
+    FPROP_UNUSED_4      = (1 << 11), // used to be no_submerge
     FPROP_MOLD          = (1 << 12),
     FPROP_GLOW_MOLD     = (1 << 13),
     // Immune to spawning jellies and off-level eating.

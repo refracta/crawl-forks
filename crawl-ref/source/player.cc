@@ -593,7 +593,7 @@ void move_player_to_grid(const coord_def& p, bool stepped)
     ASSERT(you.can_pass_through_feat(grd(p)));
 
     // Better not be an unsubmerged monster either.
-    ASSERT(!monster_at(p) || monster_at(p)->submerged()
+    ASSERT(!monster_at(p)
            || fedhas_passthrough(monster_at(p))
            || mons_is_player_shadow(*monster_at(p)));
 
@@ -1259,8 +1259,7 @@ bool regeneration_is_inhibited()
         {
             if (mons_is_threatening(**mi)
                 && !mi->wont_attack()
-                && !mi->neutral()
-                && !mi->submerged())
+                && !mi->neutral())
             {
                 return true;
             }

@@ -821,13 +821,12 @@ spret vampiric_drain(int pow, monster* mons, bool fail)
 
     const bool observable = mons && mons->observable();
     if (!mons
-        || mons->submerged()
         || !observable && !actor_is_susceptible_to_vampirism(*mons))
     {
         fail_check();
 
         canned_msg(MSG_NOTHING_CLOSE_ENOUGH);
-        // Cost to disallow freely locating invisible/submerged
+        // Cost to disallow freely locating invisible
         // monsters.
         return spret::success;
     }
@@ -885,7 +884,7 @@ spret cast_freeze(int pow, monster* mons, bool fail)
 {
     pow = min(25, pow);
 
-    if (!mons || mons->submerged())
+    if (!mons)
     {
         fail_check();
         canned_msg(MSG_NOTHING_CLOSE_ENOUGH);
@@ -1830,7 +1829,7 @@ void shillelagh(actor *wielder, coord_def where, int pow)
     for (adjacent_iterator ai(where, false); ai; ++ai)
     {
         monster *mon = monster_at(*ai);
-        if (!mon || !mon->alive() || mon->submerged()
+        if (!mon || !mon->alive()
             || mon->is_insubstantial() || !you.can_see(*mon)
             || mon == wielder)
         {
@@ -3620,9 +3619,6 @@ spret cast_dazzling_spray(int pow, coord_def aim, bool fail)
 
 static bool _toxic_can_affect(const actor *act)
 {
-    if (act->is_monster() && act->as_monster()->submerged())
-        return false;
-
     // currently monsters are still immune at rPois 1
     return act->res_poison() < (act->is_player() ? 3 : 1);
 }

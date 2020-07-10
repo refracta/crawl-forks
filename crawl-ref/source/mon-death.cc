@@ -2192,6 +2192,12 @@ item_def* monster_die(monster& mons, killer_type killer,
             place_cloud(CLOUD_FIRE, mons.pos(), 2 + random2(4), &mons);
         }
 
+        if (mons.type == MONS_CHAOS_VORTEX && !wizard && !mons_reset
+            && !submerged && !was_banished && !cell_is_solid(mons.pos()))
+        {
+            place_cloud(CLOUD_CHAOS, mons.pos(), 2 + random2(4), &mons);
+        }
+
         if (killer == KILL_RESET)
             killer = KILL_DISMISSED;
     }

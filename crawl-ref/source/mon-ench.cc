@@ -208,9 +208,6 @@ void monster::add_enchantment_effect(const mon_enchant &ench, bool quiet)
         // deliberate fall-through
 
     case ENCH_INSANE:
-        if (has_ench(ENCH_SUBMERGED))
-            del_ench(ENCH_SUBMERGED);
-
         calc_speed();
         break;
 
@@ -220,10 +217,6 @@ void monster::add_enchantment_effect(const mon_enchant &ench, bool quiet)
 
     case ENCH_SLOW:
         calc_speed();
-        break;
-
-    case ENCH_SUBMERGED:
-        dprf("%s submerges.", name(DESC_A, true).c_str());
         break;
 
     case ENCH_CHARM:
@@ -275,7 +268,7 @@ void monster::add_enchantment_effect(const mon_enchant &ench, bool quiet)
         you.stop_constricting(mid, true);
 
         if (invisible() && you.see_cell(pos()) && !you.can_see_invisible()
-            && !backlit() && !has_ench(ENCH_SUBMERGED))
+            && !backlit())
         {
             if (!quiet)
             {
@@ -337,84 +330,6 @@ void monster::add_enchantment_effect(const mon_enchant &ench, bool quiet)
     }
 }
 
-static bool _prepare_del_ench(monster* mon, const mon_enchant &me)
-{
-    if (me.ench != ENCH_SUBMERGED)
-        return true;
-
-    int midx = mon->mindex();
-
-    if (!monster_at(mon->pos()))
-        mgrd(mon->pos()) = midx;
-
-    if (mon->pos() != you.pos() && midx == mgrd(mon->pos()))
-        return true;
-
-    if (midx != mgrd(mon->pos()))
-    {
-        monster* other_mon = &menv[mgrd(mon->pos())];
-
-        if (other_mon->type == MONS_NO_MONSTER
-            || other_mon->type == MONS_PROGRAM_BUG)
-        {
-            mgrd(mon->pos()) = midx;
-
-            mprf(MSGCH_ERROR, "mgrd(%d,%d) points to %s monster, even "
-                 "though it contains submerged monster %s (see bug 2293518)",
-                 mon->pos().x, mon->pos().y,
-                 other_mon->type == MONS_NO_MONSTER ? "dead" : "buggy",
-                 mon->name(DESC_PLAIN, true).c_str());
-
-            if (mon->pos() != you.pos())
-                return true;
-        }
-        else
-            mprf(MSGCH_ERROR, "%s tried to unsubmerge while on same square as "
-                 "%s (see bug 2293518)", mon->name(DESC_THE, true).c_str(),
-                 mon->name(DESC_A, true).c_str());
-    }
-
-    // Monster un-submerging while under player or another monster. Try to
-    // move to an adjacent square in which the monster could have been
-    // submerged and have it unsubmerge from there.
-    coord_def target_square;
-    int       okay_squares = 0;
-
-    for (adjacent_iterator ai(mon->pos()); ai; ++ai)
-        if (!actor_at(*ai)
-            && monster_can_submerge(mon, grd(*ai))
-            && one_chance_in(++okay_squares))
-        {
-            target_square = *ai;
-        }
-
-    if (okay_squares > 0)
-        return mon->move_to_pos(target_square);
-
-    // No available adjacent squares from which the monster could also
-    // have unsubmerged. Can it just stay submerged where it is?
-    if (monster_can_submerge(mon, grd(mon->pos())))
-        return false;
-
-    // The terrain changed and the monster can't remain submerged.
-    // Try to move to an adjacent square where it would be happy.
-    for (adjacent_iterator ai(mon->pos()); ai; ++ai)
-    {
-        if (!actor_at(*ai)
-            && monster_habitable_grid(mon, grd(*ai))
-            && !trap_at(*ai))
-        {
-            if (one_chance_in(++okay_squares))
-                target_square = *ai;
-        }
-    }
-
-    if (okay_squares > 0)
-        return mon->move_to_pos(target_square);
-
-    return true;
-}
-
 bool monster::del_ench(enchant_type ench, bool quiet, bool effect)
 {
     auto i = enchantments.find(ench);
@@ -423,9 +338,6 @@ bool monster::del_ench(enchant_type ench, bool quiet, bool effect)
 
     const mon_enchant me = i->second;
     const enchant_type et = i->first;
-
-    if (!_prepare_del_ench(this, me))
-        return false;
 
     enchantments.erase(et);
     ench_cache.set(et, false);
@@ -578,7 +490,6 @@ void monster::remove_enchantment_effect(const mon_enchant &me, bool quiet)
         // that they can properly have their invisibility removed just
         // before being polymorphed into a non-invisible monster.
         if (you.see_cell(pos()) && !you.can_see_invisible() && !backlit()
-            && !has_ench(ENCH_SUBMERGED)
             && !friendly())
         {
             if (!quiet)
@@ -594,7 +505,7 @@ void monster::remove_enchantment_effect(const mon_enchant &me, bool quiet)
     case ENCH_FRIENDLY_BRIBED:
     case ENCH_HEXED:
         if (invisible() && you.see_cell(pos()) && !you.can_see_invisible()
-            && !backlit() && !has_ench(ENCH_SUBMERGED))
+            && !backlit())
         {
             if (!quiet)
             {
@@ -726,40 +637,6 @@ void monster::remove_enchantment_effect(const mon_enchant &me, bool quiet)
         // Conjured ball lightnings explode when they time out.
         suicide();
         monster_die(*this, KILL_TIMEOUT, NON_MONSTER);
-        break;
-    case ENCH_SUBMERGED:
-        if (mons_is_wandering(*this))
-        {
-            behaviour = BEH_SEEK;
-            behaviour_event(this, ME_EVAL);
-        }
-
-        if (you.pos() == pos())
-        {
-            // If, despite our best efforts, it unsubmerged on the same
-            // square as the player, teleport it away.
-            monster_teleport(this, true, false);
-            if (you.pos() == pos())
-            {
-                mprf(MSGCH_ERROR, "%s is on the same square as you!",
-                     name(DESC_A).c_str());
-            }
-        }
-
-        if (you.can_see(*this))
-        {
-            if (!quiet && feat_is_watery(grd(pos())))
-            {
-                mprf(MSGCH_WARN, "%s bursts forth from the water.",
-                     name(DESC_A, true).c_str());
-                seen_monster(this);
-            }
-        }
-        else if (you.see_cell(pos()) && feat_is_watery(grd(pos())))
-        {
-            mpr("Something invisible bursts forth from the water.");
-            interrupt_activity(activity_interrupt::force);
-        }
         break;
 
     case ENCH_SOUL_RIPE:
@@ -1328,7 +1205,7 @@ static bool _merfolk_avatar_movement_effect(const monster* mons)
                 {
                     swapping = true;
                 }
-                else if (!mon->submerged())
+                else
                     do_resist = true;
             }
 
@@ -1614,19 +1491,6 @@ void monster::apply_enchantment(const mon_enchant &me)
         }
         break;
 
-    case ENCH_SUBMERGED:
-    {
-        // Don't unsubmerge into a harmful cloud
-        if (!is_harmless_cloud(cloud_type_at(pos())))
-            break;
-
-        // Now we handle the others:
-        const dungeon_feature_type grid = grd(pos());
-
-        if (!monster_can_submerge(this, grid))
-            del_ench(ENCH_SUBMERGED); // forced to surface
-        break;
-    }
     case ENCH_POISON:
     {
         const int poisonval = me.degree;
@@ -2193,7 +2057,7 @@ static const char *enchant_names[] =
 #endif
     "summon", "abj", "magic_candle",
     "charm", "sticky_flame", "glowing_shapeshifter", "shapeshifter", "tp",
-    "sleep_wary", "submerged", "short_lived", "paralysis", "sick",
+    "sleep_wary", "old_submerged", "short_lived", "paralysis", "sick",
 #if TAG_MAJOR_VERSION == 34
     "sleepy",
 #endif

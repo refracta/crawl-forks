@@ -127,9 +127,6 @@ static bool _reaching_weapon_attack(const item_def& wpn)
     const int x_distance  = abs(delta.x);
     const int y_distance  = abs(delta.y);
     monster* mons = monster_at(beam.target);
-    // don't allow targeting of submerged monsters
-    if (mons && mons->submerged())
-        mons = nullptr;
 
     if (x_distance > reach_range || y_distance > reach_range)
     {

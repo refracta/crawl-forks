@@ -942,7 +942,6 @@ static bool _handle_reaching(monster* mons)
         || range <= REACH_NONE
         || is_sanctuary(mons->pos())
         || is_sanctuary(foe->pos())
-        || mons->submerged()
         || (mons_aligned(mons, foe) && !mons->has_ench(ENCH_INSANE))
         || (mons_is_fleeing(*mons)
         || mons->pacified()))
@@ -990,7 +989,6 @@ static bool _handle_scroll(monster& mons)
     // Yes, there is a logic to this ordering {dlb}:
     if (mons.asleep()
         || mons_is_confused(mons)
-        || mons.submerged()
         || !scroll
         || mons.has_ench(ENCH_BLIND)
         || !one_chance_in(3)
@@ -1277,7 +1275,6 @@ static bool _handle_wand(monster& mons)
         || mons.pacified()
         || mons.confused()
         || !mons_itemuse(mons) & MU_WAND
-        || mons.has_ench(ENCH_SUBMERGED)
         || x_chance_in_y(3, 4)
         || !wand
         || wand->base_type != OBJ_WANDS)
@@ -1336,7 +1333,6 @@ bool handle_throw(monster* mons, bolt & beem, spell_type call_spell, bool check_
 {
     // Yes, there is a logic to this ordering {dlb}:
     if (mons->incapacitated()
-        || mons->submerged()
         || mons->caught()
         || mons_is_confused(*mons))
     {
@@ -2035,31 +2031,6 @@ void handle_monster_move(monster* mons)
     {
         DEBUG_ENERGY_USE("handle_pickup()");
         return;
-    }
-
-    // Lurking monsters only stop lurking if their target is right
-    // next to them, otherwise they just sit there.
-    if (mons->has_ench(ENCH_SUBMERGED))
-    {
-        if (mons->foe != MHITNOT
-            && grid_distance(mons->target, mons->pos()) <= 1)
-        {
-            if (mons->submerged())
-            {
-                if (!mons->del_ench(ENCH_SUBMERGED))
-                {
-                    // Couldn't unsubmerge.
-                    mons->speed_increment -= non_move_energy;
-                    return;
-                }
-            }
-            mons->behaviour = BEH_SEEK;
-        }
-        else
-        {
-            mons->speed_increment -= non_move_energy;
-            return;
-        }
     }
 
     if (mons->caught())
@@ -2882,7 +2853,7 @@ static bool _handle_pickup(monster* mons)
     if (igrd(mons->pos()) == NON_ITEM
         // Summoned monsters never pick anything up.
         || mons->is_summoned() || mons->is_perm_summoned()
-        || mons->asleep() || mons->submerged())
+        || mons->asleep())
     {
         return false;
     }
@@ -3053,10 +3024,6 @@ static bool _mons_can_displace(const monster* mpusher,
     // Batty monsters are unpushable.
     if (mons_is_batty(*mpusher) || mons_is_batty(*mpushee))
         return false;
-
-    // Anyone can displace a submerged monster.
-    if (mpushee->submerged())
-        return true;
 
     if (!monster_shover(*mpusher))
         return false;
@@ -4131,7 +4098,7 @@ static bool _monster_move(monster* mons)
 static void _mons_in_cloud(monster& mons)
 {
     // Submerging in water or lava saves from clouds.
-    if (mons.submerged() && env.grid(mons.pos()) != DNGN_FLOOR)
+    if (mons.submerged())
         return;
 
     actor_apply_cloud(&mons);

@@ -584,7 +584,7 @@ bool bolt::can_affect_actor(const actor *act) const
         return false;
     }
 
-    return !act->submerged();
+    return true;
 }
 
 static beam_type _chaos_enchant_type()

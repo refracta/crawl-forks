@@ -1534,14 +1534,7 @@ bool monster_can_hit_monster(monster* mons, const monster* targ)
     if (!summon_can_attack(mons, targ))
         return false;
 
-    if (!targ->submerged() || mons->has_damage_type(DVORP_TENTACLE))
-        return true;
-
-    if (grd(targ->pos()) != DNGN_SHALLOW_WATER)
-        return false;
-
-    const item_def *weapon = mons->weapon();
-    return weapon && item_attack_skill(*weapon) == SK_POLEARMS;
+    return true;
 }
 
 // Friendly summons can't attack out of the player's LOS, it's too abusable.

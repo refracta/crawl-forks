@@ -2394,7 +2394,7 @@ static void _swing_at_target(coord_def move)
 
     const coord_def target = you.pos() + move;
     monster* mon = monster_at(target);
-    if (mon && !mon->submerged())
+    if (mon)
     {
         you.turn_is_over = true;
         fight_melee(&you, mon);

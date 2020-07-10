@@ -923,10 +923,10 @@ bool cast_imprison(int pow, monster* mons, int source)
 
 bool cast_smiting(int pow, monster* mons)
 {
-    if (mons == nullptr || mons->submerged())
+    if (mons == nullptr)
     {
         canned_msg(MSG_NOTHING_THERE);
-        // Counts as a real cast, due to invisible/submerged monsters.
+        // Counts as a real cast, due to invisible monsters.
         return true;
     }
 

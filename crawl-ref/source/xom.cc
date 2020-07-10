@@ -1122,10 +1122,6 @@ bool swap_monsters(monster* m1, monster* m2)
     const bool mon1_caught = mon1.caught();
     const bool mon2_caught = mon2.caught();
 
-    // Make submerged monsters unsubmerge.
-    mon1.del_ench(ENCH_SUBMERGED);
-    mon2.del_ench(ENCH_SUBMERGED);
-
     mon1.swap_with(m2);
 
     if (mon1_caught && !mon2_caught)

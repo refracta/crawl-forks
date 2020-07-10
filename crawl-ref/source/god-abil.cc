@@ -2690,7 +2690,6 @@ spret fedhas_sunlight(bool fail)
     targeter_smite tgt(&you, LOS_RADIUS, 0, 1);
     direction_chooser_args args;
     args.restricts = DIR_TARGET;
-    args.mode = TARG_HOSTILE_SUBMERGED;
     args.range = LOS_RADIUS;
     args.needs_path = false;
     args.top_prompt = "Select sunlight destination.";

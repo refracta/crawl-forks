@@ -1368,7 +1368,6 @@ bool does_ru_wanna_redirect(monster* mon)
             && !mon->friendly()
             && you.see_cell_no_trans(mon->pos())
             && !mons_is_firewood(*mon)
-            && !mon->submerged()
             && !mons_is_projectile(mon->type);
 }
 
