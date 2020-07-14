@@ -2739,7 +2739,7 @@ static spret _do_ability(const ability_def& abil, bool fail)
     {
         fail_check();
         you.increase_duration(DUR_CHANNEL_ENERGY,
-            apply_invo_enhancer(4 + random2avg(you.skill_rdiv(SK_INVOCATIONS, 2, 3), 2), 100),true);
+            apply_invo_enhancer(4 + random2avg(you.skill_rdiv(SK_INVOCATIONS, 2, 3), 2), true));
         break;
     }
 
