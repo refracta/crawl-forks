@@ -3307,8 +3307,13 @@ bool melee_attack::mons_attack_effects()
     }
 
     if (attacker != defender && attk_flavour == AF_TRAMPLE
-        && !defender->wearing_ego(EQ_BOOTS, SPARM_STURDY))
+        && !defender->wearing_ego(EQ_BOOTS, SPARM_STURDY)
+        && !defender->is_constricted()
+        && !(defender->is_monster() && defender->as_monster()->has_ench(ENCH_HELD))
+        && !(defender->is_player() && you.attribute[ATTR_HELD]))
+    {
         do_knockback();
+    }
 
     special_damage = 0;
     special_damage_message.clear();
