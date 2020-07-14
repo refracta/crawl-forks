@@ -1005,6 +1005,7 @@ void make_book_kiku_gift(item_def &book, bool first)
                                         SPELL_BORGNJORS_VILE_CLUTCH,
                                         SPELL_EXCRUCIATING_WOUNDS,
                                         SPELL_BOLT_OF_DRAINING,
+                                        SPELL_CIGOTUVIS_DEGENERATION,
                                         SPELL_SIMULACRUM,
                                         SPELL_DEATH_CHANNEL);
             if (you.species == SP_FELID

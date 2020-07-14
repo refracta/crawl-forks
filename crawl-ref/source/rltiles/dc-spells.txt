@@ -162,6 +162,7 @@ beastly_appendage BEASTLY_APPENDAGE
 irradiate IRRADIATE
 hydra_form HYDRA_FORM
 dragon_form DRAGON_FORM
+cigotuvi CIGOTUVI
 
 # item-based spells
 %sdir gui/spells/misc

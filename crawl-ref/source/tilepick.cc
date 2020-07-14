@@ -2031,7 +2031,7 @@ tileidx_t tileidx_monster(const monster_info& mons)
         ch |= TILE_FLAG_DRAIN;
     if (mons.is(MB_IDEALISED) || mons.is(MB_CHAOTIC_INFUSION))
         ch |= TILE_FLAG_IDEALISED;
-    if (mons.is(MB_WRETCHED))
+    if (mons.is(MB_WRETCHED) || mons.is(MB_CIGOTUVI))
         ch |= TILE_FLAG_WRETCHED;
 //    if (mons.is(MB_DAZED))
 //        ch |= TILE_FLAG_DAZED;

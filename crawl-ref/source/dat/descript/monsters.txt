@@ -1100,6 +1100,11 @@ faun
 A hybrid with the torso of a human atop the forelegs of a goat. It is fabled
 for its ability to play with the minds of those who intrude into its domain.
 %%%%
+fetid cyst
+
+A collapsed mass of rotting flesh and bone. With a weak sentience, it seeks to 
+consume and corrupt the living.
+%%%%
 felid
 
 A feline creature that has been granted sentience by magical means. It uses the
@@ -1966,6 +1971,12 @@ program bug
 A ravenous and incredibly buggy monster. Please report its existence to the
 DevTeam.
 %%%%
+pulsating mass
+
+A cancerous growth given some form of sentience after the host passed. This mass of 
+blighted tissue wishes only to consume and to infect more beings. Contact with it 
+can cause victims to be corroded or malmutated.
+%%%%
 purple draconian
 
 A muscular purple-scaled humanoid with a reptilian tail and small wings.
@@ -2549,6 +2560,12 @@ vault warden
 
 A veteran commander, able to seal nearby doorways and staircases to prevent
 intruders from either trespassing further or escaping alive.
+%%%%
+verdant mould
+
+A semi-sentient mobile carnivorous slime mould. Many false mouths on the ends of 
+pseudopods externally digest foes by injecting with acid before its victims are 
+pulled into the true mouth at the center.
 %%%%
 very ugly thing
 

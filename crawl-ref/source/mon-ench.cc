@@ -346,6 +346,30 @@ bool monster::del_ench(enchant_type ench, bool quiet, bool effect)
     return true;
 }
 
+void monster::degenerate(const actor * f)
+{
+    // Assumes the caster is the player; which is the only way right now.
+
+    coord_def pc = pos();
+    int       hd = get_hit_dice();
+    bool  living = (bool)(holiness() & MH_NATURAL);
+
+    mprf("The foul degenerative disease fully consumes %s, creating a new %s.", name(DESC_THE).c_str(), living ? "pulsating lump" : "fetid cyst");
+
+    add_ench(ENCH_NOCORPSE);
+
+    hurt(f, INSTANT_DEATH);
+    monster * ooze = create_monster(mgen_data(living ? MONS_PULSATING_LUMP : MONS_FETID_CYST, BEH_FRIENDLY, pc));
+
+    ooze->set_hit_dice(hd);
+    ooze->max_hit_points = ooze->hit_points = ((ooze->hit_points * hd) / 10);
+    ooze->move_to_pos(pc);
+
+    int pow = calc_spell_power(SPELL_CIGOTUVIS_DEGENERATION, true);
+
+    ooze->add_ench(mon_enchant(ENCH_SLOWLY_DYING, 0, f, (pow/2 + roll_dice(3, 5 + pow / 4)) * BASELINE_DELAY));
+}
+
 void monster::remove_enchantment_effect(const mon_enchant &me, bool quiet)
 {
     switch (me.ench)
@@ -453,6 +477,10 @@ void monster::remove_enchantment_effect(const mon_enchant &me, bool quiet)
 
         if (alive()) // losing active flight over lava
             behaviour_event(this, ME_EVAL);
+        break;
+
+    case ENCH_CIGOTUVI:
+        degenerate(me.agent());
         break;
 
     case ENCH_FEAR:
@@ -1431,6 +1459,7 @@ void monster::apply_enchantment(const mon_enchant &me)
     case ENCH_ELEC_VULN:
     case ENCH_PHYS_VULN:
     case ENCH_STFSHIELD_COOLDOWN:
+    case ENCH_CIGOTUVI:
         decay_enchantment(en);
         break;
 
@@ -1557,7 +1586,7 @@ void monster::apply_enchantment(const mon_enchant &me)
                     mprf("%s crumbles away.", name(DESC_THE, false).c_str());
                 else if (type == MONS_BLOCK_OF_ICE)
                     mprf("%s melts away.", name(DESC_THE, false).c_str());
-                else if (type == MONS_CRAWLING_CORPSE || type == MONS_MACABRE_MASS)
+                else if (mons_genus(type) == MONS_MACABRE_MASS || mons_genus(type) == MONS_PULSATING_LUMP)
                     mprf("%s collapses into a bloody pulp.", name(DESC_THE, false).c_str());
                 else
                 {
@@ -2356,6 +2385,7 @@ int mon_enchant::calc_duration(const monster* mons,
     case ENCH_EXPLODING:
         return random_range(3, 7) * 10;
 
+    case ENCH_CIGOTUVI:
     case ENCH_PORTAL_PACIFIED:
         // Must be set by spell.
         return 0;

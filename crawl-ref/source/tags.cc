@@ -7102,9 +7102,6 @@ static void unmarshallSpells(reader &th, monster_spells &spells
         if (spells[j].spell == SPELL_FAKE_RAKSHASA_SUMMON)
             spells[j].spell = SPELL_PHANTOM_MIRROR;
 
-        if (spells[j].spell == SPELL_SUNRAY)
-            spells[j].spell = SPELL_STONE_ARROW;
-
         if (th.getMinorVersion() >= TAG_MINOR_MONSTER_SPELL_SLOTS)
         {
 #endif

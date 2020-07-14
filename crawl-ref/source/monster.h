@@ -211,6 +211,8 @@ public:
     void apply_enchantments();
     void apply_enchantment(const mon_enchant &me);
 
+    void degenerate(const actor *f);
+
     bool can_drink() const;
     bool can_drink_potion(potion_type ptype) const;
     bool should_drink_potion(potion_type ptype) const;

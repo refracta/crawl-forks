@@ -916,18 +916,17 @@ static const struct spell_desc spelldata[] =
     TILEG_BANISHMENT,
 },
 
-#if TAG_MAJOR_VERSION == 34
 {
     SPELL_CIGOTUVIS_DEGENERATION, "Cigotuvi's Degeneration", "",
     spschool::transmutation | spschool::necromancy,
-    spflag::dir_or_target | spflag::not_self | spflag::chaotic,
-    5,
+    spflag::dir_or_target | spflag::not_self | spflag::chaotic
+        | spflag::needs_tracer | spflag::MR_check,
+    6,
     200,
     LOS_RADIUS, LOS_RADIUS,
     4, 0,
-    TILEG_ERROR,
+    TILEG_CIGOTUVI,
 },
-#endif
 
 {
     SPELL_STING, "Sting", "Chaos Shard",
@@ -2461,19 +2460,6 @@ static const struct spell_desc spelldata[] =
     4, 0,
     TILEG_MIGHT,
 },
-
-#if TAG_MAJOR_VERSION == 34
-{
-    SPELL_SUNRAY, "Sunray", "",
-    spschool::fire,
-    spflag::dir_or_target,
-    6,
-    200,
-    8, 8,
-    -9, 0,
-    TILEG_ERROR,
-},
-#endif
 
 {
     SPELL_AWAKEN_FOREST, "Awaken Forest", "",

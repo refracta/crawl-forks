@@ -119,6 +119,8 @@ enum band_type
     BAND_GIRAFFES,
     BAND_SWAMP_BUTTERFLY,
     BAND_CHAOS_BUTTERFLY,
+    BAND_CYSTS,
+    BAND_LUMPS,
     NUM_BANDS                   // always last
 };
 

@@ -832,7 +832,14 @@ acid_blob MONS_ACID_BLOB
 death_ooze MONS_DEATH_OOZE
 princess_slime MONS_PRINCESS_SLIME
 lava_glob MONS_LAVA_GLOB
+%rim 0
 slime_remnant MONS_SLIME_REMNANT
+fetid_cyst MONS_FETID_CYST
+pulsating_lump0 MONS_PULSATING_LUMP
+pulsating_lump1
+pulsating_lump2
+verdant_mould MONS_VERDANT_MOULD
+%rim 1
 
 ## Kobolds ('K')
 %sdir mon/unique

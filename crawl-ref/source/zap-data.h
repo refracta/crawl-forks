@@ -315,6 +315,24 @@ _mon_hex_zap(ZAP_CONFUSE, BEAM_CONFUSION),
 },
 
 {
+    ZAP_CIGOTUVI,
+    "",
+    200,
+    nullptr,
+    new tohit_calculator<0, 1, 1>,
+    nullptr,
+    nullptr,
+    BLACK,
+    true,
+    BEAM_CIGOTUVI,
+    NUM_DCHAR_TYPES,
+    false,
+    false,
+    false,
+    0
+},
+
+{
     ZAP_SNAKES_TO_STICKS,
     "",
     100,

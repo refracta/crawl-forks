@@ -48,6 +48,7 @@ static pair<spell_type, zap_type> _spl_zaps[] =
     { SPELL_SLEEP,                  ZAP_SLEEP },
     { SPELL_PARALYSE,               ZAP_PARALYSE },
     { SPELL_PETRIFY,                ZAP_PETRIFY },
+    { SPELL_CIGOTUVIS_DEGENERATION, ZAP_CIGOTUVI },
     { SPELL_POLYMORPH,              ZAP_POLYMORPH },
     { SPELL_TELEPORT_OTHER,         ZAP_TELEPORT_OTHER },
     { SPELL_INNER_FLAME,            ZAP_INNER_FLAME },

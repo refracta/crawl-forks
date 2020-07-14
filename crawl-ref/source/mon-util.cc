@@ -3471,6 +3471,7 @@ void define_monster(monster& mons)
         mons.blob_size = 1;
         break;
 
+    case MONS_VERDANT_MOULD:
     case MONS_HYDRA:
         // Hydras start off with 4 to 8 heads.
         mons.num_heads = random_range(4, 8);

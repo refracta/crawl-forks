@@ -60,6 +60,7 @@ static map<enchant_type, monster_info_flags> trivial_ench_mb_mappings = {
     { ENCH_STICKY_FLAME,    MB_BURNING },
     { ENCH_PETRIFIED,       MB_PETRIFIED },
     { ENCH_PETRIFYING,      MB_PETRIFYING },
+    { ENCH_CIGOTUVI,        MB_CIGOTUVI },
     { ENCH_LOWERED_MR,      MB_VULN_MAGIC },
     { ENCH_SWIFT,           MB_SWIFT },
     { ENCH_SILENCE,         MB_SILENCING },
@@ -1170,6 +1171,8 @@ static string _verbose_info0(const monster_info& mi)
         return "pinned";
     if (mi.is(MB_PETRIFYING))
         return "petrifying";
+    if (mi.is(MB_CIGOTUVI))
+        return "degenerating";
     if (mi.is(MB_MAD))
         return "mad";
     if (mi.is(MB_CONFUSED))
@@ -1387,6 +1390,8 @@ vector<string> monster_info::attributes() const
         v.emplace_back("petrified");
     if (is(MB_PETRIFYING))
         v.emplace_back("slowly petrifying");
+    if (is(MB_CIGOTUVI))
+        v.emplace_back("infected with magical cancer");
     if (is(MB_VULN_MAGIC))
         v.emplace_back("susceptible to hostile enchantments");
     if (is(MB_SWIFT))

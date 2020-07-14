@@ -4047,6 +4047,12 @@ void bolt::affect_player_enchantment(bool resistible)
         obvious_effect = true;
         break;
 
+    case BEAM_CIGOTUVI:
+        you.drain_exp(agent());
+        you.polymorph(100);
+        obvious_effect = true;
+        break;
+
     case BEAM_MALIGN_OFFERING:
     {
         const int dam = resist_adjust_damage(&you, flavour, damage.roll());
@@ -6435,6 +6441,18 @@ mon_resist_type bolt::apply_enchantment_to_monster(monster* mon)
         obvious_effect = true;
         break;
 
+    case BEAM_CIGOTUVI:
+        if (!mon->has_ench(ENCH_CIGOTUVI)
+            && mon->add_ench(mon_enchant(ENCH_CIGOTUVI, 0, agent(), (3 + random2(8)) * BASELINE_DELAY)))
+        {
+            if (you.can_see(*mon))
+            {
+                mprf("You infect %s with foul degeneration!", mon->name(DESC_THE).c_str());
+                obvious_effect = true;
+            }
+        }
+        break;
+
     case BEAM_SNAKES_TO_STICKS:
         stickify(agent(), mon);
         obvious_effect = true;
@@ -6944,6 +6962,16 @@ void bolt::determine_affected_cells(explosion_map& m, const coord_def& delta,
     }
 }
 
+static bool _cig_check(const monster * mon)
+{
+    if (mons_genus(mon->mons_species()) == MONS_PULSATING_LUMP)
+        return false;
+    if (mon->is_insubstantial())
+        return false;
+
+    return (bool)(mon->holiness() & (MH_NATURAL | MH_UNDEAD));
+}
+
 // Returns true if the beam is harmful ((mostly) ignoring monster
 // resists) -- mon is given for 'special' cases where,
 // for example, "Heal" might actually hurt undead, or
@@ -7000,6 +7028,8 @@ bool bolt::nasty_to(const monster* mon) const
             return is_snake(*mon);
         case BEAM_UNRAVELLING:
             return monster_is_debuffable(*mon); // XXX: as tukima's
+        case BEAM_CIGOTUVI:
+            return _cig_check(mon);
         default:
             break;
     }
@@ -7274,6 +7304,7 @@ static string _beam_type_name(beam_type type)
     case BEAM_CRYSTAL:               return "crystal bolt";
     case BEAM_DRAIN_MAGIC:           return "drain magic";
     case BEAM_TUKIMAS_DANCE:         return "tukima's dance";
+    case BEAM_CIGOTUVI:              return "cigotuvi's degeneration";
     case BEAM_SNAKES_TO_STICKS:      return "stickify";
     case BEAM_BOUNCY_TRACER:         return "bouncy tracer";
     case BEAM_DEATH_RATTLE:          return "breath of the dead";

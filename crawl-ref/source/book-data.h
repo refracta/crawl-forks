@@ -123,6 +123,7 @@ static const vector<spell_type> spellbook_templates[] =
 
 {   // Book of Transfigurations
     SPELL_IRRADIATE,
+    SPELL_CIGOTUVIS_DEGENERATION,
     SPELL_STATUE_FORM,
     SPELL_HYDRA_FORM,
     SPELL_DRAGON_FORM,
@@ -216,6 +217,7 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_ANIMATE_DEAD,
     SPELL_BORGNJORS_VILE_CLUTCH,
     SPELL_DEATH_CHANNEL,
+    SPELL_CIGOTUVIS_DEGENERATION,
     SPELL_SIMULACRUM,
 },
 

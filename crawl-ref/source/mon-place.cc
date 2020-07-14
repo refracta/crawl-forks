@@ -1844,6 +1844,9 @@ static const band_conditions mf_band_condition = { 0, 0, []() {
 static const map<monster_type, band_set> bands_by_leader = {
     { MONS_GIANT_BLOWFLY,   { {}, {{BAND_BLOWFLIES, {1, 4}, true}}}},
     { MONS_ORC,             { {2}, {{ BAND_ORCS, {2, 5} }}}},
+    { MONS_FETID_CYST,      { {}, {{ BAND_CYSTS, {2, 5} }}}},
+    { MONS_DEEP_ELF_DEATH_MAGE,  { {}, {{ BAND_CYSTS, {3, 4} }}}},
+    { MONS_PULSATING_LUMP,  { {}, {{ BAND_LUMPS, {2, 5} }}}},
     { MONS_ORC_WIZARD,      { {}, {{ BAND_ORCS, {2, 5} }}}},
     { MONS_ORC_PRIEST,      { {}, {{ BAND_ORC_WARRIOR, {2, 5} }}}},
     { MONS_ORC_WARRIOR,     { {}, {{ BAND_ORC_WARRIOR, {2, 5} }}}},
@@ -2261,6 +2264,8 @@ static const map<band_type, vector<member_possibilites>> band_membership = {
                                   {MONS_ORC_WIZARD, 7},
                                   {MONS_ORC, 35}}}},
     { BAND_BLOWFLIES,           {{{MONS_GIANT_BLOWFLY, 1}}}},
+    { BAND_CYSTS,               {{{MONS_FETID_CYST, 1}}}},
+    { BAND_LUMPS,               {{{MONS_PULSATING_LUMP, 1}}}},
     { BAND_ORC_WARRIOR,         {{{MONS_ORC_PRIEST, 5},
                                   {MONS_ORC_WIZARD, 7},
                                   {MONS_ORC,       22}}}},
