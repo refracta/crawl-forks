@@ -1010,10 +1010,10 @@ A cold and hollow apparition of the drowned dead, chained by some lingering
 attachment to the depths in which it perished. It rushes to embrace the living,
 sharing the last moments of its watery fate with whatever it touches.
 %%%%
-dryad
+kael
 
-A spirit of nature, bound to the forest in which it resides. It is capable of
-calling upon the trees to defend against incursions.
+A magical semi-humanoid tree. It is capable of awakening otherwise normal 
+trees to defend against incursions.
 %%%%
 dwarf
 
@@ -2234,14 +2234,14 @@ from afar.
 %%%%
 snaplasher vine
 
-A swift and sinuous vine brought alive by a dryad's magic. It can quickly bind
-and entangle the dryad's foes, dragging them back to the forest from which it
+A swift and sinuous vine brought alive by Kael's magic. It can quickly bind
+and entangle Kael's foes, dragging them back to the forest from which it
 surges.
 %%%%
 snaplasher vine segment
 
-Part of a swift and sinuous vine brought alive by a dryad's magic. It can
-quickly bind and entangle the dryad's foes, dragging them back to the forest
+Part of a swift and sinuous vine brought alive by Kael's magic. It can
+quickly bind and entangle Kael's foes, dragging them back to the forest
 from which it surges.
 %%%%
 snapping turtle

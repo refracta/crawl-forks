@@ -1566,19 +1566,26 @@ spret cast_summon_jungle(int pow, god_type god, bool fail)
  *               spret::fail if one could be found but we miscast, and
  *               spret::success if the spell was successfully cast.
 */
-spret cast_summon_forest(actor* caster, int pow, god_type god, bool fail)
+spret cast_summon_forest(actor* caster, int pow, coord_def &where, god_type god, bool fail)
 {
     const int duration = random_range(120 + pow, 200 + pow * 3 / 2);
 
     // Is this area open enough to summon a forest?
     bool success = false;
-    for (adjacent_iterator ai(caster->pos(), false); ai; ++ai)
+    for (adjacent_iterator ai(where, false); ai; ++ai)
     {
         if (count_neighbours_with_func(*ai, &feat_is_solid) == 0)
         {
             success = true;
             break;
         }
+    }
+
+    if (grid_distance(where, you.pos()) > spell_range(SPELL_SUMMON_LIGHTNING_SPIRE, pow)
+        || !in_bounds(where))
+    {
+        mpr("That's too far away.");
+        return spret::abort;
     }
 
     if (success)
@@ -1671,6 +1678,8 @@ spret cast_summon_forest(actor* caster, int pow, god_type god, bool fail)
             mon_enchant abj = dryad->get_ench(ENCH_ABJ);
             abj.duration = duration - 10;
             dryad->update_ench(abj);
+            dryad->move_to_pos(where);
+            dryad->max_hit_points = dryad->hit_points = div_rand_round(dryad->max_hit_points * dryad->get_experience_level(), 5);
 
             chaos_summon(SPELL_SUMMON_FOREST, dryad, caster);
 

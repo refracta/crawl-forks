@@ -2048,7 +2048,7 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
         return cast_malign_gateway(&you, powc, god, fail);
 
     case SPELL_SUMMON_FOREST:
-        return cast_summon_forest(&you, powc, god, fail);
+        return cast_summon_forest(&you, powc, beam.target, god, fail);
 
     case SPELL_ANIMATE_SKELETON:
         return cast_animate_skeleton(god, fail);
