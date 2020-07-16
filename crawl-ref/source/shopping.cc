@@ -235,6 +235,7 @@ static int _armour_brand_value(special_armour_type sparm)
         return 250;
 
     case SPARM_WIELDING:
+    case SPARM_SOFT:
         return 120;
 
     case SPARM_INSULATION:

@@ -6918,6 +6918,9 @@ bool player::res_wind() const
 
 bool player::res_petrify(bool temp) const
 {
+    if (you.wearing_ego(EQ_BODY_ARMOUR, SPARM_SOFT) || you.wearing_ego(EQ_CLOAK, SPARM_SOFT))
+        return true;
+
     return get_mutation_level(MUT_PETRIFICATION_RESISTANCE)
            || temp && get_form()->res_petrify();
 }
@@ -7418,7 +7421,7 @@ void player::petrify(actor *who, bool force)
 {
     ASSERT(!crawl_state.game_is_arena());
 
-    if (res_petrify() && !force && !one_chance_in(3))
+    if (res_petrify() && !force)
     {
         canned_msg(MSG_YOU_UNAFFECTED);
         return;

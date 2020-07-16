@@ -2156,7 +2156,7 @@ void bolt::apply_bolt_petrify(monster* mons)
     if (mons->petrified())
         return;
 
-    if (mons->res_petrify() && !one_chance_in(3))
+    if (mons->res_petrify())
         return;
 
     if (mons->petrifying())
@@ -3501,7 +3501,7 @@ bool bolt::is_harmless(const monster* mon) const
         return mon->res_acid() >= 3;
 
     case BEAM_PETRIFY:
-        return mon->stasis() || (mon->holiness() == MH_NONLIVING && mon->res_petrify()) || mon->petrified();
+        return mon->stasis() || mon->res_petrify() || mon->petrified();
 
     case BEAM_MEPHITIC:
         return mon->res_poison() > 0 || mon->is_unbreathing();

@@ -1036,6 +1036,10 @@ static void _equip_armour_effect(item_def& arm, bool unmeld,
                 mpr("You feel stealthy.");
             break;
 
+        case SPARM_SOFT:
+            mpr("You feel very soft and fluffy.");
+            break;
+
         case SPARM_INSULATION:
             mpr("You feel insulated against electric shocks.");
             break;
@@ -1202,6 +1206,10 @@ static void _unequip_armour_effect(item_def& item, bool meld,
     case SPARM_STEALTH:
         if (!you.get_mutation_level(MUT_NO_STEALTH))
             mpr("You feel less stealthy.");
+        break;
+
+    case SPARM_SOFT:
+        mpr("You feel harder and more rigid.");
         break;
 
     case SPARM_INSULATION:

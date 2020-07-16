@@ -3986,6 +3986,11 @@ bool monster::res_wind() const
 
 bool monster::res_petrify(bool /*temp*/) const
 {
+    const int armour = inv[MSLOT_ARMOUR];
+
+    if (armour != NON_ITEM && mitm[armour].base_type == OBJ_ARMOURS && mitm[armour].brand == SPARM_SOFT)
+        return true;
+
     return is_insubstantial() || get_mons_resist(*this, MR_RES_PETRIFY) > 0;
 }
 
