@@ -308,7 +308,7 @@ static const struct spell_desc spelldata[] =
     spschool::translocation,
     spflag::escape | spflag::emergency | spflag::utility,
     7,
-    200,
+    100,
     -1, -1,
     2, 0, // Not noisier than Blink, to keep this spell relevant
           // for stabbers. [rob]
