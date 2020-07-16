@@ -361,6 +361,7 @@ void monster::degenerate(const actor * f)
     hurt(f, INSTANT_DEATH);
     monster * ooze = create_monster(mgen_data(living ? MONS_PULSATING_LUMP : MONS_FETID_CYST, BEH_FRIENDLY, pc));
 
+    ooze->add_ench(mon_enchant(ENCH_BLEED, 1, 0, (16 + random2(16)) * BASELINE_DELAY));
     ooze->set_hit_dice(hd);
     ooze->max_hit_points = ooze->hit_points = ((ooze->hit_points * hd) / 10);
     ooze->move_to_pos(pc);
@@ -760,6 +761,9 @@ void monster::remove_enchantment_effect(const mon_enchant &me, bool quiet)
             simple_monster_message(*this, " is no longer resistant to hostile "
                                           "enchantments.");
         }
+        break;
+
+    case ENCH_BLEED:
         break;
 
     case ENCH_WRETCHED:
@@ -1587,7 +1591,10 @@ void monster::apply_enchantment(const mon_enchant &me)
                 else if (type == MONS_BLOCK_OF_ICE)
                     mprf("%s melts away.", name(DESC_THE, false).c_str());
                 else if (mons_genus(type) == MONS_MACABRE_MASS || mons_genus(type) == MONS_PULSATING_LUMP)
+                {
                     mprf("%s collapses into a bloody pulp.", name(DESC_THE, false).c_str());
+                    bleed_onto_floor(pos(), MONS_OGRE, 99, true);
+                }
                 else
                 {
                     mprf("A nearby %s withers and dies.",
@@ -1749,8 +1756,13 @@ void monster::apply_enchantment(const mon_enchant &me)
         maybe_bloodify_square(base_position);
         hurt(me.agent(), 20);
     }
-
     break;
+
+    case ENCH_BLEED:
+        if (!one_chance_in(3))
+            maybe_bloodify_square(pos());
+        decay_enchantment(en);
+        break;
 
     case ENCH_GLOWING_SHAPESHIFTER: // This ench never runs out!
         // Number of actions is fine for shapeshifters. Don't change
@@ -2382,6 +2394,7 @@ int mon_enchant::calc_duration(const monster* mons,
         // the monster will create a ballistomycete spore.
         return random_range(475, 525) * 10;
 
+    case ENCH_BLEED:
     case ENCH_EXPLODING:
         return random_range(3, 7) * 10;
 

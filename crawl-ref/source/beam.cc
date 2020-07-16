@@ -5011,6 +5011,7 @@ static monster_type _chaos_pillar()
 {
     return random_choose_weighted(
         4, MONS_JELLY,
+        4, MONS_PULSATING_LUMP,
         3, MONS_CHAOS_SPAWN,
         2, MONS_CRAWLING_CORPSE,
         5, MONS_DEMONIC_PLANT,
@@ -5019,8 +5020,8 @@ static monster_type _chaos_pillar()
         1, MONS_CHAOS_VORTEX,
         1, MONS_SPATIAL_MAELSTROM,
         1, MONS_SKY_BEAST,
+        1, MONS_FETID_CYST,
         1, MONS_STARCURSED_MASS);
-    // BCADDO: Add Pulsating Lumps here.
 }
 
 static void _glaciate_freeze(monster* mon, killer_type englaciator,

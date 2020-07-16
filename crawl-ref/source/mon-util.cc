@@ -3183,6 +3183,8 @@ static abom_facet_type _gen_new_facet(abom_def & def)
 
 bool init_abomination(monster& mon, int hd, bool player)
 {
+    mon.add_ench(mon_enchant(ENCH_BLEED, 1, 0, (16 + random2(16)) * BASELINE_DELAY));
+
     if (mon.type == MONS_CRAWLING_CORPSE || mon.type == MONS_MACABRE_MASS)
     {
         mon.set_hit_dice(mon.hit_points = mon.max_hit_points = hd);

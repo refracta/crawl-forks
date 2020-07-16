@@ -2407,6 +2407,9 @@ bool twisted_resurrection(actor *caster, int pow, beh_type beha,
         mg.set_summoned(caster, 0, 0, god);
         if (monster *mons = create_monster(mg))
         {
+            // Make it position on top of where the corpse was, if possible.
+            mons->move_to_pos(*ri);
+
             // Set hit dice, AC, and HP.
             init_abomination(*mons, hd, caster->is_player());
 
