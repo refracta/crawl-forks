@@ -1443,11 +1443,9 @@ static string _armour_brand_desc(const item_def item)
     case SPARM_PONDEROUSNESS:
         description += "It is very cumbersome, thus slowing your movement.";
         break;
-#if TAG_MAJOR_VERSION == 34
-    case SPARM_FLYING:
-        description += "It does nothing special.";
+    case SPARM_INSULATION:
+        description += "Its thick rubbery material insulates against electric shocks.";
         break;
-#endif
     case SPARM_MAGIC_RESISTANCE:
         description += "It increases its wearer's resistance "
             "to enchantments.";

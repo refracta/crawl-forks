@@ -2552,6 +2552,9 @@ int get_armour_res_elec(const item_def &arm, bool check_artp)
 
     int res = 0;
 
+    if (arm.brand == SPARM_INSULATION)
+        res++;
+
     // intrinsic armour abilities
     res += armour_type_prop(arm.sub_type, ARMF_RES_ELEC);
 

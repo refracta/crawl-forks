@@ -3082,6 +3082,11 @@ static void _brand_armour(item_def &arm)
         mprf("%s sink%s into the shadows!", itname.c_str(), plural ? "" : "s");
         break;
 
+    case SPARM_INSULATION:
+        flash_colour = CYAN;
+        mprf("%s feel%s insulated against electric shocks!", itname.c_str(), plural ? "" : "s");
+        break;
+
     case SPARM_STURDY:
         flash_colour = BROWN;
         mprf("%s feel%s very rugged!", itname.c_str(), plural ? "" : "s");
