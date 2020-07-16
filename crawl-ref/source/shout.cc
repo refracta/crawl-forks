@@ -13,6 +13,7 @@
 #include "areas.h"
 #include "artefact.h"
 #include "branch.h"
+#include "coordit.h"
 #include "database.h"
 #include "directn.h"
 #include "english.h"
@@ -920,11 +921,51 @@ void check_monsters_sense(sense_type sense, int range, const coord_def& where)
     }
 }
 
+static void _maybe_spawn_sharks(const coord_def& where)
+{
+    if (you.where_are_you != BRANCH_SHOALS
+        || you.pos() != where
+        || !feat_is_water(grd(where)))
+        return;
+
+    int water_count = 0;
+    for (adjacent_iterator ai(where); ai; ++ai)
+    {
+        if (feat_is_water(grd(*ai)) && !actor_at(*ai))
+            water_count++;
+    }
+
+    if (water_count > 4 && x_chance_in_y(water_count, 240))
+    {
+        int shark_count = 3 + random2(2);
+
+        while (shark_count > 0)
+        {
+            for (adjacent_iterator ai(where); ai; ++ai)
+            {
+                if (feat_is_water(grd(*ai)) && x_chance_in_y(shark_count, water_count + 1))
+                {
+                    mgen_data mg(MONS_SHARK, BEH_HOSTILE, *ai, MHITYOU, MG_FORCE_BEH | MG_AUTOFOE);
+                    if (monster *mons = create_monster(mg))
+                        mons->move_to_pos(*ai);
+
+                    water_count--;
+                    shark_count--;
+                }
+            }
+        }
+
+        mprf(MSGCH_DANGER, "%s", "Sharks are drawn to the smell of your your blood in the water!");
+    }
+}
+
 void blood_smell(int strength, const coord_def& where)
 {
     const int range = strength;
     dprf("blood stain at (%d, %d), range of smell = %d",
          where.x, where.y, range);
+
+    _maybe_spawn_sharks(where);
 
     check_monsters_sense(SENSE_SMELL_BLOOD, range, where);
 }
