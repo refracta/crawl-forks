@@ -1068,7 +1068,6 @@ special_armour_type generate_armour_type_ego(armour_type type)
         return random_choose_weighted(1, SPARM_RUNNING, 
                                       2, SPARM_STURDY, 
                                       5, SPARM_STEALTH);
-        // BCADDO: Buff SPARM_STEALTH.
 
     case ARM_NAGA_BARDING:
     case ARM_CENTAUR_BARDING:

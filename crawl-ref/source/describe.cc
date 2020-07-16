@@ -1456,7 +1456,7 @@ static string _armour_brand_desc(const item_def item)
         description += "It protects its wearer from harm (+3 to AC).";
         break;
     case SPARM_STEALTH:
-        description += "It enhances the stealth of its wearer.";
+        description += "It greatly increases the stealth of the wearer, when they are walking on dry land.";
         break;
     case SPARM_RESISTANCE:
         description += "It protects its wearer from the effects "

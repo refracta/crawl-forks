@@ -3628,7 +3628,11 @@ int player_stealth()
                 stealth /= 2;       // splashy-splashy
         }
         else if (boots && get_armour_ego_type(*boots) == SPARM_STEALTH)
+        {
             stealth += STEALTH_PIP;
+            stealth *= 5;
+            stealth /= 4;
+        }
         else if (you.has_usable_hooves())
             stealth -= 5 + 5 * you.get_mutation_level(MUT_HOOVES);
         else if (you.species == SP_FELID
