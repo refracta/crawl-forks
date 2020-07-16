@@ -307,8 +307,8 @@ static const struct spell_desc spelldata[] =
     SPELL_CONTROLLED_BLINK, "Controlled Blink", "",
     spschool::translocation,
     spflag::escape | spflag::emergency | spflag::utility,
-    8,
-    0,
+    7,
+    200,
     -1, -1,
     2, 0, // Not noisier than Blink, to keep this spell relevant
           // for stabbers. [rob]
