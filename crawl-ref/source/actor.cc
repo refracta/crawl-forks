@@ -731,13 +731,19 @@ bool actor::can_constrict(const actor* defender, bool direct) const
 {
     ASSERT(defender); // XXX: change to actor &defender
 
+    size_type size = body_size(PSIZE_BODY);
+
+    // Only sources of engulf right now; let them ignore normal size restriction for the most part.
+    if (is_monster() && (as_monster()->type == MONS_ECTOPLASMIC_ORB || as_monster()->type == MONS_WATER_ELEMENTAL))
+        size = SIZE_BIG;
+
     if (direct)
     {
         return (!is_constricting() || has_usable_tentacle())
                && !defender->is_constricted()
                && can_see(*defender)
                && !confused()
-               && body_size(PSIZE_BODY) >= defender->body_size(PSIZE_BODY)
+               && size >= defender->body_size(PSIZE_BODY)
                && defender->res_constrict() < 3
                && adjacent(pos(), defender->pos());
     }

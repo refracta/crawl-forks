@@ -576,6 +576,7 @@ static int _mons_class_halo_radius(monster_type type)
     }
     switch (type)
     {
+    case MONS_HOLY_FLAN:
     case MONS_FAIRY:
         return 2;
     case MONS_ANGEL:

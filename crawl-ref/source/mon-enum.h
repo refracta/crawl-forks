@@ -240,6 +240,7 @@ enum shout_type
     S_CHERUB,               // for cherubs
     S_SQUEAL,               // pigs
     S_LOUD_ROAR,            // dragons, &c. loud!
+    S_GIBBERING,
     NUM_SHOUTS,
 
     // Loudness setting for shouts that are only defined in dat/shout.txt

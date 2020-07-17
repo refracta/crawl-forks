@@ -701,6 +701,18 @@ Warning Cry howler monkey cast
 
 @The_monster@ hoots and howls with incredible vigour!
 %%%%
+unseen Warning Cry gibbering mound cast
+
+Horrid eldritch gibbering echoes through the dungeon!
+%%%%
+Warning Cry gibbering mound cast
+
+@The_monster@ gibbers a loud, echoing eldritch prayer!
+%%%%
+Sentinel's Mark gibbering mound cast
+
+@The_monster@ stares @at@ @target@ and chants from many mouths!
+%%%%
 unseen Warning Cry vault sentinel cast
 
 You hear a note loudly blown on a horn!

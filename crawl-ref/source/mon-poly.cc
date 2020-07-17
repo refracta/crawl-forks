@@ -576,11 +576,9 @@ bool monster_polymorph(monster* mons, monster_type targetc,
 
 bool mon_can_be_slimified(const monster* mons)
 {
-    const mon_holy_type holi = mons->holiness();
+    // Only mons that are already slimes or are tentacle segments are immune.
 
-    return !mons->is_insubstantial()
-           && !mons_is_tentacle_or_tentacle_segment(mons->type)
-           && (holi & (MH_UNDEAD | MH_NATURAL) && !mons_is_slime(*mons));
+    return !mons_is_tentacle_or_tentacle_segment(mons->type) && !mons_is_slime(*mons);
 }
 
 void slimify_monster(monster* mon)
@@ -589,25 +587,43 @@ void slimify_monster(monster* mon)
 
     const int x = mon->get_hit_dice() + random_choose(1, -1) * random2(5);
 
-    if (x < 3)
-        target = MONS_OOZE;
-    else if (x >= 3 && x < 5)
-        target = MONS_JELLY;
-    else if (x >= 5 && x <= 11)
-        target = MONS_SLIME_CREATURE;
-    else
+    if (mon->holiness() & MH_UNDEAD)
     {
-        if (coinflip())
-            target = MONS_ACID_BLOB;
+        if (mon->is_insubstantial())
+            target = MONS_ECTOPLASMIC_ORB;
         else
-            target = MONS_AZURE_JELLY;
+            target = MONS_DEATH_OOZE;
+    }
+    else if (mon->holiness() & MH_DEMONIC)
+        target = MONS_GIBBERING_MOUND;
+    else if (mon->holiness() & MH_HOLY)
+        target = MONS_HOLY_FLAN;
+    else if (mon->holiness() & MH_NONLIVING)
+        target = MONS_ANCIENT_ZYME;
+    else if (mon->holiness() & MH_PLANT)
+        target = MONS_VERDANT_MOULD;
+    else // if (mon->holiness() & MH_NATURAL)
+    {
+        if (x < 3)
+            target = MONS_OOZE;
+        else if (x >= 3 && x < 5)
+            target = MONS_JELLY;
+        else if (x >= 5 && x <= 11)
+            target = MONS_SLIME_CREATURE;
+        else
+        {
+            if (coinflip())
+                target = MONS_ACID_BLOB;
+            else
+                target = MONS_AZURE_JELLY;
+        }
+
+        if (feat_is_water(grd(mon->pos()))) // Pick something amphibious.
+            target = (x < 7) ? MONS_JELLY : MONS_SLIME_CREATURE;
     }
 
-    if (feat_is_water(grd(mon->pos()))) // Pick something amphibious.
-        target = (x < 7) ? MONS_JELLY : MONS_SLIME_CREATURE;
-
-    if (mon->holiness() & MH_UNDEAD)
-        target = MONS_DEATH_OOZE;
+    if (feat_is_lava(grd(mon->pos())))
+        target = MONS_LAVA_GLOB;
 
     // Bail out if jellies can't live here.
     if (!monster_habitable_grid(target, grd(mon->pos())))

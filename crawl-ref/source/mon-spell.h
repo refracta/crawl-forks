@@ -582,6 +582,14 @@ static const mon_spellbook mspell_list[] =
       }
     },
 
+    {  MST_MOUND,
+      {
+       { SPELL_WARNING_CRY, 50, MON_SPELL_NATURAL | MON_SPELL_NO_SILENT
+                                | MON_SPELL_BREATH },
+       { SPELL_SENTINEL_MARK, 58, MON_SPELL_MAGICAL },
+      }
+    },
+
     {  MST_IRONHEART_PRESERVER,
       {
        { SPELL_INJURY_BOND, 21, MON_SPELL_WIZARD },

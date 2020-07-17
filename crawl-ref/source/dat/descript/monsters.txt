@@ -1024,6 +1024,11 @@ earth elemental
 A spirit drawn from the elemental plane of earth, which exists in this world by
 inhabiting a lump of earth and rocks.
 %%%%
+ectoplasmic emanation
+
+A thick condensed orb of ghostly slime. It's thick semi-gaseous body can suffocate 
+those that blunder into it.
+%%%%
 efreet
 
 An imposing, muscular figure engulfed in a cloud of searing flame.
@@ -1238,6 +1243,11 @@ purple in the light. They lay their eggs in corpses and keep the dungeon clean
 of blood and rot. A bit gross, due to their diet and habits, but ultimately 
 harmless.
 %%%%
+gibbering mound
+
+A collapsed demonic mound, which gibbers and screeches prayers to higher demons 
+loudly and incessantly. Bites those that get too close quite nastily as well.
+%%%%
 giraffe
 
 Far more aggressive than those found outside the dungeon, these giraffes defend 
@@ -1405,6 +1415,11 @@ hog
 
 A large even-toed ungulate. Like human beings, it is omnivorous, intelligent,
 and nearly hairless.
+%%%%
+holy flan
+
+A rare heavenly dessert with some rudimentary sentience. Generally results from 
+Jiyva's chaos infecting the servants of The Shining One.
 %%%%
 holy swine
 

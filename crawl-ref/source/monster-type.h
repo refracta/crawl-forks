@@ -363,10 +363,8 @@ enum monster_type                      // menv[].type
     MONS_UNBORN,
 #endif
     MONS_ELF,
-#if TAG_MAJOR_VERSION == 34
-    MONS_DEEP_ELF_SOLDIER,
-    MONS_DEEP_ELF_FIGHTER,
-#endif
+    MONS_GIBBERING_MOUND,
+    MONS_ECTOPLASMIC_ORB,
     MONS_DEEP_ELF_KNIGHT,
 #if TAG_MAJOR_VERSION > 34
     MONS_DEEP_ELF_ARCHER,
@@ -712,8 +710,8 @@ enum monster_type                      // menv[].type
     MONS_SHEDU,
 #endif
     MONS_OPHAN,
+    MONS_HOLY_FLAN,
 #if TAG_MAJOR_VERSION == 34
-    MONS_SPIRIT,
     MONS_PALADIN,
 #endif
     MONS_APIS,

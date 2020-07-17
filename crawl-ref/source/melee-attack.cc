@@ -3752,10 +3752,11 @@ void melee_attack::mons_apply_attack_flavour()
 
             if (needs_message)
             {
-                mprf("%s %s %s in water!",
+                mprf("%s %s %s in %s!",
                      atk_name(DESC_THE).c_str(),
                      attacker->conj_verb("engulf").c_str(),
-                     defender_name(true).c_str());
+                     defender_name(true).c_str(),
+                     attacker->type == MONS_WATER_ELEMENTAL ? "water" : "ectoplasm");
             }
         }
 

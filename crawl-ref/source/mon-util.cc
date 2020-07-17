@@ -1106,7 +1106,9 @@ bool mons_class_is_slime(monster_type mc)
 {
     return mons_genus(mc) == MONS_JELLY
            || mons_genus(mc) == MONS_FLOATING_EYE
-           || mons_genus(mc) == MONS_GLOWING_ORANGE_BRAIN;
+           || mons_genus(mc) == MONS_GLOWING_ORANGE_BRAIN
+           || mons_genus(mc) == MONS_ANCIENT_ZYME
+           || mons_genus(mc) == MONS_PULSATING_LUMP;
 }
 
 bool mons_is_slime(const monster& mon)
@@ -5371,6 +5373,7 @@ string do_mon_str_replacements(const string &in_msg, const monster& mons,
         "says",         // S_CHERUB -- they just speak normally.
         "squeals",
         "roars",
+        "gibbers",
         "buggily says", // NUM_SHOUTS
         "breathes",     // S_VERY_SOFT
         "whispers",     // S_SOFT

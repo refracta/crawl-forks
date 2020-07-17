@@ -839,6 +839,9 @@ pulsating_lump0 MONS_PULSATING_LUMP
 pulsating_lump1
 pulsating_lump2
 verdant_mould MONS_VERDANT_MOULD
+ectoplasm MONS_ECTOPLASMIC_ORB
+holy_flan MONS_HOLY_FLAN
+gibbering_mound MONS_GIBBERING_MOUND
 %rim 1
 
 ## Kobolds ('K')

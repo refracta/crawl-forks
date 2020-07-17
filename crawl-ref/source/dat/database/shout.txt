@@ -114,6 +114,14 @@ __MOAN seen
 
 SOUND:@The_monster@ gives a chilling moan.
 %%%%
+__GIBBERING unseen
+
+SOUND:You hear an incomprehensible gibbering.
+%%%%
+__GIBBERING seen
+
+SOUND:@The_monster@ gibbers incessantly.
+%%%%
 __GURGLE unseen
 
 SOUND:You hear a horrible gurgling sound!

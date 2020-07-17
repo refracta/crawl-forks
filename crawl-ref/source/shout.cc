@@ -58,6 +58,7 @@ static const map<shout_type, string> default_msg_keys = {
     { S_SCREECH,        "__SCREECH" },
     { S_BUZZ,           "__BUZZ" },
     { S_MOAN,           "__MOAN" },
+    { S_GIBBERING,      "__GIBBERING" }, 
     { S_GURGLE,         "__GURGLE" },
     { S_CROAK,          "__CROAK" },
     { S_GROWL,          "__GROWL" },
