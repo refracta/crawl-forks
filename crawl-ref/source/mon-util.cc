@@ -2100,7 +2100,7 @@ static mon_attack_def _hepliaklqana_ancestor_attack(const monster &mon,
         return {};
 }
 
-static mon_attack_def _abom_facet_attack(abom_facet_type facet, int multiplier, int heads)
+static mon_attack_def _abom_facet_attack(abom_facet_type facet, int multiplier, int heads, bool player)
 {
     mon_attack_def retval;
 
@@ -2163,6 +2163,12 @@ static mon_attack_def _abom_facet_attack(abom_facet_type facet, int multiplier, 
     }
     // If it is 10; do nothing.
 
+    if (player)
+    {
+        retval.damage *= (13 + you.experience_level);
+        retval.damage /= 40;
+    }
+
     return retval;
 }
 
@@ -2214,10 +2220,10 @@ mon_attack_def mons_attack_spec(const monster& m, int attk_number,
         if (mon.props.exists(ABOM_DEF))
         {
             abom_def def = read_def(mon);
-            return _abom_facet_attack(def.facets[attk_number], def.atk, m.heads());
+            return _abom_facet_attack(def.facets[attk_number], def.atk, m.heads(), mons_is_god_gift(mon, GOD_YREDELEMNUL));
         }
         else if (attk_number == 0)
-            return _abom_facet_attack(FAC_CLASSIC, 10, 4);
+            return _abom_facet_attack(FAC_CLASSIC, 10, 4, false);
         else
             return { AT_NONE, AF_PLAIN, 0 };
     }
@@ -3160,6 +3166,10 @@ static int _calc_abom_HP(bool large, bool player, int hp_mult, int hd)
     // Invocations boost (player)
     retval *= 10000 + you.skill(SK_INVOCATIONS, 100);
     retval = div_rand_round(retval, 10000);
+
+    // Scale with XL (to make early game not so OP)
+    retval *= 3 + you.experience_level;
+    retval = div_rand_round(retval, 30);
 
     return retval;
 }
