@@ -253,6 +253,13 @@ random_var player::attack_delay(const item_def *projectile, bool rescale) const
 
     // Old Version Applies when a Single Weapon is used (this Weap being that weapon).
     item_def * weap = nullptr;
+    bool lantern_penalty = false;
+
+    if (weap0 && weap0->is_type(OBJ_MISCELLANY, MISC_LANTERN_OF_SHADOWS))
+        lantern_penalty = true;
+
+    if (weap1 && weap1->is_type(OBJ_MISCELLANY, MISC_LANTERN_OF_SHADOWS))
+        lantern_penalty = true;
 
     if (weap0 && !is_weapon(*weap0))
         weap0 = nullptr;
@@ -301,7 +308,6 @@ random_var player::attack_delay(const item_def *projectile, bool rescale) const
     // The old version; only changed to accommodate shield/weapon hybrids.
     else
     {
-
         if (weap0 && !weap1) // Single Melee Weapon (either 2H or with Offhand Punch)
             weap = weap0;
 
@@ -340,6 +346,9 @@ random_var player::attack_delay(const item_def *projectile, bool rescale) const
 
     // At the moment it never gets this low anyway.
     attk_delay = rv::max(attk_delay, random_var(3));
+
+    if (lantern_penalty)
+        attk_delay = div_rand_round(attk_delay * 5, 4);
 
     if (you.duration[DUR_CLUMSY])
         attk_delay = attk_delay * 2;
@@ -442,7 +451,6 @@ bool player::can_wield(const item_def& item, bool ignore_curse,
 bool player::could_wield(const item_def &item, bool ignore_brand,
                          bool ignore_transform, bool quiet) const
 {
-    // Most non-weapon objects can be wielded, though there's rarely a point
     if (species == SP_FELID)
     {
         if (!quiet)
@@ -451,7 +459,7 @@ bool player::could_wield(const item_def &item, bool ignore_brand,
     }
 
     if (item.base_type != OBJ_WEAPONS && item.base_type != OBJ_SHIELDS
-        && item.base_type != OBJ_STAVES)
+        && item.base_type != OBJ_STAVES && !item.is_type(OBJ_MISCELLANY, MISC_LANTERN_OF_SHADOWS))
     {
         if (!quiet)
             mpr("You can't wield that.");

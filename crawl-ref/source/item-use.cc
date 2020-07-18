@@ -387,7 +387,7 @@ bool can_wield(const item_def *weapon, bool say_reason,
         return false;
 
     if (weapon->base_type != OBJ_WEAPONS && weapon->base_type != OBJ_STAVES
-        && weapon->base_type != OBJ_SHIELDS)
+        && weapon->base_type != OBJ_SHIELDS && !weapon->is_type(OBJ_MISCELLANY, MISC_LANTERN_OF_SHADOWS))
     {
         SAY(mpr("You can't wield that."));
         return false;

@@ -460,9 +460,10 @@ static void _equip_weapon_effect(item_def& item, bool showMsgs, bool unmeld, equ
     if (item.is_type(OBJ_MISCELLANY, MISC_LANTERN_OF_SHADOWS))
     {
         if (showMsgs)
-            mpr("The area is filled with flickering shadows.");
+            mprf(MSGCH_DURATION, "The area is filled with flickering shadows.");
 
         you.attribute[ATTR_SHADOWS] = 1;
+        you.attribute[ATTR_SHADOW_DELAY] = 2 + random2(5);
         update_vision_range();
     }
 
@@ -695,6 +696,7 @@ static void _unequip_weapon_effect(item_def& real_item, bool showMsgs,
     if (item.is_type(OBJ_MISCELLANY, MISC_LANTERN_OF_SHADOWS))
     {
         you.attribute[ATTR_SHADOWS] = 0;
+        you.attribute[ATTR_SHADOW_DELAY] = 0;
         update_vision_range();
         expire_lantern_shadows();
     }

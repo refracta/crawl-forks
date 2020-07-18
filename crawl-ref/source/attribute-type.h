@@ -30,9 +30,7 @@ enum attribute_type
     ATTR_NOISES,
 #endif
     ATTR_SHADOWS,              // Lantern of shadows effect.
-#if TAG_MAJOR_VERSION == 34
-    ATTR_UNUSED2,              // was ATTR_FRUIT_FOUND
-#endif
+    ATTR_SHADOW_DELAY,         // Delay between shadow spawns (lantern)
     ATTR_FLIGHT_UNCANCELLABLE, // Tornado only right now.
     ATTR_INVIS_UNCANCELLABLE,  // Spell/potion of invis is in effect.
     ATTR_PERM_FLIGHT,          // Tengu flight or boots of flying are on.

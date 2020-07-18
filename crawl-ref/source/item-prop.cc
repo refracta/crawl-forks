@@ -229,8 +229,6 @@ struct shield_def
     int                 price;
 };
 
-
-
 static int Shield_index[NUM_SHIELDS];
 static const shield_def Shield_prop[] =
 {
@@ -2238,6 +2236,9 @@ bool item_skills(const item_def &item, set<skill_type> &skills)
  */
 bool is_weapon_wieldable(const item_def &item, size_type size)
 {
+    if (item.is_type(OBJ_MISCELLANY, MISC_LANTERN_OF_SHADOWS))
+        return true;
+
     if (item.base_type == OBJ_SHIELDS)
     {
         if (Shield_prop[Shield_index[item.sub_type]].min_1h_size > size)

@@ -71,24 +71,26 @@ void shadow_lantern_effect()
     int n = div_rand_round(you.time_taken, 10);
     for (int i = 0; i < n; ++i)
     {
-        if (you.magic_points > 0)
+        you.attribute[ATTR_SHADOW_DELAY]--;
+
+        if (you.attribute[ATTR_SHADOW_DELAY] <= 0)
         {
-            dec_mp(1);
-
-            if (x_chance_in_y(
-                    player_adjust_evoc_power(
-                        you.skill_rdiv(SK_EVOCATIONS, 1, 5) + 1),
-                    14))
+            monster_type type = MONS_SHADOW;
+            if (you.skill(SK_EVOCATIONS) > 9 + random2(10))
             {
-                mgen_data mg(MONS_SHADOW, BEH_FRIENDLY, you.pos());
-                mg.set_summoned(&you, 2, MON_SUMM_LANTERN);
-
-                create_monster(mg);
-                did_god_conduct(DID_EVIL, 1);
+                if (x_chance_in_y(3 + you.skill(SK_EVOCATIONS), 90))
+                    type = MONS_SHADOW_WRAITH;
             }
+
+            mgen_data mg(type, BEH_FRIENDLY, you.pos());
+            mg.set_summoned(&you, 3, MON_SUMM_LANTERN);
+
+            create_monster(mg);
+            did_god_conduct(DID_EVIL, 1);
+            
+            int delay = 60 - you.skill(SK_EVOCATIONS) - random2(you.skill(SK_EVOCATIONS));
+            you.attribute[ATTR_SHADOW_DELAY] = div_rand_round(delay, 3);
         }
-        else
-            expire_lantern_shadows();
     }
 }
 
