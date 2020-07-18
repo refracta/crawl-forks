@@ -730,6 +730,9 @@ static int _spell_enhancement(spell_type spell)
     if (typeflags & spschool::transmutation)
         enhanced += player_spec_transmu();
 
+    if (you.attribute[ATTR_SHADOWS])
+        enhanced -= 2;
+
     if (you.form == transformation::shadow)
         enhanced -= 2;
 

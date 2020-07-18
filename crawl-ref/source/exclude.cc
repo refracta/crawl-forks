@@ -71,7 +71,9 @@ static bool _need_auto_exclude(const monster* mon, bool sleepy = false)
 
 // Nightstalker reduces LOS, so reducing the maximum exclusion radius
 // only makes sense. This is only possible because it's a permanent
-// mutation; other sources of LOS reduction should not have this effect.
+// mutation; the lantern of Shadows should not have this effect.
+// TODO: update the radiuses on wield/unwield, we already need to do that
+// when gaining/losing nightstalker.
 // Similarly, Barachim's LOS increase.
 static int _get_full_exclusion_radius()
 {

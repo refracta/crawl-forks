@@ -109,6 +109,7 @@ static bool _check_train_dodging(int amount)
 void practise_sneaking(bool invis)
 {
     if (!x_chance_in_y(_armour_mass(), 1000)
+        && !you.attribute[ATTR_SHADOWS]
             // If invisible, training happens much more rarely.
         && (!invis && one_chance_in(25) || one_chance_in(100)))
     {
@@ -122,7 +123,7 @@ void practise_waiting()
     if (one_chance_in(6) && _check_train_armour(1))
         return; // Armour trained in check_train_armour
 
-    if (you.berserk())
+    if (you.berserk() || you.attribute[ATTR_SHADOWS])
         return;
 
     // Exercise stealth skill:
