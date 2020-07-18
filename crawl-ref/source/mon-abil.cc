@@ -62,14 +62,25 @@ void draconian_change_colour(monster* drac)
     if (mons_genus(drac->type) != MONS_DRACONIAN)
         return;
 
-    // BCADDO: Return here shortly.
-    drac->base_monster = random_choose(MONS_RED_DRACONIAN,
-                                       MONS_WHITE_DRACONIAN,
-                                       MONS_BLACK_DRACONIAN,
-                                       MONS_GREEN_DRACONIAN,
-                                       MONS_PURPLE_DRACONIAN,
-                                       MONS_LIME_DRACONIAN);
+    // No undead or demigod colours for Tiamat.
+    drac->base_monster = random_choose_weighted(14, MONS_BLACK_DRACONIAN,
+                                                 2, MONS_PINK_DRACONIAN,
+                                                14, MONS_LIME_DRACONIAN,
+                                                 6, MONS_GREEN_DRACONIAN,
+                                                12, MONS_PURPLE_DRACONIAN,
+                                                10, MONS_RED_DRACONIAN,
+                                                12, MONS_WHITE_DRACONIAN,
+                                                10, MONS_SILVER_DRACONIAN,
+                                                10, MONS_BLUE_DRACONIAN,
+                                                 8, MONS_CYAN_DRACONIAN,
+                                                 6, MONS_SCINTILLATING_DRACONIAN,
+                                                 2, MONS_MAGENTA_DRACONIAN);
     drac->colour = mons_class_colour(drac->base_monster);
+
+    if (drac->base_monster == MONS_BLACK_DRACONIAN)
+        drac->add_ench(ENCH_INVIS);
+    else
+        drac->del_ench(ENCH_INVIS, false, false);
 
     // Get rid of the old breath weapon first.
     monster_spells oldspells = drac->spells;

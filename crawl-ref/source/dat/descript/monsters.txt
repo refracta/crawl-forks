@@ -280,6 +280,11 @@ through the water faster than a human can run, swatting aside trees as though
 they were matchsticks. Its many heads slaver and gnash constantly as it hunts
 for prey to slake its bottomless appetite.
 %%%%
+Livarra
+
+One the greatest warrior-priestesses to serve Tiamat, blessed with the ability
+to change colours rapidly and chaotically.
+%%%%
 Lom Lobon
 
 Stoic and inscrutable, Lom Lobon is an ancient demon infamous for their mastery
@@ -456,11 +461,6 @@ Terence
 A violent murderer who kills for both pleasure and profit, Terence has been
 forced into hiding after a botched job. There's a price on his head, and he
 can't afford to leave anyone who sees him alive!
-%%%%
-Tiamat
-
-The earthly avatar of Tiamat, deity of dragonkind, here incarnated as a mighty
-draconian warrior. Her scales seem to shimmer and change colour as you watch.
 %%%%
 Urug
 

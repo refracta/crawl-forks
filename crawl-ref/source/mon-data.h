@@ -619,7 +619,7 @@ static monsterentry mondata[] =
 },
 
 {
-    MONS_LIME_DRACONIAN, 'd', YELLOW, "lime draconian",
+    MONS_LIME_DRACONIAN, 'd', GREEN, "lime draconian",
     M_COLD_BLOOD | M_SPEAKS | M_FLIES,
     mrd(MR_RES_ACID, 2),
     10, MONS_DRACONIAN, MONS_LIME_DRACONIAN, MH_NATURAL, 40,
@@ -676,7 +676,7 @@ static monsterentry mondata[] =
 },
 
 {
-    MONS_RED_DRACONIAN, 'd', LIGHTRED, "red draconian",
+    MONS_RED_DRACONIAN, 'd', RED, "red draconian",
     M_COLD_BLOOD | M_SPEAKS | M_FLIES,
     MR_RES_FIRE,
     10, MONS_DRACONIAN, MONS_RED_DRACONIAN, MH_NATURAL, 40,
@@ -793,7 +793,7 @@ static monsterentry mondata[] =
 },
 
 {
-    MONS_SCINTILLATING_DRACONIAN, 'd', ETC_JEWEL, "scintillating draconian",
+    MONS_SCINTILLATING_DRACONIAN, 'd', LIGHTCYAN, "scintillating draconian",
     M_FLIES | M_SPEAKS | M_COLD_BLOOD,
     MR_NO_FLAGS,
     10, MONS_DRACONIAN, MONS_SCINTILLATING_DRACONIAN, MH_NATURAL, 40,
@@ -835,7 +835,7 @@ static monsterentry mondata[] =
 },
 
 {
-    MONS_MAGENTA_DRACONIAN, 'd', MAGENTA, "magenta draconian",
+    MONS_MAGENTA_DRACONIAN, 'd', LIGHTMAGENTA, "magenta draconian",
     M_FLIES | M_SPEAKS | M_COLD_BLOOD,
     MR_NO_FLAGS,
     10, MONS_DRACONIAN, MONS_MAGENTA_DRACONIAN, MH_NATURAL, 40,
@@ -6790,7 +6790,7 @@ DUMMY(MONS_HELL_LORD, '&', COLOUR_UNDEF, "hell lord", TILEP_MONS_PROGRAM_BUG)
 
 // "d"raconians.
 {
-    MONS_TIAMAT, 'd', COLOUR_UNDEF, "Tiamat",
+    MONS_TIAMAT, 'd', COLOUR_UNDEF, "Livarra",
     M_UNIQUE | M_SEE_INVIS | M_COLD_BLOOD | M_SPEAKS | M_FEMALE | M_FLIES,
     MR_RES_POISON,
     10, MONS_DRACONIAN, MONS_DRACONIAN, MH_NATURAL, 140,

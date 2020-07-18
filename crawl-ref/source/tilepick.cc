@@ -1549,15 +1549,19 @@ tileidx_t tileidx_monster_base(int type, int mon_id, bool in_water, int colour,
         int offset = 0;
         switch (colour)
         {
-        case BLUE:          offset = 0; break;
-        case YELLOW:        offset = 1; break;
-        case GREEN:         offset = 2; break;
-        case LIGHTGREY:     offset = 3; break;
-        case LIGHTMAGENTA:  offset = 4; break;
-        case CYAN:          offset = 5; break;
-        case MAGENTA:       offset = 6; break;
-        case LIGHTRED:      offset = 7; break;
-        case WHITE:         offset = 8; break;
+        default:
+        case BLUE:          offset =  0; break;
+        case LIGHTGREEN:    offset =  1; break;
+        case GREEN:         offset =  2; break;
+        case LIGHTGREY:     offset =  3; break;
+        case LIGHTMAGENTA:  offset =  4; break;
+        case CYAN:          offset =  5; break;
+        case MAGENTA:       offset =  6; break;
+        case LIGHTRED:      offset =  7; break;
+        case WHITE:         offset =  8; break;
+        case DARKGREY:      offset =  9; break;
+        case RED:           offset = 10; break;
+        case LIGHTCYAN:     offset = 11; break;
         }
 
         return TILEP_MONS_TIAMAT + offset;

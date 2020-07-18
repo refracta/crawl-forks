@@ -1442,7 +1442,7 @@ ENDMAP
 # There's about 800 gold.
 NAME:   st_grand_hoard_of_tiamat
 TAGS:   no_monster_gen
-KMONS:  1 = patrolling Tiamat, patrolling golden dragon
+KMONS:  1 = patrolling Livarra, patrolling golden dragon
 SUBST:  D = DDD$
 KITEM:  D = $
 KITEM:  $ = gold q:1
@@ -1735,7 +1735,7 @@ KMONS:   L = shard shrike / nonbase white draconian w:6
 KMONS:   M = brown very ugly thing
 KMONS:   N = lime draconian
 KMONS:   O = acid blob / nonbase lime draconian w:6
-KMONS:   Z = golden dragon / killer klown / Tiamat, golden dragon / killer klown band
+KMONS:   Z = golden dragon / killer klown / Livarra, golden dragon / killer klown band
 KITEM:   BEHKN = $ w:15 / % w:25 / *
 KITEM:   z = any good_item
 KITEM:   Z = superb_item

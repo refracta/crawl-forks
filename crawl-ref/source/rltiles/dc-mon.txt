@@ -1182,15 +1182,18 @@ orb_of_electricity MONS_ORB_OF_ELECTRICITY
 
 ## Draconians ('d')
 %sdir mon/unique
-tiamat_black MONS_TIAMAT
-tiamat_yellow
+tiamat_blue MONS_TIAMAT
+tiamat_lime
 tiamat_green
-tiamat_grey
-tiamat_mottled
-tiamat_pale
+tiamat_silver
+tiamat_magenta
+tiamat_cyan
 tiamat_purple
-tiamat_red
+tiamat_pink
 tiamat_white
+tiamat_black
+tiamat_red
+tiamat_scintillating
 bai_suizhen MONS_BAI_SUZHEN
 bai_suizhen_dragon MONS_BAI_SUZHEN_DRAGON
 %sdir mon/draco

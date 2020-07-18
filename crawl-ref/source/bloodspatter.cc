@@ -36,8 +36,6 @@ static bool _allow_bleeding_on_square(const coord_def& where,
     if (is_bloodcovered(where) && !to_ignite)
         return false;
 
-    // BCADDO: Be a nice place to spawn sharks here if you still want to do that.
-
     // No spattering into lava or water.
     if (feat_is_lava(grd(where)) || feat_is_water(grd(where)))
         return false;
