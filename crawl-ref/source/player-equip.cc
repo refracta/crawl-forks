@@ -10,6 +10,7 @@
 #include "art-enum.h"
 #include "delay.h"
 #include "english.h" // conjugate_verb
+#include "evoke.h"
 #include "food.h"
 #include "god-abil.h"
 #include "god-item.h"
@@ -456,6 +457,15 @@ static void _equip_weapon_effect(item_def& item, bool showMsgs, bool unmeld, equ
     const bool artefact     = is_artefact(item);
 
     // And here we finally get to the special effects of wielding. {dlb}
+    if (item.is_type(OBJ_MISCELLANY, MISC_LANTERN_OF_SHADOWS))
+    {
+        if (showMsgs)
+            mpr("The area is filled with flickering shadows.");
+
+        you.attribute[ATTR_SHADOWS] = 1;
+        update_vision_range();
+    }
+
     if (item.base_type == OBJ_STAVES)
     {
         set_ident_flags(item, ISFLAG_IDENT_MASK);
@@ -682,7 +692,13 @@ static void _unequip_weapon_effect(item_def& real_item, bool showMsgs,
                                  true);
     }
 
-    if (item.base_type == OBJ_WEAPONS || (item.base_type == OBJ_SHIELDS && is_hybrid(item.sub_type)))
+    if (item.is_type(OBJ_MISCELLANY, MISC_LANTERN_OF_SHADOWS))
+    {
+        you.attribute[ATTR_SHADOWS] = 0;
+        update_vision_range();
+        expire_lantern_shadows();
+    }
+    else if (item.base_type == OBJ_WEAPONS || (item.base_type == OBJ_SHIELDS && is_hybrid(item.sub_type)))
     {
         const int brand = get_weapon_brand(item);
 

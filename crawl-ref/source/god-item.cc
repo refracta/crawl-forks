@@ -187,7 +187,7 @@ bool is_evil_item(const item_def& item, bool calc_unid)
     case OBJ_BOOKS:
         return _is_book_type(item, is_evil_spell);
     case OBJ_MISCELLANY:
-        return item.sub_type == MISC_HORN_OF_GERYON;
+        return item.sub_type == MISC_HORN_OF_GERYON || item.sub_type == MISC_LANTERN_OF_SHADOWS;
     default:
         return false;
     }

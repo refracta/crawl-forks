@@ -46,6 +46,7 @@
 #include "dlua.h"
 #include "dungeon.h"
 #include "env.h"
+#include "evoke.h"
 #include "exercise.h"
 #include "files.h"
 #include "food.h"
@@ -911,6 +912,9 @@ void player_reacts()
     // Too annoying for regular diagnostics.
     mprf(MSGCH_DIAGNOSTICS, "stealth: %d", stealth);
 #endif
+
+    if (you.attribute[ATTR_SHADOWS])
+        shadow_lantern_effect();
 
     if (you.has_mutation(MUT_DEMONIC_GUARDIAN))
         check_demonic_guardian();

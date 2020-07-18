@@ -56,9 +56,7 @@ tileidx_t tilep_equ_hand1(const item_def &item)
         case MISC_CRYSTAL_BALL_OF_ENERGY:     return TILEP_HAND1_CRYSTAL;
 
         case MISC_LAMP_OF_FIRE:               return TILEP_HAND1_LANTERN;
-#if TAG_MAJOR_VERSION == 34
-        case MISC_BUGGY_LANTERN_OF_SHADOWS:   return TILEP_HAND1_BONE_LANTERN;
-#endif
+        case MISC_LANTERN_OF_SHADOWS:         return TILEP_HAND1_BONE_LANTERN;
         case MISC_HORN_OF_GERYON:             return TILEP_HAND1_HORN;
         case MISC_BOX_OF_BEASTS:              return TILEP_HAND1_BOX;
 
@@ -321,9 +319,7 @@ tileidx_t tilep_equ_hand2(const item_def &item)
         case MISC_CRYSTAL_BALL_OF_ENERGY:     return TILEP_HAND2_CRYSTAL;
 
         case MISC_LAMP_OF_FIRE:               return TILEP_HAND2_LANTERN;
-#if TAG_MAJOR_VERSION == 34
-        case MISC_BUGGY_LANTERN_OF_SHADOWS:   return TILEP_HAND2_BONE_LANTERN;
-#endif
+        case MISC_LANTERN_OF_SHADOWS:         return TILEP_HAND2_BONE_LANTERN;
         case MISC_HORN_OF_GERYON:             return TILEP_HAND2_HORN;
         case MISC_BOX_OF_BEASTS:              return TILEP_HAND2_BOX;
 
@@ -593,9 +589,7 @@ tileidx_t tilep_equ_weapon(const item_def &item)
         case MISC_CRYSTAL_BALL_OF_ENERGY:     return TILEP_HAND1_CRYSTAL;
 
         case MISC_LAMP_OF_FIRE:               return TILEP_HAND1_LANTERN;
-#if TAG_MAJOR_VERSION == 34
-        case MISC_BUGGY_LANTERN_OF_SHADOWS:   return TILEP_HAND1_BONE_LANTERN;
-#endif
+        case MISC_LANTERN_OF_SHADOWS:         return TILEP_HAND1_BONE_LANTERN;
         case MISC_HORN_OF_GERYON:             return TILEP_HAND1_HORN;
         case MISC_BOX_OF_BEASTS:              return TILEP_HAND1_BOX;
 

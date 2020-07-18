@@ -152,7 +152,7 @@ enum mon_summon_type
 
     // BCADNOTE: These are long unused but may be restored at some point.
 //    MON_SUMM_SHADOW,  // Shadow trap
-//    MON_SUMM_LANTERN, // Lantern of shadows
+    MON_SUMM_LANTERN, // Lantern of shadows
 };
 
 #include "mon-flags.h"

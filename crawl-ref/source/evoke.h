@@ -19,4 +19,6 @@ bool evoke_item(int slot = -1);
 int wand_mp_cost();
 void zap_wand(int slot = -1);
 
+void shadow_lantern_effect();
+void expire_lantern_shadows();
 void black_drac_breath();

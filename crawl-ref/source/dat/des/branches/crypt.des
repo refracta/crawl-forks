@@ -668,7 +668,7 @@ NAME:    minmay_shadows
 ORIENT:  northwest
 DEPTH:   Crypt, Tar
 MONS:    shadow, soul eater, tzitzimitl
-ITEM:    any misc
+ITEM:    lantern of shadows
 SUBST:   A : x., B : x., C : x., E : x., F : x.
 : if you.in_branch("Tar") then
 NSUBST:  d = 1:} / 1:)

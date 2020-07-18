@@ -617,6 +617,8 @@ static int _acquirement_misc_subtype(bool /*divine*/, int & /*quantity*/,
             (you.seen_misc[MISC_PHIAL_OF_FLOODS] ?    0 : 17)},
         {MISC_FAN_OF_GALES,
             (you.seen_misc[MISC_FAN_OF_GALES] ?       0 : 17)},
+        {MISC_LANTERN_OF_SHADOWS,
+            (you.seen_misc[MISC_LANTERN_OF_SHADOWS] ? 0 :  7)}
     };
 
     const int * const choice = random_choose_weighted(choices);

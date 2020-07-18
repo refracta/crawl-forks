@@ -1057,9 +1057,7 @@ static string misc_type_name(int type)
 #endif
     case MISC_FAN_OF_GALES:              return "fan of gales";
     case MISC_LAMP_OF_FIRE:              return "lamp of fire";
-#if TAG_MAJOR_VERSION == 34
-    case MISC_BUGGY_LANTERN_OF_SHADOWS:  return "removed lantern of shadows";
-#endif
+    case MISC_LANTERN_OF_SHADOWS:        return "lantern of shadows";
     case MISC_HORN_OF_GERYON:            return "horn of Geryon";
     case MISC_LIGHTNING_ROD:             return "lightning rod";
 #if TAG_MAJOR_VERSION == 34
@@ -2788,7 +2786,6 @@ void check_item_knowledge(bool unknown_items)
 #if TAG_MAJOR_VERSION == 34
                 || is_deck_type(i)
                 || i == MISC_BUGGY_EBONY_CASKET
-                || i == MISC_BUGGY_LANTERN_OF_SHADOWS
                 || i == MISC_BOTTLED_EFREET
                 || i == MISC_RUNE_OF_ZOT
                 || i == MISC_STONE_OF_TREMORS
@@ -3938,9 +3935,7 @@ bool is_useless_item(const item_def &item, bool temp)
             return item_type_known(item);
 #endif
         // These can always be used.
-#if TAG_MAJOR_VERSION == 34
-        case MISC_BUGGY_LANTERN_OF_SHADOWS:
-#endif
+        case MISC_LANTERN_OF_SHADOWS:
         case MISC_ZIGGURAT:
             return false;
 

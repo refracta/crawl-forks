@@ -2078,7 +2078,15 @@ bool prompt_failed(int retval)
 // wielded to be used normally.
 bool item_is_wieldable(const item_def &item)
 {
-    return (is_weapon(item) || item.base_type == OBJ_SHIELDS) && you.species != SP_FELID && you.species != SP_FAIRY;
+    // Can't wield anything.
+    if (you.species == SP_FELID || you.species == SP_FAIRY)
+        return false; 
+
+    // The lantern needs to be wielded to be used.
+    if (item.is_type(OBJ_MISCELLANY, MISC_LANTERN_OF_SHADOWS))
+        return true;
+
+    return (is_weapon(item) || item.base_type == OBJ_SHIELDS);
 }
 
 /// Does the item only serve to produce summons or allies?
@@ -2217,17 +2225,16 @@ bool item_is_evokable(const item_def &item, bool reach, bool known,
             mpr("That item cannot be evoked!");
         return false;
 
-#if TAG_MAJOR_VERSION == 34
     case OBJ_MISCELLANY:
-        if (item.sub_type != MISC_BUGGY_LANTERN_OF_SHADOWS
+        if (item.sub_type != MISC_LANTERN_OF_SHADOWS
+#if TAG_MAJOR_VERSION == 34
             && item.sub_type != MISC_BUGGY_EBONY_CASKET
+#endif
             )
         {
             return true;
         }
-#endif
         // removed items fallthrough to failure
-
     default:
         if (msg)
             mpr("That item cannot be evoked!");
