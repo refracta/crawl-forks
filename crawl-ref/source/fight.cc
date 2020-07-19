@@ -497,6 +497,11 @@ static inline int get_resistible_fraction(beam_type flavour)
 {
     switch (flavour)
     {
+    case BEAM_CRYSTAL_SPEAR:
+    case BEAM_CRYSTAL_FIRE:
+    case BEAM_CRYSTAL_ICE:
+        return 20;
+
     // Drowning damage from water is resistible by being a water thing, or
     // otherwise asphyx resistant.
     case BEAM_WATER:
@@ -528,6 +533,7 @@ static int _beam_to_resist(const actor* defender, beam_type flavour)
 {
     switch (flavour)
     {
+        case BEAM_CRYSTAL_FIRE:
         case BEAM_FIRE:
         case BEAM_LAVA:
             return defender->res_fire();
@@ -539,6 +545,7 @@ static int _beam_to_resist(const actor* defender, beam_type flavour)
         case BEAM_ICY_DEVASTATION:
         case BEAM_FREEZE:
         case BEAM_ICE:
+        case BEAM_CRYSTAL_ICE:
             return defender->res_cold();
         case BEAM_WATER:
             return defender->res_water_drowning();

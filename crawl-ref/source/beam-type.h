@@ -97,9 +97,12 @@ enum beam_type                  // bolt::flavour
     BEAM_BLOOD,
     BEAM_IRRADIATE,
     BEAM_PARADOXICAL,
+    BEAM_CRYSTAL_SPEAR,
+    BEAM_CRYSTAL_FIRE,
+    BEAM_CRYSTAL_ICE,
     BEAM_WAND_HEALING,
-    BEAM_WAND_RANDOM, // Used for Monster Setup only.
     BEAM_LAST_REAL = BEAM_WAND_HEALING,
+    BEAM_WAND_RANDOM, // Used for Monster Setup only.
 
     // For getting the visual effect of a beam.
     BEAM_VISUAL,

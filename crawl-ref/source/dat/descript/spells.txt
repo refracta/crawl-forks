@@ -996,11 +996,13 @@ it to check random elemental resistances instead.
 Legendary Destruction spell
 
 Conjures two explosive magical effects in instant succession. The effects can
-be any mix of Fireball, Iceblast, and Ghostly Fireball.
+be any mix of Fireball, Ball Lightning, Hellfire Blast and Ghostly Fireball.
 %%%%
 Lehudib's Crystal Spear spell
 
-Hurls a lethally sharp shard of crystal.
+Hurls a lethally sharp shard of magical crystal. May pierce through multiple enemies 
+magical residue on the crystal will deal a small amount of fire or ice elemental 
+damage in addition to the physical.
 %%%%
 Chaos Crystal spell
 

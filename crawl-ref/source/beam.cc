@@ -875,6 +875,8 @@ void bolt::fake_flavour()
         flavour = _chaos_beam_flavour(this);
     else if (real_flavour == BEAM_CHAOS_ENCHANTMENT)
         flavour = _chaos_enchant_type();
+    else if (real_flavour == BEAM_CRYSTAL_SPEAR)
+        flavour = coinflip() ? BEAM_CRYSTAL_FIRE : BEAM_CRYSTAL_ICE;
     else if (real_flavour == BEAM_ELDRITCH)
     {
         name = pierce ? "eldritch beam of " : is_explosion ? "eldritch blast of " : "eldritch shard of ";
@@ -1660,6 +1662,7 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
 
     switch (pbolt.flavour)
     {
+    case BEAM_CRYSTAL_FIRE:
     case BEAM_FIRE:
     case BEAM_STEAM:
         hurted = resist_adjust_damage(mons, pbolt.flavour, hurted);
@@ -1683,10 +1686,10 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
             {
                 simple_monster_message(*mons, " is on fire!");
             }
-            else if (pbolt.flavour == BEAM_FIRE)
-                simple_monster_message(*mons, " is burned terribly!");
-            else
+            else if (pbolt.flavour == BEAM_STEAM)
                 simple_monster_message(*mons, " is scalded terribly!");
+            else
+                simple_monster_message(*mons, " is burned terribly!");
         }
         break;
 
@@ -1879,6 +1882,7 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
         break;
     }
 
+    case BEAM_CRYSTAL_ICE:
     case BEAM_FREEZE:
     case BEAM_ICE:
         // ice - 40% of damage is cold, other 60% is impact and
@@ -7312,6 +7316,9 @@ static string _beam_type_name(beam_type type)
     case BEAM_AGILITY:               return "agility";
     case BEAM_SAP_MAGIC:             return "sap magic";
     case BEAM_CRYSTAL:               return "crystal bolt";
+    case BEAM_CRYSTAL_FIRE:          // Fallthrough
+    case BEAM_CRYSTAL_ICE:           // Fallthrough
+    case BEAM_CRYSTAL_SPEAR:         return "crystal spear";
     case BEAM_DRAIN_MAGIC:           return "drain magic";
     case BEAM_TUKIMAS_DANCE:         return "tukima's dance";
     case BEAM_CIGOTUVI:              return "cigotuvi's degeneration";
@@ -7325,6 +7332,7 @@ static string _beam_type_name(beam_type type)
     case BEAM_IRRESISTIBLE_CONFUSION:return "confusion";
     case BEAM_INFESTATION:           return "infestation";
     case BEAM_VILE_CLUTCH:           return "vile clutch";
+    case BEAM_WAND_RANDOM:           return "random effects"; // Shouldn't ever show up...
 
     case NUM_BEAMS:                  die("invalid beam type");
     }

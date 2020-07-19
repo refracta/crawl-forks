@@ -515,7 +515,7 @@ static const struct spell_desc spelldata[] =
     spflag::dir_or_target | spflag::needs_tracer,
     8,
     200,
-    3, 3,
+    4, 4,
     8, 0,
     TILEG_LEHUDIBS_CRYSTAL_SPEAR,
 },
