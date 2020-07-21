@@ -239,6 +239,10 @@ static const char *divine_title[][8] =
     // Wu Jian -- animal/chinese martial arts monk theme
     {"Wooden Rat",          "Young Dog",             "Young Crane",              "Young Tiger",
         "Young Dragon",     "Red Sash",               "Golden Sash",              "Sifu"},
+
+    // Bahamut/Tiamat -- Duality theme
+    {"Disjointed",          "Entwined",             "Conjoined",                "Dualist",
+        "Merged",           "@Adj@ Unifier",         "Serendipitous",            "XXX"}, // Last one filled in below.
 };
 COMPILE_CHECK(ARRAYSZ(divine_title) == NUM_GODS);
 
@@ -253,6 +257,46 @@ string god_title(god_type which_god, species_type which_species, int piety)
         title = divine_title[which_god][_gold_level()];
     else
         title = divine_title[which_god][_piety_level(piety)];
+
+    if (which_god == GOD_BAHAMUT_TIAMAT && (_piety_level(piety) == 7))
+    {
+        int aspect_count = 0;
+        if (you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY))
+        {
+            if (you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+                aspect_count++;
+            else
+                aspect_count--;
+        }
+        if (you.props.exists(BAHAMUT_TIAMAT_CHOICE1_KEY))
+        {
+            if (you.props[BAHAMUT_TIAMAT_CHOICE1_KEY].get_bool())
+                aspect_count++;
+            else
+                aspect_count--;
+        }
+        if (you.props.exists(BAHAMUT_TIAMAT_CHOICE2_KEY))
+        {
+            if (you.props[BAHAMUT_TIAMAT_CHOICE2_KEY].get_bool())
+                aspect_count++;
+            else
+                aspect_count--;
+        }
+        if (you.props.exists(BAHAMUT_TIAMAT_CHOICE3_KEY))
+        {
+            if (you.props[BAHAMUT_TIAMAT_CHOICE3_KEY].get_bool())
+                aspect_count++;
+            else
+                aspect_count--;
+        }
+
+        if (aspect_count > 0)
+            title = "Aspect of Bahamut";
+        else if (aspect_count < 0)
+            title = "Aspect of Tiamat";
+        else // if (aspect_count == 0)
+            title = "Aspect of Ouroboros";
+    } 
 
     const map<string, string> replacements =
     {
@@ -521,6 +565,10 @@ static string _describe_god_wrath_causes(god_type which_god)
                    comma_separated_fn(begin(chaotic_gods), end(chaotic_gods),
                                       bind(god_name, placeholders::_1, false, false)) +
                    " are chaotic.)";
+        case GOD_BAHAMUT_TIAMAT: // More plurals
+            return uppercase_first(god_name(which_god)) +
+                " do not appreciate abandonment, and will call down"
+                " fearful punishments on disloyal followers!";
         default:
             return uppercase_first(god_name(which_god)) +
                    " does not appreciate abandonment, and will call down"
@@ -541,9 +589,14 @@ static formatted_string _god_wrath_description(god_type which_god)
     _add_par(desc, _describe_god_wrath_causes(which_god));
     _add_par(desc, getLongDescription(god_name(which_god) + " wrath"));
 
-    if (which_god != GOD_RU) // Permanent wrath.
+    const bool long_wrath = initial_wrath_penance_for(which_god) > 30;
+    if (which_god == GOD_BAHAMUT_TIAMAT) // ...Plurals (yes I could fix this value; but I may mutate the duration.
     {
-        const bool long_wrath = initial_wrath_penance_for(which_god) > 30;
+        _add_par(desc, make_stringf("The wrath of the twin serpents lasts for a relatively %s duration.", 
+                              long_wrath ? "long" : "short"));
+    }
+    else if (which_god != GOD_RU) // Permanent wrath.
+    {
         _add_par(desc, apostrophise(uppercase_first(god_name(which_god)))
                               + " wrath lasts for a relatively " +
                               (long_wrath ? "long" : "short") + " duration.");

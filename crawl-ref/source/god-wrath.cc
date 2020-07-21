@@ -89,6 +89,7 @@ static const char *_god_wrath_adjectives[] =
     "fury",             // Uskayaw
     "memory",           // Hepliaklqana (unused)
     "rancor",           // Wu Jian
+    "outrage",          // Bahamut & Tiamat
 };
 COMPILE_CHECK(ARRAYSZ(_god_wrath_adjectives) == NUM_GODS);
 
@@ -106,6 +107,13 @@ static string _god_wrath_name(god_type god)
 {
     const bool use_full_name = god == GOD_FEDHAS      // fedhas is very formal.
                                || god == GOD_WU_JIAN; // apparently.
+
+    // You like exceptions right? Twin gods need special rules.
+    if (god == GOD_BAHAMUT_TIAMAT)
+    {
+        return coinflip ()  ? "the outrage of Bahamut"
+                            : "the brutality of Tiamat";
+    }
 
     return make_stringf("the %s of %s",
                         _god_wrath_adjectives[god],
@@ -1700,6 +1708,12 @@ static bool _uskayaw_retribution()
     return true;
 }
 
+static bool _bahamut_retribution()
+{
+    // BCADDO: Fill this in.
+    return false;
+}
+
 bool divine_retribution(god_type god, bool no_bonus, bool force)
 {
     ASSERT(god != GOD_NO_GOD);
@@ -1726,25 +1740,26 @@ bool divine_retribution(god_type god, bool no_bonus, bool force)
         xom_acts(abs(you.piety - HALF_MAX_PIETY),
                  frombool(one_chance_in(10)));
         break;
-    case GOD_SHINING_ONE:   do_more = _tso_retribution(); break;
-    case GOD_ZIN:           do_more = _zin_retribution(); break;
-    case GOD_MAKHLEB:       do_more = _makhleb_retribution(); break;
-    case GOD_KIKUBAAQUDGHA: do_more = _kikubaaqudgha_retribution(); break;
-    case GOD_YREDELEMNUL:   do_more = _yredelemnul_retribution(); break;
-    case GOD_TROG:          do_more = _trog_retribution(); break;
-    case GOD_BEOGH:         do_more = _beogh_retribution(); break;
-    case GOD_OKAWARU:       do_more = _okawaru_retribution(); break;
-    case GOD_LUGONU:        do_more = _lugonu_retribution(); break;
-    case GOD_VEHUMET:       do_more = _vehumet_retribution(); break;
-    case GOD_NEMELEX_XOBEH: do_more = _nemelex_retribution(); break;
-    case GOD_SIF_MUNA:      do_more = _sif_muna_retribution(); break;
-    case GOD_JIYVA:         do_more = _jiyva_retribution(); break;
-    case GOD_FEDHAS:        do_more = _fedhas_retribution(); break;
-    case GOD_CHEIBRIADOS:   do_more = _cheibriados_retribution(); break;
-    case GOD_DITHMENOS:     do_more = _dithmenos_retribution(); break;
-    case GOD_QAZLAL:        do_more = _qazlal_retribution(); break;
-    case GOD_USKAYAW:       do_more = _uskayaw_retribution(); break;
-    case GOD_WU_JIAN:       do_more = _wu_jian_retribution(); break;
+    case GOD_SHINING_ONE:       do_more = _tso_retribution(); break;
+    case GOD_ZIN:               do_more = _zin_retribution(); break;
+    case GOD_MAKHLEB:           do_more = _makhleb_retribution(); break;
+    case GOD_KIKUBAAQUDGHA:     do_more = _kikubaaqudgha_retribution(); break;
+    case GOD_YREDELEMNUL:       do_more = _yredelemnul_retribution(); break;
+    case GOD_TROG:              do_more = _trog_retribution(); break;
+    case GOD_BEOGH:             do_more = _beogh_retribution(); break;
+    case GOD_OKAWARU:           do_more = _okawaru_retribution(); break;
+    case GOD_LUGONU:            do_more = _lugonu_retribution(); break;
+    case GOD_VEHUMET:           do_more = _vehumet_retribution(); break;
+    case GOD_NEMELEX_XOBEH:     do_more = _nemelex_retribution(); break;
+    case GOD_SIF_MUNA:          do_more = _sif_muna_retribution(); break;
+    case GOD_JIYVA:             do_more = _jiyva_retribution(); break;
+    case GOD_FEDHAS:            do_more = _fedhas_retribution(); break;
+    case GOD_CHEIBRIADOS:       do_more = _cheibriados_retribution(); break;
+    case GOD_DITHMENOS:         do_more = _dithmenos_retribution(); break;
+    case GOD_QAZLAL:            do_more = _qazlal_retribution(); break;
+    case GOD_USKAYAW:           do_more = _uskayaw_retribution(); break;
+    case GOD_WU_JIAN:           do_more = _wu_jian_retribution(); break;
+    case GOD_BAHAMUT_TIAMAT:    do_more = _bahamut_retribution(); break;
 
     case GOD_ASHENZARI:
     case GOD_ELYVILON:

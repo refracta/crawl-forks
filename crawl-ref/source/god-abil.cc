@@ -7360,3 +7360,42 @@ spret wu_jian_wall_jump_ability()
     remove_ice_armour_movement();
     return spret::success;
 }
+
+bool bahamut_tiamat_make_choice(ability_type abil)
+{
+    if (!yesno("Are you sure you wish to pick this ability? Your choice is permanent.", false, 0))
+        return false;
+
+    switch (abil)
+    {
+    case ABIL_BAHAMUT_PROTECTION:
+        you.props[BAHAMUT_TIAMAT_CHOICE0_KEY] = true;
+        break;
+    case ABIL_TIAMAT_RETRIBUTION:
+        you.props[BAHAMUT_TIAMAT_CHOICE0_KEY] = false;
+        break;
+    case ABIL_CHOOSE_BAHAMUT_BREATH:
+        you.props[BAHAMUT_TIAMAT_CHOICE1_KEY] = true;
+        break;
+    case ABIL_CHOOSE_TIAMAT_BREATH:
+        you.props[BAHAMUT_TIAMAT_CHOICE1_KEY] = false;
+        break;
+    case ABIL_CHOOSE_BAHAMUT_DRAKE:
+        you.props[BAHAMUT_TIAMAT_CHOICE2_KEY] = true;
+        break;
+    case ABIL_CHOOSE_TIAMAT_DRAKE:
+        you.props[BAHAMUT_TIAMAT_CHOICE2_KEY] = false;
+        break;
+    case ABIL_BAHAMUT_TRANSFORM:
+        you.props[BAHAMUT_TIAMAT_CHOICE3_KEY] = true;
+        break;
+    case ABIL_CHOOSE_TIAMAT_TRANSFORM:
+        you.props[BAHAMUT_TIAMAT_CHOICE3_KEY] = false;
+        break;
+    default:
+        mprf(MSGCH_ERROR, "BUG: Bad ability passed to Bahamut & Tiamat Choice function.");
+        break;
+    }
+
+    return true;
+}

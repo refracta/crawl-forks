@@ -649,6 +649,40 @@ static const ability_def Ability_List[] =
     { ABIL_WU_JIAN_WALLJUMP, "Wall Jump",
         0, 0, 0, 0, {}, abflag::starve_ok | abflag::berserk_ok },
 
+    // Bahamut and Tiamat
+        // Choices
+    { ABIL_BAHAMUT_PROTECTION, "Choose Bahamut's Protection",
+        0, 0, 0, 0, { fail_basis::invo }, abflag::none },
+    { ABIL_TIAMAT_RETRIBUTION, "Choose Tiamat's Retribution",
+        0, 0, 0, 0, { fail_basis::invo }, abflag::none },
+    { ABIL_CHOOSE_BAHAMUT_BREATH, "Choose Bahamut's Empowered Breath",
+        0, 0, 0, 0, { fail_basis::invo }, abflag::none },
+    { ABIL_CHOOSE_TIAMAT_BREATH, "Choose Tiamat's Adaptive Breath",
+        0, 0, 0, 0, { fail_basis::invo }, abflag::none },
+    { ABIL_CHOOSE_BAHAMUT_DRAKE, "Choose Bahamut's Summon Drakes",
+        0, 0, 0, 0, { fail_basis::invo }, abflag::none },
+    { ABIL_CHOOSE_TIAMAT_DRAKE, "Choose Tiamat's Drake Mount",
+        0, 0, 0, 0, { fail_basis::invo }, abflag::none },
+    { ABIL_BAHAMUT_TRANSFORM, "Choose Bahamut's Permanent Transformation",
+        0, 0, 0, 0, { fail_basis::invo }, abflag::none },
+    { ABIL_CHOOSE_TIAMAT_TRANSFORM, "Choose Tiamat's Harmonizing Transformation",
+        0, 0, 0, 0, { fail_basis::invo }, abflag::none },
+    { ABIL_BAHAMUT_DRAGONSLAYING, "Brand Weapon with Dragon Slaying",
+        0, 0, 0, 0, { fail_basis::invo }, abflag::none },
+    { ABIL_TIAMAT_DRAGON_BOOK, "Recieve Book of the Dragon",
+        0, 0, 0, 0, { fail_basis::invo }, abflag::none },
+        // Normal Actives
+    { ABIL_BAHAMUT_EMPOWERED_BREATH, "Empowered Breath",
+        4, 0, 200, 4, { fail_basis::invo }, abflag::breath },
+    { ABIL_TIAMAT_ADAPTIVE_BREATH, "Adaptive Breath",
+        4, 0, 200, 4, { fail_basis::invo }, abflag::breath },
+    { ABIL_BAHAMUT_SUMMON_DRAKES, "Summon Drakes",
+        7, 0, 500, 12, { fail_basis::invo }, abflag::none },
+    { ABIL_TIAMAT_DRAKE_MOUNT, "Drake Mount",
+        7, 0, 500, 12, { fail_basis::invo }, abflag::none },
+    { ABIL_TIAMAT_TRANSFORM, "Change Draconian Colour",
+        4, 0, 500, 8, { fail_basis::invo }, abflag::none },
+
     { ABIL_STOP_RECALL, "Stop Recall", 0, 0, 0, 0, {fail_basis::invo}, abflag::starve_ok },
     { ABIL_RENOUNCE_RELIGION, "Renounce Religion",
       0, 0, 0, 0, {fail_basis::invo}, abflag::starve_ok | abflag::silence_ok },
@@ -3281,6 +3315,12 @@ static spret _do_ability(const ability_def& abil, bool fail)
         fail_check();
         return wu_jian_wall_jump_ability();
 
+    case ABIL_BAHAMUT_PROTECTION:
+    case ABIL_TIAMAT_RETRIBUTION:
+        if (!bahamut_tiamat_make_choice(abil.ability))
+            return spret::abort;
+        break;
+
     case ABIL_RENOUNCE_RELIGION:
         fail_check();
         if (yesno("Really renounce your faith, foregoing its fabulous benefits?",
@@ -3813,6 +3853,12 @@ int find_ability_slot(const ability_type abil, char firstletter)
     case ABIL_CONVERT_TO_BEOGH:
         first_slot = letter_to_index('Y');
         break;
+    case ABIL_BAHAMUT_PROTECTION:
+        first_slot = letter_to_index('B');
+        break;
+    case ABIL_TIAMAT_RETRIBUTION:
+        first_slot = letter_to_index('T');
+        break;
     case ABIL_RU_SACRIFICE_PURITY:
     case ABIL_RU_SACRIFICE_WORDS:
     case ABIL_RU_SACRIFICE_DRINK:
@@ -3890,6 +3936,18 @@ vector<ability_type> get_god_abilities(bool ignore_silence, bool ignore_piety,
                 abilities.push_back(ABIL_RU_APOCALYPSE);
         }
     }
+
+    if (you_worship(GOD_BAHAMUT_TIAMAT))
+    {
+        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY))
+        {
+            abilities.push_back(ABIL_BAHAMUT_PROTECTION);
+            abilities.push_back(ABIL_TIAMAT_RETRIBUTION);
+        }
+
+        // BCADDO: More here.
+    }
+
     // XXX: should we check ignore_piety?
     if (you_worship(GOD_HEPLIAKLQANA)
         && piety_rank() >= 2 && !you.props.exists(HEPLIAKLQANA_ALLY_TYPE_KEY))

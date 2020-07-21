@@ -258,6 +258,9 @@ enum class passive_t
     wu_jian_lunge,
     wu_jian_whirlwind,
     wu_jian_wall_jump,
+
+    // Bahamut's Protection or Tiamat's retribution (checks this and an prop)
+    bahamut_tiamat_passive,
 };
 
 enum ru_interference

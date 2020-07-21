@@ -480,6 +480,11 @@ static peeve_map divine_peeves[] =
     peeve_map(),
     // GOD_WU_JIAN,
     peeve_map(),
+    // GOD_BAHAMUT_TIAMAT
+    {
+        { DID_CANNIBALISM, RUDE_CANNIBALISM_RESPONSE },
+        { DID_ATTACK_FRIEND, _on_attack_friend("you attack draconic allies") },
+    },
 };
 
 string get_god_dislikes(god_type which_god)
@@ -521,7 +526,10 @@ string get_god_dislikes(god_type which_god)
     if (!dislikes.empty())
     {
         text += uppercase_first(god_name(which_god));
-        text += " dislikes it when ";
+        if (which_god == GOD_BAHAMUT_TIAMAT) // Yay for plurals.
+            text += " dislike it when ";
+        else
+            text += " dislike it when ";
         text += comma_separated_line(dislikes.begin(), dislikes.end(),
                                      " or ", ", ");
         text += ".";
@@ -533,7 +541,10 @@ string get_god_dislikes(god_type which_god)
     if (!really_dislikes.empty())
     {
         text += uppercase_first(god_name(which_god));
-        text += " strongly dislikes it when ";
+        if (which_god == GOD_BAHAMUT_TIAMAT) // Yay for plurals.
+            text += " strongly dislike it when ";
+        else
+            text += " strongly dislikes it when ";
         text += comma_separated_line(really_dislikes.begin(),
                                      really_dislikes.end(),
                                      " or ", ", ");
@@ -1000,6 +1011,14 @@ static like_map divine_likes[] =
         { DID_EXPLORATION, EXPLORE_RESPONSE },
     },
     // GOD_WU_JIAN
+    {
+        { DID_KILL_LIVING, KILL_LIVING_RESPONSE },
+        { DID_KILL_UNDEAD, KILL_UNDEAD_RESPONSE },
+        { DID_KILL_DEMON, KILL_DEMON_RESPONSE },
+        { DID_KILL_HOLY, KILL_HOLY_RESPONSE },
+        { DID_KILL_NONLIVING, KILL_NONLIVING_RESPONSE },
+    },
+    // GOD_BAHAMUT_TIAMAT
     {
         { DID_KILL_LIVING, KILL_LIVING_RESPONSE },
         { DID_KILL_UNDEAD, KILL_UNDEAD_RESPONSE },

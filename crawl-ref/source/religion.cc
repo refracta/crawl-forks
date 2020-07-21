@@ -645,6 +645,20 @@ void dec_penance(god_type god, int val)
                 mprf(MSGCH_GOD, "A storm instantly forms around you!");
                 you.redraw_armour_class = true; // also handles shields
             }
+            if (have_passive(passive_t::bahamut_tiamat_passive))
+            {
+                if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY))
+                    mprf(MSGCH_GOD, "You are once again offered a choice between the passive Protection of Bahamut or the Retribution of Tiamat.");
+                else if (you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+                {
+                    mprf(MSGCH_GOD, "Bahamut will now protect you from slowing, confusion and sleep.");
+                    you.duration[DUR_CONF] = 0;
+                    you.duration[DUR_SLOW] = 0;
+                    you.duration[DUR_SLEEP] = 0;
+                }
+                else
+                    mprf(MSGCH_GOD, "Tiamat will now drive you to haste when suffering hard or fiery hits in combat.");
+            }
             // When you've worked through all your penance, you get
             // another chance to make hostile slimes strict neutral.
 
@@ -855,6 +869,18 @@ static void _inc_penance(god_type god, int val)
                 you.duration[DUR_CHANNEL_ENERGY] = 0;
             if (you.attribute[ATTR_DIVINE_ENERGY])
                 you.attribute[ATTR_DIVINE_ENERGY] = 0;
+        }
+
+        else if (god == GOD_BAHAMUT_TIAMAT)
+        {
+            if (you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY))
+            {
+                if (you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+                    mprf(MSGCH_GOD, "Bahamut will no longer protect you from slowing, confusion and sleep.");
+                else
+                    mprf(MSGCH_GOD, "Tiamat will no longer haste you when suffering hard or fiery hits in combat.");
+            }
+            // BCADDO: There's probably going to be more here.
         }
 
         if (you_worship(god))
@@ -2179,39 +2205,40 @@ string god_name(god_type which_god, bool long_name, bool sidebar)
         {
             switch (which_god)
             {
-            case GOD_NO_GOD:        return "No God";
-            case GOD_RANDOM:        return "Random";
-            case GOD_ZIN:           return "Zin";
-            case GOD_SHINING_ONE:   return "TSOne";
-            case GOD_KIKUBAAQUDGHA: return "Kiku";
-            case GOD_YREDELEMNUL:   return "Yred";
-            case GOD_VEHUMET:       return "Vehu";
-            case GOD_OKAWARU:       return "Oka";
-            case GOD_MAKHLEB:       return "Makh";
-            case GOD_SIF_MUNA:      return "Sif";
-            case GOD_TROG:          return "Trog";
-            case GOD_NEMELEX_XOBEH: return "Neme";
-            case GOD_ELYVILON:      return "Ely";
-            case GOD_LUGONU:        return "Lugonu";
-            case GOD_BEOGH:         return "Beogh";
-            case GOD_FEDHAS:        return "Fedhas";
-            case GOD_CHEIBRIADOS:   return "Chei";
-            case GOD_XOM:           return "Xom";
-            case GOD_ASHENZARI:     return "Ash";
-            case GOD_DITHMENOS:     return "Dith";
-            case GOD_GOZAG:         return "Gozag";
-            case GOD_QAZLAL:        return "Qazlal";
-            case GOD_RU:            return "Ru";
+            case GOD_NO_GOD:            return "No God";
+            case GOD_RANDOM:            return "Random";
+            case GOD_ZIN:               return "Zin";
+            case GOD_SHINING_ONE:       return "TSOne";
+            case GOD_KIKUBAAQUDGHA:     return "Kiku";
+            case GOD_YREDELEMNUL:       return "Yred";
+            case GOD_VEHUMET:           return "Vehu";
+            case GOD_OKAWARU:           return "Oka";
+            case GOD_MAKHLEB:           return "Makh";
+            case GOD_SIF_MUNA:          return "Sif";
+            case GOD_TROG:              return "Trog";
+            case GOD_NEMELEX_XOBEH:     return "Neme";
+            case GOD_ELYVILON:          return "Ely";
+            case GOD_LUGONU:            return "Lugonu";
+            case GOD_BEOGH:             return "Beogh";
+            case GOD_FEDHAS:            return "Fedhas";
+            case GOD_CHEIBRIADOS:       return "Chei";
+            case GOD_XOM:               return "Xom";
+            case GOD_ASHENZARI:         return "Ash";
+            case GOD_DITHMENOS:         return "Dith";
+            case GOD_GOZAG:             return "Gozag";
+            case GOD_QAZLAL:            return "Qazlal";
+            case GOD_RU:                return "Ru";
 #if TAG_MAJOR_VERSION == 34
-            case GOD_PAKELLAS:      return "Pak";
+            case GOD_PAKELLAS:          return "Pak";
 #endif
-            case GOD_USKAYAW:       return "Usk";
-            case GOD_HEPLIAKLQANA:  return "Hep";
-            case GOD_WU_JIAN:       return "Wu";
-            case GOD_JIYVA:         return "Jiyva";
+            case GOD_USKAYAW:           return "Usk";
+            case GOD_HEPLIAKLQANA:      return "Hep";
+            case GOD_WU_JIAN:           return "Wu";
+            case GOD_JIYVA:             return "Jiyva";
+            case GOD_BAHAMUT_TIAMAT:    return "Ba&Tia";
             case GOD_NAMELESS:
-            case GOD_ECUMENICAL:    return "???";
-            case NUM_GODS: default: break;
+            case GOD_ECUMENICAL:        return "???";
+            case NUM_GODS: default:     break;
             }
         }
     }
@@ -2234,39 +2261,40 @@ string god_name(god_type which_god, bool long_name, bool sidebar)
 
     switch (which_god)
     {
-    case GOD_NO_GOD:        return "No God";
-    case GOD_RANDOM:        return "random";
-    case GOD_NAMELESS:      return "nameless";
-    case GOD_ZIN:           return "Zin";
-    case GOD_SHINING_ONE:   return "the Shining One";
-    case GOD_KIKUBAAQUDGHA: return "Kikubaaqudgha";
-    case GOD_YREDELEMNUL:   return "Yredelemnul";
-    case GOD_VEHUMET:       return "Vehumet";
-    case GOD_OKAWARU:       return "Okawaru";
-    case GOD_MAKHLEB:       return "Makhleb";
-    case GOD_SIF_MUNA:      return "Sif Muna";
-    case GOD_TROG:          return "Trog";
-    case GOD_NEMELEX_XOBEH: return "Nemelex Xobeh";
-    case GOD_ELYVILON:      return "Elyvilon";
-    case GOD_LUGONU:        return "Lugonu";
-    case GOD_BEOGH:         return "Beogh";
-    case GOD_FEDHAS:        return "Fedhas Madash";
-    case GOD_CHEIBRIADOS:   return "Cheibriados";
-    case GOD_XOM:           return "Xom";
-    case GOD_ASHENZARI:     return "Ashenzari";
-    case GOD_DITHMENOS:     return "Dithmenos";
-    case GOD_GOZAG:         return "Gozag Ym Sagoz";
-    case GOD_QAZLAL:        return "Qazlal";
-    case GOD_RU:            return "Ru";
+    case GOD_NO_GOD:            return "No God";
+    case GOD_RANDOM:            return "random";
+    case GOD_NAMELESS:          return "nameless";
+    case GOD_ZIN:               return "Zin";
+    case GOD_SHINING_ONE:       return "the Shining One";
+    case GOD_KIKUBAAQUDGHA:     return "Kikubaaqudgha";
+    case GOD_YREDELEMNUL:       return "Yredelemnul";
+    case GOD_VEHUMET:           return "Vehumet";
+    case GOD_OKAWARU:           return "Okawaru";
+    case GOD_MAKHLEB:           return "Makhleb";
+    case GOD_SIF_MUNA:          return "Sif Muna";
+    case GOD_TROG:              return "Trog";
+    case GOD_NEMELEX_XOBEH:     return "Nemelex Xobeh";
+    case GOD_ELYVILON:          return "Elyvilon";
+    case GOD_LUGONU:            return "Lugonu";
+    case GOD_BEOGH:             return "Beogh";
+    case GOD_FEDHAS:            return "Fedhas Madash";
+    case GOD_CHEIBRIADOS:       return "Cheibriados";
+    case GOD_XOM:               return "Xom";
+    case GOD_ASHENZARI:         return "Ashenzari";
+    case GOD_DITHMENOS:         return "Dithmenos";
+    case GOD_GOZAG:             return "Gozag Ym Sagoz";
+    case GOD_QAZLAL:            return "Qazlal";
+    case GOD_RU:                return "Ru";
 #if TAG_MAJOR_VERSION == 34
-    case GOD_PAKELLAS:      return "Pakellas";
+    case GOD_PAKELLAS:          return "Pakellas";
 #endif
-    case GOD_USKAYAW:       return "Uskayaw";
-    case GOD_HEPLIAKLQANA:  return "Hepliaklqana";
-    case GOD_WU_JIAN:       return "Wu Jian";
+    case GOD_USKAYAW:           return "Uskayaw";
+    case GOD_HEPLIAKLQANA:      return "Hepliaklqana";
+    case GOD_WU_JIAN:           return "Wu Jian";
     case GOD_JIYVA: // This is handled at the beginning of the function
-    case GOD_ECUMENICAL:    return "an unknown god";
-    case NUM_GODS: default: break;
+    case GOD_ECUMENICAL:        return "an unknown god";
+    case GOD_BAHAMUT_TIAMAT:    return "Bahamut & Tiamat";
+    case NUM_GODS: default:     break;
     }
     return "buggy";
 }
@@ -2520,6 +2548,21 @@ static void _gain_piety_point()
         if (rank == rank_for_passive(passive_t::clarity))
             you.duration[DUR_CONF] = 0;
 
+        if (rank == rank_for_passive(passive_t::bahamut_tiamat_passive))
+        {
+            if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY))
+                mprf(MSGCH_GOD, "You may now make a choice between the passive Protection of Bahamut or the Retribution of Tiamat.");
+            else if (you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+            {
+                mprf(MSGCH_GOD, "Bahamut will now protect you from slowing, confusion and sleep.");
+                you.duration[DUR_CONF] = 0;
+                you.duration[DUR_SLOW] = 0;
+                you.duration[DUR_SLEEP] = 0;
+            }
+            else
+                mprf(MSGCH_GOD, "Tiamat will now drive you to haste when suffering hard or fiery hits in combat.");
+        }
+
         // TODO: add one-time ability check in have_passive
         if (have_passive(passive_t::unlock_slime_vaults) && can_do_capstone_ability(you.religion))
         {
@@ -2771,6 +2814,7 @@ int initial_wrath_penance_for(god_type god)
     {
         case GOD_ASHENZARI:
         case GOD_BEOGH:
+        case GOD_BAHAMUT_TIAMAT:
         case GOD_ELYVILON:
         case GOD_GOZAG:
         case GOD_HEPLIAKLQANA:
@@ -3177,6 +3221,9 @@ bool god_hates_attacking_friend(god_type god, const monster& fr)
             return mons_class_is_slime(species);
         case GOD_FEDHAS:
             return _fedhas_protects_species(species);
+        case GOD_BAHAMUT_TIAMAT:
+            return mons_genus(species) == MONS_DRAGON || mons_genus(species) == MONS_DRAKE 
+                || mons_genus(species) == MONS_DRACONIAN;
         default:
             return false;
     }
@@ -3244,6 +3291,9 @@ bool player_can_join_god(god_type which_god)
         return false;
 
     if (which_god == GOD_BEOGH && !species_is_orcish(you.species))
+        return false;
+
+    if (which_god == GOD_BAHAMUT_TIAMAT && !species_is_draconian(you.species))
         return false;
 
     // Fedhas hates undead, but will accept demonspawn. Trog won't accept those that can't rage.
@@ -4214,6 +4264,7 @@ void handle_god_time(int /*time_delta*/)
 #endif
         case GOD_JIYVA:
         case GOD_WU_JIAN:
+        case GOD_BAHAMUT_TIAMAT:
             if (one_chance_in(17))
                 lose_piety(1);
             break;

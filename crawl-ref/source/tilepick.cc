@@ -492,6 +492,8 @@ tileidx_t tileidx_feature_base(dungeon_feature_type feat)
         return TILE_DNGN_ALTAR_WU_JIAN;
     case DNGN_ALTAR_ECUMENICAL:
         return TILE_DNGN_ALTAR_ECUMENICAL;
+    case DNGN_ALTAR_BAHAMUT_TIAMAT:
+        return TILE_DNGN_ALTAR_BAHAMUT_TIAMAT;
     case DNGN_FOUNTAIN_BLUE:
         return TILE_DNGN_BLUE_FOUNTAIN;
     case DNGN_FOUNTAIN_SPARKLING:

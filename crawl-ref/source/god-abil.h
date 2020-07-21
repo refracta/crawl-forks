@@ -55,6 +55,11 @@ const char * const GOZAG_SHOP_COST_KEY       = "gozag_shop_cost_%d";
 #define USKAYAW_MONSTER_HURT_VALUE "uskayaw_monster_hurt_value"
 #define USKAYAW_AUT_SINCE_PIETY_GAIN "uskayaw_aut_since_piety_gain"
 
+#define BAHAMUT_TIAMAT_CHOICE0_KEY "first_bahamut_tiamat_ability_choice"
+#define BAHAMUT_TIAMAT_CHOICE1_KEY "second_bahamut_tiamat_ability_choice"
+#define BAHAMUT_TIAMAT_CHOICE2_KEY "third_bahamut_tiamat_ability_choice"
+#define BAHAMUT_TIAMAT_CHOICE3_KEY "fourth_bahamut_tiamat_ability_choice"
+
 struct bolt;
 class stack_iterator;
 
@@ -201,3 +206,5 @@ bool wu_jian_can_wall_jump_in_principle(const coord_def& target);
 bool wu_jian_can_wall_jump(const coord_def& target, string &error_ret);
 bool wu_jian_do_wall_jump(coord_def targ, bool ability);
 spret wu_jian_wall_jump_ability();
+
+bool bahamut_tiamat_make_choice(ability_type abil);
