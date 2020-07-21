@@ -3917,6 +3917,22 @@ static void tag_read_you_items(reader &th)
             continue;
         }
 
+        // If wearing non-armour in armour slot, unwear.
+        if (item && i >= EQ_MIN_ARMOUR && i <= EQ_MAX_ARMOUR && item->base_type != OBJ_ARMOURS)
+        {
+            you.equip[i] = -1;
+            you.melded.set(i, false);
+            continue;
+        }
+
+        // If wearing anything in the no-longer existant shield slot; unwear.
+        if (item && i == EQ_OLD_SHIELD)
+        {
+            you.equip[i] = -1;
+            you.melded.set(i, false);
+            continue;
+        }
+
         if (item && i != EQ_AMULET && i != EQ_FAIRY_JEWEL && item->is_type(OBJ_JEWELLERY, AMU_CHAOS))
         {
             you.equip[i] = -1;
