@@ -1643,18 +1643,22 @@ int monster_info::res_magic() const
 string monster_info::speed_description() const
 {
     string part;
+    part = "a";
+
     if (mbase_speed < 7)
-        part = "very slow";
+        part += " very slow";
     else if (mbase_speed < 10)
-        part = "slow";
+        part += " slow";
     else if (mbase_speed > 20)
-        part = "extremely fast";
+        part += "n extremely fast";
     else if (mbase_speed > 15)
-        part = "very fast";
+        part += " very fast";
     else if (mbase_speed > 10)
-        part = "fast";
+        part += " fast";
     else 
-        part = "average";
+        part += "n average";
+
+    part += " action rate";
 
     return make_stringf("%s (%d)", part.c_str(), mbase_speed);
 }

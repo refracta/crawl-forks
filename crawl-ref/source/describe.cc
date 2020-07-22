@@ -4325,21 +4325,18 @@ static const char *_speed_description(int speed)
 {
     // These thresholds correspond to the player mutations for fast and slow.
     ASSERT(speed != 10);
-    string part = "buggily";
-    if (speed < 7)
-        part = "extremely slowly";
-    else if (speed < 8)
-        part = "very slowly";
-    else if (speed < 10)
-        part = "slowly";
-    else if (speed > 15)
-        part = "extremely quickly";
-    else if (speed > 13)
-        part = "very quickly";
-    else if (speed > 10)
-        part = "quickly";
 
-    return make_stringf("%s (%d)", part.c_str(), speed).c_str();
+    if (speed < 7)
+        return "extremely slowly";
+    else if (speed < 8)
+        return "very slowly";
+    else if (speed < 10)
+        return "slowly";
+    else if (speed > 15)
+        return "extremely quickly";
+    else if (speed > 13)
+        return "very quickly";
+    return "quickly";
 }
 
 static void _add_energy_to_string(int speed, int energy, string what,
@@ -4350,9 +4347,9 @@ static void _add_energy_to_string(int speed, int energy, string what,
 
     const int act_speed = (speed * 10) / energy;
     if (act_speed > 10)
-        fast.push_back(what + " " + _speed_description(act_speed));
+        fast.push_back(what + " " + _speed_description(act_speed) + " (" + to_string(act_speed) + ")");
     if (act_speed < 10)
-        slow.push_back(what + " " + _speed_description(act_speed));
+        slow.push_back(what + " " + _speed_description(act_speed) + " (" + to_string(act_speed) + ")");
 }
 
 static void _describe_monster_hd(const monster_info& mi, ostringstream &result)
@@ -4635,7 +4632,7 @@ static string _monster_stat_description(const monster_info& mi)
     {
         did_speed = true;
         result << uppercase_first(pronoun) << " "
-               << conjugate_verb("are", plural) << " "
+               << conjugate_verb("have", plural) << " "
                << mi.speed_description();
     }
     const mon_energy_usage def = DEFAULT_ENERGY;
