@@ -378,6 +378,8 @@ monster_type random_draconian_job();
 monster_type random_demonspawn_monster_species();
 monster_type random_demonspawn_job();
 
+string get_species_insult(const string &species, const string &type);
+
 bool init_abomination(monster& mon, int hd, bool player = false);
 void define_monster(monster& mons);
 

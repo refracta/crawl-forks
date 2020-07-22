@@ -5968,7 +5968,7 @@ string player::shout_verb(bool directed) const
     if (!get_form()->shout_verb.empty())
         return get_form()->shout_verb;
 
-    const int screaminess = max(get_mutation_level(MUT_SCREAM) - 1, 0);
+    const int screaminess = max(get_mutation_level(MUT_SHOUTITUS) - 1, 0);
 
     if (species == SP_GNOLL)
         return dog_shout_verbs[screaminess];
@@ -5994,8 +5994,8 @@ int player::shout_volume() const
 {
     const int base_noise = 12 + get_form()->shout_volume_modifier;
 
-    if (get_mutation_level(MUT_SCREAM))
-        return base_noise + 2 * (get_mutation_level(MUT_SCREAM) - 1);
+    if (get_mutation_level(MUT_SHOUTITUS))
+        return base_noise + 2 * (get_mutation_level(MUT_SHOUTITUS) - 1);
 
     return base_noise;
 }
