@@ -7370,9 +7370,11 @@ bool bahamut_tiamat_make_choice(ability_type abil)
     {
     case ABIL_BAHAMUT_PROTECTION:
         you.props[BAHAMUT_TIAMAT_CHOICE0_KEY] = true;
+        mprf(MSGCH_GOD, "Bahamut will now protect you.");
         break;
     case ABIL_TIAMAT_RETRIBUTION:
         you.props[BAHAMUT_TIAMAT_CHOICE0_KEY] = false;
+        mprf(MSGCH_GOD, "Tiamat will now quicken your movements in response to powerful hits.");
         break;
     case ABIL_CHOOSE_BAHAMUT_BREATH:
         you.props[BAHAMUT_TIAMAT_CHOICE1_KEY] = true;

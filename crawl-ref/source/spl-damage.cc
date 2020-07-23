@@ -518,13 +518,13 @@ static int _los_spell_damage_player(actor* agent, bolt &beam,
         {
             ouch(hurted, KILLED_BY_BEAM, agent->mid,
                  make_stringf("by %s", beam.name.c_str()).c_str(), true,
-                 agent->as_monster()->name(DESC_A).c_str());
+                 agent->as_monster()->name(DESC_A).c_str(), beam.flavour == BEAM_FIRE);
             you.expose_to_element(beam.flavour, 5);
             if (beam.origin_spell == SPELL_OZOCUBUS_REFRIGERATION && (player_res_cold() < 1))
                 slow_player(hurted);
         }
         // -harm from player casting Ozo's Refridge.
-        // we don't actually take damage, but can get slowed and lose potions
+        // we don't actually take damage, but can get slowed
         else if (beam.origin_spell == SPELL_OZOCUBUS_REFRIGERATION)
         {
             you.expose_to_element(beam.flavour, 5);
@@ -2291,7 +2291,7 @@ static int _ignite_poison_player(coord_def where, beam_type damtype, int pow, ac
 
     ouch(damage, KILLED_BY_BEAM, agent->mid,
          (damtype == BEAM_FIRE) ? "by burning poison" : "by chaotically catalyzed poison", 
-         you.can_see(*agent), agent->as_monster()->name(DESC_A, true).c_str());
+         you.can_see(*agent), agent->as_monster()->name(DESC_A, true).c_str(), damtype == BEAM_FIRE);
     if (damage > 0)
     {
         you.expose_to_element(damtype, 2);

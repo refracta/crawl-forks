@@ -4645,10 +4645,18 @@ bool confuse_player(int amount, bool quiet, bool force)
         return false;
     }
 
+    if (!force && have_passive(passive_t::bahamut_tiamat_passive)
+        && you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY)
+        && you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+    {
+        mprf(MSGCH_DURATION, "Bahamut protects you from confusion.");
+        return false;
+    }
+
     if (!force && you.duration[DUR_DIVINE_STAMINA] > 0)
     {
         if (!quiet)
-            mpr("Your divine stamina protects you from confusion!");
+            mprf(MSGCH_DURATION, "Your divine stamina protects you from confusion!");
         return false;
     }
 
@@ -4691,7 +4699,7 @@ bool poison_player(int amount, string source, string source_aux, bool force)
 
     if (you.duration[DUR_DIVINE_STAMINA] > 0)
     {
-        mpr("Your divine stamina protects you from poison!");
+        mprf(MSGCH_DURATION, "Your divine stamina protects you from poison!");
         return false;
     }
 
@@ -4958,7 +4966,7 @@ bool miasma_player(actor *who, string source_aux)
 
     if (you.duration[DUR_DIVINE_STAMINA] > 0)
     {
-        mpr("Your divine stamina protects you from the miasma!");
+        mprf(MSGCH_DURATION, "Your divine stamina protects you from the miasma!");
         return false;
     }
 
@@ -5024,7 +5032,7 @@ void dec_napalm_player(int delay)
     you.expose_to_element(BEAM_STICKY_FLAME, 2);
     maybe_melt_player_enchantments(BEAM_STICKY_FLAME, hurted * delay / BASELINE_DELAY);
 
-    ouch(hurted * delay / BASELINE_DELAY, KILLED_BY_BURNING);
+    ouch(hurted * delay / BASELINE_DELAY, KILLED_BY_BURNING, 0U, nullptr, true, nullptr, true);
 
     you.duration[DUR_LIQUID_FLAMES] -= delay;
     if (you.duration[DUR_LIQUID_FLAMES] <= 0)
@@ -5040,6 +5048,14 @@ bool slow_player(int turns)
 
     if (turns <= 0)
         return false;
+
+    if (have_passive(passive_t::bahamut_tiamat_passive)
+        && you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY)
+        && you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+    {
+        mprf(MSGCH_DURATION, "Bahamut protects you from being slowed.");
+        return false;
+    }
 
     if (you.stasis())
     {
@@ -5114,7 +5130,7 @@ void dec_berserk_recovery_player(int delay)
     }
 }
 
-bool haste_player(int turns, bool rageext)
+bool haste_player(int turns, bool rageext, bool msg)
 {
     ASSERT(!crawl_state.game_is_arena());
 
@@ -5132,12 +5148,15 @@ bool haste_player(int turns, bool rageext)
     turns = haste_div(turns);
     const int threshold = 40;
 
-    if (!you.duration[DUR_HASTE])
-        mpr("You feel yourself speed up.");
-    else if (you.duration[DUR_HASTE] > threshold * BASELINE_DELAY)
-        mpr("You already have as much speed as you can handle.");
-    else if (!rageext)
-        mpr("You feel as though your hastened speed will last longer.");
+    if (msg)
+    {
+        if (!you.duration[DUR_HASTE])
+            mpr("You feel yourself speed up.");
+        else if (you.duration[DUR_HASTE] > threshold * BASELINE_DELAY)
+            mpr("You already have as much speed as you can handle.");
+        else if (!rageext)
+            mpr("You feel as though your hastened speed will last longer.");
+    }
 
     you.increase_duration(DUR_HASTE, turns, threshold);
 
@@ -7235,6 +7254,9 @@ int player::hurt(const actor *agent, int amount, beam_type flavour,
                  kill_method_type kill_type, string source, string aux,
                  bool /*cleanup_dead*/, bool /*attacker_effects*/)
 {
+    bool fiery = (flavour == BEAM_FIRE || flavour == BEAM_LAVA 
+               || flavour == BEAM_CRYSTAL_FIRE || flavour == BEAM_STICKY_FLAME);
+
     // We ignore cleanup_dead here.
     if (!agent)
     {
@@ -7242,12 +7264,12 @@ int player::hurt(const actor *agent, int amount, beam_type flavour,
         // to a player from a dead monster. We should probably not do that,
         // but it could be tricky to fix, so for now let's at least avoid
         // a crash even if it does mean funny death messages.
-        ouch(amount, kill_type, MID_NOBODY, aux.c_str(), false, source.c_str());
+        ouch(amount, kill_type, MID_NOBODY, aux.c_str(), false, source.c_str(), fiery);
     }
     else
     {
         ouch(amount, kill_type, agent->mid, aux.c_str(),
-             agent->visible_to(this), source.c_str());
+             agent->visible_to(this), source.c_str(), fiery);
     }
 
     if ((flavour == BEAM_DEVASTATION || flavour == BEAM_DISINTEGRATION 
@@ -7282,7 +7304,7 @@ bool player::rot(actor */*who*/, int amount, bool quiet, bool /*no_cleanup*/)
 
     if (duration[DUR_DIVINE_STAMINA] > 0)
     {
-        mpr("Your divine stamina protects you from decay!");
+        mprf(MSGCH_DURATION, "Your divine stamina protects you from decay!");
         return false;
     }
 
@@ -7450,7 +7472,15 @@ void player::petrify(actor *who, bool force)
 
     if (duration[DUR_DIVINE_STAMINA] > 0)
     {
-        mpr("Your divine stamina protects you from petrification!");
+        mprf(MSGCH_DURATION, "Your divine stamina protects you from petrification!");
+        return;
+    }
+
+    if (have_passive(passive_t::bahamut_tiamat_passive)
+        && you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY)
+        && you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+    {
+        mprf(MSGCH_DURATION, "Bahamut protects you from petrification.");
         return;
     }
 
@@ -7699,11 +7729,11 @@ bool player::sicken(int amount)
 
     if (duration[DUR_DIVINE_STAMINA] > 0)
     {
-        mpr("Your divine stamina protects you from disease!");
+        mprf(MSGCH_DURATION, "Your divine stamina protects you from disease!");
         return false;
     }
 
-    mpr("You feel ill.");
+    mprf(MSGCH_DURATION, "You feel ill.");
 
     disease += amount * BASELINE_DELAY;
     if (disease > 210 * BASELINE_DELAY)
@@ -7999,9 +8029,17 @@ void player::put_to_sleep(actor*, int power, bool hibernate)
         return;
     }
 
+    if (have_passive(passive_t::bahamut_tiamat_passive)
+        && you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY)
+        && you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+    {
+        mprf(MSGCH_DURATION, "Bahamut protects you from falling asleep.");
+        return;
+    }
+
     if (duration[DUR_SLEEP_IMMUNITY])
     {
-        mpr("You can't fall asleep again this soon!");
+        mprf(MSGCH_DURATION, "You can't fall asleep again this soon!");
         return;
     }
 

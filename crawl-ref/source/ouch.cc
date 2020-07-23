@@ -757,6 +757,30 @@ static void _powered_by_pain(int dam)
     }
 }
 
+static void _tiamat_retribution(int dam, bool fiery)
+{
+    if (have_passive(passive_t::bahamut_tiamat_passive)
+        && you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY)
+        && !you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+    {
+        if (fiery)
+            dam *= 2;
+
+        if (dam < (you.hp_max / 10))
+            return;
+
+        bool already_haste = you.duration[DUR_HASTE];
+
+        if (x_chance_in_y(dam * 2, you.hp_max))
+        {
+            if (haste_player(dam / 4 + random2(dam), false, false))
+                mprf(MSGCH_DURATION, "%sTiamat %s haste.", fiery ? "Your cold-blood boils as " : "", 
+                    already_haste ? "extends your" : "raises you to a" );
+        }
+    }
+}
+
+
 static void _maybe_fog(int dam)
 {
     const int minpiety = have_passive(passive_t::hit_smoke)
@@ -933,9 +957,10 @@ static bool _is_damage_threatening (int damage_fraction_of_hp)
  *  @param aux what did they do it with?
  *  @param see_source whether the attacker was visible to you
  *  @param death_source_name the attacker's name if it is already dead.
+ *  @param fiery increased haste chance from Tiamat
  */
 void ouch(int dam, kill_method_type death_type, mid_t source, const char *aux,
-          bool see_source, const char *death_source_name)
+          bool see_source, const char *death_source_name, bool fiery)
 {
     ASSERT(!crawl_state.game_is_arena());
     if (you.duration[DUR_TIME_STEP])
@@ -1097,6 +1122,7 @@ void ouch(int dam, kill_method_type death_type, mid_t source, const char *aux,
             _maybe_spawn_monsters(dam, death_type, source);
             _maybe_fog(dam);
             _powered_by_pain(dam);
+            _tiamat_retribution(dam, fiery);
             if (sanguine_armour_valid())
                 activate_sanguine_armour();
             if (death_type != KILLED_BY_POISON)

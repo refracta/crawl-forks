@@ -3078,7 +3078,7 @@ void bolt::affect_ground()
 
 bool bolt::is_fiery() const
 {
-    return flavour == BEAM_FIRE || flavour == BEAM_LAVA;
+    return flavour == BEAM_FIRE || flavour == BEAM_LAVA || flavour == BEAM_STICKY_FLAME;
 }
 
 /// Can this bolt burn trees it hits?
@@ -3365,7 +3365,7 @@ void bolt::internal_ouch(int dam)
     {
         ouch(dam, KILLED_BY_DIVINE_WRATH, MID_NOBODY,
              aux_source.empty() ? nullptr : aux_source.c_str(), true,
-             source_name.empty() ? nullptr : source_name.c_str());
+             source_name.empty() ? nullptr : source_name.c_str(), is_fiery());
     }
     else if (monst && (monst->type == MONS_BALLISTOMYCETE_SPORE
                        || monst->type == MONS_BALL_LIGHTNING
@@ -3384,28 +3384,28 @@ void bolt::internal_ouch(int dam)
         || flavour == BEAM_CHAOTIC_DEVASTATION)
     {
         ouch(dam, KILLED_BY_DISINT, source_id, what, true,
-             source_name.empty() ? nullptr : source_name.c_str());
+             source_name.empty() ? nullptr : source_name.c_str(), is_fiery());
     }
     else if (YOU_KILL(thrower) && aux_source.empty())
     {
         if (reflections > 0)
-            ouch(dam, KILLED_BY_REFLECTION, reflector, name.c_str());
+            ouch(dam, KILLED_BY_REFLECTION, reflector, name.c_str(), true, nullptr, is_fiery());
         else if (bounces > 0)
-            ouch(dam, KILLED_BY_BOUNCE, MID_PLAYER, name.c_str());
+            ouch(dam, KILLED_BY_BOUNCE, MID_PLAYER, name.c_str(), true, nullptr, is_fiery());
         else
         {
             if (aimed_at_feet && effect_known)
-                ouch(dam, KILLED_BY_SELF_AIMED, MID_PLAYER, name.c_str());
+                ouch(dam, KILLED_BY_SELF_AIMED, MID_PLAYER, name.c_str(), true, nullptr, is_fiery());
             else
-                ouch(dam, KILLED_BY_TARGETING, MID_PLAYER, name.c_str());
+                ouch(dam, KILLED_BY_TARGETING, MID_PLAYER, name.c_str(), true, nullptr, is_fiery());
         }
     }
     else if (MON_KILL(thrower) || aux_source == "exploding inner flame")
         ouch(dam, KILLED_BY_BEAM, source_id,
              aux_source.c_str(), true,
-             source_name.empty() ? nullptr : source_name.c_str());
+             source_name.empty() ? nullptr : source_name.c_str(), is_fiery());
     else // KILL_MISC || (YOU_KILL && aux_source)
-        ouch(dam, KILLED_BY_WILD_MAGIC, source_id, aux_source.c_str());
+        ouch(dam, KILLED_BY_WILD_MAGIC, source_id, aux_source.c_str(), true, nullptr, is_fiery());
 }
 
 // [ds] Apply a fuzz if the monster lacks see invisible and is trying to target

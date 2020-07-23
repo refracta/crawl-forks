@@ -1145,7 +1145,7 @@ bool slow_player(int turns);
 void dec_slow_player(int delay);
 void dec_berserk_recovery_player(int delay);
 
-bool haste_player(int turns, bool rageext = false);
+bool haste_player(int turns, bool rageext = false, bool msg = true);
 void dec_haste_player(int delay);
 void dec_elixir_player(int delay);
 void dec_ambrosia_player(int delay);

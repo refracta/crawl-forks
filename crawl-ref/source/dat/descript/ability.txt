@@ -35,6 +35,10 @@ Breathe Frost ability
 
 <Chilling Breath spell>
 %%%%
+Twisted Reanimation ability
+
+<Twisted Resurrection spell>
+%%%%
 Breathe Poison Gas ability
 
 Breathes a blast of poison gas at a targeted creature.
@@ -953,6 +957,17 @@ with martial attacks provides an increasing bonus to melee damage and accuracy.
 The bonus fades over time, and the storm lasts until the bonus has faded
 completely. The heavenly clouds prevent invisibility, and obscure the vision of
 those outside the storm.
+%%%%
+Choose Bahamut's Protection ability
+
+Bahamut will passively protect you against slowing, petrification, sleep and confusion 
+for as long as you worship Bahamut & Tiamat. This choice is permanent.
+%%%%
+Choose Tiamat's Retribution ability
+
+Upon taking a significantly damaging hit, Tiamat may quicken your movements in reprisal. 
+Odds are higher on fiery hits as the heat warming your cold blood makes speeding up easier. 
+This haste chance persists as long as you worship Bahamut & Tiamat. This choice is permanent.
 %%%%
 Hop ability
 
