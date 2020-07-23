@@ -394,6 +394,29 @@ const vector<god_power> god_powers[NUM_GODS] =
            "summon a storm of heavenly clouds to empower your attacks",
            "summon a storm of heavenly clouds" },
     },
+
+    // Bahamut and Tiamat
+    { { 0, ABIL_BAHAMUT_PROTECTION, "You are now offered a choice between Bahamut's Protection and Tiamat's Retribution.", 
+                                    "", "Bahamut will protect you from slowing, confusion, petrification and sleep."},
+      { 0, ABIL_TIAMAT_RETRIBUTION, "", "", "Tiamat will quicken your movements in retribution for hard-hitting attacks."},
+      { 2, ABIL_CHOOSE_BAHAMUT_BREATH, "You are now offered a choice between Bahamut's Empowered Breath and Tiamat's Adaptive breath.",
+                "Bahamut & Tiamat are no longer ready to enhance your breath abilities.", "enhance your natural draconic breath"}, 
+      { 2, ABIL_CHOOSE_TIAMAT_BREATH, "", "", "select a different breath power to use in place of your own"},
+      { 2, ABIL_BAHAMUT_EMPOWERED_BREATH, " enhance your natural draconic breath"},
+      { 2, ABIL_TIAMAT_ADAPTIVE_BREATH, " select a different breath power to use in place of your own"},
+      { 4, ABIL_CHOOSE_BAHAMUT_DRAKE, "You are now offered a choice between Bahamut's Summon Drakes and Tiamat's Summon Drake Mount.",
+                "Bahamut & Tiamat are no longer ready for you to choose a drake summon.", "summon a horde of drakes into battle"},
+      { 4, ABIL_CHOOSE_TIAMAT_DRAKE, "", "", "summon a single rime drake and ride upon its back" },
+      { 4, ABIL_BAHAMUT_SUMMON_DRAKES, " summon a horde of drakes into battle" },
+      { 4, ABIL_TIAMAT_DRAKE_MOUNT, " summon a single rime drake and ride upon its back" },
+      { 6, ABIL_BAHAMUT_TRANSFORM, "You are now offered a choice between Bahamut's Enhanced Transformation and Tiamat's Repeatable Transformation.",
+                "Bahamut & Tiamat are no longer ready to transform you.", "permanently transform into a rarer, more powerful, draconian colour"},
+      { 6, ABIL_CHOOSE_TIAMAT_TRANSFORM, "", "", "repeatedly transform into other common draconian colours"},
+      { 6, ABIL_TIAMAT_TRANSFORM, " transform into a different draconian colour" },
+      { 7, ABIL_BAHAMUT_DRAGONSLAYING, "You are offered one final gift. Bahamut offers to brand your weapon with Dragonslaying and Tiamat offers a"
+                " Book of the Dragon, along with a permanent Wizardry bonus for spells therein.", "Bahamut & Tiamat are no longer ready to give you your"
+                " final gift.", "Bahamut will brand one of your weapons with Dragonslaying or Tiamat will gift you a Book of the Dragon."},
+    },
 };
 
 vector<god_power> get_god_powers(god_type god)
@@ -2528,6 +2551,12 @@ static void _gain_piety_point()
         take_note(Note(NOTE_PIETY_RANK, you.religion, rank));
         for (const auto& power : get_god_powers(you.religion))
         {
+            // Gain description of the choice abilities are on the first of the two choices.
+            if (power.abil == ABIL_TIAMAT_RETRIBUTION || power.abil == ABIL_CHOOSE_TIAMAT_BREATH
+                || power.abil == ABIL_CHOOSE_TIAMAT_DRAKE || power.abil == ABIL_CHOOSE_TIAMAT_TRANSFORM)
+            {
+                continue;
+            }
             if (power.rank == rank
                 || power.rank == 7 && can_do_capstone_ability(you.religion))
             {
@@ -2705,6 +2734,13 @@ void lose_piety(int pgn)
 
         for (const auto& power : get_god_powers(you.religion))
         {
+            // Loss description of the choice abilities are on the first of the two choices.
+            if (power.abil == ABIL_TIAMAT_RETRIBUTION || power.abil == ABIL_CHOOSE_TIAMAT_BREATH
+                || power.abil == ABIL_CHOOSE_TIAMAT_DRAKE || power.abil == ABIL_CHOOSE_TIAMAT_TRANSFORM)
+            {
+                continue;
+            }
+
             if (power.rank == old_rank
                 || power.rank == 7 && old_rank == 6
                    && !you.one_time_ability_used[you.religion])
@@ -2908,7 +2944,8 @@ void excommunication(bool voluntary, god_type new_god)
     if (god_hates_your_god(old_god, new_god))
     {
         simple_god_message(
-            make_stringf(" does not appreciate desertion%s!",
+            make_stringf(" do%s not appreciate desertion%s!",
+                         old_god == GOD_BAHAMUT_TIAMAT ? "" : "es",
                          _god_hates_your_god_reaction(old_god, new_god).c_str()).c_str(),
             old_god);
     }
@@ -3815,7 +3852,8 @@ void join_religion(god_type which_god)
                    + god_name(you.religion) + ".");
     take_note(Note(NOTE_GET_GOD, you.religion));
 
-    simple_god_message(make_stringf(" welcomes you%s!",
+    simple_god_message(make_stringf(" welcome%s you%s!",
+                                    which_god == GOD_BAHAMUT_TIAMAT ? "" : "s",
                                     you.worshipped[which_god] ? " back"
                                                               : "").c_str());
     // included in default force_more_message
@@ -3853,8 +3891,13 @@ void join_religion(god_type which_god)
 
     if (!you_worship(GOD_GOZAG))
         for (const auto& power : get_god_powers(you.religion))
+        {
+            // Gain description of the choice abilities are on the first of the two choices.
+            if (power.abil == ABIL_TIAMAT_RETRIBUTION)
+                continue;
             if (power.rank <= 0)
                 power.display(true, "You can now %s.");
+        }
 
     // Allow training all divine ability skills immediately.
     vector<ability_type> abilities = get_god_abilities();

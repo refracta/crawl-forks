@@ -1009,6 +1009,58 @@ ability_type fixup_ability(ability_type ability)
         else
             return ability;
 
+    // Can only make the choices once.
+    case ABIL_BAHAMUT_PROTECTION:
+    case ABIL_TIAMAT_RETRIBUTION:
+        if (you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY))
+            return ABIL_NON_ABILITY;
+        return ability;
+
+    case ABIL_CHOOSE_BAHAMUT_BREATH:
+    case ABIL_CHOOSE_TIAMAT_BREATH:
+        if (you.props.exists(BAHAMUT_TIAMAT_CHOICE1_KEY))
+            return ABIL_NON_ABILITY;
+        return ability;
+
+    case ABIL_CHOOSE_BAHAMUT_DRAKE:
+    case ABIL_CHOOSE_TIAMAT_DRAKE:
+        if (you.props.exists(BAHAMUT_TIAMAT_CHOICE2_KEY))
+            return ABIL_NON_ABILITY;
+        return ability;
+
+    case ABIL_CHOOSE_TIAMAT_TRANSFORM:
+        if (you.props.exists(BAHAMUT_TIAMAT_CHOICE3_KEY))
+            return ABIL_NON_ABILITY;
+        return ability;
+
+    // You only have one of the choice abilities.
+    case ABIL_BAHAMUT_EMPOWERED_BREATH:
+        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE1_KEY) || !you.props[BAHAMUT_TIAMAT_CHOICE1_KEY].get_bool())
+            return ABIL_NON_ABILITY;
+        return ability;
+    case ABIL_TIAMAT_ADAPTIVE_BREATH:
+        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE1_KEY) || you.props[BAHAMUT_TIAMAT_CHOICE1_KEY].get_bool())
+            return ABIL_NON_ABILITY;
+        return ability;
+
+    case ABIL_BAHAMUT_SUMMON_DRAKES:
+        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE2_KEY) || !you.props[BAHAMUT_TIAMAT_CHOICE2_KEY].get_bool())
+            return ABIL_NON_ABILITY;
+        return ability;
+    case ABIL_TIAMAT_DRAKE_MOUNT:
+        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE2_KEY) || you.props[BAHAMUT_TIAMAT_CHOICE2_KEY].get_bool())
+            return ABIL_NON_ABILITY;
+        return ability;
+
+    case ABIL_BAHAMUT_TRANSFORM:
+        if (you.props.exists(BAHAMUT_TIAMAT_CHOICE3_KEY))
+            return ABIL_NON_ABILITY;
+        return ability;
+    case ABIL_TIAMAT_TRANSFORM:
+        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE3_KEY) || you.props[BAHAMUT_TIAMAT_CHOICE3_KEY].get_bool())
+            return ABIL_NON_ABILITY;
+        return ability;
+
     default:
         return ability;
     }
@@ -3935,17 +3987,6 @@ vector<ability_type> get_god_abilities(bool ignore_silence, bool ignore_piety,
             if (piety_rank() >= 5)
                 abilities.push_back(ABIL_RU_APOCALYPSE);
         }
-    }
-
-    if (you_worship(GOD_BAHAMUT_TIAMAT))
-    {
-        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY))
-        {
-            abilities.push_back(ABIL_BAHAMUT_PROTECTION);
-            abilities.push_back(ABIL_TIAMAT_RETRIBUTION);
-        }
-
-        // BCADDO: More here.
     }
 
     // XXX: should we check ignore_piety?

@@ -59,7 +59,7 @@ static VColour _flash_colours[NUM_TERM_COLOURS] =
     VColour(255,  64,  64, 100), // LIGHTRED
     VColour(255,  64, 255, 100), // LIGHTMAGENTA
     VColour(150, 150,   0, 100), // YELLOW
-    VColour(255, 255, 255, 100), // WHITE
+    VColour(255, 255, 255, 100)  // WHITE
 };
 
 DungeonRegion::DungeonRegion(const TileRegionInit &init) :
