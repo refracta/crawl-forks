@@ -3216,6 +3216,9 @@ bool init_abomination(monster& mon, int hd, bool player)
     if (hd <= 6)
         hd = large ? (12 + random2(18)) : (6 + random2(9));
 
+    if (mon.num_heads <= 0)
+        mon.num_heads = 4 + random2(12);
+
     hd = min(max_hd, hd);
 
     if (mon.props.exists(ABOM_DEF))
@@ -3235,9 +3238,7 @@ bool init_abomination(monster& mon, int hd, bool player)
         }
 
         // Heal (but not fully as we aren't truly a new monster).
-
         mon.heal(roll_dice(2, hd));
-
 
         if (large && (def.facets[1] != FAC_NON_FACET) && (def.facets[2] != FAC_NON_FACET) && (def.facets[3] == FAC_NON_FACET)
             && (!player || you.skill(SK_INVOCATIONS) > 20 + random2(5))
@@ -3407,7 +3408,6 @@ bool init_abomination(monster& mon, int hd, bool player)
 
     mon.max_hit_points = hp;
     mon.hit_points = hp;
-    mon.num_heads = 4 + random2(12);
 
     new_def.facets[0] = _gen_new_facet(new_def);
 

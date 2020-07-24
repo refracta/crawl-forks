@@ -6785,6 +6785,10 @@ void unmarshallMonster(reader &th, monster& m)
     ASSERT(parts & MP_GHOST_DEMON || !mons_is_ghost_demon(m.type));
 
     m.check_speed();
+
+    // BCADNOTE: This can be permanent or we can tag it doesn't matter.
+    if (m.has_hydra_multi_attack() && m.num_heads == 0)
+        m.num_heads = 4 + random2(4);
 }
 
 static void tag_read_level_monsters(reader &th)
