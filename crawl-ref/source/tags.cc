@@ -2970,7 +2970,9 @@ static void tag_read_you(reader &th)
         you.mutation[MUT_SPIT_POISON] = 0;
 #endif
 
-    if (you.char_class != JOB_MUMMY)
+    // BCADNOTE: Next minor version bump; put one here so this doesn't need to be updated if another
+    // species gets rF-.
+    if (you.char_class != JOB_MUMMY && you.species != SP_LIGNIFITE)
     {
         you.mutation[MUT_NECRO_ENHANCER] = you.innate_mutation[MUT_NECRO_ENHANCER] = 0;
         you.mutation[MUT_HEAT_VULNERABILITY] = you.innate_mutation[MUT_HEAT_VULNERABILITY] = 0;
