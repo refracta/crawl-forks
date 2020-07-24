@@ -2970,6 +2970,12 @@ static void tag_read_you(reader &th)
         you.mutation[MUT_SPIT_POISON] = 0;
 #endif
 
+    if (you.char_class != JOB_MUMMY)
+    {
+        you.mutation[MUT_NECRO_ENHANCER] = you.innate_mutation[MUT_NECRO_ENHANCER] = 0;
+        you.mutation[MUT_HEAT_VULNERABILITY] = you.innate_mutation[MUT_HEAT_VULNERABILITY] = 0;
+    }
+
     for (int j = count; j < NUM_MUTATIONS; ++j)
         you.mutation[j] = you.innate_mutation[j] = you.sacrifices[j];
 

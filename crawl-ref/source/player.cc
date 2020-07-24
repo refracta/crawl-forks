@@ -3330,6 +3330,12 @@ void level_change(bool skip_attribute_increase)
                 if (you.experience_level == 7)
                 {
                     you.drac_colour = random_draconian_colour();
+
+                    // Zombie and Skeletons getting demonspawn mutations is off-flavour; when a demonspawn rolls one of those
+                    // colours collapse it to Teal.
+                    if (you.char_class == JOB_DEMONSPAWN && (you.drac_colour == DR_OLIVE || you.drac_colour == DR_BONE))
+                        you.drac_colour = DR_TEAL;
+
                     abil_swap(ABIL_BREATHE_DART, draconian_breath());
 
                     // The player symbol depends on species.
