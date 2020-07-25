@@ -7378,21 +7378,28 @@ bool bahamut_tiamat_make_choice(ability_type abil)
         break;
     case ABIL_CHOOSE_BAHAMUT_BREATH:
         you.props[BAHAMUT_TIAMAT_CHOICE1_KEY] = true;
+        mprf(MSGCH_GOD, "You may now call upon Bahamut to empower your breath power.");
         break;
     case ABIL_CHOOSE_TIAMAT_BREATH:
         you.props[BAHAMUT_TIAMAT_CHOICE1_KEY] = false;
+        mprf(MSGCH_GOD, "You may new call upon Tiamat to allow you to choose a variety of breath "
+            "abilties to use in place of your own.");
         break;
     case ABIL_CHOOSE_BAHAMUT_DRAKE:
         you.props[BAHAMUT_TIAMAT_CHOICE2_KEY] = true;
+        mprf(MSGCH_GOD, "You may now call upon Bahamut to summon a horde of drakes into battle.");
         break;
     case ABIL_CHOOSE_TIAMAT_DRAKE:
         you.props[BAHAMUT_TIAMAT_CHOICE2_KEY] = false;
+        mprf(MSGCH_GOD, "You may now call upon Tiamat to summon a rime drake mount for you.");
         break;
     case ABIL_BAHAMUT_TRANSFORM:
         you.props[BAHAMUT_TIAMAT_CHOICE3_KEY] = true;
+        bahamut_tiamat_transform(true);
         break;
     case ABIL_CHOOSE_TIAMAT_TRANSFORM:
         you.props[BAHAMUT_TIAMAT_CHOICE3_KEY] = false;
+        mprf(MSGCH_GOD, "You may now call upon Tiamat to change your current draconian colour.");
         break;
     default:
         mprf(MSGCH_ERROR, "BUG: Bad ability passed to Bahamut & Tiamat Choice function.");
@@ -7400,4 +7407,158 @@ bool bahamut_tiamat_make_choice(ability_type abil)
     }
 
     return true;
+}
+
+static draconian_colour _random_common_colour(draconian_colour cols[])
+{
+    draconian_colour retval = DR_BROWN;
+
+    while (retval == DR_BROWN || you.drac_colour == retval || cols[0] == retval
+        || cols[1] == retval)
+    {
+        retval = random_choose(DR_BLACK, DR_BLUE, DR_CYAN, DR_GREEN, DR_LIME, 
+            DR_MAGENTA, DR_PINK, DR_PURPLE, DR_RED, DR_SILVER, DR_SCINTILLATING, DR_WHITE);
+    }
+
+    return retval;
+}
+
+static string _name_from_colour(draconian_colour col)
+{
+    switch (col)
+    {
+    case DR_BLACK:          return "Black";
+    case DR_BLOOD:          return "Blood";
+    case DR_BLUE:           return "Blue";
+    case DR_BONE:           return "Bone";
+    case DR_CYAN:           return "Cyan";
+    case DR_GOLDEN:         return "Golden";
+    case DR_GREEN:          return "Green";
+    case DR_LIME:           return "Lime";
+    case DR_MAGENTA:        return "Magenta";
+    case DR_OLIVE:          return "Olive";
+    case DR_PEARL:          return "Pearl";
+    case DR_PINK:           return "Pink";
+    case DR_PLATINUM:       return "Platinum";
+    case DR_PURPLE:         return "Purple";
+    case DR_RED:            return "Red";
+    case DR_SCINTILLATING:  return "Scintillating";
+    case DR_SILVER:         return "Silver";
+    case DR_TEAL:           return "Teal";
+    case DR_WHITE:          return "White";
+    default: case DR_BROWN: break; // Immature shouldn't come up here;
+    }
+
+    return "Buggy";
+}
+
+bool bahamut_tiamat_transform(bool bahamut)
+{
+    string colour_names[3] = { "buggy", "buggy", "buggy" };
+    draconian_colour colours[3] = { DR_BROWN, DR_BROWN, DR_BROWN };
+
+    // Perma-transform always shows the same list based on your current colour
+    if (bahamut)
+    {
+        switch (you.drac_colour)
+        {
+        case DR_RED:
+            colours[0] = DR_GOLDEN;
+            colours[1] = DR_BLOOD;
+            colours[2] = DR_OLIVE;
+            break;
+        case DR_BLACK:
+            colours[0] = DR_BLOOD;
+            colours[1] = DR_PEARL;
+            colours[2] = DR_TEAL;
+            break;
+        case DR_BLUE:
+            colours[0] = DR_BLOOD;
+            colours[1] = DR_PLATINUM;
+            colours[2] = DR_OLIVE;
+            break;
+        case DR_CYAN:
+            colours[0] = DR_PLATINUM;
+            colours[1] = DR_GOLDEN;
+            colours[2] = DR_TEAL;
+            break;
+        case DR_GREEN:
+            colours[0] = DR_GOLDEN;
+            colours[1] = DR_BLOOD;
+            colours[2] = DR_OLIVE;
+            break;
+        case DR_LIME:
+            colours[0] = DR_PLATINUM;
+            colours[1] = DR_PEARL;
+            colours[2] = DR_TEAL;
+            break;
+        case DR_MAGENTA:
+            colours[0] = DR_PEARL;
+            colours[1] = DR_PLATINUM;
+            colours[2] = DR_BONE;
+            break;
+        case DR_PINK:
+            colours[0] = DR_PEARL;
+            colours[1] = DR_GOLDEN;
+            colours[2] = DR_BONE;
+            break;
+        case DR_PURPLE:
+            colours[0] = DR_PLATINUM;
+            colours[1] = DR_BLOOD;
+            colours[2] = DR_OLIVE;
+            break;
+        case DR_SCINTILLATING:
+            colours[0] = DR_BLOOD;
+            colours[1] = DR_GOLDEN;
+            colours[2] = DR_TEAL;
+            break;
+        case DR_SILVER:
+            colours[0] = DR_PEARL;
+            colours[1] = DR_PLATINUM;
+            colours[2] = DR_BONE;
+            break;
+        case DR_WHITE:
+            colours[0] = DR_GOLDEN;
+            colours[1] = DR_PEARL;
+            colours[2] = DR_BONE;
+            break;
+        default: // Already undead
+            colours[0] = DR_GOLDEN;
+            colours[1] = DR_BLOOD;
+            if (you.drac_colour == DR_TEAL)
+                colours[2] = DR_BONE;
+            else
+                colours[2] = DR_TEAL;
+            break;
+        }
+    }
+
+    // Repeatable transform makes a new list everytime.
+    else
+        for (int i = 0; i < 3; i++)
+            colours[i] = _random_common_colour(colours);
+
+    for (int i = 0; i < 3; i++)
+        colour_names[i] = _name_from_colour(colours[i]);
+
+    int keyin = 0;
+
+    while (true)
+    {
+        if (crawl_state.seen_hups)
+            return false;
+
+        clear_messages();
+        for (int i = 0; i < 3; i++)
+        {
+            string line = make_stringf("  [%c] - %s", i + 'a', colour_names[i].c_str());
+            mpr_nojoin(MSGCH_PLAIN, line);
+        }
+        mprf(MSGCH_PROMPT, "Transform into which colour?");
+        keyin = toalower(get_ch()) - 'a';
+        if (keyin < 0 || keyin > 2)
+            continue;
+
+        break;
+    }
 }

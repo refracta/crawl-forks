@@ -208,3 +208,4 @@ bool wu_jian_do_wall_jump(coord_def targ, bool ability);
 spret wu_jian_wall_jump_ability();
 
 bool bahamut_tiamat_make_choice(ability_type abil);
+bool bahamut_tiamat_transform(bool bahamut);

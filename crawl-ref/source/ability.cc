@@ -3369,7 +3369,18 @@ static spret _do_ability(const ability_def& abil, bool fail)
 
     case ABIL_BAHAMUT_PROTECTION:
     case ABIL_TIAMAT_RETRIBUTION:
+    case ABIL_CHOOSE_BAHAMUT_BREATH:
+    case ABIL_CHOOSE_TIAMAT_BREATH:
+    case ABIL_CHOOSE_BAHAMUT_DRAKE:
+    case ABIL_CHOOSE_TIAMAT_DRAKE:
+    case ABIL_BAHAMUT_TRANSFORM:
+    case ABIL_CHOOSE_TIAMAT_TRANSFORM:
         if (!bahamut_tiamat_make_choice(abil.ability))
+            return spret::abort;
+        break;
+
+    case ABIL_TIAMAT_TRANSFORM:
+        if (!bahamut_tiamat_transform(false))
             return spret::abort;
         break;
 

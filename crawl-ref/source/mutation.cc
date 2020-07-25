@@ -1559,9 +1559,9 @@ static string _drac_enhancer_msg(bool gain)
     {
     case DR_BLACK:      ostr << "death.";                                       break;
     case DR_BLOOD:      ostr << "death, curses and the sky.";                   break;
-    case DR_BLUE:       ostr << "the air.";                                     break;
+    case DR_BLUE:       ostr << "the sky.";                                     break;
     case DR_BONE:       ostr << "charms and the earth.";                        break;
-    case DR_CYAN:       ostr << "the sky.";                                     break;
+    case DR_CYAN:       ostr << "translocation.";                               break;
     case DR_GOLDEN:     ostr << "fire, ice and venom.";                         break;
     case DR_GREEN:      ostr << "venom.";                                       break;
     case DR_LIME:       ostr << "transmutation.";                               break;
@@ -2356,7 +2356,7 @@ const char* mutation_name(mutation_type mut, bool allow_category, bool for_displ
         case DR_BLOOD:              return "necromancy, hexes and air enhancers";
         case DR_BLUE:               return "air enhancer";
         case DR_BONE:               return "charms and earth enhancers";
-        case DR_CYAN:               return "air enhancer";
+        case DR_CYAN:               return "translocations enhancer";
         case DR_GOLDEN:             return "fire, ice and poison enhancers";
         case DR_GREEN:              return "poison enhancer";
         case DR_LIME:               return "transmutation enhancer";
