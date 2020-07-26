@@ -169,7 +169,8 @@ static void _give_wand(monster* mon, int level, bool summoned)
     item_def& wand = mitm[idx];
     
     while (idx == NON_ITEM || no_high_tier && is_high_tier_wand(wand.sub_type) || !mon->likes_wand(wand)
-        || (wand.sub_type == WAND_HEAL_WOUNDS && !one_chance_in(10))) // Keep Heal Wounds rare.
+        || (wand.sub_type == WAND_HEAL_WOUNDS && !one_chance_in(10)) // Keep Heal Wounds rare.
+        || (wand.sub_type == WAND_RANDOM_EFFECTS && !one_chance_in(3))) // Random effects is fun; but let's not make too many mons suicidal.
     {
         destroy_item(idx, true);
         idx = items(false, OBJ_WANDS, OBJ_RANDOM, level);
