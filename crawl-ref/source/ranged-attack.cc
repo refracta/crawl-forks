@@ -447,7 +447,7 @@ bool ranged_attack::handle_phase_hit()
                 else if (lrange > 4)
                     multiplier = 10 - (3 * (lrange - 4));
                 else if (lrange < 4)
-                    multiplier = 10 - (3 * (4 - lrange));
+                    multiplier = max(1, 10 - (3 * (4 - lrange)));
                 damage_done = div_rand_round(damage_done * multiplier, 10);
                 if (!handle_phase_damaged())
                     return false;
