@@ -4944,7 +4944,7 @@ int str_to_ego(object_class_type item_type, string ego_str)
         "dexterity",
         "intelligence",
         "ponderousness",
-        "flying",
+        "insulation",
         "magic_resistance",
         "protection",
         "stealth",
@@ -4957,9 +4957,7 @@ int str_to_ego(object_class_type item_type, string ego_str)
         "reflection",
         "spirit_shield",
         "archery",
-#if TAG_MAJOR_VERSION == 34
-        "jumping",
-#endif
+        "softness",
         "repulsion",
         "cloud_immunity",
         "high_priest",

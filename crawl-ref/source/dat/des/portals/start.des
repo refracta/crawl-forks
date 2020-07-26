@@ -89,7 +89,7 @@ KFEAT:  2 = weapon shop type:Archery suffix:Annex count:5 use_all greed:40 ; \
 KFEAT:  4 = weapon shop type:Sling suffix:Spring count:3 use_all greed:20 ; \
             mundane not_cursed hunting sling | mundane not_cursed fustibalus |\
 			mundane not_cursed mangonel
-KFEAT:  8 = armour shop type:Auxillary suffix:Armour count:13 use_all greed:20 ; \
+KFEAT:  8 = armour shop type:Auxillary suffix:Armour count:14 use_all greed:20 ; \
             mundane not_cursed hat | not_cursed hat ego:magic_resistance plus:0|\
             not_cursed hat ego:intelligence plus:0 |\
             not_cursed hat ego:see_invisible plus:0 |\
@@ -101,8 +101,9 @@ KFEAT:  8 = armour shop type:Auxillary suffix:Armour count:13 use_all greed:20 ;
             not_cursed pair of gloves ego:strength plus:0|\
             not_cursed pair of gloves ego:archery plus:0|\
             not_cursed pair of gloves ego:wielding plus:0|\
+            not_cursed pair of gloves ego:insulation plus:0|\
 			mundane not_cursed pair of clawed gauntlets
-KFEAT:  L = armour shop type:Shoe suffix:Department count:14 use_all greed:30 ; \
+KFEAT:  L = armour shop type:Shoe suffix:Department count:15 use_all greed:30 ; \
 			mundane not_cursed naga barding |\
             mundane not_cursed naga barding |\
             not_cursed naga barding ego:stealth plus:0|\
@@ -116,24 +117,27 @@ KFEAT:  L = armour shop type:Shoe suffix:Department count:14 use_all greed:30 ; 
             mundane not_cursed pair of boots |\
             not_cursed pair of boots ego:running plus:0|\
             not_cursed pair of boots ego:sturdiness plus:0|\
-            not_cursed pair of boots ego:stealth plus:0
-KFEAT:  K = armour shop type:Bundle_Up suffix:Cloaks_and_Scarves use_all count:8 greed:30 ; \
+            not_cursed pair of boots ego:stealth plus:0|\
+            not_cursed pair of boots ego:insulation plus:0
+KFEAT:  K = armour shop type:Bundle_Up suffix:Cloaks_and_Scarves use_all count:9 greed:30 ; \
             mundane not_cursed cloak |\
             not_cursed cloak ego:poison_resistance plus:0 |\
             not_cursed cloak ego:invisibility plus:0 |\
             not_cursed cloak ego:magic_resistance plus:0|\
+			not_cursed cloak ego:softness plus:0|\
             not_cursed scarf ego:spirit_shield |\
             not_cursed scarf ego:resistance |\
             not_cursed scarf ego:repulsion |\
             not_cursed scarf ego:cloud_immunity
-KFEAT:  M = armour shop type:Mage suffix:Robes use_all count:7 greed:25 ; \
+KFEAT:  M = armour shop type:Mage suffix:Robes use_all count:8 greed:25 ; \
             not_cursed robe ego:high_priest plus:0 |\
             not_cursed robe ego:archmagi plus:0 |\
             not_cursed robe ego:resistance plus:0|\
             not_cursed robe ego:fire_resistance plus:0|\
             not_cursed robe ego:cold_resistance plus:0|\
             not_cursed robe ego:magic_resistance plus:0|\
-            not_cursed robe ego:positive_energy plus:0
+            not_cursed robe ego:positive_energy plus:0|\
+			not_cursed robe ego:softness plus:0
 KFEAT:  O = armour shop type:Lightly suffix:Armoured use_all count:12 greed:30 ; \
             mundane not_cursed leather armour|\
             not_cursed leather armour ego:fire_resistance plus:0|\
