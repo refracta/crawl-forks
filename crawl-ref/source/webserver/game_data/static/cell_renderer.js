@@ -581,7 +581,8 @@ function ($, view_data, main, tileinfo_player, icons, dngn, enums,
                 this.draw_dngn(dngn.DNGN_SHALLOW_WATER_MURKY, x, y);
             else if (cell.mushroom_slime && bg_idx > dngn.DNGN_UNSEEN)
                 this.draw_dngn(dngn.DNGN_SLIMY_WATER, x, y);
-            else if (bg_idx >= dngn.DNGN_FIRST_TRANSPARENT || bg_idx == dngn.DNGN_SHALLOW_WATER || bg_idx == dngn.DNGN_DEEP_WATER)
+            else if (bg_idx >= dngn.DNGN_FIRST_TRANSPARENT || bg_idx == dngn.DNGN_SHALLOW_WATER || bg_idx == dngn.DNGN_DEEP_WATER
+                || bg_idx == dngn.DNGN_SHALLOW_WATER_DISTURBANCE || bg_idx == dngn.DNGN_SHALLOW_WATER_DISTURBANCE + 1)
             {
                 this.draw_dngn(cell.flv.f, x, y); // f = floor
 
