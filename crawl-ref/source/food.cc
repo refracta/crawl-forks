@@ -164,8 +164,10 @@ static bool _eat_check(bool check_hunger = true, bool silent = false,
     if (you.hunger_state >= HS_ENGORGED)
     {
         if (!silent)
+        {
             mpr("You're too full to eat anything.");
-        crawl_state.zero_turns_taken();
+            crawl_state.zero_turns_taken();
+        }
         return false;
     }
     return true;
@@ -432,6 +434,10 @@ int prompt_eat_chunks(bool only_auto)
                 autoeat = true;
             else if (only_auto)
                 return 0;
+            else
+                mprf(MSGCH_PROMPT, "Eat %s%s? (ye/n/q)",
+                    ((item->quantity > 1) ? "one of " : ""),
+                    item_name.c_str());
 
             int keyin = autoeat ? 'y' : toalower(getchm(KMC_CONFIRM));
             switch (keyin)
