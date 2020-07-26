@@ -1360,8 +1360,8 @@ static const pop_entry pop_water_generic[] =
 
 static const pop_entry pop_water_sewer[] =
 { // Sewer water monsters
-  {  1,  27,  150, FLAT, MONS_SLIMEHEAD },
-  {  1,  27,  450, FLAT, MONS_GIANT_BLOWFLY},
+  {  1,  27,  300, FLAT, MONS_SLIMEHEAD },
+  {  1,  27,  150, FLAT, MONS_GIANT_BLOWFLY},
   { 0,0,0,FLAT,MONS_0 }
 };
 
