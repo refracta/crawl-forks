@@ -3171,6 +3171,109 @@ static void _draconian_skill_check(mutation_type mut = MUT_NON_MUTATION)
     check_training_targets();
 }
 
+void change_drac_colour (draconian_colour new_colour)
+{
+    ASSERT(species_is_draconian(you.species));
+    draconian_colour old_colour = you.drac_colour;
+
+    if (old_colour == new_colour)
+        return;
+
+    ability_type old_breath = draconian_breath();
+    bool was_undead = (you.undead_state() != US_ALIVE);
+
+    you.drac_colour = new_colour;
+
+    abil_swap(old_breath, draconian_breath());
+
+    // The player symbol depends on species.
+    update_player_symbol();
+    #ifdef USE_TILE
+    init_player_doll();
+    #endif
+    if (old_colour == DR_TEAL)
+    {
+        you.mutation[MUT_INSUBSTANTIAL] = you.innate_mutation[MUT_INSUBSTANTIAL] = 0;
+        mprf(MSGCH_INTRINSIC_GAIN, "You resolidify.");
+    }
+
+    if (you.drac_colour == DR_TEAL)
+    {
+        if (old_colour != DR_BONE)
+        {
+            monster dummy;
+            dummy.type = you.mons_species();
+            define_monster(dummy);
+            dummy.props["always_corpse"] = true; // BCADDO: I think I can get rid of this prop...
+            dummy.mname = player_name();
+            dummy.set_hit_dice(you.experience_level);
+            dummy.position = you.pos();
+            place_monster_corpse(dummy, true, true);
+        }
+
+        perma_mutate(MUT_INSUBSTANTIAL, 1, "draconic bloodline");
+        if (was_undead)
+            mprf(MSGCH_INTRINSIC_GAIN, "Your ghostly form can be transmuted to any form you wish and you can drink potions once more.");
+        else
+            mprf(MSGCH_INTRINSIC_GAIN, "As a ghost, you can still transmute into various forms you may have been using.");
+    }
+    else if (you.drac_colour == DR_BONE)
+    {
+        if (old_colour == DR_TEAL)
+            mprf(MSGCH_INTRINSIC_GAIN, "Your spirit reforms as a tough animated skeleton.");
+        else
+        {
+            int i = items(false, OBJ_FOOD, FOOD_CHUNK, 1);
+            item_def& item = mitm[i];
+            item.quantity = roll_dice(2, 4);
+            move_item_to_grid(&i, you.pos());
+
+            mprf(MSGCH_INTRINSIC_GAIN,
+                "Your flesh falls away, revealing a tough animated skeleton!");
+        }
+    }
+    else
+    {
+        if (old_colour == DR_BONE)
+        {
+            mprf(MSGCH_INTRINSIC_GAIN,
+                "Your flesh regrows and is covered in %s scales.",
+                article_a(scale_type()).c_str());
+        }
+        else
+        {
+            mprf(MSGCH_INTRINSIC_GAIN,
+                "Your scales start taking on %s colour.",
+                article_a(scale_type()).c_str());
+        }
+    }
+
+    if (!was_undead && you.undead_state() != US_ALIVE)
+        mummify();
+
+    if (was_undead && you.undead_state() == US_ALIVE)
+    {
+        mprf(MSGCH_INTRINSIC_GAIN, "You feel yourself come back to life.");
+
+        // Strip all the undead mutations.
+        you.mutation[MUT_UNBREATHING_FORM] = you.innate_mutation[MUT_UNBREATHING_FORM] = 0;
+        you.mutation[MUT_NEGATIVE_ENERGY_RESISTANCE] = you.innate_mutation[MUT_NEGATIVE_ENERGY_RESISTANCE] = 0;
+        you.mutation[MUT_COLD_RESISTANCE] = you.innate_mutation[MUT_COLD_RESISTANCE] = (you.get_mutation_level(MUT_COLD_RESISTANCE) - 1);
+        you.mutation[MUT_TORMENT_RESISTANCE] = you.innate_mutation[MUT_TORMENT_RESISTANCE] = 0;
+        you.mutation[MUT_COLD_BLOODED] = you.innate_mutation[MUT_COLD_BLOODED] = 1;
+    }
+
+    _draconian_skill_check();
+
+    describe_breath(true);
+
+    // needs to be done early here, so HP doesn't look rotted
+    // when we redraw the screen
+    _gain_and_note_hp_mp();
+
+    redraw_screen();
+}
+
 /**
  * Handle the effects from a player's change in XL.
  * @param aux                     A string describing the cause of the level
@@ -3329,67 +3432,14 @@ void level_change(bool skip_attribute_increase)
             case SP_DRACONIAN:
                 if (you.experience_level == 7)
                 {
-                    you.drac_colour = random_draconian_colour();
-                    abil_swap(ABIL_BREATHE_DART, draconian_breath());
-
-                    // The player symbol depends on species.
-                    update_player_symbol();
-#ifdef USE_TILE
-                    init_player_doll();
-#endif
-                    if (you.drac_colour == DR_TEAL)
-                    {
-                        monster dummy;
-                        dummy.type = MONS_DRACONIAN;
-                        define_monster(dummy);
-                        dummy.props["always_corpse"] = true; // BCADDO: I think I can get rid of this prop...
-                        dummy.mname = player_name();
-                        dummy.set_hit_dice(you.experience_level);
-                        dummy.position = you.pos();
-                        place_monster_corpse(dummy, true, true);
-
-                        perma_mutate(MUT_INSUBSTANTIAL, 1, "draconic bloodline");
-                        if (you.char_class == JOB_MUMMY)
-                            mprf(MSGCH_INTRINSIC_GAIN, "Your ghostly form can be transmuted to any form you wish and you can drink potions once more.");
-                        else
-                            mprf(MSGCH_INTRINSIC_GAIN, "As a ghost, you can still transmute into various forms you may have been using.");
-                    }
-                    else if (you.drac_colour == DR_BONE)
-                    {
-                        int i = items(false, OBJ_FOOD, FOOD_CHUNK, 1);
-                        item_def& item = mitm[i];
-                        item.quantity = roll_dice(2, 4);
-                        move_item_to_grid(&i, you.pos());
-
-                        mprf(MSGCH_INTRINSIC_GAIN,
-                            "Your flesh falls away, revealing a tough animated skeleton!");
-                    }
-                    else
-                    {
-                        mprf(MSGCH_INTRINSIC_GAIN,
-                            "Your scales start taking on %s colour.",
-                            article_a(scale_type()).c_str());
-                    }
-
-                    if (you.char_class != JOB_MUMMY && you.undead_state() != US_ALIVE)
-                        mummify();
-
-                    _draconian_skill_check();
-
-                    if (!(you.experience_level % 3))
-                    {
-                        mprf(MSGCH_INTRINSIC_GAIN, "Your scales feel tougher.");
-                        you.redraw_armour_class = true;
-                    }
-
-                    describe_breath(true);
-
-                    // needs to be done early here, so HP doesn't look rotted
-                    // when we redraw the screen
-                    _gain_and_note_hp_mp();
+                    change_drac_colour(random_draconian_colour());
                     updated_maxhp = true;
+                }
 
-                    redraw_screen();
+                if (!(you.experience_level % 3))
+                {
+                    mprf(MSGCH_INTRINSIC_GAIN, "Your scales feel tougher.");
+                    you.redraw_armour_class = true;
                 }
 
                 // BCADDNOTE: All the "change apts. mutations are here instead of in the .yaml

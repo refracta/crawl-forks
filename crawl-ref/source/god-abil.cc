@@ -7561,4 +7561,8 @@ bool bahamut_tiamat_transform(bool bahamut)
 
         break;
     }
+
+    change_drac_colour(colors[keyin]);
+
+    return true;
 }
