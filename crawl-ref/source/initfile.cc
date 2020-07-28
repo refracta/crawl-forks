@@ -958,7 +958,9 @@ static string _resolve_dir(string path, string suffix)
 
 static string _get_save_path(string subdir)
 {
-    return _resolve_dir(SysEnv.crawl_dir, subdir);
+    string weird_bug_strip = _resolve_dir(SysEnv.crawl_dir, subdir);
+
+    return replace_all(weird_bug_strip, "/C:/msys64-x0/", "/");
 }
 
 void game_options::reset_options()
