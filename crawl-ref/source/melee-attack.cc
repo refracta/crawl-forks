@@ -2887,9 +2887,20 @@ bool melee_attack::apply_staff_damage()
         }
         else
         {
-            if (you.can_see(*mons) && mons->hit_points < mons->max_hit_points)
-                simple_monster_message(*mons, " wounds heal themselves!");
-            mons->heal(heal);
+            if (defender->is_player())
+            {
+                mprf(MSGCH_FRIEND_SPELL, "%s heals your wounds%s", attacker->name(DESC_THE).c_str(),
+                    attack_strength_punctuation(heal).c_str());
+            }
+            else
+            {
+                mons->heal(heal);
+                if (you.can_see(*mons) && mons->hit_points < mons->max_hit_points)
+                {
+                    mprf("%s wounds heal themselves%s", mons->name(DESC_ITS).c_str(),
+                        attack_strength_punctuation(heal).c_str());
+                }
+            }
         }
     }
         break;
