@@ -26,7 +26,7 @@
 #include "religion.h"
 #include "state.h"
 #include "terrain.h"
-#include "tiledef-dngn.h"
+#include "rltiles/tiledef-dngn.h"
 #include "view.h"
 
 static void _daction_hog_to_human(monster *mon, bool in_transit);
