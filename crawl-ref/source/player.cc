@@ -218,7 +218,7 @@ bool check_moveto_trap(const coord_def& p, const string &move_verb,
     return true;
 }
 
-static bool _check_moveto_dangerous(const coord_def& p, const string& msg, const string& move_verb)
+static bool _check_moveto_dangerous(const coord_def& p, const string& msg, const string& move_verb, bool *prompted)
 {
     if (you.can_swim() && feat_is_water(env.grid(p))
         || you.airborne() || !is_feat_dangerous(env.grid(p)))
@@ -230,6 +230,9 @@ static bool _check_moveto_dangerous(const coord_def& p, const string& msg, const
     // in dangerous, continuing to move through dangerous is fine.
     if (is_feat_dangerous(env.grid(you.position)))
         return true;
+
+    if (prompted)
+        *prompted = true;
 
     if (!msg.empty())
         mpr(msg);
@@ -264,7 +267,7 @@ bool check_moveto_terrain(const coord_def& p, const string &move_verb,
     if (!env.map_knowledge(p).known())
         return true;
 
-    if (!_check_moveto_dangerous(p, msg, move_verb))
+    if (!_check_moveto_dangerous(p, msg, move_verb, prompted))
         return false;
     if (!you.airborne() && env.grid(you.pos()) != env.grid(p)
         && (env.grid(p) == DNGN_TOXIC_BOG || env.grid(p) == DNGN_QUAGMIRE))
