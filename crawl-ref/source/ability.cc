@@ -1028,7 +1028,10 @@ ability_type fixup_ability(ability_type ability)
             return ABIL_NON_ABILITY;
         return ability;
 
+    case ABIL_BAHAMUT_TRANSFORM:
     case ABIL_CHOOSE_TIAMAT_TRANSFORM:
+        if (you.experience_level < 7)
+            return ABIL_NON_ABILITY; // Probably impossible anyways but immature draconians shouldn't unlock this yet.
         if (you.props.exists(BAHAMUT_TIAMAT_CHOICE3_KEY))
             return ABIL_NON_ABILITY;
         return ability;
@@ -1052,10 +1055,6 @@ ability_type fixup_ability(ability_type ability)
             return ABIL_NON_ABILITY;
         return ability;
 
-    case ABIL_BAHAMUT_TRANSFORM:
-        if (you.props.exists(BAHAMUT_TIAMAT_CHOICE3_KEY))
-            return ABIL_NON_ABILITY;
-        return ability;
     case ABIL_TIAMAT_TRANSFORM:
         if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE3_KEY) || you.props[BAHAMUT_TIAMAT_CHOICE3_KEY].get_bool())
             return ABIL_NON_ABILITY;
@@ -3380,9 +3379,7 @@ static spret _do_ability(const ability_def& abil, bool fail)
         break;
 
     case ABIL_TIAMAT_TRANSFORM:
-        if (!bahamut_tiamat_transform(false))
-            return spret::abort;
-        break;
+        return (bahamut_tiamat_transform(false, fail));
 
     case ABIL_RENOUNCE_RELIGION:
         fail_check();

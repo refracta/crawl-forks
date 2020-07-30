@@ -1914,9 +1914,9 @@ unsigned int skill_exp_needed(int lev, skill_type sk, species_type sp)
     return exp[lev] * species_apt_factor(sk, sp);
 }
 
-int colour_apt(skill_type skill)
+int colour_apt(skill_type skill, draconian_colour colour)
 {
-    switch (you.drac_colour)
+    switch (colour)
     {
     default:
     case DR_BROWN:

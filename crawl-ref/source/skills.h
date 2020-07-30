@@ -109,7 +109,7 @@ bool can_enable_skill(skill_type sk, bool override = false);
 bool trainable_skills(bool check_all = false);
 bool skills_being_trained();
 
-int colour_apt(skill_type skill);
+int colour_apt(skill_type skill, draconian_colour drac_colour = you.drac_colour);
 int species_apt(skill_type skill, species_type species = you.species);
 float species_apt_factor(skill_type sk, species_type sp = you.species);
 float apt_to_factor(int apt);

@@ -7363,8 +7363,11 @@ spret wu_jian_wall_jump_ability()
 
 bool bahamut_tiamat_make_choice(ability_type abil)
 {
-    if (!yesno("Are you sure you wish to pick this ability? Your choice is permanent.", false, 0))
-        return false;
+    if (abil != ABIL_BAHAMUT_TRANSFORM)
+    {
+        if (!yesno("Are you sure you wish to pick this ability? Your choice is permanent.", false, 0))
+            return false;
+    }
 
     switch (abil)
     {
@@ -7394,8 +7397,8 @@ bool bahamut_tiamat_make_choice(ability_type abil)
         mprf(MSGCH_GOD, "You may now call upon Tiamat to summon a rime drake mount for you.");
         break;
     case ABIL_BAHAMUT_TRANSFORM:
-        you.props[BAHAMUT_TIAMAT_CHOICE3_KEY] = true;
-        bahamut_tiamat_transform(true);
+        if (bahamut_tiamat_transform(true, false) == spret::success)
+            you.props[BAHAMUT_TIAMAT_CHOICE3_KEY] = true;
         break;
     case ABIL_CHOOSE_TIAMAT_TRANSFORM:
         you.props[BAHAMUT_TIAMAT_CHOICE3_KEY] = false;
@@ -7427,32 +7430,33 @@ static string _name_from_colour(draconian_colour col)
 {
     switch (col)
     {
-    case DR_BLACK:          return "Black";
-    case DR_BLOOD:          return "Blood";
-    case DR_BLUE:           return "Blue";
-    case DR_BONE:           return "Bone";
-    case DR_CYAN:           return "Cyan";
-    case DR_GOLDEN:         return "Golden";
-    case DR_GREEN:          return "Green";
-    case DR_LIME:           return "Lime";
-    case DR_MAGENTA:        return "Magenta";
-    case DR_OLIVE:          return "Olive";
-    case DR_PEARL:          return "Pearl";
-    case DR_PINK:           return "Pink";
-    case DR_PLATINUM:       return "Platinum";
-    case DR_PURPLE:         return "Purple";
-    case DR_RED:            return "Red";
-    case DR_SCINTILLATING:  return "Scintillating";
-    case DR_SILVER:         return "Silver";
-    case DR_TEAL:           return "Teal";
-    case DR_WHITE:          return "White";
+                                 //"Colour:             Skills/Enhancers:          Resist:            Breath:";
+    case DR_BLACK:          return "Black               Necromancy                 Stealth            Draining Bolt";
+    case DR_BLOOD:          return "Blood               Necromancy, Hexes, Air     rTorm, rHellfire   Vampiric Fog";
+    case DR_BLUE:           return "Blue                Air                        rElec              Lightning Bolt";
+    case DR_BONE:           return "Bone (no Potions)   Charms, Earth              AC++               Bone Shards";
+    case DR_CYAN:           return "Cyan                Translocations             rAir, rCloud       Wind Blast";
+    case DR_GOLDEN:         return "Golden              Fire, Ice, Poison          rF+, rC+, rPois    Triple Breath";
+    case DR_GREEN:          return "Green               Poison                     rPois              Mephritic Cloud";
+    case DR_LIME:           return "Lime                Transmutations             rCorr              Acid Spit";
+    case DR_MAGENTA:        return "Magenta             Charms                     rMsl               Fog";
+    case DR_OLIVE:          return "Olive (no Potions)  Poison, Air                rMut (less rot)    Foul Miasma";
+    case DR_PEARL:          return "Pearl               Charms, Summon, Earth      rN+++, AC+         Holy Flames";
+    case DR_PINK:           return "Pink                Summonings                 clarity            Butterflies";
+    case DR_PLATINUM:       return "Platinum            Translo, Transmut, Hexes   Fast, rMut         Radiation Blast";
+    case DR_PURPLE:         return "Purple              Hexes                      MR++               Dispelling Energy";
+    case DR_RED:            return "Red                 Fire                       rF+                Searing Flames";
+    case DR_SCINTILLATING:  return "Scintillating       All (chaotically)          Any (chaos)        Bolt of Chaos";
+    case DR_SILVER:         return "Silver              Earth                      rMut, AC+          Silver Fragments";
+    case DR_TEAL:           return "Teal                Translo, Transmu           Insubstantial      Spectral Mist";
+    case DR_WHITE:          return "White               Ice                        rC+                Chilling Bolt";
     default: case DR_BROWN: break; // Immature shouldn't come up here;
     }
 
     return "Buggy";
 }
 
-bool bahamut_tiamat_transform(bool bahamut)
+spret bahamut_tiamat_transform(bool bahamut, bool fail)
 {
     string colour_names[3] = { "buggy", "buggy", "buggy" };
     draconian_colour colours[3] = { DR_BROWN, DR_BROWN, DR_BROWN };
@@ -7546,23 +7550,41 @@ bool bahamut_tiamat_transform(bool bahamut)
     while (true)
     {
         if (crawl_state.seen_hups)
-            return false;
+            return spret::abort;
 
         clear_messages();
+        string header = "        Colour:             Skills/Enhancers:          Resist:            Breath:";
+        mpr_nojoin(MSGCH_PROMPT, header);
         for (int i = 0; i < 3; i++)
         {
             string line = make_stringf("  [%c] - %s", i + 'a', colour_names[i].c_str());
             mpr_nojoin(MSGCH_PLAIN, line);
         }
+        mpr_nojoin(MSGCH_PLAIN, "  [d] - Cancel (Remain Current Colour)");
         mprf(MSGCH_PROMPT, "Transform into which colour?");
         keyin = toalower(get_ch()) - 'a';
-        if (keyin < 0 || keyin > 2)
+        if (keyin < 0 || keyin > 3)
             continue;
 
         break;
     }
 
-    change_drac_colour(colors[keyin]);
+    if (keyin == 3)
+    {
+        clear_messages();
+        mpr("Transformation cancelled.");
+        return spret::abort;
+    }
 
-    return true;
+    if (bahamut)
+    {
+        if (!yesno("Are you sure? Your choice is permanent.", false, 0))
+            return spret::abort;
+    }
+
+    fail_check();
+
+    change_drac_colour(colours[keyin]);
+
+    return spret::success;
 }

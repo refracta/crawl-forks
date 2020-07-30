@@ -3121,7 +3121,7 @@ int xp_to_level_diff(int xp, int scale)
         return adjusted_level - projected_level;
 }
 
-static void _draconian_skill_check(mutation_type mut = MUT_NON_MUTATION)
+static void _draconian_skill_check(mutation_type mut = MUT_NON_MUTATION, draconian_colour old_colour = DR_BROWN)
 {
     // We just changed our aptitudes, so some skills may now
     // be at the wrong level (with negative progress); if we
@@ -3146,11 +3146,17 @@ static void _draconian_skill_check(mutation_type mut = MUT_NON_MUTATION)
     // skill being checked is at the wrong level.
     for (skill_type sk = SK_FIRST_SKILL; sk < NUM_SKILLS; ++sk)
     {
-        if (mut == MUT_NON_MUTATION && colour_apt(sk) > 0)
+        if (mut == MUT_NON_MUTATION)
         {
-            mprf(MSGCH_INTRINSIC_GAIN, "You learn %s %smore quickly.",
-                skill_name(sk),
-                colour_apt(sk) > 4 ? "much " : "");
+            int apt_diff = colour_apt(sk) - colour_apt(sk, old_colour);
+            if (apt_diff != 0)
+            {
+                mprf(MSGCH_INTRINSIC_GAIN, "You learn %s %smore %s.",
+                    skill_name(sk),
+                    abs(apt_diff) > 4 ? "much " :
+                    abs(apt_diff) < 3 ? "a little " : "",
+                    apt_diff < 0 ? "slowly" : "quickly");
+            }
         }
 
         if (mut == MUT_MINOR_MARTIAL_APT_BOOST && sk == you.minor_skill
@@ -3182,22 +3188,13 @@ void change_drac_colour (draconian_colour new_colour)
     ability_type old_breath = draconian_breath();
     bool was_undead = (you.undead_state() != US_ALIVE);
 
-    you.drac_colour = new_colour;
-
-    abil_swap(old_breath, draconian_breath());
-
-    // The player symbol depends on species.
-    update_player_symbol();
-    #ifdef USE_TILE
-    init_player_doll();
-    #endif
     if (old_colour == DR_TEAL)
     {
         you.mutation[MUT_INSUBSTANTIAL] = you.innate_mutation[MUT_INSUBSTANTIAL] = 0;
         mprf(MSGCH_INTRINSIC_GAIN, "You resolidify.");
     }
 
-    if (you.drac_colour == DR_TEAL)
+    if (new_colour == DR_TEAL)
     {
         if (old_colour != DR_BONE)
         {
@@ -3217,7 +3214,7 @@ void change_drac_colour (draconian_colour new_colour)
         else
             mprf(MSGCH_INTRINSIC_GAIN, "As a ghost, you can still transmute into various forms you may have been using.");
     }
-    else if (you.drac_colour == DR_BONE)
+    else if (new_colour == DR_BONE)
     {
         if (old_colour == DR_TEAL)
             mprf(MSGCH_INTRINSIC_GAIN, "Your spirit reforms as a tough animated skeleton.");
@@ -3234,6 +3231,8 @@ void change_drac_colour (draconian_colour new_colour)
     }
     else
     {
+        you.drac_colour = new_colour;
+
         if (old_colour == DR_BONE)
         {
             mprf(MSGCH_INTRINSIC_GAIN,
@@ -3247,6 +3246,16 @@ void change_drac_colour (draconian_colour new_colour)
                 article_a(scale_type()).c_str());
         }
     }
+
+    you.drac_colour = new_colour;
+    
+    abil_swap(old_breath, draconian_breath());
+
+    // The player symbol depends on species.
+    update_player_symbol();
+    #ifdef USE_TILE
+    init_player_doll();
+    #endif
 
     if (!was_undead && you.undead_state() != US_ALIVE)
         mummify();
@@ -3263,7 +3272,7 @@ void change_drac_colour (draconian_colour new_colour)
         you.mutation[MUT_COLD_BLOODED] = you.innate_mutation[MUT_COLD_BLOODED] = 1;
     }
 
-    _draconian_skill_check();
+    _draconian_skill_check(MUT_NON_MUTATION, old_colour);
 
     describe_breath(true);
 
