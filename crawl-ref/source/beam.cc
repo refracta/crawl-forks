@@ -5676,15 +5676,6 @@ void bolt::affect_monster(monster* mon)
     // Apply flavoured specials.
     mons_adjust_flavoured(mon, *this, postac, true);
 
-    // Apply chaos effects.
-    if (mon->alive() && (real_flavour == BEAM_CHAOTIC || real_flavour == BEAM_CHAOTIC_DEVASTATION) && !mons_class_is_firewood(mon->type))
-    {
-        int dur = damage.roll();
-        dur += damage.size;
-
-        chaotic_status(mon, dur, actor_by_mid(source_id));
-    }
-
     // mons_adjust_flavoured may kill the monster directly.
     if (mon->alive())
     {
@@ -5704,6 +5695,15 @@ void bolt::affect_monster(monster* mon)
             mon->hurt(agent(), final, real_flavour, KILLED_BY_BEAM, "", "", false);
         else
             mon->hurt(agent(), final, flavour, KILLED_BY_BEAM, "", "", false);
+    }
+
+    // Apply chaos effects.
+    if (mon->alive() && (real_flavour == BEAM_CHAOTIC || real_flavour == BEAM_CHAOTIC_DEVASTATION) && !mons_class_is_firewood(mon->type))
+    {
+        int dur = damage.roll();
+        dur += damage.size;
+
+        chaotic_status(mon, dur, actor_by_mid(source_id));
     }
 
     if (mon->alive())
