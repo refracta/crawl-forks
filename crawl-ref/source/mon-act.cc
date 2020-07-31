@@ -1252,6 +1252,8 @@ static void _mons_fire_wand(monster& mons, item_def &wand, bolt &beem,
             mprf(MSGCH_SOUND, "You hear a zap.");
     }
 
+    noisy(6, mons.pos(), mons.mid);
+
     const spell_type mzap =
         spell_in_wand(static_cast<wand_type>(wand.sub_type));
 
@@ -1267,9 +1269,8 @@ static bool _handle_wand(monster& mons)
 {
     item_def *wand = mons.mslot_item(MSLOT_WAND);
     // Yes, there is a logic to this ordering {dlb}:
-    // FIXME: monsters should be able to use wands
-    //        out of sight of the player [rob]
     if (!you.see_cell(mons.pos())
+        || mons.has_ench(ENCH_WAND_COOLDOWN)
         || mons.asleep()
         || mons_is_fleeing(mons)
         || mons.pacified()
@@ -1277,13 +1278,11 @@ static bool _handle_wand(monster& mons)
         || !mons_itemuse(mons) & MU_WAND
         || x_chance_in_y(3, 4)
         || !wand
-        || wand->base_type != OBJ_WANDS)
+        || wand->base_type != OBJ_WANDS
+        || wand->charges <= 0)
     {
         return false;
     }
-
-    if (wand->charges <= 0)
-        return false;
 
     if (item_type_removed(wand->base_type, wand->sub_type))
         return false;
@@ -1319,8 +1318,28 @@ static bool _handle_wand(monster& mons)
         break;
     }
 
+    if (mons.friendly())
+    {
+        bool see_enemy = false;
+        for (monster_iterator mi; mi; ++mi)
+        {
+            if (mons.see_cell(mi->pos()) && (mi->attitude == ATT_HOSTILE))
+            {
+                see_enemy = true;
+                break;
+            }
+        }
+        if (!see_enemy)
+            should_fire = false;
+    }
+
     if (should_fire)
     {
+        if (mons.friendly() && (wand->sub_type == WAND_HASTING || wand->sub_type == WAND_HEAL_WOUNDS))
+        {
+            mons.add_ench(mon_enchant(ENCH_WAND_COOLDOWN, 0, 0, wand->sub_type == WAND_HASTING ?
+                (4 + random2(4) * BASELINE_DELAY) : (2 + random2(4)) * BASELINE_DELAY));
+        }
         _mons_fire_wand(mons, *wand, beem, you.see_cell(mons.pos()));
         return true;
     }

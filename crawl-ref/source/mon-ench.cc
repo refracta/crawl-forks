@@ -1464,6 +1464,7 @@ void monster::apply_enchantment(const mon_enchant &me)
     case ENCH_PHYS_VULN:
     case ENCH_STFSHIELD_COOLDOWN:
     case ENCH_CIGOTUVI:
+    case ENCH_WAND_COOLDOWN:
         decay_enchantment(en);
         break;
 
