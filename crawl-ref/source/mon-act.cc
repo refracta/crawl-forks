@@ -1856,6 +1856,21 @@ void handle_monster_move(monster* mons)
 #endif
     coord_def old_pos = mons->pos();
 
+    // Adding a surrounded check for passives so they don't infinite loop when they can't move.
+    if (mons->attitude == ATT_PASSIVE)
+    {
+        int invalid_move = 0;
+        int possible_move = 0;
+        for (adjacent_iterator ai(mons->pos()); ai; ++ai)
+        {
+            possible_move++;
+            if (actor_at(*ai))
+                invalid_move++;
+        }
+        if (invalid_move == possible_move)
+            mons->lose_energy(EUT_MOVE);
+    }
+
     if (!mons->has_action_energy())
         return;
 
@@ -1949,6 +1964,7 @@ void handle_monster_move(monster* mons)
 
     if (env.level_state & LSTATE_SLIMY_WALL)
         slime_wall_damage(mons, speed_to_duration(mons->speed));
+
     if (!mons->alive())
         return;
 
