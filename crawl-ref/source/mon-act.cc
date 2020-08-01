@@ -1864,7 +1864,11 @@ void handle_monster_move(monster* mons)
         for (adjacent_iterator ai(mons->pos()); ai; ++ai)
         {
             possible_move++;
-            if (actor_at(*ai))
+            if (!in_bounds(*ai))
+                invalid_move++;
+            else if (actor_at(*ai))
+                invalid_move++;
+            else if (!monster_habitable_grid(mons, grd(*ai)))
                 invalid_move++;
         }
         if (invalid_move == possible_move)
