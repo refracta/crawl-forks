@@ -55,6 +55,7 @@
 #include "mutation.h"
 #include "nearby-danger.h"
 #include "ouch.h"
+#include "player.h"
 #include "player-stats.h"
 #include "potion.h"
 #include "prompt.h"
@@ -3585,6 +3586,10 @@ bool bolt::is_reflectable(const actor &whom) const
     if (range_used() > range)
         return false;
 
+    // Catch players dual-wielding shields.
+    if (whom.is_player() && player_omnireflects())
+        return is_omnireflectable();
+
     const item_def *it = whom.shield();
     return (it && is_shield(*it) && shield_reflects(*it)) || whom.reflection();
 }
@@ -3632,7 +3637,9 @@ void bolt::reflect()
 #endif
     }
 
-    flavour = real_flavour;
+    if (real_flavour == BEAM_CHAOS)
+        flavour = real_flavour;
+
     choose_ray();
 }
 
