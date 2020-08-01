@@ -1305,11 +1305,17 @@ static bool _handle_wand(monster& mons)
     switch (kind)
     {
     case WAND_SCATTERSHOT:
-        should_fire = scattershot_tracer(&mons, power, beem.target);
+        if (mons->get_foe())
+            should_fire = scattershot_tracer(&mons, power, beem.target);
+        else
+            should_fire = false;
         break;
 
     case WAND_CLOUDS:
-        should_fire = mons_should_cloud_cone(&mons, power, beem.target);
+        if (mons->get_foe())
+            should_fire = mons_should_cloud_cone(&mons, power, beem.target);
+        else
+            should_fire = false;
         break;
 
     default:
