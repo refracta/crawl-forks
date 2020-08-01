@@ -1509,7 +1509,7 @@ bool armour_is_enchantable(const item_def &item)
  */
 int armour_max_enchant(const item_def &item)
 {
-    ASSERT(item.base_type == OBJ_ARMOURS);
+    ASSERT(item.base_type == OBJ_ARMOURS || item.base_type == OBJ_SHIELDS);
 
     // Unenchantables.
     if (!armour_is_enchantable(item))
