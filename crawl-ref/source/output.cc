@@ -854,35 +854,37 @@ static void _print_stats_ac(int x, int y)
     else if (you.duration[DUR_CORROSION])
         text_col = RED;
 
-    string ac = make_stringf("%2d ", you.armour_class());
-
-    ac += make_stringf("(%d%%) ", you.gdr_perc());
+    string ac = make_stringf("%2d", you.armour_class());
+    ac += make_stringf(" (%d%%)", you.gdr_perc());
     
     textcolour(text_col);
     CGOTOXY(x+4, y, GOTO_STAT);
     CPRINTF("%-12s", ac.c_str());
 
-    // SH: (two lines lower)
+    textcolour(Options.status_caption_colour);
+    CGOTOXY(16, y, GOTO_STAT); CPRINTF("EV:");
+
+    // SH:
     text_col = HUD_VALUE_COLOUR;
     if (you.incapacitated() && you.shielded())
         text_col = RED;
     else if (_boosted_sh())
         text_col = LIGHTBLUE;
 
-    string sh = make_stringf("%2d ", player_displayed_shield_class());
+    string sh = make_stringf("%2d", player_displayed_shield_class());
     textcolour(text_col);
-    CGOTOXY(x+4, y+2, GOTO_STAT);
+    CGOTOXY(x+35, y, GOTO_STAT);
     CPRINTF("%-12s", sh.c_str());
 }
 
 static void _print_stats_ev(int x, int y)
 {
-    CGOTOXY(x+4, y, GOTO_STAT);
+    CGOTOXY(x+19, y, GOTO_STAT);
     textcolour(you.duration[DUR_PETRIFYING] || you.duration[DUR_GRASPING_ROOTS]
               || you.cannot_move() ? RED :
               _boosted_ev()
               ? LIGHTBLUE : HUD_VALUE_COLOUR);
-    CPRINTF("%2d ", you.evasion());
+    CPRINTF("%2d", you.evasion());
 }
 
 /**
@@ -1295,8 +1297,7 @@ static void _redraw_title()
 
 void print_stats()
 {
-    int ac_pos = 5;
-    int ev_pos = ac_pos + 1;
+    int line1 = 5;
 
     cursor_control coff(false);
     textcolour(LIGHTGREY);
@@ -1343,22 +1344,22 @@ void print_stats()
     if (you.wield_change || you.redraw_armour_class)
     {
         you.redraw_armour_class = false;
-        _print_stats_ac(1, ac_pos);
+        _print_stats_ac(1, line1);
     }
     if (you.wield_change || you.redraw_evasion)
     {
         you.redraw_evasion = false;
-        _print_stats_ev(1, ev_pos);
+        _print_stats_ev(1, line1);
     }
 
-    for (int i = 0; i < NUM_STATS; ++i)
-        if (you.redraw_stats[i])
-            _print_stat(static_cast<stat_type>(i), 19, 5 + i);
+    _print_stat(STAT_STR, 1, 6);
+    _print_stat(STAT_INT, 16, 6);
+    _print_stat(STAT_DEX, 31, 6);
     you.redraw_stats.init(false);
 
     if (you.redraw_experience)
     {
-        CGOTOXY(1, 8, GOTO_STAT);
+        CGOTOXY(1, 7, GOTO_STAT);
         textcolour(Options.status_caption_colour);
         CPRINTF("XL: ");
         textcolour(HUD_VALUE_COLOUR);
@@ -1384,9 +1385,9 @@ void print_stats()
     {
         yhack++;
         if (Options.equip_bar)
-            _print_stats_equip(1, 8+yhack);
+            _print_stats_equip(1, 7+yhack);
         else
-            _print_stats_noise(1, 8+yhack);
+            _print_stats_noise(1, 7+yhack);
     }
 
     if (you.wield_change)
@@ -1401,8 +1402,8 @@ void print_stats()
         // Also, it's a little bogus to change simulation state in
         // render code. We should find a better place for this.
         you.m_quiver.on_weapon_changed();
-        _print_stats_wp(0, 9 + yhack);
-        _print_stats_wp(1, 10 + yhack);
+        _print_stats_wp(0, 8 + yhack);
+        _print_stats_wp(1, 9 + yhack);
     }
     you.wield_change  = false;
 
@@ -1416,7 +1417,7 @@ void print_stats()
     if (you.redraw_status_lights)
     {
         you.redraw_status_lights = false;
-        _print_status_lights(11 + yhack);
+        _print_status_lights(10 + yhack);
     }
 
 #ifdef USE_TILE_LOCAL
@@ -1471,22 +1472,18 @@ void draw_border()
 
 //    int hp_pos = 3;
     int mp_pos = 4;
-    int ac_pos = 5;
-    int ev_pos = 6;
-    int sh_pos = 7;
-    int str_pos = ac_pos;
-    int int_pos = ev_pos;
-    int dex_pos = sh_pos;
+    int line1 = 5;
+    int line2 = 6;
 
     //CGOTOXY(1, 3, GOTO_STAT); CPRINTF("Hp:");
     CGOTOXY(1, mp_pos, GOTO_STAT);
-    CGOTOXY(1, ac_pos, GOTO_STAT); CPRINTF("AC:");
-    CGOTOXY(1, ev_pos, GOTO_STAT); CPRINTF("EV:");
-    CGOTOXY(1, sh_pos, GOTO_STAT); CPRINTF("SH:");
+    CGOTOXY(1, line1, GOTO_STAT); CPRINTF("AC:");
+    CGOTOXY(16, line1, GOTO_STAT); CPRINTF("EV:");
+    CGOTOXY(31, line1, GOTO_STAT); CPRINTF("SH:");
 
-    CGOTOXY(19, str_pos, GOTO_STAT); CPRINTF("Str:");
-    CGOTOXY(19, int_pos, GOTO_STAT); CPRINTF("Int:");
-    CGOTOXY(19, dex_pos, GOTO_STAT); CPRINTF("Dex:");
+    CGOTOXY(1, line2, GOTO_STAT); CPRINTF("Str:");
+    CGOTOXY(16, line2, GOTO_STAT); CPRINTF("Int:");
+    CGOTOXY(31, line2, GOTO_STAT); CPRINTF("Dex:");
 
     CGOTOXY(19, 9, GOTO_STAT);
     CPRINTF(Options.show_game_time ? "Time:" : "Turn:");
