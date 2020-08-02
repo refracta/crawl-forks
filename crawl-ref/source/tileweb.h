@@ -56,6 +56,7 @@ struct player_info
     int armour_class;
     int evasion;
     int shield_class;
+    int gdr;
 
     int8_t strength, strength_max;
     int8_t intel, intel_max;
