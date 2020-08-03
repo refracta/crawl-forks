@@ -398,7 +398,7 @@ function ($, comm, enums, map_knowledge, messages, options) {
         update_defense("ac");
         update_defense("ev");
         update_defense("sh");
-        update_defence("gdr");
+        update_defense("gdr");
 
         update_stat("str");
         update_stat("int");
