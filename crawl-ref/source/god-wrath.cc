@@ -1710,6 +1710,31 @@ static bool _uskayaw_retribution()
 
 static bool _bahamut_retribution()
 {
+    switch (random2(4))
+    {
+    case 0:
+    {
+        int count = 1 + you.experience_level / 9;
+        bool success = false;
+        for (int i = 0; i < count; i++)
+        {
+            if (summon_drakes(you.get_experience_level(), true))
+            {
+                success = true;
+            }
+        }
+        if (success)
+        {
+            mprf(MSGCH_GOD, "Tiamat sends hordes of drakes to punish you.");
+            return true;
+        }
+    }   // If fail, fallthrough to next.
+    case 1:
+    case 2:
+    case 3:
+        break;
+    }
+
     // BCADDO: Fill this in.
     return false;
 }

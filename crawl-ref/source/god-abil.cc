@@ -7390,11 +7390,11 @@ bool bahamut_tiamat_make_choice(ability_type abil)
         break;
     case ABIL_CHOOSE_BAHAMUT_DRAKE:
         you.props[BAHAMUT_TIAMAT_CHOICE2_KEY] = true;
-        mprf(MSGCH_GOD, "You may now call upon Bahamut to summon a horde of drakes into battle.");
+        mprf(MSGCH_GOD, "You may now call upon Bahamut to summon a rime drake mount for you.");
         break;
     case ABIL_CHOOSE_TIAMAT_DRAKE:
         you.props[BAHAMUT_TIAMAT_CHOICE2_KEY] = false;
-        mprf(MSGCH_GOD, "You may now call upon Tiamat to summon a rime drake mount for you.");
+        mprf(MSGCH_GOD, "You may now call upon Tiamat to summon a horde of drakes into battle.");
         break;
     case ABIL_BAHAMUT_TRANSFORM:
         if (bahamut_tiamat_transform(true, false) == spret::success)

@@ -1051,7 +1051,7 @@ static formatted_string _describe_god_powers(god_type which_god)
 
         // Give Tiamat a different god colour than Bahamut.
         if (power.abil == ABIL_TIAMAT_ADAPTIVE_BREATH || power.abil == ABIL_TIAMAT_DRAGON_BOOK
-            || power.abil == ABIL_TIAMAT_DRAKE_MOUNT || power.abil == ABIL_TIAMAT_RETRIBUTION
+            || power.abil == ABIL_TIAMAT_SUMMON_DRAKES || power.abil == ABIL_TIAMAT_RETRIBUTION
             || power.abil == ABIL_TIAMAT_TRANSFORM || power.abil == ABIL_CHOOSE_TIAMAT_BREATH
             || power.abil == ABIL_CHOOSE_TIAMAT_DRAKE || power.abil == ABIL_CHOOSE_TIAMAT_TRANSFORM)
         {

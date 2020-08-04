@@ -655,30 +655,30 @@ static const ability_def Ability_List[] =
         0, 0, 0, 0, { fail_basis::invo }, abflag::none },
     { ABIL_TIAMAT_RETRIBUTION, "Choose Tiamat's Retribution",
         0, 0, 0, 0, { fail_basis::invo }, abflag::none },
-    { ABIL_CHOOSE_BAHAMUT_BREATH, "Choose Bahamut's Empowered Breath",
+    { ABIL_CHOOSE_BAHAMUT_BREATH, "Choose Bahamut's Refined Breath",
         0, 0, 0, 0, { fail_basis::invo }, abflag::none },
     { ABIL_CHOOSE_TIAMAT_BREATH, "Choose Tiamat's Adaptive Breath",
         0, 0, 0, 0, { fail_basis::invo }, abflag::none },
-    { ABIL_CHOOSE_BAHAMUT_DRAKE, "Choose Bahamut's Summon Drakes",
+    { ABIL_CHOOSE_BAHAMUT_DRAKE, "Choose Bahamut's Drake Mount",
         0, 0, 0, 0, { fail_basis::invo }, abflag::none },
-    { ABIL_CHOOSE_TIAMAT_DRAKE, "Choose Tiamat's Drake Mount",
+    { ABIL_CHOOSE_TIAMAT_DRAKE, "Choose Tiamat's Summon Drakes",
         0, 0, 0, 0, { fail_basis::invo }, abflag::none },
-    { ABIL_BAHAMUT_TRANSFORM, "Choose Bahamut's Permanent Transformation",
+    { ABIL_BAHAMUT_TRANSFORM, "Choose Bahamut's Promotion",
         0, 0, 0, 0, { fail_basis::invo }, abflag::none },
-    { ABIL_CHOOSE_TIAMAT_TRANSFORM, "Choose Tiamat's Harmonizing Transformation",
+    { ABIL_CHOOSE_TIAMAT_TRANSFORM, "Choose Tiamat's Transformation",
         0, 0, 0, 0, { fail_basis::invo }, abflag::none },
-    { ABIL_BAHAMUT_DRAGONSLAYING, "Brand Weapon with Dragon Slaying",
+    { ABIL_BAHAMUT_DRAGONSLAYING, "Brand Weapon with Dragonslaying",
         0, 0, 0, 0, { fail_basis::invo }, abflag::none },
-    { ABIL_TIAMAT_DRAGON_BOOK, "Recieve Book of the Dragon",
+    { ABIL_TIAMAT_DRAGON_BOOK, "Receive Book of the Dragon",
         0, 0, 0, 0, { fail_basis::invo }, abflag::none },
         // Normal Actives
-    { ABIL_BAHAMUT_EMPOWERED_BREATH, "Empowered Breath",
+    { ABIL_BAHAMUT_EMPOWERED_BREATH, "Enhanced Breath",
         4, 0, 200, 4, { fail_basis::invo }, abflag::breath },
     { ABIL_TIAMAT_ADAPTIVE_BREATH, "Adaptive Breath",
         4, 0, 200, 4, { fail_basis::invo }, abflag::breath },
-    { ABIL_BAHAMUT_SUMMON_DRAKES, "Summon Drakes",
+    { ABIL_BAHAMUT_DRAKE_MOUNT, "Drake Mount",
         7, 0, 500, 12, { fail_basis::invo }, abflag::none },
-    { ABIL_TIAMAT_DRAKE_MOUNT, "Drake Mount",
+    { ABIL_TIAMAT_SUMMON_DRAKES, "Summon Drakes",
         7, 0, 500, 12, { fail_basis::invo }, abflag::none },
     { ABIL_TIAMAT_TRANSFORM, "Change Draconian Colour",
         4, 0, 500, 8, { fail_basis::invo }, abflag::none },
@@ -1046,11 +1046,11 @@ ability_type fixup_ability(ability_type ability)
             return ABIL_NON_ABILITY;
         return ability;
 
-    case ABIL_BAHAMUT_SUMMON_DRAKES:
+    case ABIL_BAHAMUT_DRAKE_MOUNT:
         if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE2_KEY) || !you.props[BAHAMUT_TIAMAT_CHOICE2_KEY].get_bool())
             return ABIL_NON_ABILITY;
         return ability;
-    case ABIL_TIAMAT_DRAKE_MOUNT:
+    case ABIL_TIAMAT_SUMMON_DRAKES:
         if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE2_KEY) || you.props[BAHAMUT_TIAMAT_CHOICE2_KEY].get_bool())
             return ABIL_NON_ABILITY;
         return ability;
@@ -3377,6 +3377,12 @@ static spret _do_ability(const ability_def& abil, bool fail)
         if (!bahamut_tiamat_make_choice(abil.ability))
             return spret::abort;
         break;
+
+    case ABIL_TIAMAT_SUMMON_DRAKES:
+        fail_check();
+        if (summon_drakes(apply_invo_enhancer(you.skill(SK_INVOCATIONS), true), false))
+            return spret::success;
+        return spret::fail;
 
     case ABIL_TIAMAT_TRANSFORM:
         return (bahamut_tiamat_transform(false, fail));

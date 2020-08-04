@@ -689,6 +689,61 @@ bool summon_holy_warrior(int pow, bool punish)
     return true;
 }
 
+static monster_type _pick_drake(int pow)
+{
+    int chance = random2(3 + pow);
+
+    if (chance > 24 || one_chance_in(6))
+        return MONS_ACID_DRAGON;
+    if (chance > 16 || one_chance_in(4))
+        return random_choose(MONS_DEATH_DRAKE, MONS_LINDWURM);
+    if (chance > 8 || one_chance_in(3))
+        return random_choose(MONS_WIND_DRAKE, MONS_RIME_DRAKE, MONS_SWAMP_DRAKE);
+    else
+        return MONS_WYVERN;
+}
+
+// Not a spell. Rather, this is Tiamat's doing.
+bool summon_drakes(int pow, bool punish)
+{
+    int amount = 2 + (random2(pow) / 9) + coinflip();
+    int summoned = 0;
+
+    for (int i = 0; i < amount; i++)
+    {
+        mgen_data mg(_pick_drake(pow),
+            punish ? BEH_HOSTILE : BEH_FRIENDLY,
+            you.pos(), MHITYOU, MG_FORCE_BEH | MG_AUTOFOE);
+        mg.set_summoned(punish ? 0 : &you,
+            punish ? 0 : min(2 + (random2(pow) / 4), 6),
+            SPELL_NO_SPELL, GOD_BAHAMUT_TIAMAT);
+
+        if (punish)
+        {
+            mg.extra_flags |= (MF_NO_REWARD | MF_HARD_RESET);
+            mg.non_actor_summoner = god_name(GOD_BAHAMUT_TIAMAT);
+        }
+
+        monster *summon = create_monster(mg);
+
+        if (!summon)
+            continue;
+        else
+            summoned++;
+
+        summon->flags |= MF_ATT_CHANGE_ATTEMPT;
+
+        player_angers_monster(summon);
+    }
+
+    if (!punish && summoned)
+        mpr("You call forth Tiamat's armies to fight for you.");
+
+    if (summoned)
+        return true;
+    return false;
+}
+
 /**
  * Essentially a macro to allow for a generic fail pattern to avoid leaking
  * information about invisible enemies. (Not implemented as a macro because I
