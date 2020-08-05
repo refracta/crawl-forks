@@ -2885,12 +2885,14 @@ bool melee_attack::apply_staff_damage()
                     mprf("You increase %s time in this world.", mons->name(DESC_ITS).c_str());
             }
         }
-        else
+        else // attacker is monster.
         {
+            heal += 2 + random2(9); // Non-zero value for low HD monsters.
             if (defender->is_player())
             {
                 mprf(MSGCH_FRIEND_SPELL, "%s heals your wounds%s", attacker->name(DESC_THE).c_str(),
                     attack_strength_punctuation(heal).c_str());
+                you.heal(heal);
             }
             else
             {
