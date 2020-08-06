@@ -3239,6 +3239,8 @@ void change_drac_colour (draconian_colour new_colour)
                 "Your flesh regrows and is covered in %s scales.",
                 article_a(scale_type()).c_str());
         }
+        else if (new_colour == DR_BROWN)
+            mprf(MSGCH_INTRINSIC_GAIN, "You return to an immature form.");
         else
         {
             mprf(MSGCH_INTRINSIC_GAIN,

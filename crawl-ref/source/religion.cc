@@ -636,6 +636,13 @@ void dec_penance(god_type god, int val)
 
         take_note(Note(NOTE_MOLLIFY_GOD, god));
 
+        if (you.attribute[ATTR_STRIPPED_COLOUR] > 0)
+        {
+            mprf(MSGCH_INTRINSIC_GAIN, "You feel yourself maturing once more...");
+            change_drac_colour((draconian_colour)you.attribute[ATTR_STRIPPED_COLOUR]);
+            you.attribute[ATTR_STRIPPED_COLOUR] = 0;
+        }
+
         if (you_worship(god))
         {
             // Redraw piety display and, in case the best skill is Invocations,
