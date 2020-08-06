@@ -3387,6 +3387,14 @@ static spret _do_ability(const ability_def& abil, bool fail)
     case ABIL_TIAMAT_TRANSFORM:
         return (bahamut_tiamat_transform(false, fail));
 
+    case ABIL_BAHAMUT_DRAGONSLAYING:
+        fail_check();
+        mprf(MSGCH_GOD, "Bahamut will enhance one of your weapons.");
+        // included in default force_more_message
+        if (!bless_weapon(GOD_BAHAMUT_TIAMAT, SPWPN_DRAGON_SLAYING, YELLOW))
+            return spret::abort;
+        break;
+
     case ABIL_RENOUNCE_RELIGION:
         fail_check();
         if (yesno("Really renounce your faith, foregoing its fabulous benefits?",
@@ -3911,18 +3919,28 @@ int find_ability_slot(const ability_type abil, char firstletter)
     case ABIL_KIKU_GIFT_NECRONOMICON:
         first_slot = letter_to_index('N');
         break;
+    case ABIL_TIAMAT_DRAGON_BOOK:
+        first_slot = letter_to_index('D');
+        break;
     case ABIL_TSO_BLESS_WEAPON:
     case ABIL_KIKU_BLESS_WEAPON:
     case ABIL_LUGONU_BLESS_WEAPON:
+    case ABIL_BAHAMUT_DRAGONSLAYING:
         first_slot = letter_to_index('W');
         break;
     case ABIL_CONVERT_TO_BEOGH:
         first_slot = letter_to_index('Y');
         break;
     case ABIL_BAHAMUT_PROTECTION:
+    case ABIL_CHOOSE_BAHAMUT_BREATH:
+    case ABIL_CHOOSE_BAHAMUT_DRAKE:
+    case ABIL_BAHAMUT_TRANSFORM:
         first_slot = letter_to_index('B');
         break;
     case ABIL_TIAMAT_RETRIBUTION:
+    case ABIL_CHOOSE_TIAMAT_BREATH:
+    case ABIL_CHOOSE_TIAMAT_DRAKE:
+    case ABIL_CHOOSE_TIAMAT_TRANSFORM:
         first_slot = letter_to_index('T');
         break;
     case ABIL_RU_SACRIFICE_PURITY:

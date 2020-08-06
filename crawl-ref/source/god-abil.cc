@@ -156,7 +156,7 @@ bool bless_weapon(god_type god, brand_type brand, colour_t colour)
 
     item_def& wpn(you.inv[item_slot]);
     // Only TSO allows blessing ranged weapons.
-    if (!is_brandable_weapon(wpn, brand == SPWPN_HOLY_WRATH, true))
+    if (!is_brandable_weapon(wpn, (brand == SPWPN_HOLY_WRATH || brand == SPWPN_DRAGON_SLAYING), true))
         return false;
 
     if (get_weapon_brand(wpn) == brand)
@@ -168,7 +168,9 @@ bool bless_weapon(god_type god, brand_type brand, colour_t colour)
         prompt += "bloodied with pain";
     else if (brand == SPWPN_DISTORTION)
         prompt += "corrupted with distortion";
-    else
+    else if (brand == SPWPN_DRAGON_SLAYING)
+        prompt += "augmented with dragon slaying";
+    else //if (brand == SPWPN_HOLY_WRATH)
         prompt += "blessed with holy wrath";
     prompt += "?";
     if (!yesno(prompt.c_str(), true, 'n'))
@@ -228,6 +230,7 @@ bool bless_weapon(god_type god, brand_type brand, colour_t colour)
             if (!one_chance_in(4))
                 maybe_bloodify_square(*ri);
     }
+    // BCADDO: There should be something cooler on disto from Lugonu.
 
 #ifndef USE_TILE_LOCAL
     // Allow extra time for the flash to linger.
