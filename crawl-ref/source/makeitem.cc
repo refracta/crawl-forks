@@ -403,11 +403,11 @@ bool is_weapon_brand_ok(int type, int brand, bool /*strict*/)
     case SPWPN_MOLTEN:
     case SPWPN_FREEZING:
     case SPWPN_ACID: // Melee-only, except punk.
+    case SPWPN_DRAGON_SLAYING: // Normally polearm-only but Bahamut can put on whatever.
         break;
 
     // Melee-only brands.
     case SPWPN_DRAINING: // Rare Brand, only placed by Yred-related things.
-    case SPWPN_DRAGON_SLAYING:
     case SPWPN_VAMPIRISM:
     case SPWPN_PAIN:
     case SPWPN_DISTORTION:

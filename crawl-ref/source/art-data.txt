@@ -595,8 +595,6 @@ BOOL:    inv, tilerim, nogen
 NAME:    lance "Wyrmbane"
 OBJ:     OBJ_WEAPONS/WPN_SPEAR
 FALLBACK: OBJ_WEAPONS/WPN_DEMON_TRIDENT
-FB_BRAND: SPWPN_VORPAL
-INSCRIP: slay drac,
 TYPE:    lance
 BASE_DAM: +2
 PLUS:    +8
