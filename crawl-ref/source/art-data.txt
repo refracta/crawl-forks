@@ -603,6 +603,7 @@ PLUS:    +8
 COLOUR:  LIGHTGREEN
 TILE:    urand_wyrmbane
 TILE_EQ: wyrmbane
+BRAND:   SPWPN_DRAGON_SLAYING
 AC:      3
 FIRE:    1
 COLD:    1
