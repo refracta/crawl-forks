@@ -1632,9 +1632,9 @@ bool attack::apply_damage_brand(const char *what)
         break;
 
     case SPWPN_DRAGON_SLAYING:
-        if (is_dragonkind(defender))
+        if (defender->is_dragonkind())
         {
-            special_damage = 1 + random2(3*damage_done/2);
+            special_damage = 1 + (random2(damage_done * 15) / 10);
             if (defender_visible)
             {
                 special_damage_message =

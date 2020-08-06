@@ -664,6 +664,19 @@ bool monster::can_speak()
     return mon_shape_is_humanoid(get_mon_shape(*this));
 }
 
+bool monster::is_dragonkind() const
+{
+    if (mons_is_zombified(*this)
+        && (mons_genus(base_monster) == MONS_DRAGON
+            || mons_genus(base_monster) == MONS_DRAKE
+            || mons_genus(base_monster) == MONS_HYDRA))
+    {
+        return true;
+    }
+
+    return actor::is_dragonkind();
+}
+
 bool monster::is_silenced() const
 {
     return silenced(pos())

@@ -914,6 +914,8 @@ public:
 
     bool clear_far_engulf() override;
 
+    bool is_dragonkind() const override;
+
 protected:
     void _removed_beholder(bool quiet = false);
     bool _possible_beholder(const monster* mon) const;

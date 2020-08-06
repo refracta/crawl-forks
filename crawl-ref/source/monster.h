@@ -576,6 +576,8 @@ public:
     bool has_abom_facet(abom_facet_type facet) const;
     bool angered_by_attacks() const;
 
+    bool is_dragonkind() const override;
+
 private:
     int hit_dice;
 

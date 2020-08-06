@@ -22,14 +22,12 @@
 
 #include "areas.h"         // For silenced() and invalidate_agrid()
 #include "attack.h"        // For attack_strength_punctuation()
-#include "beam.h"          // For Lajatang of Order's silver damage
 #include "cloud.h"         // For storm bow's and robe of clouds' rain
 #include "coordit.h"       // For distance_iterator()
 #include "english.h"       // For apostrophise
 #include "exercise.h"      // For practise_evoking
 #include "fight.h"
 #include "food.h"          // For evokes
-#include "ghost.h"         // For is_dragonkind ghost_demon datas
 #include "god-conduct.h"    // did_god_conduct
 #include "god-passive.h"    // passive_t::want_curses
 #include "mgen-data.h"     // For Sceptre of Asmodeus evoke
@@ -658,47 +656,10 @@ static void _DEMON_AXE_unequip(item_def */*item*/, bool */*show_msgs*/)
 
 ///////////////////////////////////////////////////
 
-static void _WYRMBANE_equip(item_def */*item*/, bool *show_msgs, bool /*unmeld*/)
-{
-    _equip_mpr(show_msgs, "You feel an overwhelming desire to slay dragons!");
-}
-
-static bool is_dragonkind(const actor *act)
-{
-    if (mons_genus(act->mons_species()) == MONS_DRAGON
-        || mons_genus(act->mons_species()) == MONS_DRAKE
-        || mons_genus(act->mons_species()) == MONS_DRACONIAN)
-    {
-        return true;
-    }
-
-    if (act->is_player())
-        return you.form == transformation::dragon;
-
-    // Else the actor is a monster.
-    const monster* mon = act->as_monster();
-
-    if (mons_is_zombified(*mon)
-        && (mons_genus(mon->base_monster) == MONS_DRAGON
-            || mons_genus(mon->base_monster) == MONS_DRAKE
-            || mons_genus(mon->base_monster) == MONS_DRACONIAN))
-    {
-        return true;
-    }
-
-    if (mons_is_ghost_demon(mon->type)
-        && species_is_draconian(mon->ghost->species))
-    {
-        return true;
-    }
-
-    return false;
-}
-
 static void _WYRMBANE_melee_effects(item_def* weapon, actor* attacker,
                                     actor* defender, bool mondied, int dam)
 {
-    if (!defender || !is_dragonkind(defender))
+    if (!defender || !defender->is_dragonkind())
         return;
 
     // Since the target will become a DEAD MONSTER if it dies due to the extra
@@ -708,14 +669,6 @@ static void _WYRMBANE_melee_effects(item_def* weapon, actor* attacker,
 
     if (!mondied)
     {
-        int bonus_dam = 1 + random2(3 * dam / 2);
-        mprf("%s %s%s",
-            defender->name(DESC_THE).c_str(),
-            defender->conj_verb("convulse").c_str(),
-            attack_strength_punctuation(bonus_dam).c_str());
-
-        defender->hurt(attacker, bonus_dam);
-
         // Allow the lance to charge when killing dragonform felid players.
         mondied = defender->is_player() ? defender->as_player()->pending_revival
                                         : !defender->alive();

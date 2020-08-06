@@ -1107,3 +1107,15 @@ bool actor::evil() const
     // none of which points to a const object, the const_cast here is safe.
     return const_cast<actor *>(ensure_valid_actor(static_cast<const actor *>(act)));
 }
+
+bool actor::is_dragonkind() const
+{
+    if (mons_genus(mons_species()) == MONS_DRAGON
+        || mons_genus(mons_species()) == MONS_DRAKE
+        || mons_genus(mons_species()) == MONS_HYDRA)
+    {
+        return true;
+    }
+
+    return false;
+}

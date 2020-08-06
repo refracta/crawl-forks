@@ -9107,3 +9107,11 @@ bool player::immune_to_hex(const spell_type hex) const
         return false;
     }
 }
+
+bool player::is_dragonkind() const
+{
+    if (you.form == transformation::dragon || you.form == transformation::hydra)
+        return true;
+
+    return actor::is_dragonkind();
+}
