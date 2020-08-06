@@ -3196,13 +3196,14 @@ void bolt::affect_place_clouds()
     if (see_preservation)
         mpr("A magical artifact is magically pushed up through the ice!");
 
+    // BCADNOTE: Any vault or Abyss placed ice/obsidian is assumed to be permanent and unaltered by this.
     if ((feat == DNGN_ICE || feat == DNGN_OBSIDIAN) && (flavour == BEAM_COLD || flavour == BEAM_FREEZE))
         mutate_terrain_change_duration(p, damage.roll() * 5, true);
 
     if (feat == DNGN_ICE && is_fiery())
     {
-        mpr("The fire melts away some of the ice.");
-        mutate_terrain_change_duration(p, damage.roll() * -1);
+        if (mutate_terrain_change_duration(p, damage.roll() * -1))
+            mpr("The fire melts away some of the ice.");
     }
 
     // Is there already a cloud here?

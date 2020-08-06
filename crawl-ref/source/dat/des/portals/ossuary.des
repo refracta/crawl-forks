@@ -1065,8 +1065,6 @@ NAME:   ossuary_zaba_two_paths
 # more time to go for a walk and another chance to meet the player.
 TAGS:   no_rotate uniq_ossuary
 #
-KFEAT:  O7 = ice
-COLOUR: O7 = cyan
 SUBST: 6 = NN6
 KFEAT: N6 = floor
 SUBST: 7 = OO7
@@ -1083,6 +1081,8 @@ CLEAR: p
 : ossuary_setup_features(_G)
 FTILE:  N6 = floor_demonic
 COLOUR: N6 = green
+FTILE:  O7 = floor_ice
+COLOUR: O7 = cyan
 MAP
   c+c+c+ccpppppppppppcc+c+c+c
 ccc2c2c2cccpppppppppccc2c2c2ccc

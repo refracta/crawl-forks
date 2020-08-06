@@ -145,7 +145,7 @@ bool cell_can_cling_to(const coord_def& from, const coord_def to);
 bool cell_triggers_conduct(const coord_def pos);
 bool is_boring_terrain(dungeon_feature_type feat);
 
-void mutate_terrain_change_duration(coord_def pos, int delta, bool replace = false);
+bool mutate_terrain_change_duration(coord_def pos, int delta, bool replace = false);
 dungeon_feature_type orig_terrain(coord_def pos);
 void temp_change_terrain(coord_def pos, dungeon_feature_type newfeat, int dur,
                          terrain_change_type type = TERRAIN_CHANGE_GENERIC,
