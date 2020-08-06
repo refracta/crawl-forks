@@ -415,8 +415,8 @@ const vector<god_power> god_powers[NUM_GODS] =
       { 6, ABIL_TIAMAT_TRANSFORM, "transform into a different draconian colour" },
       { 7, ABIL_BAHAMUT_DRAGONSLAYING, "You are offered one final gift. Bahamut offers to brand your weapon with Dragonslaying and Tiamat offers a"
                 " Book of the Dragon, along with a permanent Wizardry bonus for spells therein.", "Bahamut & Tiamat are no longer ready to give you your"
-                " final gift.", "Bahamut will brand one of your weapons with Dragonslaying or Tiamat will gift you a Book of the Dragon."},
-      { 7, ABIL_TIAMAT_DRAGON_BOOK, "receive the book of the dragon and a wizardry bonus for the spells it contains." },
+                " final gift.", "brand one of your weapons with Dragonslaying"},
+      { 7, ABIL_TIAMAT_DRAGON_BOOK, "receive the book of the dragon and a wizardry bonus for the spells it contains" },
     },
 };
 
@@ -2561,7 +2561,8 @@ static void _gain_piety_point()
         {
             // Gain description of the choice abilities are on the first of the two choices.
             if (power.abil == ABIL_TIAMAT_RETRIBUTION || power.abil == ABIL_CHOOSE_TIAMAT_BREATH
-                || power.abil == ABIL_CHOOSE_TIAMAT_DRAKE || power.abil == ABIL_CHOOSE_TIAMAT_TRANSFORM)
+                || power.abil == ABIL_CHOOSE_TIAMAT_DRAKE || power.abil == ABIL_CHOOSE_TIAMAT_TRANSFORM
+                || power.abil == ABIL_TIAMAT_DRAGON_BOOK)
             {
                 continue;
             }
@@ -2744,7 +2745,8 @@ void lose_piety(int pgn)
         {
             // Loss description of the choice abilities are on the first of the two choices.
             if (power.abil == ABIL_TIAMAT_RETRIBUTION || power.abil == ABIL_CHOOSE_TIAMAT_BREATH
-                || power.abil == ABIL_CHOOSE_TIAMAT_DRAKE || power.abil == ABIL_CHOOSE_TIAMAT_TRANSFORM)
+                || power.abil == ABIL_CHOOSE_TIAMAT_DRAKE || power.abil == ABIL_CHOOSE_TIAMAT_TRANSFORM
+                || power.abil == ABIL_TIAMAT_DRAGON_BOOK)
             {
                 continue;
             }

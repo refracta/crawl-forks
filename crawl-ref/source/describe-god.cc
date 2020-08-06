@@ -1026,9 +1026,12 @@ static formatted_string _describe_god_powers(god_type which_god)
         if (you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY))
         {
             if (you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
-                desc.cprintf("Bahamut protects you from slowing, confusion, petrification and sleep.");
+                desc.cprintf("Bahamut protects you from slowing, confusion, petrification and sleep.\n");
             else
-                desc.cprintf("Tiamat may quicken your movements in retribution for hard-hitting and fiery attacks.");
+            {
+                desc.textcolour(LIGHTGREEN);
+                desc.cprintf("Tiamat may quicken your movements in retribution for hard-hitting and fiery attacks.\n");
+            }
         }
         break;
 
