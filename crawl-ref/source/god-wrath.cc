@@ -1712,9 +1712,26 @@ static bool _uskayaw_retribution()
 
 static const pop_entry _bahamut_draconians[] =
 {
-  { 0,  12,   5, FLAT, MONS_DRACONIAN },
-  { 8,  27,  10, FALL, RANDOM_BASE_DRACONIAN },
+  {  0, 12,   5, FLAT, MONS_DRACONIAN },
+  {  8, 27,  10, FALL, RANDOM_BASE_DRACONIAN },
   { 15, 27,  10, RISE, RANDOM_NONBASE_DRACONIAN },
+  { 0,0,0,FLAT,MONS_0 }
+};
+
+static const pop_entry _bahamut_dragons[] =
+{
+  {  0, 12,  10, FLAT, MONS_STEAM_DRAGON },
+  {  6, 18,  10, PEAK, MONS_ACID_DRAGON },
+  {  8, 24,  10, PEAK, MONS_FIRE_DRAGON },
+  {  8, 24,  10, PEAK, MONS_ICE_DRAGON },
+  { 10, 18,  10, RISE, MONS_HYDRA },
+  { 12, 27,  20, RISE, MONS_SHADOW_DRAGON },
+  { 12, 27,  20, PEAK, MONS_STORM_DRAGON },
+  { 12, 27,  20, PEAK, MONS_GOLDEN_DRAGON },
+  { 18, 27,  20, RISE, MONS_QUICKSILVER_DRAGON },
+  { 18, 27,  10, RISE, MONS_IRON_DRAGON },
+  { 21, 27,  10, RISE, MONS_BONE_DRAGON },
+  { 21, 27,   5, RISE, MONS_PEARL_DRAGON },
   { 0,0,0,FLAT,MONS_0 }
 };
 
@@ -1748,8 +1765,20 @@ static bool _bahamut_retribution()
     }   // If fail, fallthrough to next.
     case 1:
     {
-        int count = 1 + you.experience_level / 9;
+        int count = 1 + you.experience_level / 8 + random2(1 + you.experience_level / 3);
         bool success = false;
+
+        for (int i = 0; i < count; i++)
+        {
+            monster_type mon_type = pick_monster_from(_bahamut_dragons,
+                you.experience_level);
+
+            mgen_data temp = _wrath_mon_data(mon_type, GOD_BAHAMUT_TIAMAT);
+
+            if (create_monster(temp, false))
+                success = true;
+        }
+        count = 1 + you.experience_level / 9;
         for (int i = 0; i < count; i++)
         {
             monster_type mon_type = pick_monster_from(_bahamut_draconians,
@@ -1773,7 +1802,7 @@ static bool _bahamut_retribution()
     {
         if (mon)
         {
-            if (you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY) && you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+            if (you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY) && you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool() && !you.stasis() && !you.res_petrify())
             {
                 you.petrify(nullptr);
                 mprf(MSGCH_GOD, "Bahamut Booms: \"Repent and I shall protect you once more.\"");
