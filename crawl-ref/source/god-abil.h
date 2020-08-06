@@ -59,6 +59,7 @@ const char * const GOZAG_SHOP_COST_KEY       = "gozag_shop_cost_%d";
 #define BAHAMUT_TIAMAT_CHOICE1_KEY "second_bahamut_tiamat_ability_choice"
 #define BAHAMUT_TIAMAT_CHOICE2_KEY "third_bahamut_tiamat_ability_choice"
 #define BAHAMUT_TIAMAT_CHOICE3_KEY "fourth_bahamut_tiamat_ability_choice"
+#define TIAMAT_BOOK_KEY "received_dragon_book"
 
 struct bolt;
 class stack_iterator;
