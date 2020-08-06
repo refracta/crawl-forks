@@ -704,6 +704,31 @@ static like_response okawaru_kill(const char* desc)
     };
 }
 
+// 100% this function is for the bloody plural. Might as well have fun with it though.
+static like_response bahamut_kill(const char * desc)
+{
+    return
+    {
+        desc, false,
+        -3, 18, 2, nullptr, [](int &/*piety*/, int &/*denom*/, const monster*/*victim*/)
+    {
+        switch (random2(3))
+        {
+        case 0:
+            mprf(MSGCH_GOD, "Bahamut approves of your kill.");
+            break;
+        case 1:
+            mprf(MSGCH_GOD, "<lightgreen>Tiamat appreciates your kill.</lightgreen>");
+            break;
+        default:
+        case 2:
+            mprf(MSGCH_GOD, "Bahamut & Tiamat accept your kill.");
+            break;
+        }    
+    }
+    };
+}
+
 static const like_response EXPLORE_RESPONSE = {
     "you explore the world", false,
     0, 0, 0, nullptr,
@@ -1020,11 +1045,11 @@ static like_map divine_likes[] =
     },
     // GOD_BAHAMUT_TIAMAT
     {
-        { DID_KILL_LIVING, KILL_LIVING_RESPONSE },
-        { DID_KILL_UNDEAD, KILL_UNDEAD_RESPONSE },
-        { DID_KILL_DEMON, KILL_DEMON_RESPONSE },
-        { DID_KILL_HOLY, KILL_HOLY_RESPONSE },
-        { DID_KILL_NONLIVING, KILL_NONLIVING_RESPONSE },
+        { DID_KILL_LIVING, bahamut_kill("you kill living beings") },
+        { DID_KILL_UNDEAD, bahamut_kill("you destroy the undead") },
+        { DID_KILL_DEMON, bahamut_kill("you kill demons") },
+        { DID_KILL_HOLY, bahamut_kill("you kill holy beings") },
+        { DID_KILL_NONLIVING, bahamut_kill("you destroy nonliving beings") },
     },
 };
 
