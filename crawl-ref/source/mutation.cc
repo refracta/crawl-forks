@@ -2905,6 +2905,13 @@ void roll_demonspawn_mutations()
                          _select_ds_mutations()));
 }
 
+static bool _is_ranged_skill(skill_type skill)
+{
+    if (skill == SK_BOWS || skill == SK_CROSSBOWS || skill == SK_SLINGS)
+        return true;
+    return false;
+}
+
 // Sets up variables only used by the Draconian pseudomutations.
 void draconian_setup()
 {
@@ -2920,13 +2927,26 @@ void draconian_setup()
     you.major_skill = random_choose(SK_LONG_BLADES, SK_AXES_HAMMERS, SK_MACES_STAVES, SK_WHIPS_FLAILS, SK_SLINGS,
         SK_BOWS, SK_CROSSBOWS);
 
-    you.minor_skill = random_choose(SK_SHORT_BLADES, SK_LONG_BLADES, SK_AXES_HAMMERS, SK_MACES_STAVES, SK_WHIPS_FLAILS,
-        SK_SLINGS, SK_BOWS, SK_CROSSBOWS, SK_UNARMED_COMBAT);
+    you.minor_skill = you.major_skill;
+
+    while (you.major_skill == you.minor_skill)
+    {
+        you.minor_skill = random_choose(SK_SHORT_BLADES, SK_LONG_BLADES, SK_AXES_HAMMERS, SK_MACES_STAVES, SK_WHIPS_FLAILS,
+            SK_SLINGS, SK_BOWS, SK_CROSSBOWS, SK_UNARMED_COMBAT);
+    }
 
     you.defence_skill = random_choose(SK_DODGING, SK_STEALTH, SK_SHIELDS);
 
-    if (you.major_skill == you.minor_skill)
-        you.minor_skill = SK_UNARMED_COMBAT;
+    if (_is_ranged_skill(you.major_skill) && _is_ranged_skill(you.minor_skill))
+    {
+        if (coinflip())
+        {
+            you.minor_skill = random_choose(SK_SHORT_BLADES, SK_LONG_BLADES, SK_AXES_HAMMERS, SK_MACES_STAVES, SK_WHIPS_FLAILS,
+                SK_UNARMED_COMBAT);
+        }
+        else
+            you.major_skill = random_choose(SK_LONG_BLADES, SK_AXES_HAMMERS, SK_MACES_STAVES, SK_WHIPS_FLAILS);
+    }
 }
 
 bool perma_mutate(mutation_type which_mut, int how_much, const string &reason)
