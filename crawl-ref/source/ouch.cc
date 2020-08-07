@@ -766,6 +766,8 @@ static void _tiamat_retribution(int dam, bool fiery)
         if (fiery)
             dam *= 2;
 
+        apply_pity(dam);
+
         if (dam < (you.hp_max / 10))
             return;
 

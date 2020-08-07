@@ -293,7 +293,10 @@ static int _apply_spellcasting_success_boosts(spell_type spell, int chance)
         && you_worship(GOD_BAHAMUT_TIAMAT)
         && spell_found_in_book(BOOK_DRAGON, spell))
     {
-        fail_reduce = 67;
+        if (you.get_mutation_level(MUT_GODS_PITY) > 1)
+            fail_reduce = 50;
+        else
+            fail_reduce = 67;
     }
 
     const int wizardry = player_wizardry(spell);
