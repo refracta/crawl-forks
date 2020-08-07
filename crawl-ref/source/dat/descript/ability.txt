@@ -106,9 +106,11 @@ The range of the blast is decreased by one for every creature it strikes.
 %%%%
 Breathe Butterflies ability
 
-Breathes a gust of harmless fairy dust, which coalesces into harmless 
-butterflies on every empty tile it crosses. The range of the gust is 
-decreased by one for every creature it crosses.
+Breathes a gust of fairy dust, which coalesces into harmless butterflies 
+on every empty tile it crosses. Additional butterflies swarm to surround 
+the user. As the dust surrounds summoned creatures it will increase their time 
+in this world or abjure them, depending on their attitude towards the user. 
+The range of the dust is decreased by one for every creature it crosses.
 %%%%
 Breathe Bone Shards ability
 

@@ -1949,8 +1949,43 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
         // Fallthrough
 
     case BEAM_BLOOD:
-    case BEAM_BUTTERFLY:
     case BEAM_FOG:
+        hurted = 0;
+        break;
+
+    case BEAM_BUTTERFLY:
+        if (doFlavouredEffects && mons->is_summoned())
+        {
+            mon_enchant abj = mons->get_ench(ENCH_ABJ);
+
+            if (pbolt.agent()->is_player())
+            {
+                if (mons->wont_attack())
+                {
+                    abj.duration += hurted * BASELINE_DELAY;
+                    mprf("You extend %s time in this world.", mons->name(DESC_ITS).c_str());
+                }
+                else
+                {
+                    abj.duration = max(abj.duration - hurted * BASELINE_DELAY, 1);
+                    simple_monster_message(*mons, " shudders.");
+                }
+            }
+            else
+            {
+                if (mons_aligned(pbolt.agent(), mons))
+                {
+                    abj.duration += hurted * BASELINE_DELAY;
+                    mprf("%s extend %s time in this world.", pbolt.agent()->name(DESC_THE).c_str(), mons->name(DESC_ITS).c_str());
+                }
+                else
+                {
+                    abj.duration = max(abj.duration - hurted * BASELINE_DELAY, 1);
+                    simple_monster_message(*mons, " shudders%s.");
+                }
+            }
+            mons->update_ench(abj);
+        }
         hurted = 0;
         break;
 
@@ -3262,10 +3297,19 @@ void bolt::affect_place_clouds()
     if (flavour == BEAM_PARADOXICAL)
         place_cloud(grid_distance(coord_def(1, 1), p) % 2 ? CLOUD_COLD : CLOUD_FIRE, p, random2(5) + 2, agent());
 
-    // BCADDO: Beam Butterfly is still buggy. Replace.
-    if (flavour == BEAM_BUTTERFLY && !defender)
-        create_monster( mgen_data(MONS_BUTTERFLY, BEH_COPY, p, agent()->is_player() ? int{ MHITYOU } 
-            : agent()->as_monster()->foe, MG_AUTOFOE).set_summoned(agent(), damage.roll(), SPELL_NO_SPELL, GOD_NO_GOD));
+    if (flavour == BEAM_BUTTERFLY && !actor_at(p))
+    {
+        monster * butterfly = create_monster( mgen_data(MONS_BUTTERFLY, BEH_COPY, p, agent()->is_player() ? int{ MHITYOU } 
+                                : agent()->as_monster()->foe, MG_AUTOFOE).set_summoned(agent(), 2, SPELL_NO_SPELL, GOD_NO_GOD));
+        if (butterfly)
+        {
+            butterfly->move_to_pos(p);
+            mon_enchant abj = butterfly->get_ench(ENCH_ABJ);
+
+            abj.duration = (damage.roll() * BASELINE_DELAY);
+            butterfly->update_ench(abj);
+        }
+    }
 
     //XXX: these use the name for a gameplay effect.
     if (name == "poison gas")
@@ -3474,6 +3518,7 @@ bool bolt::is_harmless(const monster* mon) const
     case BEAM_DIGGING:
     case BEAM_WAND_HEALING:
     case BEAM_FOG:
+    case BEAM_BUTTERFLY: // Not necessarily true; but it's smart and always harmless to allies.
         return true;
 
     case BEAM_HOLY:

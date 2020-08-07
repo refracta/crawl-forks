@@ -2299,6 +2299,34 @@ static spret _do_ability(const ability_def& abil, bool fail)
         if (zapping(zap, power, beam, true, m.c_str()) == spret::abort)
             return spret::abort;
 
+        if (zap = ZAP_BREATHE_BUTTERFLY)
+        {
+            int extras = 2 + you.get_experience_level() / 9 + random2(4);
+            for (int i = 0; i < extras; i++)
+            {
+                monster * butterfly = create_monster(mgen_data(MONS_BUTTERFLY, BEH_COPY, you.pos(), 
+                                                     MHITYOU).set_summoned(&you, 2, SPELL_NO_SPELL, GOD_NO_GOD));
+                
+                if (butterfly)
+                {
+                    for (adjacent_iterator ai(you.pos()); ai; ++ai)
+                    {
+                        if (!actor_at(*ai) && butterfly->is_habitable(*ai))
+                        {
+                            butterfly->move_to_pos(*ai);
+                            break;
+                        }
+                    }
+
+                    mon_enchant abj = butterfly->get_ench(ENCH_ABJ);
+
+                    // Matches the damage roll of the beam.
+                    abj.duration = (roll_dice(5, 4 + you.get_experience_level() / 3) * BASELINE_DELAY);
+                    butterfly->update_ench(abj);
+                }
+            }
+        }
+
         you.increase_duration(DUR_BREATH_WEAPON,
                       3 + random2(10) + random2(30 - you.experience_level));
         break;
