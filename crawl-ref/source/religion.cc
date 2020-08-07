@@ -1653,7 +1653,7 @@ static bool _handle_veh_gift(bool forced)
                 prompt += spell_title(*it);
                 take_note(Note(NOTE_OFFERED_SPELL, *it));
             }
-            prompt += ", to your library.";
+            prompt += " to your library.";
 
             if (gifts >= 5)
                 _inc_gift_timeout(30 + random2avg(30, 2));
