@@ -7447,7 +7447,7 @@ static ability_type _breath_for_skill(int skill, bool allow_escape)
         return random_choose_weighted(1, ABIL_BREATHE_GHOSTLY_FLAMES, 
                                       3, ABIL_BREATHE_RADIATION, 
                                       1, ABIL_BREATHE_BLOOD, 
-                                      2, ABIL_BREATHE_MIASMA
+                                      2, ABIL_BREATHE_MIASMA,
                                       1, ABIL_BREATHE_CHAOS);
     }
 
