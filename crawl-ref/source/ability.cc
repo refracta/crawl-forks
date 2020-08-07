@@ -673,15 +673,15 @@ static const ability_def Ability_List[] =
         0, 0, 0, 0, { fail_basis::invo }, abflag::none },
         // Normal Actives
     { ABIL_BAHAMUT_EMPOWERED_BREATH, "Enhanced Breath",
-        4, 0, 200, 4, { fail_basis::invo }, abflag::breath },
+        4, 0, 200, 4, { fail_basis::invo, 60, 5, 20 }, abflag::breath },
     { ABIL_TIAMAT_ADAPTIVE_BREATH, "Adaptive Breath",
-        4, 0, 200, 4, { fail_basis::invo }, abflag::breath },
+        4, 0, 200, 4, { fail_basis::invo, 60, 5, 20 }, abflag::breath },
     { ABIL_BAHAMUT_DRAKE_MOUNT, "Drake Mount",
-        7, 0, 500, 12, { fail_basis::invo }, abflag::none },
+        7, 0, 500, 12, { fail_basis::invo, 90, 6, 10 }, abflag::none },
     { ABIL_TIAMAT_SUMMON_DRAKES, "Summon Drakes",
-        7, 0, 500, 12, { fail_basis::invo }, abflag::none },
+        7, 0, 500, 12, { fail_basis::invo, 90, 6, 10 }, abflag::none },
     { ABIL_TIAMAT_TRANSFORM, "Change Draconian Colour",
-        4, 0, 500, 8, { fail_basis::invo }, abflag::none },
+        4, 0, 500, 8, { fail_basis::invo, 120, 5, 10 }, abflag::none },
 
     { ABIL_STOP_RECALL, "Stop Recall", 0, 0, 0, 0, {fail_basis::invo}, abflag::starve_ok },
     { ABIL_RENOUNCE_RELIGION, "Renounce Religion",
@@ -1629,6 +1629,7 @@ static bool _check_ability_possible(const ability_def& abil, bool quiet = false)
     case ABIL_BREATHE_GHOSTLY_FLAMES:
     case ABIL_BREATHE_METAL:
     case ABIL_BREATHE_RADIATION:
+    case ABIL_TIAMAT_ADAPTIVE_BREATH:
         if (you.duration[DUR_BREATH_WEAPON])
         {
             if (!quiet)
@@ -1913,6 +1914,14 @@ static bool _cleansing_flame_affects(const actor *act)
 }
 
 bool previously_on = false;
+
+// This is a short circuit used by Tiamat's breath ability.
+spret tiamat_breath(const ability_type abil)
+{
+    const ability_def& ability = get_ability_def(abil);
+
+    return _do_ability(ability, false);
+}
 
 /*
  * Use an ability.
@@ -3377,6 +3386,9 @@ static spret _do_ability(const ability_def& abil, bool fail)
         if (!bahamut_tiamat_make_choice(abil.ability))
             return spret::abort;
         break;
+
+    case ABIL_TIAMAT_ADAPTIVE_BREATH:
+        return tiamat_choice_breath(fail);
 
     case ABIL_TIAMAT_SUMMON_DRAKES:
         fail_check();

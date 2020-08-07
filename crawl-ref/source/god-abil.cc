@@ -12,6 +12,7 @@
 #include <queue>
 #include <sstream>
 
+#include "ability.h"
 #include "act-iter.h"
 #include "areas.h"
 #include "artefact.h"
@@ -7421,6 +7422,98 @@ bool bahamut_tiamat_make_choice(ability_type abil)
     }
 
     return true;
+}
+
+static ability_type _breath_for_skill(int skill, bool allow_escape)
+{
+    int pow = skill/9 + random2(skill);
+
+    // Only one of the three choices is allowed to be an "escape" ability; since these are non-damaging
+    // we don't want bad RNG leading to butterflies, wind, fog, afterall.
+    if (allow_escape && !one_chance_in(3))
+    {
+        if (pow > 20)
+            return ABIL_BREATHE_HOLY_FLAMES;
+
+        if (pow > 10)
+            return ABIL_BREATHE_BUTTERFLIES;
+
+        return random_choose(ABIL_BREATHE_FOG, ABIL_BREATHE_WIND);
+    }
+
+    if (one_chance_in(15))
+        return ABIL_BREATHE_CHAOS;
+
+    // weighting radiation higher since the rest are useless on undead and that could be relevant sometimes.
+    if (one_chance_in(6) || pow > 20)
+    {
+        return random_choose_weighted(1, ABIL_BREATHE_GHOSTLY_FLAMES, 
+                                      3, ABIL_BREATHE_RADIATION, 
+                                      1, ABIL_BREATHE_BLOOD, 
+                                      2, ABIL_BREATHE_MIASMA);
+    }
+
+    if (one_chance_in(4) || pow > 10)
+        return random_choose(ABIL_BREATHE_ACID, ABIL_BREATHE_LIGHTNING, ABIL_BREATHE_POWER, ABIL_BREATHE_SILVER);
+
+    return random_choose(ABIL_BREATHE_FIRE, ABIL_BREATHE_FROST, ABIL_BREATHE_MEPHITIC, ABIL_BREATHE_DRAIN, ABIL_BREATHE_BONE);
+}
+
+static ability_type _random_breath(ability_type breaths[], bool allow_escape)
+{
+    ability_type retval = ABIL_NON_ABILITY;
+
+    while (retval == ABIL_NON_ABILITY || draconian_breath() == retval || breaths[0] == retval
+        || breaths[1] == retval)
+    {
+        retval = _breath_for_skill(apply_invo_enhancer(you.skill(SK_INVOCATIONS), false), allow_escape);
+    }
+
+    return retval;
+}
+
+spret tiamat_choice_breath(bool fail)
+{
+    if (fail)
+    {
+        if (yesno("You fail to use your ability. Do you want to use your normal breath?", true, 1))
+            return tiamat_breath(draconian_breath());
+        return spret::fail;
+    }
+
+    int keyin = 0;
+    apply_invo_enhancer(0, true); // Just for the message.
+
+    ability_type breaths[3] = { ABIL_NON_ABILITY, ABIL_NON_ABILITY, ABIL_NON_ABILITY };
+
+    for (int i = 0; i < 3; i++)
+        breaths[i] = _random_breath(breaths, i == 2);
+
+    while (true)
+    {
+        if (crawl_state.seen_hups)
+            return spret::abort;
+
+        clear_messages();
+        mpr_nojoin(MSGCH_PROMPT, "Tiamat offers you a choice of breath powers.");
+        for (int i = 0; i < 3; i++)
+        {
+            string line = make_stringf("  [%c] - %s", i + 'a', ability_name(breaths[i]));
+            mpr_nojoin(MSGCH_PLAIN, line);
+        }
+        string last_line = make_stringf("  [d] - %s (your normal breath)", ability_name(draconian_breath()));
+        mpr_nojoin(MSGCH_PLAIN, last_line);
+        mprf(MSGCH_PROMPT, "Breathe what?");
+        keyin = toalower(get_ch()) - 'a';
+        if (keyin < 0 || keyin > 3)
+            continue;
+
+        break;
+    }
+
+    if (keyin == 3)
+        return tiamat_breath(draconian_breath());
+    return tiamat_breath(breaths[keyin]);
 }
 
 static draconian_colour _random_common_colour(draconian_colour cols[])
