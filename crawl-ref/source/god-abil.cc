@@ -7441,16 +7441,14 @@ static ability_type _breath_for_skill(int skill, bool allow_escape)
         return random_choose(ABIL_BREATHE_FOG, ABIL_BREATHE_WIND);
     }
 
-    if (one_chance_in(15))
-        return ABIL_BREATHE_CHAOS;
-
     // weighting radiation higher since the rest are useless on undead and that could be relevant sometimes.
     if (one_chance_in(6) || pow > 20)
     {
         return random_choose_weighted(1, ABIL_BREATHE_GHOSTLY_FLAMES, 
                                       3, ABIL_BREATHE_RADIATION, 
                                       1, ABIL_BREATHE_BLOOD, 
-                                      2, ABIL_BREATHE_MIASMA);
+                                      2, ABIL_BREATHE_MIASMA
+                                      1, ABIL_BREATHE_CHAOS);
     }
 
     if (one_chance_in(4) || pow > 10)
