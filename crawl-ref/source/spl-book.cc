@@ -135,6 +135,22 @@ vector<spell_type> spells_in_book(const item_def &book)
     return ret;
 }
 
+// I almost named this spell_in_book but that was too similar to the above.
+// Returns if a particular spell is in the associated book.
+// Currently only used for Tiamat's "Wizardry for Book of the Dragon spells".
+bool spell_found_in_book(const book_type book, const spell_type spell)
+{
+    vector<spell_type> spells = spellbook_template(book);
+    int x = spells.size();
+
+    for (int i = 0; i < x; i++)
+    {
+        if (spells[i] = spell)
+            return true;
+    }
+    return false;
+}
+
 vector<spell_type> spellbook_template(book_type book)
 {
     ASSERT_RANGE(book, 0, (int)ARRAYSZ(spellbook_templates));

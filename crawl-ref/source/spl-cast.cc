@@ -288,6 +288,14 @@ static int _apply_spellcasting_success_boosts(spell_type spell, int chance)
             fail_reduce = 67;
     }
 
+    // The get_bool() would be redundant since it's always initialized to true.
+    if (you.props.exists(TIAMAT_BOOK_KEY) // && you.props[TIAMAT_BOOK_KEY].get_bool() 
+        && you_worship(GOD_BAHAMUT_TIAMAT)
+        && spell_found_in_book(BOOK_DRAGON, spell))
+    {
+        fail_reduce = 67;
+    }
+
     const int wizardry = player_wizardry(spell);
 
     if (wizardry > 0)

@@ -2088,32 +2088,40 @@ bool kiku_take_corpse()
     return false;
 }
 
-bool kiku_gift_necronomicon()
+bool final_book_gift(god_type god)
 {
-    ASSERT(can_do_capstone_ability(you.religion));
+    ASSERT(can_do_capstone_ability(god));
 
-    if (!yesno("Do you wish to receive a Necronomicon?", true, 'n'))
+    string prompt = make_stringf("Do you wish to receive a %s?", god == GOD_KIKUBAAQUDGHA ? "Necronomicon" : "Book of the Dragon");
+
+    if (!yesno(prompt.c_str(), true, 'n'))
     {
         canned_msg(MSG_OK);
         return false;
     }
-    int thing_created = items(true, OBJ_BOOKS, BOOK_NECRONOMICON, 1, 0,
-                              you.religion);
+    int thing_created = items(true, OBJ_BOOKS, god == GOD_KIKUBAAQUDGHA ? BOOK_NECRONOMICON : BOOK_DRAGON, 1, 0,
+                              god);
     if (thing_created == NON_ITEM
         || !move_item_to_grid(&thing_created, you.pos()))
     {
         return false;
     }
     set_ident_type(mitm[thing_created], true);
-    simple_god_message(" grants you a gift!");
-    flash_view(UA_PLAYER, RED);
+    if (god == GOD_BAHAMUT_TIAMAT)
+    {
+        mprf(MSGCH_GOD, "<lightgreen>Tiamat grants you a gift!</lightgreen>");
+        you.props[TIAMAT_BOOK_KEY] = true;
+    }
+    else
+        simple_god_message(" grants you a gift!");
+    flash_view(UA_PLAYER, god == GOD_KIKUBAAQUDGHA ? RED : LIGHTGREEN);
 #ifndef USE_TILE_LOCAL
     // Allow extra time for the flash to linger.
     scaled_delay(1000);
 #endif
     more();
-    you.one_time_ability_used.set(you.religion);
-    take_note(Note(NOTE_GOD_GIFT, you.religion));
+    you.one_time_ability_used.set(god);
+    take_note(Note(NOTE_GOD_GIFT, god));
     return true;
 }
 

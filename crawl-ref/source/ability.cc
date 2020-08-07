@@ -2569,7 +2569,7 @@ static spret _do_ability(const ability_def& abil, bool fail)
     case ABIL_KIKU_GIFT_NECRONOMICON:
     {
         fail_check();
-        if (!kiku_gift_necronomicon())
+        if (!final_book_gift(GOD_KIKUBAAQUDGHA))
             return spret::abort;
         break;
     }
@@ -3392,6 +3392,12 @@ static spret _do_ability(const ability_def& abil, bool fail)
         mprf(MSGCH_GOD, "Bahamut will enhance one of your weapons.");
         // included in default force_more_message
         if (!bless_weapon(GOD_BAHAMUT_TIAMAT, SPWPN_DRAGON_SLAYING, YELLOW))
+            return spret::abort;
+        break;
+
+    case ABIL_TIAMAT_DRAGON_BOOK:
+        fail_check();
+        if (!final_book_gift(GOD_BAHAMUT_TIAMAT))
             return spret::abort;
         break;
 

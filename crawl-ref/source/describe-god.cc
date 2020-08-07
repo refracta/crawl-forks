@@ -1033,6 +1033,11 @@ static formatted_string _describe_god_powers(god_type which_god)
                 desc.cprintf("Tiamat may quicken your movements in retribution for hard-hitting and fiery attacks.\n");
             }
         }
+        if (you.props.exists(TIAMAT_BOOK_KEY))
+        {
+            desc.textcolour(LIGHTGREEN);
+            desc.cprintf("Tiamat aids you in casting traditional draconic spells.\n");
+        }
         break;
 
     default:
