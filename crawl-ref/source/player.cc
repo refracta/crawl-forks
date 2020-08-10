@@ -1434,6 +1434,9 @@ int player_spell_levels()
     bool burst = false;
     bool bolt = false;
 
+    bool hail = false;
+    bool cicle = false;
+
     for (const spell_type spell : you.spells)
     {
         if (spell == SPELL_LRD)
@@ -1452,6 +1455,10 @@ int player_spell_levels()
             burst = true;
         if (spell == SPELL_BOLT_OF_FIRE)
             bolt = true;
+        if (spell == SPELL_HAILSTORM)
+            hail = true;
+        if (spell == SPELL_THROW_ICICLE)
+            cicle = true;
         if (spell != SPELL_NO_SPELL)
             sl -= spell_difficulty(spell);
         // BCADDO: This is getting long and repetitive refactor into a map.
@@ -1468,6 +1475,9 @@ int player_spell_levels()
 
     if (bolt && burst)
         sl += spell_difficulty(SPELL_BOLT_OF_FIRE);
+
+    if (hail && cicle)
+        sl += spell_difficulty(SPELL_THROW_ICICLE);
 
     // Note: This can happen because of draining. -- bwr
     if (sl < 0)

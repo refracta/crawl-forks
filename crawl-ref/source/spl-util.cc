@@ -520,6 +520,16 @@ int spell_levels_required(spell_type which_spell)
     {
         levels = 0;
     }
+    else if (which_spell == SPELL_THROW_ICICLE
+        && you.has_spell(SPELL_HAILSTORM))
+    {
+        levels = 0;
+    }
+    else if (which_spell == SPELL_HAILSTORM
+        && you.has_spell(SPELL_THROW_ICICLE))
+    {
+        levels = 0;
+    }
     // BCADDO: This is getting long and repetitive, refactor into a map.
 
     return levels;
