@@ -1371,7 +1371,7 @@ static bool _give_equipment_gift()
 
     // Should gift catnip instead.
     // BCADDO: Catnip.
-    if (you.species == SP_FELID)
+    if (you.species == SP_FELID || you.species == SP_FAIRY)
         return false;
 
     object_class_type gift_type = OBJ_RANDOM;
