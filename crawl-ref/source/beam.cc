@@ -1886,6 +1886,14 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
     case BEAM_CRYSTAL_ICE:
     case BEAM_FREEZE:
     case BEAM_ICE:
+        // Weird special case; but decided to put it in for practical purposes
+        if (mons->is_icy() && pbolt.name == "icy shards")
+        {
+            simple_monster_message(*mons, " is unaffected.");
+            hurted = 0;
+            break;
+        }
+
         // ice - 40% of damage is cold, other 60% is impact and
         // can't be resisted (except by AC, of course)
         hurted = resist_adjust_damage(mons, pbolt.flavour, hurted);
@@ -4483,6 +4491,9 @@ void bolt::affect_player()
     // Apply resistances to damage, but don't print "You resist" messages yet
     int final_dam = check_your_resists(pre_res_dam, flavour, "", this, false);
 
+    if (you.is_icy() && name == "icy shards")
+        final_dam = 0;
+
     // Tell the player the beam hit
     if (hit_verb.empty())
         hit_verb = engulfs ? "engulfs" : "hits";
@@ -4503,7 +4514,10 @@ void bolt::affect_player()
     // these come after the beam actually hitting.
     // Note that this must be called with the pre-resistance damage, so that
     // poison effects etc work properly.
-    check_your_resists(pre_res_dam, flavour, "", this, true);
+    if (you.is_icy() && name == "icy shards")
+        mprf("You are unaffected (0).");
+    else
+        check_your_resists(pre_res_dam, flavour, "", this, true);
 
     if (flavour == BEAM_MIASMA && final_dam > 0)
         was_affected = miasma_player(agent(), name);
@@ -4778,6 +4792,9 @@ bool bolt::determine_damage(monster* mon, int& preac, int& postac, int& final)
         preac = damage.roll() + damage.roll() + damage.roll();
         preac /= 3;
     }
+
+    if (name == "icy shards" && mon->is_icy())
+        return preac = 0;
 
     int tracer_postac_max = preac_max_damage;
 
@@ -7014,6 +7031,9 @@ bool bolt::nasty_to(const monster* mon) const
     if (flavour == BEAM_DISINTEGRATION || flavour == BEAM_DEVASTATION
         || flavour == BEAM_ICY_DEVASTATION || flavour == BEAM_CHAOTIC_DEVASTATION)
         return mon->type != MONS_ORB_OF_DESTRUCTION && mon->type != MONS_ORB_OF_CHAOS;
+
+    if (name == "icy shards" && mon->is_icy())
+        return false;
 
     // Take care of other non-enchantments.
     if (!is_enchantment())
