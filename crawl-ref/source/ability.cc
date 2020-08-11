@@ -2299,7 +2299,7 @@ static spret _do_ability(const ability_def& abil, bool fail)
         if (zapping(zap, power, beam, true, m.c_str()) == spret::abort)
             return spret::abort;
 
-        if (zap = ZAP_BREATHE_BUTTERFLY)
+        if (zap == ZAP_BREATHE_BUTTERFLY)
         {
             int extras = 2 + you.get_experience_level() / 9 + random2(4);
             for (int i = 0; i < extras; i++)
