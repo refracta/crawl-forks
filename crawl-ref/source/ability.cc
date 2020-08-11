@@ -1926,6 +1926,24 @@ spret tiamat_breath(const ability_type abil, const bool bahamut)
     return _do_ability(ability, false, bahamut);
 }
 
+static int _pois_res_multi(monster * mons)
+{
+    switch (mons->res_poison())
+    {
+    default:
+    case -1:
+        return 5;
+    case 0:
+        return 10;
+    case 1:
+        return 20;
+    case 2:
+        return 25;
+    case 3:
+        return 1000; // Arbitrarily high to be completely impossible to succeed.
+    }
+}
+
 /*
  * Use an ability.
  *
@@ -2068,7 +2086,9 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         case ABIL_BREATHE_FOG:              cloud = CLOUD_PURPLE_SMOKE;     break;
         case ABIL_BREATHE_POISON:           cloud = CLOUD_POISON;           break;
         case ABIL_BREATHE_BLOOD:            cloud = CLOUD_BLOOD;            break;
-        case ABIL_BREATHE_MEPHITIC:         cloud = CLOUD_MEPHITIC;         break;
+        case ABIL_BREATHE_MEPHITIC:         empowered   ?   cloud = CLOUD_POISON
+                                                        :   cloud = CLOUD_MEPHITIC;
+                                                                            break;
         default:                            cloud = CLOUD_CHAOS;            break;  
         }
 
@@ -2086,10 +2106,14 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
 
         fail_check();
 
-        int power = _drac_breath_power();
+        int power = _drac_breath_power(empowered);
 
         if (abil.ability == ABIL_BREATHE_FOG)
-            mprf("You exhale a massive amount of fog.");
+        {
+            if (empowered)
+                mass_enchantment(ENCH_FEAR, power * 5, false);
+            mpr("You exhale a massive amount of fog.");
+        }
         else
         {
             mprf("You exhale a mighty wave of %s!",
@@ -2100,6 +2124,21 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         {
             if (entry.second <= 0)
                 continue;
+            if (empowered && monster_at(entry.first))
+            {
+                monster * mons = monster_at(entry.first);
+                if (cloud == CLOUD_BLOOD && x_chance_in_y(power, mons->get_experience_level() * 2))
+                {
+                    mprf("You drain %s vigour!",
+                        mons->name(DESC_ITS).c_str());
+                    mons->slow_down(&you, power/5 + random2(power));
+                }
+                else if (cloud == CLOUD_POISON && x_chance_in_y(roll_dice(2, power), mons->get_experience_level() * _pois_res_multi(mons) / 10))
+                {
+                    simple_monster_message(*mons, " chokes on the fumes.");
+                    mons->add_ench(mon_enchant(ENCH_CONFUSION, 0, &you, (power/5 + random2(power)) * BASELINE_DELAY));
+                }
+            }
             place_cloud(cloud, entry.first,
                 max(5, random2avg(power, 3)),
                 &you, div_round_up(power, 10) - 1);

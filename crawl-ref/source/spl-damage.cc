@@ -4092,7 +4092,7 @@ spret cast_scattershot(const actor *caster, int pow, const coord_def &pos,
             case ZAP_BREATHE_SILVER:
             {
                 int degree = max(max(1, mons->how_chaotic(true)), mons->how_unclean(false));
-                int check = div_rand_round(2 * pow, 3) - mons->get_hit_dice();
+                int check = div_rand_round(pow, 3) - mons->get_hit_dice();
                 check -= random2(5);
                 zin_eff effect = effect_for_prayer_type(RECITE_BREATH, check, 0, mons);
                 zin_affect(mons, effect, degree, RECITE_BREATH, pow);
