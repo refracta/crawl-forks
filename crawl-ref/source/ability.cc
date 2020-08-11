@@ -2127,16 +2127,28 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
             if (empowered && monster_at(entry.first))
             {
                 monster * mons = monster_at(entry.first);
-                if (cloud == CLOUD_BLOOD && x_chance_in_y(power, mons->get_experience_level() * 2))
+                if (cloud == CLOUD_BLOOD && x_chance_in_y(power, 
+                    mons->get_experience_level() * 2))
                 {
                     mprf("You drain %s vigour!",
                         mons->name(DESC_ITS).c_str());
                     mons->slow_down(&you, power/5 + random2(power));
                 }
-                else if (cloud == CLOUD_POISON && x_chance_in_y(roll_dice(2, power), mons->get_experience_level() * _pois_res_multi(mons) / 10))
+                else if (cloud == CLOUD_POISON && x_chance_in_y(roll_dice(2, power), 
+                    mons->get_experience_level() * _pois_res_multi(mons) / 10))
                 {
                     simple_monster_message(*mons, " chokes on the fumes.");
-                    mons->add_ench(mon_enchant(ENCH_CONFUSION, 0, &you, (power/5 + random2(power)) * BASELINE_DELAY));
+                    mons->add_ench(mon_enchant(ENCH_CONFUSION, 0, &you, 
+                        (power/5 + random2(power)) * BASELINE_DELAY));
+                }
+                else if (cloud == CLOUD_SPECTRAL)
+                {
+                    int dam = 2 + div_rand_round(power, 6);
+                    dam = roll_dice(3, dam);
+                    dam = resist_adjust_damage(mons, BEAM_NEG, dam);
+                    mons->hurt(&you, dam, BEAM_NEG, KILLED_BY_DRAINING);
+                    if (mons->alive())
+                        mons->drain_exp(&you);
                 }
             }
             place_cloud(cloud, entry.first,
