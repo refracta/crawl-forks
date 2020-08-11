@@ -7509,9 +7509,24 @@ spret tiamat_choice_breath(bool fail)
         break;
     }
 
+    bool loop = true;
+    ability_type breath = ABIL_NON_ABILITY;
+
     if (keyin == 3)
-        return tiamat_breath(draconian_breath());
-    return tiamat_breath(breaths[keyin]);
+        breath = draconian_breath();
+    else
+        breath = breaths[keyin];
+
+    while (loop)
+    {
+        spret breath_result = tiamat_breath(breath);
+        if (breath_result == spret::success)
+            loop = false;
+        else if (yesno("Really abort? (And waste your turn, MP and piety)?", true, 0))
+            loop = false;
+    }
+
+    return spret::success;
 }
 
 static draconian_colour _random_common_colour(draconian_colour cols[])
