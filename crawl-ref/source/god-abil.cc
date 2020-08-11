@@ -7734,7 +7734,10 @@ spret bahamut_tiamat_transform(bool bahamut, bool fail)
             string line = make_stringf("  [%c] - %s", i + 'a', colour_names[i].c_str());
             mpr_nojoin(MSGCH_PLAIN, line);
         }
-        mpr_nojoin(MSGCH_PLAIN, "  [d] - Cancel (Remain Current Colour)");
+        if (bahamut)
+            mpr_nojoin(MSGCH_PLAIN, "  [d] - Cancel (Remain Current Colour)");
+        else
+            mpr_nojoin(MSGCH_PLAIN, "  [d] - Cancel (Remain Current Colour). This still expends the piety cost.");
         mprf(MSGCH_PROMPT, "Transform into which colour?");
         keyin = toalower(get_ch()) - 'a';
         if (keyin < 0 || keyin > 3)
@@ -7747,7 +7750,9 @@ spret bahamut_tiamat_transform(bool bahamut, bool fail)
     {
         clear_messages();
         mpr("Transformation cancelled.");
-        return spret::abort;
+        if (bahamut)
+            return spret::abort;
+        return spret::success;
     }
 
     if (bahamut)
