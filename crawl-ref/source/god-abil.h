@@ -77,6 +77,8 @@ recite_eligibility zin_check_recite_to_single_monster(const monster *mon,
                                                   recite_counts &eligibility,
                                                   bool quiet = false);
 int zin_check_recite_to_monsters(bool quiet = false);
+zin_eff effect_for_prayer_type(recite_type prayertype, int check, int degree, monster * mon);
+bool zin_affect(monster * mon, zin_eff effect, int degree, recite_type prayertype, int power);
 bool zin_recite_to_single_monster(const coord_def& where);
 int zin_recite_power();
 bool zin_vitalisation();
@@ -209,5 +211,6 @@ bool wu_jian_do_wall_jump(coord_def targ, bool ability);
 spret wu_jian_wall_jump_ability();
 
 bool bahamut_tiamat_make_choice(ability_type abil);
+spret bahamut_empowered_breath();
 spret tiamat_choice_breath(bool fail);
 spret bahamut_tiamat_transform(bool bahamut, bool fail);

@@ -4389,11 +4389,11 @@ void impale_player_with_barbs()
     }
 }
 
-void impale_monster_with_barbs(monster* mon, actor* agent)
+void impale_monster_with_barbs(monster* mon, actor* agent, string what)
 {
     if (mon->is_insubstantial() || mons_genus(mon->type) == MONS_JELLY)
         return;
-    mprf("The barbed spikes become lodged in %s.", mon->name(DESC_THE).c_str());
+    mprf("The %s become lodged in %s.", what.c_str(), mon->name(DESC_THE).c_str());
     mon->add_ench(mon_enchant(ENCH_BARBS, 1, agent,
         random_range(5, 7) * BASELINE_DELAY));
 }

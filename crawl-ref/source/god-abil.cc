@@ -820,24 +820,410 @@ int zin_check_recite_to_monsters(bool quiet)
         return 1; // We just recite against everything.
 }
 
-enum class zin_eff
+zin_eff effect_for_prayer_type(recite_type prayertype, int check, int degree, monster * mon)
 {
-    nothing,
-    daze,
-    confuse,
-    cause_fear,
-    smite,
-    blind,
-    silver_candle,
-    antimagic,
-    mute,
-    mad,
-    dumb,
-    ignite_chaos,
-    saltify,
-    rot,
-    holy_word,
-};
+    if (prayertype == RECITE_BREATH)
+    {
+        if (mon->how_chaotic(true))
+            prayertype = RECITE_CHAOTIC;
+        else if (mon->how_unclean(false))
+            prayertype = RECITE_IMPURE;
+        else
+        {
+            prayertype = RECITE_HERETIC;
+            degree = coinflip();
+        }
+    }
+
+    switch (prayertype)
+    {
+    case RECITE_HERETIC:
+        if (degree == 1)
+        {
+            if (mon->asleep())
+                break;
+            // This is the path for 'conversion' effects.
+            // Their degree is only 1 if they weren't a priest,
+            // a worshiper of an evil or chaotic god, etc.
+
+            // Right now, it only has the 'failed conversion' effects, though.
+            // This branch can't hit sleeping monsters - until they wake up.
+
+            if (check < 5)
+                return zin_eff::daze;
+            else if (check < 10)
+            {
+                if (coinflip())
+                    return zin_eff::confuse;
+                else
+                    return zin_eff::daze;
+            }
+            else if (check < 15)
+                return zin_eff::confuse;
+            else
+            {
+                if (one_chance_in(3))
+                    return zin_eff::cause_fear;
+                else
+                    return zin_eff::confuse;
+            }
+        }
+        else
+        {
+            // This is the path for 'smiting' effects.
+            // Their degree is only greater than 1 if
+            // they're unable to be redeemed.
+            if (check < 5)
+            {
+                if (coinflip())
+                    return zin_eff::confuse;
+                else
+                    return zin_eff::smite;
+            }
+            else if (check < 10)
+            {
+                if (one_chance_in(3))
+                    return zin_eff::blind;
+                else if (mon->antimagic_susceptible())
+                    return zin_eff::antimagic;
+                else
+                    return zin_eff::silver_candle;
+            }
+            else if (check < 15)
+            {
+                if (one_chance_in(3))
+                    return zin_eff::blind;
+                else if (coinflip())
+                    return zin_eff::cause_fear;
+                else
+                    return zin_eff::mute;
+            }
+            else
+            {
+                if (coinflip())
+                    return zin_eff::mad;
+                else
+                    return zin_eff::dumb;
+            }
+        }
+        break;
+
+    case RECITE_CHAOTIC:
+        if (check < 5)
+        {
+            // nastier -- fallthrough if immune
+            if (coinflip() && mon->res_rotting() <= 1)
+                return zin_eff::rot;
+            else
+                return zin_eff::smite;
+        }
+        else if (check < 10)
+        {
+            if (coinflip())
+                return zin_eff::silver_candle;
+            else
+                return zin_eff::smite;
+        }
+        else if (check < 15)
+        {
+            if (coinflip())
+                return zin_eff::ignite_chaos;
+            else
+                return zin_eff::silver_candle;
+        }
+        else
+            return zin_eff::saltify;
+        break;
+
+    case RECITE_IMPURE:
+        // Many creatures normally resistant to rotting are still affected,
+        // because this is divine punishment. Those with no real flesh are
+        // immune, of course.
+        if (check < 5)
+        {
+            if (coinflip() && mon->res_rotting() <= 1)
+                return zin_eff::rot;
+            else
+                return zin_eff::smite;
+        }
+        else if (check < 10)
+        {
+            if (coinflip())
+                return zin_eff::smite;
+            else
+                return zin_eff::silver_candle;
+        }
+        else if (check < 15)
+        {
+            if (mon->undead_or_demonic() && coinflip())
+                return zin_eff::holy_word;
+            else
+                return zin_eff::silver_candle;
+        }
+        else
+            return zin_eff::saltify;
+        break;
+
+    case RECITE_UNHOLY:
+        if (check < 5)
+        {
+            if (coinflip())
+                return zin_eff::daze;
+            else
+                return zin_eff::confuse;
+        }
+        else if (check < 10)
+        {
+            if (coinflip())
+                return zin_eff::confuse;
+            else
+                return zin_eff::silver_candle;
+        }
+        // Half of the time, the anti-unholy prayer will be capped at this
+        // level of effect.
+        else if (check < 15 || coinflip())
+        {
+            if (coinflip())
+                return zin_eff::holy_word;
+            else
+                return zin_eff::silver_candle;
+        }
+        else
+            return zin_eff::saltify;
+        break;
+
+    case RECITE_BREATH:
+    case NUM_RECITE_TYPES:
+        die("invalid recite type");
+    }
+
+    return zin_eff::nothing;
+}
+
+bool zin_affect(monster * mon, zin_eff effect, int degree, recite_type prayertype, int power)
+{
+    bool minor = degree <= (prayertype == RECITE_HERETIC ? 2 : 1);
+    const int spellpower = power * 2 + degree * 20;
+
+    switch (effect)
+    {
+    case zin_eff::nothing:
+        break;
+
+    case zin_eff::daze:
+        if (mon->add_ench(mon_enchant(ENCH_DAZED, degree, &you,
+            (degree + random2(spellpower)) * BASELINE_DELAY)))
+        {
+            if (prayertype == RECITE_BREATH)
+                simple_monster_message(*mon, " is dazed by blessed breath.");
+            else
+                simple_monster_message(*mon, " is dazed by your recitation.");
+            return true;
+        }
+        break;
+
+    case zin_eff::confuse:
+        if (!mon->check_clarity()
+            && mon->add_ench(mon_enchant(ENCH_CONFUSION, degree, &you,
+            (degree + random2(spellpower)) * BASELINE_DELAY)))
+        {
+            if (prayertype == RECITE_HERETIC)
+                simple_monster_message(*mon, " is confused by your recitation.");
+            else
+                simple_monster_message(*mon, " stumbles about in disarray.");
+            return true;
+        }
+        break;
+
+    case zin_eff::cause_fear:
+        if (mon->add_ench(mon_enchant(ENCH_FEAR, 0, &you,
+            (degree + random2(spellpower)) * BASELINE_DELAY)))
+        {
+            if (prayertype == RECITE_BREATH)
+                simple_monster_message(*mon, " is afraid of the combined power of Bahamut and Zin.");
+            else 
+            {
+                simple_monster_message(*mon,
+                    minor ? " is afraid of the wrath of Zin."
+                          : " is terrified of your heretical recitation.");
+            }
+            return true;
+        }
+        break;
+
+    case zin_eff::smite:
+        if (prayertype == RECITE_BREATH)
+        {
+            if (coinflip())
+                simple_monster_message(*mon, " is smitten by the wrath of Bahamut.");
+            else
+                minor = true;
+        }
+        if (minor)
+            simple_monster_message(*mon, " is smitten by the wrath of Zin.");
+        else
+            simple_monster_message(*mon, " is blasted by the fury of Zin!");
+        // XXX: This duplicates code in cast_smiting().
+        mon->hurt(&you, 7 + (random2(spellpower) * 33 / 191));
+        if (mon->alive())
+            print_wounds(*mon);
+        return true;
+        break;
+
+    case zin_eff::blind:
+        if (mon->add_ench(mon_enchant(ENCH_BLIND, degree, &you, INFINITE_DURATION)))
+        {
+            if (prayertype == RECITE_BREATH)
+                simple_monster_message(*mon, " is struck blind by your blessed silver!");
+            else
+                simple_monster_message(*mon, " is struck blind by the wrath of Zin!");
+            return true;
+        }
+        break;
+
+    case zin_eff::silver_candle:
+        if (mon->add_ench(mon_enchant(ENCH_SILVER_CANDLE, degree, &you,
+            (degree + random2(spellpower)) * BASELINE_DELAY)))
+        {
+            mpr(make_stringf("A silvery candle appears, clearly marking %s.", mon->name(DESC_THE).c_str()));
+            return true;
+        }
+        break;
+
+    case zin_eff::antimagic:
+        ASSERT(prayertype == RECITE_HERETIC || prayertype == RECITE_BREATH);
+        if (mon->add_ench(mon_enchant(ENCH_ANTIMAGIC, degree, &you,
+            (degree + random2(spellpower)) * BASELINE_DELAY)))
+        {
+            if (prayertype == RECITE_BREATH)
+                simple_monster_message(*mon, " is stricken powerless by your blessed silver.");
+            else
+            {
+                simple_monster_message(*mon,
+                    minor ? " quails at your recitation."
+                          : " looks feeble and powerless before your recitation.");
+            }
+            return true;
+        }
+        break;
+
+    case zin_eff::mute:
+        if (mon->add_ench(mon_enchant(ENCH_MUTE, degree, &you, INFINITE_DURATION)))
+        {
+            if (prayertype == RECITE_BREATH)
+                simple_monster_message(*mon, " is stricken mute by your blessed silver.");
+            else
+                simple_monster_message(*mon, " is struck mute by the wrath of Zin!");
+            return true;
+        }
+        break;
+
+    case zin_eff::mad:
+        if (mon->add_ench(mon_enchant(ENCH_MAD, degree, &you, INFINITE_DURATION)))
+        {
+            if (prayertype == RECITE_BREATH)
+                simple_monster_message(*mon, " is driven mad by your blessed silver.");
+            else
+                simple_monster_message(*mon, " is driven mad by the wrath of Zin!");
+            return true;
+        }
+        break;
+
+    case zin_eff::dumb:
+        if (mon->add_ench(mon_enchant(ENCH_DUMB, degree, &you, INFINITE_DURATION)))
+        {
+            if (prayertype == RECITE_BREATH)
+                simple_monster_message(*mon, " is driven mad by your blessed silver.");
+            else
+                simple_monster_message(*mon, " is left stupefied by the wrath of Zin!");
+            return true;
+        }
+        break;
+
+    case zin_eff::ignite_chaos:
+        ASSERT(prayertype == RECITE_CHAOTIC || prayertype == RECITE_BREATH);
+        {
+            bolt beam;
+            dice_def dam_dice(0, 5 + spellpower / 7);  // Dice added below if applicable.
+            dam_dice.num = degree;
+
+            int damage = dam_dice.roll();
+            if (damage > 0)
+            {
+                mon->hurt(&you, damage, BEAM_MISSILE, KILLED_BY_BEAM,
+                    "", "", false);
+
+                if (mon->alive())
+                {
+                    simple_monster_message(*mon,
+                        (damage < 25) ? "'s chaotic flesh sizzles and spatters!" :
+                        (damage < 50) ? "'s chaotic flesh bubbles and boils."
+                        : "'s chaotic flesh runs like molten wax.");
+
+                    print_wounds(*mon);
+                    behaviour_event(mon, ME_WHACK, &you);
+                    return true;
+                }
+                else
+                {
+                    simple_monster_message(*mon,
+                        " melts away into a sizzling puddle of chaotic flesh.");
+                    monster_die(*mon, KILL_YOU, NON_MONSTER);
+                    return false;
+                }
+            }
+        }
+        break;
+
+    case zin_eff::saltify:
+        _zin_saltify(mon);
+        return false;
+        break;
+
+    case zin_eff::rot:
+        // FIXME: no message (other than "You kill X!") is produced if the
+        // rotting kills the monster.
+        if (mon->res_rotting() <= 1
+            && mon->rot(&you, 1 + roll_dice(2, degree), true))
+        {
+            mon->add_ench(mon_enchant(ENCH_SICK, degree, &you,
+                (degree + random2(spellpower)) * BASELINE_DELAY));
+
+            if (prayertype == RECITE_BREATH)
+            {
+                if (mon->how_chaotic(true))
+                    prayertype = RECITE_CHAOTIC;
+                else if (mon->how_unclean(false))
+                    prayertype = RECITE_CHAOTIC;
+            }
+
+            switch (prayertype)
+            {
+            case RECITE_CHAOTIC:
+                simple_monster_message(*mon,
+                    minor ? "'s chaotic flesh is covered in bleeding sores."
+                          : "'s chaotic flesh erupts into weeping sores!");
+                break;
+            case RECITE_IMPURE:
+                simple_monster_message(*mon,
+                    minor ? "'s impure flesh rots away."
+                          : "'s impure flesh sloughs off!");
+                break;
+
+            default:
+                die("bad recite rot");
+            }
+            return true;
+        }
+        break;
+
+    case zin_eff::holy_word:
+        holy_word_monsters(mon->pos(), spellpower, HOLY_WORD_ZIN, &you);
+        return true;
+        break;
+    }
+    return false;
+}
 
 bool zin_recite_to_single_monster(const coord_def& where)
 {
@@ -892,346 +1278,12 @@ bool zin_recite_to_single_monster(const coord_def& where)
 
     // To what degree are they eligible for this prayertype?
     const int degree = eligibility[prayertype];
-    const bool minor = degree <= (prayertype == RECITE_HERETIC ? 2 : 1);
-    const int spellpower = power * 2 + degree * 20;
-    zin_eff effect = zin_eff::nothing;
+    
+    zin_eff effect = effect_for_prayer_type(prayertype, check, degree, mon);
 
-    switch (prayertype)
-    {
-    case RECITE_HERETIC:
-        if (degree == 1)
-        {
-            if (mon->asleep())
-                break;
-            // This is the path for 'conversion' effects.
-            // Their degree is only 1 if they weren't a priest,
-            // a worshiper of an evil or chaotic god, etc.
-
-            // Right now, it only has the 'failed conversion' effects, though.
-            // This branch can't hit sleeping monsters - until they wake up.
-
-            if (check < 5)
-                effect = zin_eff::daze;
-            else if (check < 10)
-            {
-                if (coinflip())
-                    effect = zin_eff::confuse;
-                else
-                    effect = zin_eff::daze;
-            }
-            else if (check < 15)
-                effect = zin_eff::confuse;
-            else
-            {
-                if (one_chance_in(3))
-                    effect = zin_eff::cause_fear;
-                else
-                    effect = zin_eff::confuse;
-            }
-        }
-        else
-        {
-            // This is the path for 'smiting' effects.
-            // Their degree is only greater than 1 if
-            // they're unable to be redeemed.
-            if (check < 5)
-            {
-                if (coinflip())
-                    effect = zin_eff::confuse;
-                else
-                    effect = zin_eff::smite;
-            }
-            else if (check < 10)
-            {
-                if (one_chance_in(3))
-                    effect = zin_eff::blind;
-                else if (mon->antimagic_susceptible())
-                    effect = zin_eff::antimagic;
-                else
-                    effect = zin_eff::silver_candle;
-            }
-            else if (check < 15)
-            {
-                if (one_chance_in(3))
-                    effect = zin_eff::blind;
-                else if (coinflip())
-                    effect = zin_eff::cause_fear;
-                else
-                    effect = zin_eff::mute;
-            }
-            else
-            {
-                if (coinflip())
-                    effect = zin_eff::mad;
-                else
-                    effect = zin_eff::dumb;
-            }
-        }
-        break;
-
-    case RECITE_CHAOTIC:
-        if (check < 5)
-        {
-            // nastier -- fallthrough if immune
-            if (coinflip() && mon->res_rotting() <= 1)
-                effect = zin_eff::rot;
-            else
-                effect = zin_eff::smite;
-        }
-        else if (check < 10)
-        {
-            if (coinflip())
-                effect = zin_eff::silver_candle;
-            else
-                effect = zin_eff::smite;
-        }
-        else if (check < 15)
-        {
-            if (coinflip())
-                effect = zin_eff::ignite_chaos;
-            else
-                effect = zin_eff::silver_candle;
-        }
-        else
-            effect = zin_eff::saltify;
-        break;
-
-    case RECITE_IMPURE:
-        // Many creatures normally resistant to rotting are still affected,
-        // because this is divine punishment. Those with no real flesh are
-        // immune, of course.
-        if (check < 5)
-        {
-            if (coinflip() && mon->res_rotting() <= 1)
-                effect = zin_eff::rot;
-            else
-                effect = zin_eff::smite;
-        }
-        else if (check < 10)
-        {
-            if (coinflip())
-                effect = zin_eff::smite;
-            else
-                effect = zin_eff::silver_candle;
-        }
-        else if (check < 15)
-        {
-            if (mon->undead_or_demonic() && coinflip())
-                effect = zin_eff::holy_word;
-            else
-                effect = zin_eff::silver_candle;
-        }
-        else
-            effect = zin_eff::saltify;
-        break;
-
-    case RECITE_UNHOLY:
-        if (check < 5)
-        {
-            if (coinflip())
-                effect = zin_eff::daze;
-            else
-                effect = zin_eff::confuse;
-        }
-        else if (check < 10)
-        {
-            if (coinflip())
-                effect = zin_eff::confuse;
-            else
-                effect = zin_eff::silver_candle;
-        }
-        // Half of the time, the anti-unholy prayer will be capped at this
-        // level of effect.
-        else if (check < 15 || coinflip())
-        {
-            if (coinflip())
-                effect = zin_eff::holy_word;
-            else
-                effect = zin_eff::silver_candle;
-        }
-        else
-            effect = zin_eff::saltify;
-        break;
-
-    case NUM_RECITE_TYPES:
-        die("invalid recite type");
-    }
+    affected = zin_affect(mon, effect, degree, prayertype, power);
 
     // And the actual effects...
-    switch (effect)
-    {
-    case zin_eff::nothing:
-        break;
-
-    case zin_eff::daze:
-        if (mon->add_ench(mon_enchant(ENCH_DAZED, degree, &you,
-                          (degree + random2(spellpower)) * BASELINE_DELAY)))
-        {
-            simple_monster_message(*mon, " is dazed by your recitation.");
-            affected = true;
-        }
-        break;
-
-    case zin_eff::confuse:
-        if (!mon->check_clarity()
-            && mon->add_ench(mon_enchant(ENCH_CONFUSION, degree, &you,
-                             (degree + random2(spellpower)) * BASELINE_DELAY)))
-        {
-            if (prayertype == RECITE_HERETIC)
-                simple_monster_message(*mon, " is confused by your recitation.");
-            else
-                simple_monster_message(*mon, " stumbles about in disarray.");
-            affected = true;
-        }
-        break;
-
-    case zin_eff::cause_fear:
-        if (mon->add_ench(mon_enchant(ENCH_FEAR, 0, &you,
-                          (degree + random2(spellpower)) * BASELINE_DELAY)))
-        {
-            simple_monster_message(*mon,
-                minor ? " is afraid of the wrath of Zin."
-                      : " is terrified of your heretical recitation.");
-            affected = true;
-        }
-        break;
-
-    case zin_eff::smite:
-        if (minor)
-            simple_monster_message(*mon, " is smitten by the wrath of Zin.");
-        else
-            simple_monster_message(*mon, " is blasted by the fury of Zin!");
-        // XXX: This duplicates code in cast_smiting().
-        mon->hurt(&you, 7 + (random2(spellpower) * 33 / 191));
-        if (mon->alive())
-            print_wounds(*mon);
-        affected = true;
-        break;
-
-    case zin_eff::blind:
-        if (mon->add_ench(mon_enchant(ENCH_BLIND, degree, &you, INFINITE_DURATION)))
-        {
-            simple_monster_message(*mon, " is struck blind by the wrath of Zin!");
-            affected = true;
-        }
-        break;
-
-    case zin_eff::silver_candle:
-        if (mon->add_ench(mon_enchant(ENCH_SILVER_CANDLE, degree, &you,
-                          (degree + random2(spellpower)) * BASELINE_DELAY)))
-        {
-            mpr(make_stringf("A silvery candle appears, clearly marking %s.", mon->name(DESC_THE).c_str()));
-            affected = true;
-        }
-        break;
-
-    case zin_eff::antimagic:
-        ASSERT(prayertype == RECITE_HERETIC);
-        if (mon->add_ench(mon_enchant(ENCH_ANTIMAGIC, degree, &you,
-                          (degree + random2(spellpower)) * BASELINE_DELAY)))
-        {
-            simple_monster_message(*mon,
-                minor ? " quails at your recitation."
-                      : " looks feeble and powerless before your recitation.");
-            affected = true;
-        }
-        break;
-
-    case zin_eff::mute:
-        if (mon->add_ench(mon_enchant(ENCH_MUTE, degree, &you, INFINITE_DURATION)))
-        {
-            simple_monster_message(*mon, " is struck mute by the wrath of Zin!");
-            affected = true;
-        }
-        break;
-
-    case zin_eff::mad:
-        if (mon->add_ench(mon_enchant(ENCH_MAD, degree, &you, INFINITE_DURATION)))
-        {
-            simple_monster_message(*mon, " is driven mad by the wrath of Zin!");
-            affected = true;
-        }
-        break;
-
-    case zin_eff::dumb:
-        if (mon->add_ench(mon_enchant(ENCH_DUMB, degree, &you, INFINITE_DURATION)))
-        {
-            simple_monster_message(*mon, " is left stupefied by the wrath of Zin!");
-            affected = true;
-        }
-        break;
-
-    case zin_eff::ignite_chaos:
-        ASSERT(prayertype == RECITE_CHAOTIC);
-        {
-            bolt beam;
-            dice_def dam_dice(0, 5 + spellpower/7);  // Dice added below if applicable.
-            dam_dice.num = degree;
-
-            int damage = dam_dice.roll();
-            if (damage > 0)
-            {
-                mon->hurt(&you, damage, BEAM_MISSILE, KILLED_BY_BEAM,
-                          "", "", false);
-
-                if (mon->alive())
-                {
-                    simple_monster_message(*mon,
-                      (damage < 25) ? "'s chaotic flesh sizzles and spatters!" :
-                      (damage < 50) ? "'s chaotic flesh bubbles and boils."
-                                    : "'s chaotic flesh runs like molten wax.");
-
-                    print_wounds(*mon);
-                    behaviour_event(mon, ME_WHACK, &you);
-                    affected = true;
-                }
-                else
-                {
-                    simple_monster_message(*mon,
-                        " melts away into a sizzling puddle of chaotic flesh.");
-                    monster_die(*mon, KILL_YOU, NON_MONSTER);
-                }
-            }
-        }
-        break;
-
-    case zin_eff::saltify:
-        _zin_saltify(mon);
-        break;
-
-    case zin_eff::rot:
-        // FIXME: no message (other than "You kill X!") is produced if the
-        // rotting kills the monster.
-        if (mon->res_rotting() <= 1
-            && mon->rot(&you, 1 + roll_dice(2, degree), true))
-        {
-            mon->add_ench(mon_enchant(ENCH_SICK, degree, &you,
-                          (degree + random2(spellpower)) * BASELINE_DELAY));
-            switch (prayertype)
-            {
-            case RECITE_CHAOTIC:
-                simple_monster_message(*mon,
-                    minor ? "'s chaotic flesh is covered in bleeding sores."
-                          : "'s chaotic flesh erupts into weeping sores!");
-                break;
-            case RECITE_IMPURE:
-                simple_monster_message(*mon,
-                    minor ? "'s impure flesh rots away."
-                          : "'s impure flesh sloughs off!");
-                break;
-
-            default:
-                die("bad recite rot");
-            }
-            affected = true;
-        }
-        break;
-
-    case zin_eff::holy_word:
-        holy_word_monsters(where, spellpower, HOLY_WORD_ZIN, &you);
-        affected = true;
-        break;
-    }
 
     // Recite time, to prevent monsters from being recited against
     // more than once in a given recite instance.
@@ -7468,6 +7520,11 @@ static ability_type _random_breath(ability_type breaths[], bool allow_escape)
     }
 
     return retval;
+}
+
+spret bahamut_empowered_breath()
+{
+    return tiamat_breath(draconian_breath(), true);
 }
 
 spret tiamat_choice_breath(bool fail)

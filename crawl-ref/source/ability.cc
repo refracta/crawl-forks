@@ -246,7 +246,7 @@ struct ability_def
 };
 
 static int _lookup_ability_slot(ability_type abil);
-static spret _do_ability(const ability_def& abil, bool fail);
+static spret _do_ability(const ability_def& abil, bool fail, bool empowered = false);
 static void _pay_ability_costs(const ability_def& abil);
 
 // The description screen was way out of date with the actual costs.
@@ -848,10 +848,13 @@ const string make_cost_description(ability_type ability)
 
 // Ripped this out both because it's used a lot and because it will likely become more complicated 
 // later so keeping it centralized for all calls will make the later mutations easier.
-static int _drac_breath_power()
+static int _drac_breath_power(bool empowered = false)
 {
-    return (you.form == transformation::dragon) ? 2 * you.experience_level 
-                                                : you.experience_level;
+    int power =  (you.form == transformation::dragon) ? 2 * you.experience_level 
+                                                      : you.experience_level;
+    if (empowered)
+        power += you.skill(SK_INVOCATIONS);
+    return power;
 }
 
 static const string _detailed_cost_description(ability_type ability)
@@ -1916,11 +1919,11 @@ static bool _cleansing_flame_affects(const actor *act)
 bool previously_on = false;
 
 // This is a short circuit used by Tiamat's breath ability.
-spret tiamat_breath(const ability_type abil)
+spret tiamat_breath(const ability_type abil, const bool bahamut)
 {
     const ability_def& ability = get_ability_def(abil);
 
-    return _do_ability(ability, false);
+    return _do_ability(ability, false, bahamut);
 }
 
 /*
@@ -1929,10 +1932,12 @@ spret tiamat_breath(const ability_type abil)
  * @param abil The actual ability used.
  * @param fail If true, the ability is doomed to fail, and spret::fail will
  * be returned if the ability is not spret::aborted.
+ * @param empowered used by Bahamut's empowered breath ability; causes the 
+ * called breath ability to be strongr than normal.
  * @returns Whether the spell succeeded (spret::success), failed (spret::fail),
  *  or was canceled (spret::abort). Never returns spret::none.
  */
-static spret _do_ability(const ability_def& abil, bool fail)
+static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
 {
     dist abild;
     bolt beam;
@@ -2027,7 +2032,7 @@ static spret _do_ability(const ability_def& abil, bool fail)
             break;
         }
 
-        const int power = div_rand_round(5 * _drac_breath_power(), 2);
+        const int power = div_rand_round(5 * _drac_breath_power(empowered), 2);
 
         targeter_shotgun hitfunc(&you, shotgun_beam_count(power), beam.range);
         direction_chooser_args args;
@@ -2039,7 +2044,7 @@ static spret _do_ability(const ability_def& abil, bool fail)
 
         fail_check();
 
-        spret s = cast_scattershot(&you, power, beam.target, false, zap);
+        spret s = cast_scattershot(&you, power, beam.target, false, zap, empowered);
 
         if (s == spret::success)
             you.increase_duration(DUR_BREATH_WEAPON,
@@ -3415,6 +3420,10 @@ static spret _do_ability(const ability_def& abil, bool fail)
         if (!bahamut_tiamat_make_choice(abil.ability))
             return spret::abort;
         break;
+
+    case ABIL_BAHAMUT_EMPOWERED_BREATH:
+        fail_check();
+        return bahamut_empowered_breath();
 
     case ABIL_TIAMAT_ADAPTIVE_BREATH:
         return tiamat_choice_breath(fail);

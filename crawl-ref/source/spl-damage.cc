@@ -27,6 +27,7 @@
 #include "fight.h"
 #include "food.h"
 #include "fprop.h"
+#include "god-abil.h"      // Silver Draconian EMPOWERED breath.
 #include "god-conduct.h"
 #include "invent.h"
 #include "item-prop.h"
@@ -4021,7 +4022,7 @@ size_t shotgun_beam_count(int pow)
 }
 
 spret cast_scattershot(const actor *caster, int pow, const coord_def &pos,
-                            bool fail, zap_type zap)
+                            bool fail, zap_type zap, bool empowered)
 {
     const size_t range = spell_range(SPELL_SCATTERSHOT, pow);
     const size_t beam_count = shotgun_beam_count(pow);
@@ -4077,6 +4078,30 @@ spret cast_scattershot(const actor *caster, int pow, const coord_def &pos,
         monster* mons = monster_by_mid(it.first);
         if (!mons || !mons->alive() || !you.can_see(*mons))
             continue;
+
+        if (empowered)
+        {
+            switch (zap)
+            {
+            case ZAP_BREATHE_BONE:
+                impale_monster_with_barbs(mons, &you, "bone shards");
+                break;
+            case ZAP_BREATHE_METAL:
+                impale_monster_with_barbs(mons, &you, "metal splinters");
+                break;
+            case ZAP_BREATHE_SILVER:
+            {
+                int degree = max(max(1, mons->how_chaotic(true)), mons->how_unclean(false));
+                int check = div_rand_round(2 * pow, 3) - mons->get_hit_dice();
+                check -= random2(5);
+                zin_eff effect = effect_for_prayer_type(RECITE_BREATH, check, 0, mons);
+                zin_affect(mons, effect, degree, RECITE_BREATH, pow);
+                break;
+            }
+            default:
+                break;
+            }
+        }
 
         print_wounds(*mons);
     }
