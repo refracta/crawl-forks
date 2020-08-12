@@ -1632,6 +1632,7 @@ static bool _check_ability_possible(const ability_def& abil, bool quiet = false)
     case ABIL_BREATHE_GHOSTLY_FLAMES:
     case ABIL_BREATHE_METAL:
     case ABIL_BREATHE_RADIATION:
+    case ABIL_BAHAMUT_EMPOWERED_BREATH:
     case ABIL_TIAMAT_ADAPTIVE_BREATH:
         if (you.duration[DUR_BREATH_WEAPON])
         {
