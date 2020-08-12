@@ -2180,7 +2180,10 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
 
         fail_check();
 
-        zapping(ZAP_BREATHE_ACID, _drac_breath_power(),
+        if (empowered)
+            beam.origin_spell = SPELL_EMPOWERED_BREATH;
+
+        zapping(ZAP_BREATHE_ACID, _drac_breath_power(empowered),
                 beam, false, "You spit a glob of acid.");
 
         you.increase_duration(DUR_BREATH_WEAPON,

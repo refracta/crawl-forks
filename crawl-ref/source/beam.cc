@@ -34,6 +34,7 @@
 #include "exercise.h"
 #include "fight.h"
 #include "food.h"
+#include "god-abil.h"
 #include "god-blessing.h"
 #include "god-conduct.h"
 #include "god-item.h"
@@ -2933,6 +2934,10 @@ void bolt::affect_endpoint()
         return;
     }
 
+    case SPELL_EMPOWERED_BREATH: // Only player gets empowered breath so; these are all player effects.
+        // Acid handled elsewhere.
+        break;
+
     case SPELL_SEARING_BREATH:
         if (!path_taken.empty() && !cell_is_solid(pos()))
             place_cloud(CLOUD_FIRE, pos(), 5 + random2(5), agent());
@@ -5184,12 +5189,20 @@ void bolt::monster_post_hit(monster* mon, int dmg)
     }
 
     // Acid splash from yellow draconians / acid dragons
-    if (origin_spell == SPELL_ACID_SPLASH)
+    if (origin_spell == SPELL_ACID_SPLASH
+        || (origin_spell == SPELL_EMPOWERED_BREATH && flavour == BEAM_ACID))
     {
         mon->splash_with_acid(agent(), 3);
 
-        for (adjacent_iterator ai(source); ai; ++ai)
+        for (adjacent_iterator ai(target); ai; ++ai)
         {
+            if (*ai == source)
+                continue;
+            if (origin_spell == SPELL_EMPOWERED_BREATH && !cell_is_solid(*ai)
+                && x_chance_in_y(3 + apply_invo_enhancer(you.skill(SK_INVOCATIONS), false), 45))
+            {
+                place_cloud(CLOUD_ACID, *ai, 5 + random2(5), &you, 1);
+            }
             // the acid can splash onto adjacent targets
             if (grid_distance(*ai, target) != 1)
                 continue;
