@@ -2227,14 +2227,14 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         mpr("You breathe a wild blast of lightning!");
 
         bolt dam_beam;
-        zappy(ZAP_BREATHE_LIGHTNING, _drac_breath_power(), false, dam_beam);
+        int power = _drac_breath_power(empowered);
+        zappy(ZAP_BREATHE_LIGHTNING, power, false, dam_beam);
 
         for (radius_iterator ri(you.pos(), 2, C_SQUARE, true); ri; ++ri)
         {
             actor *act = actor_at(*ri);
             if (act && act->alive())
             {
-
                 if (you.religion == GOD_FEDHAS && fedhas_protects(act->as_monster()))
                     simple_god_message(" protects your plant from harm.", GOD_FEDHAS);
                 else
@@ -2243,6 +2243,13 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
                     dam_beam.in_explosion_phase = true;
                     dam_beam.explosion_affect_cell(*ri);
                 }
+            }
+            if (empowered && !cell_is_solid(*ri))
+            {
+                if (x_chance_in_y(power, 120))
+                    place_cloud(CLOUD_STORM, *ri, 8 + random2avg(power / 3, 2), &you, 2);
+                else if (x_chance_in_y(power, 90))
+                    place_cloud(CLOUD_RAIN, *ri, 8 + random2avg(power / 2, 2), &you, 1);
             }
         }
 
