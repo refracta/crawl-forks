@@ -1779,6 +1779,25 @@ _mon_hex_zap(ZAP_DRAIN_MAGIC, BEAM_DRAIN_MAGIC),
     0 // No additional effect noise.
 },
 
+// Used only by CYAN's empowered breath
+{
+    ZAP_EMPOWERED_BREATH,
+    "wind blast",
+    200,
+    new calcdice_calculator<2, 4, 1, 6>,
+    new tohit_calculator<40>,
+    new calcdice_calculator<2, 4, 1, 6>,
+    new tohit_calculator<40>,
+    CYAN,
+    false,
+    BEAM_MMISSILE,
+    NUM_DCHAR_TYPES,
+    true,
+    false,
+    false,
+    0 // No additional effect noise.
+},
+
 {
     ZAP_THROW_PIE,
     "klown pie",

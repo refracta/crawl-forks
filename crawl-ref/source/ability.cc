@@ -2263,7 +2263,16 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
     {
         fail_check();
 
-        wind_blast(&you, _drac_breath_power() * 5, coord_def(), 2);
+        int power = _drac_breath_power(empowered);
+
+        if (empowered)
+        {
+            spret local = fire_los_attack_spell(SPELL_EMPOWERED_BREATH, power, &you, nullptr, false);
+            if (local == spret::abort)
+                return spret::abort;
+        }
+
+        wind_blast(&you, power * 5, coord_def(), empowered ? 3 : 2);
 
         you.increase_duration(DUR_BREATH_WEAPON,
             3 + random2(10) + random2(30 - you.experience_level));
@@ -2295,7 +2304,7 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
 
         string m;
         zap_type zap;
-        const int power = _drac_breath_power();
+        const int power = _drac_breath_power(empowered);
 
         fail_check();
 

@@ -469,6 +469,13 @@ static bool _drain_lifeable(const actor* agent, const actor* act)
              || mons && m && mons_atts_aligned(mons->attitude, m->attitude));
 }
 
+static bool _damageable(const actor *caster, const actor *act)
+{
+    return act != caster
+            && !(caster->deity() == GOD_FEDHAS
+                && fedhas_protects(act->as_monster()));
+}           
+
 static void _los_spell_pre_damage_monsters(const actor* agent,
                                            vector<monster *> affected_monsters,
                                            const char *verb)
@@ -663,6 +670,17 @@ static spret _cast_los_attack_spell(spell_type spell, int pow,
             vulnerable = &_drain_lifeable;
             break;
 
+        case SPELL_EMPOWERED_BREATH:
+            player_msg = "You exhale a mighty gale!";
+            global_msg = ""; // Enemies can't get it anyways.
+            mons_vis_msg = "";
+            mons_invis_msg = "";
+            verb = "buffeted";
+            prompt_verb = "breathe mighty wind";
+            vulnerable = &_damageable;
+            break;
+
+
         case SPELL_SONIC_WAVE:
             player_msg = "You send a blast of sound all around you.";
             global_msg = "Something sends a blast of sound all around you.";
@@ -670,11 +688,7 @@ static spret _cast_los_attack_spell(spell_type spell, int pow,
             mons_invis_msg = "Sound blasts the surrounding area!";
             verb = "blasted";
             // prompt_verb = "sing" The singing sword prompts in melee-attack
-            vulnerable = [](const actor *caster, const actor *act) {
-                return act != caster
-                       && !(caster->deity() == GOD_FEDHAS
-                            && fedhas_protects(act->as_monster()));
-            };
+            vulnerable = &_damageable;
             break;
 
         default:
