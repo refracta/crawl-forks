@@ -75,6 +75,7 @@ spret cast_dragon_call(int pow, bool fail);
 void do_dragon_call(int time);
 
 void doom_howl(int time);
+void create_vortices(actor * caster);
 
 void init_servitor(monster* servitor, actor* caster);
 spret cast_spellforged_servitor(int pow, god_type god, bool fail);

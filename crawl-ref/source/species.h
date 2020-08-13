@@ -34,7 +34,8 @@ enum draconian_colour
     DR_PEARL,
     DR_SCINTILLATING,
     DR_BLOOD,
-    DR_PLATINUM
+    DR_PLATINUM,
+    NUM_DRAC_COLOURS
 };
 
 bool species_is_elven(species_type species);

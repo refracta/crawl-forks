@@ -35,6 +35,7 @@ void wizard_toggle_xray_vision();
 void wizard_freeze_time();
 void wizard_god_wrath();
 void wizard_god_mollify();
+void wizard_drac_colour();
 void wizard_transform();
 void wizard_join_religion();
 job_type find_job_from_string(const string &job_str);

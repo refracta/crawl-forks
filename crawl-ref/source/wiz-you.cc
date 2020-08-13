@@ -911,6 +911,83 @@ void wizard_god_mollify()
         mpr("You are not under penance.");
 }
 
+static string _colour_name(draconian_colour colour)
+{
+    switch (colour)
+    {
+    case DR_BLACK:          return "black";
+    case DR_BLOOD:          return "blood";
+    case DR_BLUE:           return "blue";
+    case DR_BROWN:          return "brown";
+    case DR_BONE:           return "bone";
+    case DR_CYAN:           return "cyan";
+    case DR_GOLDEN:         return "golden";
+    case DR_GREEN:          return "green";
+    case DR_LIME:           return "lime";
+    case DR_MAGENTA:        return "magenta";
+    case DR_OLIVE:          return "olive";
+    case DR_PEARL:          return "pearl";
+    case DR_PINK:           return "pink";
+    case DR_PLATINUM:       return "platinum";
+    case DR_PURPLE:         return "purple";
+    case DR_RED:            return "red";
+    case DR_SCINTILLATING:  return "scintillating";
+    case DR_SILVER:         return "silver";
+    case DR_TEAL:           return "teal";
+    case DR_WHITE:          return "white";
+    default:                break;
+    }
+    return "";
+}
+
+static draconian_colour _find_colour_from_string(const string &col)
+{
+    string spec = lowercase_string(col);
+
+    draconian_colour sp = NUM_DRAC_COLOURS;
+
+    for (int i = 0; i < NUM_DRAC_COLOURS; ++i)
+    {
+        const draconian_colour si = static_cast<draconian_colour>(i);
+        const string sp_name = lowercase_string(_colour_name(si));
+
+        string::size_type pos = sp_name.find(spec);
+        if (pos != string::npos)
+        {
+            // We prefer prefixes over partial matches.
+            sp = si;
+            break;
+        }
+    }
+
+    return sp;
+}
+
+void wizard_drac_colour()
+{
+    char col[80];
+
+    msgwin_get_line("What colour would you like to be now? ",
+        col, sizeof(col));
+
+    if (col[0] == '\0')
+    {
+        canned_msg(MSG_OK);
+        return;
+    }
+
+    const draconian_colour dr = _find_colour_from_string(col);
+
+    // Means find_species_from_string couldn't interpret `col`.
+    if (dr == NUM_DRAC_COLOURS)
+    {
+        mpr("That colour doesn't exist.");
+        return;
+    }
+
+    change_drac_colour(dr);
+}
+
 void wizard_transform()
 {
     transformation form;

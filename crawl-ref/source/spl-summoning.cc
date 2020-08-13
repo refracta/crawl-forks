@@ -528,6 +528,32 @@ void doom_howl(int time)
     }
 }
 
+void create_vortices(actor * caster)
+{
+    const int num = 3 + random2(5);
+
+    int count = 0;
+
+    for (int i = 0; i < num; i++)
+    {
+        coord_def pos = find_gateway_location(caster);
+
+        if (pos != coord_def(0, 0))
+        {
+            monster * x = create_monster(mgen_data(MONS_CHAOS_VORTEX, caster->is_player() ? BEH_FRIENDLY 
+                                            : SAME_ATTITUDE(caster->as_monster()), pos, MHITYOU));
+            if (x)
+            {
+                x->add_ench(mon_enchant(ENCH_FAKE_ABJURATION, 0, 0, (5 + random2(10)) * BASELINE_DELAY));
+                count++;
+            }
+        }
+    }
+
+    if (count)
+        mprf("The chaotic winds form %schaos vort%s.", count > 1 ? "" : "a ", count > 1 ? "ices" : "ex");
+}
+
 spret cast_summon_dragon(actor *caster, int pow, god_type god, bool fail)
 {
     // Dragons are always friendly. Dragon type depends on power and

@@ -2373,11 +2373,14 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
             break;
         }
 
-        if (empowered)
+        if (empowered && zap != ZAP_BREATHE_CHAOS)
             beam.origin_spell = SPELL_EMPOWERED_BREATH;
 
         if (zapping(zap, power, beam, true, m.c_str()) == spret::abort)
             return spret::abort;
+
+        if (empowered && zap == ZAP_BREATHE_CHAOS)
+            create_vortices(&you);
 
         if (zap == ZAP_BREATHE_BUTTERFLY)
         {

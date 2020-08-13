@@ -96,6 +96,7 @@ static void _ench_animation(int flavour, const monster* mon = nullptr,
                             bool force = false);
 static beam_type _chaos_beam_flavour(bolt* beam);
 static string _beam_type_name(beam_type type);
+static bool _cigotuvi(monster * mon, actor * agent);
 int _ench_pow_to_dur(int pow);
 
 tracer_info::tracer_info()
@@ -560,9 +561,6 @@ void zappy(zap_type z_type, int power, bool is_monster, bolt &pbolt)
             }
         }
     }
-
-    if (z_type == ZAP_BREATHE_FIRE && you.drac_colour == DR_RED && !is_monster)
-        pbolt.origin_spell = SPELL_SEARING_BREATH;
 
     if (pbolt.loudness == 0)
         pbolt.loudness = zinfo->hit_loudness;
@@ -2784,6 +2782,16 @@ cloud_type bolt::get_cloud_type() const
     if (origin_spell == SPELL_SPECTRAL_CLOUD)
         return CLOUD_SPECTRAL;
 
+    if (origin_spell == SPELL_EMPOWERED_BREATH)
+    {
+        if (flavour == BEAM_FIRE)
+            return CLOUD_STEAM;
+        if (flavour == BEAM_COLD)
+            return CLOUD_COLD;
+        if (flavour == BEAM_IRRADIATE)
+            return CLOUD_MUTAGENIC;
+    }
+
     return CLOUD_NONE;
 }
 
@@ -2795,7 +2803,8 @@ int bolt::get_cloud_pow() const
         return random_range(10, 15);
     }
 
-    if (origin_spell == SPELL_SPECTRAL_CLOUD)
+    if (origin_spell == SPELL_SPECTRAL_CLOUD 
+        || origin_spell == SPELL_EMPOWERED_BREATH)
         return random_range(12, 20);
 
     return 0;
@@ -2814,6 +2823,14 @@ int bolt::get_cloud_size(bool min, bool max) const
         return 8;
     if (max)
         return 12;
+
+    if (origin_spell == SPELL_EMPOWERED_BREATH)
+    {
+        if (flavour == BEAM_FIRE)
+            return 15 + random2(10);
+        if (flavour == BEAM_COLD || flavour == BEAM_IRRADIATE)
+            return 2 + random2(7);
+    }
 
     return 8 + random2(5);
 }
@@ -2937,6 +2954,14 @@ void bolt::affect_endpoint()
 
     case SPELL_EMPOWERED_BREATH: // Only player gets empowered breath so; these are all player effects.
         // Acid handled elsewhere.
+        if (flavour == BEAM_FIRE && !path_taken.empty())
+        {
+            for (adjacent_iterator ai(pos(), false); ai; ++ai)
+            {
+                if (!cell_is_solid(*ai) && (*ai == pos() || !one_chance_in(3)))
+                    place_cloud(CLOUD_FIRE, *ai, 5 + random2(5), agent(), 2);
+            }
+        }
         break;
 
     case SPELL_SEARING_BREATH:
@@ -5270,6 +5295,57 @@ void bolt::monster_post_hit(monster* mon, int dmg)
     if (origin_spell == SPELL_CHILLING_BREATH && dmg > 0)
         do_slow_monster(*mon, agent(), max(random2(10), dmg / 3));
 
+    if (origin_spell == SPELL_EMPOWERED_BREATH)
+    {
+        if (flavour == BEAM_COLD && dmg > 0)
+        {
+            do_slow_monster(*mon, agent(), max(random2(10), dmg / 3));
+
+            if (!mon->has_ench(ENCH_FROZEN) && x_chance_in_y(agent()->skill(SK_INVOCATIONS), mon->get_hit_dice() * 2))
+            {
+                simple_monster_message(*mon, " is flash-frozen.");
+                mon->add_ench(ENCH_FROZEN);
+            }
+        }
+        if (flavour == BEAM_MMISSILE && you.drac_colour != DR_BROWN)
+        {
+            if (monster_is_debuffable(*mon))
+            {
+                debuff_monster(*mon);
+                _unravelling_explode(*this);
+            }
+
+            if (mon->res_magic() != MAG_IMMUNE)
+            {
+                if (!mon->has_ench(ENCH_LOWERED_MR))
+                    mprf("%s magical defenses are stripped away!",
+                        mon->name(DESC_ITS).c_str());
+
+                mon_enchant lowered_mr(ENCH_LOWERED_MR, 1, agent(),
+                    (20 + random2(20)) * BASELINE_DELAY);
+                mon->add_ench(lowered_mr);
+            }
+        }
+        if (flavour == BEAM_IRRADIATE)
+        {
+            switch (random2(3))
+            {
+            case 0:
+                if (mon->check_res_magic(drac_breath_power(true) * 3))
+                {
+                    if (_cigotuvi(mon, &you))
+                        break;
+                }   // else fallthrough
+            case 1:
+                mon->drain_exp(&you);
+                break;
+            case 2:
+                mon->add_ench(mon_enchant(ENCH_WEAK, 1, &you, drac_breath_power(true)));
+                break;
+            }
+        }
+    }
+
     if (origin_spell == SPELL_THROW_BARBS && dmg > 0)
         impale_monster_with_barbs(mon, agent());
 
@@ -6062,6 +6138,20 @@ mon_resist_type bolt::try_enchant_monster(monster* mon, int &res_margin)
     return apply_enchantment_to_monster(mon);
 }
 
+static bool _cigotuvi(monster * mon, actor * agent)
+{
+    if (!mon->has_ench(ENCH_CIGOTUVI)
+        && mon->add_ench(mon_enchant(ENCH_CIGOTUVI, 0, agent, (3 + random2(8)) * BASELINE_DELAY)))
+    {
+        if (you.can_see(*mon))
+        {
+            mprf("You infect %s with foul degeneration!", mon->name(DESC_THE).c_str());
+            return true;
+        }
+    }
+    return false;
+}
+
 mon_resist_type bolt::apply_enchantment_to_monster(monster* mon)
 {
     // Gigantic-switches-R-Us
@@ -6523,15 +6613,7 @@ mon_resist_type bolt::apply_enchantment_to_monster(monster* mon)
         break;
 
     case BEAM_CIGOTUVI:
-        if (!mon->has_ench(ENCH_CIGOTUVI)
-            && mon->add_ench(mon_enchant(ENCH_CIGOTUVI, 0, agent(), (3 + random2(8)) * BASELINE_DELAY)))
-        {
-            if (you.can_see(*mon))
-            {
-                mprf("You infect %s with foul degeneration!", mon->name(DESC_THE).c_str());
-                obvious_effect = true;
-            }
-        }
+        obvious_effect = _cigotuvi(mon, agent());
         break;
 
     case BEAM_SNAKES_TO_STICKS:

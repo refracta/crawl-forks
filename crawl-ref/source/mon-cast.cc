@@ -6771,23 +6771,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
 
     case SPELL_VORTICES:
     {
-        const int num = 3 + random2(5);
-
-        mpr("The chaotic winds form chaos vortices.");
-
-        for (int i = 0; i < num; i++)
-        {
-            coord_def pos = find_gateway_location(mons);
-
-            if (pos != coord_def(0, 0))
-            {
-                x = create_monster(
-                    mgen_data(MONS_CHAOS_VORTEX,
-                        SAME_ATTITUDE(mons), pos, mons->foe));
-                x->add_ench(mon_enchant(ENCH_FAKE_ABJURATION, 0,
-                    0, (5 + random2(10)) * BASELINE_DELAY));
-            }
-        }
+        create_vortices(mons);
         return;
     }
 
