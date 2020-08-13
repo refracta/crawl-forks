@@ -2376,6 +2376,23 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         if (empowered && zap != ZAP_BREATHE_CHAOS)
             beam.origin_spell = SPELL_EMPOWERED_BREATH;
 
+        if (empowered && zap == ZAP_BREATHE_HOLY_FLAMES)
+        {
+            targeter_radius hitfunc(&you, LOS_NO_TRANS);
+
+            if (stop_attack_prompt(hitfunc, "let out a sacred roar",
+                [](const actor* monpopo)
+            {
+                return monpopo->undead_or_demonic();
+            },
+                nullptr, nullptr))
+            {
+                return spret::abort;
+            }
+
+            holy_word(power * 5, HOLY_WORD_BREATH, you.pos(), false, &you);
+        }
+
         if (zapping(zap, power, beam, true, m.c_str()) == spret::abort)
             return spret::abort;
 

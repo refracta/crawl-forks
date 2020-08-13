@@ -2790,6 +2790,8 @@ cloud_type bolt::get_cloud_type() const
             return CLOUD_COLD;
         if (flavour == BEAM_IRRADIATE)
             return CLOUD_MUTAGENIC;
+        if (flavour == BEAM_HOLY)
+            return CLOUD_HOLY;
     }
 
     return CLOUD_NONE;
@@ -4050,7 +4052,7 @@ void bolt::affect_player_enchantment(bool resistible)
         const int dam = resist_adjust_damage(&you, flavour, damage.roll());
         if (dam)
         {
-            mpr("Pain shoots through your body!");
+            mprf("Pain shoots through your body%s", attack_strength_punctuation(dam));
             internal_ouch(dam);
             obvious_effect = true;
         }
