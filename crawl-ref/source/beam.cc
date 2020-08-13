@@ -2794,6 +2794,8 @@ cloud_type bolt::get_cloud_type() const
             return CLOUD_HOLY;
         if (flavour == BEAM_PARADOXICAL)
             return CLOUD_POISON;
+        if (flavour == BEAM_NEG)
+            return CLOUD_NEGATIVE_ENERGY;
     }
 
     return CLOUD_NONE;
@@ -2832,7 +2834,7 @@ int bolt::get_cloud_size(bool min, bool max) const
     {
         if (flavour == BEAM_FIRE || flavour == BEAM_PARADOXICAL)
             return 15 + random2(10);
-        if (flavour == BEAM_COLD || flavour == BEAM_IRRADIATE)
+        if (flavour == BEAM_COLD || flavour == BEAM_IRRADIATE || flavour == BEAM_NEG)
             return 2 + random2(7);
     }
 
@@ -5316,7 +5318,7 @@ void bolt::monster_post_hit(monster* mon, int dmg)
             if (monster_is_debuffable(*mon))
             {
                 debuff_monster(*mon);
-                _unravelling_explode(*this);
+                mon->malmutate("unraveling magic");
             }
 
             if (mon->res_magic() != MAG_IMMUNE)
