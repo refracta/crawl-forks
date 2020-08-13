@@ -195,8 +195,8 @@ spark_wasp MONS_SPARK_WASP
 ghost_moth MONS_GHOST_MOTH
 moth_of_wrath MONS_MOTH_OF_WRATH
 giant_firefly MONS_GIANT_FIREFLY
-sphinxmoth MONS_SPHINX_MOTH
 %rim 0
+sphinxmoth MONS_SPHINX_MOTH
 giant_blowfly MONS_GIANT_BLOWFLY
 chaos_butterfly MONS_CHAOS_BUTTERFLY
 

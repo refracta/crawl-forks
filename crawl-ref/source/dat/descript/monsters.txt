@@ -2312,6 +2312,12 @@ sphinx
 A fearsome hybrid with a woman's head, a lion's body and the wings of an eagle,
 able to cloud the minds of its foes and wield fell magics.
 %%%%
+sphinx moth
+
+A strange insectoid hybrid; pale shadow of the greater sphinx, but still a powerful 
+creature in it's own right. Mostly a moth, but with the legs of a tiger and a some 
+natural spellcasting ability to disable its enemies.
+%%%%
 spiny frog
 
 A frog the size of a wolf, covered in small spines and spurs which drip venom.

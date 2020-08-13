@@ -5340,7 +5340,7 @@ void bolt::monster_post_hit(monster* mon, int dmg)
                 mon->drain_exp(&you);
                 break;
             case 2:
-                mon->add_ench(mon_enchant(ENCH_WEAK, 1, &you, drac_breath_power(true)));
+                mon->weaken(&you, drac_breath_power(true));
                 break;
             }
         }

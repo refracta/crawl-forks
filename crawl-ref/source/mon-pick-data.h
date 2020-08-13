@@ -285,6 +285,7 @@ static const pop_entry pop_swamp[] =
   {  1,  4,  915, FLAT, MONS_HYDRA },
   {  1,  4,  825, FLAT, MONS_TYRANT_LEECH },
   {  1,  4,  665, FLAT, MONS_VAMPIRE_MOSQUITO },
+  {  1,  4,  515, FLAT, MONS_SPHINX_MOTH },
   { -6,  4,   40, FLAT, MONS_GIANT_BLOWFLY },
   {  1,  4,  500, FLAT, MONS_SWAMP_DRAGON },
   {  1,  4,  335, FLAT, MONS_INSUBSTANTIAL_WISP },
@@ -347,6 +348,7 @@ static const pop_entry pop_snake[] =
 static const pop_entry pop_spider[] =
 { // Spider Nest
   { -1,  4,  260, RISE, MONS_HORNET },
+  {  1,  4,  320, RISE, MONS_SPHINX_MOTH },
   { -1,  9,  765, SEMI, MONS_DEMONIC_CRAWLER },
   {  1,  4,  955, FLAT, MONS_WOLF_SPIDER },
   {  1,  4,  985, FLAT, MONS_JUMPING_SPIDER },
