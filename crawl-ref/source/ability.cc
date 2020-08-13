@@ -310,6 +310,8 @@ static const ability_def Ability_List[] =
       0, 0, 125, 0, {fail_basis::xl, 30, 1}, abflag::breath },
     { ABIL_BREATHE_DART, "Breathe Dart",
       0, 0, 125, 0, {fail_basis::xl, 30, 1}, abflag::breath },
+    { ABIL_BREATHE_TRIPLE, "Breathe Searing Ice",
+      0, 0, 125, 0, {fail_basis::xl, 30, 1}, abflag::breath }, // Placeholder; only used by a god power.
 
     { ABIL_TRAN_BAT, "Bat Form",
       2, 0, 0, 0, {fail_basis::xl, 45, 2}, abflag::starve_ok },
@@ -1095,6 +1097,7 @@ static int _adjusted_failure_chance(ability_type ability, int base_chance)
     case ABIL_BREATHE_GHOSTLY_FLAMES:
     case ABIL_BREATHE_METAL:
     case ABIL_BREATHE_RADIATION:
+    case ABIL_BREATHE_TRIPLE:
         if (you.form == transformation::dragon)
             return base_chance - 20;
         return base_chance;
@@ -1870,6 +1873,7 @@ static int _calc_breath_ability_range(ability_type ability)
     case ABIL_BREATHE_BUTTERFLIES:
     case ABIL_BREATHE_HOLY_FLAMES:
     case ABIL_SPIT_POISON:
+    case ABIL_BREATHE_TRIPLE:
         range = 5;
         break;
     case ABIL_BREATHE_STEAM:
@@ -2291,6 +2295,7 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
     case ABIL_BREATHE_BUTTERFLIES:
     case ABIL_BREATHE_CHAOS:
     case ABIL_BREATHE_RADIATION:
+    case ABIL_BREATHE_TRIPLE:
     {
         beam.range = _calc_breath_ability_range(abil.ability);
         
@@ -2310,6 +2315,11 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
 
         switch (abil.ability)
         {
+        case ABIL_BREATHE_TRIPLE:
+            zap = ZAP_BREATHE_TRIPLE;
+            m   = "You expend all your breath powers at once!";
+            break;
+
         default:
         case ABIL_BREATHE_FIRE:
             zap = ZAP_BREATHE_FIRE;

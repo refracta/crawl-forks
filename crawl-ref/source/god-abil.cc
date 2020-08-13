@@ -7524,6 +7524,8 @@ static ability_type _random_breath(ability_type breaths[], bool allow_escape)
 
 spret bahamut_empowered_breath()
 {
+    if (you.drac_colour == DR_GOLDEN)
+        return tiamat_breath(ABIL_BREATHE_TRIPLE, true);
     return tiamat_breath(draconian_breath(), true);
 }
 

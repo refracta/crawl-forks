@@ -2792,6 +2792,8 @@ cloud_type bolt::get_cloud_type() const
             return CLOUD_MUTAGENIC;
         if (flavour == BEAM_HOLY)
             return CLOUD_HOLY;
+        if (flavour == BEAM_PARADOXICAL)
+            return CLOUD_POISON;
     }
 
     return CLOUD_NONE;
@@ -2828,7 +2830,7 @@ int bolt::get_cloud_size(bool min, bool max) const
 
     if (origin_spell == SPELL_EMPOWERED_BREATH)
     {
-        if (flavour == BEAM_FIRE)
+        if (flavour == BEAM_FIRE || flavour == BEAM_PARADOXICAL)
             return 15 + random2(10);
         if (flavour == BEAM_COLD || flavour == BEAM_IRRADIATE)
             return 2 + random2(7);
@@ -4052,7 +4054,7 @@ void bolt::affect_player_enchantment(bool resistible)
         const int dam = resist_adjust_damage(&you, flavour, damage.roll());
         if (dam)
         {
-            mprf("Pain shoots through your body%s", attack_strength_punctuation(dam));
+            mprf("Pain shoots through your body%s", attack_strength_punctuation(dam).c_str());
             internal_ouch(dam);
             obvious_effect = true;
         }

@@ -613,6 +613,7 @@ string describe_breath(bool gain)
     case DR_RED:            ostr << "puffs of flames, which leave flaming clouds in their wake.";               break;
     case DR_SILVER:         ostr << "silver splinters, which deal bonus damage to chaotic creatures.";          break;
     case DR_TEAL:           ostr << "blasts of ghostly flames, which heal the undead and damage the living.";   break;
+    default:                ostr << "buggy bugs of bugging";        break;
     }
 
     return ostr.str();
@@ -1495,6 +1496,7 @@ static string _drac_def_msg()
         break;
     case DR_BONE: // Special case; no scales.
         return "Your tough skeletal form vastly boosts your defenses. (AC+++)\nHowever; you are also weak to shatter and Lee's Rapid Deconstruction.";
+    default:
     case DR_BROWN:
         ostr << "don't do anything special. (This message shouldn't ever display.)";
         break;
@@ -2329,6 +2331,7 @@ const char* mutation_name(mutation_type mut, bool allow_category, bool for_displ
         case DR_BLOOD:              return "rTorm, rHellfire";
         case DR_BLUE:               return "rElec";
         case DR_BONE:               return "AC+++, rShatter-";
+        default:
         case DR_BROWN:              return "buggy mutation!";
         case DR_CYAN:               return "rCloud, rAir";
         case DR_GOLDEN:             return "rF+, rC+, rPois";

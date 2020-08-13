@@ -811,6 +811,24 @@ _mon_hex_zap(ZAP_BANISHMENT, BEAM_BANISH, 150),
 },
 
 {
+    ZAP_BREATHE_TRIPLE,
+    "freezing flame",
+    200,
+    new dicedef_calculator<4, 4, 1, 3>,
+    new tohit_calculator<8, 1, 6>,
+    nullptr,
+    nullptr,
+    ETC_CRYSTAL,
+    false,
+    BEAM_PARADOXICAL,
+    DCHAR_FIRED_ZAP,
+    true,
+    true,
+    false,
+    7
+},
+
+{
     ZAP_BREATHE_LIGHTNING,
     "lightning breath",
     200,
@@ -1795,7 +1813,7 @@ _mon_hex_zap(ZAP_DRAIN_MAGIC, BEAM_DRAIN_MAGIC),
     true,
     false,
     false,
-    0 // No additional effect noise.
+    2
 },
 
 {
