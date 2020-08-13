@@ -795,6 +795,14 @@ static const mon_spellbook mspell_list[] =
        { SPELL_BERSERK_OTHER, 66, MON_SPELL_NATURAL },
       }
     },
+    
+    {  MST_SPHINX_MOTH,
+      {
+       { SPELL_CONFUSE, 33, MON_SPELL_NATURAL },
+       { SPELL_SLOW, 11, MON_SPELL_NATURAL },
+       { SPELL_PETRIFY, 11, MON_SPELL_NATURAL },
+      }
+    },
 
     {  MST_CHAOS_BUTTERFLY,
       {

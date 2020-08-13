@@ -848,7 +848,7 @@ const string make_cost_description(ability_type ability)
 
 // Ripped this out both because it's used a lot and because it will likely become more complicated 
 // later so keeping it centralized for all calls will make the later mutations easier.
-static int _drac_breath_power(bool empowered = false)
+int drac_breath_power(bool empowered)
 {
     int power =  (you.form == transformation::dragon) ? 2 * you.experience_level 
                                                       : you.experience_level;
@@ -2051,7 +2051,7 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
             break;
         }
 
-        const int power = div_rand_round(5 * _drac_breath_power(empowered), 2);
+        const int power = div_rand_round(5 * drac_breath_power(empowered), 2);
 
         targeter_shotgun hitfunc(&you, shotgun_beam_count(power), beam.range);
         direction_chooser_args args;
@@ -2107,7 +2107,7 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
 
         fail_check();
 
-        int power = _drac_breath_power(empowered);
+        int power = drac_breath_power(empowered);
 
         if (abil.ability == ABIL_BREATHE_FOG)
         {
@@ -2184,7 +2184,7 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         if (empowered)
             beam.origin_spell = SPELL_EMPOWERED_BREATH;
 
-        zapping(ZAP_BREATHE_ACID, _drac_breath_power(empowered),
+        zapping(ZAP_BREATHE_ACID, drac_breath_power(empowered),
                 beam, false, "You spit a glob of acid.");
 
         you.increase_duration(DUR_BREATH_WEAPON,
@@ -2228,7 +2228,7 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         mpr("You breathe a wild blast of lightning!");
 
         bolt dam_beam;
-        int power = _drac_breath_power(empowered);
+        int power = drac_breath_power(empowered);
         zappy(ZAP_BREATHE_LIGHTNING, power, false, dam_beam);
 
         for (radius_iterator ri(you.pos(), 2, C_SQUARE, true); ri; ++ri)
@@ -2263,7 +2263,7 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
     {
         fail_check();
 
-        int power = _drac_breath_power(empowered);
+        int power = drac_breath_power(empowered);
 
         if (empowered)
         {
@@ -2304,7 +2304,7 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
 
         string m;
         zap_type zap;
-        const int power = _drac_breath_power(empowered);
+        const int power = drac_breath_power(empowered);
 
         fail_check();
 
@@ -2373,6 +2373,9 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
             break;
         }
 
+        if (empowered)
+            beam.origin_spell = SPELL_EMPOWERED_BREATH;
+
         if (zapping(zap, power, beam, true, m.c_str()) == spret::abort)
             return spret::abort;
 
@@ -2381,7 +2384,9 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
             int extras = 2 + you.get_experience_level() / 9 + random2(4);
             for (int i = 0; i < extras; i++)
             {
-                monster * butterfly = create_monster(mgen_data(MONS_BUTTERFLY, BEH_COPY, you.pos(), 
+                monster_type butttype = empowered && x_chance_in_y(power, 120) ? MONS_SPHINX_MOTH : MONS_BUTTERFLY;
+
+                monster * butterfly = create_monster(mgen_data(butttype, BEH_COPY, you.pos(),
                                                      MHITYOU).set_summoned(&you, 2, SPELL_NO_SPELL, GOD_NO_GOD));
                 
                 if (butterfly)
@@ -2393,6 +2398,12 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
                             butterfly->move_to_pos(*ai);
                             break;
                         }
+                    }
+
+                    if (butttype == MONS_SPHINX_MOTH)
+                    {
+                        butterfly->set_hit_dice(3 + div_rand_round(power, 5));
+                        butterfly->max_hit_points = butterfly->hit_points = butterfly->max_hit_points * butterfly->get_hit_dice() / 10;
                     }
 
                     mon_enchant abj = butterfly->get_ench(ENCH_ABJ);

@@ -110,6 +110,7 @@ hornet CORPSE_HORNET
 spark_wasp CORPSE_SPARK_WASP
 ghost_moth CORPSE_GHOST_MOTH
 moth_of_wrath CORPSE_MOTH_OF_WRATH
+sphinxmoth CORPSE_SPHINX_MOTH
 giant_firefly CORPSE_GIANT_FIREFLY
 giant_blowfly CORPSE_GIANT_BLOWFLY
 chaos_butterfly CORPSE_CHAOS_BUTTERFLY

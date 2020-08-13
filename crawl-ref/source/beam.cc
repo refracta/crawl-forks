@@ -16,6 +16,7 @@
 #include <iostream>
 #include <set>
 
+#include "ability.h"    // Drac_breath_power()
 #include "act-iter.h"
 #include "areas.h"
 #include "art-enum.h"
@@ -3304,12 +3305,23 @@ void bolt::affect_place_clouds()
 
     if (flavour == BEAM_BUTTERFLY && !actor_at(p))
     {
-        monster * butterfly = create_monster( mgen_data(MONS_BUTTERFLY, BEH_COPY, p, agent()->is_player() ? int{ MHITYOU } 
+        monster_type butttype = MONS_BUTTERFLY;
+        int power = drac_breath_power(true);
+        if (origin_spell == SPELL_EMPOWERED_BREATH && x_chance_in_y(power, 90))
+            butttype = MONS_SPHINX_MOTH;
+
+        monster * butterfly = create_monster( mgen_data(butttype, BEH_COPY, p, agent()->is_player() ? int{ MHITYOU }
                                 : agent()->as_monster()->foe, MG_AUTOFOE).set_summoned(agent(), 2, SPELL_NO_SPELL, GOD_NO_GOD));
         if (butterfly)
         {
             butterfly->move_to_pos(p);
             mon_enchant abj = butterfly->get_ench(ENCH_ABJ);
+
+            if (butttype == MONS_SPHINX_MOTH)
+            {
+                butterfly->set_hit_dice(3 + div_rand_round(power, 5));
+                butterfly->max_hit_points = butterfly->hit_points = butterfly->max_hit_points * butterfly->get_hit_dice() / 10;
+            }
 
             abj.duration = (damage.roll() * BASELINE_DELAY);
             butterfly->update_ench(abj);
