@@ -1482,9 +1482,14 @@ cat8
 cat9
 cat10
 draconian1 HORNS_DRAC
-%sdir player/head
+
+## Mounts
+%sdir player/mount
+drake_mount_front DRAKE_FRONT
+drake_mount_back  DRAKE_BACK
 
 ## Doll editor tiles, but not randomly picked
+%sdir player/head
 cone_red CONE_RED
 crown_gold1 CROWN
 crown_gold2

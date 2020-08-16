@@ -1148,6 +1148,7 @@ void TilesFramework::send_doll(const dolls_data &doll, bool submerged, bool ghos
         TILEP_PART_ENCH,
         TILEP_PART_DRCWING,
         TILEP_PART_CLOAK,
+        TILEP_PART_MOUNTB,
         // player
         TILEP_PART_BASE,
         TILEP_PART_BOOTS,
@@ -1160,6 +1161,7 @@ void TilesFramework::send_doll(const dolls_data &doll, bool submerged, bool ghos
         TILEP_PART_HELM,
         TILEP_PART_HAND1,
         TILEP_PART_HAND2,
+        TILEP_PART_MOUNTF,
     };
 
     int flags[TILEP_PART_MAX];

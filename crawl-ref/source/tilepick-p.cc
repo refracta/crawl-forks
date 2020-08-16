@@ -1748,6 +1748,8 @@ const int parts_saved[TILEP_PART_MAX + 1] =
     TILEP_PART_ENCH,
     TILEP_PART_DRCWING,
     TILEP_PART_DRCHEAD,
+    TILEP_PART_MOUNTF,
+    TILEP_PART_MOUNTB,
     -1
 };
 

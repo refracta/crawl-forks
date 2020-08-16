@@ -1684,6 +1684,7 @@ bool PlayerMenuEntry::get_tiles(vector<tile_def>& tileset) const
         TILEP_PART_ENCH,
         TILEP_PART_DRCWING,
         TILEP_PART_CLOAK,
+        TILEP_PART_MOUNTB,
         TILEP_PART_BASE,    //  5
         TILEP_PART_BOOTS,
         TILEP_PART_LEG,
@@ -1695,6 +1696,7 @@ bool PlayerMenuEntry::get_tiles(vector<tile_def>& tileset) const
         TILEP_PART_HELM,
         TILEP_PART_HAND1,   // 10
         TILEP_PART_HAND2,
+        TILEP_PART_MOUNTF,
     };
 
     int flags[TILEP_PART_MAX];

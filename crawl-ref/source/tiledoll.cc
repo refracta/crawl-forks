@@ -567,6 +567,7 @@ void pack_doll_buf(SubmergedTileBuffer& buf, const dolls_data &doll,
         TILEP_PART_ENCH,
         TILEP_PART_DRCWING,
         TILEP_PART_CLOAK,
+        TILEP_PART_MOUNTB,
         // player
         TILEP_PART_BASE,
         TILEP_PART_BOOTS,
@@ -578,7 +579,8 @@ void pack_doll_buf(SubmergedTileBuffer& buf, const dolls_data &doll,
         TILEP_PART_DRCHEAD,
         TILEP_PART_HELM,
         TILEP_PART_HAND1,
-        TILEP_PART_HAND2
+        TILEP_PART_HAND2,
+        TILEP_PART_MOUNTF,
     };
 
     int flags[TILEP_PART_MAX];
