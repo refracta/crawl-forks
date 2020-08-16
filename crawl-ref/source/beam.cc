@@ -4658,9 +4658,7 @@ void bolt::affect_player()
                 success = true;
         }
         if (!success || one_chance_in(4))
-        {
-            rot_hp(4 + random2(8));
-        }
+            you.drain_stat(STAT_RANDOM, 2 + random2(3));
     }
 
     if (flavour == BEAM_DEVASTATION || flavour == BEAM_ENERGY

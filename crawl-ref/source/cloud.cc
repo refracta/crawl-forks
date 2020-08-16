@@ -1163,7 +1163,7 @@ static bool _actor_apply_cloud_side_effects(actor *act,
                 else
                 {
                     if (player)
-                        rot_hp(4 + random2(8));
+                        you.drain_stat(STAT_RANDOM, 2 + random2(3));
                     else if (mons->can_mutate())
                         mons->malmutate("foul blight");
                     else
