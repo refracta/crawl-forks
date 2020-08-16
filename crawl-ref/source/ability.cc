@@ -2369,6 +2369,11 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         case ABIL_BREATHE_MIASMA:
             zap = ZAP_BREATHE_MIASMA;
             m   = "You exhale a noxious wave of foul miasma.";
+            if (empowered)
+            {
+                zap = ZAP_BREATHE_ROT;
+                m = "You exhale a vile wave of vicious blight.";
+            }
             break;
 
         case ABIL_BREATHE_DRAIN:

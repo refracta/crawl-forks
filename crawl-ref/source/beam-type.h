@@ -100,6 +100,7 @@ enum beam_type                  // bolt::flavour
     BEAM_CRYSTAL_SPEAR,
     BEAM_CRYSTAL_FIRE,
     BEAM_CRYSTAL_ICE,
+    BEAM_ROT,
     BEAM_WAND_HEALING,
     BEAM_LAST_REAL = BEAM_WAND_HEALING,
     BEAM_WAND_RANDOM, // Used for Monster Setup only.

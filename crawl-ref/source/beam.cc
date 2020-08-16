@@ -1662,6 +1662,52 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
 
     switch (pbolt.flavour)
     {
+    case BEAM_ROT:
+    {
+        if (mons->is_insubstantial() && bool(mons->holiness() & MH_UNDEAD))
+            return 0;
+            
+        // Early out for tracer/no side effects.
+        if (!doFlavouredEffects)
+            return hurted;
+
+        bool success = false;
+
+        if (bool(mons->holiness() & MH_NONLIVING) && mons->res_acid() < 3)
+        {
+            mprf("The vicious blight erodes %s", mons->name(DESC_THE).c_str());
+            if (one_chance_in(3))
+                mons->corrode_equipment("foul blight", 1);
+        }
+        else
+        {
+            if (miasma_monster(mons, pbolt.agent()))
+                success = true;
+
+            simple_monster_message(*mons, " seems to rot from the inside!");
+
+            if (!success)
+            {
+                if (poison_monster(mons, pbolt.agent(), 1 + random2(3), true, false))
+                    success = true;
+            }
+            if (!success || one_chance_in(4))
+            {
+                if (!one_chance_in(3))
+                {
+                    if (mons->can_mutate())
+                        mons->malmutate("foul blight");
+                    else
+                        mons->weaken(pbolt.agent(), 8);
+                }
+                else
+                    mons->corrode_equipment("foul blight", 1);
+            }
+        }
+
+        if (YOU_KILL(pbolt.thrower))
+            did_god_conduct(DID_UNCLEAN, 2, pbolt.god_cares());
+    }
     case BEAM_CRYSTAL_FIRE:
     case BEAM_FIRE:
     case BEAM_STEAM:
@@ -2796,6 +2842,8 @@ cloud_type bolt::get_cloud_type() const
             return CLOUD_POISON;
         if (flavour == BEAM_NEG)
             return CLOUD_NEGATIVE_ENERGY;
+        if (flavour == BEAM_ROT)
+            return CLOUD_ROT;
     }
 
     return CLOUD_NONE;
@@ -3321,6 +3369,9 @@ void bolt::affect_place_clouds()
 
     if (flavour == BEAM_MIASMA)
         place_cloud(CLOUD_MIASMA, p, random2(5) + 2, agent());
+
+    if (flavour == BEAM_ROT)
+        place_cloud(CLOUD_ROT, p, random2(5) + 2, agent());
 
     if (flavour == BEAM_STEAM)
         place_cloud(CLOUD_STEAM, p, random2(5) + 2, agent());
@@ -4592,6 +4643,25 @@ void bolt::affect_player()
 
     if (flavour == BEAM_MIASMA && final_dam > 0)
         was_affected = miasma_player(agent(), name);
+
+    if (flavour == BEAM_ROT && final_dam > 0)
+    {
+        bool success = false;
+
+        mprf(MSGCH_WARN, "You feel yourself rotting from the inside.");
+
+        if (miasma_player(agent(), "vicious blight"))
+            success = true;
+        if (!success)
+        {
+            if (poison_player(5 + roll_dice(3, 8), agent() ? agent()->name(DESC_A) : "", "vicious blight", true))
+                success = true;
+        }
+        if (!success || one_chance_in(4))
+        {
+            rot_hp(4 + random2(8));
+        }
+    }
 
     if (flavour == BEAM_DEVASTATION || flavour == BEAM_ENERGY
         || flavour == BEAM_ICY_DEVASTATION || real_flavour == BEAM_CHAOTIC_DEVASTATION) // DISINTEGRATION already handled
@@ -7490,6 +7560,7 @@ static string _beam_type_name(beam_type type)
     case BEAM_IRRESISTIBLE_CONFUSION:return "confusion";
     case BEAM_INFESTATION:           return "infestation";
     case BEAM_VILE_CLUTCH:           return "vile clutch";
+    case BEAM_ROT:                   return "vicious blight";
     case BEAM_WAND_RANDOM:           return "random effects"; // Shouldn't ever show up...
 
     case NUM_BEAMS:                  die("invalid beam type");

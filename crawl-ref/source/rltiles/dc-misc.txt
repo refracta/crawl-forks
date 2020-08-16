@@ -217,6 +217,10 @@ cloud_neg0 CLOUD_NEG
 cloud_neg1
 cloud_neg2
 
+cloud_rot0 CLOUD_ROT
+cloud_rot1
+cloud_rot2
+
 cloud_gold_dust0 CLOUD_GOLD_DUST
 cloud_gold_dust1
 cloud_gold_dust2

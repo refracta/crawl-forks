@@ -164,6 +164,11 @@ int check_your_resists(int hurted, beam_type flavour, string source,
         }
         break;
 
+    case BEAM_ROT:
+        if (you.is_insubstantial() && bool(you.holiness() & MH_UNDEAD))
+            hurted = 0;
+        break; // Only ghosts resist the foul blight!
+
     case BEAM_MAGIC_CANDLE:
         you.backlight();
         // Fallthrough

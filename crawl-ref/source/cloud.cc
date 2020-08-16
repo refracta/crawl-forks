@@ -313,6 +313,13 @@ static const cloud_data clouds[] = {
       BEAM_NEG,                                 // beam_effect
       { 0, 12, false },                         // base, random damage
     },
+    // CLOUD_ROT,
+    { "vicious blight", "vile decay",           // terse, verbose name
+      LIGHTGREEN,                               // colour
+      { TILE_CLOUD_ROT, CTVARY_DUR },           // tile
+      BEAM_ROT,                                 // beam_effect
+      { 4, 18 },                                // base, random damage
+    },
 };
 COMPILE_CHECK(ARRAYSZ(clouds) == NUM_CLOUD_TYPES);
 
@@ -855,6 +862,7 @@ static bool _cloud_has_negative_side_effects(cloud_type cloud)
     case CLOUD_ACID:
     case CLOUD_BLOOD:
     case CLOUD_NEGATIVE_ENERGY:
+    case CLOUD_ROT:
         return true;
     default:
         return false;
@@ -1116,6 +1124,54 @@ static bool _actor_apply_cloud_side_effects(actor *act,
             miasma_player(cloud.agent(), cloud.cloud_name());
         else
             miasma_monster(mons, cloud.agent());
+        break;
+
+    case CLOUD_ROT:
+    {
+        bool success = false;
+
+        if (player)
+            mprf(MSGCH_WARN, "You feel yourself rotting from the inside!");
+
+        if (!player && bool(mons->holiness() & MH_NONLIVING) && mons->res_acid() < 3)
+        {
+            if (one_chance_in(3))
+                act->corrode_equipment("foul blight", 1);
+        }
+        else
+        {
+            if (player && miasma_player(cloud.agent(), cloud.cloud_name()))
+                success = true;
+
+            if (!player && miasma_monster(mons, cloud.agent()))
+                success = true;
+
+            if (!success)
+            {
+                if (player && poison_player(5 + roll_dice(3, 8), cloud.agent() 
+                    ? cloud.agent()->name(DESC_A) : "", cloud.cloud_name(), true))
+                {
+                    success = true;
+                }
+                if (!player && poison_monster(mons, cloud.agent(), 1 + random2(3), true, false))
+                    success = true;
+            }
+            if (!success || one_chance_in(4))
+            {
+                if (one_chance_in(3))
+                    act->corrode_equipment("foul blight", 1);
+                else
+                {
+                    if (player)
+                        rot_hp(4 + random2(8));
+                    else if (mons->can_mutate())
+                        mons->malmutate("foul blight");
+                    else
+                        mons->weaken(cloud.agent(), 8);
+                }
+            }
+        }
+    }
         break;
 
     case CLOUD_MUTAGENIC:
@@ -1455,6 +1511,7 @@ static bool _mons_avoids_cloud(const monster* mons, const cloud_struct& cloud,
 
     switch (cloud.type)
     {
+    case CLOUD_ROT:
     case CLOUD_MIASMA:
         // Even the dumbest monsters will avoid miasma if they can.
         return true;

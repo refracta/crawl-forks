@@ -986,7 +986,7 @@ void cloud_strike(actor * caster, actor * foe, int damage)
 
     if (cloud == CLOUD_CHAOS)
     {
-        int x = random2(8);
+        int x = random2(9);
         switch (x)
         {
         case 0:
@@ -1010,7 +1010,14 @@ void cloud_strike(actor * caster, actor * foe, int damage)
         default:
             cloud = CLOUD_HOLY;
         }
+    }
 
+    if (cloud == CLOUD_ROT)
+    {
+        if (foe->holiness() & (MH_UNDEAD | MH_NONLIVING))
+            cloud = CLOUD_ACID;
+        else
+            cloud = CLOUD_MIASMA;
     }
 
     switch (cloud)

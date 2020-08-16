@@ -1027,6 +1027,24 @@ _mon_hex_zap(ZAP_BANISHMENT, BEAM_BANISH, 150),
 },
 
 {
+    ZAP_BREATHE_ROT,
+    "vicious blight",
+    200,
+    new dicedef_calculator<2, 2, 1, 6>,
+    new tohit_calculator<6, 1, 6>,
+    nullptr,
+    nullptr,
+    LIGHTGREEN,
+    false,
+    BEAM_ROT,
+    DCHAR_FIRED_ZAP,
+    true,
+    true,
+    false,
+    7 // Explosion does the noise.
+},
+
+{
     ZAP_BREATHE_BUTTERFLY,
     "fairy dust",
     200,
