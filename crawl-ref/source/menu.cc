@@ -1679,24 +1679,24 @@ bool PlayerMenuEntry::get_tiles(vector<tile_def>& tileset) const
     // FIXME: Implement this logic in one place in e.g. pack_doll_buf().
     int p_order[TILEP_PART_MAX] =
     {
-        TILEP_PART_SHADOW,  //  0
-        TILEP_PART_HALO,
-        TILEP_PART_ENCH,
-        TILEP_PART_DRCWING,
-        TILEP_PART_CLOAK,
-        TILEP_PART_MOUNTB,
-        TILEP_PART_BASE,    //  5
-        TILEP_PART_BOOTS,
-        TILEP_PART_LEG,
-        TILEP_PART_BODY,
-        TILEP_PART_ARM,
-        TILEP_PART_HAIR,
-        TILEP_PART_BEARD,
-        TILEP_PART_DRCHEAD,  // 15
-        TILEP_PART_HELM,
-        TILEP_PART_HAND1,   // 10
-        TILEP_PART_HAND2,
-        TILEP_PART_MOUNTF,
+        TILEP_PART_SHADOW,      //  0
+        TILEP_PART_ENCH,        //  1
+        TILEP_PART_HALO,        //  2
+        TILEP_PART_DRCWING,     //  3
+        TILEP_PART_CLOAK,       //  4
+        TILEP_PART_MOUNT_BACK,  //  5
+        TILEP_PART_BASE,        //  6
+        TILEP_PART_BOOTS,       //  7
+        TILEP_PART_LEG,         //  8
+        TILEP_PART_BODY,        //  9
+        TILEP_PART_ARM,         // 10
+        TILEP_PART_HAIR,        // 11
+        TILEP_PART_BEARD,       // 12
+        TILEP_PART_DRCHEAD,     // 13
+        TILEP_PART_HELM,        // 14
+        TILEP_PART_HAND1,       // 15
+        TILEP_PART_HAND2,       // 16
+        TILEP_PART_MOUNT_FRONT, // 17
     };
 
     int flags[TILEP_PART_MAX];
@@ -1705,7 +1705,7 @@ bool PlayerMenuEntry::get_tiles(vector<tile_def>& tileset) const
     // For skirts, boots go under the leg armour. For pants, they go over.
     if (equip_doll.parts[TILEP_PART_LEG] < TILEP_LEG_SKIRT_OFS)
     {
-        p_order[6] = TILEP_PART_BOOTS;
+        p_order[8] = TILEP_PART_BOOTS;
         p_order[7] = TILEP_PART_LEG;
     }
 
