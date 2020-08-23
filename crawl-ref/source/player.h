@@ -25,6 +25,7 @@
 #include "game-chapter.h"
 #include "kills.h"
 #include "mon-holy-type.h"
+#include "mount.h"
 #include "mutation-type.h"
 #include "place-info.h"
 #include "quiver.h"
@@ -170,6 +171,10 @@ public:
     // PC's symbol (usually @) and colour.
     monster_type symbol;
     transformation form;
+
+    mount_type mount;
+    int mount_hp_max;
+    int mount_hp;
 
     FixedVector< item_def, ENDOFPACK > inv;
     FixedBitVector<NUM_RUNE_TYPES> runes;
@@ -915,6 +920,7 @@ public:
     bool clear_far_engulf() override;
 
     bool is_dragonkind() const override;
+    bool mounted() const override;
 
 protected:
     void _removed_beholder(bool quiet = false);

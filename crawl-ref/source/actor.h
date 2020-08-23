@@ -443,6 +443,7 @@ public:
     virtual bool constriction_does_damage(bool direct) const = 0;
     virtual bool clear_far_engulf() = 0;
     virtual bool is_dragonkind() const;
+    virtual bool mounted() const { return false; }
 
     // Be careful using this, as it doesn't keep the constrictor in sync.
     void clear_constricted();

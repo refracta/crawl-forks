@@ -577,6 +577,7 @@ public:
     bool angered_by_attacks() const;
 
     bool is_dragonkind() const override;
+    bool mounted() const override { return false; };    // BCADNOTE: keeping mainline behavior for mounted monsters for now; but use this if we decide to mirror player mechanics.
 
 private:
     int hit_dice;

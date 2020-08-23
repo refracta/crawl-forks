@@ -280,15 +280,15 @@ void fill_doll_equipment(dolls_data &result)
     case transformation::tree:
         if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
             result.parts[TILEP_PART_BASE] = TILEP_TRAN_TREE_SPECTRAL;
-        else 
-            result.parts[TILEP_PART_BASE]    = TILEP_TRAN_TREE;
-        result.parts[TILEP_PART_HELM]    = 0; // fixme, should show up
+        else
+            result.parts[TILEP_PART_BASE] = TILEP_TRAN_TREE;
+        result.parts[TILEP_PART_HELM] = 0; // fixme, should show up
         result.parts[TILEP_PART_DRCHEAD] = 0;
         result.parts[TILEP_PART_DRCWING] = 0;
-        result.parts[TILEP_PART_HAIR]    = 0;
-        result.parts[TILEP_PART_BEARD]   = 0;
-        result.parts[TILEP_PART_LEG]     = 0;
-        result.parts[TILEP_PART_SHADOW]  = 0;
+        result.parts[TILEP_PART_HAIR] = 0;
+        result.parts[TILEP_PART_BEARD] = 0;
+        result.parts[TILEP_PART_LEG] = 0;
+        result.parts[TILEP_PART_SHADOW] = 0;
         break;
     case transformation::statue:
         tileidx_t ch;
@@ -300,13 +300,13 @@ void fill_doll_equipment(dolls_data &result)
         case SP_OCTOPODE:ch = TILEP_TRAN_STATUE_OCTOPODE; break;
         default:         ch = TILEP_TRAN_STATUE_HUMANOID; break;
         }
-        result.parts[TILEP_PART_BASE]    = ch;
+        result.parts[TILEP_PART_BASE] = ch;
         if (you.species == SP_DRACONIAN)
             result.parts[TILEP_PART_DRCHEAD] = TILEP_DRCHEAD_STATUE;
         else
             result.parts[TILEP_PART_DRCHEAD] = 0;
-        result.parts[TILEP_PART_HAIR]    = 0;
-        result.parts[TILEP_PART_LEG]     = 0;
+        result.parts[TILEP_PART_HAIR] = 0;
+        result.parts[TILEP_PART_LEG] = 0;
         break;
     case transformation::lich:
         switch (you.species)
@@ -317,33 +317,33 @@ void fill_doll_equipment(dolls_data &result)
         case SP_OCTOPODE:ch = TILEP_TRAN_LICH_OCTOPODE; break;
         default:         ch = TILEP_TRAN_LICH_HUMANOID; break;
         }
-        result.parts[TILEP_PART_BASE]    = ch;
+        result.parts[TILEP_PART_BASE] = ch;
         result.parts[TILEP_PART_DRCHEAD] = 0;
-        result.parts[TILEP_PART_HAIR]    = 0;
-        result.parts[TILEP_PART_BEARD]   = 0;
-        result.parts[TILEP_PART_LEG]     = 0;
+        result.parts[TILEP_PART_HAIR] = 0;
+        result.parts[TILEP_PART_BEARD] = 0;
+        result.parts[TILEP_PART_LEG] = 0;
 
         // fixme: these should show up, but look ugly with the lich tile
-        result.parts[TILEP_PART_HELM]    = 0;
-        result.parts[TILEP_PART_BOOTS]   = 0;
-        result.parts[TILEP_PART_BODY]    = 0;
-        result.parts[TILEP_PART_ARM]     = 0;
-        result.parts[TILEP_PART_CLOAK]   = 0;
+        result.parts[TILEP_PART_HELM] = 0;
+        result.parts[TILEP_PART_BOOTS] = 0;
+        result.parts[TILEP_PART_BODY] = 0;
+        result.parts[TILEP_PART_ARM] = 0;
+        result.parts[TILEP_PART_CLOAK] = 0;
         break;
     default:
         // A monster tile is being used for the player.
         if (Options.tile_use_monster != MONS_0)
         {
-            result.parts[TILEP_PART_BASE]    = tileidx_player_mons();
+            result.parts[TILEP_PART_BASE] = tileidx_player_mons();
             result.parts[TILEP_PART_DRCHEAD] = 0;
-            result.parts[TILEP_PART_HAIR]    = 0;
-            result.parts[TILEP_PART_BEARD]   = 0;
-            result.parts[TILEP_PART_LEG]     = 0;
-            result.parts[TILEP_PART_HELM]    = 0;
-            result.parts[TILEP_PART_BOOTS]   = 0;
-            result.parts[TILEP_PART_BODY]    = 0;
-            result.parts[TILEP_PART_ARM]     = 0;
-            result.parts[TILEP_PART_CLOAK]   = 0;
+            result.parts[TILEP_PART_HAIR] = 0;
+            result.parts[TILEP_PART_BEARD] = 0;
+            result.parts[TILEP_PART_LEG] = 0;
+            result.parts[TILEP_PART_HELM] = 0;
+            result.parts[TILEP_PART_BOOTS] = 0;
+            result.parts[TILEP_PART_BODY] = 0;
+            result.parts[TILEP_PART_ARM] = 0;
+            result.parts[TILEP_PART_CLOAK] = 0;
         }
         break;
     }
@@ -362,7 +362,7 @@ void fill_doll_equipment(dolls_data &result)
             if (is_player_tile(result.parts[TILEP_PART_BASE], TILEP_BASE_OCTOPODE))
                 result.parts[TILEP_PART_HAND1] = TILEP_HAND1_BLADEHAND_OP;
             else if (is_player_tile(result.parts[TILEP_PART_BASE], TILEP_BASE_FELID)
-                     || Options.tile_use_monster == MONS_NATASHA)
+                || Options.tile_use_monster == MONS_NATASHA)
                 result.parts[TILEP_PART_HAND1] = TILEP_HAND1_BLADEHAND_FE;
             else result.parts[TILEP_PART_HAND1] = TILEP_HAND1_BLADEHAND;
         }
@@ -380,7 +380,7 @@ void fill_doll_equipment(dolls_data &result)
             if (is_player_tile(result.parts[TILEP_PART_BASE], TILEP_BASE_OCTOPODE))
                 result.parts[TILEP_PART_HAND2] = TILEP_HAND1_BLADEHAND_OP;
             else if (is_player_tile(result.parts[TILEP_PART_BASE], TILEP_BASE_FELID)
-                     || Options.tile_use_monster == MONS_NATASHA)
+                || Options.tile_use_monster == MONS_NATASHA)
                 result.parts[TILEP_PART_HAND2] = TILEP_HAND1_BLADEHAND_FE;
             else result.parts[TILEP_PART_HAND2] = TILEP_HAND1_BLADEHAND;
         }
@@ -418,14 +418,14 @@ void fill_doll_equipment(dolls_data &result)
             if (you.species == SP_FELID)
             {
                 if (is_player_tile(result.parts[TILEP_PART_BASE],
-                                  TILEP_BASE_FELID))
+                    TILEP_BASE_FELID))
                 {
                     // Felid horns are offset by the tile variant.
                     result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS_CAT
                         + result.parts[TILEP_PART_BASE] - TILEP_BASE_FELID;
                 }
                 else if (is_player_tile(result.parts[TILEP_PART_BASE],
-                                  TILEP_TRAN_STATUE_FELID))
+                    TILEP_TRAN_STATUE_FELID))
                 {
                     result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS_CAT;
                 }
@@ -435,15 +435,15 @@ void fill_doll_equipment(dolls_data &result)
             else
                 switch (you.get_mutation_level(MUT_HORNS))
                 {
-                    case 1:
-                        result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS1;
-                        break;
-                    case 2:
-                        result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS2;
-                        break;
-                    case 3:
-                        result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS3;
-                        break;
+                case 1:
+                    result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS1;
+                    break;
+                case 2:
+                    result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS2;
+                    break;
+                case 3:
+                    result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS3;
+                    break;
                 }
         }
         else
@@ -496,7 +496,7 @@ void fill_doll_equipment(dolls_data &result)
         tileidx_t head = 0;
         tileidx_t wing = 0;
         tilep_draconian_init(you.species, you.experience_level,
-                             &base, &head, &wing);
+            &base, &head, &wing);
 
         if (result.parts[TILEP_PART_DRCHEAD] == TILEP_SHOW_EQUIP)
             result.parts[TILEP_PART_DRCHEAD] = head;
@@ -507,14 +507,29 @@ void fill_doll_equipment(dolls_data &result)
     if (result.parts[TILEP_PART_SHADOW] == TILEP_SHOW_EQUIP)
         result.parts[TILEP_PART_SHADOW] = TILEP_SHADOW_SHADOW;
 
-    /*
-    // Mount (Defaulted to the drake mount to test).
+    // Mount Front
     if (result.parts[TILEP_PART_MOUNT_FRONT] == TILEP_SHOW_EQUIP)
-        result.parts[TILEP_PART_MOUNT_FRONT] = TILEP_MOUNT_FRONT_DRAKE;
+    {
+        if (you.mounted())
+        {
+            if (you.mount == mount_type::drake)
+                result.parts[TILEP_PART_MOUNT_FRONT] = TILEP_MOUNT_FRONT_DRAKE;
+            else
+                result.parts[TILEP_PART_MOUNT_FRONT] = 0;
+        }
+    }
 
-    if (result.parts[TILEP_PART_MOUNT_BACK] == TILEP_SHOW_EQUIP)
-        result.parts[TILEP_PART_MOUNT_BACK] = TILEP_MOUNT_BACK_DRAKE;
-    */
+    // Mount Back (Yes it's basically duplicated logic.)
+    if (result.parts[TILEP_PART_MOUNT_BACK] == TILEP_SHOW_EQUIP) 
+    {
+        if (you.mounted())
+        {
+            if (you.mount == mount_type::drake)
+                result.parts[TILEP_PART_MOUNT_BACK] = TILEP_MOUNT_BACK_DRAKE;
+            else
+                result.parts[TILEP_PART_MOUNT_BACK] = 0;
+        }
+    }
 
     // Various other slots.
     for (int i = 0; i < TILEP_PART_MAX; i++)

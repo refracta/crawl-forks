@@ -5647,6 +5647,10 @@ player::player()
     symbol          = MONS_PLAYER;
     form            = transformation::none;
 
+    mount           = mount_type::none;
+    mount_hp_max    = 0;
+    mount_hp        = 0;
+
     for (auto &item : inv)
         item.clear();
     runes.reset();
@@ -9114,4 +9118,11 @@ bool player::is_dragonkind() const
         return true;
 
     return actor::is_dragonkind();
+}
+
+bool player::mounted() const
+{
+    if (you.duration[DUR_MOUNTED] && you.mount != mount_type::none)
+        return true;
+    return false;
 }
