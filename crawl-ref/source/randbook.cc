@@ -1226,9 +1226,13 @@ void acquire_themed_randbook(item_def &book, int agent)
     spschool discipline_1
         = _choose_randbook_discipline(possible_spells, agent);
     spschool discipline_2 = discipline_1;
+    int loops = 0;
 
-    while (discipline_2 == discipline_1)
+    while (discipline_2 == discipline_1 && loops < 24)
+    {
         discipline_2 = _choose_randbook_discipline(possible_spells, agent);
+        loops++;
+    }
 
     vector<spell_type> spells;
     _choose_themed_randbook_spells(possible_spells, discipline_1, discipline_2,
