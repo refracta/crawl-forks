@@ -459,6 +459,8 @@ public:
     int m_request_redraw_after; // force a redraw at this turn count
 };
 
+static colour_bar mount_HP_Bar(LIGHTCYAN, CYAN, BLUE, DARKGREY);
+
 static colour_bar HP_Bar(LIGHTGREEN, GREEN, RED, DARKGREY);
 
 #ifdef USE_TILE_LOCAL
@@ -475,6 +477,7 @@ static colour_bar Noise_Bar(LIGHTGREY, LIGHTGREY, MAGENTA, DARKGREY);
 
 void reset_hud()
 {
+    mount_HP_Bar.reset();
     HP_Bar.reset();
     MP_Bar.reset();
     Noise_Bar.reset();
@@ -803,6 +806,9 @@ static void _print_stats_hp(int x, int y)
     else
 #endif
         HP_Bar.draw(19, y, you.hp, you.hp_max, you.hp - max(0, poison_survival()));
+
+    if (you.mounted())
+        mount_HP_Bar.draw(19, y + 1, you.mount_hp, you.mount_hp_max, 0);
 }
 
 static short _get_stat_colour(stat_type stat)
@@ -1330,6 +1336,7 @@ void print_stats()
         you.redraw_title = false;
         _redraw_title();
     }
+    int y = you.mounted() ? 6 : 5;
     if (you.redraw_hit_points)
     {
         you.redraw_hit_points = false;
@@ -1338,28 +1345,28 @@ void print_stats()
     if (you.redraw_magic_points)
     {
         you.redraw_magic_points = false;
-        _print_stats_mp(1, 4);
+        _print_stats_mp(1, y - 1);
     }
 
     if (you.wield_change || you.redraw_armour_class)
     {
         you.redraw_armour_class = false;
-        _print_stats_ac(1, line1);
+        _print_stats_ac(1, y);
     }
     if (you.wield_change || you.redraw_evasion)
     {
         you.redraw_evasion = false;
-        _print_stats_ev(1, line1);
+        _print_stats_ev(1, y);
     }
 
-    _print_stat(STAT_STR, 1, 6);
-    _print_stat(STAT_INT, 16, 6);
-    _print_stat(STAT_DEX, 31, 6);
+    _print_stat(STAT_STR, 1, y + 1);
+    _print_stat(STAT_INT, 16, y + 1);
+    _print_stat(STAT_DEX, 31, y + 1);
     you.redraw_stats.init(false);
 
     if (you.redraw_experience)
     {
-        CGOTOXY(1, 7, GOTO_STAT);
+        CGOTOXY(1, y + 1, GOTO_STAT);
         textcolour(Options.status_caption_colour);
         CPRINTF("XL: ");
         textcolour(HUD_VALUE_COLOUR);
@@ -1376,7 +1383,7 @@ void print_stats()
         you.redraw_experience = false;
     }
 
-    int yhack = 0;
+    int yhack = 1;
 
     // Line 9 is Noise and Turns
 #ifdef USE_TILE_LOCAL

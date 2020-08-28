@@ -524,3 +524,23 @@ spret cast_SMD(const coord_def& target, int pow, bool fail)
     start_delay<SMDDelay>(delay, target);
     return spret::success;
 }
+
+spret gain_mount(mount_type mount, int pow, bool fail)
+{
+    fail_check();
+    int dur = 0;
+    if (pow == 0)
+        dur = 15 + roll_dice(3, you.skill(SK_INVOCATIONS));
+    else
+        dur = 15 + roll_dice(3, pow / 8);
+    you.increase_duration(DUR_MOUNTED, dur, 200);
+    you.mount = mount;
+    return spret::success;
+}
+
+void dismount()
+{
+    if (you.duration[DUR_MOUNTED])
+        you.duration[DUR_MOUNTED] = 0;
+    you.mount = mount_type::none;
+}

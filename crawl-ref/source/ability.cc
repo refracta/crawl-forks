@@ -3545,6 +3545,9 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
     case ABIL_TIAMAT_ADAPTIVE_BREATH:
         return tiamat_choice_breath(fail);
 
+    case ABIL_BAHAMUT_DRAKE_MOUNT:
+        return gain_mount(mount_type::drake, 0, fail);
+
     case ABIL_TIAMAT_SUMMON_DRAKES:
         fail_check();
         if (summon_drakes(apply_invo_enhancer(you.skill(SK_INVOCATIONS), true), false))

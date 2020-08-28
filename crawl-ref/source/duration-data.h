@@ -4,6 +4,7 @@
 
 #include "cloud.h"
 #include "god-passive.h"
+#include "spl-other.h"
 
 static void _end_weapon_brand()
 {
@@ -687,7 +688,7 @@ static const duration_def duration_data[] =
       {{ "You release your hold on the winds." , end_still_winds}}},
     { DUR_MOUNTED,
       BROWN, "", "", "mount", "", D_NO_FLAGS,
-      {{ }}},
+      {{ "Your mount expires." , dismount}}},
 
 #if TAG_MAJOR_VERSION == 34
     // And removed ones
