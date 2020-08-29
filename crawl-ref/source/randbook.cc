@@ -324,8 +324,10 @@ void build_themed_book(item_def &book, themed_spell_filter filter,
     spschool discipline_1; 
     spschool discipline_2;
 
-    while (spells[0] == SPELL_NO_SPELL)
+    int loops = 0;
+    while ((spells[0] == SPELL_NO_SPELL) && loops < 10)
     {
+        loops++;
         discipline_1 = get_discipline();
         discipline_2 = get_discipline();
         // Substitutions are arbitrary this is to prevent a crash on trying
@@ -338,6 +340,14 @@ void build_themed_book(item_def &book, themed_spell_filter filter,
         theme_book_spells(discipline_1, discipline_2, filter, agent, num_spells,
             spells);
     }
+
+    if (spells[0] == SPELL_NO_SPELL)
+    {
+        // Failed to make a themed book to spec; just default to a book with just flame tongue.
+        spells[0] = SPELL_FLAME_TONGUE;
+        discipline_1 = discipline_2 = spschool::fire;
+    }
+
     fixup_randbook_disciplines(discipline_1, discipline_2, spells);
     init_book_theme_randart(book, spells);
     name_book_theme_randart(book, discipline_1, discipline_2, owner, subject);
