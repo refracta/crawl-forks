@@ -16,6 +16,7 @@
 #include "message.h"
 #include "mon-place.h"
 #include "mon-util.h"
+#include "output.h"
 #include "place.h"
 #include "religion.h"
 #include "spl-util.h"
@@ -529,12 +530,48 @@ spret gain_mount(mount_type mount, int pow, bool fail)
 {
     fail_check();
     int dur = 0;
+    int mount_hp = 0;
+    bool already_mount = you.mounted();
+
+    switch (mount)
+    {
+    case mount_type::drake:
+        mount_hp = 28 + random2(10);
+        break;
+    case mount_type::hydra:
+        mount_hp = 60 + random2(12);
+        break;
+    default:
+    case mount_type::spider:
+        mount_hp = 47 + random2(9);
+        break;
+    }
+
     if (pow == 0)
+    {
         dur = 15 + roll_dice(3, you.skill(SK_INVOCATIONS));
+        mount_hp *= 10 + you.skill(SK_INVOCATIONS);
+        mount_hp = div_rand_round(mount_hp, 10);
+    }
     else
+    {
         dur = 15 + roll_dice(3, pow / 8);
+        mount_hp *= 100 + pow;
+        mount_hp = div_rand_round(mount_hp, 100);
+    }
+
     you.increase_duration(DUR_MOUNTED, dur, 200);
-    you.mount = mount;
+    if (already_mount)
+    {
+        mprf(MSGCH_DURATION, "You heal your mount and increase the time it has in this world.");
+        you.mount_hp = you.mount_hp_max;
+    }
+    else
+    {
+        you.mount = mount;
+        you.mount_hp = you.mount_hp_max = mount_hp;
+    }
+    redraw_screen();
     return spret::success;
 }
 
@@ -543,4 +580,6 @@ void dismount()
     if (you.duration[DUR_MOUNTED])
         you.duration[DUR_MOUNTED] = 0;
     you.mount = mount_type::none;
+    you.mount_hp = you.mount_hp_max = 0;
+    redraw_screen();
 }

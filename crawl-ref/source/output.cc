@@ -353,10 +353,10 @@ public:
             // Maybe this should use textbackground too?
             textcolour(BLACK + m_empty * 16);
 
-            if (cx < disp)
+            if (cx < disp && cx < old_disp)
                 textcolour(BLACK + m_default * 16);
             else if (cx < sub_disp)
-                textcolour(BLACK + YELLOW * 16);
+                textcolour(BLACK + m_change_pos * 16);
             else if (old_disp >= sub_disp && cx < old_disp)
                 textcolour(BLACK + m_change_neg * 16);
             putwch(' ');
@@ -373,7 +373,7 @@ public:
             }
             else if (cx < sub_disp)
             {
-                textcolour(YELLOW);
+                textcolour(m_change_neg);
                 putwch('=');
             }
             else if (cx < old_disp)
@@ -459,21 +459,10 @@ public:
     int m_request_redraw_after; // force a redraw at this turn count
 };
 
-static colour_bar mount_HP_Bar(LIGHTCYAN, CYAN, BLUE, DARKGREY);
-
+static colour_bar mount_HP_Bar(LIGHTCYAN, CYAN, MAGENTA, DARKGREY);
 static colour_bar HP_Bar(LIGHTGREEN, GREEN, RED, DARKGREY);
-
-#ifdef USE_TILE_LOCAL
-static colour_bar MP_Bar(BLUE, BLUE, LIGHTBLUE, DARKGREY);
-#else
 static colour_bar MP_Bar(LIGHTBLUE, BLUE, MAGENTA, DARKGREY);
-#endif
-
-#ifdef USE_TILE_LOCAL
-static colour_bar Noise_Bar(WHITE, LIGHTGREY, LIGHTGREY, DARKGREY);
-#else
 static colour_bar Noise_Bar(LIGHTGREY, LIGHTGREY, MAGENTA, DARKGREY);
-#endif
 
 void reset_hud()
 {
@@ -544,7 +533,7 @@ void update_turn_count()
         return;
     }
 
-    CGOTOXY(19+6, 9, GOTO_STAT);
+    CGOTOXY(19+6, you.mounted() ? 9 : 8, GOTO_STAT);
 
     // Show the turn count starting from 1. You can still quit on turn 0.
     textcolour(HUD_VALUE_COLOUR);
@@ -808,7 +797,24 @@ static void _print_stats_hp(int x, int y)
         HP_Bar.draw(19, y, you.hp, you.hp_max, you.hp - max(0, poison_survival()));
 
     if (you.mounted())
-        mount_HP_Bar.draw(19, y + 1, you.mount_hp, you.mount_hp_max, 0);
+    {
+        // Health: xxx/yyy (zzz)
+        CGOTOXY(1, y + 1, GOTO_STAT);
+        textcolour(HUD_CAPTION_COLOUR);
+        CPRINTF("Mount:  ");
+        const int mount_hp_perc = (100 * you.mount_hp) / you.mount_hp_max;
+        if (mount_hp_perc > 50)
+            hp_colour = HUD_VALUE_COLOUR;
+        else if (mount_hp_perc > 25)
+            hp_colour = YELLOW;
+        else
+            hp_colour = RED;
+        textcolour(hp_colour);
+        CPRINTF("%d", you.mount_hp);
+        textcolour(HUD_VALUE_COLOUR);
+        CPRINTF("/%d", you.mount_hp_max);
+        mount_HP_Bar.draw(19, y + 1, you.mount_hp, you.mount_hp_max, you.mount_hp);
+    }
 }
 
 static short _get_stat_colour(stat_type stat)
@@ -1303,8 +1309,6 @@ static void _redraw_title()
 
 void print_stats()
 {
-    int line1 = 5;
-
     cursor_control coff(false);
     textcolour(LIGHTGREY);
 
@@ -1366,7 +1370,7 @@ void print_stats()
 
     if (you.redraw_experience)
     {
-        CGOTOXY(1, y + 1, GOTO_STAT);
+        CGOTOXY(1, y + 2, GOTO_STAT);
         textcolour(Options.status_caption_colour);
         CPRINTF("XL: ");
         textcolour(HUD_VALUE_COLOUR);
@@ -1383,7 +1387,7 @@ void print_stats()
         you.redraw_experience = false;
     }
 
-    int yhack = 1;
+    int yhack = you.mounted() ? 1 : 0;
 
     // Line 9 is Noise and Turns
 #ifdef USE_TILE_LOCAL
@@ -1457,7 +1461,7 @@ static string _level_description_string_hud()
 
 void print_stats_level()
 {
-    int ypos = 8;
+    int ypos = you.mounted() ? 8 : 7;
     cgotoxy(19, ypos, GOTO_STAT);
     textcolour(HUD_CAPTION_COLOUR);
     CPRINTF("Place: ");
@@ -1481,6 +1485,15 @@ void draw_border()
     int mp_pos = 4;
     int line1 = 5;
     int line2 = 6;
+    int time = 8;
+
+    if (you.mounted())
+    {
+        mp_pos++;
+        line1++;
+        line2++;
+        time++;
+    }
 
     //CGOTOXY(1, 3, GOTO_STAT); CPRINTF("Hp:");
     CGOTOXY(1, mp_pos, GOTO_STAT);
@@ -1492,7 +1505,7 @@ void draw_border()
     CGOTOXY(16, line2, GOTO_STAT); CPRINTF("Int:");
     CGOTOXY(31, line2, GOTO_STAT); CPRINTF("Dex:");
 
-    CGOTOXY(19, 9, GOTO_STAT);
+    CGOTOXY(19, time, GOTO_STAT);
     CPRINTF(Options.show_game_time ? "Time:" : "Turn:");
     // Line 8 is exp pool, Level
 }
