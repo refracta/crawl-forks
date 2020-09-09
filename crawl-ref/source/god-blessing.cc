@@ -408,12 +408,21 @@ static string _beogh_bless_armour(monster* mon)
             _upgrade_body_armour(arm);
     }
 
-    // And enchant or uncurse it. (Lower chance for higher enchantment.)
-    const bool enchanted = !x_chance_in_y(arm.plus, armour_max_enchant(arm))
-                           && enchant_item(arm, true);
+    int max_enchant = 10;
 
-    if (enchanted)
-        set_ident_flags(arm, ISFLAG_KNOW_PLUSES);
+    if (arm.base_type == OBJ_ARMOURS)
+        max_enchant = armour_max_enchant(arm);
+    else if (arm.base_type == OBJ_SHIELDS)
+    {
+        if (is_hybrid(arm.sub_type))
+            max_enchant = MAX_WPN_ENCHANT;
+        else 
+            max_enchant = property(arm, PSHD_SH);
+    }
+
+    // And enchant or uncurse it. (Lower chance for higher enchantment.)
+    const bool enchanted = !x_chance_in_y(arm.plus, max_enchant)
+                           && enchant_item(arm, true);
 
     if (!enchanted && old_subtype == arm.sub_type)
     {

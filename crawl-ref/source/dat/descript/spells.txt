@@ -1732,6 +1732,14 @@ Summon Illusion spell
 Summons a temporary mirror image of an enemy. Such a copy has the same physical
 prowess as the original, and can cast the same spells.
 %%%%
+Summon Jungle Spell
+
+Summons a lone thorn hunter, several anacondas and dire elephants. Additionally, 
+many of the walls near the casting site turn into trees and water and a massive 
+flood of water comes on the first cast. There's considerable cooldown on how often 
+these floods of water can come into the dungeon, but additional monsters can be 
+spawned shortly after the first cast.
+%%%%
 Summon Lightning Spire spell
 
 Constructs a lightning spire in a nearby location. It can fire bouncing bolts

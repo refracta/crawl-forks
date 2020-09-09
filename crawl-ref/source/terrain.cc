@@ -44,7 +44,7 @@
 #include "spl-transloc.h"
 #include "state.h"
 #include "stringutil.h"
-#include "tiledef-dngn.h"
+#include "rltiles/tiledef-dngn.h"
 #include "tileview.h"
 #include "transform.h"
 #include "traps.h"
@@ -2185,20 +2185,26 @@ dungeon_feature_type orig_terrain(coord_def pos)
     return terch->old_feature;
 }
 
-void mutate_terrain_change_duration(coord_def pos, int delta, bool replace)
+bool mutate_terrain_change_duration(coord_def pos, int delta, bool replace)
 {
     map_marker *mark = env.markers.find(pos, MAT_TERRAIN_CHANGE);
     map_terrain_change_marker *terch = dynamic_cast<map_terrain_change_marker *>(mark);
 
-    if (replace)
-    {
-        if (delta > terch->duration)
-            terch->duration = delta;
-        else
-            terch->duration += div_rand_round(delta, 10);
-    }
+    if (!terch)
+        return false;
     else
-        terch->duration += delta;
+    {
+        if (replace)
+        {
+            if (delta > terch->duration)
+                terch->duration = delta;
+            else
+                terch->duration += div_rand_round(delta, 10);
+        }
+        else
+            terch->duration += delta;
+    }
+    return true;
 }
 
 void temp_change_terrain(coord_def pos, dungeon_feature_type newfeat, int dur,

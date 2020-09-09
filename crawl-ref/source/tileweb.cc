@@ -6,11 +6,14 @@
 
 #include <cerrno>
 #include <cstdarg>
+
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/un.h>
+#if defined(UNIX) || defined(TARGET_COMPILER_MINGW)
 #include <unistd.h>
+#endif
 
 #include "artefact.h"
 #include "branch.h"
@@ -42,11 +45,11 @@
 #include "throw.h"
 #include "tile-flags.h"
 #include "tile-player-flag-cut.h"
-#include "tiledef-dngn.h"
-#include "tiledef-gui.h"
-#include "tiledef-icons.h"
-#include "tiledef-main.h"
-#include "tiledef-player.h"
+#include "rltiles/tiledef-dngn.h"
+#include "rltiles/tiledef-gui.h"
+#include "rltiles/tiledef-icons.h"
+#include "rltiles/tiledef-main.h"
+#include "rltiles/tiledef-player.h"
 #include "tilepick.h"
 #include "tilepick-p.h"
 #include "tileview.h"

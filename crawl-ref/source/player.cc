@@ -218,7 +218,7 @@ bool check_moveto_trap(const coord_def& p, const string &move_verb,
     return true;
 }
 
-static bool _check_moveto_dangerous(const coord_def& p, const string& msg, const string& move_verb)
+static bool _check_moveto_dangerous(const coord_def& p, const string& msg, const string& move_verb, bool *prompted)
 {
     if (you.can_swim() && feat_is_water(env.grid(p))
         || you.airborne() || !is_feat_dangerous(env.grid(p)))
@@ -230,6 +230,9 @@ static bool _check_moveto_dangerous(const coord_def& p, const string& msg, const
     // in dangerous, continuing to move through dangerous is fine.
     if (is_feat_dangerous(env.grid(you.position)))
         return true;
+
+    if (prompted)
+        *prompted = true;
 
     if (!msg.empty())
         mpr(msg);
@@ -264,7 +267,7 @@ bool check_moveto_terrain(const coord_def& p, const string &move_verb,
     if (!env.map_knowledge(p).known())
         return true;
 
-    if (!_check_moveto_dangerous(p, msg, move_verb))
+    if (!_check_moveto_dangerous(p, msg, move_verb, prompted))
         return false;
     if (!you.airborne() && env.grid(you.pos()) != env.grid(p)
         && (env.grid(p) == DNGN_TOXIC_BOG || env.grid(p) == DNGN_QUAGMIRE))
@@ -1431,6 +1434,9 @@ int player_spell_levels()
     bool burst = false;
     bool bolt = false;
 
+    bool hail = false;
+    bool cicle = false;
+
     for (const spell_type spell : you.spells)
     {
         if (spell == SPELL_LRD)
@@ -1449,6 +1455,10 @@ int player_spell_levels()
             burst = true;
         if (spell == SPELL_BOLT_OF_FIRE)
             bolt = true;
+        if (spell == SPELL_HAILSTORM)
+            hail = true;
+        if (spell == SPELL_THROW_ICICLE)
+            cicle = true;
         if (spell != SPELL_NO_SPELL)
             sl -= spell_difficulty(spell);
         // BCADDO: This is getting long and repetitive refactor into a map.
@@ -1465,6 +1475,9 @@ int player_spell_levels()
 
     if (bolt && burst)
         sl += spell_difficulty(SPELL_BOLT_OF_FIRE);
+
+    if (hail && cicle)
+        sl += spell_difficulty(SPELL_THROW_ICICLE);
 
     // Note: This can happen because of draining. -- bwr
     if (sl < 0)
@@ -3443,7 +3456,14 @@ void level_change(bool skip_attribute_increase)
             case SP_DRACONIAN:
                 if (you.experience_level == 7)
                 {
-                    change_drac_colour(random_draconian_colour());
+                    draconian_colour temp = random_draconian_colour();
+
+                    // Zombie and Skeletons getting demonspawn mutations is off-flavour; when a demonspawn rolls one of those
+                    // colours collapse it to Teal.
+                    if (you.char_class == JOB_DEMONSPAWN && (temp == DR_OLIVE || temp == DR_BONE))
+                        you.drac_colour = DR_TEAL;
+                  
+                    change_drac_colour(temp);
                     updated_maxhp = true;
                 }
 
@@ -6052,7 +6072,7 @@ string player::shout_verb(bool directed) const
     if (!get_form()->shout_verb.empty())
         return get_form()->shout_verb;
 
-    const int screaminess = max(get_mutation_level(MUT_SCREAM) - 1, 0);
+    const int screaminess = max(get_mutation_level(MUT_SHOUTITUS) - 1, 0);
 
     if (species == SP_GNOLL)
         return dog_shout_verbs[screaminess];
@@ -6078,8 +6098,8 @@ int player::shout_volume() const
 {
     const int base_noise = 12 + get_form()->shout_volume_modifier;
 
-    if (get_mutation_level(MUT_SCREAM))
-        return base_noise + 2 * (get_mutation_level(MUT_SCREAM) - 1);
+    if (get_mutation_level(MUT_SHOUTITUS))
+        return base_noise + 2 * (get_mutation_level(MUT_SHOUTITUS) - 1);
 
     return base_noise;
 }

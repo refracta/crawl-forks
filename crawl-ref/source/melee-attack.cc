@@ -99,7 +99,7 @@ bool melee_attack::handle_phase_attempted()
     // Skip invalid and dummy attacks.
     if (defender && (!adjacent(attack_position, defender->pos())
                      && !can_reach())
-        || attk_type == AT_CONSTRICT
+        || attk_flavour == AF_CRUSH
            && (!attacker->can_constrict(defender, true)
                || attacker->is_monster() && attacker->mid == MID_PLAYER))
     {
@@ -2353,13 +2353,14 @@ bool melee_attack::consider_decapitation(int dam, int damage_type)
 {
     const int dam_type = (damage_type != -1) ? damage_type :
                                                attacker->damage_type();
-    if (!defender->alive())
-        return true;
 
     if (!attack_chops_heads(dam, dam_type))
         return false;
 
     decapitate(dam_type);
+
+    if (!defender->alive())
+        return true;
 
     // Only living hydras get to regenerate heads.
     if (!(defender->holiness() & MH_NATURAL))
@@ -2884,11 +2885,24 @@ bool melee_attack::apply_staff_damage()
                     mprf("You increase %s time in this world.", mons->name(DESC_ITS).c_str());
             }
         }
-        else
+        else // attacker is monster.
         {
-            if (you.can_see(*mons) && mons->hit_points < mons->max_hit_points)
-                simple_monster_message(*mons, " wounds heal themselves!");
-            mons->heal(heal);
+            heal += 2 + random2(9); // Non-zero value for low HD monsters.
+            if (defender->is_player())
+            {
+                mprf(MSGCH_FRIEND_SPELL, "%s heals your wounds%s", attacker->name(DESC_THE).c_str(),
+                    attack_strength_punctuation(heal).c_str());
+                you.heal(heal);
+            }
+            else
+            {
+                mons->heal(heal);
+                if (you.can_see(*mons) && mons->hit_points < mons->max_hit_points)
+                {
+                    mprf("%s wounds heal themselves%s", mons->name(DESC_ITS).c_str(),
+                        attack_strength_punctuation(heal).c_str());
+                }
+            }
         }
     }
         break;

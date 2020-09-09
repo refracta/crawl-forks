@@ -76,8 +76,8 @@
 #include "stringutil.h"
 #include "syscalls.h"
 #include "terrain.h"
-#include "tiledef-dngn.h"
-#include "tiledef-player.h"
+#include "rltiles/tiledef-dngn.h"
+#include "rltiles/tiledef-player.h"
 #include "tilepick.h"
 #include "tileview.h"
 #ifdef USE_TILE
@@ -2970,6 +2970,14 @@ static void tag_read_you(reader &th)
         you.mutation[MUT_SPIT_POISON] = 0;
 #endif
 
+    // BCADNOTE: Next minor version bump; put one here so this doesn't need to be updated if another
+    // species gets rF-.
+    if (you.char_class != JOB_MUMMY && you.species != SP_LIGNIFITE)
+    {
+        you.mutation[MUT_NECRO_ENHANCER] = you.innate_mutation[MUT_NECRO_ENHANCER] = 0;
+        you.mutation[MUT_HEAT_VULNERABILITY] = you.innate_mutation[MUT_HEAT_VULNERABILITY] = 0;
+    }
+
     for (int j = count; j < NUM_MUTATIONS; ++j)
         you.mutation[j] = you.innate_mutation[j] = you.sacrifices[j];
 
@@ -3911,6 +3919,22 @@ static void tag_read_you_items(reader &th)
         const item_def *item = you.slot_item(static_cast<equipment_type>(i));
 
         if (item && i == EQ_AMULET && you.species == SP_FAIRY)
+        {
+            you.equip[i] = -1;
+            you.melded.set(i, false);
+            continue;
+        }
+
+        // If wearing non-armour in armour slot, unwear.
+        if (item && i >= EQ_MIN_ARMOUR && i <= EQ_MAX_ARMOUR && item->base_type != OBJ_ARMOURS)
+        {
+            you.equip[i] = -1;
+            you.melded.set(i, false);
+            continue;
+        }
+
+        // If wearing anything in the no-longer existant shield slot; unwear.
+        if (item && i == EQ_OLD_SHIELD)
         {
             you.equip[i] = -1;
             you.melded.set(i, false);
@@ -6760,6 +6784,10 @@ void unmarshallMonster(reader &th, monster& m)
     ASSERT(parts & MP_GHOST_DEMON || !mons_is_ghost_demon(m.type));
 
     m.check_speed();
+
+    // BCADNOTE: This can be permanent or we can tag it doesn't matter.
+    if (m.has_hydra_multi_attack() && m.num_heads == 0)
+        m.num_heads = 4 + random2(4);
 }
 
 static void tag_read_level_monsters(reader &th)

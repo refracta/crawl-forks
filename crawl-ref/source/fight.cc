@@ -159,6 +159,7 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
         if (you.species == SP_FAIRY)
         {
             mpr("You're too small and insubstantial to effectively melee attack.");
+            stop_running();
             you.turn_is_over = false;
             return false;
         }

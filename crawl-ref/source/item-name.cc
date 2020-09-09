@@ -3598,7 +3598,7 @@ static bool _invisibility_is_useless(const bool temp)
 {
     // If you're magic candle'd or a TSO-ite, this is always useless.
     return temp ? you.backlit()
-                : you.haloed() && will_have_passive(passive_t::halo);
+                : (you.haloed() && will_have_passive(passive_t::halo) || you.species == SP_FAIRY);
 }
 
 /**

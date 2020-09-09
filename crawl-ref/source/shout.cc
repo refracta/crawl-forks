@@ -695,14 +695,14 @@ void issue_orders()
 /// If the player has the shout mutation, maybe shout at newly-seen monsters.
 void maybe_trigger_shoutitus(const vector<monster*> monsters)
 {
-    if (!you.get_mutation_level(MUT_SCREAM))
+    if (!you.get_mutation_level(MUT_SHOUTITUS))
         return;
 
     for (const monster* mon : monsters)
     {
         if (!mons_is_tentacle_or_tentacle_segment(mon->type)
             && !mons_is_conjured(mon->type)
-            && x_chance_in_y(3 + you.get_mutation_level(MUT_SCREAM) * 3, 100))
+            && x_chance_in_y(3 + you.get_mutation_level(MUT_SHOUTITUS) * 3, 100))
         {
             yell(mon);
             return;
@@ -751,8 +751,28 @@ void yell(const actor* mon)
 
         if (!msg.empty())
         {
+            string foe_genus = mons_type_name(mons_genus(mon->type), DESC_PLAIN);
+
+            // Let's use the insults for player ghouls for various undead.
+            if (bool(mon->holiness() & MH_UNDEAD) && !mon->is_insubstantial()
+                && !(mon->type == MONS_SIMULACRUM))
+            {
+                foe_genus = "ghoul";
+            }
+
             msg = replace_all(msg, "@The_monster@", "You");
             msg = replace_all(msg, "@says@", shout_verb);
+
+            // Replace with species specific insults.
+            if (msg.find("@species_insult_") != string::npos)
+            {
+                msg = replace_all(msg, "@species_insult_adj1@",
+                    get_species_insult(foe_genus, "adj1"));
+                msg = replace_all(msg, "@species_insult_adj2@",
+                    get_species_insult(foe_genus, "adj2"));
+                msg = replace_all(msg, "@species_insult_noun@",
+                    get_species_insult(foe_genus, "noun"));
+            }
         }
 
         mprf(MSGCH_SOUND, "%s at %s!",

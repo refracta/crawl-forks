@@ -40,8 +40,8 @@ Conjurers confront problems with damaging spells.
 %%%%
 Earth Elementalist
 
-Earth Elementalists know the Sandblast spell, and carry stones to fuel the
-spell. More earthen spells are in their set of starting spells.
+Earth Elementalists know the Sandblast spell. More earthen spells are in their 
+set of starting spells.
 %%%%
 Enchanter
 
@@ -60,8 +60,8 @@ spell. Their other starting spells focus on destruction as well.
 %%%%
 Gladiator
 
-Gladiators are ready for the arena with light armour, nets, and a weapon of
-their choice.
+Gladiators are ready for the arena with light armour, a weapon of their choice 
+and a wand of ensnaring to trap their foes.
 %%%%
 Hunter
 
@@ -86,7 +86,8 @@ from a small chapel, which they enter before the dungeon.
 Necromancer
 
 Necromancers are wizards specializing in the practice of death magic. They
-start out with the Pain spell.
+start out with the Pain spell memorized and a book with rites on raising the
+dead.
 %%%%
 Noble
 
@@ -106,7 +107,7 @@ other Summonings spells in their library.
 Transmuter
 
 Transmuters learn spells to shift their form, as well as to turn sticks into
-snakes.
+allied snakes...and enemy snakes back into sticks.
 %%%%
 Venom Mage
 

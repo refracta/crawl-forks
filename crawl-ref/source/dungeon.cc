@@ -64,7 +64,7 @@
 #include "stairs.h"
 #include "state.h"
 #include "stringutil.h"
-#include "tiledef-dngn.h"
+#include "rltiles/tiledef-dngn.h"
 #include "tilepick.h"
 #include "tileview.h"
 #include "timed-effects.h"
@@ -3908,6 +3908,9 @@ static void _place_aquatic_in(vector<coord_def> &places, const pop_entry *pop,
         return;
     int num = min(random_range(places.size() / 35, places.size() / 18), 15);
     shuffle_array(places);
+
+    if (you.where_are_you == BRANCH_DUNGEON && level == 2)
+        num /= 2; // Sewer is huge.
 
     for (int i = 0; i < num; i++)
     {

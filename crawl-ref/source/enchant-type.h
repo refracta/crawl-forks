@@ -38,8 +38,8 @@ enum enchant_type
     ENCH_SLEEPY,         //   Monster can't wake until this wears off.
 #endif
     ENCH_HELD,           //   Caught in a net.
+    ENCH_WAND_COOLDOWN,
 #if TAG_MAJOR_VERSION == 34
-    ENCH_OLD_BATTLE_FRENZY,
     ENCH_TEMP_PACIF,
 #endif
     ENCH_PETRIFYING,

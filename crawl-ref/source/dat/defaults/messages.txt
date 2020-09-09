@@ -63,6 +63,7 @@ msc += $warning:whistling.*wind
 msc += $warning:rapidly growing quiet
 msc += $warning:slides
 msc += $warning:settles down
+msc += $warning:small and insubstantial
 
 msc += lightcyan:LOW MAGIC WARNING
 msc += $warning:fails to return

@@ -69,7 +69,7 @@
 #include "wizard-option-type.h"
 #ifdef USE_TILE
 #include "tilepick.h"
-#include "tiledef-player.h"
+#include "rltiles/tiledef-player.h"
 #endif
 #include "tiles-build-specific.h"
 
@@ -86,7 +86,7 @@ extern char **NXArgv;
 #ifndef DATA_DIR_PATH
 #include <unistd.h>
 #endif
-#elif defined(TARGET_OS_LINUX) || defined(TARGET_OS_CYGWIN)
+#elif defined(UNIX) || defined(TARGET_COMPILER_MINGW)
 #include <unistd.h>
 #endif
 
@@ -958,7 +958,9 @@ static string _resolve_dir(string path, string suffix)
 
 static string _get_save_path(string subdir)
 {
-    return _resolve_dir(SysEnv.crawl_dir, subdir);
+    string weird_bug_strip = _resolve_dir(SysEnv.crawl_dir, subdir);
+
+    return replace_all(weird_bug_strip, "/C:/msys64-x0/", "/");
 }
 
 void game_options::reset_options()
@@ -3947,7 +3949,7 @@ static string _find_executable_path()
         return utf16_to_8(tempPath);
     else
         return "";
-#elif defined (TARGET_OS_LINUX) || defined (TARGET_OS_CYGWIN)
+#elif defined (UNIX)
     char tempPath[2048];
     const ssize_t rsize =
         readlink("/proc/self/exe", tempPath, sizeof(tempPath) - 1);

@@ -1289,6 +1289,7 @@ spret warped_cast(zap_type zap, int pow, bolt target, actor * caster)
     beam.ench_power /= 4;
     beam.aimed_at_spot = true;
     beam.source = beam.target = target.target;
+    beam.set_agent(caster);
     beam.fire();
 
     return spret::success;
@@ -1954,7 +1955,7 @@ spret cast_irradiate(int powc, actor* who, bool fail)
                     && fedhas_protects(act->as_monster()));
     };
 
-    if (stop_attack_prompt(hitfunc, "irradiate", vulnerable))
+    if (who->is_player() && stop_attack_prompt(hitfunc, "irradiate", vulnerable))
         return spret::abort;
 
     fail_check();

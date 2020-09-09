@@ -195,7 +195,8 @@ void spawn_flies(item_def item, bool msg)
     for (int i = 0; i <= num_flies; ++i)
     {
         monster * fly = create_monster(mgen_data(MONS_GIANT_BLOWFLY, BEH_PASSIVE, p, MHITNOT));
-        fly->flags |= MF_WAS_NEUTRAL;
+        if (fly)
+            fly->flags |= MF_WAS_NEUTRAL;
     }
 
     if (you.see_cell(p) && msg)

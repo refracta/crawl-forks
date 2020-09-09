@@ -460,7 +460,7 @@ static const mutation_def mut_data[] =
 },
 #endif
 
-{ MUT_SCREAM, 6, 3, mutflag::bad | mutflag::xom, false,
+{ MUT_SHOUTITUS, 6, 3, mutflag::bad | mutflag::xom, false,
   "screaming",
 
   {"You occasionally shout uncontrollably at your foes.",

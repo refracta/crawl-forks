@@ -18,7 +18,7 @@
 #include <utility> // pair
 #include <vector>
 #include <fcntl.h>
-#ifdef DGAMELAUNCH
+#if defined(UNIX) || defined(TARGET_COMPILER_MINGW)
 # include <unistd.h>
 #endif
 
@@ -134,7 +134,7 @@
 #include "terrain.h"
 #include "throw.h"
 #ifdef USE_TILE
- #include "tiledef-dngn.h"
+ #include "rltiles/tiledef-dngn.h"
  #include "tilepick.h"
 #endif
 #include "timed-effects.h"

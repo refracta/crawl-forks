@@ -67,13 +67,13 @@ end
 
 local function have_reaching()
   local wp = items.equipped_at("weapon")
-  local wp0 = items.equipped_at("weapon0")
+  local wp0 = items.equipped_at("shield")
   return (wp and wp.reach_range >= 2 and not wp.is_melded) or (wp0 and wp0.reach_range >= 2 and not wp0.is_melded)
 end
 
 local function reach_range()
   local wp = items.equipped_at("weapon")
-  local wp0 = items.equipped_at("weapon0")
+  local wp0 = items.equipped_at("shield")
   if (wp and not wp.is_melded and wp.reach_range > 2) or (wp0 and not wp0.is_melded and wp0.reach_range > 2) then
       return 3
   end
@@ -90,7 +90,7 @@ end
 
 local function have_melee()
   local wp = items.equipped_at("weapon")
-  local wp0 = items.equipped_at("weapon0")
+  local wp0 = items.equipped_at("shield")
   return (wp and not wp.is_ranged and not wp.is_melded) or (wp0 and not wp0.is_ranged and not wp0.is_melded)
 end
 

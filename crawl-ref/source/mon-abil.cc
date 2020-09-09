@@ -285,8 +285,10 @@ static void _lose_turn(monster* mons, bool has_gone)
 static bool _do_merge_crawlies(monster* crawlie, monster* merge_to)
 {
     bool player = (crawlie->friendly() && you.religion == GOD_YREDELEMNUL);
-    bool allow_large = (!player || player_allowed_abom(true));
-    bool allow_small = (!player || player_allowed_abom());
+    bool allow_large = (!player || player_allowed_abom(true) 
+        || crawlie->type == MONS_ABOMINATION_LARGE || merge_to->type == MONS_ABOMINATION_LARGE);
+    bool allow_small = (!player || player_allowed_abom() || mons_genus(crawlie->type) == MONS_ABOMINATION_SMALL
+        || mons_genus(merge_to->type) == MONS_ABOMINATION_SMALL);
 
     const int orighd = merge_to->get_experience_level();
     int addhd = crawlie->get_experience_level();

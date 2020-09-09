@@ -38,7 +38,7 @@
 #include "stringutil.h"
 #include "target.h"
 #include "terrain.h"
-#include "tiledef-gui.h"    // spell tiles
+#include "rltiles/tiledef-gui.h"    // spell tiles
 #include "tiles-build-specific.h"
 #include "transform.h"
 
@@ -517,6 +517,16 @@ int spell_levels_required(spell_type which_spell)
     }
     else if (which_spell == SPELL_BECKONING
         && you.has_spell(SPELL_FORCE_LANCE))
+    {
+        levels = 0;
+    }
+    else if (which_spell == SPELL_THROW_ICICLE
+        && you.has_spell(SPELL_HAILSTORM))
+    {
+        levels = 0;
+    }
+    else if (which_spell == SPELL_HAILSTORM
+        && you.has_spell(SPELL_THROW_ICICLE))
     {
         levels = 0;
     }
@@ -1492,7 +1502,8 @@ bool spell_no_hostile_in_range(spell_type spell)
     const int minRange = get_dist_to_nearest_monster();
 
     if (you.staff() && staff_enhances_spell(you.staff(), spell) 
-            && get_staff_facet(*you.staff()) == SPSTF_WARP)
+            && get_staff_facet(*you.staff()) == SPSTF_WARP
+            && get_spell_flags(spell) & spflag::needs_tracer)
         return (minRange > you.current_vision);
 
     switch (spell)

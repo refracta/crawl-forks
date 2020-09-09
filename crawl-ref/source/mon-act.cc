@@ -1252,6 +1252,8 @@ static void _mons_fire_wand(monster& mons, item_def &wand, bolt &beem,
             mprf(MSGCH_SOUND, "You hear a zap.");
     }
 
+    noisy(6, mons.pos(), mons.mid);
+
     const spell_type mzap =
         spell_in_wand(static_cast<wand_type>(wand.sub_type));
 
@@ -1267,9 +1269,8 @@ static bool _handle_wand(monster& mons)
 {
     item_def *wand = mons.mslot_item(MSLOT_WAND);
     // Yes, there is a logic to this ordering {dlb}:
-    // FIXME: monsters should be able to use wands
-    //        out of sight of the player [rob]
     if (!you.see_cell(mons.pos())
+        || mons.has_ench(ENCH_WAND_COOLDOWN)
         || mons.asleep()
         || mons_is_fleeing(mons)
         || mons.pacified()
@@ -1277,13 +1278,11 @@ static bool _handle_wand(monster& mons)
         || !mons_itemuse(mons) & MU_WAND
         || x_chance_in_y(3, 4)
         || !wand
-        || wand->base_type != OBJ_WANDS)
+        || wand->base_type != OBJ_WANDS
+        || wand->charges <= 0)
     {
         return false;
     }
-
-    if (wand->charges <= 0)
-        return false;
 
     if (item_type_removed(wand->base_type, wand->sub_type))
         return false;
@@ -1306,11 +1305,17 @@ static bool _handle_wand(monster& mons)
     switch (kind)
     {
     case WAND_SCATTERSHOT:
-        should_fire = scattershot_tracer(&mons, power, beem.target);
+        if (mons.get_foe())
+            should_fire = scattershot_tracer(&mons, power, beem.target);
+        else
+            should_fire = false;
         break;
 
     case WAND_CLOUDS:
-        should_fire = mons_should_cloud_cone(&mons, power, beem.target);
+        if (mons.get_foe())
+            should_fire = mons_should_cloud_cone(&mons, power, beem.target);
+        else
+            should_fire = false;
         break;
 
     default:
@@ -1319,8 +1324,28 @@ static bool _handle_wand(monster& mons)
         break;
     }
 
+    if (mons.friendly())
+    {
+        bool see_enemy = false;
+        for (monster_iterator mi; mi; ++mi)
+        {
+            if (mons.see_cell(mi->pos()) && (mi->attitude == ATT_HOSTILE))
+            {
+                see_enemy = true;
+                break;
+            }
+        }
+        if (!see_enemy)
+            should_fire = false;
+    }
+
     if (should_fire)
     {
+        if (mons.friendly() && (wand->sub_type == WAND_HASTING || wand->sub_type == WAND_HEAL_WOUNDS))
+        {
+            mons.add_ench(mon_enchant(ENCH_WAND_COOLDOWN, 0, 0, wand->sub_type == WAND_HASTING ?
+                (4 + random2(4) * BASELINE_DELAY) : (2 + random2(4)) * BASELINE_DELAY));
+        }
         _mons_fire_wand(mons, *wand, beem, you.see_cell(mons.pos()));
         return true;
     }
@@ -1837,6 +1862,25 @@ void handle_monster_move(monster* mons)
 #endif
     coord_def old_pos = mons->pos();
 
+    // Adding a surrounded check for passives so they don't infinite loop when they can't move.
+    if (mons->attitude == ATT_PASSIVE)
+    {
+        int invalid_move = 0;
+        int possible_move = 0;
+        for (adjacent_iterator ai(mons->pos()); ai; ++ai)
+        {
+            possible_move++;
+            if (!in_bounds(*ai))
+                invalid_move++;
+            else if (actor_at(*ai))
+                invalid_move++;
+            else if (!monster_habitable_grid(mons, grd(*ai)))
+                invalid_move++;
+        }
+        if (invalid_move == possible_move)
+            mons->lose_energy(EUT_MOVE);
+    }
+
     if (!mons->has_action_energy())
         return;
 
@@ -1930,6 +1974,7 @@ void handle_monster_move(monster* mons)
 
     if (env.level_state & LSTATE_SLIMY_WALL)
         slime_wall_damage(mons, speed_to_duration(mons->speed));
+
     if (!mons->alive())
         return;
 

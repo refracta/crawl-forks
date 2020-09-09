@@ -314,23 +314,40 @@ void build_themed_book(item_def &book, themed_spell_filter filter,
     if (num_spells < 1)
         num_spells = theme_book_size();
 
-    spschool discipline_1 = get_discipline();
-    spschool discipline_2 = get_discipline();
-
-    // Substitutions are arbitrary this is to prevent a crash on trying
-    // to create a spellbook of non-player spells.
-    if (discipline_1 == spschool::evocation)
-        discipline_1 = spschool::air;
-    if (discipline_2 == spschool::evocation)
-        discipline_2 = spschool::fire;
+    vector<spell_type> spells;
+    spells.emplace_back(SPELL_NO_SPELL);
 
     item_source_type agent;
     if (!origin_is_acquirement(book, &agent))
         agent = (item_source_type)origin_as_god_gift(book);
 
-    vector<spell_type> spells;
-    theme_book_spells(discipline_1, discipline_2, filter, agent, num_spells,
-                      spells);
+    spschool discipline_1; 
+    spschool discipline_2;
+
+    int loops = 0;
+    while ((spells[0] == SPELL_NO_SPELL) && loops < 10)
+    {
+        loops++;
+        discipline_1 = get_discipline();
+        discipline_2 = get_discipline();
+        // Substitutions are arbitrary this is to prevent a crash on trying
+        // to create a spellbook of non-player spells.
+        if (discipline_1 == spschool::evocation)
+            discipline_1 = spschool::air;
+        if (discipline_2 == spschool::evocation)
+            discipline_2 = spschool::fire;
+
+        theme_book_spells(discipline_1, discipline_2, filter, agent, num_spells,
+            spells);
+    }
+
+    if (spells[0] == SPELL_NO_SPELL)
+    {
+        // Failed to make a themed book to spec; just default to a book with just flame tongue.
+        spells[0] = SPELL_FLAME_TONGUE;
+        discipline_1 = discipline_2 = spschool::fire;
+    }
+
     fixup_randbook_disciplines(discipline_1, discipline_2, spells);
     init_book_theme_randart(book, spells);
     name_book_theme_randart(book, discipline_1, discipline_2, owner, subject);
@@ -711,7 +728,11 @@ void init_book_theme_randart(item_def &book, vector<spell_type> spells)
 
     spells.resize(RANDBOOK_SIZE, SPELL_NO_SPELL);
     sort(spells.begin(), spells.end(), _compare_spells);
-    ASSERT(spells[0] != SPELL_NO_SPELL);
+    if (spells[0] == SPELL_NO_SPELL)
+    {
+        mprf(MSGCH_ERROR, "Random Spellbook Creation Error!");
+        spells[0] = SPELL_FLAME_TONGUE;
+    }
 
     CrawlHashTable &props = book.props;
     props.erase(SPELL_LIST_KEY);
@@ -1214,8 +1235,14 @@ void acquire_themed_randbook(item_def &book, int agent)
     // XXX: we could cache this...
     spschool discipline_1
         = _choose_randbook_discipline(possible_spells, agent);
-    spschool discipline_2
-        = _choose_randbook_discipline(possible_spells, agent);
+    spschool discipline_2 = discipline_1;
+    int loops = 0;
+
+    while (discipline_2 == discipline_1 && loops < 24)
+    {
+        discipline_2 = _choose_randbook_discipline(possible_spells, agent);
+        loops++;
+    }
 
     vector<spell_type> spells;
     _choose_themed_randbook_spells(possible_spells, discipline_1, discipline_2,

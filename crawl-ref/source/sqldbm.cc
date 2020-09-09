@@ -9,7 +9,9 @@
 
 #include <cstring>
 #include <fcntl.h>
+#if defined(UNIX) || defined(TARGET_COMPILER_MINGW)
 #include <unistd.h>
+#endif
 
 #include "end.h"
 #include "syscalls.h"

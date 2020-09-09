@@ -57,6 +57,7 @@
 #include "mutation.h"
 #include "nearby-danger.h"
 #include "ouch.h"
+#include "player.h"
 #include "player-stats.h"
 #include "potion.h"
 #include "prompt.h"
@@ -1931,6 +1932,14 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
     case BEAM_CRYSTAL_ICE:
     case BEAM_FREEZE:
     case BEAM_ICE:
+        // Weird special case; but decided to put it in for practical purposes
+        if (mons->is_icy() && pbolt.name == "icy shards")
+        {
+            simple_monster_message(*mons, " is unaffected.");
+            hurted = 0;
+            break;
+        }
+
         // ice - 40% of damage is cold, other 60% is impact and
         // can't be resisted (except by AC, of course)
         hurted = resist_adjust_damage(mons, pbolt.flavour, hurted);
@@ -3315,13 +3324,14 @@ void bolt::affect_place_clouds()
     if (see_preservation)
         mpr("A magical artifact is magically pushed up through the ice!");
 
+    // BCADNOTE: Any vault or Abyss placed ice/obsidian is assumed to be permanent and unaltered by this.
     if ((feat == DNGN_ICE || feat == DNGN_OBSIDIAN) && (flavour == BEAM_COLD || flavour == BEAM_FREEZE))
         mutate_terrain_change_duration(p, damage.roll() * 5, true);
 
     if (feat == DNGN_ICE && is_fiery())
     {
-        mpr("The fire melts away some of the ice.");
-        mutate_terrain_change_duration(p, damage.roll() * -1);
+        if (mutate_terrain_change_duration(p, damage.roll() * -1))
+            mpr("The fire melts away some of the ice.");
     }
 
     // Is there already a cloud here?
@@ -3729,6 +3739,10 @@ bool bolt::is_reflectable(const actor &whom) const
     if (range_used() > range)
         return false;
 
+    // Catch players dual-wielding shields.
+    if (whom.is_player() && player_omnireflects())
+        return is_omnireflectable();
+
     const item_def *it = whom.shield();
     return (it && is_shield(*it) && shield_reflects(*it)) || whom.reflection();
 }
@@ -3776,7 +3790,9 @@ void bolt::reflect()
 #endif
     }
 
-    flavour = real_flavour;
+    if (real_flavour == BEAM_CHAOS)
+        flavour = real_flavour;
+
     choose_ray();
 }
 
@@ -4619,6 +4635,9 @@ void bolt::affect_player()
     // Apply resistances to damage, but don't print "You resist" messages yet
     int final_dam = check_your_resists(pre_res_dam, flavour, "", this, false);
 
+    if (you.is_icy() && name == "icy shards")
+        final_dam = 0;
+
     // Tell the player the beam hit
     if (hit_verb.empty())
         hit_verb = engulfs ? "engulfs" : "hits";
@@ -4639,7 +4658,10 @@ void bolt::affect_player()
     // these come after the beam actually hitting.
     // Note that this must be called with the pre-resistance damage, so that
     // poison effects etc work properly.
-    check_your_resists(pre_res_dam, flavour, "", this, true);
+    if (you.is_icy() && name == "icy shards")
+        mprf("You are unaffected (0).");
+    else
+        check_your_resists(pre_res_dam, flavour, "", this, true);
 
     if (flavour == BEAM_MIASMA && final_dam > 0)
         was_affected = miasma_player(agent(), name);
@@ -4931,6 +4953,9 @@ bool bolt::determine_damage(monster* mon, int& preac, int& postac, int& final)
         preac = damage.roll() + damage.roll() + damage.roll();
         preac /= 3;
     }
+
+    if (name == "icy shards" && mon->is_icy())
+        return preac = 0;
 
     int tracer_postac_max = preac_max_damage;
 
@@ -5896,15 +5921,6 @@ void bolt::affect_monster(monster* mon)
     // Apply flavoured specials.
     mons_adjust_flavoured(mon, *this, postac, true);
 
-    // Apply chaos effects.
-    if (mon->alive() && (real_flavour == BEAM_CHAOTIC || real_flavour == BEAM_CHAOTIC_DEVASTATION) && !mons_class_is_firewood(mon->type))
-    {
-        int dur = damage.roll();
-        dur += damage.size;
-
-        chaotic_status(mon, dur, actor_by_mid(source_id));
-    }
-
     // mons_adjust_flavoured may kill the monster directly.
     if (mon->alive())
     {
@@ -5924,6 +5940,15 @@ void bolt::affect_monster(monster* mon)
             mon->hurt(agent(), final, real_flavour, KILLED_BY_BEAM, "", "", false);
         else
             mon->hurt(agent(), final, flavour, KILLED_BY_BEAM, "", "", false);
+    }
+
+    // Apply chaos effects.
+    if (mon->alive() && (real_flavour == BEAM_CHAOTIC || real_flavour == BEAM_CHAOTIC_DEVASTATION) && !mons_class_is_firewood(mon->type))
+    {
+        int dur = damage.roll();
+        dur += damage.size;
+
+        chaotic_status(mon, dur, actor_by_mid(source_id));
     }
 
     if (mon->alive())
@@ -7232,6 +7257,9 @@ bool bolt::nasty_to(const monster* mon) const
     if (flavour == BEAM_DISINTEGRATION || flavour == BEAM_DEVASTATION
         || flavour == BEAM_ICY_DEVASTATION || flavour == BEAM_CHAOTIC_DEVASTATION)
         return mon->type != MONS_ORB_OF_DESTRUCTION && mon->type != MONS_ORB_OF_CHAOS;
+
+    if (name == "icy shards" && mon->is_icy())
+        return false;
 
     // Take care of other non-enchantments.
     if (!is_enchantment())

@@ -536,6 +536,8 @@ void zap_wand(int slot)
     if (wand.charges == 0)
         mpr("Wand is now empty.");
 
+    noisy(6, you.pos(), you.mid);
+
     practise_evoking(1);
     count_action(CACT_EVOKE, EVOC_WAND);
     alert_nearby_monsters();

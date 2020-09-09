@@ -73,7 +73,7 @@
 #include "teleport.h"
 #include "terrain.h"
 #ifdef USE_TILE
-#include "tiledef-dngn.h"
+#include "rltiles/tiledef-dngn.h"
 #endif
 #include "timed-effects.h"
 #include "traps.h"
@@ -5112,8 +5112,8 @@ static int _mons_mesmerise(monster* mons, bool actual)
 
 static bool _mons_irradiate(monster *mons)
 {
-    if (mons->friendly() && adjacent(you.pos(), mons->pos()))
-        return false;
+    if (mons->wont_attack() && adjacent(you.pos(), mons->pos()))
+        return true;
     int logic = 0;
     int hd = mons->spell_hd();
     
@@ -5130,9 +5130,7 @@ static bool _mons_irradiate(monster *mons)
         }
     }
 
-    if (logic > 0)
-        return false;
-    return true;
+    return (logic <= 0);
 }
 
 // Check whether targets might be scared.

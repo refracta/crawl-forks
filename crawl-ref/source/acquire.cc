@@ -1278,7 +1278,7 @@ int acquirement_create_item(object_class_type class_wanted,
         int lvl = ITEM_LEVEL;
         int x = 1 + random2(9);
 
-        if ((agent == GOD_TROG || agent == GOD_OKAWARU) && !x_chance_in_y(you.num_total_gifts[you.religion], x + you.num_total_gifts[you.religion]))
+        if ((agent == GOD_TROG || agent == GOD_OKAWARU) && x_chance_in_y(max(15 - you.num_total_gifts[you.religion], 1), x + you.num_total_gifts[you.religion]))
             lvl = ISPEC_DAMAGED;
 
         thing_created = items(want_arts, class_wanted, type_wanted,

@@ -45,8 +45,8 @@
 #include "spl-util.h"
 #include "stringutil.h"
 #include "terrain.h"
-#include "tiledef-dngn.h"
-#include "tiledef-player.h"
+#include "rltiles/tiledef-dngn.h"
+#include "rltiles/tiledef-player.h"
 
 #ifdef DEBUG_TAG_PROFILING
 static map<string,int> _tag_profile;
@@ -2342,8 +2342,7 @@ string map_def::desc_or_name() const
 void map_def::write_full(writer& outf) const
 {
     cache_offset = outf.tell();
-    marshallUByte(outf, TAG_MAJOR_VERSION);
-    marshallUByte(outf, TAG_MINOR_VERSION);
+    write_save_version(outf, save_version::current());
     marshallString4(outf, name);
     prelude.write(outf);
     mapchunk.write(outf);
@@ -2363,8 +2362,8 @@ void map_def::read_full(reader& inf)
     // reloading the index), but it's easier to save the game at this
     // point and let the player reload.
 
-    const uint8_t major = unmarshallUByte(inf);
-    const uint8_t minor = unmarshallUByte(inf);
+    const auto version = get_save_version(inf);
+    const auto major = version.major, minor = version.minor;
 
     if (major != TAG_MAJOR_VERSION || minor > TAG_MINOR_VERSION)
     {
@@ -4944,7 +4943,7 @@ int str_to_ego(object_class_type item_type, string ego_str)
         "dexterity",
         "intelligence",
         "ponderousness",
-        "flying",
+        "insulation",
         "magic_resistance",
         "protection",
         "stealth",
@@ -4957,9 +4956,7 @@ int str_to_ego(object_class_type item_type, string ego_str)
         "reflection",
         "spirit_shield",
         "archery",
-#if TAG_MAJOR_VERSION == 34
-        "jumping",
-#endif
+        "softness",
         "repulsion",
         "cloud_immunity",
         "high_priest",

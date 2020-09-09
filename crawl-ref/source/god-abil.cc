@@ -87,7 +87,7 @@
 #include "teleport.h" // monster_teleport
 #include "terrain.h"
 #ifdef USE_TILE
- #include "tiledef-main.h"
+ #include "rltiles/tiledef-main.h"
 #endif
 #include "timed-effects.h"
 #include "traps.h"
@@ -5058,7 +5058,7 @@ static map<const char*, vector<mutation_type>> sacrifice_vector_map =
     }},
     /// Mutations granted by ABIL_RU_SACRIFICE_PURITY
     { PURITY_SAC_KEY, {
-        MUT_SCREAM,
+        MUT_SHOUTITUS,
         MUT_INHIBITED_REGENERATION,
         MUT_NO_POTION_HEAL,
         MUT_DOPEY,
@@ -5133,7 +5133,7 @@ static mutation_type _random_valid_sacrifice(const vector<mutation_type> &muts)
             continue;
 
         // Can't scream in permasilence. Hah.
-        if (mut == MUT_SCREAM && you.species == SP_SILENT_SPECTRE)
+        if (mut == MUT_SHOUTITUS && you.species == SP_SILENT_SPECTRE)
             continue;
 
         // demonspawn can't get frail if they have a robust facet
@@ -5434,7 +5434,7 @@ int get_sacrifice_piety(ability_type sac, bool include_skill)
             else
                 piety_gain += 14;
 
-            if (mut == MUT_SCREAM)
+            if (mut == MUT_SHOUTITUS)
                 piety_gain /= 2; // screaming just isn't that bad.
 
             break;

@@ -809,6 +809,9 @@ string ash_describe_bondage(int flags, bool level)
 
 bool passive_id_item(item_def& item, bool silent)
 {
+    if (fully_identified(item))
+        return false;
+    
     iflags_t old_ided = item.flags & ISFLAG_IDENT_MASK;
     iflags_t ided = 0;
 

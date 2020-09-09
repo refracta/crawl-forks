@@ -86,7 +86,7 @@ MAKEFLAGS += -rR # This only works for recursive makes, i.e. contribs ...
         clean-catch2 clean-plug-and-play-tests \
 		clean-coverage clean-coverage-full \
         distclean debug debug-lite profile package-source source \
-        build-windows package-windows docs greet api api-dev android FORCE \
+        build-windows package-windows-installer docs greet api api-dev android FORCE \
         monster catch2-tests plug-and-play-tests
 
 include Makefile.obj
@@ -179,10 +179,6 @@ export uname_S
 #
 uname_S := $(shell sh -c 'uname -s 2>/dev/null || echo not')
 uname_M := $(shell sh -c 'uname -m 2>/dev/null || echo not')
-uname_O := $(shell sh -c 'uname -o 2>/dev/null || echo not')
-uname_R := $(shell sh -c 'uname -r 2>/dev/null || echo not')
-uname_P := $(shell sh -c 'uname -p 2>/dev/null || echo not')
-uname_V := $(shell sh -c 'uname -v 2>/dev/null || echo not')
 
 HOST := $(shell sh -c 'cc -dumpmachine || echo unknown')
 ARCH := $(HOST)
@@ -223,7 +219,6 @@ ifdef msys
 	GAME = crawl.exe
 	bin_prefix = .
 	WIN32 = Yes
-	NO_RDYNAMIC = YesPlease
 	NO_NCURSES = YesPlease
 	NEED_LIBW32C = YesPlease
 	BUILD_PCRE = YesPlease
@@ -264,12 +259,8 @@ ifeq ($(uname_S),Darwin)
 		COPY_FONTS = yes
 	endif
 endif
-ifdef USE_ICC
-	NO_RDYNAMIC := YesPlease
-endif
 ifneq (,$(findstring CYGWIN,$(uname_S)))
 	GAME = crawl.exe
-	NO_RDYNAMIC = YesPlease
 	BUILD_PCRE = YesPlease
 	# newlib doesn't provide Posix functions with c++11
 	STDFLAG = -std=gnu++11
@@ -313,28 +304,6 @@ else
 LIBLUA := contrib/install/$(ARCH)/lib/liblua.a
 endif
 LIBZ := contrib/install/$(ARCH)/lib/libz.a
-
-ifndef CROSSHOST
-	# FreeBSD keeps all of its userland includes in /usr/local so
-	# look there
-	ifeq ($(uname_S),FreeBSD)
-		SQLITE_INCLUDE_DIR := /usr/local/include
-	else
-		SQLITE_INCLUDE_DIR := /usr/include
-	endif
-else
-	# This is totally wrong, works only with some old-style setups, and
-	# on some architectures of Debian/new FHS multiarch -- excluding, for
-	# example, i386.  Fortunately, i386 is rarely cross-compiled to.
-	# There's no support for /usr/local/ too, without thorough handholding.
-	# It's still an improvement over Crawl 0.8 which had no cross-compiling
-	# to non-win32 at all.
-	#
-	# Needs to be replaced by compile checks.  Guessing the paths is fragile,
-	# while the compiler knows them already.
-	SQLITE_INCLUDE_DIR := /usr/$(ARCH)/include
-endif
-SQLITE_LIB := -lsqlite3
 
 #
 # Set up the TILES variant
@@ -385,12 +354,6 @@ OBJECTS += libw32c.o
 else
 OBJECTS += libunix.o
 endif
-endif
-
-# To get stack trace symbols.
-# Note that MinGW doesn't support -rdynamic.
-ifndef NO_RDYNAMIC
-LDFLAGS += -rdynamic
 endif
 
 ifdef USE_MERGE_BASE
@@ -568,6 +531,12 @@ ifdef LTO
   endif
 endif
 
+# To get stack trace symbols.
+# Note that Msys, MinGW, ICC, and Cygwin don't support -rdynamic.
+ifeq (,$(shell echo 'int main(){return 1;}'|$(GXX) -x c++ - -o /dev/null -rdynamic 2>&1))
+  LDFLAGS += -rdynamic
+endif
+
 # Okay, we have to assume we're on something else that
 # uses standard UNIX-like methods for finding libs.
 #
@@ -609,20 +578,14 @@ ifndef LUA_PACKAGE
     ifneq ($(USE_LUAJIT),)
       ifeq ($(shell $(PKGCONFIG) luajit --exists || echo no),)
         LUA_PACKAGE = luajit
-      else
-        BUILD_LUA = yes
       endif
     else
       ifneq ($(shell $(PKGCONFIG) lua5.1 --exists || echo no),)
         ifneq ($(shell $(PKGCONFIG) lua-5.1 --exists || echo no),)
           ifneq ($(shell $(PKGCONFIG) lua51 --exists || echo no),)
-            ifneq ($(shell $(PKGCONFIG) lua --exists || echo no),)
-              BUILD_LUA = yes
-            else
+            ifeq ($(shell $(PKGCONFIG) lua --exists || echo no),)
               ifeq ($(shell $(PKGCONFIG) lua --modversion | head -c 3),5.1)
                 LUA_PACKAGE = lua
-              else
-                BUILD_LUA = yes
               endif
             endif
           else
@@ -637,6 +600,10 @@ ifndef LUA_PACKAGE
     endif
   endif
 endif
+ifndef LUA_PACKAGE
+  BUILD_LUA = yes
+endif
+
 ifndef BUILD_LUA
   ifndef LUA_PACKAGE
     LUA_PACKAGE = lua5.1
@@ -651,14 +618,17 @@ DEFINES_L += -DUSE_LUAJIT
 endif
 
 ifndef BUILD_SQLITE
-  ifeq ($(shell grep -q sqlite3_prepare $(SQLITE_INCLUDE_DIR)/sqlite3.h 2>/dev/null && echo yes),yes)
-    # INCLUDES_L += -isystem $(SQLITE_INCLUDE_DIR)
-    LIBS += $(SQLITE_LIB)
-    ifneq ($(shell grep -q sqlite3_prepare_v2 $(SQLITE_INCLUDE_DIR)/sqlite3.h 2>/dev/null && echo yes),yes)
-      DEFINES_L += -DANCIENT_SQLITE
-    endif
-  else
+  ifdef NO_PKGCONFIG
     BUILD_SQLITE = yes
+  endif
+endif
+ifndef BUILD_SQLITE
+ ifneq ($(shell $(PKGCONFIG) sqlite3 --exists || echo no),)
+   BUILD_SQLITE = yes
+ else
+   INCLUDES_L += $(shell $(PKGCONFIG) sqlite3 --cflags-only-I | sed -e 's/-I/-isystem /')
+   CFLAGS_L += $(shell $(PKGCONFIG) sqlite3 --cflags-only-other)
+   LIBS += $(shell $(PKGCONFIG) sqlite3 --libs)
   endif
 endif
 
@@ -670,7 +640,6 @@ endif
 endif #ANDROID
 
 RLTILES = rltiles
-INCLUDES_L += -I$(RLTILES)
 
 ifdef WEBTILES
 DEFINES_L += -DUSE_TILE
@@ -1020,9 +989,8 @@ ifndef NO_PKGCONFIG
   NC_CFLAGS := $(subst -I,-isystem ,$(shell $(PKGCONFIG) --cflags $(NCURSESLIB) 2>/dev/null || echo "$(NC_CFLAGS)"))
 endif
 
-CFOTHERS_L += $(NC_CFLAGS)
-
 ifndef TILES
+CFOTHERS_L += $(NC_CFLAGS)
 LIBS += $(NC_LIBS)
 endif
 
@@ -1209,8 +1177,10 @@ SRC_PKG_BASE  := stone_soup
 SRC_VERSION   := $(shell git describe --tags $(MERGE_BASE) 2>/dev/null || cat util/release_ver)
 MAJOR_VERSION = $(shell echo "$(SRC_VERSION)"|sed -r 's/-.*//;s/^([^.]+\.[^.]+).*/\1/')
 RECENT_TAG    := $(shell git describe --abbrev=0 --tags $(MERGE_BASE))
+WINARCH := $(shell $(GXX) -dumpmachine | grep -q x64_64 && echo win64 || echo win32)
 
 export SRC_VERSION
+export WINARCH
 
 # Update .ver file if SRC_VERSION has changed
 .ver: FORCE
@@ -1833,7 +1803,7 @@ package-tarball-nodeps: source
 	cd build && tar cfJ ../../../$(SRC_PKG_TAR_NODEPS) --exclude contrib --exclude simplebar.js $(PKG_SRC_DIR)
 
 package-source: package-tarball-deps package-zipball-deps package-tarball-nodeps
-	rm -rf build
+	$(RM) -r build-win
 
 removeold:
 	if [ -f ../../$(SRC_PKG_TAR) ]; then $(RM) ../../$(SRC_PKG_TAR); fi
@@ -1844,13 +1814,13 @@ removeold:
 #
 
 # You need to have NSIS installed.
-package-windows:
+package-windows-installer:
 ifneq (x$(SRC_VERSION),x$(shell cat build-win/version.txt 2>/dev/null))
 	+$(MAKE) build-windows
 endif
-	if $(GXX) -dumpmachine|grep -q x86_64; \
-	  then WINARCH=win64; else WINARCH=win32; fi; \
-	makensis -NOCD -DVERSION=$(SRC_VERSION) -DWINARCH="$$WINARCH" util/crawl.nsi
+	makensis -NOCD -DVERSION=$(SRC_VERSION) -DWINARCH="$(WINARCH)" util/crawl.nsi
+	ln -sf "stone_soup-$(SRC_VERSION)-$(WINARCH)-installer.exe" "stone_soup-latest-$(WINARCH)-installer.exe"
+	$(RM) -r build-win
 
 build-windows:
 ifneq ($(GAME),crawl.exe)
@@ -1865,7 +1835,7 @@ endif
 	echo $(SRC_VERSION) >build-win/version.txt
 
 ZIP_DOCS=../../LICENSE
-package-windows-zips:
+package-windows-tiles:
 ifneq ($(GAME),crawl.exe)
 	@echo "This is only for Windows; please specify CROSSHOST.";false
 endif
@@ -1873,12 +1843,23 @@ endif
 	+$(MAKE) TILES=y DESTDIR=build-win/stone_soup-tiles-$(MAJOR_VERSION) FORCE_SSE=y install
 	cp -p $(ZIP_DOCS) build-win/stone_soup-tiles-$(MAJOR_VERSION)/
 	cd build-win && zip -9r ../stone_soup-$(SRC_VERSION)-tiles-win32.zip *
-	rm -rf build-win
-	+$(MAKE) DESTDIR=build-win/stone_soup-$(MAJOR_VERSION) FORCE_SSE=y install
-	cp -p $(ZIP_DOCS) build-win/stone_soup-$(MAJOR_VERSION)/
-	cd build-win && zip -9r ../stone_soup-$(SRC_VERSION)-win32.zip *
-	rm -rf build-win
-	if which advzip >/dev/null;then advzip -z4 stone_soup-$(SRC_VERSION)*-win32.zip;fi
+	if which advzip >/dev/null;then advzip -z3 stone_soup-$(SRC_VERSION)-tiles-win32.zip;fi
+	ln -sf stone_soup-$(SRC_VERSION)-tiles-win32.zip stone_soup-latest-tiles-win32.zip
+	$(RM) -r build-win
+
+package-windows-console:
+ifneq ($(GAME),crawl.exe)
+	@echo "This is only for Windows; please specify CROSSHOST.";false
+endif
+	+$(MAKE) clean
+	+$(MAKE) DESTDIR=build-win/stone_soup-console-$(MAJOR_VERSION) FORCE_SSE=y install
+	cp -p $(ZIP_DOCS) build-win/stone_soup-console-$(MAJOR_VERSION)/
+	cd build-win && zip -9r ../stone_soup-$(SRC_VERSION)-console-win32.zip *
+	if which advzip >/dev/null;then advzip -z3 stone_soup-$(SRC_VERSION)-console-win32.zip;fi
+	ln -sf stone_soup-$(SRC_VERSION)-console-win32.zip stone_soup-latest-console-win32.zip
+	$(RM) -r build-win
+
+package-windows-zips: package-windows-tiles package-windows-console
 
 #############################################################################
 # Building Mac app bundles
