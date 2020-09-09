@@ -20,6 +20,14 @@ bloodshed. Especially fervent devotees of Beogh will find orcish followers
 flocking to their banner: it is an age of signs and portents, and the orcs have
 become increasingly certain that the coming of their Messiah is nigh.
 %%%%
+Bahamut & Tiamat
+
+Once representing warring factions of Dragons, Drakes and Draconians; these two now 
+work together and accept the worship of all sorts of serpents. Amongst player races 
+only Draconians may join their service. Bahamut offers abilities to strength the existing 
+draconic heritage of worshippers, while Tiamat offers abilities to adapt to various 
+situations through using properties of other kinds of dragons.
+%%%%
 Cheibriados
 
 Cheibriados is a god of deliberation. Those following Cheibriados travel more
@@ -236,6 +244,19 @@ their own, who may be blessed by Beogh in battle and can be recalled as needed.
 Eventually, followers will gain the power to walk on water. Beogh will
 sometimes directly intervene to save a follower's life, and the chosen of
 Beogh will eventually be able to resurrect other fallen orcs.
+%%%%
+Bahamut & Tiamat powers
+
+Followers of Bahamut & Tiamat will be offered the choice of a Bahamut power or 
+a Tiamat deleterious multiple times as they gain favour. Bahamut may protect you from 
+various deletirious effects of the dungeon, strengthen your draconic breath, grant 
+you a horde of allied drakes, promote your draconian colour to a stronger colour 
+and brand one of your weapons with dragon slaying. Tiamat may quicken your movements 
+in response to powerful and fiery attacks, allow you breath effects you normally 
+couldn't access, grant you a single powerful drake as a mount, change your draconian 
+colour to other common colours multiple times and grant you the book of the dragon, 
+with a wizardry bonus for the spells within. You may mix and match these offerings 
+as you wish, but choices at each offering tier are permanent.
 %%%%
 Cheibriados powers
 
@@ -484,6 +505,16 @@ orcish warriors, or by dancing electric weapons. Beogh may also simply smite
 such blasphemers – and when smiting true sinners, Beogh has a heavy hand
 indeed! Those who still worship Beogh will also find their followers regularly
 deserting them.
+%%%%
+Bahamut & Tiamat wrath
+
+Those who aggrieve the twin gods will find themselves assaulted by waves of
+draconic kin: dragons, drakes, hydrae and draconian warriors. It may have been 
+long ago that these deities warred amongst themselves, but their united armies 
+fight fervently against betrayers. Additionally; the benefits of your draconian
+colour may be stripped away for a time, you may be petrified, your enemies 
+may be raised to a haste against you, and you may be compelled to roaring until 
+you run out of breath.
 %%%%
 Cheibriados wrath
 

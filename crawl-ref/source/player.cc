@@ -3134,7 +3134,7 @@ int xp_to_level_diff(int xp, int scale)
         return adjusted_level - projected_level;
 }
 
-static void _draconian_skill_check(mutation_type mut = MUT_NON_MUTATION)
+static void _draconian_skill_check(mutation_type mut = MUT_NON_MUTATION, draconian_colour old_colour = DR_BROWN)
 {
     // We just changed our aptitudes, so some skills may now
     // be at the wrong level (with negative progress); if we
@@ -3159,11 +3159,17 @@ static void _draconian_skill_check(mutation_type mut = MUT_NON_MUTATION)
     // skill being checked is at the wrong level.
     for (skill_type sk = SK_FIRST_SKILL; sk < NUM_SKILLS; ++sk)
     {
-        if (mut == MUT_NON_MUTATION && colour_apt(sk) > 0)
+        if (mut == MUT_NON_MUTATION)
         {
-            mprf(MSGCH_INTRINSIC_GAIN, "You learn %s %smore quickly.",
-                skill_name(sk),
-                colour_apt(sk) > 4 ? "much " : "");
+            int apt_diff = colour_apt(sk) - colour_apt(sk, old_colour);
+            if (apt_diff != 0)
+            {
+                mprf(MSGCH_INTRINSIC_GAIN, "You learn %s %smore %s.",
+                    skill_name(sk),
+                    abs(apt_diff) > 4 ? "much " :
+                    abs(apt_diff) < 3 ? "a little " : "",
+                    apt_diff < 0 ? "slowly" : "quickly");
+            }
         }
 
         if (mut == MUT_MINOR_MARTIAL_APT_BOOST && sk == you.minor_skill
@@ -3182,6 +3188,114 @@ static void _draconian_skill_check(mutation_type mut = MUT_NON_MUTATION)
     // skills being rescaled to new aptitudes. Thus, we must
     // check the training targets.
     check_training_targets();
+}
+
+void change_drac_colour (draconian_colour new_colour)
+{
+    ASSERT(species_is_draconian(you.species));
+    draconian_colour old_colour = you.drac_colour;
+
+    if (old_colour == new_colour)
+        return;
+
+    ability_type old_breath = draconian_breath();
+    bool was_undead = (you.undead_state() != US_ALIVE);
+
+    if (old_colour == DR_TEAL)
+    {
+        you.mutation[MUT_INSUBSTANTIAL] = you.innate_mutation[MUT_INSUBSTANTIAL] = 0;
+        mprf(MSGCH_INTRINSIC_GAIN, "You resolidify.");
+    }
+
+    if (new_colour == DR_TEAL)
+    {
+        if (old_colour != DR_BONE)
+        {
+            monster dummy;
+            dummy.type = you.mons_species();
+            define_monster(dummy);
+            dummy.props["always_corpse"] = true; // BCADDO: I think I can get rid of this prop...
+            dummy.mname = player_name();
+            dummy.set_hit_dice(you.experience_level);
+            dummy.position = you.pos();
+            place_monster_corpse(dummy, true, true);
+        }
+
+        perma_mutate(MUT_INSUBSTANTIAL, 1, "draconic bloodline");
+        if (was_undead)
+            mprf(MSGCH_INTRINSIC_GAIN, "Your ghostly form can be transmuted to any form you wish and you can drink potions once more.");
+        else
+            mprf(MSGCH_INTRINSIC_GAIN, "As a ghost, you can still transmute into various forms you may have been using.");
+    }
+    else if (new_colour == DR_BONE)
+    {
+        if (old_colour == DR_TEAL)
+            mprf(MSGCH_INTRINSIC_GAIN, "Your spirit reforms as a tough animated skeleton.");
+        else
+        {
+            int i = items(false, OBJ_FOOD, FOOD_CHUNK, 1);
+            item_def& item = mitm[i];
+            item.quantity = roll_dice(2, 4);
+            move_item_to_grid(&i, you.pos());
+
+            mprf(MSGCH_INTRINSIC_GAIN,
+                "Your flesh falls away, revealing a tough animated skeleton!");
+        }
+    }
+    else
+    {
+        you.drac_colour = new_colour;
+
+        if (old_colour == DR_BONE)
+        {
+            mprf(MSGCH_INTRINSIC_GAIN,
+                "Your flesh regrows and is covered in %s scales.",
+                article_a(scale_type()).c_str());
+        }
+        else if (new_colour == DR_BROWN)
+            mprf(MSGCH_INTRINSIC_GAIN, "You return to an immature form.");
+        else
+        {
+            mprf(MSGCH_INTRINSIC_GAIN,
+                "Your scales start taking on %s colour.",
+                article_a(scale_type()).c_str());
+        }
+    }
+
+    you.drac_colour = new_colour;
+    
+    abil_swap(old_breath, draconian_breath());
+
+    // The player symbol depends on species.
+    update_player_symbol();
+    #ifdef USE_TILE
+    init_player_doll();
+    #endif
+
+    if (!was_undead && you.undead_state() != US_ALIVE)
+        mummify();
+
+    if (was_undead && you.undead_state() == US_ALIVE)
+    {
+        mprf(MSGCH_INTRINSIC_GAIN, "You feel yourself come back to life.");
+
+        // Strip all the undead mutations.
+        you.mutation[MUT_UNBREATHING_FORM] = you.innate_mutation[MUT_UNBREATHING_FORM] = 0;
+        you.mutation[MUT_NEGATIVE_ENERGY_RESISTANCE] = you.innate_mutation[MUT_NEGATIVE_ENERGY_RESISTANCE] = 0;
+        you.mutation[MUT_COLD_RESISTANCE] = you.innate_mutation[MUT_COLD_RESISTANCE] = (you.get_mutation_level(MUT_COLD_RESISTANCE) - 1);
+        you.mutation[MUT_TORMENT_RESISTANCE] = you.innate_mutation[MUT_TORMENT_RESISTANCE] = 0;
+        you.mutation[MUT_COLD_BLOODED] = you.innate_mutation[MUT_COLD_BLOODED] = 1;
+    }
+
+    _draconian_skill_check(MUT_NON_MUTATION, old_colour);
+
+    describe_breath(true);
+
+    // needs to be done early here, so HP doesn't look rotted
+    // when we redraw the screen
+    _gain_and_note_hp_mp();
+
+    redraw_screen();
 }
 
 /**
@@ -3342,73 +3456,21 @@ void level_change(bool skip_attribute_increase)
             case SP_DRACONIAN:
                 if (you.experience_level == 7)
                 {
-                    you.drac_colour = random_draconian_colour();
+                    draconian_colour temp = random_draconian_colour();
 
                     // Zombie and Skeletons getting demonspawn mutations is off-flavour; when a demonspawn rolls one of those
                     // colours collapse it to Teal.
-                    if (you.char_class == JOB_DEMONSPAWN && (you.drac_colour == DR_OLIVE || you.drac_colour == DR_BONE))
+                    if (you.char_class == JOB_DEMONSPAWN && (temp == DR_OLIVE || temp == DR_BONE))
                         you.drac_colour = DR_TEAL;
-
-                    abil_swap(ABIL_BREATHE_DART, draconian_breath());
-
-                    // The player symbol depends on species.
-                    update_player_symbol();
-#ifdef USE_TILE
-                    init_player_doll();
-#endif
-                    if (you.drac_colour == DR_TEAL)
-                    {
-                        monster dummy;
-                        dummy.type = MONS_DRACONIAN;
-                        define_monster(dummy);
-                        dummy.props["always_corpse"] = true; // BCADDO: I think I can get rid of this prop...
-                        dummy.mname = player_name();
-                        dummy.set_hit_dice(you.experience_level);
-                        dummy.position = you.pos();
-                        place_monster_corpse(dummy, true, true);
-
-                        perma_mutate(MUT_INSUBSTANTIAL, 1, "draconic bloodline");
-                        if (you.char_class == JOB_MUMMY)
-                            mprf(MSGCH_INTRINSIC_GAIN, "Your ghostly form can be transmuted to any form you wish and you can drink potions once more.");
-                        else
-                            mprf(MSGCH_INTRINSIC_GAIN, "As a ghost, you can still transmute into various forms you may have been using.");
-                    }
-                    else if (you.drac_colour == DR_BONE)
-                    {
-                        int i = items(false, OBJ_FOOD, FOOD_CHUNK, 1);
-                        item_def& item = mitm[i];
-                        item.quantity = roll_dice(2, 4);
-                        move_item_to_grid(&i, you.pos());
-
-                        mprf(MSGCH_INTRINSIC_GAIN,
-                            "Your flesh falls away, revealing a tough animated skeleton!");
-                    }
-                    else
-                    {
-                        mprf(MSGCH_INTRINSIC_GAIN,
-                            "Your scales start taking on %s colour.",
-                            article_a(scale_type()).c_str());
-                    }
-
-                    if (you.char_class != JOB_MUMMY && you.undead_state() != US_ALIVE)
-                        mummify();
-
-                    _draconian_skill_check();
-
-                    if (!(you.experience_level % 3))
-                    {
-                        mprf(MSGCH_INTRINSIC_GAIN, "Your scales feel tougher.");
-                        you.redraw_armour_class = true;
-                    }
-
-                    describe_breath(true);
-
-                    // needs to be done early here, so HP doesn't look rotted
-                    // when we redraw the screen
-                    _gain_and_note_hp_mp();
+                  
+                    change_drac_colour(temp);
                     updated_maxhp = true;
+                }
 
-                    redraw_screen();
+                if (!(you.experience_level % 3))
+                {
+                    mprf(MSGCH_INTRINSIC_GAIN, "Your scales feel tougher.");
+                    you.redraw_armour_class = true;
                 }
 
                 // BCADDNOTE: All the "change apts. mutations are here instead of in the .yaml
@@ -4664,10 +4726,18 @@ bool confuse_player(int amount, bool quiet, bool force)
         return false;
     }
 
+    if (!force && have_passive(passive_t::bahamut_tiamat_passive)
+        && you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY)
+        && you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+    {
+        mprf(MSGCH_DURATION, "Bahamut protects you from confusion.");
+        return false;
+    }
+
     if (!force && you.duration[DUR_DIVINE_STAMINA] > 0)
     {
         if (!quiet)
-            mpr("Your divine stamina protects you from confusion!");
+            mprf(MSGCH_DURATION, "Your divine stamina protects you from confusion!");
         return false;
     }
 
@@ -4710,7 +4780,7 @@ bool poison_player(int amount, string source, string source_aux, bool force)
 
     if (you.duration[DUR_DIVINE_STAMINA] > 0)
     {
-        mpr("Your divine stamina protects you from poison!");
+        mprf(MSGCH_DURATION, "Your divine stamina protects you from poison!");
         return false;
     }
 
@@ -4977,7 +5047,7 @@ bool miasma_player(actor *who, string source_aux)
 
     if (you.duration[DUR_DIVINE_STAMINA] > 0)
     {
-        mpr("Your divine stamina protects you from the miasma!");
+        mprf(MSGCH_DURATION, "Your divine stamina protects you from the miasma!");
         return false;
     }
 
@@ -5043,7 +5113,7 @@ void dec_napalm_player(int delay)
     you.expose_to_element(BEAM_STICKY_FLAME, 2);
     maybe_melt_player_enchantments(BEAM_STICKY_FLAME, hurted * delay / BASELINE_DELAY);
 
-    ouch(hurted * delay / BASELINE_DELAY, KILLED_BY_BURNING);
+    ouch(hurted * delay / BASELINE_DELAY, KILLED_BY_BURNING, 0U, nullptr, true, nullptr, true);
 
     you.duration[DUR_LIQUID_FLAMES] -= delay;
     if (you.duration[DUR_LIQUID_FLAMES] <= 0)
@@ -5059,6 +5129,14 @@ bool slow_player(int turns)
 
     if (turns <= 0)
         return false;
+
+    if (have_passive(passive_t::bahamut_tiamat_passive)
+        && you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY)
+        && you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+    {
+        mprf(MSGCH_DURATION, "Bahamut protects you from being slowed.");
+        return false;
+    }
 
     if (you.stasis())
     {
@@ -5133,7 +5211,7 @@ void dec_berserk_recovery_player(int delay)
     }
 }
 
-bool haste_player(int turns, bool rageext)
+bool haste_player(int turns, bool rageext, bool msg)
 {
     ASSERT(!crawl_state.game_is_arena());
 
@@ -5151,12 +5229,15 @@ bool haste_player(int turns, bool rageext)
     turns = haste_div(turns);
     const int threshold = 40;
 
-    if (!you.duration[DUR_HASTE])
-        mpr("You feel yourself speed up.");
-    else if (you.duration[DUR_HASTE] > threshold * BASELINE_DELAY)
-        mpr("You already have as much speed as you can handle.");
-    else if (!rageext)
-        mpr("You feel as though your hastened speed will last longer.");
+    if (msg)
+    {
+        if (!you.duration[DUR_HASTE])
+            mpr("You feel yourself speed up.");
+        else if (you.duration[DUR_HASTE] > threshold * BASELINE_DELAY)
+            mpr("You already have as much speed as you can handle.");
+        else if (!rageext)
+            mpr("You feel as though your hastened speed will last longer.");
+    }
 
     you.increase_duration(DUR_HASTE, turns, threshold);
 
@@ -5585,6 +5666,10 @@ player::player()
 
     symbol          = MONS_PLAYER;
     form            = transformation::none;
+
+    mount           = mount_type::none;
+    mount_hp_max    = 0;
+    mount_hp        = 0;
 
     for (auto &item : inv)
         item.clear();
@@ -7254,6 +7339,9 @@ int player::hurt(const actor *agent, int amount, beam_type flavour,
                  kill_method_type kill_type, string source, string aux,
                  bool /*cleanup_dead*/, bool /*attacker_effects*/)
 {
+    bool fiery = (flavour == BEAM_FIRE || flavour == BEAM_LAVA 
+               || flavour == BEAM_CRYSTAL_FIRE || flavour == BEAM_STICKY_FLAME);
+
     // We ignore cleanup_dead here.
     if (!agent)
     {
@@ -7261,12 +7349,12 @@ int player::hurt(const actor *agent, int amount, beam_type flavour,
         // to a player from a dead monster. We should probably not do that,
         // but it could be tricky to fix, so for now let's at least avoid
         // a crash even if it does mean funny death messages.
-        ouch(amount, kill_type, MID_NOBODY, aux.c_str(), false, source.c_str());
+        ouch(amount, kill_type, MID_NOBODY, aux.c_str(), false, source.c_str(), fiery);
     }
     else
     {
         ouch(amount, kill_type, agent->mid, aux.c_str(),
-             agent->visible_to(this), source.c_str());
+             agent->visible_to(this), source.c_str(), fiery);
     }
 
     if ((flavour == BEAM_DEVASTATION || flavour == BEAM_DISINTEGRATION 
@@ -7301,7 +7389,7 @@ bool player::rot(actor */*who*/, int amount, bool quiet, bool /*no_cleanup*/)
 
     if (duration[DUR_DIVINE_STAMINA] > 0)
     {
-        mpr("Your divine stamina protects you from decay!");
+        mprf(MSGCH_DURATION, "Your divine stamina protects you from decay!");
         return false;
     }
 
@@ -7469,7 +7557,15 @@ void player::petrify(actor *who, bool force)
 
     if (duration[DUR_DIVINE_STAMINA] > 0)
     {
-        mpr("Your divine stamina protects you from petrification!");
+        mprf(MSGCH_DURATION, "Your divine stamina protects you from petrification!");
+        return;
+    }
+
+    if (have_passive(passive_t::bahamut_tiamat_passive)
+        && you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY)
+        && you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+    {
+        mprf(MSGCH_DURATION, "Bahamut protects you from petrification.");
         return;
     }
 
@@ -7718,11 +7814,11 @@ bool player::sicken(int amount)
 
     if (duration[DUR_DIVINE_STAMINA] > 0)
     {
-        mpr("Your divine stamina protects you from disease!");
+        mprf(MSGCH_DURATION, "Your divine stamina protects you from disease!");
         return false;
     }
 
-    mpr("You feel ill.");
+    mprf(MSGCH_DURATION, "You feel ill.");
 
     disease += amount * BASELINE_DELAY;
     if (disease > 210 * BASELINE_DELAY)
@@ -8018,9 +8114,17 @@ void player::put_to_sleep(actor*, int power, bool hibernate)
         return;
     }
 
+    if (have_passive(passive_t::bahamut_tiamat_passive)
+        && you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY)
+        && you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+    {
+        mprf(MSGCH_DURATION, "Bahamut protects you from falling asleep.");
+        return;
+    }
+
     if (duration[DUR_SLEEP_IMMUNITY])
     {
-        mpr("You can't fall asleep again this soon!");
+        mprf(MSGCH_DURATION, "You can't fall asleep again this soon!");
         return;
     }
 
@@ -9026,4 +9130,19 @@ bool player::immune_to_hex(const spell_type hex) const
     default:
         return false;
     }
+}
+
+bool player::is_dragonkind() const
+{
+    if (you.form == transformation::dragon || you.form == transformation::hydra)
+        return true;
+
+    return actor::is_dragonkind();
+}
+
+bool player::mounted() const
+{
+    if (you.duration[DUR_MOUNTED] && you.mount != mount_type::none)
+        return true;
+    return false;
 }

@@ -4,6 +4,7 @@
 
 #include "cloud.h"
 #include "god-passive.h"
+#include "spl-other.h"
 
 static void _end_weapon_brand()
 {
@@ -685,6 +686,9 @@ static const duration_def duration_data[] =
     { DUR_STILL_WINDS,
       BROWN, "", "", "", "You are stilling the winds.", D_DISPELLABLE,
       {{ "You release your hold on the winds." , end_still_winds}}},
+    { DUR_MOUNTED,
+      BROWN, "", "", "mount", "", D_NO_FLAGS,
+      {{ "Your mount expires." , dismount}}},
 
 #if TAG_MAJOR_VERSION == 34
     // And removed ones
@@ -706,7 +710,6 @@ static const duration_def duration_data[] =
     { DUR_SPIRIT_HOWL, 0, "", "", "old spirit howl", "", D_NO_FLAGS},
     { DUR_SONG_OF_SHIELDING, 0, "", "", "old song of shielding", "", D_NO_FLAGS},
     { DUR_ANTENNAE_EXTEND, 0, "", "", "old antennae extend", "", D_NO_FLAGS},
-    { DUR_BUILDING_RAGE, 0, "", "", "old building rage", "", D_NO_FLAGS},
     { DUR_NEGATIVE_VULN, 0, "", "", "old negative vuln", "", D_NO_FLAGS},
     { DUR_CONTROL_TELEPORT, 0, "", "", "old control teleport", "", D_NO_FLAGS},
     { DUR_DOOM_HOWL_IMMUNITY, 0, "", "", "old howl immunity", "", D_NO_FLAGS, {{""}}},

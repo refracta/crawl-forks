@@ -7,6 +7,7 @@
 
 #include "spl-goditem.h"
 
+#include "attack.h"  // Attack Strength Punctuation
 #include "cleansing-flame-source-type.h"
 #include "coordit.h"
 #include "database.h"
@@ -983,6 +984,10 @@ void holy_word_player(holy_word_source_type source)
     case HOLY_WORD_CARD:
         aux = "the Torment card";
         break;
+
+    case HOLY_WORD_BREATH:
+        aux = "your holy breath";
+        break;
     }
 
     ouch(hploss, type, MID_NOBODY, aux);
@@ -1005,18 +1010,22 @@ void holy_word_monsters(coord_def where, int pow, holy_word_source_type source,
         return;
 
     god_conduct_trigger conducts[3];
-    int hploss = roll_dice(3, 15) + (random2(pow) / 5);
+    int hploss = roll_dice(3, 10 + pow / 10);
 
     if (hploss)
     {
+        string msg = "convulses";
         if (source == HOLY_WORD_ZIN)
-            simple_monster_message(*mons, " is blasted by Zin's holy word!");
-        else
-            simple_monster_message(*mons, " convulses!");
+            msg = "is blasted by Zin's holy word";
+        else if (source == HOLY_WORD_BREATH)
+            msg = "trembles before your holy cry";
+
+        msg = make_stringf(" %s%s", msg.c_str(), attack_strength_punctuation(hploss).c_str());
+        simple_monster_message(*mons, msg.c_str());
 
         if (attacker && attacker->is_player()
-            && source == HOLY_WORD_SCROLL
-            && item_type_known(OBJ_SCROLLS, SCR_HOLY_WORD))
+            && (source == HOLY_WORD_SCROLL && item_type_known(OBJ_SCROLLS, SCR_HOLY_WORD)
+            || source == HOLY_WORD_BREATH))
         {
             set_attack_conducts(conducts, *mons, you.can_see(*mons));
         }
@@ -1048,9 +1057,14 @@ void holy_word(int pow, holy_word_source_type source, const coord_def& where,
 {
     if (!silent && attacker)
     {
-        mprf("%s %s a Word of immense power!",
-             attacker->name(DESC_THE).c_str(),
-             attacker->conj_verb("speak").c_str());
+        if (source == HOLY_WORD_BREATH)
+            mprf("You roar a word of immense power!");
+        else
+        {
+            mprf("%s %s a Word of immense power!",
+                attacker->name(DESC_THE).c_str(),
+                attacker->conj_verb("speak").c_str());
+        }
     }
 
     for (radius_iterator ri(where, LOS_SOLID); ri; ++ri)

@@ -9,6 +9,7 @@
 
 #include <sstream>
 
+#include "act-iter.h"
 #include "areas.h"
 #include "artefact.h"
 #include "attitude-change.h"
@@ -89,6 +90,7 @@ static const char *_god_wrath_adjectives[] =
     "fury",             // Uskayaw
     "memory",           // Hepliaklqana (unused)
     "rancor",           // Wu Jian
+    "outrage",          // Bahamut & Tiamat
 };
 COMPILE_CHECK(ARRAYSZ(_god_wrath_adjectives) == NUM_GODS);
 
@@ -106,6 +108,13 @@ static string _god_wrath_name(god_type god)
 {
     const bool use_full_name = god == GOD_FEDHAS      // fedhas is very formal.
                                || god == GOD_WU_JIAN; // apparently.
+
+    // You like exceptions right? Twin gods need special rules.
+    if (god == GOD_BAHAMUT_TIAMAT)
+    {
+        return coinflip ()  ? "the outrage of Bahamut"
+                            : "the brutality of Tiamat";
+    }
 
     return make_stringf("the %s of %s",
                         _god_wrath_adjectives[god],
@@ -170,6 +179,7 @@ static const pop_entry _okawaru_servants[] =
   { 13, 27,   1, FLAT, MONS_DEEP_ELF_MASTER_ARCHER },
   { 13, 27,   1, FLAT, RANDOM_BASE_DRACONIAN },
   { 15, 27,   2, FLAT, MONS_TITAN },
+  { 18, 27,   1, RISE, MONS_DRACONIAN_KNIGHT },
   { 0,0,0,FLAT,MONS_0 }
 };
 
@@ -1700,6 +1710,150 @@ static bool _uskayaw_retribution()
     return true;
 }
 
+static const pop_entry _bahamut_draconians[] =
+{
+  {  0, 12,   5, FLAT, MONS_DRACONIAN },
+  {  8, 27,  10, FALL, RANDOM_BASE_DRACONIAN },
+  { 15, 27,  10, RISE, RANDOM_NONBASE_DRACONIAN },
+  { 0,0,0,FLAT,MONS_0 }
+};
+
+static const pop_entry _bahamut_dragons[] =
+{
+  {  0, 12,  10, FLAT, MONS_STEAM_DRAGON },
+  {  6, 18,  10, PEAK, MONS_ACID_DRAGON },
+  {  8, 24,  10, PEAK, MONS_FIRE_DRAGON },
+  {  8, 24,  10, PEAK, MONS_ICE_DRAGON },
+  { 10, 18,  10, RISE, MONS_HYDRA },
+  { 12, 27,  20, RISE, MONS_SHADOW_DRAGON },
+  { 12, 27,  20, PEAK, MONS_STORM_DRAGON },
+  { 12, 27,  20, PEAK, MONS_GOLDEN_DRAGON },
+  { 18, 27,  20, RISE, MONS_QUICKSILVER_DRAGON },
+  { 18, 27,  10, RISE, MONS_IRON_DRAGON },
+  { 21, 27,  10, RISE, MONS_BONE_DRAGON },
+  { 21, 27,   5, RISE, MONS_PEARL_DRAGON },
+  { 0,0,0,FLAT,MONS_0 }
+};
+
+static bool _bahamut_retribution()
+{
+    monster* mon = nullptr;
+    mon = choose_random_nearby_monster(0, _choose_hostile_monster);
+    int x = random2(5);
+
+    if (mon && coinflip())
+        x = 3;
+
+    switch (x)
+    {
+    case 0:
+    {
+        int count = 1 + you.experience_level / 9;
+        bool success = false;
+        for (int i = 0; i < count; i++)
+        {
+            if (summon_drakes(you.get_experience_level(), true))
+            {
+                success = true;
+            }
+        }
+        if (success)
+        {
+            mprf(MSGCH_GOD, "Tiamat sends hordes of drakes to punish you.");
+            return true;
+        }
+    }   // If fail, fallthrough to next.
+    case 1:
+    {
+        int count = 1 + you.experience_level / 8 + random2(1 + you.experience_level / 3);
+        bool success = false;
+
+        for (int i = 0; i < count; i++)
+        {
+            monster_type mon_type = pick_monster_from(_bahamut_dragons,
+                you.experience_level);
+
+            mgen_data temp = _wrath_mon_data(mon_type, GOD_BAHAMUT_TIAMAT);
+
+            if (create_monster(temp, false))
+                success = true;
+        }
+        count = 1 + you.experience_level / 9;
+        for (int i = 0; i < count; i++)
+        {
+            monster_type mon_type = pick_monster_from(_bahamut_draconians,
+                you.experience_level);
+
+            mgen_data temp = _wrath_mon_data(mon_type, GOD_BAHAMUT_TIAMAT);
+
+            if (you.experience_level > (10 + random2(5)))
+                temp.flags |= MG_PERMIT_BANDS;
+
+            if (create_monster(temp, false))
+                success = true;
+        }
+        if (success)
+        {
+            mprf(MSGCH_GOD, "Bahamut calls forth your kin to admonish your indiscretion.");
+            return true;
+        }
+    }   // If fail, fallthrough to next.
+    case 2:
+    {
+        if (mon)
+        {
+            if (you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY) && you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool() && !you.stasis() && !you.res_petrify())
+            {
+                you.petrify(nullptr);
+                mprf(MSGCH_GOD, "Bahamut Booms: \"Repent and I shall protect you once more.\"");
+            }
+            else
+            {
+                monster * target = nullptr;
+                for (monster_iterator mi; mi; ++mi)
+                {
+                    if (you.see_cell_no_trans(mi->pos()) &&
+                        (!target || (mi->get_experience_level() >= target->get_experience_level()))
+                        && !bool(mi->holiness() & (MH_NONLIVING | MH_UNDEAD)))
+                    {
+                        target = *mi;
+                    }
+                }
+                if (target)
+                {
+                    mprf(MSGCH_GOD, "%s blood boils as Tiamat raises it to a haste.", target->name(DESC_ITS).c_str());
+                    target->add_ench(ENCH_HASTE);
+                }
+            }
+        }
+    }   // If fail, fallthrough to next.
+    case 3:
+    {
+        mprf(MSGCH_GOD, "Tiamat compels you to roar at the top of your lungs!");
+
+        if (silenced(you.pos()))
+            mpr("...but you couldn't make a sound.");
+
+        noisy(35, you.pos(), you.mid);
+        you.increase_duration(DUR_BREATH_WEAPON, you.experience_level + random2(you.experience_level), 100, "You are out of breath.");
+        return true;
+    }
+    default:
+    case 4:
+    {
+        if (you.drac_colour != DR_BROWN && you.penance[GOD_BAHAMUT_TIAMAT] > 6) // Don't do this at low penance since it would just revert near immediately.
+        {
+            mprf(MSGCH_GOD, "Bahamut sneers: \"You need to grow up!\"");
+            you.attribute[ATTR_STRIPPED_COLOUR] = you.drac_colour;
+            change_drac_colour(DR_BROWN);
+            return true;
+        }
+    }
+    }
+
+    return false;
+}
+
 bool divine_retribution(god_type god, bool no_bonus, bool force)
 {
     ASSERT(god != GOD_NO_GOD);
@@ -1718,7 +1872,9 @@ bool divine_retribution(god_type god, bool no_bonus, bool force)
 
     god_acting gdact(god, true);
 
-    bool do_more    = true;
+    bool restore_colour = ((you.attribute[ATTR_STRIPPED_COLOUR] > 0) && one_chance_in(3));
+
+    bool do_more        = true;
     switch (god)
     {
     // One in ten chance that Xom might do something good...
@@ -1726,25 +1882,26 @@ bool divine_retribution(god_type god, bool no_bonus, bool force)
         xom_acts(abs(you.piety - HALF_MAX_PIETY),
                  frombool(one_chance_in(10)));
         break;
-    case GOD_SHINING_ONE:   do_more = _tso_retribution(); break;
-    case GOD_ZIN:           do_more = _zin_retribution(); break;
-    case GOD_MAKHLEB:       do_more = _makhleb_retribution(); break;
-    case GOD_KIKUBAAQUDGHA: do_more = _kikubaaqudgha_retribution(); break;
-    case GOD_YREDELEMNUL:   do_more = _yredelemnul_retribution(); break;
-    case GOD_TROG:          do_more = _trog_retribution(); break;
-    case GOD_BEOGH:         do_more = _beogh_retribution(); break;
-    case GOD_OKAWARU:       do_more = _okawaru_retribution(); break;
-    case GOD_LUGONU:        do_more = _lugonu_retribution(); break;
-    case GOD_VEHUMET:       do_more = _vehumet_retribution(); break;
-    case GOD_NEMELEX_XOBEH: do_more = _nemelex_retribution(); break;
-    case GOD_SIF_MUNA:      do_more = _sif_muna_retribution(); break;
-    case GOD_JIYVA:         do_more = _jiyva_retribution(); break;
-    case GOD_FEDHAS:        do_more = _fedhas_retribution(); break;
-    case GOD_CHEIBRIADOS:   do_more = _cheibriados_retribution(); break;
-    case GOD_DITHMENOS:     do_more = _dithmenos_retribution(); break;
-    case GOD_QAZLAL:        do_more = _qazlal_retribution(); break;
-    case GOD_USKAYAW:       do_more = _uskayaw_retribution(); break;
-    case GOD_WU_JIAN:       do_more = _wu_jian_retribution(); break;
+    case GOD_SHINING_ONE:       do_more = _tso_retribution(); break;
+    case GOD_ZIN:               do_more = _zin_retribution(); break;
+    case GOD_MAKHLEB:           do_more = _makhleb_retribution(); break;
+    case GOD_KIKUBAAQUDGHA:     do_more = _kikubaaqudgha_retribution(); break;
+    case GOD_YREDELEMNUL:       do_more = _yredelemnul_retribution(); break;
+    case GOD_TROG:              do_more = _trog_retribution(); break;
+    case GOD_BEOGH:             do_more = _beogh_retribution(); break;
+    case GOD_OKAWARU:           do_more = _okawaru_retribution(); break;
+    case GOD_LUGONU:            do_more = _lugonu_retribution(); break;
+    case GOD_VEHUMET:           do_more = _vehumet_retribution(); break;
+    case GOD_NEMELEX_XOBEH:     do_more = _nemelex_retribution(); break;
+    case GOD_SIF_MUNA:          do_more = _sif_muna_retribution(); break;
+    case GOD_JIYVA:             do_more = _jiyva_retribution(); break;
+    case GOD_FEDHAS:            do_more = _fedhas_retribution(); break;
+    case GOD_CHEIBRIADOS:       do_more = _cheibriados_retribution(); break;
+    case GOD_DITHMENOS:         do_more = _dithmenos_retribution(); break;
+    case GOD_QAZLAL:            do_more = _qazlal_retribution(); break;
+    case GOD_USKAYAW:           do_more = _uskayaw_retribution(); break;
+    case GOD_WU_JIAN:           do_more = _wu_jian_retribution(); break;
+    case GOD_BAHAMUT_TIAMAT:    do_more = _bahamut_retribution(); break;
 
     case GOD_ASHENZARI:
     case GOD_ELYVILON:
@@ -1763,6 +1920,13 @@ bool divine_retribution(god_type god, bool no_bonus, bool force)
              god_name(god).c_str());
 #endif
         return false;
+    }
+
+    if (restore_colour)
+    {
+        mprf(MSGCH_INTRINSIC_GAIN, "You feel yourself maturing once more...");
+        change_drac_colour((draconian_colour)you.attribute[ATTR_STRIPPED_COLOUR]);
+        you.attribute[ATTR_STRIPPED_COLOUR] = 0;
     }
 
     if (no_bonus)

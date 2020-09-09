@@ -2525,7 +2525,7 @@ static monster_type _band_member(band_type band, int which,
         return random_choose_weighted ( 3, MONS_OOZE, 1, MONS_JELLY);
 
     case BAND_DRACONIAN:
-        if (env.absdepth0 >= 24 && x_chance_in_y(13, 40))
+        if (x_chance_in_y(13, 40))
         {
             // Hack: race is rolled elsewhere.
             return random_choose_weighted(

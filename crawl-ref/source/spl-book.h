@@ -37,6 +37,7 @@ string desc_cannot_memorise_reason(spell_type spell);
 spell_type spell_in_wand(wand_type wand);
 vector<spell_type> spellbook_template(book_type book);
 vector<spell_type> spells_in_book(const item_def &book);
+bool spell_found_in_book(const book_type book, const spell_type spell);
 
 bool you_can_memorise(spell_type spell) PURE;
 bool has_spells_to_memorise(bool silent = true);

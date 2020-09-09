@@ -207,12 +207,13 @@ static int _weapon_brand_value(item_def item)
             return 25;
 
         case SPWPN_CHAOS:
-        case SPWPN_DRAINING: // Unrand-only.
+        case SPWPN_DRAINING: // Unrand and God Only.
         case SPWPN_MOLTEN:
         case SPWPN_FREEZING:
         case SPWPN_HOLY_WRATH:
         case SPWPN_SILVER:
         case SPWPN_VENOM:
+        case SPWPN_DRAGON_SLAYING:
             return 18;
 
         case SPWPN_VORPAL:

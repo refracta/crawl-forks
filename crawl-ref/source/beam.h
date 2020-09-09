@@ -301,7 +301,7 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
                           bool doFlavouredEffects = true);
 
 void impale_player_with_barbs();
-void impale_monster_with_barbs(monster* mon, actor* agent);
+void impale_monster_with_barbs(monster* mon, actor* agent, string what = "barbed spikes");
 
 // Return whether the effect was visible.
 bool enchant_actor_with_flavour(actor* victim, const actor *atk,

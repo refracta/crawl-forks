@@ -613,6 +613,7 @@ string describe_breath(bool gain)
     case DR_RED:            ostr << "puffs of flames, which leave flaming clouds in their wake.";               break;
     case DR_SILVER:         ostr << "silver splinters, which deal bonus damage to chaotic creatures.";          break;
     case DR_TEAL:           ostr << "blasts of ghostly flames, which heal the undead and damage the living.";   break;
+    default:                ostr << "buggy bugs of bugging";        break;
     }
 
     return ostr.str();
@@ -1495,6 +1496,7 @@ static string _drac_def_msg()
         break;
     case DR_BONE: // Special case; no scales.
         return "Your tough skeletal form vastly boosts your defenses. (AC+++)\nHowever; you are also weak to shatter and Lee's Rapid Deconstruction.";
+    default:
     case DR_BROWN:
         ostr << "don't do anything special. (This message shouldn't ever display.)";
         break;
@@ -1559,9 +1561,9 @@ static string _drac_enhancer_msg(bool gain)
     {
     case DR_BLACK:      ostr << "death.";                                       break;
     case DR_BLOOD:      ostr << "death, curses and the sky.";                   break;
-    case DR_BLUE:       ostr << "the air.";                                     break;
+    case DR_BLUE:       ostr << "the sky.";                                     break;
     case DR_BONE:       ostr << "charms and the earth.";                        break;
-    case DR_CYAN:       ostr << "the sky.";                                     break;
+    case DR_CYAN:       ostr << "translocation.";                               break;
     case DR_GOLDEN:     ostr << "fire, ice and venom.";                         break;
     case DR_GREEN:      ostr << "venom.";                                       break;
     case DR_LIME:       ostr << "transmutation.";                               break;
@@ -2329,6 +2331,7 @@ const char* mutation_name(mutation_type mut, bool allow_category, bool for_displ
         case DR_BLOOD:              return "rTorm, rHellfire";
         case DR_BLUE:               return "rElec";
         case DR_BONE:               return "AC+++, rShatter-";
+        default:
         case DR_BROWN:              return "buggy mutation!";
         case DR_CYAN:               return "rCloud, rAir";
         case DR_GOLDEN:             return "rF+, rC+, rPois";
@@ -2356,7 +2359,7 @@ const char* mutation_name(mutation_type mut, bool allow_category, bool for_displ
         case DR_BLOOD:              return "necromancy, hexes and air enhancers";
         case DR_BLUE:               return "air enhancer";
         case DR_BONE:               return "charms and earth enhancers";
-        case DR_CYAN:               return "air enhancer";
+        case DR_CYAN:               return "translocations enhancer";
         case DR_GOLDEN:             return "fire, ice and poison enhancers";
         case DR_GREEN:              return "poison enhancer";
         case DR_LIME:               return "transmutation enhancer";
@@ -2905,6 +2908,13 @@ void roll_demonspawn_mutations()
                          _select_ds_mutations()));
 }
 
+static bool _is_ranged_skill(skill_type skill)
+{
+    if (skill == SK_BOWS || skill == SK_CROSSBOWS || skill == SK_SLINGS)
+        return true;
+    return false;
+}
+
 // Sets up variables only used by the Draconian pseudomutations.
 void draconian_setup()
 {
@@ -2920,13 +2930,26 @@ void draconian_setup()
     you.major_skill = random_choose(SK_LONG_BLADES, SK_AXES_HAMMERS, SK_MACES_STAVES, SK_WHIPS_FLAILS, SK_SLINGS,
         SK_BOWS, SK_CROSSBOWS);
 
-    you.minor_skill = random_choose(SK_SHORT_BLADES, SK_LONG_BLADES, SK_AXES_HAMMERS, SK_MACES_STAVES, SK_WHIPS_FLAILS,
-        SK_SLINGS, SK_BOWS, SK_CROSSBOWS, SK_UNARMED_COMBAT);
+    you.minor_skill = you.major_skill;
+
+    while (you.major_skill == you.minor_skill)
+    {
+        you.minor_skill = random_choose(SK_SHORT_BLADES, SK_LONG_BLADES, SK_AXES_HAMMERS, SK_MACES_STAVES, SK_WHIPS_FLAILS,
+            SK_SLINGS, SK_BOWS, SK_CROSSBOWS, SK_UNARMED_COMBAT);
+    }
 
     you.defence_skill = random_choose(SK_DODGING, SK_STEALTH, SK_SHIELDS);
 
-    if (you.major_skill == you.minor_skill)
-        you.minor_skill = SK_UNARMED_COMBAT;
+    if (_is_ranged_skill(you.major_skill) && _is_ranged_skill(you.minor_skill))
+    {
+        if (coinflip())
+        {
+            you.minor_skill = random_choose(SK_SHORT_BLADES, SK_LONG_BLADES, SK_AXES_HAMMERS, SK_MACES_STAVES, SK_WHIPS_FLAILS,
+                SK_UNARMED_COMBAT);
+        }
+        else
+            you.major_skill = random_choose(SK_LONG_BLADES, SK_AXES_HAMMERS, SK_MACES_STAVES, SK_WHIPS_FLAILS);
+    }
 }
 
 bool perma_mutate(mutation_type which_mut, int how_much, const string &reason)

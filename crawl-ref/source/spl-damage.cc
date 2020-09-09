@@ -27,6 +27,7 @@
 #include "fight.h"
 #include "food.h"
 #include "fprop.h"
+#include "god-abil.h"      // Silver Draconian EMPOWERED breath.
 #include "god-conduct.h"
 #include "invent.h"
 #include "item-prop.h"
@@ -468,6 +469,13 @@ static bool _drain_lifeable(const actor* agent, const actor* act)
              || mons && m && mons_atts_aligned(mons->attitude, m->attitude));
 }
 
+static bool _damageable(const actor *caster, const actor *act)
+{
+    return act != caster
+            && !(caster->deity() == GOD_FEDHAS
+                && fedhas_protects(act->as_monster()));
+}           
+
 static void _los_spell_pre_damage_monsters(const actor* agent,
                                            vector<monster *> affected_monsters,
                                            const char *verb)
@@ -518,13 +526,13 @@ static int _los_spell_damage_player(actor* agent, bolt &beam,
         {
             ouch(hurted, KILLED_BY_BEAM, agent->mid,
                  make_stringf("by %s", beam.name.c_str()).c_str(), true,
-                 agent->as_monster()->name(DESC_A).c_str());
+                 agent->as_monster()->name(DESC_A).c_str(), beam.flavour == BEAM_FIRE);
             you.expose_to_element(beam.flavour, 5);
             if (beam.origin_spell == SPELL_OZOCUBUS_REFRIGERATION && (player_res_cold() < 1))
                 slow_player(hurted);
         }
         // -harm from player casting Ozo's Refridge.
-        // we don't actually take damage, but can get slowed and lose potions
+        // we don't actually take damage, but can get slowed
         else if (beam.origin_spell == SPELL_OZOCUBUS_REFRIGERATION)
         {
             you.expose_to_element(beam.flavour, 5);
@@ -662,6 +670,17 @@ static spret _cast_los_attack_spell(spell_type spell, int pow,
             vulnerable = &_drain_lifeable;
             break;
 
+        case SPELL_EMPOWERED_BREATH:
+            player_msg = "You exhale a mighty gale!";
+            global_msg = ""; // Enemies can't get it anyways.
+            mons_vis_msg = "";
+            mons_invis_msg = "";
+            verb = "buffeted";
+            prompt_verb = "breathe mighty wind";
+            vulnerable = &_damageable;
+            break;
+
+
         case SPELL_SONIC_WAVE:
             player_msg = "You send a blast of sound all around you.";
             global_msg = "Something sends a blast of sound all around you.";
@@ -669,11 +688,7 @@ static spret _cast_los_attack_spell(spell_type spell, int pow,
             mons_invis_msg = "Sound blasts the surrounding area!";
             verb = "blasted";
             // prompt_verb = "sing" The singing sword prompts in melee-attack
-            vulnerable = [](const actor *caster, const actor *act) {
-                return act != caster
-                       && !(caster->deity() == GOD_FEDHAS
-                            && fedhas_protects(act->as_monster()));
-            };
+            vulnerable = &_damageable;
             break;
 
         default:
@@ -971,7 +986,7 @@ void cloud_strike(actor * caster, actor * foe, int damage)
 
     if (cloud == CLOUD_CHAOS)
     {
-        int x = random2(8);
+        int x = random2(9);
         switch (x)
         {
         case 0:
@@ -995,7 +1010,14 @@ void cloud_strike(actor * caster, actor * foe, int damage)
         default:
             cloud = CLOUD_HOLY;
         }
+    }
 
+    if (cloud == CLOUD_ROT)
+    {
+        if (foe->holiness() & (MH_UNDEAD | MH_NONLIVING))
+            cloud = CLOUD_ACID;
+        else
+            cloud = CLOUD_MIASMA;
     }
 
     switch (cloud)
@@ -2292,7 +2314,7 @@ static int _ignite_poison_player(coord_def where, beam_type damtype, int pow, ac
 
     ouch(damage, KILLED_BY_BEAM, agent->mid,
          (damtype == BEAM_FIRE) ? "by burning poison" : "by chaotically catalyzed poison", 
-         you.can_see(*agent), agent->as_monster()->name(DESC_A, true).c_str());
+         you.can_see(*agent), agent->as_monster()->name(DESC_A, true).c_str(), damtype == BEAM_FIRE);
     if (damage > 0)
     {
         you.expose_to_element(damtype, 2);
@@ -4022,7 +4044,7 @@ size_t shotgun_beam_count(int pow)
 }
 
 spret cast_scattershot(const actor *caster, int pow, const coord_def &pos,
-                            bool fail, zap_type zap)
+                            bool fail, zap_type zap, bool empowered)
 {
     const size_t range = spell_range(SPELL_SCATTERSHOT, pow);
     const size_t beam_count = shotgun_beam_count(pow);
@@ -4078,6 +4100,30 @@ spret cast_scattershot(const actor *caster, int pow, const coord_def &pos,
         monster* mons = monster_by_mid(it.first);
         if (!mons || !mons->alive() || !you.can_see(*mons))
             continue;
+
+        if (empowered)
+        {
+            switch (zap)
+            {
+            case ZAP_BREATHE_BONE:
+                impale_monster_with_barbs(mons, &you, "bone shards");
+                break;
+            case ZAP_BREATHE_METAL:
+                impale_monster_with_barbs(mons, &you, "metal splinters");
+                break;
+            case ZAP_BREATHE_SILVER:
+            {
+                int degree = max(max(1, mons->how_chaotic(true)), mons->how_unclean(false));
+                int check = div_rand_round(pow, 3) - mons->get_hit_dice();
+                check -= random2(5);
+                zin_eff effect = effect_for_prayer_type(RECITE_BREATH, check, 0, mons);
+                zin_affect(mons, effect, degree, RECITE_BREATH, pow);
+                break;
+            }
+            default:
+                break;
+            }
+        }
 
         print_wounds(*mons);
     }

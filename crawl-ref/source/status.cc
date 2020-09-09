@@ -209,6 +209,41 @@ bool fill_status_info(int status, status_info& inf)
         inf.light_text = make_stringf("Corr (%d)",
                           (-4 * you.props["corrosion_amount"].get_int()));
         break;
+    
+    case DUR_MOUNTED:
+    {
+        string longtxt = "You are mounted upon a ";
+        switch (you.mount)
+        {
+        case mount_type::none:
+            inf.light_colour = RED;
+            inf.long_text = inf.short_text = inf.light_text = "buggy mount";
+            break;
+        case mount_type::drake:
+            inf.light_colour = LIGHTCYAN;
+            longtxt += "rime drake.";
+            inf.long_text = longtxt;
+            inf.short_text = "drake mount";
+            inf.light_text = "drake";
+            break;
+        case mount_type::hydra:
+            inf.light_colour = LIGHTGREEN;
+            // BCADDO: Head count?
+            longtxt += "hydra.";
+            inf.long_text = longtxt;
+            inf.short_text = "hydra mount";
+            inf.light_text = "hydra";
+            break;
+        case mount_type::spider:
+            inf.light_colour = BROWN;
+            longtxt += "giant spider.";
+            inf.long_text = longtxt;
+            inf.short_text = "spider mount";
+            inf.light_text = "spider";
+            break;
+        }
+    }
+        break;
 
     case DUR_FLAYED:
         inf.light_text = make_stringf("Flay (%d)",

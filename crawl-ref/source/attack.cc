@@ -1564,7 +1564,7 @@ bool attack::apply_damage_brand(const char *what)
         && (brand == SPWPN_MOLTEN || brand == SPWPN_FREEZING
             || brand == SPWPN_HOLY_WRATH || brand == SPWPN_ANTIMAGIC
             || brand == SPWPN_VORPAL || brand == SPWPN_VAMPIRISM
-            || brand == SPWPN_SILVER))
+            || brand == SPWPN_SILVER || brand == SPWPN_DRAGON_SLAYING))
     {
         // These brands require some regular damage to function.
         return false;
@@ -1629,6 +1629,22 @@ bool attack::apply_damage_brand(const char *what)
 
     case SPWPN_SILVER:
         special_damage = silver_damages_victim(defender, damage_done, special_damage_message);
+        break;
+
+    case SPWPN_DRAGON_SLAYING:
+        if (defender->is_dragonkind())
+        {
+            special_damage = 1 + (random2(damage_done * 15) / 10);
+            if (defender_visible)
+            {
+                special_damage_message =
+                    make_stringf(
+                        "%s %s%s",
+                        defender->name(DESC_THE).c_str(),
+                        defender->conj_verb("convulse").c_str(),
+                        attack_strength_punctuation(special_damage).c_str());
+            }
+        }
         break;
 
     case SPWPN_VENOM:

@@ -563,6 +563,10 @@ static void _equip_weapon_effect(item_def& item, bool showMsgs, bool unmeld, equ
                         mpr("You see sparks fly.");
                     break;
 
+                case SPWPN_DRAGON_SLAYING:
+                    mpr("You feel a sudden desire to slay dragons!");
+                    break;
+
                 case SPWPN_VENOM:
                     mprf("%s begins to drip with poison!", item_name.c_str());
                     break;

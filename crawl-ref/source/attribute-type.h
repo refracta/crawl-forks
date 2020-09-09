@@ -100,5 +100,6 @@ enum attribute_type
     ATTR_DEATHS_DOOR_HP,       // How much HP we should have under Death's Door
     ATTR_SCRYING,              // Do we have X-Ray Vision?
     ATTR_STAFF_SHIELD,         // SH from a wielded enhancer staff. 
+    ATTR_STRIPPED_COLOUR,      // Lost draconian colour.
     NUM_ATTRIBUTES
 };

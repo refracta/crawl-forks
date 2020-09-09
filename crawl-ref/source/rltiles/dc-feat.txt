@@ -517,6 +517,15 @@ hep4
 hep5
 wu_jian DNGN_ALTAR_WU_JIAN
 bahamut_tiamat DNGN_ALTAR_BAHAMUT_TIAMAT
+bahamut_tiamat_lime
+bahamut_tiamat_cyan
+bahamut_tiamat_blue
+bahamut_tiamat_purple
+bahamut_tiamat_magenta
+bahamut_tiamat_red
+bahamut_tiamat_pink
+bahamut_tiamat_white
+bahamut_tiamat_silver
 ecumenical DNGN_ALTAR_ECUMENICAL
 unknown DNGN_UNKNOWN_ALTAR
 

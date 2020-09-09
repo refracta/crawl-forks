@@ -274,6 +274,7 @@ void ghost_demon::init_player_ghost()
     unwind_var<FixedBitVector<NUM_EQUIP>> melded(you.melded,
                                                  FixedBitVector<NUM_EQUIP>());
     unwind_var<bool> fishtail(you.fishtail, false);
+    unwind_var<mount_type> mount(you.mount, mount_type::none);
 
     name   = player_name();
     max_hp = min(get_real_hp(false, false), MAX_GHOST_HP);

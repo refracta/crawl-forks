@@ -950,7 +950,7 @@ enum monster_type                      // menv[].type
 
     MONS_FORMICID,
     MONS_FORMICID_DRONE,
-    MONS_FORMICID_VENOM_MAGE,
+    MONS_SPHINX_MOTH,
 
     MONS_RAIJU,
 

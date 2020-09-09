@@ -1344,7 +1344,7 @@ void wind_blast(actor* agent, int pow, coord_def target, int source)
         {
             mpr("You exhale a mighty gale!");
         }
-        else
+        else if (source != 3) // No message for source = 3 since it's messaged earlier.
         {
             if (pow > 120)
                 mprf("A mighty gale blasts forth from the %s!", s.c_str());

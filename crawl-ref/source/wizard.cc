@@ -133,7 +133,7 @@ static void _do_wizard_command(int wiz_command)
     case 'P': debug_place_map(true); break;
     case CONTROL('P'): wizard_list_props(); break;
 
-    // case 'q': break;
+    case 'q': wizard_drac_colour();  break;
     // case 'Q': break;
     case CONTROL('Q'): wizard_toggle_dprf(); break;
 
@@ -408,6 +408,7 @@ int list_wizard_commands(bool do_redraw_screen)
                        "<w>k</w>      change experience level and skills\n"
                        "<w>l</w>      change experience level\n"
                        "<w>Ctrl-P</w> list props\n"
+                       "<w>q</w>      change draconian colour\n"
                        "<w>r</w>      change character's species\n"
                        "<w>s</w>      set skill to level\n"
                        "<w>x</w>      gain an experience level\n"

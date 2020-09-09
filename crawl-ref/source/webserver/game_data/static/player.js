@@ -384,6 +384,7 @@ function ($, comm, enums, map_knowledge, messages, options) {
             $("#stats_real_hp_max").text("(" + player.real_hp_max + ")");
         else
             $("#stats_real_hp_max").text("");
+      
 
         if (player.species == "Deep Dwarf" && player.dd_real_mp_max != player.mp_max)
             $("#stats_dd_real_mp_max").text("(" + player.dd_real_mp_max + ")");

@@ -12,6 +12,7 @@
 #include <queue>
 #include <sstream>
 
+#include "ability.h"
 #include "act-iter.h"
 #include "areas.h"
 #include "artefact.h"
@@ -156,7 +157,7 @@ bool bless_weapon(god_type god, brand_type brand, colour_t colour)
 
     item_def& wpn(you.inv[item_slot]);
     // Only TSO allows blessing ranged weapons.
-    if (!is_brandable_weapon(wpn, brand == SPWPN_HOLY_WRATH, true))
+    if (!is_brandable_weapon(wpn, (brand == SPWPN_HOLY_WRATH || brand == SPWPN_DRAGON_SLAYING), true))
         return false;
 
     if (get_weapon_brand(wpn) == brand)
@@ -168,7 +169,9 @@ bool bless_weapon(god_type god, brand_type brand, colour_t colour)
         prompt += "bloodied with pain";
     else if (brand == SPWPN_DISTORTION)
         prompt += "corrupted with distortion";
-    else
+    else if (brand == SPWPN_DRAGON_SLAYING)
+        prompt += "augmented with dragon slaying";
+    else //if (brand == SPWPN_HOLY_WRATH)
         prompt += "blessed with holy wrath";
     prompt += "?";
     if (!yesno(prompt.c_str(), true, 'n'))
@@ -228,6 +231,7 @@ bool bless_weapon(god_type god, brand_type brand, colour_t colour)
             if (!one_chance_in(4))
                 maybe_bloodify_square(*ri);
     }
+    // BCADDO: There should be something cooler on disto from Lugonu.
 
 #ifndef USE_TILE_LOCAL
     // Allow extra time for the flash to linger.
@@ -816,24 +820,410 @@ int zin_check_recite_to_monsters(bool quiet)
         return 1; // We just recite against everything.
 }
 
-enum class zin_eff
+zin_eff effect_for_prayer_type(recite_type prayertype, int check, int degree, monster * mon)
 {
-    nothing,
-    daze,
-    confuse,
-    cause_fear,
-    smite,
-    blind,
-    silver_candle,
-    antimagic,
-    mute,
-    mad,
-    dumb,
-    ignite_chaos,
-    saltify,
-    rot,
-    holy_word,
-};
+    if (prayertype == RECITE_BREATH)
+    {
+        if (mon->how_chaotic(true))
+            prayertype = RECITE_CHAOTIC;
+        else if (mon->how_unclean(false))
+            prayertype = RECITE_IMPURE;
+        else
+        {
+            prayertype = RECITE_HERETIC;
+            degree = coinflip();
+        }
+    }
+
+    switch (prayertype)
+    {
+    case RECITE_HERETIC:
+        if (degree == 1)
+        {
+            if (mon->asleep())
+                break;
+            // This is the path for 'conversion' effects.
+            // Their degree is only 1 if they weren't a priest,
+            // a worshiper of an evil or chaotic god, etc.
+
+            // Right now, it only has the 'failed conversion' effects, though.
+            // This branch can't hit sleeping monsters - until they wake up.
+
+            if (check < 5)
+                return zin_eff::daze;
+            else if (check < 10)
+            {
+                if (coinflip())
+                    return zin_eff::confuse;
+                else
+                    return zin_eff::daze;
+            }
+            else if (check < 15)
+                return zin_eff::confuse;
+            else
+            {
+                if (one_chance_in(3))
+                    return zin_eff::cause_fear;
+                else
+                    return zin_eff::confuse;
+            }
+        }
+        else
+        {
+            // This is the path for 'smiting' effects.
+            // Their degree is only greater than 1 if
+            // they're unable to be redeemed.
+            if (check < 5)
+            {
+                if (coinflip())
+                    return zin_eff::confuse;
+                else
+                    return zin_eff::smite;
+            }
+            else if (check < 10)
+            {
+                if (one_chance_in(3))
+                    return zin_eff::blind;
+                else if (mon->antimagic_susceptible())
+                    return zin_eff::antimagic;
+                else
+                    return zin_eff::silver_candle;
+            }
+            else if (check < 15)
+            {
+                if (one_chance_in(3))
+                    return zin_eff::blind;
+                else if (coinflip())
+                    return zin_eff::cause_fear;
+                else
+                    return zin_eff::mute;
+            }
+            else
+            {
+                if (coinflip())
+                    return zin_eff::mad;
+                else
+                    return zin_eff::dumb;
+            }
+        }
+        break;
+
+    case RECITE_CHAOTIC:
+        if (check < 5)
+        {
+            // nastier -- fallthrough if immune
+            if (coinflip() && mon->res_rotting() <= 1)
+                return zin_eff::rot;
+            else
+                return zin_eff::smite;
+        }
+        else if (check < 10)
+        {
+            if (coinflip())
+                return zin_eff::silver_candle;
+            else
+                return zin_eff::smite;
+        }
+        else if (check < 15)
+        {
+            if (coinflip())
+                return zin_eff::ignite_chaos;
+            else
+                return zin_eff::silver_candle;
+        }
+        else
+            return zin_eff::saltify;
+        break;
+
+    case RECITE_IMPURE:
+        // Many creatures normally resistant to rotting are still affected,
+        // because this is divine punishment. Those with no real flesh are
+        // immune, of course.
+        if (check < 5)
+        {
+            if (coinflip() && mon->res_rotting() <= 1)
+                return zin_eff::rot;
+            else
+                return zin_eff::smite;
+        }
+        else if (check < 10)
+        {
+            if (coinflip())
+                return zin_eff::smite;
+            else
+                return zin_eff::silver_candle;
+        }
+        else if (check < 15)
+        {
+            if (mon->undead_or_demonic() && coinflip())
+                return zin_eff::holy_word;
+            else
+                return zin_eff::silver_candle;
+        }
+        else
+            return zin_eff::saltify;
+        break;
+
+    case RECITE_UNHOLY:
+        if (check < 5)
+        {
+            if (coinflip())
+                return zin_eff::daze;
+            else
+                return zin_eff::confuse;
+        }
+        else if (check < 10)
+        {
+            if (coinflip())
+                return zin_eff::confuse;
+            else
+                return zin_eff::silver_candle;
+        }
+        // Half of the time, the anti-unholy prayer will be capped at this
+        // level of effect.
+        else if (check < 15 || coinflip())
+        {
+            if (coinflip())
+                return zin_eff::holy_word;
+            else
+                return zin_eff::silver_candle;
+        }
+        else
+            return zin_eff::saltify;
+        break;
+
+    case RECITE_BREATH:
+    case NUM_RECITE_TYPES:
+        die("invalid recite type");
+    }
+
+    return zin_eff::nothing;
+}
+
+bool zin_affect(monster * mon, zin_eff effect, int degree, recite_type prayertype, int power)
+{
+    bool minor = degree <= (prayertype == RECITE_HERETIC ? 2 : 1);
+    const int spellpower = power * 2 + degree * 20;
+
+    switch (effect)
+    {
+    case zin_eff::nothing:
+        break;
+
+    case zin_eff::daze:
+        if (mon->add_ench(mon_enchant(ENCH_DAZED, degree, &you,
+            (degree + random2(spellpower)) * BASELINE_DELAY)))
+        {
+            if (prayertype == RECITE_BREATH)
+                simple_monster_message(*mon, " is dazed by blessed breath.");
+            else
+                simple_monster_message(*mon, " is dazed by your recitation.");
+            return true;
+        }
+        break;
+
+    case zin_eff::confuse:
+        if (!mon->check_clarity()
+            && mon->add_ench(mon_enchant(ENCH_CONFUSION, degree, &you,
+            (degree + random2(spellpower)) * BASELINE_DELAY)))
+        {
+            if (prayertype == RECITE_HERETIC)
+                simple_monster_message(*mon, " is confused by your recitation.");
+            else
+                simple_monster_message(*mon, " stumbles about in disarray.");
+            return true;
+        }
+        break;
+
+    case zin_eff::cause_fear:
+        if (mon->add_ench(mon_enchant(ENCH_FEAR, 0, &you,
+            (degree + random2(spellpower)) * BASELINE_DELAY)))
+        {
+            if (prayertype == RECITE_BREATH)
+                simple_monster_message(*mon, " is afraid of the combined power of Bahamut and Zin.");
+            else 
+            {
+                simple_monster_message(*mon,
+                    minor ? " is afraid of the wrath of Zin."
+                          : " is terrified of your heretical recitation.");
+            }
+            return true;
+        }
+        break;
+
+    case zin_eff::smite:
+        if (prayertype == RECITE_BREATH)
+        {
+            if (coinflip())
+                simple_monster_message(*mon, " is smitten by the wrath of Bahamut.");
+            else
+                minor = true;
+        }
+        if (minor)
+            simple_monster_message(*mon, " is smitten by the wrath of Zin.");
+        else
+            simple_monster_message(*mon, " is blasted by the fury of Zin!");
+        // XXX: This duplicates code in cast_smiting().
+        mon->hurt(&you, 7 + (random2(spellpower) * 33 / 191));
+        if (mon->alive())
+            print_wounds(*mon);
+        return true;
+        break;
+
+    case zin_eff::blind:
+        if (mon->add_ench(mon_enchant(ENCH_BLIND, degree, &you, INFINITE_DURATION)))
+        {
+            if (prayertype == RECITE_BREATH)
+                simple_monster_message(*mon, " is struck blind by your blessed silver!");
+            else
+                simple_monster_message(*mon, " is struck blind by the wrath of Zin!");
+            return true;
+        }
+        break;
+
+    case zin_eff::silver_candle:
+        if (mon->add_ench(mon_enchant(ENCH_SILVER_CANDLE, degree, &you,
+            (degree + random2(spellpower)) * BASELINE_DELAY)))
+        {
+            mpr(make_stringf("A silvery candle appears, clearly marking %s.", mon->name(DESC_THE).c_str()));
+            return true;
+        }
+        break;
+
+    case zin_eff::antimagic:
+        ASSERT(prayertype == RECITE_HERETIC || prayertype == RECITE_BREATH);
+        if (mon->add_ench(mon_enchant(ENCH_ANTIMAGIC, degree, &you,
+            (degree + random2(spellpower)) * BASELINE_DELAY)))
+        {
+            if (prayertype == RECITE_BREATH)
+                simple_monster_message(*mon, " is stricken powerless by your blessed silver.");
+            else
+            {
+                simple_monster_message(*mon,
+                    minor ? " quails at your recitation."
+                          : " looks feeble and powerless before your recitation.");
+            }
+            return true;
+        }
+        break;
+
+    case zin_eff::mute:
+        if (mon->add_ench(mon_enchant(ENCH_MUTE, degree, &you, INFINITE_DURATION)))
+        {
+            if (prayertype == RECITE_BREATH)
+                simple_monster_message(*mon, " is stricken mute by your blessed silver.");
+            else
+                simple_monster_message(*mon, " is struck mute by the wrath of Zin!");
+            return true;
+        }
+        break;
+
+    case zin_eff::mad:
+        if (mon->add_ench(mon_enchant(ENCH_MAD, degree, &you, INFINITE_DURATION)))
+        {
+            if (prayertype == RECITE_BREATH)
+                simple_monster_message(*mon, " is driven mad by your blessed silver.");
+            else
+                simple_monster_message(*mon, " is driven mad by the wrath of Zin!");
+            return true;
+        }
+        break;
+
+    case zin_eff::dumb:
+        if (mon->add_ench(mon_enchant(ENCH_DUMB, degree, &you, INFINITE_DURATION)))
+        {
+            if (prayertype == RECITE_BREATH)
+                simple_monster_message(*mon, " is driven mad by your blessed silver.");
+            else
+                simple_monster_message(*mon, " is left stupefied by the wrath of Zin!");
+            return true;
+        }
+        break;
+
+    case zin_eff::ignite_chaos:
+        ASSERT(prayertype == RECITE_CHAOTIC || prayertype == RECITE_BREATH);
+        {
+            bolt beam;
+            dice_def dam_dice(0, 5 + spellpower / 7);  // Dice added below if applicable.
+            dam_dice.num = degree;
+
+            int damage = dam_dice.roll();
+            if (damage > 0)
+            {
+                mon->hurt(&you, damage, BEAM_MISSILE, KILLED_BY_BEAM,
+                    "", "", false);
+
+                if (mon->alive())
+                {
+                    simple_monster_message(*mon,
+                        (damage < 25) ? "'s chaotic flesh sizzles and spatters!" :
+                        (damage < 50) ? "'s chaotic flesh bubbles and boils."
+                        : "'s chaotic flesh runs like molten wax.");
+
+                    print_wounds(*mon);
+                    behaviour_event(mon, ME_WHACK, &you);
+                    return true;
+                }
+                else
+                {
+                    simple_monster_message(*mon,
+                        " melts away into a sizzling puddle of chaotic flesh.");
+                    monster_die(*mon, KILL_YOU, NON_MONSTER);
+                    return false;
+                }
+            }
+        }
+        break;
+
+    case zin_eff::saltify:
+        _zin_saltify(mon);
+        return false;
+        break;
+
+    case zin_eff::rot:
+        // FIXME: no message (other than "You kill X!") is produced if the
+        // rotting kills the monster.
+        if (mon->res_rotting() <= 1
+            && mon->rot(&you, 1 + roll_dice(2, degree), true))
+        {
+            mon->add_ench(mon_enchant(ENCH_SICK, degree, &you,
+                (degree + random2(spellpower)) * BASELINE_DELAY));
+
+            if (prayertype == RECITE_BREATH)
+            {
+                if (mon->how_chaotic(true))
+                    prayertype = RECITE_CHAOTIC;
+                else if (mon->how_unclean(false))
+                    prayertype = RECITE_CHAOTIC;
+            }
+
+            switch (prayertype)
+            {
+            case RECITE_CHAOTIC:
+                simple_monster_message(*mon,
+                    minor ? "'s chaotic flesh is covered in bleeding sores."
+                          : "'s chaotic flesh erupts into weeping sores!");
+                break;
+            case RECITE_IMPURE:
+                simple_monster_message(*mon,
+                    minor ? "'s impure flesh rots away."
+                          : "'s impure flesh sloughs off!");
+                break;
+
+            default:
+                die("bad recite rot");
+            }
+            return true;
+        }
+        break;
+
+    case zin_eff::holy_word:
+        holy_word_monsters(mon->pos(), spellpower, HOLY_WORD_ZIN, &you);
+        return true;
+        break;
+    }
+    return false;
+}
 
 bool zin_recite_to_single_monster(const coord_def& where)
 {
@@ -888,346 +1278,12 @@ bool zin_recite_to_single_monster(const coord_def& where)
 
     // To what degree are they eligible for this prayertype?
     const int degree = eligibility[prayertype];
-    const bool minor = degree <= (prayertype == RECITE_HERETIC ? 2 : 1);
-    const int spellpower = power * 2 + degree * 20;
-    zin_eff effect = zin_eff::nothing;
+    
+    zin_eff effect = effect_for_prayer_type(prayertype, check, degree, mon);
 
-    switch (prayertype)
-    {
-    case RECITE_HERETIC:
-        if (degree == 1)
-        {
-            if (mon->asleep())
-                break;
-            // This is the path for 'conversion' effects.
-            // Their degree is only 1 if they weren't a priest,
-            // a worshiper of an evil or chaotic god, etc.
-
-            // Right now, it only has the 'failed conversion' effects, though.
-            // This branch can't hit sleeping monsters - until they wake up.
-
-            if (check < 5)
-                effect = zin_eff::daze;
-            else if (check < 10)
-            {
-                if (coinflip())
-                    effect = zin_eff::confuse;
-                else
-                    effect = zin_eff::daze;
-            }
-            else if (check < 15)
-                effect = zin_eff::confuse;
-            else
-            {
-                if (one_chance_in(3))
-                    effect = zin_eff::cause_fear;
-                else
-                    effect = zin_eff::confuse;
-            }
-        }
-        else
-        {
-            // This is the path for 'smiting' effects.
-            // Their degree is only greater than 1 if
-            // they're unable to be redeemed.
-            if (check < 5)
-            {
-                if (coinflip())
-                    effect = zin_eff::confuse;
-                else
-                    effect = zin_eff::smite;
-            }
-            else if (check < 10)
-            {
-                if (one_chance_in(3))
-                    effect = zin_eff::blind;
-                else if (mon->antimagic_susceptible())
-                    effect = zin_eff::antimagic;
-                else
-                    effect = zin_eff::silver_candle;
-            }
-            else if (check < 15)
-            {
-                if (one_chance_in(3))
-                    effect = zin_eff::blind;
-                else if (coinflip())
-                    effect = zin_eff::cause_fear;
-                else
-                    effect = zin_eff::mute;
-            }
-            else
-            {
-                if (coinflip())
-                    effect = zin_eff::mad;
-                else
-                    effect = zin_eff::dumb;
-            }
-        }
-        break;
-
-    case RECITE_CHAOTIC:
-        if (check < 5)
-        {
-            // nastier -- fallthrough if immune
-            if (coinflip() && mon->res_rotting() <= 1)
-                effect = zin_eff::rot;
-            else
-                effect = zin_eff::smite;
-        }
-        else if (check < 10)
-        {
-            if (coinflip())
-                effect = zin_eff::silver_candle;
-            else
-                effect = zin_eff::smite;
-        }
-        else if (check < 15)
-        {
-            if (coinflip())
-                effect = zin_eff::ignite_chaos;
-            else
-                effect = zin_eff::silver_candle;
-        }
-        else
-            effect = zin_eff::saltify;
-        break;
-
-    case RECITE_IMPURE:
-        // Many creatures normally resistant to rotting are still affected,
-        // because this is divine punishment. Those with no real flesh are
-        // immune, of course.
-        if (check < 5)
-        {
-            if (coinflip() && mon->res_rotting() <= 1)
-                effect = zin_eff::rot;
-            else
-                effect = zin_eff::smite;
-        }
-        else if (check < 10)
-        {
-            if (coinflip())
-                effect = zin_eff::smite;
-            else
-                effect = zin_eff::silver_candle;
-        }
-        else if (check < 15)
-        {
-            if (mon->undead_or_demonic() && coinflip())
-                effect = zin_eff::holy_word;
-            else
-                effect = zin_eff::silver_candle;
-        }
-        else
-            effect = zin_eff::saltify;
-        break;
-
-    case RECITE_UNHOLY:
-        if (check < 5)
-        {
-            if (coinflip())
-                effect = zin_eff::daze;
-            else
-                effect = zin_eff::confuse;
-        }
-        else if (check < 10)
-        {
-            if (coinflip())
-                effect = zin_eff::confuse;
-            else
-                effect = zin_eff::silver_candle;
-        }
-        // Half of the time, the anti-unholy prayer will be capped at this
-        // level of effect.
-        else if (check < 15 || coinflip())
-        {
-            if (coinflip())
-                effect = zin_eff::holy_word;
-            else
-                effect = zin_eff::silver_candle;
-        }
-        else
-            effect = zin_eff::saltify;
-        break;
-
-    case NUM_RECITE_TYPES:
-        die("invalid recite type");
-    }
+    affected = zin_affect(mon, effect, degree, prayertype, power);
 
     // And the actual effects...
-    switch (effect)
-    {
-    case zin_eff::nothing:
-        break;
-
-    case zin_eff::daze:
-        if (mon->add_ench(mon_enchant(ENCH_DAZED, degree, &you,
-                          (degree + random2(spellpower)) * BASELINE_DELAY)))
-        {
-            simple_monster_message(*mon, " is dazed by your recitation.");
-            affected = true;
-        }
-        break;
-
-    case zin_eff::confuse:
-        if (!mon->check_clarity()
-            && mon->add_ench(mon_enchant(ENCH_CONFUSION, degree, &you,
-                             (degree + random2(spellpower)) * BASELINE_DELAY)))
-        {
-            if (prayertype == RECITE_HERETIC)
-                simple_monster_message(*mon, " is confused by your recitation.");
-            else
-                simple_monster_message(*mon, " stumbles about in disarray.");
-            affected = true;
-        }
-        break;
-
-    case zin_eff::cause_fear:
-        if (mon->add_ench(mon_enchant(ENCH_FEAR, 0, &you,
-                          (degree + random2(spellpower)) * BASELINE_DELAY)))
-        {
-            simple_monster_message(*mon,
-                minor ? " is afraid of the wrath of Zin."
-                      : " is terrified of your heretical recitation.");
-            affected = true;
-        }
-        break;
-
-    case zin_eff::smite:
-        if (minor)
-            simple_monster_message(*mon, " is smitten by the wrath of Zin.");
-        else
-            simple_monster_message(*mon, " is blasted by the fury of Zin!");
-        // XXX: This duplicates code in cast_smiting().
-        mon->hurt(&you, 7 + (random2(spellpower) * 33 / 191));
-        if (mon->alive())
-            print_wounds(*mon);
-        affected = true;
-        break;
-
-    case zin_eff::blind:
-        if (mon->add_ench(mon_enchant(ENCH_BLIND, degree, &you, INFINITE_DURATION)))
-        {
-            simple_monster_message(*mon, " is struck blind by the wrath of Zin!");
-            affected = true;
-        }
-        break;
-
-    case zin_eff::silver_candle:
-        if (mon->add_ench(mon_enchant(ENCH_SILVER_CANDLE, degree, &you,
-                          (degree + random2(spellpower)) * BASELINE_DELAY)))
-        {
-            mpr(make_stringf("A silvery candle appears, clearly marking %s.", mon->name(DESC_THE).c_str()));
-            affected = true;
-        }
-        break;
-
-    case zin_eff::antimagic:
-        ASSERT(prayertype == RECITE_HERETIC);
-        if (mon->add_ench(mon_enchant(ENCH_ANTIMAGIC, degree, &you,
-                          (degree + random2(spellpower)) * BASELINE_DELAY)))
-        {
-            simple_monster_message(*mon,
-                minor ? " quails at your recitation."
-                      : " looks feeble and powerless before your recitation.");
-            affected = true;
-        }
-        break;
-
-    case zin_eff::mute:
-        if (mon->add_ench(mon_enchant(ENCH_MUTE, degree, &you, INFINITE_DURATION)))
-        {
-            simple_monster_message(*mon, " is struck mute by the wrath of Zin!");
-            affected = true;
-        }
-        break;
-
-    case zin_eff::mad:
-        if (mon->add_ench(mon_enchant(ENCH_MAD, degree, &you, INFINITE_DURATION)))
-        {
-            simple_monster_message(*mon, " is driven mad by the wrath of Zin!");
-            affected = true;
-        }
-        break;
-
-    case zin_eff::dumb:
-        if (mon->add_ench(mon_enchant(ENCH_DUMB, degree, &you, INFINITE_DURATION)))
-        {
-            simple_monster_message(*mon, " is left stupefied by the wrath of Zin!");
-            affected = true;
-        }
-        break;
-
-    case zin_eff::ignite_chaos:
-        ASSERT(prayertype == RECITE_CHAOTIC);
-        {
-            bolt beam;
-            dice_def dam_dice(0, 5 + spellpower/7);  // Dice added below if applicable.
-            dam_dice.num = degree;
-
-            int damage = dam_dice.roll();
-            if (damage > 0)
-            {
-                mon->hurt(&you, damage, BEAM_MISSILE, KILLED_BY_BEAM,
-                          "", "", false);
-
-                if (mon->alive())
-                {
-                    simple_monster_message(*mon,
-                      (damage < 25) ? "'s chaotic flesh sizzles and spatters!" :
-                      (damage < 50) ? "'s chaotic flesh bubbles and boils."
-                                    : "'s chaotic flesh runs like molten wax.");
-
-                    print_wounds(*mon);
-                    behaviour_event(mon, ME_WHACK, &you);
-                    affected = true;
-                }
-                else
-                {
-                    simple_monster_message(*mon,
-                        " melts away into a sizzling puddle of chaotic flesh.");
-                    monster_die(*mon, KILL_YOU, NON_MONSTER);
-                }
-            }
-        }
-        break;
-
-    case zin_eff::saltify:
-        _zin_saltify(mon);
-        break;
-
-    case zin_eff::rot:
-        // FIXME: no message (other than "You kill X!") is produced if the
-        // rotting kills the monster.
-        if (mon->res_rotting() <= 1
-            && mon->rot(&you, 1 + roll_dice(2, degree), true))
-        {
-            mon->add_ench(mon_enchant(ENCH_SICK, degree, &you,
-                          (degree + random2(spellpower)) * BASELINE_DELAY));
-            switch (prayertype)
-            {
-            case RECITE_CHAOTIC:
-                simple_monster_message(*mon,
-                    minor ? "'s chaotic flesh is covered in bleeding sores."
-                          : "'s chaotic flesh erupts into weeping sores!");
-                break;
-            case RECITE_IMPURE:
-                simple_monster_message(*mon,
-                    minor ? "'s impure flesh rots away."
-                          : "'s impure flesh sloughs off!");
-                break;
-
-            default:
-                die("bad recite rot");
-            }
-            affected = true;
-        }
-        break;
-
-    case zin_eff::holy_word:
-        holy_word_monsters(where, spellpower, HOLY_WORD_ZIN, &you);
-        affected = true;
-        break;
-    }
 
     // Recite time, to prevent monsters from being recited against
     // more than once in a given recite instance.
@@ -2085,32 +2141,40 @@ bool kiku_take_corpse()
     return false;
 }
 
-bool kiku_gift_necronomicon()
+bool final_book_gift(god_type god)
 {
-    ASSERT(can_do_capstone_ability(you.religion));
+    ASSERT(can_do_capstone_ability(god));
 
-    if (!yesno("Do you wish to receive a Necronomicon?", true, 'n'))
+    string prompt = make_stringf("Do you wish to receive a %s?", god == GOD_KIKUBAAQUDGHA ? "Necronomicon" : "Book of the Dragon");
+
+    if (!yesno(prompt.c_str(), true, 'n'))
     {
         canned_msg(MSG_OK);
         return false;
     }
-    int thing_created = items(true, OBJ_BOOKS, BOOK_NECRONOMICON, 1, 0,
-                              you.religion);
+    int thing_created = items(true, OBJ_BOOKS, god == GOD_KIKUBAAQUDGHA ? BOOK_NECRONOMICON : BOOK_DRAGON, 1, 0,
+                              god);
     if (thing_created == NON_ITEM
         || !move_item_to_grid(&thing_created, you.pos()))
     {
         return false;
     }
     set_ident_type(mitm[thing_created], true);
-    simple_god_message(" grants you a gift!");
-    flash_view(UA_PLAYER, RED);
+    if (god == GOD_BAHAMUT_TIAMAT)
+    {
+        mprf(MSGCH_GOD, "<lightgreen>Tiamat grants you a gift!</lightgreen>");
+        you.props[TIAMAT_BOOK_KEY] = true;
+    }
+    else
+        simple_god_message(" grants you a gift!");
+    flash_view(UA_PLAYER, god == GOD_KIKUBAAQUDGHA ? RED : LIGHTGREEN);
 #ifndef USE_TILE_LOCAL
     // Allow extra time for the flash to linger.
     scaled_delay(1000);
 #endif
     more();
-    you.one_time_ability_used.set(you.religion);
-    take_note(Note(NOTE_GOD_GIFT, you.religion));
+    you.one_time_ability_used.set(god);
+    take_note(Note(NOTE_GOD_GIFT, god));
     return true;
 }
 
@@ -7358,5 +7422,350 @@ spret wu_jian_wall_jump_ability()
 
     apply_barbs_damage();
     remove_ice_armour_movement();
+    return spret::success;
+}
+
+bool bahamut_tiamat_make_choice(ability_type abil)
+{
+    if (abil != ABIL_BAHAMUT_TRANSFORM)
+    {
+        if (!yesno("Are you sure you wish to pick this ability? Your choice is permanent.", false, 0))
+            return false;
+    }
+
+    switch (abil)
+    {
+    case ABIL_BAHAMUT_PROTECTION:
+        you.props[BAHAMUT_TIAMAT_CHOICE0_KEY] = true;
+        mprf(MSGCH_GOD, "Bahamut will now protect you.");
+        break;
+    case ABIL_TIAMAT_RETRIBUTION:
+        you.props[BAHAMUT_TIAMAT_CHOICE0_KEY] = false;
+        mprf(MSGCH_GOD, "Tiamat will now quicken your movements in response to powerful hits.");
+        break;
+    case ABIL_CHOOSE_BAHAMUT_BREATH:
+        you.props[BAHAMUT_TIAMAT_CHOICE1_KEY] = true;
+        mprf(MSGCH_GOD, "You may now call upon Bahamut to empower your breath power.");
+        break;
+    case ABIL_CHOOSE_TIAMAT_BREATH:
+        you.props[BAHAMUT_TIAMAT_CHOICE1_KEY] = false;
+        mprf(MSGCH_GOD, "You may new call upon Tiamat to allow you to choose a variety of breath "
+            "abilties to use in place of your own.");
+        break;
+    case ABIL_CHOOSE_BAHAMUT_DRAKE:
+        you.props[BAHAMUT_TIAMAT_CHOICE2_KEY] = true;
+        mprf(MSGCH_GOD, "You may now call upon Bahamut to summon a rime drake mount for you.");
+        break;
+    case ABIL_CHOOSE_TIAMAT_DRAKE:
+        you.props[BAHAMUT_TIAMAT_CHOICE2_KEY] = false;
+        mprf(MSGCH_GOD, "You may now call upon Tiamat to summon a horde of drakes into battle.");
+        break;
+    case ABIL_BAHAMUT_TRANSFORM:
+        if (bahamut_tiamat_transform(true, false) == spret::success)
+            you.props[BAHAMUT_TIAMAT_CHOICE3_KEY] = true;
+        break;
+    case ABIL_CHOOSE_TIAMAT_TRANSFORM:
+        you.props[BAHAMUT_TIAMAT_CHOICE3_KEY] = false;
+        mprf(MSGCH_GOD, "You may now call upon Tiamat to change your current draconian colour.");
+        break;
+    default:
+        mprf(MSGCH_ERROR, "BUG: Bad ability passed to Bahamut & Tiamat Choice function.");
+        break;
+    }
+
+    return true;
+}
+
+static ability_type _breath_for_skill(int skill, bool allow_escape)
+{
+    int pow = skill/9 + random2(skill);
+
+    // Only one of the three choices is allowed to be an "escape" ability; since these are non-damaging
+    // we don't want bad RNG leading to butterflies, wind, fog, afterall.
+    if (allow_escape && !one_chance_in(3))
+    {
+        if (pow > 20)
+            return ABIL_BREATHE_HOLY_FLAMES;
+
+        if (pow > 10)
+            return ABIL_BREATHE_BUTTERFLIES;
+
+        return random_choose(ABIL_BREATHE_FOG, ABIL_BREATHE_WIND);
+    }
+
+    // weighting radiation higher since the rest are useless on undead and that could be relevant sometimes.
+    if (one_chance_in(6) || pow > 20)
+    {
+        return random_choose_weighted(1, ABIL_BREATHE_GHOSTLY_FLAMES, 
+                                      3, ABIL_BREATHE_RADIATION, 
+                                      1, ABIL_BREATHE_BLOOD, 
+                                      2, ABIL_BREATHE_MIASMA,
+                                      1, ABIL_BREATHE_CHAOS);
+    }
+
+    if (one_chance_in(4) || pow > 10)
+        return random_choose(ABIL_BREATHE_ACID, ABIL_BREATHE_LIGHTNING, ABIL_BREATHE_POWER, ABIL_BREATHE_SILVER);
+
+    return random_choose(ABIL_BREATHE_FIRE, ABIL_BREATHE_FROST, ABIL_BREATHE_MEPHITIC, ABIL_BREATHE_DRAIN, ABIL_BREATHE_BONE);
+}
+
+static ability_type _random_breath(ability_type breaths[], bool allow_escape)
+{
+    ability_type retval = ABIL_NON_ABILITY;
+
+    while (retval == ABIL_NON_ABILITY || draconian_breath() == retval || breaths[0] == retval
+        || breaths[1] == retval)
+    {
+        retval = _breath_for_skill(apply_invo_enhancer(you.skill(SK_INVOCATIONS), false), allow_escape);
+    }
+
+    return retval;
+}
+
+spret bahamut_empowered_breath()
+{
+    if (you.drac_colour == DR_GOLDEN)
+        return tiamat_breath(ABIL_BREATHE_TRIPLE, true);
+    return tiamat_breath(draconian_breath(), true);
+}
+
+spret tiamat_choice_breath(bool fail)
+{
+    if (fail)
+    {
+        if (yesno("You fail to use your ability. Do you want to use your normal breath?", true, 1))
+            return tiamat_breath(draconian_breath());
+        return spret::fail;
+    }
+
+    int keyin = 0;
+    apply_invo_enhancer(0, true); // Just for the message.
+
+    ability_type breaths[3] = { ABIL_NON_ABILITY, ABIL_NON_ABILITY, ABIL_NON_ABILITY };
+
+    for (int i = 0; i < 3; i++)
+        breaths[i] = _random_breath(breaths, i == 2);
+
+    while (true)
+    {
+        if (crawl_state.seen_hups)
+            return spret::abort;
+
+        clear_messages();
+        mpr_nojoin(MSGCH_PROMPT, "Tiamat offers you a choice of breath powers.");
+        for (int i = 0; i < 3; i++)
+        {
+            string line = make_stringf("  [%c] - %s", i + 'a', ability_name(breaths[i]));
+            mpr_nojoin(MSGCH_PLAIN, line);
+        }
+        string last_line = make_stringf("  [d] - %s (your normal breath)", ability_name(draconian_breath()));
+        mpr_nojoin(MSGCH_PLAIN, last_line);
+        mprf(MSGCH_PROMPT, "Breathe what?");
+        keyin = toalower(get_ch()) - 'a';
+        if (keyin < 0 || keyin > 3)
+            continue;
+
+        break;
+    }
+
+    bool loop = true;
+    ability_type breath = ABIL_NON_ABILITY;
+
+    if (keyin == 3)
+        breath = draconian_breath();
+    else
+        breath = breaths[keyin];
+
+    while (loop)
+    {
+        spret breath_result = tiamat_breath(breath);
+        if (breath_result == spret::success)
+            loop = false;
+        else if (yesno("Really abort? (And waste your turn, MP and piety)?", true, 0))
+            loop = false;
+    }
+
+    return spret::success;
+}
+
+static draconian_colour _random_common_colour(draconian_colour cols[])
+{
+    draconian_colour retval = DR_BROWN;
+
+    while (retval == DR_BROWN || you.drac_colour == retval || cols[0] == retval
+        || cols[1] == retval)
+    {
+        retval = random_choose(DR_BLACK, DR_BLUE, DR_CYAN, DR_GREEN, DR_LIME, 
+            DR_MAGENTA, DR_PINK, DR_PURPLE, DR_RED, DR_SILVER, DR_SCINTILLATING, DR_WHITE);
+    }
+
+    return retval;
+}
+
+static string _name_from_colour(draconian_colour col)
+{
+    switch (col)
+    {
+                                 //"Colour:             Skills/Enhancers:          Resist:            Breath:";
+    case DR_BLACK:          return "Black               Necromancy                 Stealth            Draining Bolt";
+    case DR_BLOOD:          return "Blood               Necromancy, Hexes, Air     rTorm, rHellfire   Vampiric Fog";
+    case DR_BLUE:           return "Blue                Air                        rElec              Lightning Bolt";
+    case DR_BONE:           return "Bone (no Potions)   Charms, Earth              AC++               Bone Shards";
+    case DR_CYAN:           return "Cyan                Translocations             rAir, rCloud       Wind Blast";
+    case DR_GOLDEN:         return "Golden              Fire, Ice, Poison          rF+, rC+, rPois    Triple Breath";
+    case DR_GREEN:          return "Green               Poison                     rPois              Mephritic Cloud";
+    case DR_LIME:           return "Lime                Transmutations             rCorr              Acid Spit";
+    case DR_MAGENTA:        return "Magenta             Charms                     rMsl               Fog";
+    case DR_OLIVE:          return "Olive (no Potions)  Poison, Air                rMut (less rot)    Foul Miasma";
+    case DR_PEARL:          return "Pearl               Charms, Summon, Earth      rN+++, AC+         Holy Flames";
+    case DR_PINK:           return "Pink                Summonings                 clarity            Butterflies";
+    case DR_PLATINUM:       return "Platinum            Translo, Transmut, Hexes   Fast, rMut         Radiation Blast";
+    case DR_PURPLE:         return "Purple              Hexes                      MR++               Dispelling Energy";
+    case DR_RED:            return "Red                 Fire                       rF+                Searing Flames";
+    case DR_SCINTILLATING:  return "Scintillating       All (chaotically)          Any (chaos)        Bolt of Chaos";
+    case DR_SILVER:         return "Silver              Earth                      rMut, AC+          Silver Fragments";
+    case DR_TEAL:           return "Teal                Translo, Transmu           Insubstantial      Spectral Mist";
+    case DR_WHITE:          return "White               Ice                        rC+                Chilling Bolt";
+    default: case DR_BROWN: break; // Immature shouldn't come up here;
+    }
+
+    return "Buggy";
+}
+
+spret bahamut_tiamat_transform(bool bahamut, bool fail)
+{
+    string colour_names[3] = { "buggy", "buggy", "buggy" };
+    draconian_colour colours[3] = { DR_BROWN, DR_BROWN, DR_BROWN };
+
+    // Perma-transform always shows the same list based on your current colour
+    if (bahamut)
+    {
+        switch (you.drac_colour)
+        {
+        case DR_RED:
+            colours[0] = DR_GOLDEN;
+            colours[1] = DR_BLOOD;
+            colours[2] = DR_OLIVE;
+            break;
+        case DR_BLACK:
+            colours[0] = DR_BLOOD;
+            colours[1] = DR_PEARL;
+            colours[2] = DR_TEAL;
+            break;
+        case DR_BLUE:
+            colours[0] = DR_BLOOD;
+            colours[1] = DR_PLATINUM;
+            colours[2] = DR_OLIVE;
+            break;
+        case DR_CYAN:
+            colours[0] = DR_PLATINUM;
+            colours[1] = DR_GOLDEN;
+            colours[2] = DR_TEAL;
+            break;
+        case DR_GREEN:
+            colours[0] = DR_GOLDEN;
+            colours[1] = DR_BLOOD;
+            colours[2] = DR_OLIVE;
+            break;
+        case DR_LIME:
+            colours[0] = DR_PLATINUM;
+            colours[1] = DR_PEARL;
+            colours[2] = DR_TEAL;
+            break;
+        case DR_MAGENTA:
+            colours[0] = DR_PEARL;
+            colours[1] = DR_PLATINUM;
+            colours[2] = DR_BONE;
+            break;
+        case DR_PINK:
+            colours[0] = DR_PEARL;
+            colours[1] = DR_GOLDEN;
+            colours[2] = DR_BONE;
+            break;
+        case DR_PURPLE:
+            colours[0] = DR_PLATINUM;
+            colours[1] = DR_BLOOD;
+            colours[2] = DR_OLIVE;
+            break;
+        case DR_SCINTILLATING:
+            colours[0] = DR_BLOOD;
+            colours[1] = DR_GOLDEN;
+            colours[2] = DR_TEAL;
+            break;
+        case DR_SILVER:
+            colours[0] = DR_PEARL;
+            colours[1] = DR_PLATINUM;
+            colours[2] = DR_BONE;
+            break;
+        case DR_WHITE:
+            colours[0] = DR_GOLDEN;
+            colours[1] = DR_PEARL;
+            colours[2] = DR_BONE;
+            break;
+        default: // Already undead
+            colours[0] = DR_GOLDEN;
+            colours[1] = DR_BLOOD;
+            if (you.drac_colour == DR_TEAL)
+                colours[2] = DR_BONE;
+            else
+                colours[2] = DR_TEAL;
+            break;
+        }
+    }
+
+    // Repeatable transform makes a new list everytime.
+    else
+        for (int i = 0; i < 3; i++)
+            colours[i] = _random_common_colour(colours);
+
+    for (int i = 0; i < 3; i++)
+        colour_names[i] = _name_from_colour(colours[i]);
+
+    int keyin = 0;
+
+    while (true)
+    {
+        if (crawl_state.seen_hups)
+            return spret::abort;
+
+        clear_messages();
+        string header = "        Colour:             Skills/Enhancers:          Resist:            Breath:";
+        mpr_nojoin(MSGCH_PROMPT, header);
+        for (int i = 0; i < 3; i++)
+        {
+            string line = make_stringf("  [%c] - %s", i + 'a', colour_names[i].c_str());
+            mpr_nojoin(MSGCH_PLAIN, line);
+        }
+        if (bahamut)
+            mpr_nojoin(MSGCH_PLAIN, "  [d] - Cancel (Remain Current Colour)");
+        else
+            mpr_nojoin(MSGCH_PLAIN, "  [d] - Cancel (Remain Current Colour). This still expends the piety cost.");
+        mprf(MSGCH_PROMPT, "Transform into which colour?");
+        keyin = toalower(get_ch()) - 'a';
+        if (keyin < 0 || keyin > 3)
+            continue;
+
+        break;
+    }
+
+    if (keyin == 3)
+    {
+        clear_messages();
+        mpr("Transformation cancelled.");
+        if (bahamut)
+            return spret::abort;
+        return spret::success;
+    }
+
+    if (bahamut)
+    {
+        if (!yesno("Are you sure? Your choice is permanent.", false, 0))
+            return spret::abort;
+    }
+
+    fail_check();
+
+    change_drac_colour(colours[keyin]);
+
     return spret::success;
 }

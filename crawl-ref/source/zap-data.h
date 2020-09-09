@@ -811,6 +811,24 @@ _mon_hex_zap(ZAP_BANISHMENT, BEAM_BANISH, 150),
 },
 
 {
+    ZAP_BREATHE_TRIPLE,
+    "freezing flame",
+    200,
+    new dicedef_calculator<4, 4, 1, 3>,
+    new tohit_calculator<8, 1, 6>,
+    nullptr,
+    nullptr,
+    ETC_CRYSTAL,
+    false,
+    BEAM_PARADOXICAL,
+    DCHAR_FIRED_ZAP,
+    true,
+    true,
+    false,
+    7
+},
+
+{
     ZAP_BREATHE_LIGHTNING,
     "lightning breath",
     200,
@@ -1009,10 +1027,28 @@ _mon_hex_zap(ZAP_BANISHMENT, BEAM_BANISH, 150),
 },
 
 {
+    ZAP_BREATHE_ROT,
+    "vicious blight",
+    200,
+    new dicedef_calculator<2, 2, 1, 6>,
+    new tohit_calculator<6, 1, 6>,
+    nullptr,
+    nullptr,
+    LIGHTGREEN,
+    false,
+    BEAM_ROT,
+    DCHAR_FIRED_ZAP,
+    true,
+    true,
+    false,
+    7 // Explosion does the noise.
+},
+
+{
     ZAP_BREATHE_BUTTERFLY,
     "fairy dust",
     200,
-    new dicedef_calculator<3, 3, 1, 6>,
+    new dicedef_calculator<5, 4, 1, 3>,
     new tohit_calculator<AUTOMATIC_HIT>,
     nullptr,
     nullptr,
@@ -1777,6 +1813,25 @@ _mon_hex_zap(ZAP_DRAIN_MAGIC, BEAM_DRAIN_MAGIC),
     false,
     false,
     0 // No additional effect noise.
+},
+
+// Used only by CYAN's empowered breath
+{
+    ZAP_EMPOWERED_BREATH,
+    "wind blast",
+    200,
+    new calcdice_calculator<2, 4, 1, 6>,
+    new tohit_calculator<40>,
+    new calcdice_calculator<2, 4, 1, 6>,
+    new tohit_calculator<40>,
+    CYAN,
+    false,
+    BEAM_MMISSILE,
+    NUM_DCHAR_TYPES,
+    true,
+    false,
+    false,
+    2
 },
 
 {

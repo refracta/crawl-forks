@@ -31,7 +31,7 @@ KFEAT:  w = altar_wu_jian
 KFEAT:  y = altar_yredelemnul
 KFEAT:  z = altar_zin
 KFEAT:  1 = altar_the_shining_one
-KFEAT:  t = altar_ecumenical
+KFEAT:  t = altar_bahamut_and_tiamat
 ORIENT:  encompass
 PLACE: Start Temple
 

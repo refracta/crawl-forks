@@ -181,6 +181,20 @@ static int _etc_elemental(int, const coord_def& loc)
     }
 }
 
+// Cycles between Golden (Bahamut) and Jeweled (Tiamat).
+static int _etc_baha_tia(int, const coord_def& loc)
+{
+    int cycle = (you.elapsed_time / 200) % 2;
+    switch (cycle)
+    {
+    default:
+    case 0:
+        return element_colour(ETC_GOLD, false, loc);
+    case 1:
+        return element_colour(ETC_JEWEL, false, loc);
+    }
+}
+
 int get_disjunct_phase(const coord_def& loc)
 {
     static int turns = you.num_turns;
@@ -628,6 +642,9 @@ void init_element_colours()
                             }));
     add_element_colour(new element_colour_calc(
                             ETC_ELEMENTAL, "elemental", _etc_elemental
+                       ));
+    add_element_colour(new element_colour_calc(
+                            ETC_BAHA_TIA, "bahamut and tiamat", _etc_baha_tia
                        ));
     add_element_colour(new random_element_colour_calc(
                             ETC_INCARNADINE, "incarnadine",

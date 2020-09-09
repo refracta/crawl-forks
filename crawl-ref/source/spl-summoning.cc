@@ -528,6 +528,32 @@ void doom_howl(int time)
     }
 }
 
+void create_vortices(actor * caster)
+{
+    const int num = 3 + random2(5);
+
+    int count = 0;
+
+    for (int i = 0; i < num; i++)
+    {
+        coord_def pos = find_gateway_location(caster);
+
+        if (pos != coord_def(0, 0))
+        {
+            monster * x = create_monster(mgen_data(MONS_CHAOS_VORTEX, caster->is_player() ? BEH_FRIENDLY 
+                                            : SAME_ATTITUDE(caster->as_monster()), pos, MHITYOU));
+            if (x)
+            {
+                x->add_ench(mon_enchant(ENCH_FAKE_ABJURATION, 0, 0, (5 + random2(10)) * BASELINE_DELAY));
+                count++;
+            }
+        }
+    }
+
+    if (count)
+        mprf("The chaotic winds form %schaos vort%s.", count > 1 ? "" : "a ", count > 1 ? "ices" : "ex");
+}
+
 spret cast_summon_dragon(actor *caster, int pow, god_type god, bool fail)
 {
     // Dragons are always friendly. Dragon type depends on power and
@@ -687,6 +713,61 @@ bool summon_holy_warrior(int pow, bool punish)
 
     player_angers_monster(summon);
     return true;
+}
+
+static monster_type _pick_drake(int pow)
+{
+    int chance = random2(3 + pow);
+
+    if (chance > 24 || one_chance_in(6))
+        return MONS_ACID_DRAGON;
+    if (chance > 16 || one_chance_in(4))
+        return random_choose(MONS_DEATH_DRAKE, MONS_LINDWURM);
+    if (chance > 8 || one_chance_in(3))
+        return random_choose(MONS_WIND_DRAKE, MONS_RIME_DRAKE, MONS_SWAMP_DRAKE);
+    else
+        return MONS_WYVERN;
+}
+
+// Not a spell. Rather, this is Tiamat's doing.
+bool summon_drakes(int pow, bool punish)
+{
+    int amount = 2 + (random2(pow) / 9) + coinflip();
+    int summoned = 0;
+
+    for (int i = 0; i < amount; i++)
+    {
+        mgen_data mg(_pick_drake(pow),
+            punish ? BEH_HOSTILE : BEH_FRIENDLY,
+            you.pos(), MHITYOU, MG_FORCE_BEH | MG_AUTOFOE);
+        mg.set_summoned(punish ? 0 : &you,
+            punish ? 0 : min(2 + (random2(pow) / 4), 6),
+            SPELL_NO_SPELL, GOD_BAHAMUT_TIAMAT);
+
+        if (punish)
+        {
+            mg.extra_flags |= (MF_NO_REWARD | MF_HARD_RESET);
+            mg.non_actor_summoner = god_name(GOD_BAHAMUT_TIAMAT);
+        }
+
+        monster *summon = create_monster(mg);
+
+        if (!summon)
+            continue;
+        else
+            summoned++;
+
+        summon->flags |= MF_ATT_CHANGE_ATTEMPT;
+
+        player_angers_monster(summon);
+    }
+
+    if (!punish && summoned)
+        mpr("You call forth Tiamat's armies to fight for you.");
+
+    if (summoned)
+        return true;
+    return false;
 }
 
 /**

@@ -280,15 +280,15 @@ void fill_doll_equipment(dolls_data &result)
     case transformation::tree:
         if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
             result.parts[TILEP_PART_BASE] = TILEP_TRAN_TREE_SPECTRAL;
-        else 
-            result.parts[TILEP_PART_BASE]    = TILEP_TRAN_TREE;
-        result.parts[TILEP_PART_HELM]    = 0; // fixme, should show up
+        else
+            result.parts[TILEP_PART_BASE] = TILEP_TRAN_TREE;
+        result.parts[TILEP_PART_HELM] = 0; // fixme, should show up
         result.parts[TILEP_PART_DRCHEAD] = 0;
         result.parts[TILEP_PART_DRCWING] = 0;
-        result.parts[TILEP_PART_HAIR]    = 0;
-        result.parts[TILEP_PART_BEARD]   = 0;
-        result.parts[TILEP_PART_LEG]     = 0;
-        result.parts[TILEP_PART_SHADOW]  = 0;
+        result.parts[TILEP_PART_HAIR] = 0;
+        result.parts[TILEP_PART_BEARD] = 0;
+        result.parts[TILEP_PART_LEG] = 0;
+        result.parts[TILEP_PART_SHADOW] = 0;
         break;
     case transformation::statue:
         tileidx_t ch;
@@ -300,13 +300,13 @@ void fill_doll_equipment(dolls_data &result)
         case SP_OCTOPODE:ch = TILEP_TRAN_STATUE_OCTOPODE; break;
         default:         ch = TILEP_TRAN_STATUE_HUMANOID; break;
         }
-        result.parts[TILEP_PART_BASE]    = ch;
+        result.parts[TILEP_PART_BASE] = ch;
         if (you.species == SP_DRACONIAN)
             result.parts[TILEP_PART_DRCHEAD] = TILEP_DRCHEAD_STATUE;
         else
             result.parts[TILEP_PART_DRCHEAD] = 0;
-        result.parts[TILEP_PART_HAIR]    = 0;
-        result.parts[TILEP_PART_LEG]     = 0;
+        result.parts[TILEP_PART_HAIR] = 0;
+        result.parts[TILEP_PART_LEG] = 0;
         break;
     case transformation::lich:
         switch (you.species)
@@ -317,38 +317,39 @@ void fill_doll_equipment(dolls_data &result)
         case SP_OCTOPODE:ch = TILEP_TRAN_LICH_OCTOPODE; break;
         default:         ch = TILEP_TRAN_LICH_HUMANOID; break;
         }
-        result.parts[TILEP_PART_BASE]    = ch;
+        result.parts[TILEP_PART_BASE] = ch;
         result.parts[TILEP_PART_DRCHEAD] = 0;
-        result.parts[TILEP_PART_HAIR]    = 0;
-        result.parts[TILEP_PART_BEARD]   = 0;
-        result.parts[TILEP_PART_LEG]     = 0;
+        result.parts[TILEP_PART_HAIR] = 0;
+        result.parts[TILEP_PART_BEARD] = 0;
+        result.parts[TILEP_PART_LEG] = 0;
 
         // fixme: these should show up, but look ugly with the lich tile
-        result.parts[TILEP_PART_HELM]    = 0;
-        result.parts[TILEP_PART_BOOTS]   = 0;
-        result.parts[TILEP_PART_BODY]    = 0;
-        result.parts[TILEP_PART_ARM]     = 0;
-        result.parts[TILEP_PART_CLOAK]   = 0;
+        result.parts[TILEP_PART_HELM] = 0;
+        result.parts[TILEP_PART_BOOTS] = 0;
+        result.parts[TILEP_PART_BODY] = 0;
+        result.parts[TILEP_PART_ARM] = 0;
+        result.parts[TILEP_PART_CLOAK] = 0;
         break;
     default:
         // A monster tile is being used for the player.
         if (Options.tile_use_monster != MONS_0)
         {
-            result.parts[TILEP_PART_BASE]    = tileidx_player_mons();
+            result.parts[TILEP_PART_BASE] = tileidx_player_mons();
             result.parts[TILEP_PART_DRCHEAD] = 0;
-            result.parts[TILEP_PART_HAIR]    = 0;
-            result.parts[TILEP_PART_BEARD]   = 0;
-            result.parts[TILEP_PART_LEG]     = 0;
-            result.parts[TILEP_PART_HELM]    = 0;
-            result.parts[TILEP_PART_BOOTS]   = 0;
-            result.parts[TILEP_PART_BODY]    = 0;
-            result.parts[TILEP_PART_ARM]     = 0;
-            result.parts[TILEP_PART_CLOAK]   = 0;
+            result.parts[TILEP_PART_HAIR] = 0;
+            result.parts[TILEP_PART_BEARD] = 0;
+            result.parts[TILEP_PART_LEG] = 0;
+            result.parts[TILEP_PART_HELM] = 0;
+            result.parts[TILEP_PART_BOOTS] = 0;
+            result.parts[TILEP_PART_BODY] = 0;
+            result.parts[TILEP_PART_ARM] = 0;
+            result.parts[TILEP_PART_CLOAK] = 0;
         }
         break;
     }
 
     // Base tile.
+    // BCADDO: Edit this to make draconian colours show properly.
     if (result.parts[TILEP_PART_BASE] == TILEP_SHOW_EQUIP)
         tilep_race_default(you.species, you.experience_level, &result);
 
@@ -361,7 +362,7 @@ void fill_doll_equipment(dolls_data &result)
             if (is_player_tile(result.parts[TILEP_PART_BASE], TILEP_BASE_OCTOPODE))
                 result.parts[TILEP_PART_HAND1] = TILEP_HAND1_BLADEHAND_OP;
             else if (is_player_tile(result.parts[TILEP_PART_BASE], TILEP_BASE_FELID)
-                     || Options.tile_use_monster == MONS_NATASHA)
+                || Options.tile_use_monster == MONS_NATASHA)
                 result.parts[TILEP_PART_HAND1] = TILEP_HAND1_BLADEHAND_FE;
             else result.parts[TILEP_PART_HAND1] = TILEP_HAND1_BLADEHAND;
         }
@@ -379,7 +380,7 @@ void fill_doll_equipment(dolls_data &result)
             if (is_player_tile(result.parts[TILEP_PART_BASE], TILEP_BASE_OCTOPODE))
                 result.parts[TILEP_PART_HAND2] = TILEP_HAND1_BLADEHAND_OP;
             else if (is_player_tile(result.parts[TILEP_PART_BASE], TILEP_BASE_FELID)
-                     || Options.tile_use_monster == MONS_NATASHA)
+                || Options.tile_use_monster == MONS_NATASHA)
                 result.parts[TILEP_PART_HAND2] = TILEP_HAND1_BLADEHAND_FE;
             else result.parts[TILEP_PART_HAND2] = TILEP_HAND1_BLADEHAND;
         }
@@ -417,14 +418,14 @@ void fill_doll_equipment(dolls_data &result)
             if (you.species == SP_FELID)
             {
                 if (is_player_tile(result.parts[TILEP_PART_BASE],
-                                  TILEP_BASE_FELID))
+                    TILEP_BASE_FELID))
                 {
                     // Felid horns are offset by the tile variant.
                     result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS_CAT
                         + result.parts[TILEP_PART_BASE] - TILEP_BASE_FELID;
                 }
                 else if (is_player_tile(result.parts[TILEP_PART_BASE],
-                                  TILEP_TRAN_STATUE_FELID))
+                    TILEP_TRAN_STATUE_FELID))
                 {
                     result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS_CAT;
                 }
@@ -434,15 +435,15 @@ void fill_doll_equipment(dolls_data &result)
             else
                 switch (you.get_mutation_level(MUT_HORNS))
                 {
-                    case 1:
-                        result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS1;
-                        break;
-                    case 2:
-                        result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS2;
-                        break;
-                    case 3:
-                        result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS3;
-                        break;
+                case 1:
+                    result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS1;
+                    break;
+                case 2:
+                    result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS2;
+                    break;
+                case 3:
+                    result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS3;
+                    break;
                 }
         }
         else
@@ -495,7 +496,7 @@ void fill_doll_equipment(dolls_data &result)
         tileidx_t head = 0;
         tileidx_t wing = 0;
         tilep_draconian_init(you.species, you.experience_level,
-                             &base, &head, &wing);
+            &base, &head, &wing);
 
         if (result.parts[TILEP_PART_DRCHEAD] == TILEP_SHOW_EQUIP)
             result.parts[TILEP_PART_DRCHEAD] = head;
@@ -505,6 +506,30 @@ void fill_doll_equipment(dolls_data &result)
     // Shadow.
     if (result.parts[TILEP_PART_SHADOW] == TILEP_SHOW_EQUIP)
         result.parts[TILEP_PART_SHADOW] = TILEP_SHADOW_SHADOW;
+
+    // Mount Front
+    if (result.parts[TILEP_PART_MOUNT_FRONT] == TILEP_SHOW_EQUIP)
+    {
+        if (you.mounted())
+        {
+            if (you.mount == mount_type::drake)
+                result.parts[TILEP_PART_MOUNT_FRONT] = TILEP_MOUNT_FRONT_DRAKE;
+            else
+                result.parts[TILEP_PART_MOUNT_FRONT] = 0;
+        }
+    }
+
+    // Mount Back (Yes it's basically duplicated logic.)
+    if (result.parts[TILEP_PART_MOUNT_BACK] == TILEP_SHOW_EQUIP) 
+    {
+        if (you.mounted())
+        {
+            if (you.mount == mount_type::drake)
+                result.parts[TILEP_PART_MOUNT_BACK] = TILEP_MOUNT_BACK_DRAKE;
+            else
+                result.parts[TILEP_PART_MOUNT_BACK] = 0;
+        }
+    }
 
     // Various other slots.
     for (int i = 0; i < TILEP_PART_MAX; i++)
@@ -561,24 +586,24 @@ void pack_doll_buf(SubmergedTileBuffer& buf, const dolls_data &doll,
     // Ordered from back to front.
     int p_order[TILEP_PART_MAX] =
     {
-        // background
-        TILEP_PART_SHADOW,
-        TILEP_PART_HALO,
-        TILEP_PART_ENCH,
-        TILEP_PART_DRCWING,
-        TILEP_PART_CLOAK,
-        // player
-        TILEP_PART_BASE,
-        TILEP_PART_BOOTS,
-        TILEP_PART_LEG,
-        TILEP_PART_BODY,
-        TILEP_PART_ARM,
-        TILEP_PART_HAIR,
-        TILEP_PART_BEARD,
-        TILEP_PART_DRCHEAD,
-        TILEP_PART_HELM,
-        TILEP_PART_HAND1,
-        TILEP_PART_HAND2
+        TILEP_PART_SHADOW,      //  0
+        TILEP_PART_ENCH,        //  1
+        TILEP_PART_HALO,        //  2
+        TILEP_PART_DRCWING,     //  3
+        TILEP_PART_CLOAK,       //  4
+        TILEP_PART_MOUNT_BACK,  //  5
+        TILEP_PART_BASE,        //  6
+        TILEP_PART_BOOTS,       //  7
+        TILEP_PART_LEG,         //  8
+        TILEP_PART_BODY,        //  9
+        TILEP_PART_ARM,         // 10
+        TILEP_PART_HAIR,        // 11
+        TILEP_PART_BEARD,       // 12
+        TILEP_PART_DRCHEAD,     // 13
+        TILEP_PART_HELM,        // 14
+        TILEP_PART_HAND1,       // 15
+        TILEP_PART_HAND2,       // 16
+        TILEP_PART_MOUNT_FRONT, // 17
     };
 
     int flags[TILEP_PART_MAX];
@@ -587,8 +612,8 @@ void pack_doll_buf(SubmergedTileBuffer& buf, const dolls_data &doll,
     // For skirts, boots go under the leg armour. For pants, they go over.
     if (doll.parts[TILEP_PART_LEG] < TILEP_LEG_SKIRT_OFS)
     {
-        p_order[7] = TILEP_PART_BOOTS;
-        p_order[6] = TILEP_PART_LEG;
+        p_order[8] = TILEP_PART_BOOTS;
+        p_order[7] = TILEP_PART_LEG;
     }
 
     // Draw scarves above other clothing.
@@ -599,7 +624,8 @@ void pack_doll_buf(SubmergedTileBuffer& buf, const dolls_data &doll,
         p_order[6] = p_order[7];
         p_order[7] = p_order[8];
         p_order[8] = p_order[9];
-        p_order[9] = TILEP_PART_CLOAK;
+        p_order[9] = p_order[10];
+        p_order[10] = TILEP_PART_CLOAK;
     }
 
     // Special case bardings from being cut off.

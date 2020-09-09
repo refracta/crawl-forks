@@ -246,7 +246,7 @@ struct ability_def
 };
 
 static int _lookup_ability_slot(ability_type abil);
-static spret _do_ability(const ability_def& abil, bool fail);
+static spret _do_ability(const ability_def& abil, bool fail, bool empowered = false);
 static void _pay_ability_costs(const ability_def& abil);
 
 // The description screen was way out of date with the actual costs.
@@ -310,6 +310,8 @@ static const ability_def Ability_List[] =
       0, 0, 125, 0, {fail_basis::xl, 30, 1}, abflag::breath },
     { ABIL_BREATHE_DART, "Breathe Dart",
       0, 0, 125, 0, {fail_basis::xl, 30, 1}, abflag::breath },
+    { ABIL_BREATHE_TRIPLE, "Breathe Searing Ice",
+      0, 0, 125, 0, {fail_basis::xl, 30, 1}, abflag::breath }, // Placeholder; only used by a god power.
 
     { ABIL_TRAN_BAT, "Bat Form",
       2, 0, 0, 0, {fail_basis::xl, 45, 2}, abflag::starve_ok },
@@ -649,6 +651,40 @@ static const ability_def Ability_List[] =
     { ABIL_WU_JIAN_WALLJUMP, "Wall Jump",
         0, 0, 0, 0, {}, abflag::starve_ok | abflag::berserk_ok },
 
+    // Bahamut and Tiamat
+        // Choices
+    { ABIL_BAHAMUT_PROTECTION, "Choose Bahamut's Protection",
+        0, 0, 0, 0, { fail_basis::invo }, abflag::none },
+    { ABIL_TIAMAT_RETRIBUTION, "Choose Tiamat's Retribution",
+        0, 0, 0, 0, { fail_basis::invo }, abflag::none },
+    { ABIL_CHOOSE_BAHAMUT_BREATH, "Choose Bahamut's Refined Breath",
+        0, 0, 0, 0, { fail_basis::invo }, abflag::none },
+    { ABIL_CHOOSE_TIAMAT_BREATH, "Choose Tiamat's Adaptive Breath",
+        0, 0, 0, 0, { fail_basis::invo }, abflag::none },
+    { ABIL_CHOOSE_BAHAMUT_DRAKE, "Choose Bahamut's Drake Mount",
+        0, 0, 0, 0, { fail_basis::invo }, abflag::none },
+    { ABIL_CHOOSE_TIAMAT_DRAKE, "Choose Tiamat's Summon Drakes",
+        0, 0, 0, 0, { fail_basis::invo }, abflag::none },
+    { ABIL_BAHAMUT_TRANSFORM, "Choose Bahamut's Promotion",
+        0, 0, 0, 0, { fail_basis::invo }, abflag::none },
+    { ABIL_CHOOSE_TIAMAT_TRANSFORM, "Choose Tiamat's Transformation",
+        0, 0, 0, 0, { fail_basis::invo }, abflag::none },
+    { ABIL_BAHAMUT_DRAGONSLAYING, "Brand Weapon with Dragonslaying",
+        0, 0, 0, 0, { fail_basis::invo }, abflag::none },
+    { ABIL_TIAMAT_DRAGON_BOOK, "Receive Book of the Dragon",
+        0, 0, 0, 0, { fail_basis::invo }, abflag::none },
+        // Normal Actives
+    { ABIL_BAHAMUT_EMPOWERED_BREATH, "Enhanced Breath",
+        4, 0, 200, 4, { fail_basis::invo, 60, 5, 20 }, abflag::breath },
+    { ABIL_TIAMAT_ADAPTIVE_BREATH, "Adaptive Breath",
+        4, 0, 200, 4, { fail_basis::invo, 60, 5, 20 }, abflag::breath },
+    { ABIL_BAHAMUT_DRAKE_MOUNT, "Drake Mount",
+        7, 0, 500, 12, { fail_basis::invo, 90, 6, 10 }, abflag::none },
+    { ABIL_TIAMAT_SUMMON_DRAKES, "Summon Drakes",
+        7, 0, 500, 12, { fail_basis::invo, 90, 6, 10 }, abflag::none },
+    { ABIL_TIAMAT_TRANSFORM, "Change Draconian Colour",
+        4, 0, 500, 8, { fail_basis::invo, 120, 5, 10 }, abflag::none },
+
     { ABIL_STOP_RECALL, "Stop Recall", 0, 0, 0, 0, {fail_basis::invo}, abflag::starve_ok },
     { ABIL_RENOUNCE_RELIGION, "Renounce Religion",
       0, 0, 0, 0, {fail_basis::invo}, abflag::starve_ok | abflag::silence_ok },
@@ -814,10 +850,13 @@ const string make_cost_description(ability_type ability)
 
 // Ripped this out both because it's used a lot and because it will likely become more complicated 
 // later so keeping it centralized for all calls will make the later mutations easier.
-static int _drac_breath_power()
+int drac_breath_power(bool empowered)
 {
-    return (you.form == transformation::dragon) ? 2 * you.experience_level 
-                                                : you.experience_level;
+    int power =  (you.form == transformation::dragon) ? 2 * you.experience_level 
+                                                      : you.experience_level;
+    if (empowered)
+        power += you.skill(SK_INVOCATIONS);
+    return power;
 }
 
 static const string _detailed_cost_description(ability_type ability)
@@ -975,6 +1014,59 @@ ability_type fixup_ability(ability_type ability)
         else
             return ability;
 
+    // Can only make the choices once.
+    case ABIL_BAHAMUT_PROTECTION:
+    case ABIL_TIAMAT_RETRIBUTION:
+        if (you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY))
+            return ABIL_NON_ABILITY;
+        return ability;
+
+    case ABIL_CHOOSE_BAHAMUT_BREATH:
+    case ABIL_CHOOSE_TIAMAT_BREATH:
+        if (you.props.exists(BAHAMUT_TIAMAT_CHOICE1_KEY))
+            return ABIL_NON_ABILITY;
+        return ability;
+
+    case ABIL_CHOOSE_BAHAMUT_DRAKE:
+        // BCADDO: Reenable when you feel comfortable
+        return ABIL_NON_ABILITY;
+    case ABIL_CHOOSE_TIAMAT_DRAKE:
+        if (you.props.exists(BAHAMUT_TIAMAT_CHOICE2_KEY))
+            return ABIL_NON_ABILITY;
+        return ability;
+
+    case ABIL_BAHAMUT_TRANSFORM:
+    case ABIL_CHOOSE_TIAMAT_TRANSFORM:
+        if (you.experience_level < 7)
+            return ABIL_NON_ABILITY; // Probably impossible anyways but immature draconians shouldn't unlock this yet.
+        if (you.props.exists(BAHAMUT_TIAMAT_CHOICE3_KEY))
+            return ABIL_NON_ABILITY;
+        return ability;
+
+    // You only have one of the choice abilities.
+    case ABIL_BAHAMUT_EMPOWERED_BREATH:
+        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE1_KEY) || !you.props[BAHAMUT_TIAMAT_CHOICE1_KEY].get_bool())
+            return ABIL_NON_ABILITY;
+        return ability;
+    case ABIL_TIAMAT_ADAPTIVE_BREATH:
+        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE1_KEY) || you.props[BAHAMUT_TIAMAT_CHOICE1_KEY].get_bool())
+            return ABIL_NON_ABILITY;
+        return ability;
+
+    case ABIL_BAHAMUT_DRAKE_MOUNT:
+        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE2_KEY) || !you.props[BAHAMUT_TIAMAT_CHOICE2_KEY].get_bool())
+            return ABIL_NON_ABILITY;
+        return ability;
+    case ABIL_TIAMAT_SUMMON_DRAKES:
+        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE2_KEY) || you.props[BAHAMUT_TIAMAT_CHOICE2_KEY].get_bool())
+            return ABIL_NON_ABILITY;
+        return ability;
+
+    case ABIL_TIAMAT_TRANSFORM:
+        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE3_KEY) || you.props[BAHAMUT_TIAMAT_CHOICE3_KEY].get_bool())
+            return ABIL_NON_ABILITY;
+        return ability;
+
     default:
         return ability;
     }
@@ -1007,6 +1099,7 @@ static int _adjusted_failure_chance(ability_type ability, int base_chance)
     case ABIL_BREATHE_GHOSTLY_FLAMES:
     case ABIL_BREATHE_METAL:
     case ABIL_BREATHE_RADIATION:
+    case ABIL_BREATHE_TRIPLE:
         if (you.form == transformation::dragon)
             return base_chance - 20;
         return base_chance;
@@ -1544,6 +1637,8 @@ static bool _check_ability_possible(const ability_def& abil, bool quiet = false)
     case ABIL_BREATHE_GHOSTLY_FLAMES:
     case ABIL_BREATHE_METAL:
     case ABIL_BREATHE_RADIATION:
+    case ABIL_BAHAMUT_EMPOWERED_BREATH:
+    case ABIL_TIAMAT_ADAPTIVE_BREATH:
         if (you.duration[DUR_BREATH_WEAPON])
         {
             if (!quiet)
@@ -1780,6 +1875,7 @@ static int _calc_breath_ability_range(ability_type ability)
     case ABIL_BREATHE_BUTTERFLIES:
     case ABIL_BREATHE_HOLY_FLAMES:
     case ABIL_SPIT_POISON:
+    case ABIL_BREATHE_TRIPLE:
         range = 5;
         break;
     case ABIL_BREATHE_STEAM:
@@ -1829,16 +1925,44 @@ static bool _cleansing_flame_affects(const actor *act)
 
 bool previously_on = false;
 
+// This is a short circuit used by Tiamat's breath ability.
+spret tiamat_breath(const ability_type abil, const bool bahamut)
+{
+    const ability_def& ability = get_ability_def(abil);
+
+    return _do_ability(ability, false, bahamut);
+}
+
+static int _pois_res_multi(monster * mons)
+{
+    switch (mons->res_poison())
+    {
+    default:
+    case -1:
+        return 5;
+    case 0:
+        return 10;
+    case 1:
+        return 20;
+    case 2:
+        return 25;
+    case 3:
+        return 1000; // Arbitrarily high to be completely impossible to succeed.
+    }
+}
+
 /*
  * Use an ability.
  *
  * @param abil The actual ability used.
  * @param fail If true, the ability is doomed to fail, and spret::fail will
  * be returned if the ability is not spret::aborted.
+ * @param empowered used by Bahamut's empowered breath ability; causes the 
+ * called breath ability to be strongr than normal.
  * @returns Whether the spell succeeded (spret::success), failed (spret::fail),
  *  or was canceled (spret::abort). Never returns spret::none.
  */
-static spret _do_ability(const ability_def& abil, bool fail)
+static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
 {
     dist abild;
     bolt beam;
@@ -1933,18 +2057,19 @@ static spret _do_ability(const ability_def& abil, bool fail)
             break;
         }
 
-        const int power = div_rand_round(5 * _drac_breath_power(), 2);
+        const int power = div_rand_round(5 * drac_breath_power(empowered), 2);
 
         targeter_shotgun hitfunc(&you, shotgun_beam_count(power), beam.range);
         direction_chooser_args args;
         args.mode = TARG_HOSTILE;
         args.hitfunc = &hitfunc;
+        args.self = confirm_prompt_type::cancel;
         if (!spell_direction(abild, beam, &args))
             return spret::abort;
 
         fail_check();
 
-        spret s = cast_scattershot(&you, power, beam.target, false, zap);
+        spret s = cast_scattershot(&you, power, beam.target, false, zap, empowered);
 
         if (s == spret::success)
             you.increase_duration(DUR_BREATH_WEAPON,
@@ -1968,7 +2093,9 @@ static spret _do_ability(const ability_def& abil, bool fail)
         case ABIL_BREATHE_FOG:              cloud = CLOUD_PURPLE_SMOKE;     break;
         case ABIL_BREATHE_POISON:           cloud = CLOUD_POISON;           break;
         case ABIL_BREATHE_BLOOD:            cloud = CLOUD_BLOOD;            break;
-        case ABIL_BREATHE_MEPHITIC:         cloud = CLOUD_MEPHITIC;         break;
+        case ABIL_BREATHE_MEPHITIC:         empowered   ?   cloud = CLOUD_POISON
+                                                        :   cloud = CLOUD_MEPHITIC;
+                                                                            break;
         default:                            cloud = CLOUD_CHAOS;            break;  
         }
 
@@ -1986,10 +2113,14 @@ static spret _do_ability(const ability_def& abil, bool fail)
 
         fail_check();
 
-        int power = _drac_breath_power();
+        int power = drac_breath_power(empowered);
 
         if (abil.ability == ABIL_BREATHE_FOG)
-            mprf("You exhale a massive amount of fog.");
+        {
+            if (empowered)
+                mass_enchantment(ENCH_FEAR, power * 5, false);
+            mpr("You exhale a massive amount of fog.");
+        }
         else
         {
             mprf("You exhale a mighty wave of %s!",
@@ -2000,6 +2131,33 @@ static spret _do_ability(const ability_def& abil, bool fail)
         {
             if (entry.second <= 0)
                 continue;
+            if (empowered && monster_at(entry.first))
+            {
+                monster * mons = monster_at(entry.first);
+                if (cloud == CLOUD_BLOOD && x_chance_in_y(power, 
+                    mons->get_experience_level() * 2))
+                {
+                    mprf("You drain %s vigour!",
+                        mons->name(DESC_ITS).c_str());
+                    mons->slow_down(&you, power/5 + random2(power));
+                }
+                else if (cloud == CLOUD_POISON && x_chance_in_y(roll_dice(2, power), 
+                    mons->get_experience_level() * _pois_res_multi(mons) / 10))
+                {
+                    simple_monster_message(*mons, " chokes on the fumes.");
+                    mons->add_ench(mon_enchant(ENCH_CONFUSION, 0, &you, 
+                        (power/5 + random2(power)) * BASELINE_DELAY));
+                }
+                else if (cloud == CLOUD_SPECTRAL)
+                {
+                    int dam = 2 + div_rand_round(power, 6);
+                    dam = roll_dice(3, dam);
+                    dam = resist_adjust_damage(mons, BEAM_NEG, dam);
+                    mons->hurt(&you, dam, BEAM_NEG, KILLED_BY_DRAINING);
+                    if (mons->alive())
+                        mons->drain_exp(&you);
+                }
+            }
             place_cloud(cloud, entry.first,
                 max(5, random2avg(power, 3)),
                 &you, div_round_up(power, 10) - 1);
@@ -2029,7 +2187,10 @@ static spret _do_ability(const ability_def& abil, bool fail)
 
         fail_check();
 
-        zapping(ZAP_BREATHE_ACID, _drac_breath_power(),
+        if (empowered)
+            beam.origin_spell = SPELL_EMPOWERED_BREATH;
+
+        zapping(ZAP_BREATHE_ACID, drac_breath_power(empowered),
                 beam, false, "You spit a glob of acid.");
 
         you.increase_duration(DUR_BREATH_WEAPON,
@@ -2073,14 +2234,14 @@ static spret _do_ability(const ability_def& abil, bool fail)
         mpr("You breathe a wild blast of lightning!");
 
         bolt dam_beam;
-        zappy(ZAP_BREATHE_LIGHTNING, _drac_breath_power(), false, dam_beam);
+        int power = drac_breath_power(empowered);
+        zappy(ZAP_BREATHE_LIGHTNING, power, false, dam_beam);
 
         for (radius_iterator ri(you.pos(), 2, C_SQUARE, true); ri; ++ri)
         {
             actor *act = actor_at(*ri);
             if (act && act->alive())
             {
-
                 if (you.religion == GOD_FEDHAS && fedhas_protects(act->as_monster()))
                     simple_god_message(" protects your plant from harm.", GOD_FEDHAS);
                 else
@@ -2089,6 +2250,13 @@ static spret _do_ability(const ability_def& abil, bool fail)
                     dam_beam.in_explosion_phase = true;
                     dam_beam.explosion_affect_cell(*ri);
                 }
+            }
+            if (empowered && !cell_is_solid(*ri))
+            {
+                if (x_chance_in_y(power, 120))
+                    place_cloud(CLOUD_STORM, *ri, 8 + random2avg(power / 3, 2), &you, 2);
+                else if (x_chance_in_y(power, 90))
+                    place_cloud(CLOUD_RAIN, *ri, 8 + random2avg(power / 2, 2), &you, 1);
             }
         }
 
@@ -2101,7 +2269,16 @@ static spret _do_ability(const ability_def& abil, bool fail)
     {
         fail_check();
 
-        wind_blast(&you, _drac_breath_power() * 5, coord_def(), 2);
+        int power = drac_breath_power(empowered);
+
+        if (empowered)
+        {
+            spret local = fire_los_attack_spell(SPELL_EMPOWERED_BREATH, power, &you, nullptr, false);
+            if (local == spret::abort)
+                return spret::abort;
+        }
+
+        wind_blast(&you, power * 5, coord_def(), empowered ? 3 : 2);
 
         you.increase_duration(DUR_BREATH_WEAPON,
             3 + random2(10) + random2(30 - you.experience_level));
@@ -2120,6 +2297,7 @@ static spret _do_ability(const ability_def& abil, bool fail)
     case ABIL_BREATHE_BUTTERFLIES:
     case ABIL_BREATHE_CHAOS:
     case ABIL_BREATHE_RADIATION:
+    case ABIL_BREATHE_TRIPLE:
     {
         beam.range = _calc_breath_ability_range(abil.ability);
         
@@ -2133,12 +2311,17 @@ static spret _do_ability(const ability_def& abil, bool fail)
 
         string m;
         zap_type zap;
-        const int power = _drac_breath_power();
+        const int power = drac_breath_power(empowered);
 
         fail_check();
 
         switch (abil.ability)
         {
+        case ABIL_BREATHE_TRIPLE:
+            zap = ZAP_BREATHE_TRIPLE;
+            m   = "You expend all your breath powers at once!";
+            break;
+
         default:
         case ABIL_BREATHE_FIRE:
             zap = ZAP_BREATHE_FIRE;
@@ -2188,6 +2371,11 @@ static spret _do_ability(const ability_def& abil, bool fail)
         case ABIL_BREATHE_MIASMA:
             zap = ZAP_BREATHE_MIASMA;
             m   = "You exhale a noxious wave of foul miasma.";
+            if (empowered)
+            {
+                zap = ZAP_BREATHE_ROT;
+                m = "You exhale a vile wave of vicious blight.";
+            }
             break;
 
         case ABIL_BREATHE_DRAIN:
@@ -2202,8 +2390,67 @@ static spret _do_ability(const ability_def& abil, bool fail)
             break;
         }
 
+        if (empowered && zap != ZAP_BREATHE_CHAOS)
+            beam.origin_spell = SPELL_EMPOWERED_BREATH;
+
+        if (empowered && zap == ZAP_BREATHE_HOLY_FLAMES)
+        {
+            targeter_radius hitfunc(&you, LOS_NO_TRANS);
+
+            if (stop_attack_prompt(hitfunc, "let out a sacred roar",
+                [](const actor* monpopo)
+            {
+                return monpopo->undead_or_demonic();
+            },
+                nullptr, nullptr))
+            {
+                return spret::abort;
+            }
+
+            holy_word(power * 5, HOLY_WORD_BREATH, you.pos(), false, &you);
+        }
+
         if (zapping(zap, power, beam, true, m.c_str()) == spret::abort)
             return spret::abort;
+
+        if (empowered && zap == ZAP_BREATHE_CHAOS)
+            create_vortices(&you);
+
+        if (zap == ZAP_BREATHE_BUTTERFLY)
+        {
+            int extras = 2 + you.get_experience_level() / 9 + random2(4);
+            for (int i = 0; i < extras; i++)
+            {
+                monster_type butttype = empowered && x_chance_in_y(power, 120) ? MONS_SPHINX_MOTH : MONS_BUTTERFLY;
+
+                monster * butterfly = create_monster(mgen_data(butttype, BEH_COPY, you.pos(),
+                                                     MHITYOU).set_summoned(&you, 2, SPELL_NO_SPELL, GOD_NO_GOD));
+                
+                if (butterfly)
+                {
+                    for (adjacent_iterator ai(you.pos()); ai; ++ai)
+                    {
+                        if (!actor_at(*ai) && butterfly->is_habitable(*ai))
+                        {
+                            butterfly->move_to_pos(*ai);
+                            break;
+                        }
+                    }
+
+                    if (butttype == MONS_SPHINX_MOTH)
+                    {
+                        butterfly->set_hit_dice(3 + div_rand_round(power, 5));
+                        butterfly->max_hit_points = butterfly->hit_points = butterfly->max_hit_points * butterfly->get_hit_dice() / 10;
+                    }
+
+                    mon_enchant abj = butterfly->get_ench(ENCH_ABJ);
+
+                    // Matches the damage roll of the beam.
+                    abj.duration = (roll_dice(5, 4 + you.get_experience_level() / 3) * BASELINE_DELAY);
+                    butterfly->update_ench(abj);
+                }
+            }
+        }
 
         you.increase_duration(DUR_BREATH_WEAPON,
                       3 + random2(10) + random2(30 - you.experience_level));
@@ -2484,7 +2731,7 @@ static spret _do_ability(const ability_def& abil, bool fail)
     case ABIL_KIKU_GIFT_NECRONOMICON:
     {
         fail_check();
-        if (!kiku_gift_necronomicon())
+        if (!final_book_gift(GOD_KIKUBAAQUDGHA))
             return spret::abort;
         break;
     }
@@ -3281,6 +3528,51 @@ static spret _do_ability(const ability_def& abil, bool fail)
         fail_check();
         return wu_jian_wall_jump_ability();
 
+    case ABIL_BAHAMUT_PROTECTION:
+    case ABIL_TIAMAT_RETRIBUTION:
+    case ABIL_CHOOSE_BAHAMUT_BREATH:
+    case ABIL_CHOOSE_TIAMAT_BREATH:
+    case ABIL_CHOOSE_BAHAMUT_DRAKE:
+    case ABIL_CHOOSE_TIAMAT_DRAKE:
+    case ABIL_BAHAMUT_TRANSFORM:
+    case ABIL_CHOOSE_TIAMAT_TRANSFORM:
+        if (!bahamut_tiamat_make_choice(abil.ability))
+            return spret::abort;
+        break;
+
+    case ABIL_BAHAMUT_EMPOWERED_BREATH:
+        fail_check();
+        return bahamut_empowered_breath();
+
+    case ABIL_TIAMAT_ADAPTIVE_BREATH:
+        return tiamat_choice_breath(fail);
+
+    case ABIL_BAHAMUT_DRAKE_MOUNT:
+        return gain_mount(mount_type::drake, 0, fail);
+
+    case ABIL_TIAMAT_SUMMON_DRAKES:
+        fail_check();
+        if (summon_drakes(apply_invo_enhancer(you.skill(SK_INVOCATIONS), true), false))
+            return spret::success;
+        return spret::fail;
+
+    case ABIL_TIAMAT_TRANSFORM:
+        return (bahamut_tiamat_transform(false, fail));
+
+    case ABIL_BAHAMUT_DRAGONSLAYING:
+        fail_check();
+        mprf(MSGCH_GOD, "Bahamut will enhance one of your weapons.");
+        // included in default force_more_message
+        if (!bless_weapon(GOD_BAHAMUT_TIAMAT, SPWPN_DRAGON_SLAYING, YELLOW))
+            return spret::abort;
+        break;
+
+    case ABIL_TIAMAT_DRAGON_BOOK:
+        fail_check();
+        if (!final_book_gift(GOD_BAHAMUT_TIAMAT))
+            return spret::abort;
+        break;
+
     case ABIL_RENOUNCE_RELIGION:
         fail_check();
         if (yesno("Really renounce your faith, foregoing its fabulous benefits?",
@@ -3805,13 +4097,29 @@ int find_ability_slot(const ability_type abil, char firstletter)
     case ABIL_KIKU_GIFT_NECRONOMICON:
         first_slot = letter_to_index('N');
         break;
+    case ABIL_TIAMAT_DRAGON_BOOK:
+        first_slot = letter_to_index('D');
+        break;
     case ABIL_TSO_BLESS_WEAPON:
     case ABIL_KIKU_BLESS_WEAPON:
     case ABIL_LUGONU_BLESS_WEAPON:
+    case ABIL_BAHAMUT_DRAGONSLAYING:
         first_slot = letter_to_index('W');
         break;
     case ABIL_CONVERT_TO_BEOGH:
         first_slot = letter_to_index('Y');
+        break;
+    case ABIL_BAHAMUT_PROTECTION:
+    case ABIL_CHOOSE_BAHAMUT_BREATH:
+    case ABIL_CHOOSE_BAHAMUT_DRAKE:
+    case ABIL_BAHAMUT_TRANSFORM:
+        first_slot = letter_to_index('B');
+        break;
+    case ABIL_TIAMAT_RETRIBUTION:
+    case ABIL_CHOOSE_TIAMAT_BREATH:
+    case ABIL_CHOOSE_TIAMAT_DRAKE:
+    case ABIL_CHOOSE_TIAMAT_TRANSFORM:
+        first_slot = letter_to_index('T');
         break;
     case ABIL_RU_SACRIFICE_PURITY:
     case ABIL_RU_SACRIFICE_WORDS:
@@ -3890,6 +4198,7 @@ vector<ability_type> get_god_abilities(bool ignore_silence, bool ignore_piety,
                 abilities.push_back(ABIL_RU_APOCALYPSE);
         }
     }
+
     // XXX: should we check ignore_piety?
     if (you_worship(GOD_HEPLIAKLQANA)
         && piety_rank() >= 2 && !you.props.exists(HEPLIAKLQANA_ALLY_TYPE_KEY))

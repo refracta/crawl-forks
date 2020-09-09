@@ -261,7 +261,9 @@ void DollEditRegion::render()
         "Beard",
         "Helm",
         "DrcWing",
-        "DrcHead"
+        "DrcHead",
+        "MountF",
+        "MountB"
     };
 
     // Add current doll information:
@@ -469,6 +471,8 @@ void DollEditRegion::run()
                 case TILEP_PART_ENCH:
                 case TILEP_PART_DRCWING:
                 case TILEP_PART_DRCHEAD:
+                case TILEP_PART_MOUNT_FRONT:
+                case TILEP_PART_MOUNT_BACK:
                     break;
                 default:
                     m_dolls[m_doll_idx].parts[i] = 0;

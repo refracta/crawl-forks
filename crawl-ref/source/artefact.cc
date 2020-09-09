@@ -575,18 +575,21 @@ static void _add_randart_weapon_brand(const item_def &item,
             SPWPN_ELECTROCUTION,
             SPWPN_VAMPIRISM,
             SPWPN_PAIN,
-            SPWPN_CHAOS);
+            SPWPN_CHAOS,
+            item_attack_skill(item) == SK_POLEARMS ? SPWPN_DRAGON_SLAYING 
+                                                   : SPWPN_ANTIMAGIC);
         // fall back to regular melee brands 2/9 of the time
     }
     else
     {
+        // Total Weight: 303
         item_props[ARTP_BRAND] = random_choose_weighted(
             73, SPWPN_VORPAL,
             34, SPWPN_MOLTEN,
             34, SPWPN_FREEZING,
             26, SPWPN_VENOM,
             26, SPWPN_ACID,
-            13, SPWPN_HOLY_WRATH,
+            13, item_attack_skill(item) == SK_POLEARMS ? SPWPN_DRAGON_SLAYING : SPWPN_HOLY_WRATH,
             13, SPWPN_ELECTROCUTION,
             13, SPWPN_SPEED,
             13, SPWPN_VAMPIRISM,

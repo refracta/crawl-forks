@@ -55,6 +55,12 @@ const char * const GOZAG_SHOP_COST_KEY       = "gozag_shop_cost_%d";
 #define USKAYAW_MONSTER_HURT_VALUE "uskayaw_monster_hurt_value"
 #define USKAYAW_AUT_SINCE_PIETY_GAIN "uskayaw_aut_since_piety_gain"
 
+#define BAHAMUT_TIAMAT_CHOICE0_KEY "first_bahamut_tiamat_ability_choice"
+#define BAHAMUT_TIAMAT_CHOICE1_KEY "second_bahamut_tiamat_ability_choice"
+#define BAHAMUT_TIAMAT_CHOICE2_KEY "third_bahamut_tiamat_ability_choice"
+#define BAHAMUT_TIAMAT_CHOICE3_KEY "fourth_bahamut_tiamat_ability_choice"
+#define TIAMAT_BOOK_KEY "received_dragon_book"
+
 struct bolt;
 class stack_iterator;
 
@@ -71,6 +77,8 @@ recite_eligibility zin_check_recite_to_single_monster(const monster *mon,
                                                   recite_counts &eligibility,
                                                   bool quiet = false);
 int zin_check_recite_to_monsters(bool quiet = false);
+zin_eff effect_for_prayer_type(recite_type prayertype, int check, int degree, monster * mon);
+bool zin_affect(monster * mon, zin_eff effect, int degree, recite_type prayertype, int power);
 bool zin_recite_to_single_monster(const coord_def& where);
 int zin_recite_power();
 bool zin_vitalisation();
@@ -106,7 +114,7 @@ void yred_make_enslaved_soul(monster* mon, bool force_hostile = false);
 
 bool kiku_receive_corpses(int pow);
 bool kiku_take_corpse();
-bool kiku_gift_necronomicon();
+bool final_book_gift(god_type god);
 
 bool fedhas_passthrough_class(const monster_type mc);
 bool fedhas_passthrough(const monster* target);
@@ -201,3 +209,8 @@ bool wu_jian_can_wall_jump_in_principle(const coord_def& target);
 bool wu_jian_can_wall_jump(const coord_def& target, string &error_ret);
 bool wu_jian_do_wall_jump(coord_def targ, bool ability);
 spret wu_jian_wall_jump_ability();
+
+bool bahamut_tiamat_make_choice(ability_type abil);
+spret bahamut_empowered_breath();
+spret tiamat_choice_breath(bool fail);
+spret bahamut_tiamat_transform(bool bahamut, bool fail);

@@ -419,9 +419,9 @@ static const char *weapon_brands_terse[] =
 {
     "", "molten", "freeze", "holy", "elec",
 #if TAG_MAJOR_VERSION == 34
-    "obsolete", "obsolete",
+    "obsolete",
 #endif
-    "venom", "protect", "drain", "speed", "buggy-vorpal",
+    "slay drac", "venom", "protect", "drain", "speed", "buggy-vorpal",
 #if TAG_MAJOR_VERSION == 34
     "obsolete", "obsolete",
 #endif
@@ -444,9 +444,9 @@ static const char *weapon_brands_verbose[] =
 {
     "", "molten steel", "freezing", "holy wrath", "electrocution",
 #if TAG_MAJOR_VERSION == 34
-    "orc slaying", "dragon slaying",
+    "orc slaying", 
 #endif
-    "venom", "protection", "draining", "speed", "buggy-vorpal",
+    "dragon slaying", "venom", "protection", "draining", "speed", "buggy-vorpal",
 #if TAG_MAJOR_VERSION == 34
     "flame", "frost",
 #endif

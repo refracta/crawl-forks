@@ -394,6 +394,30 @@ const vector<god_power> god_powers[NUM_GODS] =
            "summon a storm of heavenly clouds to empower your attacks",
            "summon a storm of heavenly clouds" },
     },
+
+    // Bahamut and Tiamat
+    { { 0, ABIL_BAHAMUT_PROTECTION, "You are now offered a choice between Bahamut's Protection and Tiamat's Retribution.", 
+                                    "", "Bahamut will protect you from slowing, confusion, petrification and sleep."},
+      { 0, ABIL_TIAMAT_RETRIBUTION, "", "", "Tiamat will quicken your movements in retribution for hard-hitting attacks."},
+      { 2, ABIL_CHOOSE_BAHAMUT_BREATH, "You are now offered a choice between Bahamut's Empowered Breath and Tiamat's Adaptive breath.",
+                "Bahamut & Tiamat are no longer ready to enhance your breath abilities.", "enhance your natural draconic breath"}, 
+      { 2, ABIL_CHOOSE_TIAMAT_BREATH, "", "", "select a different breath power to use in place of your own"},
+      { 2, ABIL_BAHAMUT_EMPOWERED_BREATH, " enhance your natural draconic breath"},
+      { 2, ABIL_TIAMAT_ADAPTIVE_BREATH, " select a different breath power to use in place of your own"},
+      { 4, ABIL_CHOOSE_BAHAMUT_DRAKE, "You are now offered a choice between Bahamut's Summon Drake Mount and Tiamat's Summon Drakes.",
+                "Bahamut & Tiamat are no longer ready for you to choose a drake summon.", "summon a horde of drakes into battle"},
+      { 4, ABIL_CHOOSE_TIAMAT_DRAKE, "", "", "summon a single rime drake and ride upon its back" },
+      { 4, ABIL_BAHAMUT_DRAKE_MOUNT, " summon a single rime drake and ride upon its back" },
+      { 4, ABIL_TIAMAT_SUMMON_DRAKES, " summon a horde of drakes into battle" },
+      { 6, ABIL_BAHAMUT_TRANSFORM, "You are now offered a choice between Bahamut's Enhanced Transformation and Tiamat's Repeatable Transformation.",
+                "Bahamut & Tiamat are no longer ready to transform you.", "permanently transform into a rarer, more powerful, draconian colour"},
+      { 6, ABIL_CHOOSE_TIAMAT_TRANSFORM, "", "", "repeatedly transform into other common draconian colours"},
+      { 6, ABIL_TIAMAT_TRANSFORM, "transform into a different draconian colour" },
+      { 7, ABIL_BAHAMUT_DRAGONSLAYING, "You are offered one final gift. Bahamut offers to brand your weapon with Dragonslaying and Tiamat offers a"
+                " Book of the Dragon, along with a permanent Wizardry bonus for spells therein.", "Bahamut & Tiamat are no longer ready to give you your"
+                " final gift.", "brand one of your weapons with Dragonslaying"},
+      { 7, ABIL_TIAMAT_DRAGON_BOOK, "receive the book of the dragon and a wizardry bonus for the spells it contains" },
+    },
 };
 
 vector<god_power> get_god_powers(god_type god)
@@ -612,6 +636,13 @@ void dec_penance(god_type god, int val)
 
         take_note(Note(NOTE_MOLLIFY_GOD, god));
 
+        if (you.attribute[ATTR_STRIPPED_COLOUR] > 0)
+        {
+            mprf(MSGCH_INTRINSIC_GAIN, "You feel yourself maturing once more...");
+            change_drac_colour((draconian_colour)you.attribute[ATTR_STRIPPED_COLOUR]);
+            you.attribute[ATTR_STRIPPED_COLOUR] = 0;
+        }
+
         if (you_worship(god))
         {
             // Redraw piety display and, in case the best skill is Invocations,
@@ -644,6 +675,20 @@ void dec_penance(god_type god, int val)
             {
                 mprf(MSGCH_GOD, "A storm instantly forms around you!");
                 you.redraw_armour_class = true; // also handles shields
+            }
+            if (have_passive(passive_t::bahamut_tiamat_passive))
+            {
+                if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY))
+                    mprf(MSGCH_GOD, "You are once again offered a choice between the passive Protection of Bahamut or the Retribution of Tiamat.");
+                else if (you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+                {
+                    mprf(MSGCH_GOD, "Bahamut will now protect you from slowing, confusion and sleep.");
+                    you.duration[DUR_CONF] = 0;
+                    you.duration[DUR_SLOW] = 0;
+                    you.duration[DUR_SLEEP] = 0;
+                }
+                else
+                    mprf(MSGCH_GOD, "Tiamat will now drive you to haste when suffering hard or fiery hits in combat.");
             }
             // When you've worked through all your penance, you get
             // another chance to make hostile slimes strict neutral.
@@ -855,6 +900,18 @@ static void _inc_penance(god_type god, int val)
                 you.duration[DUR_CHANNEL_ENERGY] = 0;
             if (you.attribute[ATTR_DIVINE_ENERGY])
                 you.attribute[ATTR_DIVINE_ENERGY] = 0;
+        }
+
+        else if (god == GOD_BAHAMUT_TIAMAT)
+        {
+            if (you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY))
+            {
+                if (you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+                    mprf(MSGCH_GOD, "Bahamut will no longer protect you from slowing, confusion and sleep.");
+                else
+                    mprf(MSGCH_GOD, "Tiamat will no longer haste you when suffering hard or fiery hits in combat.");
+            }
+            // BCADDO: There's probably going to be more here.
         }
 
         if (you_worship(god))
@@ -1596,7 +1653,7 @@ static bool _handle_veh_gift(bool forced)
                 prompt += spell_title(*it);
                 take_note(Note(NOTE_OFFERED_SPELL, *it));
             }
-            prompt += ", to your library.";
+            prompt += " to your library.";
 
             if (gifts >= 5)
                 _inc_gift_timeout(30 + random2avg(30, 2));
@@ -2179,39 +2236,40 @@ string god_name(god_type which_god, bool long_name, bool sidebar)
         {
             switch (which_god)
             {
-            case GOD_NO_GOD:        return "No God";
-            case GOD_RANDOM:        return "Random";
-            case GOD_ZIN:           return "Zin";
-            case GOD_SHINING_ONE:   return "TSOne";
-            case GOD_KIKUBAAQUDGHA: return "Kiku";
-            case GOD_YREDELEMNUL:   return "Yred";
-            case GOD_VEHUMET:       return "Vehu";
-            case GOD_OKAWARU:       return "Oka";
-            case GOD_MAKHLEB:       return "Makh";
-            case GOD_SIF_MUNA:      return "Sif";
-            case GOD_TROG:          return "Trog";
-            case GOD_NEMELEX_XOBEH: return "Neme";
-            case GOD_ELYVILON:      return "Ely";
-            case GOD_LUGONU:        return "Lugonu";
-            case GOD_BEOGH:         return "Beogh";
-            case GOD_FEDHAS:        return "Fedhas";
-            case GOD_CHEIBRIADOS:   return "Chei";
-            case GOD_XOM:           return "Xom";
-            case GOD_ASHENZARI:     return "Ash";
-            case GOD_DITHMENOS:     return "Dith";
-            case GOD_GOZAG:         return "Gozag";
-            case GOD_QAZLAL:        return "Qazlal";
-            case GOD_RU:            return "Ru";
+            case GOD_NO_GOD:            return "No God";
+            case GOD_RANDOM:            return "Random";
+            case GOD_ZIN:               return "Zin";
+            case GOD_SHINING_ONE:       return "TSOne";
+            case GOD_KIKUBAAQUDGHA:     return "Kiku";
+            case GOD_YREDELEMNUL:       return "Yred";
+            case GOD_VEHUMET:           return "Vehu";
+            case GOD_OKAWARU:           return "Oka";
+            case GOD_MAKHLEB:           return "Makh";
+            case GOD_SIF_MUNA:          return "Sif";
+            case GOD_TROG:              return "Trog";
+            case GOD_NEMELEX_XOBEH:     return "Neme";
+            case GOD_ELYVILON:          return "Ely";
+            case GOD_LUGONU:            return "Lugonu";
+            case GOD_BEOGH:             return "Beogh";
+            case GOD_FEDHAS:            return "Fedhas";
+            case GOD_CHEIBRIADOS:       return "Chei";
+            case GOD_XOM:               return "Xom";
+            case GOD_ASHENZARI:         return "Ash";
+            case GOD_DITHMENOS:         return "Dith";
+            case GOD_GOZAG:             return "Gozag";
+            case GOD_QAZLAL:            return "Qazlal";
+            case GOD_RU:                return "Ru";
 #if TAG_MAJOR_VERSION == 34
-            case GOD_PAKELLAS:      return "Pak";
+            case GOD_PAKELLAS:          return "Pak";
 #endif
-            case GOD_USKAYAW:       return "Usk";
-            case GOD_HEPLIAKLQANA:  return "Hep";
-            case GOD_WU_JIAN:       return "Wu";
-            case GOD_JIYVA:         return "Jiyva";
+            case GOD_USKAYAW:           return "Usk";
+            case GOD_HEPLIAKLQANA:      return "Hep";
+            case GOD_WU_JIAN:           return "Wu";
+            case GOD_JIYVA:             return "Jiyva";
+            case GOD_BAHAMUT_TIAMAT:    return "Ba&Tia";
             case GOD_NAMELESS:
-            case GOD_ECUMENICAL:    return "???";
-            case NUM_GODS: default: break;
+            case GOD_ECUMENICAL:        return "???";
+            case NUM_GODS: default:     break;
             }
         }
     }
@@ -2234,39 +2292,40 @@ string god_name(god_type which_god, bool long_name, bool sidebar)
 
     switch (which_god)
     {
-    case GOD_NO_GOD:        return "No God";
-    case GOD_RANDOM:        return "random";
-    case GOD_NAMELESS:      return "nameless";
-    case GOD_ZIN:           return "Zin";
-    case GOD_SHINING_ONE:   return "the Shining One";
-    case GOD_KIKUBAAQUDGHA: return "Kikubaaqudgha";
-    case GOD_YREDELEMNUL:   return "Yredelemnul";
-    case GOD_VEHUMET:       return "Vehumet";
-    case GOD_OKAWARU:       return "Okawaru";
-    case GOD_MAKHLEB:       return "Makhleb";
-    case GOD_SIF_MUNA:      return "Sif Muna";
-    case GOD_TROG:          return "Trog";
-    case GOD_NEMELEX_XOBEH: return "Nemelex Xobeh";
-    case GOD_ELYVILON:      return "Elyvilon";
-    case GOD_LUGONU:        return "Lugonu";
-    case GOD_BEOGH:         return "Beogh";
-    case GOD_FEDHAS:        return "Fedhas Madash";
-    case GOD_CHEIBRIADOS:   return "Cheibriados";
-    case GOD_XOM:           return "Xom";
-    case GOD_ASHENZARI:     return "Ashenzari";
-    case GOD_DITHMENOS:     return "Dithmenos";
-    case GOD_GOZAG:         return "Gozag Ym Sagoz";
-    case GOD_QAZLAL:        return "Qazlal";
-    case GOD_RU:            return "Ru";
+    case GOD_NO_GOD:            return "No God";
+    case GOD_RANDOM:            return "random";
+    case GOD_NAMELESS:          return "nameless";
+    case GOD_ZIN:               return "Zin";
+    case GOD_SHINING_ONE:       return "the Shining One";
+    case GOD_KIKUBAAQUDGHA:     return "Kikubaaqudgha";
+    case GOD_YREDELEMNUL:       return "Yredelemnul";
+    case GOD_VEHUMET:           return "Vehumet";
+    case GOD_OKAWARU:           return "Okawaru";
+    case GOD_MAKHLEB:           return "Makhleb";
+    case GOD_SIF_MUNA:          return "Sif Muna";
+    case GOD_TROG:              return "Trog";
+    case GOD_NEMELEX_XOBEH:     return "Nemelex Xobeh";
+    case GOD_ELYVILON:          return "Elyvilon";
+    case GOD_LUGONU:            return "Lugonu";
+    case GOD_BEOGH:             return "Beogh";
+    case GOD_FEDHAS:            return "Fedhas Madash";
+    case GOD_CHEIBRIADOS:       return "Cheibriados";
+    case GOD_XOM:               return "Xom";
+    case GOD_ASHENZARI:         return "Ashenzari";
+    case GOD_DITHMENOS:         return "Dithmenos";
+    case GOD_GOZAG:             return "Gozag Ym Sagoz";
+    case GOD_QAZLAL:            return "Qazlal";
+    case GOD_RU:                return "Ru";
 #if TAG_MAJOR_VERSION == 34
-    case GOD_PAKELLAS:      return "Pakellas";
+    case GOD_PAKELLAS:          return "Pakellas";
 #endif
-    case GOD_USKAYAW:       return "Uskayaw";
-    case GOD_HEPLIAKLQANA:  return "Hepliaklqana";
-    case GOD_WU_JIAN:       return "Wu Jian";
+    case GOD_USKAYAW:           return "Uskayaw";
+    case GOD_HEPLIAKLQANA:      return "Hepliaklqana";
+    case GOD_WU_JIAN:           return "Wu Jian";
     case GOD_JIYVA: // This is handled at the beginning of the function
-    case GOD_ECUMENICAL:    return "an unknown god";
-    case NUM_GODS: default: break;
+    case GOD_ECUMENICAL:        return "an unknown god";
+    case GOD_BAHAMUT_TIAMAT:    return "Bahamut & Tiamat";
+    case NUM_GODS: default:     break;
     }
     return "buggy";
 }
@@ -2500,6 +2559,13 @@ static void _gain_piety_point()
         take_note(Note(NOTE_PIETY_RANK, you.religion, rank));
         for (const auto& power : get_god_powers(you.religion))
         {
+            // Gain description of the choice abilities are on the first of the two choices.
+            if (power.abil == ABIL_TIAMAT_RETRIBUTION || power.abil == ABIL_CHOOSE_TIAMAT_BREATH
+                || power.abil == ABIL_CHOOSE_TIAMAT_DRAKE || power.abil == ABIL_CHOOSE_TIAMAT_TRANSFORM
+                || power.abil == ABIL_TIAMAT_DRAGON_BOOK)
+            {
+                continue;
+            }
             if (power.rank == rank
                 || power.rank == 7 && can_do_capstone_ability(you.religion))
             {
@@ -2519,6 +2585,21 @@ static void _gain_piety_point()
             autotoggle_autopickup(false);
         if (rank == rank_for_passive(passive_t::clarity))
             you.duration[DUR_CONF] = 0;
+
+        if (rank == rank_for_passive(passive_t::bahamut_tiamat_passive))
+        {
+            if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY))
+                mprf(MSGCH_GOD, "You may now make a choice between the passive Protection of Bahamut or the Retribution of Tiamat.");
+            else if (you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+            {
+                mprf(MSGCH_GOD, "Bahamut will now protect you from slowing, confusion and sleep.");
+                you.duration[DUR_CONF] = 0;
+                you.duration[DUR_SLOW] = 0;
+                you.duration[DUR_SLEEP] = 0;
+            }
+            else
+                mprf(MSGCH_GOD, "Tiamat will now drive you to haste when suffering hard or fiery hits in combat.");
+        }
 
         // TODO: add one-time ability check in have_passive
         if (have_passive(passive_t::unlock_slime_vaults) && can_do_capstone_ability(you.religion))
@@ -2662,6 +2743,14 @@ void lose_piety(int pgn)
 
         for (const auto& power : get_god_powers(you.religion))
         {
+            // Loss description of the choice abilities are on the first of the two choices.
+            if (power.abil == ABIL_TIAMAT_RETRIBUTION || power.abil == ABIL_CHOOSE_TIAMAT_BREATH
+                || power.abil == ABIL_CHOOSE_TIAMAT_DRAKE || power.abil == ABIL_CHOOSE_TIAMAT_TRANSFORM
+                || power.abil == ABIL_TIAMAT_DRAGON_BOOK)
+            {
+                continue;
+            }
+
             if (power.rank == old_rank
                 || power.rank == 7 && old_rank == 6
                    && !you.one_time_ability_used[you.religion])
@@ -2771,6 +2860,7 @@ int initial_wrath_penance_for(god_type god)
     {
         case GOD_ASHENZARI:
         case GOD_BEOGH:
+        case GOD_BAHAMUT_TIAMAT:
         case GOD_ELYVILON:
         case GOD_GOZAG:
         case GOD_HEPLIAKLQANA:
@@ -2864,7 +2954,8 @@ void excommunication(bool voluntary, god_type new_god)
     if (god_hates_your_god(old_god, new_god))
     {
         simple_god_message(
-            make_stringf(" does not appreciate desertion%s!",
+            make_stringf(" do%s not appreciate desertion%s!",
+                         old_god == GOD_BAHAMUT_TIAMAT ? "" : "es",
                          _god_hates_your_god_reaction(old_god, new_god).c_str()).c_str(),
             old_god);
     }
@@ -3177,6 +3268,9 @@ bool god_hates_attacking_friend(god_type god, const monster& fr)
             return mons_class_is_slime(species);
         case GOD_FEDHAS:
             return _fedhas_protects_species(species);
+        case GOD_BAHAMUT_TIAMAT:
+            return mons_genus(species) == MONS_DRAGON || mons_genus(species) == MONS_DRAKE 
+                || mons_genus(species) == MONS_DRACONIAN;
         default:
             return false;
     }
@@ -3244,6 +3338,9 @@ bool player_can_join_god(god_type which_god)
         return false;
 
     if (which_god == GOD_BEOGH && !species_is_orcish(you.species))
+        return false;
+
+    if (which_god == GOD_BAHAMUT_TIAMAT && !species_is_draconian(you.species))
         return false;
 
     // Fedhas hates undead, but will accept demonspawn. Trog won't accept those that can't rage.
@@ -3765,7 +3862,8 @@ void join_religion(god_type which_god)
                    + god_name(you.religion) + ".");
     take_note(Note(NOTE_GET_GOD, you.religion));
 
-    simple_god_message(make_stringf(" welcomes you%s!",
+    simple_god_message(make_stringf(" welcome%s you%s!",
+                                    which_god == GOD_BAHAMUT_TIAMAT ? "" : "s",
                                     you.worshipped[which_god] ? " back"
                                                               : "").c_str());
     // included in default force_more_message
@@ -3803,8 +3901,13 @@ void join_religion(god_type which_god)
 
     if (!you_worship(GOD_GOZAG))
         for (const auto& power : get_god_powers(you.religion))
+        {
+            // Gain description of the choice abilities are on the first of the two choices.
+            if (power.abil == ABIL_TIAMAT_RETRIBUTION)
+                continue;
             if (power.rank <= 0)
                 power.display(true, "You can now %s.");
+        }
 
     // Allow training all divine ability skills immediately.
     vector<ability_type> abilities = get_god_abilities();
@@ -4214,6 +4317,7 @@ void handle_god_time(int /*time_delta*/)
 #endif
         case GOD_JIYVA:
         case GOD_WU_JIAN:
+        case GOD_BAHAMUT_TIAMAT:
             if (one_chance_in(17))
                 lose_piety(1);
             break;
@@ -4752,8 +4856,17 @@ static bool _is_temple_god(god_type god)
     {
     case GOD_NO_GOD:
     case GOD_LUGONU:
-    case GOD_BEOGH:
     case GOD_JIYVA:
+        return false;
+
+    case GOD_BEOGH:
+        if (species_is_orcish(you.species))
+            return true;
+        return false;
+
+    case GOD_BAHAMUT_TIAMAT:
+        if (species_is_draconian(you.species))
+            return true;
         return false;
 
     default:

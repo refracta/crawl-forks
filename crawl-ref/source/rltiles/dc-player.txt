@@ -1482,9 +1482,9 @@ cat8
 cat9
 cat10
 draconian1 HORNS_DRAC
-%sdir player/head
 
 ## Doll editor tiles, but not randomly picked
+%sdir player/head
 cone_red CONE_RED
 crown_gold1 CROWN
 crown_gold2
@@ -1558,6 +1558,20 @@ hood_ybrown HOOD_YBROWN
 hood_green HOOD_GREEN
 ninja_black MASK_NINJA_BLACK
 %end_ctg
+
+## Mounts
+%sdir player/mount
+
+## Front
+%parts_ctg MOUNT_FRONT
+drake_mount_front DRAKE
+%end_ctg
+
+## Back
+%parts_ctg MOUNT_BACK
+drake_mount_back  DRAKE
+%end_ctg
+
 
 # draconian wings and heads, need same order as draconians
 %parts_ctg DRCWING

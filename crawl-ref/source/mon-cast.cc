@@ -4761,11 +4761,12 @@ static monster_type _pick_vermin()
 static monster_type _pick_drake(bool eldritch = false)
 {
     return random_choose_weighted(5, MONS_SWAMP_DRAKE,
-                                  5, MONS_KOMODO_DRAGON,
+                                  5, MONS_WYVERN,
                                   5, MONS_WIND_DRAKE,
                                   6, MONS_RIME_DRAKE,
                   eldritch ? 18 : 6, MONS_DEATH_DRAKE,
-                                  3, MONS_LINDWURM);
+                                  3, MONS_LINDWURM,
+                                  3, MONS_ACID_DRAGON);
 }
 
 static void _do_high_level_summon(monster* mons, spell_type spell_cast,
@@ -6768,23 +6769,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
 
     case SPELL_VORTICES:
     {
-        const int num = 3 + random2(5);
-
-        mpr("The chaotic winds form chaos vortices.");
-
-        for (int i = 0; i < num; i++)
-        {
-            coord_def pos = find_gateway_location(mons);
-
-            if (pos != coord_def(0, 0))
-            {
-                x = create_monster(
-                    mgen_data(MONS_CHAOS_VORTEX,
-                        SAME_ATTITUDE(mons), pos, mons->foe));
-                x->add_ench(mon_enchant(ENCH_FAKE_ABJURATION, 0,
-                    0, (5 + random2(10)) * BASELINE_DELAY));
-            }
-        }
+        create_vortices(mons);
         return;
     }
 

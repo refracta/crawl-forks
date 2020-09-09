@@ -43,6 +43,7 @@ spret cast_summon_mana_viper(int pow, god_type god, bool fail);
 bool summon_berserker(int pow, actor *caster,
                       monster_type override_mons = MONS_PROGRAM_BUG);
 bool summon_holy_warrior(int pow, bool punish);
+bool summon_drakes(int pow, bool punish);
 
 bool tukima_affects(const actor &target);
 bool is_snake(const monster &mon);
@@ -74,6 +75,7 @@ spret cast_dragon_call(int pow, bool fail);
 void do_dragon_call(int time);
 
 void doom_howl(int time);
+void create_vortices(actor * caster);
 
 void init_servitor(monster* servitor, actor* caster);
 spret cast_spellforged_servitor(int pow, god_type god, bool fail);

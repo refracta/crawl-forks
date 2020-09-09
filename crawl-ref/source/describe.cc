@@ -1622,6 +1622,10 @@ static string _weapon_brand_desc(const item_def &item)
                 "harm.";
         }
         break;
+    case SPWPN_DRAGON_SLAYING:
+        description += "This legendary weapon is deadly to all "
+            "dragonkind.";
+        break;
     case SPWPN_VENOM:
         if (is_range_weapon(item))
             description += "It poisons the ammo it fires.";

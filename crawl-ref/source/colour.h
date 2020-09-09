@@ -63,6 +63,7 @@ enum element_type
     ETC_WU_JIAN,        // Wu Jian Chinese-inspired colours
     ETC_AWOKEN_FOREST,  // Angry trees.
     ETC_CHAOS,          // Chaos.
+    ETC_BAHA_TIA,       // altar colours for Bahamut/Tiamat.
     ETC_DISCO = 96,
     ETC_FIRST_LUA = ETC_DISCO, // colour indices have to be <128
 

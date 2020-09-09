@@ -21,9 +21,7 @@ enum duration_type
     DUR_DEATHS_DOOR,
     DUR_FIRE_SHIELD,
 
-#if TAG_MAJOR_VERSION == 34
-    DUR_BUILDING_RAGE,
-#endif
+    DUR_MOUNTED,                // drake mount
     DUR_EXHAUSTED,              // fatigue counter for berserk
 
     DUR_LIQUID_FLAMES,

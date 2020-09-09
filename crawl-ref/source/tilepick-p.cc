@@ -1162,7 +1162,7 @@ static int _draconian_colour(int race, int level)
     {
     case DR_BROWN: 
         if (you.char_class == JOB_MUMMY)    return 21; 
-                            return 0;
+    default:                return 0;
     case DR_BLACK:          return 1;
     case DR_LIME:           return 2;
     case DR_GREEN:          return 3;
@@ -1748,6 +1748,8 @@ const int parts_saved[TILEP_PART_MAX + 1] =
     TILEP_PART_ENCH,
     TILEP_PART_DRCWING,
     TILEP_PART_DRCHEAD,
+    TILEP_PART_MOUNT_FRONT,
+    TILEP_PART_MOUNT_BACK,
     -1
 };
 

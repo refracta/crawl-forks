@@ -403,6 +403,7 @@ bool is_weapon_brand_ok(int type, int brand, bool /*strict*/)
     case SPWPN_MOLTEN:
     case SPWPN_FREEZING:
     case SPWPN_ACID: // Melee-only, except punk.
+    case SPWPN_DRAGON_SLAYING: // Normally polearm-only but Bahamut can put on whatever.
         break;
 
     // Melee-only brands.
@@ -432,7 +433,6 @@ bool is_weapon_brand_ok(int type, int brand, bool /*strict*/)
     case SPWPN_ORC_SLAYING:
     case SPWPN_FLAME:
     case SPWPN_FROST:
-    case SPWPN_DRAGON_SLAYING:
     case SPWPN_EVASION:
         return false;
 #endif
@@ -2493,11 +2493,18 @@ void makeitem_tests()
         item.brand = coinflip() ? SPWPN_NORMAL
                                 : random2(NUM_REAL_SPECIAL_WEAPONS);
 #if TAG_MAJOR_VERSION == 34
+<<<<<<< HEAD
         if (item.brand == SPWPN_ORC_SLAYING
             || item.brand == SPWPN_REACHING
             || item.brand == SPWPN_RETURNING
             || item.brand == SPWPN_CONFUSE
             || item.brand == SPWPN_DRAGON_SLAYING)
+=======
+        if (item.special == SPWPN_ORC_SLAYING
+            || item.special == SPWPN_REACHING
+            || item.special == SPWPN_RETURNING
+            || item.special == SPWPN_CONFUSE)
+>>>>>>> parent of 9b7421e1bc... Remove the dragon slaying brand
         {
             item.brand = SPWPN_FORBID_BRAND;
         }

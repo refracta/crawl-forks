@@ -107,21 +107,33 @@ static string _describe_favour(god_type which_god)
         case 6:  return "A favoured servant of " + godname + ".";
         case 5:
 
-            if (you_worship(GOD_DITHMENOS))
+            if (which_god == GOD_DITHMENOS)
                 return "A glorious shadow in the eyes of " + godname + ".";
-            else
-                return "A shining star in the eyes of " + godname + ".";
+            return "A shining star in the eyes of " + godname + ".";
 
         case 4:
 
-            if (you_worship(GOD_DITHMENOS))
+            if (which_god == GOD_DITHMENOS)
                 return "A rising shadow in the eyes of " + godname + ".";
-            else
-                return "A rising star in the eyes of " + godname + ".";
+            return "A rising star in the eyes of " + godname + ".";
 
-        case 3:  return uppercase_first(godname) + " is pleased with you.";
-        case 2:  return uppercase_first(godname) + " is aware of your devotion.";
-        default: return uppercase_first(godname) + " is noncommittal.";
+        case 3:  
+
+            if (which_god == GOD_BAHAMUT_TIAMAT)
+                return uppercase_first(godname) + " are pleased with you.";
+            return uppercase_first(godname) + " is pleased with you.";
+
+        case 2:
+
+            if (which_god == GOD_BAHAMUT_TIAMAT)
+                return uppercase_first(godname) + " are aware of your devotion.";
+            return uppercase_first(godname) + " is aware of your devotion.";
+
+        default:
+
+            if (which_god == GOD_BAHAMUT_TIAMAT)
+                return uppercase_first(godname) + " are noncommittal.";
+            return uppercase_first(godname) + " is noncommittal.";
     }
 }
 
@@ -239,6 +251,10 @@ static const char *divine_title[][8] =
     // Wu Jian -- animal/chinese martial arts monk theme
     {"Wooden Rat",          "Young Dog",             "Young Crane",              "Young Tiger",
         "Young Dragon",     "Red Sash",               "Golden Sash",              "Sifu"},
+
+    // Bahamut/Tiamat -- Duality theme
+    {"Disjointed",          "Entwined",             "Conjoined",                "Dualist",
+        "Merged",           "@Adj@ Unifier",         "Serendipitous",            "XXX"}, // Last one filled in below.
 };
 COMPILE_CHECK(ARRAYSZ(divine_title) == NUM_GODS);
 
@@ -253,6 +269,46 @@ string god_title(god_type which_god, species_type which_species, int piety)
         title = divine_title[which_god][_gold_level()];
     else
         title = divine_title[which_god][_piety_level(piety)];
+
+    if (which_god == GOD_BAHAMUT_TIAMAT && (_piety_level(piety) == 7))
+    {
+        int aspect_count = 0;
+        if (you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY))
+        {
+            if (you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+                aspect_count++;
+            else
+                aspect_count--;
+        }
+        if (you.props.exists(BAHAMUT_TIAMAT_CHOICE1_KEY))
+        {
+            if (you.props[BAHAMUT_TIAMAT_CHOICE1_KEY].get_bool())
+                aspect_count++;
+            else
+                aspect_count--;
+        }
+        if (you.props.exists(BAHAMUT_TIAMAT_CHOICE2_KEY))
+        {
+            if (you.props[BAHAMUT_TIAMAT_CHOICE2_KEY].get_bool())
+                aspect_count++;
+            else
+                aspect_count--;
+        }
+        if (you.props.exists(BAHAMUT_TIAMAT_CHOICE3_KEY))
+        {
+            if (you.props[BAHAMUT_TIAMAT_CHOICE3_KEY].get_bool())
+                aspect_count++;
+            else
+                aspect_count--;
+        }
+
+        if (aspect_count > 0)
+            title = "Aspect of Bahamut";
+        else if (aspect_count < 0)
+            title = "Aspect of Tiamat";
+        else // if (aspect_count == 0)
+            title = "Aspect of Ouroboros";
+    } 
 
     const map<string, string> replacements =
     {
@@ -521,6 +577,10 @@ static string _describe_god_wrath_causes(god_type which_god)
                    comma_separated_fn(begin(chaotic_gods), end(chaotic_gods),
                                       bind(god_name, placeholders::_1, false, false)) +
                    " are chaotic.)";
+        case GOD_BAHAMUT_TIAMAT: // More plurals
+            return uppercase_first(god_name(which_god)) +
+                " do not appreciate abandonment, and will call down"
+                " fearful punishments on disloyal followers!";
         default:
             return uppercase_first(god_name(which_god)) +
                    " does not appreciate abandonment, and will call down"
@@ -541,9 +601,14 @@ static formatted_string _god_wrath_description(god_type which_god)
     _add_par(desc, _describe_god_wrath_causes(which_god));
     _add_par(desc, getLongDescription(god_name(which_god) + " wrath"));
 
-    if (which_god != GOD_RU) // Permanent wrath.
+    const bool long_wrath = initial_wrath_penance_for(which_god) > 30;
+    if (which_god == GOD_BAHAMUT_TIAMAT) // ...Plurals (yes I could fix this value; but I may mutate the duration.
     {
-        const bool long_wrath = initial_wrath_penance_for(which_god) > 30;
+        _add_par(desc, make_stringf("The wrath of the twin serpents lasts for a relatively %s duration.", 
+                              long_wrath ? "long" : "short"));
+    }
+    else if (which_god != GOD_RU) // Permanent wrath.
+    {
         _add_par(desc, apostrophise(uppercase_first(god_name(which_god)))
                               + " wrath lasts for a relatively " +
                               (long_wrath ? "long" : "short") + " duration.");
@@ -819,10 +884,10 @@ static formatted_string _describe_god_powers(god_type which_god)
             (piety >= piety_breakpoint(5)) ? "always" :
             (piety >= piety_breakpoint(3)) ? "often" :
             (piety >= piety_breakpoint(1)) ? "sometimes" :
-                                             "occasionally";
+            "occasionally";
 
         desc.cprintf("%s %s shields you from chaos.\n",
-                uppercase_first(god_name(which_god)).c_str(), how);
+            uppercase_first(god_name(which_god)).c_str(), how);
         break;
     }
 
@@ -830,7 +895,7 @@ static formatted_string _describe_god_powers(god_type which_god)
     {
         have_any = true;
         desc.cprintf("%s prevents you from stabbing unaware foes.\n",
-                uppercase_first(god_name(which_god)).c_str());
+            uppercase_first(god_name(which_god)).c_str());
         if (piety < piety_breakpoint(1))
             desc.textcolour(DARKGREY);
         else
@@ -838,10 +903,10 @@ static formatted_string _describe_god_powers(god_type which_god)
         const char *how =
             (piety >= piety_breakpoint(5)) ? "completely" :
             (piety >= piety_breakpoint(3)) ? "mostly" :
-                                             "partially";
+            "partially";
 
         desc.cprintf("%s %s shields you from negative energy.\n",
-                uppercase_first(god_name(which_god)).c_str(), how);
+            uppercase_first(god_name(which_god)).c_str(), how);
 
         const int halo_size = you_worship(which_god) ? you.halo_radius() : -1;
         if (halo_size < 0)
@@ -849,10 +914,10 @@ static formatted_string _describe_god_powers(god_type which_god)
         else
             desc.textcolour(god_colour(which_god));
         desc.cprintf("You radiate a%s righteous aura, and others within it are "
-                "easier to hit.\n",
-                halo_size > 5 ? " large" :
-                halo_size > 3 ? "" :
-                                " small");
+            "easier to hit.\n",
+            halo_size > 5 ? " large" :
+            halo_size > 3 ? "" :
+            " small");
         break;
     }
 
@@ -863,9 +928,9 @@ static formatted_string _describe_god_powers(god_type which_god)
         else
             desc.textcolour(DARKGREY);
         desc.cprintf("You gain nutrition%s when your fellow slimes consume items.\n",
-                have_passive(passive_t::slime_hp) ? ", magic and health" :
-                have_passive(passive_t::slime_mp) ? " and magic" :
-                                                    "");
+            have_passive(passive_t::slime_hp) ? ", magic and health" :
+            have_passive(passive_t::slime_mp) ? " and magic" :
+            "");
         break;
 
     case GOD_FEDHAS:
@@ -885,13 +950,13 @@ static formatted_string _describe_god_powers(god_type which_god)
         else
             desc.textcolour(DARKGREY);
         desc.cprintf("%s %sslows your movement.\n",
-                uppercase_first(god_name(which_god)).c_str(),
-                piety >= piety_breakpoint(5) ? "greatly " :
-                piety >= piety_breakpoint(2) ? "" :
-                                               "slightly ");
+            uppercase_first(god_name(which_god)).c_str(),
+            piety >= piety_breakpoint(5) ? "greatly " :
+            piety >= piety_breakpoint(2) ? "" :
+            "slightly ");
         desc.cprintf("%s supports your attributes. (+%d)\n",
-                uppercase_first(god_name(which_god)).c_str(),
-                chei_stat_boost(piety));
+            uppercase_first(god_name(which_god)).c_str(),
+            chei_stat_boost(piety));
         break;
 
     case GOD_DITHMENOS:
@@ -903,10 +968,10 @@ static formatted_string _describe_god_powers(god_type which_god)
         else
             desc.textcolour(god_colour(which_god));
         desc.cprintf("You radiate a%s aura of darkness, enhancing your stealth "
-                "and reducing the accuracy of your foes.\n",
-                umbra_size > 5 ? " large" :
-                umbra_size > 3 ? "n" :
-                                 " small");
+            "and reducing the accuracy of your foes.\n",
+            umbra_size > 5 ? " large" :
+            umbra_size > 3 ? "n" :
+            " small");
         break;
     }
 
@@ -914,7 +979,7 @@ static formatted_string _describe_god_powers(god_type which_god)
         have_any = true;
         desc.cprintf("You passively detect gold.\n");
         desc.cprintf("%s turns your defeated foes' bodies to gold.\n",
-                uppercase_first(god_name(which_god)).c_str());
+            uppercase_first(god_name(which_god)).c_str());
         desc.cprintf("Your enemies may become distracted by gold.\n");
         break;
 
@@ -928,9 +993,9 @@ static formatted_string _describe_god_powers(god_type which_god)
     {
         have_any = true;
         desc.cprintf("%s prevents your magic from regenerating.\n",
-                uppercase_first(god_name(which_god)).c_str());
+            uppercase_first(god_name(which_god)).c_str());
         desc.cprintf("%s identifies device charges for you.\n",
-                uppercase_first(god_name(which_god)).c_str());
+            uppercase_first(god_name(which_god)).c_str());
         if (!you_foodless(false))
         {
             if (have_passive(passive_t::bottle_mp))
@@ -939,8 +1004,8 @@ static formatted_string _describe_god_powers(god_type which_god)
                 desc.textcolour(DARKGREY);
 
             desc.cprintf("%s will collect and distill excess magic from your "
-                    "kills.\n",
-                    uppercase_first(god_name(which_god)).c_str());
+                "kills.\n",
+                uppercase_first(god_name(which_god)).c_str());
         }
         break;
     }
@@ -949,6 +1014,30 @@ static formatted_string _describe_god_powers(god_type which_god)
     case GOD_LUGONU:
         have_any = true;
         desc.cprintf("You are protected from the effects of unwielding distortion weapons.\n");
+        break;
+
+    case GOD_BAHAMUT_TIAMAT:
+        have_any = true;
+        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY) || !you.props.exists(BAHAMUT_TIAMAT_CHOICE1_KEY)
+            || !you.props.exists(BAHAMUT_TIAMAT_CHOICE2_KEY) || !you.props.exists(BAHAMUT_TIAMAT_CHOICE3_KEY))
+        {
+            desc.cprintf("You are offered the choice of two abilities multiple times as you gain piety.\n(Both abilities are listed below, so note that you will only gain half of them.)\n");
+        }
+        if (you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY))
+        {
+            if (you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+                desc.cprintf("Bahamut protects you from slowing, confusion, petrification and sleep.\n");
+            else
+            {
+                desc.textcolour(LIGHTGREEN);
+                desc.cprintf("Tiamat may quicken your movements in retribution for hard-hitting and fiery attacks.\n");
+            }
+        }
+        if (you.props.exists(TIAMAT_BOOK_KEY))
+        {
+            desc.textcolour(LIGHTGREEN);
+            desc.cprintf("Tiamat aids you in casting traditional draconic spells.\n");
+        }
         break;
 
     default:
@@ -966,6 +1055,17 @@ static formatted_string _describe_god_powers(god_type which_god)
         }
         have_any = true;
 
+        bool tia = false;
+
+        // Give Tiamat a different god colour than Bahamut.
+        if (power.abil == ABIL_TIAMAT_ADAPTIVE_BREATH || power.abil == ABIL_TIAMAT_DRAGON_BOOK
+            || power.abil == ABIL_TIAMAT_SUMMON_DRAKES || power.abil == ABIL_TIAMAT_RETRIBUTION
+            || power.abil == ABIL_TIAMAT_TRANSFORM || power.abil == ABIL_CHOOSE_TIAMAT_BREATH
+            || power.abil == ABIL_CHOOSE_TIAMAT_DRAKE || power.abil == ABIL_CHOOSE_TIAMAT_TRANSFORM)
+        {
+            tia = true;
+        }
+
         if (you_worship(which_god)
             && (power.rank <= 0
                 || power.rank == 7 && can_do_capstone_ability(which_god)
@@ -973,10 +1073,19 @@ static formatted_string _describe_god_powers(god_type which_god)
             && (!player_under_penance()
                 || power.rank == -1))
         {
-            desc.textcolour(god_colour(which_god));
+            if (tia)
+                desc.textcolour(LIGHTGREEN);
+            else
+                desc.textcolour(god_colour(which_god));
         }
         else
-            desc.textcolour(DARKGREY);
+        {
+            if (tia)
+                desc.textcolour(GREEN);
+            else
+                desc.textcolour(DARKGREY);
+        }
+
 
         string buf = power.general;
         if (!isupper(buf[0])) // Complete sentence given?

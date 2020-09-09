@@ -35,6 +35,10 @@ Breathe Frost ability
 
 <Chilling Breath spell>
 %%%%
+Twisted Reanimation ability
+
+<Twisted Resurrection spell>
+%%%%
 Breathe Poison Gas ability
 
 Breathes a blast of poison gas at a targeted creature.
@@ -102,9 +106,11 @@ The range of the blast is decreased by one for every creature it strikes.
 %%%%
 Breathe Butterflies ability
 
-Breathes a gust of harmless fairy dust, which coalesces into harmless 
-butterflies on every empty tile it crosses. The range of the gust is 
-decreased by one for every creature it crosses.
+Breathes a gust of fairy dust, which coalesces into harmless butterflies 
+on every empty tile it crosses. Additional butterflies swarm to surround 
+you. As the dust surrounds summoned creatures it will increase their time 
+in this world or abjure them, depending on their attitude towards you. 
+The range of the dust is decreased by one for every creature it crosses.
 %%%%
 Breathe Bone Shards ability
 
@@ -953,6 +959,81 @@ with martial attacks provides an increasing bonus to melee damage and accuracy.
 The bonus fades over time, and the storm lasts until the bonus has faded
 completely. The heavenly clouds prevent invisibility, and obscure the vision of
 those outside the storm.
+%%%%
+Choose Bahamut's Protection ability
+
+Bahamut will passively protect you against slowing, petrification, sleep and confusion 
+for as long as you worship Bahamut & Tiamat. This choice is permanent.
+%%%%
+Choose Tiamat's Retribution ability
+
+Upon taking a significantly damaging hit, Tiamat may quicken your movements in reprisal. 
+Odds are higher on fiery hits as the heat warming your cold blood makes speeding up easier. 
+This haste chance persists as long as you worship Bahamut & Tiamat. This choice is permanent.
+%%%%
+Choose Bahamut's Refined Breath ability
+
+<Enhanced Breath ability>
+%%%%
+Enhanced Breath ability
+
+The power of Bahamut will empower the strength of your natural breath ability; it's base 
+power increased by your skill with Invocations and additional effects are applied depending 
+on your base breath.
+%%%%
+Choose Tiamat's Adaptive Breath ability
+
+<Adaptive Breath ability>
+%%%%
+Adaptive Breath ability
+
+Tiamat grants you a choice of three random breaths to use in place of your own. More exotic 
+and higher damage breaths are more likely with higher invocations skill.
+%%%%
+Choose Bahamut's Drake Mount ability
+
+<Drake Mount ability>
+%%%%
+Drake Mount ability
+
+You summon a single rime drake and ride upon its back. It's takes two out of every three hits 
+in your place; melees along with you and fires its icy breath along the same trajectory as your 
+spell and ranged attacks. It's faster than average, but is not affected by any of your gear bonuses 
+neither for speed, nor for resistances.
+%%%%
+Choose Tiamat's Summon Drakes ability
+
+<Summon Drakes ability>
+%%%%
+Summon Drakes ability
+
+You summon three to five drakes or similar creatures. The quality of your summons and their duration 
+depends on your invocations skill.
+%%%%
+Choose Bahamut's Promotion ability
+
+Your draconian colour will permanently be upgraded to a rarer colour; granting bonuses to more spell 
+schools and a generally stronger breath power. This change is permanent.
+%%%%
+Choose Tiamat's Transformation ability
+
+<Change Draconian Colour ability>
+%%%%
+Change Draconian Colour ability
+
+Tiamat will present you with your choice of three other draconian colours to transform yourself into. 
+You may transform as often as you have enough piety and mana to do so.
+%%%%
+Brand Weapon with Dragonslaying ability
+
+Permanently blesses a weapon of your choice with an enchantment against drakes and dragons. 
+This blessing may only be used once, and it cannot be used on artefact weapons.
+%%%%
+Receive Book of the Dragon ability
+
+Grants you the Book of the Dragon, a spellbook containing the most sacred spells
+for dragonkin. Along with your copy of the book; Tiamat will bless you with 
+Wizardry for the spells it contains for as long as you worship Bahamut & Tiamat.
 %%%%
 Hop ability
 
