@@ -99,6 +99,7 @@ tiamat_retribution ABILITY_TIAMAT_RETRIBUTION
 tiamat_transformation ABILITY_TIAMAT_TRANSFORMATION
 tiamat_breath ABILITY_TIAMAT_BREATH
 tiamat_book ABILITY_TIAMAT_BOOK
+tiamat_summon_drakes ABILITY_TIAMAT_DRAKE
 trog_berserk ABILITY_TROG_BERSERK
 trog_brothers_in_arms ABILITY_TROG_BROTHERS_IN_ARMS
 trog_hand ABILITY_TROG_HAND
