@@ -511,7 +511,10 @@ Bahamut & Tiamat wrath
 Those who aggrieve the twin gods will find themselves assaulted by waves of
 draconic kin: dragons, drakes, hydrae and draconian warriors. It may have been 
 long ago that these deities warred amongst themselves, but their united armies 
-fight fervently against betrayers.
+fight fervently against betrayers. Additionally; the benefits of your draconian
+colour may be stripped away for a time, you may be petrified, your enemies 
+may be raised to a haste against you, and you may be compelled to roaring until 
+you run out of breath.
 %%%%
 Cheibriados wrath
 

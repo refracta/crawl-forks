@@ -1028,6 +1028,8 @@ ability_type fixup_ability(ability_type ability)
         return ability;
 
     case ABIL_CHOOSE_BAHAMUT_DRAKE:
+        // BCADDO: Reenable when you feel comfortable
+        return ABIL_NON_ABILITY;
     case ABIL_CHOOSE_TIAMAT_DRAKE:
         if (you.props.exists(BAHAMUT_TIAMAT_CHOICE2_KEY))
             return ABIL_NON_ABILITY;
