@@ -5711,6 +5711,13 @@ static dungeon_feature_type _pick_temple_altar()
         }
         // Randomized altar list for mini-temples.
         _temple_altar_list = temple_god_list();
+        if (!species_is_orcish(you.species) && !species_is_draconian(you.species) && one_chance_in(3))
+        {
+            if (coinflip())
+                _temple_altar_list.push_back(GOD_BAHAMUT_TIAMAT);
+            else
+                _temple_altar_list.push_back(GOD_BEOGH);
+        }
         shuffle_array(_temple_altar_list);
     }
 

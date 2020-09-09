@@ -4856,8 +4856,17 @@ static bool _is_temple_god(god_type god)
     {
     case GOD_NO_GOD:
     case GOD_LUGONU:
-    case GOD_BEOGH:
     case GOD_JIYVA:
+        return false;
+
+    case GOD_BEOGH:
+        if (species_is_orcish(you.species))
+            return true;
+        return false;
+
+    case GOD_BAHAMUT_TIAMAT:
+        if (species_is_draconian(you.species))
+            return true;
         return false;
 
     default:
