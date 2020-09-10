@@ -2304,7 +2304,9 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         direction_chooser_args args;
         args.top_prompt = "Breath at?";
         args.mode = TARG_HOSTILE;
-        args.self = confirm_prompt_type::cancel;
+
+        if (abil.ability != ABIL_BREATHE_POWER)
+            args.self = confirm_prompt_type::cancel;
 
         if (!spell_direction(abild, beam, &args))
             return spret::abort;
