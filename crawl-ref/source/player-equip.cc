@@ -186,7 +186,7 @@ void unequip_effect(equipment_type slot, int item_slot, bool meld, bool msg)
     const interrupt_block block_meld_interrupts(meld);
 
     if (slot >= EQ_CLOAK && slot <= EQ_BODY_ARMOUR 
-        || (item.base_type == OBJ_SHIELDS && is_hybrid(item.sub_type)))
+        || (item.base_type == OBJ_SHIELDS && !is_hybrid(item.sub_type)))
         _unequip_armour_effect(item, meld, slot);
     else if (slot == EQ_WEAPON0 || slot == EQ_WEAPON1)
         _unequip_weapon_effect(item, msg, meld,slot);
