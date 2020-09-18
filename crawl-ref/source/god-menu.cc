@@ -23,6 +23,20 @@ GodMenuEntry::GodMenuEntry(god_type god_, bool long_name) :
 {
     if (god == GOD_SHINING_ONE)
         hotkeys.push_back('1');
+    else if (god == GOD_BAHAMUT_TIAMAT)
+    {
+        if (you.species != SP_DRACONIAN)
+            hotkeys.push_back('!');
+        else
+            hotkeys.push_back('B');
+    }
+    else if (god == GOD_BEOGH)
+    {
+        if (you.species == SP_DRACONIAN)
+            hotkeys.push_back('!');
+        else
+            hotkeys.push_back('B');
+    }
     else
     {
         hotkeys.push_back(text.at(0));
