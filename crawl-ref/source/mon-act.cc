@@ -2495,6 +2495,12 @@ static void _torpor_snail_slow(monster* mons)
 
     if (!is_sanctuary(you.pos())
         && !you.stasis()
+
+        // Bahamut's Protection is a big check.
+        && !(have_passive(passive_t::bahamut_tiamat_passive) 
+            && you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY) 
+            && you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+
         && cell_see_cell(you.pos(), mons->pos(), LOS_SOLID_SEE))
     {
         if (!you.duration[DUR_SLOW])
