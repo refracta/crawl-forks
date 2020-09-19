@@ -2861,16 +2861,17 @@ cloud_type bolt::get_cloud_type() const
 int bolt::get_cloud_pow() const
 {
     if (origin_spell == SPELL_FREEZING_CLOUD
-        || origin_spell == SPELL_POISONOUS_CLOUD)
+        || origin_spell == SPELL_POISONOUS_CLOUD
+        || origin_spell == SPELL_HOLY_BREATH)
     {
-        return random_range(10, 15);
+        return random_range(10, 20);
     }
 
     if (origin_spell == SPELL_SPECTRAL_CLOUD 
         || origin_spell == SPELL_EMPOWERED_BREATH)
-        return random_range(12, 20);
+        return random_range(15, 30);
 
-    return 0;
+    return damage.roll() / 3;
 }
 
 int bolt::get_cloud_size(bool min, bool max) const
@@ -3354,13 +3355,13 @@ void bolt::affect_place_clouds()
     // No clouds here, free to make new ones.
 
     if (origin_spell == SPELL_POISONOUS_CLOUD)
-        place_cloud(CLOUD_POISON, p, random2(5) + 3, agent());
+        place_cloud(CLOUD_POISON, p, (damage.roll() + damage.roll()) / 3, agent());
 
     if (origin_spell == SPELL_HOLY_BREATH)
-        place_cloud(CLOUD_HOLY, p, random2(4) + 2, agent());
+        place_cloud(CLOUD_HOLY, p, (damage.roll() + damage.roll()) / 3, agent());
 
     if (origin_spell == SPELL_FLAMING_CLOUD)
-        place_cloud(CLOUD_FIRE, p, random2(4) + 2, agent());
+        place_cloud(CLOUD_FIRE, p, (damage.roll() + damage.roll()) / 3, agent());
 
     // Fire/cold over water/lava
     if (feat == DNGN_LAVA && flavour == BEAM_COLD
