@@ -1045,25 +1045,35 @@ ability_type fixup_ability(ability_type ability)
 
     // You only have one of the choice abilities.
     case ABIL_BAHAMUT_EMPOWERED_BREATH:
-        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE1_KEY) || !you.props[BAHAMUT_TIAMAT_CHOICE1_KEY].get_bool())
+        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE1_KEY))
+            return ABIL_NON_ABILITY;
+        if (!you.props[BAHAMUT_TIAMAT_CHOICE1_KEY].get_bool())
             return ABIL_NON_ABILITY;
         return ability;
     case ABIL_TIAMAT_ADAPTIVE_BREATH:
-        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE1_KEY) || you.props[BAHAMUT_TIAMAT_CHOICE1_KEY].get_bool())
+        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE1_KEY)) 
+            return ABIL_NON_ABILITY;
+        if (you.props[BAHAMUT_TIAMAT_CHOICE1_KEY].get_bool())
             return ABIL_NON_ABILITY;
         return ability;
 
     case ABIL_BAHAMUT_DRAKE_MOUNT:
-        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE2_KEY) || !you.props[BAHAMUT_TIAMAT_CHOICE2_KEY].get_bool())
+        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE2_KEY))
+            return ABIL_NON_ABILITY;
+        if (!you.props[BAHAMUT_TIAMAT_CHOICE2_KEY].get_bool())
             return ABIL_NON_ABILITY;
         return ability;
     case ABIL_TIAMAT_SUMMON_DRAKES:
-        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE2_KEY) || you.props[BAHAMUT_TIAMAT_CHOICE2_KEY].get_bool())
+        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE2_KEY)) 
+            return ABIL_NON_ABILITY;
+        if (you.props[BAHAMUT_TIAMAT_CHOICE2_KEY].get_bool())
             return ABIL_NON_ABILITY;
         return ability;
 
     case ABIL_TIAMAT_TRANSFORM:
-        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE3_KEY) || you.props[BAHAMUT_TIAMAT_CHOICE3_KEY].get_bool())
+        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE3_KEY))
+            return ABIL_NON_ABILITY;
+        if (you.props[BAHAMUT_TIAMAT_CHOICE3_KEY].get_bool())
             return ABIL_NON_ABILITY;
         return ability;
 

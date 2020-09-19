@@ -1053,6 +1053,7 @@ static formatted_string _describe_god_powers(god_type which_god)
         {
             continue;
         }
+
         have_any = true;
 
         bool tia = false;
@@ -1066,6 +1067,8 @@ static formatted_string _describe_god_powers(god_type which_god)
             tia = true;
         }
 
+        desc.textcolour(DARKGREY);
+
         if (you_worship(which_god)
             && (power.rank <= 0
                 || power.rank == 7 && can_do_capstone_ability(which_god)
@@ -1078,6 +1081,7 @@ static formatted_string _describe_god_powers(god_type which_god)
             else
                 desc.textcolour(god_colour(which_god));
         }
+
         else
         {
             if (tia)
@@ -1085,7 +1089,6 @@ static formatted_string _describe_god_powers(god_type which_god)
             else
                 desc.textcolour(DARKGREY);
         }
-
 
         string buf = power.general;
         if (!isupper(buf[0])) // Complete sentence given?

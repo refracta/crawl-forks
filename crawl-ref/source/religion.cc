@@ -397,21 +397,21 @@ const vector<god_power> god_powers[NUM_GODS] =
 
     // Bahamut and Tiamat
     { { 0, ABIL_BAHAMUT_PROTECTION, "You are now offered a choice between Bahamut's Protection and Tiamat's Retribution.", 
-                                    "", "Bahamut will protect you from slowing, confusion, petrification and sleep."},
-      { 0, ABIL_TIAMAT_RETRIBUTION, "", "", "Tiamat will quicken your movements in retribution for hard-hitting attacks."},
+                                    "This should never show.", "Bahamut will protect you from slowing, confusion, petrification and sleep."},
+      { 0, ABIL_TIAMAT_RETRIBUTION, "This should never show.", "", "Tiamat will quicken your movements in retribution for hard-hitting attacks."},
       { 2, ABIL_CHOOSE_BAHAMUT_BREATH, "You are now offered a choice between Bahamut's Empowered Breath and Tiamat's Adaptive breath.",
                 "Bahamut & Tiamat are no longer ready to enhance your breath abilities.", "enhance your natural draconic breath"}, 
-      { 2, ABIL_CHOOSE_TIAMAT_BREATH, "", "", "select a different breath power to use in place of your own"},
+      { 2, ABIL_CHOOSE_TIAMAT_BREATH, "This should never show.", "This should never show.", "select a different breath power to use in place of your own"},
       { 2, ABIL_BAHAMUT_EMPOWERED_BREATH, " enhance your natural draconic breath"},
       { 2, ABIL_TIAMAT_ADAPTIVE_BREATH, " select a different breath power to use in place of your own"},
       { 4, ABIL_CHOOSE_BAHAMUT_DRAKE, "You are now offered a choice between Bahamut's Summon Drake Mount and Tiamat's Summon Drakes.",
                 "Bahamut & Tiamat are no longer ready for you to choose a drake summon.", "summon a horde of drakes into battle"},
-      { 4, ABIL_CHOOSE_TIAMAT_DRAKE, "", "", "summon a single rime drake and ride upon its back" },
+      { 4, ABIL_CHOOSE_TIAMAT_DRAKE, "This should never show.", "This should never show.", "summon a single rime drake and ride upon its back" },
       { 4, ABIL_BAHAMUT_DRAKE_MOUNT, " summon a single rime drake and ride upon its back" },
       { 4, ABIL_TIAMAT_SUMMON_DRAKES, " summon a horde of drakes into battle" },
       { 6, ABIL_BAHAMUT_TRANSFORM, "You are now offered a choice between Bahamut's Enhanced Transformation and Tiamat's Repeatable Transformation.",
                 "Bahamut & Tiamat are no longer ready to transform you.", "permanently transform into a rarer, more powerful, draconian colour"},
-      { 6, ABIL_CHOOSE_TIAMAT_TRANSFORM, "", "", "repeatedly transform into other common draconian colours"},
+      { 6, ABIL_CHOOSE_TIAMAT_TRANSFORM, "This should never show.", "This should never show.", "repeatedly transform into other common draconian colours"},
       { 6, ABIL_TIAMAT_TRANSFORM, "transform into a different draconian colour" },
       { 7, ABIL_BAHAMUT_DRAGONSLAYING, "You are offered one final gift. Bahamut offers to brand your weapon with Dragonslaying and Tiamat offers a"
                 " Book of the Dragon, along with a permanent Wizardry bonus for spells therein.", "Bahamut & Tiamat are no longer ready to give you your"

@@ -2233,8 +2233,17 @@ static god_type _god_from_initial(const char god_initial)
     switch (toupper_safe(god_initial))
     {
         case '1': return GOD_SHINING_ONE;
+        case '!': 
+            if (you.species != SP_DRACONIAN)
+                return GOD_BAHAMUT_TIAMAT;
+            else
+                return GOD_BEOGH;
         case 'A': return GOD_ASHENZARI;
-        case 'B': return GOD_BEOGH;
+        case 'B': 
+            if (you.species == SP_DRACONIAN)
+                return GOD_BAHAMUT_TIAMAT;
+            else
+                return GOD_BEOGH;
         case 'C': return GOD_CHEIBRIADOS;
         case 'D': return GOD_DITHMENOS;
         case 'E': return GOD_ELYVILON;

@@ -444,7 +444,10 @@ static string _print_altars_for_gods(const vector<god_type>& gods,
 
         string disp_name = uppercase_first(god_name(god, false));
         if (god == GOD_GOZAG && !you_worship(GOD_GOZAG))
+        {
+            disp_name = "Gozag"; // Gozag Ym Sagoz is too long with the service fee.
             disp_name += make_stringf(" ($%d)", gozag_service_fee());
+        }
 
         snprintf(buffer, sizeof buffer, "<%s>%s</%s>",
                  colour, disp_name.c_str(), colour);
