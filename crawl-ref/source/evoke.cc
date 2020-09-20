@@ -499,14 +499,7 @@ void zap_wand(int slot)
         return;
     }
 
-    int power = you.skill(SK_EVOCATIONS, 10);
-    
-    if (power < 80)
-        power *= 2;
-    else 
-        power += 80;
-    if (power > 240)
-        power = 160 + power / 2;
+    int power = you.skill(SK_EVOCATIONS, 15);
 
     const int m = mp_cost ? 1 : 0;
     power *= (m + 3);
