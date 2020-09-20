@@ -398,7 +398,7 @@ const vector<god_power> god_powers[NUM_GODS] =
     // Bahamut and Tiamat
     { { 0, ABIL_BAHAMUT_PROTECTION, "You are now offered a choice between Bahamut's Protection and Tiamat's Retribution.", 
                                     "This should never show.", "Bahamut will protect you from slowing, confusion, petrification and sleep."},
-      { 0, ABIL_TIAMAT_RETRIBUTION, "This should never show.", "", "Tiamat will quicken your movements in retribution for hard-hitting attacks."},
+      { 0, ABIL_TIAMAT_RETRIBUTION, "This should never show.", "This should never show.", "Tiamat will quicken your movements in retribution for hard-hitting attacks."},
       { 2, ABIL_CHOOSE_BAHAMUT_BREATH, "You are now offered a choice between Bahamut's Empowered Breath and Tiamat's Adaptive breath.",
                 "Bahamut & Tiamat are no longer ready to enhance your breath abilities.", "enhance your natural draconic breath"}, 
       { 2, ABIL_CHOOSE_TIAMAT_BREATH, "This should never show.", "This should never show.", "select a different breath power to use in place of your own"},
