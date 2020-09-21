@@ -1018,11 +1018,13 @@ static formatted_string _describe_god_powers(god_type which_god)
 
     case GOD_BAHAMUT_TIAMAT:
         have_any = true;
+        /*
         if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY) || !you.props.exists(BAHAMUT_TIAMAT_CHOICE1_KEY)
             || !you.props.exists(BAHAMUT_TIAMAT_CHOICE2_KEY) || !you.props.exists(BAHAMUT_TIAMAT_CHOICE3_KEY))
         {
             desc.cprintf("You are offered the choice of two abilities multiple times as you gain piety.\n(Both abilities are listed below, so note that you will only gain half of them.)\n");
         }
+        */
         if (you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY))
         {
             if (you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
