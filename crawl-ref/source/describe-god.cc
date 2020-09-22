@@ -1018,13 +1018,14 @@ static formatted_string _describe_god_powers(god_type which_god)
 
     case GOD_BAHAMUT_TIAMAT:
         have_any = true;
-        /*
-        if (!you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY) || !you.props.exists(BAHAMUT_TIAMAT_CHOICE1_KEY)
-            || !you.props.exists(BAHAMUT_TIAMAT_CHOICE2_KEY) || !you.props.exists(BAHAMUT_TIAMAT_CHOICE3_KEY))
+        if (you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY) || you.props.exists(BAHAMUT_TIAMAT_CHOICE1_KEY)
+            || you.props.exists(BAHAMUT_TIAMAT_CHOICE2_KEY) || you.props.exists(BAHAMUT_TIAMAT_CHOICE3_KEY))
+        {}
+        else
         {
-            desc.cprintf("You are offered the choice of two abilities multiple times as you gain piety.\n(Both abilities are listed below, so note that you will only gain half of them.)\n");
+            desc.cprintf("You are offered the choice of two abilities multiple times as you gain piety.\n");
         }
-        */
+
         if (you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY))
         {
             if (you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
@@ -1068,6 +1069,11 @@ static formatted_string _describe_god_powers(god_type which_god)
         {
             tia = true;
         }
+
+        // The colour stuff doesn't work on webtiles.
+#if defined(USE_TILE_WEB) || defined(DGAMELAUNCH)
+        tia = false;
+#endif
 
         desc.textcolour(DARKGREY);
 
