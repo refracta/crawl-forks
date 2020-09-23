@@ -300,7 +300,7 @@ static bool _boulder_hit(monster& mon, const coord_def &pos)
 
         int dam = victim->apply_ac(roll_dice(3, 20));
         if (victim->is_player())
-            ouch(dam, KILLED_BY_ROLLING, mon.mindex());
+            ouch(dam, KILLED_BY_ROLLING, 0U, nullptr, you.can_see(mon), mon.name(DESC_A).c_str());
         else
             victim->hurt(&mon, dam);
     }
