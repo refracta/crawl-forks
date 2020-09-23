@@ -6769,23 +6769,18 @@ int player::gdr_perc() const
 
     const item_def *body_armour = slot_item(EQ_BODY_ARMOUR, false);
 
-    int body_base_AC = 0;
-    if (species == SP_GARGOYLE)
-        body_base_AC = 5;
-
-    // Currently affects Draconians, Nagas and Lignifites.
-    else
-        body_base_AC += (racial_ac(true)/300);
+    int gdr = 0;
 
     if (body_armour)
-        body_base_AC += property(*body_armour, PARM_AC);
+        gdr += base_ac_from(*body_armour);
 
-    // We take a sqrt here because damage prevented by GDR is
-    // actually proportional to the square of the GDR percentage
-    // (assuming you have enough AC).
-    int gdr = 14 * sqrt(max(body_base_AC - 2, 0));
+    gdr += (racial_ac(true)/100);
 
-    return gdr;
+    // If the race has NO body armour; boost their body base a bit.
+    if (you.species == SP_DRACONIAN || you.species == SP_FELID || you.species == SP_OCTOPODE)
+        gdr *= 1.5;
+
+    return min(gdr, 50); // Cap at 50; just in case of shenanigans. (GrDs in CPA, etc.)
 }
 
 /**
