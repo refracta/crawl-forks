@@ -773,14 +773,14 @@ static void _tiamat_retribution(int dam, bool fiery)
 
         apply_pity(dam);
 
-        if (dam < (you.hp_max / 10))
+        if (dam < (you.hp_max / 20))
             return;
 
         bool already_haste = you.duration[DUR_HASTE];
 
-        if (x_chance_in_y(dam * 2, you.hp_max))
+        if (x_chance_in_y(dam * 3, you.hp_max))
         {
-            if (haste_player(dam / 4 + random2(dam), false, false))
+            if (haste_player(25 + random2(dam), false, false))
                 mprf(MSGCH_DURATION, "%sTiamat %s.", fiery ? "Your cold-blood boils as " : "", 
                     already_haste ? "extends your haste" : "quickens your movements" );
         }
