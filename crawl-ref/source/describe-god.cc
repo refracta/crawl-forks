@@ -780,8 +780,23 @@ static string _raw_penance_message(god_type which_god)
         }
     }
 
-    const int initial_penance = initial_wrath_penance_for(which_god);
     // could do some math tricks to turn this into a table, but it seems fiddly
+    const int initial_penance = initial_wrath_penance_for(which_god);
+
+    // Yay special cases for plurals!
+    if (which_god == GOD_BAHAMUT_TIAMAT)
+    {
+        if (penance > initial_penance * 3 / 4)
+            return "The wrath of %s is upon you!";
+        if (penance > initial_penance / 2)
+            return "%s remember your sins.";
+        if (penance > initial_penance / 4)
+            return "%s's wrath is beginning to fade.";
+        if (penance > 0)
+            return "%s are almost ready to forgive your sins.";
+        return "%s are neutral towards you.";
+    }
+
     if (penance > initial_penance * 3 / 4)
         return "%s's wrath is upon you!";
     if (penance > initial_penance / 2)
