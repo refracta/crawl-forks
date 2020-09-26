@@ -1731,12 +1731,15 @@ ENDMAP
 
 NAME:   lightli_molten_gateway
 TAGS:   arrival no_monster_gen
-ORIENT: float
+COLOUR: v = red
+TILE:   v = dngn_metal_wall_red
+TILE:   x = wall_volcanic
+ORIENT: south
 MAP
-xxxxxxx++xxxxxxx
-xxxxxll..llxxxxx
-xxxllll..llllxxx
-xxlllvl..lvlllxx
+    xxx++xxx
+  xxxll..llxxx
+ xxllll..llllxx
+ xlllvl..lvlllx
 xxlllll..lllllxx
 xllllll..llllllx
 xlllllv..vlllllx
@@ -1745,10 +1748,10 @@ xlllllv{.vlllllx
 xlllllvvvvlllllx
 xllllllllllllllx
 xxllvllllllvllxx
-xxllllllllllllxx
-xxxllllllllllxxx
-xxxxxllllllxxxxx
-xxxxxxxxxxxxxxxx
+ xllllllllllllx
+ xxllllllllllxx
+  xxxllllllxxx
+    xxxxxxxx
 ENDMAP
 
 ##############################################################################

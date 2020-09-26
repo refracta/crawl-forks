@@ -1058,41 +1058,59 @@ static void _fixup_stairs()
             }
             else
             {
+                int stair_num = 0;
+                int target_stair = 30; // arbitrarily high number.
+                if (one_chance_in(4))
+                    target_stair = 1 + random2(2);
                 if (feat_is_stone_stair_down(grd(*ri)))
                 {
-                    env.tile_flv(*ri).feat_idx =
-                        store_tilename_get_index("dngn_portal_sewer");
-                    env.tile_flv(*ri).feat = TILE_DNGN_PORTAL_SEWER;
-                    env.tile_flv(*ri).floor_idx =
-                        store_tilename_get_index("floor_iron");
-                    env.tile_flv(*ri).floor = TILE_FLOOR_IRON;
-                    env.grid_colours(*ri) = GREEN;
-                    for (adjacent_iterator ai(*ri); ai; ++ai)
+                    stair_num++;
+                    bool cont = true;
+                    if (stair_num == target_stair)
                     {
-                        if (feat_is_wall(grd(*ai)))
-                        {
-                            _set_grd(*ai, DNGN_METAL_WALL);
-                            env.grid_colours(*ai) = GREEN;
-                            env.tile_flv(*ai).feat_idx =
-                                store_tilename_get_index("dngn_metal_wall_green");
-                            env.tile_flv(*ai).feat = TILE_DNGN_METAL_WALL_GREEN;
-                        }
-                        else if (grd(*ai) == DNGN_FLOOR)
-                        {
-                            if (x_chance_in_y(2, 3))
-                                _set_grd(*ai, DNGN_SHALLOW_WATER);
-                        }
+                        _set_grd(*ri, DNGN_FLOOR);
+                        if (!dgn_safe_place_map(random_map_for_tag("sewer_entrance"), false, false, *ri))
+                            _set_grd(*ri, DNGN_STONE_STAIRS_DOWN_I);
+                        else 
+                            cont = false;
+                    }
 
-                        if ((grd(*ai) == DNGN_DEEP_WATER))
+                    if (cont)
+                    {
+                        env.tile_flv(*ri).feat_idx =
+                            store_tilename_get_index("dngn_portal_sewer");
+                        env.tile_flv(*ri).feat = TILE_DNGN_PORTAL_SEWER;
+                        env.tile_flv(*ri).floor_idx =
+                            store_tilename_get_index("floor_iron");
+                        env.tile_flv(*ri).floor = TILE_FLOOR_IRON;
+                        env.grid_colours(*ri) = GREEN;
+                        for (adjacent_iterator ai(*ri); ai; ++ai)
                         {
-                            env.tile_flv(*ai).feat = TILE_DNGN_SHALLOW_WATER_MURKY;
-                            env.grid_colours(*ai) = LIGHTGREEN;
-                        }
+                            if (feat_is_wall(grd(*ai)))
+                            {
+                                _set_grd(*ai, DNGN_METAL_WALL);
+                                env.grid_colours(*ai) = GREEN;
+                                env.tile_flv(*ai).feat_idx =
+                                    store_tilename_get_index("dngn_metal_wall_green");
+                                env.tile_flv(*ai).feat = TILE_DNGN_METAL_WALL_GREEN;
+                            }
+                            else if (grd(*ai) == DNGN_FLOOR)
+                            {
+                                if (x_chance_in_y(2, 3))
+                                    _set_grd(*ai, DNGN_SHALLOW_WATER);
+                            }
 
-                        if ((grd(*ai) == DNGN_SHALLOW_WATER))
-                        {
-                            env.tile_flv(*ai).feat = TILE_DNGN_SHALLOW_WATER_MURKY;
-                            env.grid_colours(*ai) = LIGHTGREEN;
+                            if ((grd(*ai) == DNGN_DEEP_WATER))
+                            {
+                                env.tile_flv(*ai).feat = TILE_DNGN_SHALLOW_WATER_MURKY;
+                                env.grid_colours(*ai) = LIGHTGREEN;
+                            }
+
+                            if ((grd(*ai) == DNGN_SHALLOW_WATER))
+                            {
+                                env.tile_flv(*ai).feat = TILE_DNGN_SHALLOW_WATER_MURKY;
+                                env.grid_colours(*ai) = LIGHTGREEN;
+                            }
                         }
                     }
                 }
