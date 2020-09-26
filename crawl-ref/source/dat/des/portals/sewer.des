@@ -35,14 +35,14 @@ end
 
 # Basic sewer entries ##########################################
 # NOTE: See comments above regarding KMONS for the 1 glyph in these vaults.
-default-depth: D:1
+default-depth: Sewer
 
 NAME:   portal_sewer_entry_a
 : sewer_portal(_G)
 SUBST:  1 = 2234..........
 MONS:   nothing
 MONS:   rat / sewer rat w:5
-MONS:   ball python / adder w:2
+MONS:   ball python
 MONS:   giant cockroach / worm w:3
 MAP
 .........
@@ -94,9 +94,9 @@ NAME:   portal_sewer_entry_d
 KMONS:  1 = patrolling sewer rat
 KFEAT:  1 = W
 MAP
-xxxxxxxxxx
-xW}W1WWWWW@
-xxxxxxxxxx
+vvvvvvvvvv
+vW}W1WWWWW@
+vvvvvvvvvv
 ENDMAP
 
 NAME:   portal_sewer_entry_e
@@ -120,16 +120,18 @@ x........
 ENDMAP
 
 NAME:   portal_sewer_entry_f
-: sewer_portal(_G)
 KMONS:  1 = leopard gecko / giant cockroach / nothing w:5
 NSUBST: W = 6:1 / *:W
+SUBST:  x = v.y
+CLEAR:  y
 COLOUR: W = green / cyan w:5
+: sewer_portal(_G)
 MAP
-xxxxxxxxxxx
+vxvxvxvxvxv
 .WWWWWWWWW.
 @WWWW}WWWW@
 .WWWWWWWWW.
-xxxxxxxxxxx
+vxvxvxvxvxv
 ENDMAP
 
 NAME:   gup_sewer_entry_pipe

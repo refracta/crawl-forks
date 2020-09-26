@@ -1046,6 +1046,12 @@ static void _fixup_stairs()
 {
     if (player_in_hell() || (you.where_are_you == BRANCH_DUNGEON && you.depth == 1))
     {
+
+        int stair_num = 0;
+        int target_stair = -1;
+        if (one_chance_in(4))
+            target_stair = 1 + random2(2);
+
         for (rectangle_iterator ri(1); ri; ++ri)
         {
             if (player_in_hell())
@@ -1058,24 +1064,18 @@ static void _fixup_stairs()
             }
             else
             {
-                int stair_num = 0;
-                int target_stair = 30; // arbitrarily high number.
-                if (one_chance_in(4))
-                    target_stair = 1 + random2(2);
                 if (feat_is_stone_stair_down(grd(*ri)))
                 {
                     stair_num++;
-                    bool cont = true;
                     if (stair_num == target_stair)
                     {
+                        target_stair = -1;
                         _set_grd(*ri, DNGN_FLOOR);
-                        if (!dgn_safe_place_map(random_map_for_tag("sewer_entrance"), false, false, *ri))
+                        if (!dgn_place_map(random_map_for_tag("sewer_entrance"), false, false, *ri))
                             _set_grd(*ri, DNGN_STONE_STAIRS_DOWN_I);
-                        else 
-                            cont = false;
                     }
 
-                    if (cont)
+                    else
                     {
                         env.tile_flv(*ri).feat_idx =
                             store_tilename_get_index("dngn_portal_sewer");
@@ -2758,6 +2758,8 @@ static void _build_dungeon_level()
             _place_chance_vaults();
         }
 
+        _fixup_stairs();
+
         // Ruination and plant clumps.
         _post_vault_build();
 
@@ -2807,8 +2809,6 @@ static void _build_dungeon_level()
         _slimify_water();
         _sewer_water();
     }
-
-    _fixup_stairs();
 }
 
 static void _dgn_set_floor_colours()
