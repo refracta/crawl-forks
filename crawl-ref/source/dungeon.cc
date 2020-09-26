@@ -1042,14 +1042,61 @@ int dgn_count_disconnected_zones(bool choose_stairless,
                                        fill);
 }
 
-static void _fixup_hell_stairs()
+static void _fixup_stairs()
 {
-    for (rectangle_iterator ri(1); ri; ++ri)
+    if (player_in_hell() || (you.where_are_you == BRANCH_DUNGEON && you.depth == 1))
     {
-        if (feat_is_stone_stair_up(grd(*ri))
-            || grd(*ri) == DNGN_ESCAPE_HATCH_UP)
+        for (rectangle_iterator ri(1); ri; ++ri)
         {
-            _set_grd(*ri, DNGN_ENTER_HELL);
+            if (player_in_hell())
+            {
+                if (feat_is_stone_stair_up(grd(*ri))
+                    || grd(*ri) == DNGN_ESCAPE_HATCH_UP)
+                {
+                    _set_grd(*ri, DNGN_ENTER_HELL);
+                }
+            }
+            else
+            {
+                if (feat_is_stone_stair_down(grd(*ri)))
+                {
+                    env.tile_flv(*ri).feat_idx =
+                        store_tilename_get_index("dngn_portal_sewer");
+                    env.tile_flv(*ri).feat = TILE_DNGN_PORTAL_SEWER;
+                    env.tile_flv(*ri).floor_idx =
+                        store_tilename_get_index("floor_iron");
+                    env.tile_flv(*ri).floor = TILE_FLOOR_IRON;
+                    env.grid_colours(*ri) = GREEN;
+                    for (adjacent_iterator ai(*ri); ai; ++ai)
+                    {
+                        if (feat_is_wall(grd(*ai)))
+                        {
+                            _set_grd(*ai, DNGN_METAL_WALL);
+                            env.grid_colours(*ai) = GREEN;
+                            env.tile_flv(*ai).feat_idx =
+                                store_tilename_get_index("dngn_metal_wall_green");
+                            env.tile_flv(*ai).feat = TILE_DNGN_METAL_WALL_GREEN;
+                        }
+                        else if (grd(*ai) == DNGN_FLOOR)
+                        {
+                            if (x_chance_in_y(2, 3))
+                                _set_grd(*ai, DNGN_SHALLOW_WATER);
+                        }
+
+                        if ((grd(*ai) == DNGN_DEEP_WATER))
+                        {
+                            env.tile_flv(*ai).feat = TILE_DNGN_SHALLOW_WATER_MURKY;
+                            env.grid_colours(*ai) = LIGHTGREEN;
+                        }
+
+                        if ((grd(*ai) == DNGN_SHALLOW_WATER))
+                        {
+                            env.tile_flv(*ai).feat = TILE_DNGN_SHALLOW_WATER_MURKY;
+                            env.grid_colours(*ai) = LIGHTGREEN;
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -2743,8 +2790,7 @@ static void _build_dungeon_level()
         _sewer_water();
     }
 
-    if (player_in_hell())
-        _fixup_hell_stairs();
+    _fixup_stairs();
 }
 
 static void _dgn_set_floor_colours()
