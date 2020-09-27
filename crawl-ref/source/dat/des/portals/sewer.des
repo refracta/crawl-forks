@@ -518,8 +518,8 @@ ENDMAP
 NAME:     purgy_house
 TAGS:     no_item_gen no_monster_gen no_pool_fixup sewer_edge
 ORIENT:   north
-KMONS:    2 = sewer rat band / giant frog / hound
-KMONS:    1 = Purgy
+KMONS:    2 = sewer rat band / bullfrog / hound
+KMONS:    1 = Purgy, crocodile
 KITEM:    d = potion of berserk rage / potion of haste w:5
 KFEAT:    d = shallow_water
 SUBST:    ` = WW.
@@ -548,53 +548,47 @@ ENDMAP
 ###############################################################################
 # Another one with a big bad monster.
 #
-NAME:   sewer_the_crocodile
-TAGS:   no_item_gen no_monster_gen no_pool_fixup
-ORIENT: encompass
-SUBST:  - = WW...
-MONS:   kobold, jackal
-SUBST:  3 = 334
-KMONS:  3 = crocodile
+NAME:   purgy_donut
+TAGS:   no_pool_fixup sewer_edge
+ORIENT: east
+NSUBST: 1 = 2:1 / *-
+SUBST:  - = wWWW.
+KMONS:  1 = cinder newt 
+KMONS:  2 = sewer rat band / big kobold band
+KMONS:  3 = crocodile / slime creature
 KMONS:  4 = Purgy, crocodile
+KMONS:  W = withered plant / slimehead w:2 / nothing w:100
+KFEAT:  1234W = shallow_water
+SUBST:  c : cv
+SUBST:  C : ccvvvxxwW
 ITEM:   potion of agility / potion of heal wounds / \
         potion of invisibility / potion of mutation / potion of degeneration /\
         scroll of blinking / scroll of teleportation / scroll of fear / \
-        scroll of random uselessness / ration / potion of blood / \
-        nothing w:140
+        scroll of random uselessness / ration / potion of blood
 : sewer_setup(_G)
 MAP
-   ccccccccc
-   c%*c3c*%c
-   c*-c-c-*c
+   cccvvvccc
+   cd*v4v*dc
+   c*-v-v-*c
    ccc---ccc
     cc---cc
     c-----c
-   cc.---.cc
-   c..-c-..c
-  cc.-ccc-.cc
-  c.--ccc--.c
-  c--ccccc--c
-  c.-ccccc-.c
-  c.-ccccc-.c
-  c--ccccc--c
-  c.--ccc--.c
-  cc--ccc--cc
-   c.--c--.c
-   cc-----cc
+   cc.2--.cc
+   c..-C-..c
+ ccc.-CCC-.cE
+  @.--CCC--1E
+  @--CCCCC-1E
+  @--CCCCC-1E
+  @.--CCC--1E
+ ccc--CCC--cE
+   c.--C--.c
+   cc-2---cc
     c..-..c
     cc---cc
-     c.-.c
-     cc-cc
-     cc-cc
-   cccc-cccc
-cccc..---..ccccc
-cWWWWWWWWWWWWWWc
-cccc.......ccccc
-  ccc..c..cccxxxx
-  c....c.21.cdddx
-  c.A<.c2....dddx
-  c....c1.1.cxxxx
-  ccccccccccc
+   ccc---ccc
+   c*-v-v-*c
+   cd*v3v*dc
+   cccvvvccc
 ENDMAP
 
 ############################################################################
