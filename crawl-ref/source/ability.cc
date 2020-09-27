@@ -2067,7 +2067,7 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
             break;
         }
 
-        const int power = div_rand_round(5 * drac_breath_power(empowered), 2);
+        const int power = drac_breath_power(empowered);
 
         targeter_shotgun hitfunc(&you, shotgun_beam_count(power), beam.range);
         direction_chooser_args args;

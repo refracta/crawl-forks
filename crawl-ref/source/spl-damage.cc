@@ -4047,7 +4047,10 @@ spret cast_scattershot(const actor *caster, int pow, const coord_def &pos,
                             bool fail, zap_type zap, bool empowered)
 {
     const size_t range = spell_range(SPELL_SCATTERSHOT, pow);
-    const size_t beam_count = shotgun_beam_count(pow);
+    size_t beam_count = shotgun_beam_count(pow);
+
+    if (zap_type != ZAP_SCATTERSHOT)
+        beam_count *= 2;
 
     targeter_shotgun hitfunc(caster, beam_count, range);
 
@@ -4116,8 +4119,11 @@ spret cast_scattershot(const actor *caster, int pow, const coord_def &pos,
                 int degree = max(max(1, mons->how_chaotic(true)), mons->how_unclean(false));
                 int check = div_rand_round(pow, 3) - mons->get_hit_dice();
                 check -= random2(5);
-                zin_eff effect = effect_for_prayer_type(RECITE_BREATH, check, 0, mons);
-                zin_affect(mons, effect, degree, RECITE_BREATH, pow);
+                if (check > 1)
+                {
+                    zin_eff effect = effect_for_prayer_type(RECITE_BREATH, check, 0, mons);
+                    zin_affect(mons, effect, degree, RECITE_BREATH, pow);
+                }
                 break;
             }
             default:
