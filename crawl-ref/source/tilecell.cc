@@ -5,6 +5,7 @@
 #include "colour.h"
 #include "coord.h"
 #include "coordit.h"
+#include "env.h"
 #include "player.h"
 #include "religion.h"
 #include "terrain.h"
@@ -196,8 +197,14 @@ static void _pack_shoal_waves(const coord_def &gc, crawl_view_buffer& vbuf)
         {
             // Adjacent shallow water is only interesting for
             // floor cells.
-            if (!ink && feat == DNGN_SHALLOW_WATER)
-                continue;
+            if (feat == DNGN_SHALLOW_WATER)
+            {
+                if (cell.map_knowledge.feat_colour() != CYAN && cell.map_knowledge.feat_colour() != adj_knowledge.feat_colour())
+                    wt = WV_SHALLOW;
+
+                else if (!ink)
+                    continue;
+            }
 
             if (feat != DNGN_SHALLOW_WATER)
                 wt = WV_SHALLOW;
@@ -645,7 +652,26 @@ void pack_cell_overlays(const coord_def &gc, crawl_view_buffer &vbuf)
     if (cell.map_knowledge.feat() == DNGN_UNSEEN)
         return; // Don't put overlays on unseen tiles
 
-    if (player_in_branch(BRANCH_SHOALS))
+    bool use_shoals = player_in_branch(BRANCH_SHOALS) || cell.map_knowledge.feat_colour() == CYAN;
+
+    if (!use_shoals && in_bounds(gc))
+    {
+        for (adjacent_iterator ai(gc, true); ai; ++ai)
+        {
+            if (_bounds_check(*ai, vbuf))
+                continue;
+
+            const map_cell& adj_knowledge = vbuf(*ai).tile.map_knowledge;
+
+            if (!adj_knowledge.seen() && !adj_knowledge.mapped())
+                continue;
+
+            if (feat_is_water(adj_knowledge.feat()) && (adj_knowledge.feat_colour() == CYAN))
+                use_shoals = true;
+        }
+    }
+
+    if (use_shoals)
         _pack_shoal_waves(gc, vbuf);
     else
         _pack_default_waves(gc, vbuf);

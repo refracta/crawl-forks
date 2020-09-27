@@ -2488,6 +2488,7 @@ TAGS:   temple_overflow_1 temple_overflow_xom uniq_altar_xom
 KFEAT:  _ = altar_xom
 KFEAT:  C = C mimic
 NSUBST: C = 1:_ / *:C
+ORIENT: north
 MAP
 xxxxxxxxxxx
 x.G.G.G.G.x

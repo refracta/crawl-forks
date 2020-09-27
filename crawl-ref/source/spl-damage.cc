@@ -4049,7 +4049,7 @@ spret cast_scattershot(const actor *caster, int pow, const coord_def &pos,
     const size_t range = spell_range(SPELL_SCATTERSHOT, pow);
     size_t beam_count = shotgun_beam_count(pow);
 
-    if (zap_type != ZAP_SCATTERSHOT)
+    if (zap != ZAP_SCATTERSHOT)
         beam_count *= 2;
 
     targeter_shotgun hitfunc(caster, beam_count, range);
