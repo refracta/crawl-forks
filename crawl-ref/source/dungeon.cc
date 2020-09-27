@@ -1533,6 +1533,10 @@ static void _sewer_water()
 
     for (rectangle_iterator ri(coord_def(0, 0), coord_def(GXM - 1, GYM - 1)); ri; ++ri)
     {
+
+        if (map_masked(*ri, MMT_NO_POOL))
+            continue;
+
         if (_sewer_check(*ri))
         {
             if (ri->x == 0 || ri->x == 1 || ri->x == GXM - 1 || ri->x == GXM - 2)

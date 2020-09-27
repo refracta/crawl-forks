@@ -19,17 +19,18 @@ function sewer_portal(e)
   e.kfeat("1 = W")
   e.colour("1W = lightgreen / cyan w:5")
   e.tile("} = dngn_portal_sewer")
-  e.ftile("} = floor_iron")
+  e.ftile("}` = floor_iron")
   e.tile("v = dngn_metal_wall_green")
-  e.colour("v = green")
-  e.colour("w = green")
+  e.colour("wv = green")
   e.tags("sewer_entrance")
 end
 
 function sewer_setup(e)
   e.kfeat("< = exit_sewer")
-  e.colour("w = green")
+  e.tile("v = dngn_metal_wall_green")
+  e.colour("wv = green")
   e.colour("W = lightgreen")
+  e.kfeat("E = endless_sludge")
 end
 }}
 
@@ -181,15 +182,15 @@ KMONS:  1 = rat / sewer rat w:5 / giant cockroach / \
 NSUBST: - = 8:1 / *:W
 MAP
  xxx    xxx
-xx-xxxxxx-xx
+xx-vvvvvv-xx
 x----------x
-x---xxxx---x
-xx-xx--xx-xx
- x-x--}-x-x
- x-x----x-x
-xx-xx--xx-xx
-x---x--x---x
-x---x------x
+x---vvvv---x
+xv-vv--vv-vx
+ v-v--}-v-v
+ v-v----v-v
+xv-vv--vv-vx
+x---v--v---x
+x---v------x
 xx-xxxxxx-xx
  x@x    xxx
 ENDMAP
@@ -257,11 +258,11 @@ xxAAxxxxxxxxxx
 xxWWxxxxx---xx
 ...WWWWWWW--xx
 ....WWWWWWW-xx
- @..xxxx}WWxxx
-  .....mxWWxxx
-     @..xWWxxx
-      @.xWWxxx
-       .xWWxxx
+ @..vvvv}WWxxx
+  .....mvWWxxx
+     @..vWWxxx
+      @.vWWxxx
+       .vWWxxx
        ...WWAx
        ....WAx
         @..xxx
@@ -301,9 +302,9 @@ MAP
 .xxwwAwwxx.
 .xxwwAwwxx.
 .ww.....ww.
-.ww.....ww.
-.ww..}....@
-.ww.....ww.
+.ww.```.ww.
+.ww.`}`...@
+.ww.```.ww.
 .ww.....ww.
 .xxwwwwwxx.
 .xxwwwwwxx.
@@ -316,59 +317,43 @@ default-depth: Sewer
 ### KOBOLDS ################################################################
 # Sewers with kobold settlements. Combined weight 50.
 
+NAME:     disused_pipe
+TAGS:     no_monster_gen no_pool_fixup no_exits sewer_edge
+ORIENT:   northeast
+: sewer_setup(_G)
+MONS:     sewer rat band / kobold band / robin band
+KMONS:    q = crocodile / slime creature
+KFEAT:    q = deep_water
+COLOUR:   q = green
+TILE:     q = dngn_deep_water_murky
+MAP
+vvvvvvvvvvvvvvvvvvvvvvvvv
+vwqwWWW..}..1..{..WWWwqwv
+vvvvvvvvvvvvvvvvvvvvvvvvv
+ENDMAP
+
 ############################################################################
 # Sewer with a small kobold camp, potion treasure and Ely/Zin altar.
-# Easier than sewer_minmay_treatment, so more common.
 #
-NAME:     sewer_kobolds
-TAGS:     no_item_gen no_monster_gen no_pool_fixup
-WEIGHT:   25
-ORIENT:   encompass
-SUBST:    ' = .W
-SUBST:    ? = .x
+NAME:     elyvilon_niche
+TAGS:     no_pool_fixup sewer_cave
+ORIENT:   float
 : sewer_setup(_G)
+SUBST:    ? = .x
 # some fresh water for the kobolds
-KFEAT:    Y = deep_water
 KFEAT:    y = shallow_water
-KFEAT:    E = altar_zin / altar_elyvilon w:30
-MONS:     jackal / w:3 nothing, kobold / w:5 nothing, big kobold
-SHUFFLE:  de
+TILE:     y = dngn_shallow_water
+COLOUR:   y = cyan
+KFEAT:    F = altar_zin / altar_elyvilon w:30
+MONS:     jackal band, big kobold band, slime creature
 ITEM:     potion of curing / potion of heal wounds
-ITEM:     scroll of random uselessness
-MONS:     rat w:15 / sewer rat w:7 / nothing w:3
+ITEM:     any scroll
+SHUFFLE:  de
 MAP
-        ccc
-        cwc
-        cwcc
-        cwwc
-        ccwc
-         cwcc
-        ccwwc
-        cwwwc
-        cwwwc
-        cwwwc
-        cWwwc
-       ccWwWcc
-       c.WwW.c
-     ccc.WwW.c
-     c<..WwW.c
-     ccc.Www'c
-       c.WwW.c
-      cc'WwW'cc
-      c.'WwW''ccccccccccccccccccccccccccccccccc
-      c''WwWWWWWWWWWWWWWWWWWWWWWW..444.A.<..44c
-      c''WwW''ccccccccccccccccccccccccccccccccc
-      c.'WwW''c
-      c.WWwWW'c
-      c'WwwwW'c
-      c'WwwwW'c
-      c'WwwwW'c
-      c.'WWW''c
-      c..''''.c
-xxxxxxcccc1ccccx
-xedExxxx.122...xx
-xdexxxx.2232.y..x
-xx?.?xxx....yYy.x
+xxxxxxxxxx@xxxxx
+xedFxxxx.12....xx
+xdexxxx......y..x
+xx?3?xxx..2.yyy.x
  xx?.xxx?....y.xx
   x?x..?.?....xx
   xx???.xxxxxxx
@@ -379,109 +364,22 @@ ENDMAP
 # Water treatment center, staffed by kobolds
 #
 NAME:   sewer_minmay_treatment
-TAGS:   no_item_gen no_monster_gen no_pool_fixup
-WEIGHT: 15
-ORIENT: encompass
-MONS:   rat / sewer rat w:3
-MONS:   kobold / big kobold w:1
-MONS:   ball python / adder w:5 / cinder newt w:2 / ooze w:1
-SUBST:   y : yyyyyyW., Y : YYYYYYWw
-SUBST:   y = W., Y = Ww
+TAGS:   sewer_edge
+ORIENT: west
+MONS:   big kobold band / gnoll sergeant band w:5 / gnoll shaman band w:5 / robin band
 ITEM:   potion of curing / potion of heal wounds / potion of might w:4 /\
         potion of brilliance w:4 / potion of agility w:4 /\
         any scroll w:7 / any armour w:2 / any weapon w:2
 : sewer_setup(_G)
 : set_feature_name("clear_stone_wall", "large window")
-KFEAT:  C = deep_water
 MAP
-vvvvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvvvv
-vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
-vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
-vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
-vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
-vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
-vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
-vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
-vwwvvvvvvvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvvvvvvvCCv
-vwwnddv..vxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx..v..vddnCCv
-vwwnd2.2.v..3.xxxxxxx11111xxxxxxx11xxxxxx...3...v.2.2dnCCv
-vwwvv.2..+......xxxx..11....xxxx11111xxx........+..2.vvCCv
-vwwnd2.2.v......3.....xxx.........11...........3v.2.2dnCCv
-vwwnddv..vyyy..........xxx...3...xx......3....yyv..vddnCCv
-vwwvvvvvvvYYyy..xx.....xx.......3xxxx......xxyyYvvvvvvvCCv
-vwwwwwwwwwwYYyyxxxx.....3.........xx....yyxxYYYYwcwcCcCCCv
-vwwwwwwwwwwwYYYYYYxxyyyyyy.........yyyyyyYYYYwwwcwcwcCCCCv
-vwwwwwwwwwwwwwwwwYYYYYYYYyyyyyyyyyyyYYYYYYwwwwwwwcwcCcCCCv
-vwwwwwwwwwwwwwwwwwwwwwwwYYYYYYWYYYYYYwwwwwwwwwwwcwcwcCCCCv
-vwwwwwwwwwwwwwwwwwwwwwwwwwYYYWYYYYYwwwwwwwwwwwwwwcwcCcCCCv
-vwwwwwwwwwwwwwwwwwwwwwwwwYYyyyyyyyYYYYwwwwwwwwwwcwcwcCCCCv
-vwwvvvvvvvwwwwwYYYYYYYYYYYyy.....yyyyYYYYwwwwwwwvvvvvvvCCv
-vwwnd.v..vYYYYYYyyyyyyyyyyy........yyyyyYYYYYYYYv..v.dnCCv
-vwwn.....vyyyyyyy......................yyyyyyyyyv.....nCCv
-vwwvv222.+......................................+.222vvCCv
-vwwn.....v...........xx.........................v.....nCCv
-vwwnd.v..vx....1...xxxxx.......xx...............v..v.dnCCv
-vwwvvvvvvvxxxx111xxxxxx...xx..xxxxx...1..xxx..xxvvvvvvvCCv
-vwwvxxxxxxxxxxxxxxxxx<..xxxxx..xxxxxx111xxxxxxxxxxxxxxvCCv
-vwwvxxxxxxxxxxxxxxxxxxxxxxxxxx..AxxxxxxxxxxxxxxxxxxxxxvCCv
-vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
-vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
-vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
-vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
-vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
-vvvvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvvvv
-ENDMAP
-
-NAME:    kennysheep_pipe_town
-TAGS:    no_item_gen no_monster_gen no_pool_fixup
-ORIENT:  encompass
-MONS:    kobold / big kobold w:2
-MONS:    bat / rat / ooze w:5 / ball python / cinder newt w:5 /\
-         giant cockroach w:5 / adder w:1
-KMONS:   . = plant w:1 / fungus w:1 / nothing w:80
-KMONS:   p = plant
-SUBST:   p = ppW
-ITEM:    potion of curing / potion of heal wounds / potion of might w:4 /\
-         potion of brilliance w:4 / potion of agility w:4 / \
-         any scroll w:7 / any armour w:2 / \
-         any weapon w:2
-SHUFFLE: DEFH
-NSUBST:  D = 5:1 / 4:d / *:!
-NSUBST:  F = 5:1 / 4:d / *:!
-NSUBST:  E = 2:1 / 3:d / *:!
-NSUBST:  H = 2:1 / 3:d / *:!
-NSUBST:  . = 10:2 / *:.
-KFEAT:   p = shallow_water
-COLOUR:  p = lightgreen
-KFEAT:   ! = floor
-: sewer_setup(_G)
-MAP
-    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    xxxxxxxxxxxxx..xxxx...xxxx..xxxxxxxxxxxxxxxxxxx
-    xxxxxxx.........xx..........x...xxxxxxxxxxxxxxx
-    xxxxxxx.....................x...xxxxxxxxxxxxxxx
-    cccccc...........................xx......cccccc
-    cDDDDc...................................cFFFFc
-    cDDDD+......p.............pWpW.......W.pW+FFFFc
-    cD<DD+.....WWWW..WWp..WWpWWWWWpWWW...WWWW+FF<Fc
-    cDDDDc....pWpWWpWWp...pWWWpWWWWpWp...pWpWcFFFFc
-cccccccccccccccccWWWccccccccccWWWWccccccccccWcccccc
-cwWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWc
-cwwWwwwwwWwwwwwWwwwwwWwwwwwWwwwwwWwwwwwWwwwwwWwc
-cwWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWc
-ccc+ccccccccWWccccccccccccWcWcccccccWcccccccccccccc
-c!!!cEEEEc.pWWpW........pWWpWWp..pWpWWpWp.WWWcHHHHc
-c!A!cE<EE+..WpWW.........WWWpW...WWWWWW....WW+HH<Hc
-c!<!cEEEE+................p.W.......WWp...WW.+HHHHc
-cccccEEEEc...................................cHHHHc
-ccccccccccxx................................xcccccc
-xxxxxxxxxxxx.xx.....xxxx....................xxxxxxx
-xxxxxxxxxxxxxxxxxxxxxxxxx.................xxxxxxxxx
-xxxxxxxxxxxxxxxxxxxxxxxxxx............xxxxxxxxxxxxx
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx..xxxx.xxxxxxxxxxxxxxx
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+Ewvvvvvvv
+Ewnddv..v
+Ewnd.1..v
+Ewvv....+@
+Ewnd.1..v
+Ewnddv..v
+Ewvvvvvvv
 ENDMAP
 
 ### FROGS ##################################################################
@@ -491,117 +389,85 @@ ENDMAP
 # Two fairly watery vaults with (usually) two bullfrogs in the end.
 # Loot are good items, and often a scroll of blinking.
 #
-NAME:     sewer_frog_island_01
-TAGS:     no_item_gen no_monster_gen no_pool_fixup
-ORIENT:   encompass
+NAME:     sewer_frog_pond
+TAGS:     no_pool_fixup sewer_cave
 SUBST:    - = WWW.
-SHUFFLE:  |d
-ITEM:     scroll of teleportation w:2 / scroll of blinking / \
-          scroll of random uselessness w:1
-MONS:     cinder newt / ball python w:5 / giant cockroach / \
-          generate_awake cinder newt / generate_awake ball python w:5 / \
-          generate_awake giant cockroach / generate_awake \
-          leopard gecko / adder w:8 / nothing w:8
-NSUBST:   ! = 2:! / *:w
-KFEAT:    ! = w
-COLOUR:   ! = green
-KMONS:    ! = bullfrog / nothing w:2
+ITEM:     scroll of teleportation w:2 / scroll of blinking
+MONS:     generate_awake cinder newt / generate_awake adder
+NSUBST:   ! = 4:! / *:w
+NSUBST:   w = 8:1 / *:w
+KFEAT:    1! = w
+COLOUR:   1! = green
+KMONS:    ! = spiny frog / prince ribbit / crocodile
 : sewer_setup(_G)
 MAP
-ccccccccccccccccccccccccccccccccccc
-c.11---------.................1111c
-c1WWW-ccccccccccccccccccccccc1WWW1c
-c1WwWWccccccccccccccccccccccc1WwW.c
-c1WwwWccccccccccccccccccccccc.WwW.c
-c.WwW1ccccccccccccccccccccccc.WwW-c
-c.WwwWccccccc!!!!!!cccccccccc-WwW-c
-c.Wwwwccccwwwwwwwww!!!ccccccc-WwW-c
-c-WwwwccwwwWwwwwwwwwww!cccccc-WwW-c
-c-WwwwcwwWW<-wwwwwwwwww!ccccc-WwW-c
-c-Wwwwwwww-..-ww.--wwwww!cccc-WwW-c
-c-WwWwwWww---.-.*.--wwwwwcccc-WwW-c
-c-WwWWWwWww-.--***.wwwwwwcccc-WwW.c
-c-WwWWwwwWww.---d-wwwwwwwcccc-WwW.c
-c-WwWWWwwwW------wwwwwwwwcccc.WwW.c
-c-WwWWWwwwwW---wwwwwwWwwccccc.WwW.c
-c-WwW.WwwwwwwwwwwwwwWwwwccccc-WwW.c
-c.WwW.WwwwwwWWwwwwwwwWccccccc-WwW-c
-c.WwWW..WWWWwwWwWW.........---Www-c
-c.WwwWWWWwwwWWwWWWWWWWWWWWWWWWWwW-c
-c.WWwwwwwwwwwwwwwwwwwwwwwwwwwwwwW.c
-c..WWWWWWWWWWWWWWWWWWWWWWWWWWWWwW-c
-cc........................----WwW-c
- cccccccccccccccccccccccccccc-WwW-c
-                     cccccccc-WwW-c
-              cccccccc.----WWWWwW.ccccxxx
-              c.<.A..--W-WWWWWWwwwwwwwwwx
-              cccccccc.-..WW-.WWW1cccccxx
-                     cccccccc11111c
-                            ccccccc
+c.@@@1cccccccccccccc
+c.WwwWccccccc!!!!!!cccc
+c.WwwWccccwwwwwwwww!!!cc
+c-WwwWccwwwWwwwwwwwwww!cc
+c-WwwWcwwWW<-wwwwwwwwww!cc
+c-WwwwWwww-..-ww.--wwwww!c
+c-WwWwwWww---.-.*.--WWwwwc
+c-WwWWWwWww-.--***.wwwWwwc
+c-WwWWwwwWww.---d-wwwwwwwc
+c-WwWWWwwwW------wwwwwwwwc
+c-WwWWWwwwwW---wwwwwwWwwcc
+c-WwW.WwwwwwwwwwwwWwWwwwcc
+c.WwW.WwwwwwWWwwwwwwwWccc
+c.@@@W..WWWWwwWwWWccccc
+       cccccccccccc
 ENDMAP
 
-NAME:     sewer_frog_island_02
-TAGS:     no_item_gen no_monster_gen no_pool_fixup
-ORIENT:   encompass
-NSUBST:   ! = 2:! / *:w
+NAME:     sewer_frog_spiral
+TAGS:     no_pool_fixup sewer_cave
+NSUBST:   ! = 4:! / *:w
 SUBST:    - = WWWW.
-KMONS:    W = cinder newt / ball python / giant cockroach / \
-              leopard gecko / ooze / adder w:4 / \
-              nothing w:270
+KMONS:    W = cinder newt / giant cockroach w:30 / \
+              sewer rat w:70 / slime creature / adder / \
+			  ooze w:40 / nothing w:130
 KFEAT:    W = W
 KFEAT:    ! = w
 COLOUR:   ! = green
-KMONS:    ! = bullfrog / nothing w:2
+KMONS:    ! = spiny frog / prince ribbit / crocodile
 SHUFFLE:  edfgh$*
-ITEM:     nothing, nothing
-ITEM:     scroll of teleportation w:2 / scroll of blinking / \
-          scroll of random uselessness w:1
-ITEM:     nothing, nothing
+ITEM:     ration, any ring
+ITEM:     scroll of teleportation w:2 / scroll of blinking
+ITEM:     any potion, any ring
 KITEM:    de = *
 : sewer_setup(_G)
 MAP
-           ccccccccccccc
-        cccc-----------cccc
-     cccc-----------------cccc
-    cc-------ccccccccc-------cc
-   cc-----cccc-------cccc-----cc
-  cc----ccc-------------ccc----cc
-  c----cc-----ccccccc-----cc----c
- cc---cc----ccc!!!!!ccc----cc---cc
- c----c----cc!w---ww!!cc----c----c
-cc---cc---ccw--..---ww!cc---cc---c
-c.---c----cw--.gh*.---w!c----c---c
-c<.--c----c--.edf.-----!c----c---c
-c.---c----c----$------w!c----c---c
-cc---cc---c---.------w!cc---cc---c
- c----c---c--.------w!cc----c----c
- cc---cc--cc--c---wwccc----cc---cc
-  c----cc--c--ccccccc-----cc----c
-  cc----c--cc-..--------ccc----cc
-   cc-------c..------cccc-----cc
-    cccc---ccccccc-<-c-------cc
-       cc--c-----ccccc----ccccc
-        cccc-----------cccc--<c
-           c---ccccccccc-...-cc
-           c-----------..A.ccc
-           c----------.ccccc
-           ccccccccccccc
+         ccccccc
+      cccc-----cccc
+    ccc-----------ccc
+   cc-----ccccc-----cc
+  cc----ccc!!!ccc----cc
+ccc----cc!w-ww!!cc----c
+c-----ccw--..-ww!cc---cc
+c{----cw--.gh*.-w!c----c
+c-----c--.edf.---!c----c
+ccc---c---.$---w!cc---cc
+ cc---c--.----w!cc----c
+  c---cc--c-wwccc----cc
+  cc---c--ccccc-----cc
+   @@@@cc-..------ccc
+        cc.----cccc
+         cc-}-ccc
+          ccccc
 ENDMAP
 
 ############################################################################
-# Sewer in the shape of the letter W. Sort of. Frogs at the end.
+# Sewer in the shape of a ubend. Frogs at the end.
 #
 # Harder than the two other frog maps. Frogs are guaranteed, and neither
-# exit nor chokepoints aren't reachable when one sees them.
+# exit nor chokepoints are reachable when one sees them.
 #
-# XXX: An outlier in size, openness, and minimal land as a map.
-NAME:    sewer_minmay_w
-TAGS:    no_item_gen no_monster_gen no_pool_fixup
-ORIENT:  encompass
+NAME:    sewer_minmay_ubend
+TAGS:    no_pool_fixup sewer_special
+ORIENT:  southeast
 SHUFFLE: de
-MONS:    rat / sewer rat w:2
-MONS:    ball python / adder w:5 / cinder newt w:2 / ooze w:1
-MONS:    bullfrog
+MONS:    ooze w:2 / sewer rat
+MONS:    slime creature w:3 / adder w:5 / ooze w:1
+MONS:    bullfrog / spiny frog / prince ribbit / crocodile
 ITEM:    potion of curing / potion of heal wounds / potion of might /\
          potion of magic / potion of haste w:5 / potion of brilliance w:5
 ITEM:    scroll of teleportation / scroll of blinking w:5 /\
@@ -609,78 +475,74 @@ ITEM:    scroll of teleportation / scroll of blinking w:5 /\
 SUBST:   y : yyyyyyW., Y : YYYYYYWw, z = x., Z = wwwxx
 SUBST:   y = W., Y = Ww
 SUBST:   c = c x:1
+NSUBST:  v = 3:W. / *:c
+NSUBST:  V = 3:W. / *:c
+KMONS:   Ww = cinder newt / withered plant w:30 / nothing w:260
+KFEAT:   w = deep_water
+KFEAT:   W = shallow_water
+SUBST:   c : vc
 : sewer_setup(_G)
-MAP
-xxxxxxxxxxxxxxxxxxxxxcccccxxxxxxxxxxxxxxxxxxxxx
-xxxxxxxxxxxxxxxxcccccc2.2ccccccxxxxxxxxxxxxxxxx
-xccccccxxxxxxxxcc....2...2....ccxxxcccccccccccx
-cc....ccxxxxxxcc...............ccxxcdedcc3..3cc
-c......cxxxxxxc.1.1.1.c.........cxxce<e+2..2.2c
-c..<A..cxxxxxcc1.1.1.cc+cc......ccxcdedc.2..2.c
-c......cxxxxxc1.1.1.cccddcc......cxccccc2.2..2c
-czyyyyzcxxxxxczyyyyzcxcddcczyyyyzcxxxxxczyyyyzc
-cYYWYYYcxxxxxcYYWYYYcxcccccYYYYWYcxxxxxcYYZWYYc
-cwYWYYwcxxxxxcwYWYwwcxxxxxcwwwYWYcxxxxxcYYWYwYc
-cwYYWYwcxxxxxcwYWYYwcxxxxxcwwYYWYcxxxxxcwYWYYwc
-cwwYWYwcxxxxxcwwYWYwcxxxxxcwYYWYYcxxxxxcwYWWYwc
-cwwYWYwcxxxxxcwwYWZYcxxxxxcYWWYYwcxxxxxcwYYWZYc
-cwYZWYwcxxxxxcwwYZWYcxxxxxcWYYYwwcxxxxxcwwYZWYc
-cwYWZYwcxxxxxcwwwYWYcxxxxxcWWYYwwcxxxxxcwwwY.Yc
-cw.WYwwcxxxxxcwwwYYWcxxxxxcZyyyyZcxxxxxcwwwY.Yc
-cwYWZYwcxxxxxcwwwZY.cxxxxxcyy%%ywcxxxxxcwwYZWYc
-cwYZW.wcxxxxxcwwwYYWcxxxxxcZyyyyZcxxxxxcwwYWZYc
-cwwYWYwcxxxxxcwwwYWYcxxxxxcwwYYWWcxxxxxcwYYWYwc
-cwwYWYwcxxxxxcwwYZWYcxxxxxcwwwYYWcxxxxxcwYWWYwc
-cwwYWYwcxxxxxcwwYWZYcxxxxxcwYYWWYcxxxxxcwYWYYwc
-cwwYWYwcxxxxxcwYYWYwcxxxxxcwYWYYwcxxxxxcwYWYwYc
-cYYYWYYcxxxxxcwYWYwwcxxxxxcYYWYYYcxcccccYYWYYYc
-czyyyyzcxxxxxczyyyyzcxxxxxczyyyyzcxceecczyyyyzc
-c1.1.1.ccxxxcc......cxxxxxc1.1.1.ccceecc......c
-cc1.1.1.ccxcc......ccxxxxxcc1.1.1.cc+cc2.....cc
-xc.......ccc.......cxxxxxxxc.1.1.1.c.........cx
-xcc...............ccxxxxxxxcc.1.1.1.........ccx
-xxcccc.........ccccxxxxxxxxxcccc.2......2ccccxx
-xxxxxcccc2.2ccccxxxxxxxxxxxxxxxcccc2.2ccccxxxxx
-xxxxxxxxcccccxxxxxxxxxxxxxxxxxxxxxcccccxxxxxxxx
+MAP                
+@@@@@@@@cc   ccccccccccc 
+@........cc  cdedcc3..3cc
+@......2..c  ce<e+2..3.3c
+c+cc..2.2.cc cdedc.2..2.c
+cddcc..2...c ccccc2.2..2c
+cddcczyyyyzc     czyyyyzc
+cccccYYYYWYc     VYYZWYYc
+    cwwwYWYv     VYYWYwYc
+    cwwYYWYv     VwYWYYwc
+    cwYYWYYv     VwYWWYwc
+    cYWWYYwv     VwYYWZYc
+    cWYYYwwv     VwwYZWYc
+    .ZyyyyZv     VwwwY.Y.
+    .yy%%ywv     VwwYZWY.
+    .ZyyyyZv     VwwYWZY.
+    cwwYYWWv     VwYYWYwc
+    cwwwYYWv     VwYWWYwc
+    cwYWYYwv     VwYWYwYc
+    cYYWYYYc cccccYYWYYYc
+    czyyyyzc ceecczyyyyzc
+    c1.1.1.ccceecc......c
+    cc1.1.1.cc+cc2.....cc
+     c.1.1.1.c.........c 
+     cc.1.1.1.........cc 
+      cccc.2......2cccc  
+         cccc2.2cccc     
+            ccccc        
 ENDMAP
 
 ## BIG BADDIE (Purgy) ######################################################
 # Threat is mostly a single larger creature, often Purgy. Combined weight 40.
 
-NAME:     sewer_big_baddie
-TAGS:     no_item_gen no_monster_gen no_pool_fixup
-ORIENT:   encompass
+NAME:     purgy_house
+TAGS:     no_item_gen no_monster_gen no_pool_fixup sewer_edge
+ORIENT:   north
+KMONS:    2 = sewer rat band / giant frog / hound
+KMONS:    1 = Purgy
+KITEM:    d = potion of berserk rage / potion of haste w:5
+KFEAT:    d = shallow_water
+SUBST:    ` = WW.
+SUBST:    c : cv
 : sewer_setup(_G)
-SUBST:    2 = 23
-KMONS:    2 = crocodile
-KMONS:    3 = Purgy, crocodile
-ITEM:     potion of berserk rage / potion of haste w:5
-MONS:     bat
 MAP
  ccccccc
 cc$***$cc
-c..$*$..c
-c.......c
-c...2...c
-c.......c
-c.......c
-cc.....cc
- ccc.ccc     ccccccc
-   c.c      cc1.1..cc
-   c.c     cc1..w...cc
-   c.ccccccc...www...cc
-   c..........wwwww.A.c
-   c.ccccccc1..www...cc
-   c.c     cc...w...cc
-   c.c      cc1....cc
-   c.c       ccccccc
-   c.c
-   c.c
-   c.c
-   c<c
-   c.c
+c%.$*$.%c
+c...1...c
+c.2.w.2.c
+c..wWw..c
+c.WwWwW.c
+cc.WwW.cc
+ cccWccc
    cdc
-   ccc
+   c`c
+   c`c
+   c`c
+   c`c
+   c`c
+   c`c
+   c@c
 ENDMAP
 
 ###############################################################################
