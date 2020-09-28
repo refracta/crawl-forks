@@ -1529,19 +1529,22 @@ ENDMAP
 
 NAME:    evilmike_nicolae_abyss_rune_betentacled_crabyss
 TAGS:    abyss_rune unrand transparent no_pool_fixup patrolling
-KMONS:   1P = apocalypse crab
+KMONS:   1 = apocalypse crab
 KMONS:   2 = fire crab
 KMONS:   3 = ghost crab
 KMONS:   K = kraken
 KMONS:   T = tentacled monstrosity
 KMONS:   S = shambling mangrove
-KITEM:   OP = abyssal rune of Zot
-KFEAT:   TS1P = W
+KITEM:   O = abyssal rune of Zot
+KFEAT:   PTS1 = W
 KFEAT:   K = w
 KFEAT:   A = stone_arch
-SHUFFLE: O1 / O1 / P'
-SUBST:   D : cw, ' = w
-FTILE:   "A23O = floor_crystal_squares
+SHUFFLE: O1 / O1
+COLOUR:  wPK = cyan
+SUBST:   D : cw
+FTILE:   PSWw"A123O = floor_crystal_squares
+COLOUR:  c = jewel
+TILE:    c = WALL_ABYSS_BLUE
 COLOUR:  "23O = lightmagenta
 MAP
   .............
@@ -1551,15 +1554,19 @@ MAP
 .."cc1WWWWW1cc"..
 .cccWWDWSWDWWccc.
 .."cTWWWWWWWTc"..
-.ccccccWWWcccccc.
-..."cc"WWW"cc"...
- ..cc""WWW""cc..
- ..c"""WWW"""c..
- ..c"""WwW"""c..
- .cccWWwwwWWccc.
- .c2WWwwKwwWW3c.
- .cccWWwwwWWccc.
- ...""""A""""...
+.ccccccWPWcccccc.
+..."cc"PWW"cc"...
+ ..cc""PPW""cc..
+ ..c"""PPW"""c..
+ ..c"""PwP"""c..
+ .cccPPwwwPPccc.
+ .c2PPwwKwwPP3c.
+ .cccPPwwwPPccc.
+ ..cccPPPPPccc..
+ ...""""AP"""...
+ ...."""""""....
+ .....""""".....
+ ...............
 ENDMAP
 
 NAME:   doesnt_abyss_rune_brain_food
@@ -1947,11 +1954,13 @@ x...x...x
 ENDMAP
 
 NAME:   evilmike_abyss_exit_kraken
-TAGS:   abyss_exit
+TAGS:   abyss_exit no_pool_fixup
 NSUBST: w = 1:m / *:w
 KFEAT:  m = w
 KMONS:  m = kraken
+FTILE:  mWwYZO = floor_sand
 SUBST:  Z = wY, Y = wW, W = w., w=WWw
+COLOUR: Wwm = cyan
 : init_abyss_exit(_G, "O")
 MAP
 ..WWWWWWW..

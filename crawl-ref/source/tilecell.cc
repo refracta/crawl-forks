@@ -206,7 +206,7 @@ static void _pack_shoal_waves(const coord_def &gc, crawl_view_buffer& vbuf)
                     continue;
             }
 
-            if (feat != DNGN_SHALLOW_WATER)
+            if ((you.where_are_you == BRANCH_SHOALS || adj_knowledge.feat_colour() == CYAN) && feat != DNGN_SHALLOW_WATER)
                 wt = WV_SHALLOW;
         }
         else if (adj_feat == DNGN_DEEP_WATER)
