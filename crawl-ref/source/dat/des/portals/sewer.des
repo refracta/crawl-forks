@@ -17,7 +17,7 @@
 function sewer_portal(e)
   e.tags("no_monster_gen")
   e.kfeat("1 = W")
-  e.colour("1W = lightgreen / cyan w:5")
+  e.colour("1W = lightgreen / black w:5")
   e.tile("} = dngn_portal_sewer")
   e.ftile("}` = floor_iron")
   e.tile("v = dngn_metal_wall_green")

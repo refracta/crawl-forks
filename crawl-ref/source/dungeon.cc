@@ -1042,76 +1042,81 @@ int dgn_count_disconnected_zones(bool choose_stairless,
                                        fill);
 }
 
-static void _fixup_stairs()
+static void _fixup_hell_stairs()
 {
-    if (player_in_hell() || (you.where_are_you == BRANCH_DUNGEON && you.depth == 1))
+    if (!player_in_hell())
+        return;
+
+    for (rectangle_iterator ri(1); ri; ++ri)
     {
-
-        int stair_num = 0;
-        int target_stair = -1;
-        if (one_chance_in(4))
-            target_stair = 1 + random2(2);
-
-        for (rectangle_iterator ri(1); ri; ++ri)
+        if (feat_is_stone_stair_up(grd(*ri))
+            || grd(*ri) == DNGN_ESCAPE_HATCH_UP)
         {
-            if (player_in_hell())
+            _set_grd(*ri, DNGN_ENTER_HELL);
+        }
+    }
+}
+
+static void _fixup_sewer_stairs()
+{
+    if (!(you.where_are_you == BRANCH_DUNGEON && you.depth == 1))
+        return;
+
+    int stair_num = 0;
+    int target_stair = -1;
+
+    if (one_chance_in(3))
+        target_stair = 1 + random2(3);
+
+    for (rectangle_iterator ri(1); ri; ++ri)
+    {
+        if (feat_is_stone_stair_down(grd(*ri)))
+        {
+            stair_num++;
+
+            if (stair_num == target_stair)
             {
-                if (feat_is_stone_stair_up(grd(*ri))
-                    || grd(*ri) == DNGN_ESCAPE_HATCH_UP)
-                {
-                    _set_grd(*ri, DNGN_ENTER_HELL);
-                }
+                target_stair = -1;
+                _set_grd(*ri, DNGN_FLOOR);
+                if (!dgn_place_map(random_map_for_tag("sewer_entrance"), false, false, *ri))
+                    _set_grd(*ri, DNGN_STONE_STAIRS_DOWN_I);
             }
+
             else
             {
-                if (feat_is_stone_stair_down(grd(*ri)))
+                env.tile_flv(*ri).feat_idx =
+                    store_tilename_get_index("dngn_portal_sewer");
+                env.tile_flv(*ri).feat = TILE_DNGN_PORTAL_SEWER;
+                env.tile_flv(*ri).floor_idx =
+                    store_tilename_get_index("floor_iron");
+                env.tile_flv(*ri).floor = TILE_FLOOR_IRON;
+                env.grid_colours(*ri) = GREEN;
+                for (adjacent_iterator ai(*ri); ai; ++ai)
                 {
-                    stair_num++;
-                    if (stair_num == target_stair)
+                    if (feat_is_wall(grd(*ai)) && feat_is_opaque(grd(*ai)) || feat_is_tree(grd(*ai)))
                     {
-                        target_stair = -1;
-                        _set_grd(*ri, DNGN_FLOOR);
-                        if (!dgn_place_map(random_map_for_tag("sewer_entrance"), false, false, *ri))
-                            _set_grd(*ri, DNGN_STONE_STAIRS_DOWN_I);
+                        _set_grd(*ai, DNGN_METAL_WALL);
+                        env.grid_colours(*ai) = GREEN;
+                        env.tile_flv(*ai).feat_idx =
+                            store_tilename_get_index("dngn_metal_wall_green");
+                        env.tile_flv(*ai).feat = TILE_DNGN_METAL_WALL_GREEN;
+                    }
+                    else if (grd(*ai) == DNGN_FLOOR)
+                    {
+                        if (x_chance_in_y(2, 3))
+                            _set_grd(*ai, DNGN_SHALLOW_WATER);
                     }
 
-                    else
+                    if ((grd(*ai) == DNGN_DEEP_WATER))
                     {
-                        env.tile_flv(*ri).feat_idx =
-                            store_tilename_get_index("dngn_portal_sewer");
-                        env.tile_flv(*ri).feat = TILE_DNGN_PORTAL_SEWER;
-                        env.tile_flv(*ri).floor_idx =
-                            store_tilename_get_index("floor_iron");
-                        env.tile_flv(*ri).floor = TILE_FLOOR_IRON;
-                        env.grid_colours(*ri) = GREEN;
-                        for (adjacent_iterator ai(*ri); ai; ++ai)
-                        {
-                            if (feat_is_wall(grd(*ai)))
-                            {
-                                _set_grd(*ai, DNGN_METAL_WALL);
-                                env.grid_colours(*ai) = GREEN;
-                                env.tile_flv(*ai).feat_idx =
-                                    store_tilename_get_index("dngn_metal_wall_green");
-                                env.tile_flv(*ai).feat = TILE_DNGN_METAL_WALL_GREEN;
-                            }
-                            else if (grd(*ai) == DNGN_FLOOR)
-                            {
-                                if (x_chance_in_y(2, 3))
-                                    _set_grd(*ai, DNGN_SHALLOW_WATER);
-                            }
+                        env.tile_flv(*ai).feat = TILE_DNGN_SHALLOW_WATER_MURKY;
+                        env.grid_colours(*ai) = LIGHTGREEN;
+                    }
 
-                            if ((grd(*ai) == DNGN_DEEP_WATER))
-                            {
-                                env.tile_flv(*ai).feat = TILE_DNGN_SHALLOW_WATER_MURKY;
-                                env.grid_colours(*ai) = LIGHTGREEN;
-                            }
-
-                            if ((grd(*ai) == DNGN_SHALLOW_WATER))
-                            {
-                                env.tile_flv(*ai).feat = TILE_DNGN_SHALLOW_WATER_MURKY;
-                                env.grid_colours(*ai) = LIGHTGREEN;
-                            }
-                        }
+                    if ((grd(*ai) == DNGN_SHALLOW_WATER))
+                    {
+                        env.tile_flv(*ai).feat = TILE_DNGN_SHALLOW_WATER_MURKY;
+                        env.grid_colours(*ai) = LIGHTGREEN;
                     }
                 }
             }
@@ -2762,7 +2767,7 @@ static void _build_dungeon_level()
             _place_chance_vaults();
         }
 
-        _fixup_stairs();
+        _fixup_sewer_stairs();
 
         // Ruination and plant clumps.
         _post_vault_build();
@@ -2785,6 +2790,8 @@ static void _build_dungeon_level()
         _builder_items();
 
         _fixup_walls();
+
+        _fixup_hell_stairs();
     }
     else
     {
