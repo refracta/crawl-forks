@@ -171,7 +171,7 @@ static void _pack_shoal_waves(const coord_def &gc, crawl_view_buffer& vbuf)
     if (feat_is_solid(feat) || feat == DNGN_LAVA)
         return;
 
-    const bool ink_only = (feat == DNGN_DEEP_WATER);
+    const bool ink_only = (feat == DNGN_DEEP_WATER && (you.where_are_you == BRANCH_SHOALS || cell.map_knowledge.feat_colour() == CYAN));
 
     wave_type north = WV_NONE, south = WV_NONE,
               east = WV_NONE, west = WV_NONE,
@@ -209,7 +209,7 @@ static void _pack_shoal_waves(const coord_def &gc, crawl_view_buffer& vbuf)
             if ((you.where_are_you == BRANCH_SHOALS || adj_knowledge.feat_colour() == CYAN) && feat != DNGN_SHALLOW_WATER)
                 wt = WV_SHALLOW;
         }
-        else if (adj_feat == DNGN_DEEP_WATER)
+        else if (adj_feat == DNGN_DEEP_WATER && (you.where_are_you == BRANCH_SHOALS || adj_knowledge.feat_colour() == CYAN))
             wt = WV_DEEP;
         else
             continue;
@@ -301,7 +301,7 @@ static void _pack_shoal_waves(const coord_def &gc, crawl_view_buffer& vbuf)
 
         // TILE_WAVE_DEEP_* is transition tile to floor;
         // deep water has another one for shallow water in TILE_WAVE_DEEP_* + 1
-        int mod = (feat == DNGN_SHALLOW_WATER) ? 1 : 0;
+        int mod = (feat == DNGN_SHALLOW_WATER || feat == DNGN_DEEP_WATER) ? 1 : 0;
 
         if (north == WV_DEEP)
             _add_overlay(TILE_WAVE_DEEP_N + mod, cell);
@@ -671,10 +671,16 @@ void pack_cell_overlays(const coord_def &gc, crawl_view_buffer &vbuf)
         }
     }
 
+    bool use_default = !use_shoals;
+
+    if (cell.map_knowledge.feat() == DNGN_DEEP_WATER && cell.map_knowledge.feat_colour() != CYAN)
+        use_default = true;
+    
+    if (use_default)
+        _pack_default_waves(gc, vbuf);
+
     if (use_shoals)
         _pack_shoal_waves(gc, vbuf);
-    else
-        _pack_default_waves(gc, vbuf);
 
     if (cell.map_knowledge.feat() != DNGN_LAVA)
     {

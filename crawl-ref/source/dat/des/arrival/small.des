@@ -2236,26 +2236,30 @@ xxx@.@xxxxxxx@.xx
 ENDMAP
 
 NAME:     eino_arrival_cavern_b
-TAGS:     arrival no_monster_gen no_rotate
+TAGS:     arrival no_monster_gen no_pool_fixup
+KFEAT:    O = open_sea
+KFEAT:    o = deep_water
+COLOUR:   o = cyan
 ORIENT:   northwest
 WEIGHT:   5
 MAP
-xxxxxxxxxxxxxxxx
-xxxxxxx{xxxxxxxx
-xxxxxxx..xxxxxxx
-xxxxxxx...xxxwxx
-xxxxxx....xwwwxx
-xxxxxx..wwwwwwxx
-xxwwwwwwWwwwxxxx
-xwwwwwwww..xxxxx
-xwwxx.......xxxx
-xxxx........xxxx
-xxxx.........xxx
-xxxx..........xx
-xxxx..........xx
-xxxx...........@
-xxxxxx.......xxx
-xxxxxxxx.@.xxxxx
+xxxxxxxxxxxxOOOOx
+xxxxxxx{xxxxoooox
+xxxxxxx..xxxxwowx
+xxxxxxx...xxxowwx
+xxxxxx....xwwooxx
+xxxxxx..wowwowxxx
+OxowoowWWwwwxxxxx
+OowowwWww..xxxxxx
+Oooxx.......xxxxx
+Oxxx........xxxxx
+xxxx.........xxxx
+xxxx..........xxx
+xxxx..........xxx
+xxxx............@
+xxxxxx........xxx
+xxxxxxx......xxxx
+xxxxxxxx.@..xxxxx
 ENDMAP
 
 NAME:     eino_arrival_cavern_c
