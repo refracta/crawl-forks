@@ -3464,10 +3464,10 @@ static void _place_sewer_vault()
 
     int columns = env.properties[SEWER_COLUMNS_KEY].get_int();
     int row_height = env.properties[SEWER_ROW_POSITION_KEY].get_int();
-    int vault_type = random2(13);
+    int vault_type = random2(15);
     coord_def pos;
 
-    if (vault_type == 0)
+    if (vault_type < 2)
     {
         if (columns == 3)
             pos.x = GXM / 2;
@@ -3482,14 +3482,14 @@ static void _place_sewer_vault()
         if (map)
             dgn_place_map(map, false, true, pos);
     }
-    else if (vault_type == 1)
+    else if (vault_type == 3)
     {
         const map_def * map = random_map_for_tag("sewer_special");
 
         if (map)
             dgn_place_map(map, false, true, pos);
     }
-    else if (vault_type < 6)
+    else if (vault_type < 8)
     {
         const map_def * map = random_map_for_tag("sewer_cave");
 
@@ -3506,7 +3506,7 @@ static void _place_sewer_vault()
         if (map)
             dgn_place_map(map, false, false, pos);
     }
-    else if (vault_type < 9)
+    else if (vault_type < 11)
     {
         const map_def * map = random_map_for_tag("sewer_edge");
 
