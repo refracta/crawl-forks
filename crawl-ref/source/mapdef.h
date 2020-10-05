@@ -1237,7 +1237,7 @@ public:
 
     void hmirror();
     void vmirror();
-    void rotate(bool clockwise);
+    bool rotate(bool clockwise);
     void normalise();
     string resolve();
     void fixup();

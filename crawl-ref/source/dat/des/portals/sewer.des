@@ -72,7 +72,6 @@ xW'...
 ENDMAP
 
 NAME:   portal_sewer_entry_c
-WEIGHT: 4
 : sewer_portal(_G)
 NSUBST: c = 1:+ / 2:n / *:c
 NSUBST: W = 8 = 111W / *:W
@@ -313,11 +312,8 @@ ENDMAP
 # The actual portal vaults #####################################
 default-depth: Sewer
 
-### KOBOLDS ################################################################
-# Sewers with kobold settlements. Combined weight 50.
-
 NAME:     disused_pipe
-TAGS:     no_monster_gen no_pool_fixup no_exits sewer_edge
+TAGS:     no_monster_gen no_pool_fixup no_exits sewer_edge no_trap_gen
 ORIENT:   northeast
 : sewer_setup(_G)
 MONS:     sewer rat band / kobold band / robin band
@@ -380,9 +376,6 @@ Ewnd.1..v
 Ewnddv..v
 Ewvvvvvvv
 ENDMAP
-
-### FROGS ##################################################################
-# Giant frogs, specifically. Combined weight 40.
 
 ############################################################################
 # Two fairly watery vaults with (usually) two bullfrogs in the end.
@@ -512,10 +505,10 @@ cccccYYYYWYc     VYYZWYYc
 ENDMAP
 
 ## BIG BADDIE (Purgy) ######################################################
-# Threat is mostly a single larger creature, often Purgy. Combined weight 40.
+# Threat is mostly a single larger creature, often Purgy.
 
 NAME:     purgy_house
-TAGS:     no_item_gen no_monster_gen no_pool_fixup sewer_edge
+TAGS:     no_item_gen no_monster_gen no_pool_fixup sewer_edge no_trap_gen
 ORIENT:   north
 KMONS:    2 = sewer rat band / bullfrog / hound
 KMONS:    1 = Purgy, crocodile
@@ -698,9 +691,6 @@ vvvvvc+c+c+c+c+c+c+c
      ccccccccccccccc
 ENDMAP
 
-### OTHER #####################################################################
-# Other sorts of Sewer maps, most weighted 10. (Total 68).
-
 ###############################################################################
 # If you can get to the middle, there are four doors to try; two will give you
 # monsters, two will yield you treasure.
@@ -753,7 +743,6 @@ ENDMAP
 NAME:   st_sewer_sea
 TAGS:   no_monster_gen no_pool_fixup sewer_edge
 ORIENT: west
-WEIGHT: 5
 MONS:   sewer rat
 KMONS:  G = merfolk siren hd:3 name:sickly name_adjective name_species
 KMONS:  H = merfolk avatar hd:3 name:malarious name_adjective name_species
@@ -983,7 +972,7 @@ ENDMAP
 # each map, but all three pipes will be accessible on all instances.
 #
 NAME:    sewer_co_cracked_pipes
-TAGS:    no_item_gen no_monster_gen no_pool_fixup no_rotate no_vmirror
+TAGS:    no_item_gen no_monster_gen no_pool_fixup no_vmirror
 ORIENT:  encompass
 #      water creatures
 MONS:    cinder newt / ball python w:5 / \
@@ -1138,7 +1127,6 @@ ENDMAP
 NAME:    kennysheep_sewer_church
 TAGS:    no_item_gen no_monster_gen no_pool_fixup
 ORIENT:  encompass
-WEIGHT:  3
 KFEAT:   B = altar_makhleb
 MARKER:  F = lua:fog_machine { cloud_type = "flame", pow_min = 100, \
                                pow_max = 100, delay = 10, size = 1, \

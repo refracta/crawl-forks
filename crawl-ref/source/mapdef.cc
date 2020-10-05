@@ -3219,10 +3219,10 @@ void map_def::vmirror()
     }
 }
 
-void map_def::rotate(bool clock)
+bool map_def::rotate(bool clock)
 {
     if (has_tag("no_rotate"))
-        return;
+        return false;
 
 #define GMINM ((GXM) < (GYM)? (GXM) : (GYM))
     // Make sure the largest dimension fits in the smaller map bound.
@@ -3273,7 +3273,11 @@ void map_def::rotate(bool clock)
 
             sv.subvault->map.rotate(clock);
         }
+
+        return true;
     }
+
+    return false;
 }
 
 void map_def::normalise()

@@ -48,7 +48,7 @@ static map_section_type _apply_vault_definition(
     vault_placement &,
     bool check_place);
 
-static bool _resolve_map(map_def &def);
+static bool _resolve_map(map_def &def, coord_def pos);
 
 static bool _map_safe_vault_place(const map_def &map,
                                   const coord_def &c,
@@ -129,7 +129,7 @@ static map_section_type _write_vault(map_def &mdef,
         if (place.map.test_lua_veto())
             break;
 
-        if (!_resolve_map(place.map))
+        if (!_resolve_map(place.map, place.pos))
             continue;
 
         // Must set size here, or minivaults will not be placed correctly.
@@ -191,10 +191,13 @@ static bool _resolve_map_lua(map_def &map)
 
 // Resolve Lua and transformation directives, then mirror and rotate the
 // map if allowed
-static bool _resolve_map(map_def &map)
+static bool _resolve_map(map_def &map, coord_def pos)
 {
     if (!_resolve_map_lua(map))
         return false;
+
+    bool force_north_south = (pos.y == (GYM - 1));
+    bool force_east_west   = (pos.x == (GXM - 1));
 
     // Don't bother flipping or rotating 1x1 subvaults.
     // This just cuts down on level generation message spam.
@@ -210,7 +213,18 @@ static bool _resolve_map(map_def &map)
         map.vmirror();
 
     // The map may also refuse to be rotated.
-    if (coinflip())
+    // Make sure all vaults affected by forced positioning can be rotated.
+    if (force_north_south)
+    {
+        if (map.orient == MAP_WEST || map.orient == MAP_WEST)
+            return map.rotate(coinflip());
+    }
+    else if (force_east_west)
+    {
+        if (map.orient == MAP_NORTH || map.orient == MAP_SOUTH)
+            return map.rotate(coinflip());
+    }
+    else if (coinflip())
         map.rotate(coinflip());
 
     return true;
@@ -603,19 +617,38 @@ static bool _apply_vault_grid(map_def &def,
         start.x = GXM - size.x;
     }
 
-    // Handle maps aligned along cardinals that are smaller than
-    // the corresponding map dimension.
-    if ((orient == MAP_NORTH || orient == MAP_SOUTH
-         || orient == MAP_ENCOMPASS || orient == MAP_CENTRE)
-        && size.x < GXM)
+    if (orient == MAP_NORTH || orient == MAP_SOUTH || orient == MAP_EAST || orient == MAP_WEST)
     {
-        start.x = (GXM - size.x) / 2;
+        if (place.pos.x == GXM - 1)
+        {
+            if (orient != MAP_EAST && orient != MAP_WEST)
+                return false;
+            start.y = place.pos.y - (size.y / 2);
+        }
+        else if (place.pos.y == GYM - 1)
+        {
+            if (orient != MAP_NORTH && orient != MAP_SOUTH)
+                return false;
+            start.x = place.pos.x - (size.x / 2);
+        }
     }
-    if ((orient == MAP_EAST || orient == MAP_WEST
-         || orient == MAP_ENCOMPASS || orient == MAP_CENTRE)
-        && size.y < GYM)
+
+    else
     {
-        start.y = (GYM - size.y) / 2;
+        // Handle maps aligned along cardinals that are smaller than
+        // the corresponding map dimension.
+        if ((orient == MAP_NORTH || orient == MAP_SOUTH
+            || orient == MAP_ENCOMPASS || orient == MAP_CENTRE)
+            && size.x < GXM)
+        {
+            start.x = (GXM - size.x) / 2;
+        }
+        if ((orient == MAP_EAST || orient == MAP_WEST
+            || orient == MAP_ENCOMPASS || orient == MAP_CENTRE)
+            && size.y < GYM)
+        {
+            start.y = (GYM - size.y) / 2;
+        }
     }
 
     // Floating maps can go anywhere, ask the map_def to suggest a place.
