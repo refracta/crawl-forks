@@ -3883,31 +3883,6 @@ cGWW"WWA-$2$-AWW"WWGc
    .....;.c.`.....
 ENDMAP
 
-NAME: cheibrodos_pilgrimage
-TAGS: no_item_gen no_monster_gen
-DEPTH: D:2-3
-ORIENT: float
-MONS: orc priest band, orc
-SUBST: ' : cG.w
-KFEAT: G = orcish_idol
-TILE:  c = WALL_STONE_SMOOTH
-:if crawl.one_chance_in(4) then
-KFEAT: T = altar_beogh
-:end
-MAP
- ...........
-..ccccccccc.
-.ccc........
-.cc..'2..'..
-.c$........@
-@nT.1......@
-.c$........@
-.cc..'2..'..
-.ccc........
-..ccccccccc.
- ...........
-ENDMAP
-
 NAME: cheibrodos_statue_roulette
 TAGS: no_item_gen no_monster_gen
 DEPTH: D:3-

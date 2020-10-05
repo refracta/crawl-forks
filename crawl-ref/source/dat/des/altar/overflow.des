@@ -272,6 +272,31 @@ FDD..CCDCD.CC.DDF
 EC...F..E..F....E
 ENDMAP
 
+### Beogh overflow altars #####################################################
+
+NAME: cheibrodos_pilgrimage
+TAGS: no_item_gen no_monster_gen uniq_altar_beogh temple_overflow_1 temple_overflow_beogh
+DEPTH: D:2-3
+ORIENT: float
+MONS: orc priest band, orc
+SUBST: ' : cG.w
+KFEAT: G = orcish_idol
+TILE:  c = WALL_STONE_SMOOTH
+KFEAT: T = altar_beogh
+MAP
+ ...........
+..ccccccccc.
+.ccc........
+.cc..'2..'..
+.c$........@
+@nT.1......@
+.c$........@
+.cc..'2..'..
+.ccc........
+..ccccccccc.
+ ...........
+ENDMAP
+
 ### Cheibriados overflow altars ###############################################
 
 NAME:   cheibriados_altar_1
