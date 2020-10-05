@@ -92,8 +92,9 @@ TAGS: overwritable layout unrand no_exits water_ok
 	  d = 'b'
 	end
 	fill_area{x1 = 1, y1 = c - a, x2 = gxm - 1, y2 = c + b, fill = 'W', border = d}
-	
+
 	sewer_iterate()
+	pass_sewer_info(columns, c)
 
 	subst("W = d")
 

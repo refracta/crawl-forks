@@ -26,7 +26,6 @@ function sewer_portal(e)
 end
 
 function sewer_setup(e)
-  e.kfeat("< = exit_sewer")
   e.tile("v = dngn_metal_wall_green")
   e.colour("wv = green")
   e.colour("W = lightgreen")
@@ -343,7 +342,7 @@ SUBST:    ? = .x
 # some fresh water for the kobolds
 KFEAT:    y = shallow_water
 TILE:     y = dngn_shallow_water
-COLOUR:   y = cyan
+COLOUR:   y = blue
 KFEAT:    F = altar_zin / altar_elyvilon w:30
 MONS:     jackal band, big kobold band, slime creature
 ITEM:     potion of curing / potion of heal wounds
@@ -619,8 +618,6 @@ KITEM:   ! =  scroll of teleportation / scroll of fear w:5 /\
 #      Randomized environment
 SUBST:   . = .WW
 SUBST:   X = xx.
-SUBST:   Y = xy
-CLEAR:   y
 SUBST:   w = w w:200 / p
 KMONS:   p = withered_plant
 KFEAT:   p = shallow_water
@@ -630,36 +627,36 @@ SUBST:   x = c
 :end
 : sewer_setup(_G)
 MAP
-          YYYYYYYYYYYYYYYY
-        YYYwwwwwwwwwwwwwYYY
-       YYwwwwwwwwwwwwwwwwwY
-      YYwwwwwwwwwwwwwwwwwwYY
-     YYYwwwwwww....wwwwwwwwYY
-     YYwwwwww..XXXX..wwwwwwwYY
-    YYYwwwww.XXxxxxXXQ.wwwwwwYYYY
-    YYYwww..eXxxxxxxxxX..wwwwwwwYY
-   YYYwww.XXXxxxxxxxxxxxX..wwwwwwYY
-   YYYww.XxxxxxxxcccccxxxX..WwwwYY
-   YYwww.Xxxxxxxxceeeccccccc.wwwwYY
-  YYYwwww.Xxxxxxxce}....P...wwwwwYYY
-  YYwwwwww.Xxxxxxceeecccccc..wwwwwwYY
-  YYYYwwww.{XxxxxccccccxxxxxX.wwwwwwYY
-   YYwwww..XxxxxxxxxxxxxxxxxX.wwwwYY
-   YYwwww.XXxxxxxxxxxxxxxxxX.wwwwwYYY
-   YYwwwww..XXxxxxxxxxxxXXX.wwwwwwYY
-    YYwwwwww.eXxxxxxxxxX...wwwwwwwYYY
-   YYwwwwwwwww.XxxxxxXX.wwwwwwwwwwYYY
-    YYwwwwwwww.XxxxxXR.wwwwwwwwwwYYY
-   YYwwwwwwwwww.XXXX.wwwwwwwwwwYYYY
-    YYwwwwwwwwww....wwwwwwwwwYYYYY
-     YYwwwwwwwwwwwwwwwwwwwwwYYYY
-      YYYYwwwwwwwwwwwwwwwwwwYYYY
-      YYYYYYwwwwwwwwwwwwwwYYYY
-       YYYYYYYYYYYYYYYYYYYYYYY
+       vvvvWWWWWWWWWWWWWvvv
+      vvWWWWWWWwwwwWWWWWWWvv
+     vvWWwwwwwwwwwwwwwwWwWWvv
+    vvWWwwwwwwwwwwwwwwwwWwWWvv
+    vWWWwwwwwww....wwwwwwWwWWvv
+   vvWWwwwwww..XXXX..wwwwwWWWWvvvv
+   vWWWwwwww.XXxxxxXXQ.wwwwwwWWWWvv
+  vvWWWwww..eXxxxxxxxxX..wwwwwwwWWvvv
+  WWWWwww.XXXxxxxxxxxxxxX..wwwwWwWWWWW
+  WWWWww.XxxxxxxxcccccxxxX..WwwwWWWWWW
+  WWWwww.Xxxxxxxxceeeccccccc.wwwwWWWWW
+  WWWwwww.Xxxxxxxce}....P...wwwwwWWWWW
+  WWwwwwww.Xxxxxxceeecccccc..wwwWwwWWW
+  WWWWwwww.{XxxxxccccccxxxxxX.wwwWwWWW
+  WWWwwww..XxxxxxxxxxxxxxxxxX.wwwwWWWW
+  WWWwwww.XXxxxxxxxxxxxxxxxX.wwwwwWWWW
+  WWWwwwww..XXxxxxxxxxxxXXX.wwwwwwWWWW
+  WWWWwwwwww.eXxxxxxxxxX...wwwwwwwWWWW
+  vWWWWwwwwwww.XxxxxxXX.wwwwwwwwwwWWWv
+  vvWWwwwwwwww.XxxxxXR.wwwwwwwwwwWWWvv
+  vvWwwwwwwwwww.XXXX.wwwwwwwwwwWWWWvv
+  vvWWwwwwwwwwww....wwwwwwwwwWWWWWvv
+   vvWWwwwWwwwwwwwwwwwwwwwwwWWWWvvv
+    vvvWWWwwwwwwwwwwwwwwwwwwWWWWv
+      vvWWWWWWWWwwwwWWWWWWWWWWvvv
+       vvvvWWWWWWWWWWWWWvvvvvvv
 ENDMAP
 
 NAME:   kennysheep_door_sewer
-TAGS:   no_item_gen no_monster_gen no_pool_fixup
+TAGS:   no_item_gen no_monster_gen no_pool_fixup sewer_edge
 ORIENT: west
 MONS:   big kobold / centaur skeleton / gnoll / jelly
 KMONS:  2 = purgy, crocodile
@@ -754,15 +751,15 @@ ENDMAP
 # A sewer opening to sea by st_.
 #
 NAME:   st_sewer_sea
-TAGS:   no_item_gen no_monster_gen no_rotate no_pool_fixup
+TAGS:   no_monster_gen no_pool_fixup sewer_edge
 ORIENT: west
 WEIGHT: 5
-MONS:   rat w:4 / nothing w:1, rat / sewer rat w:5
+MONS:   sewer rat
 KMONS:  G = merfolk siren hd:3 name:sickly name_adjective name_species
 KMONS:  H = merfolk avatar hd:3 name:malarious name_adjective name_species
-KMONS:  hJ = cinder newt / ball python / adder / nothing w:2
+KMONS:  hJ = cinder newt / ball python / adder / ooze
 KMONS:  g = cinder newt / ball python / giant cockroach / \
-            leopard gecko / nothing w:7
+            jelly / nothing w:7
 : sewer_setup(_G)
 KFEAT:  gsh = W
 KFEAT:  O = open_sea
@@ -775,9 +772,9 @@ COLOUR: GHJns = cyan
 KITEM:  M = scroll of random uselessness q:4
 KITEM:  N = scroll of teleportation q:2 ident:type
 MAP       
-xxxxxxxxxx
+vvvvvvvvvv
 OnnnJnnnsccccccccccccc  cccccccc
-Onnnnnns.+.....+..%Wwc  c1.....c
+Onnnnnns.+.....+..%Wwc  c1...NMc
 OnnHnnsWcccccccc..%*Wc  c.ccccc@
 OnnnnnsW.ccc.1cc..%*Wc  c2cwwcc@
 OnnnJnsW.ccc..cc..*WWc ccwWgcwc@ 
@@ -790,7 +787,7 @@ OnnnnnssWcccc1cccgWcccccc
 OnGnnnnsccccc..cc.1c
 Onnnnnnnsccccc11..cc
 OnnJnnnnncccccccccc
-xxxxxxxxxx
+vvvvvvvvvv
 ENDMAP
 
 NAME:   mermaid_room

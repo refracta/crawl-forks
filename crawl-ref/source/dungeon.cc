@@ -93,6 +93,7 @@ static void _place_specific_trap(const coord_def& where, trap_spec* spec,
                                  int charges = 0);
 static void _place_branch_entrances(bool use_vaults);
 static void _place_extra_vaults();
+static void _place_sewer_vault();
 static void _place_chance_vaults();
 static void _place_minivaults();
 static int _place_uniques();
@@ -3457,11 +3458,65 @@ static void _slime_connectivity_fixup()
     }
 }
 
+static void _place_sewer_vault()
+{
+    if (!env.properties.exists(SEWER_COLUMNS_KEY))
+        return;
+
+    int columns = env.properties[SEWER_COLUMNS_KEY].get_int();
+    int row_height = env.properties[SEWER_ROW_POSITION_KEY].get_int();
+    int vault_type = random2(10);
+    coord_def pos;
+
+    if (vault_type == 0)
+    {
+        if (columns == 3)
+            pos.x = GXM / 2;
+        else // if (columns == 2)
+            pos.x = GXM / (3) * random_range(1, 2);
+        if (coinflip())
+            pos.y = row_height;
+        else
+            pos.y = GYM - row_height;
+        const map_def * map = random_map_for_tag("sewer_center");
+
+        if (map)
+            dgn_place_map(map, false, true, pos);
+    }
+    else if (vault_type == 1)
+    {
+        const map_def * map = random_map_for_tag("sewer_special");
+
+        if (map)
+            dgn_place_map(map, false, true, pos);
+    }
+    else if (vault_type < 4)
+    {
+        const map_def * map = random_map_for_tag("sewer_cave");
+
+        pos.x = GXM / (columns + 1) / 2 * (1 + 2 * random_range(0, columns));
+        if (abs(GYM / 2 - row_height) < 5)
+        {
+            pos.y = GYM / 4;
+            if (coinflip())
+                pos.y *= 3;
+        }
+        else
+            pos.y = row_height + random_range(-5, 5);
+
+        if (map)
+            dgn_place_map(map, false, false, pos);
+    }
+}
+
 // Place vaults with CHANCE: that want to be placed on this level.
 static void _place_chance_vaults()
 {
     const level_id &lid(level_id::current());
     mapref_vector maps = random_chance_maps_in_depth(lid);
+
+    if (lid.branch == BRANCH_DUNGEON && lid.depth == 2)
+        _place_sewer_vault();
     // [ds] If there are multiple CHANCE maps that share an luniq_ or
     // uniq_ tag, only the first such map will be placed. Shuffle the
     // order of chosen maps so we don't have a first-map bias.

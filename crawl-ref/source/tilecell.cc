@@ -418,14 +418,16 @@ static void _pack_default_waves(const coord_def &gc, crawl_view_buffer& vbuf)
     if (!feat_is_water(feat) && !feat_is_lava(feat))
         return;
 
-    if ((feat == DNGN_DEEP_WATER || feat == DNGN_DEEP_SLIMY_WATER || feat == DNGN_ENDLESS_SLUDGE) && (colour == GREEN || colour == BLACK))
+    if ((feat == DNGN_DEEP_WATER || feat == DNGN_DEEP_SLIMY_WATER || feat == DNGN_ENDLESS_SLUDGE) && (colour == BLUE || colour == GREEN || colour == BLACK))
     {
         // +7 and -- reverse the iteration order
         if (feat == DNGN_DEEP_SLIMY_WATER)
             colour = MAGENTA; // HACK
         if (feat == DNGN_ENDLESS_SLUDGE)
             colour = GREEN; // HACK
-        if (you.where_are_you == BRANCH_SWAMP || (you.where_are_you == BRANCH_DUNGEON && you.depth == 2))
+        if (colour == BLUE) // Override colour
+            colour = BLACK;
+        else if (you.where_are_you == BRANCH_SWAMP || (you.where_are_you == BRANCH_DUNGEON && you.depth == 2))
             colour = GREEN; // HACK
         if (colour != BLACK)
         {

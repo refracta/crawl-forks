@@ -2272,6 +2272,16 @@ LUAFN(dgn_sewer_iterate)
     return 0;
 }
 
+LUAFN(dgn_pass_sewer_info)
+{
+    const int columns = luaL_safe_checkint(ls, 2);
+    const int row_height = luaL_safe_checkint(ls, 3);
+
+    env.properties[SEWER_COLUMNS_KEY] = columns;
+    env.properties[SEWER_ROW_POSITION_KEY] = row_height;
+    return 0;
+}
+
 LUAFN(dgn_farthest_from)
 {
     LINES(ls, 1, map, lines);
@@ -2385,6 +2395,7 @@ const struct luaL_reg dgn_build_dlib[] =
     { "join_the_dots", &dgn_join_the_dots },
     { "make_circle", &dgn_make_circle },
     { "sewer_iterate", &dgn_sewer_iterate },
+    { "pass_sewer_info", &dgn_pass_sewer_info},
     { "make_diamond", &dgn_make_diamond },
     { "make_rounded_square", &dgn_make_rounded_square },
     { "make_square", &dgn_make_square },
