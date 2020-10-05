@@ -1968,8 +1968,8 @@ DEPTH:  D:2-4
 TAGS:   no_item_gen no_monster_gen no_pool_fixup
 TAGS:   temple_overflow_1 temple_overflow_sif_muna uniq_altar_sif_muna
 KFEAT:  _ = altar_sif_muna
-COLOUR: . = blue
-FTILE:  ._ = floor_marble
+COLOUR: W. = blue
+FTILE:  W._ = floor_marble
 : interest_check(_G)
 MAP
  xxx@xxx

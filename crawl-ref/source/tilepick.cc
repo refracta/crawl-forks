@@ -624,6 +624,8 @@ tileidx_t tileidx_feature(const coord_def &gc)
         }
         else if (env.map_knowledge(gc).feat_colour() == CYAN)
             return TILE_SHOALS_DEEP_WATER;
+        else if (env.map_knowledge(gc).feat_colour() == BLUE)
+            return TILE_DNGN_DEEP_WATER;
         else if (player_in_branch(BRANCH_DUNGEON) && you.depth == 2)
             return TILE_DNGN_DEEP_WATER_MURKY;
         else if (player_in_branch(BRANCH_SWAMP))
@@ -657,6 +659,8 @@ tileidx_t tileidx_feature(const coord_def &gc)
             }
             else if (env.map_knowledge(gc).feat_colour() == CYAN)
                 return TILE_SHOALS_SHALLOW_WATER;
+            else if (env.map_knowledge(gc).feat_colour() == BLUE)
+                t = TILE_DNGN_SHALLOW_WATER;
             else if (player_in_branch(BRANCH_DUNGEON) && you.depth == 2)
                 t = TILE_DNGN_SHALLOW_WATER_MURKY;
             else if (player_in_branch(BRANCH_SWAMP))
