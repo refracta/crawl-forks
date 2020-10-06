@@ -1978,6 +1978,17 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
     bolt beam;
     dist spd;
 
+    if (int(abil.food_cost * 2 + HUNGER_FAINTING + 10) >= you.hunger)
+    {
+        mprf(MSGCH_WARN, "If you use your ability, you could pass out from exhaustion!");
+
+        if (!yesno("Continue?", true, 0))
+        {
+            canned_msg(MSG_OK);
+            return spret::abort;
+        }
+    }
+
     // Note: the costs will not be applied until after this switch
     // statement... it's assumed that only failures have returned! - bwr
     switch (abil.ability)

@@ -1050,11 +1050,24 @@ bool cast_a_spell(bool check_range, spell_type spell)
     }
 
     if (you.undead_state() == US_ALIVE && !you_foodless()
-        && you.hunger <= spell_hunger(spell))
+        && (you.hunger <= spell_hunger(spell) + HUNGER_FAINTING + 10))
     {
-        canned_msg(MSG_NO_ENERGY);
-        crawl_state.zero_turns_taken();
-        return false;
+        if (you.hunger <= spell_hunger(spell))
+        {
+            canned_msg(MSG_NO_ENERGY);
+            crawl_state.zero_turns_taken();
+            return false;
+        }
+        else
+        {
+            mprf(MSGCH_WARN, "If you cast %s you could pass out from exhaustion!", spell_title(spell));
+            if (!yesno("Continue?", true, 0))
+            {
+                crawl_state.zero_turns_taken();
+                canned_msg(MSG_OK);
+                return false;
+            }
+        }
     }
 
     // This needs more work: there are spells which are hated but allowed if
