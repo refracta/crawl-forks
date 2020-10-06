@@ -7,8 +7,15 @@
 {{
 
 -- Generates a boulder rolling at the target x and y
-function boulder_generate(x, y, targetx, targety)
-  local boulder = dgn.create_monster(x, y, 'generate_awake boulder beetle')
+function boulder_generate(x, y, targetx, targety, allied)
+  
+  local boulder 
+  
+  if allied == true then
+	boulder = dgn.create_monster(x, y, 'generate_awake boulder beetle att:neutral')
+  else
+	boulder = dgn.create_monster(x, y, 'generate_awake boulder beetle')
+  end
 
   if boulder == nil then
     return
@@ -25,6 +32,22 @@ function boulder_generate(x, y, targetx, targety)
   -- Let it roll!
   boulder.add_ench("rolling",1,50)
 
+end
+
+function callback.xom_boulder(data, triggerable, triggerer, marker, ev)
+  if data.seen == true then
+    return
+  end
+  crawl.god_speaks("Xom", "Xom snickers!")
+  local target = dgn.find_marker_positions_by_prop(data.targetname, 1)[1]
+  if target ~= nil then
+    tx = target.x
+    ty = target.y
+  end
+  for slave in iter.slave_iterator(data.bouldername, 1) do
+    boulder_generate(slave.x, slave.y, tx, ty, true)
+  end
+  data.seen = true
 end
 
 -- TODO: Avoid enemies triggering it (although allow summons)
@@ -63,7 +86,7 @@ function callback.boulder_grate_trap_stepped(data, triggerable, triggerer, marke
   end
 
   for slave in iter.slave_iterator(data.bouldername, 1) do
-    boulder_generate(slave.x, slave.y, tx,ty)
+    boulder_generate(slave.x, slave.y, tx, ty, false)
   end
   -- remove the trap
   dgn.grid(x, y, "floor")
@@ -79,8 +102,8 @@ end
 # (or destroy it)
 #
 NAME:   boulder_corridor_run
-DEPTH:  D:8-13
-TAGS:   luniq_boulder_trap no_monster_gen
+DEPTH:  D:4-7
+TAGS:   luniq_boulder_trap no_monster_gen no_trap_gen
 ORIENT: float
 KFEAT: ^ = pressure plate trap
 KITEM: ^ = *
@@ -109,7 +132,7 @@ ENDMAP
 #
 NAME:   boulder_dual_corridor_run
 DEPTH:  Lair:3-
-TAGS:   luniq_boulder_trap no_monster_gen ruin_lair
+TAGS:   luniq_boulder_trap no_monster_gen ruin_lair no_trap_gen
 ORIENT: float
 KFEAT: ^ = pressure plate trap
 KITEM: ^ = *
@@ -137,7 +160,7 @@ ENDMAP
 # -- TODO: Make all the boulders slightly miss each other
 NAME:   boulder_quad_collide
 DEPTH:  Lair:4-
-TAGS:   luniq_boulder_trap no_monster_gen
+TAGS:   luniq_boulder_trap no_monster_gen no_trap_gen
 ORIENT: float
 KFEAT:  ^ = pressure plate trap
 {{
@@ -173,8 +196,8 @@ ENDMAP
 # ZorbaBeta's fault
 # TODO: Could steer the boulder along the corridor better by placing target markers on the corners and using a monster_move event
 NAME:   boulder_indie
-DEPTH:  D:7-14, Snake, !Snake:$
-TAGS:   luniq_boulder_trap no_monster_gen
+DEPTH:  D:4-7, Snake, !Snake:$
+TAGS:   luniq_boulder_trap no_monster_gen no_trap_gen
 ORIENT: float
 {{
 local tm = TriggerableFunction:new{func="callback.boulder_grate_trap_stepped",
@@ -216,4 +239,36 @@ x.x xxxxxxxx
 xAx
 x.x
 x@x
+ENDMAP
+
+NAME:     bcadren_xom_bowling
+TAGS:     luniq_boulder_trap no_monster_gen no_trap_gen extra temple_overflow_1 
+TAGS:     temple_overflow_xom uniq_altar_xom
+ORIENT:   float
+PLACE:    D:2-, Lair, !Lair:$
+KMONS:    f = wandering mushroom hd:20 hp:1 perm_ench:entropic_burst perm_ench:paralysis
+KFEAT:    + = closed_door
+KFEAT:    ABD = floor
+KFEAT:    _C = altar_xom
+{{
+local tm = TriggerableFunction:new{func="callback.xom_boulder",
+                                   repeated=true,
+                                   data = {targetname="target_bowling", bouldername="boulder_bowling"} }
+tm:add_triggerer(DgnTriggerer:new{type="player_los"})
+lua_marker('C', tm)
+lua_marker('A', props_marker { boulder_bowling=1 })
+lua_marker('B', props_marker { target_bowling=1 })
+}}
+MAP
+xxxxxxxxx
+xfffffffx
+x.fffff.x
+x..fff..x
+x...f...x
+x_..B.._x
+x_.._.._x
+x...C...x
+x..._...x
+x...A...x
+xxxx+xxxx
 ENDMAP
