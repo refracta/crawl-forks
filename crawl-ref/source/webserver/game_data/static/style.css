@@ -122,6 +122,29 @@ body {
     background-color: #204a87; /* blue */
 }
 
+/* mount hp bar, hidden normally */
+#stats_mountline {
+    display:none;
+    visibility:hidden;
+}
+ /* Visible for Lava Orcs */
+#stats[data-mounted="y"] #stats_mountline {
+    display:block;
+    visibility:visible;
+}
+ #stats_mount_hp_bar {
+    background-color: #555753; /* darkgray */
+}
+#stats_mount_hp_bar_full {
+    background-color: #06989a; /* cyan */
+}
+#stats_mount_hp_bar_decrease {
+    background-color: #FF00FF; /* magenta */
+}
+#stats_mount_hp_bar_increase {
+    background-color: #34e2e2; /* lightcyan */
+}
+
 /* default color when showing "Silenced" */
 #stats_noise_status {
     color: #FF00FF; /* magenta */

@@ -334,6 +334,12 @@ function ($, comm, enums, map_knowledge, messages, options) {
         if ($("#stats").attr("data-species") != player.species)
             $("#stats").attr("data-species", player.species);
 
+        if (player.mounted && $("#stats").attr("data-mounted") != "y")
+            $("#stats").attr("data-mounted", "y");
+
+        if (!player.mounted && $("#stats").attr("data-mounted") != "n")
+            $("#stats").attr("data-mounted", "n");
+
         var species_god = player.species;
         if (player.god != "")
             species_god += " of " + player.god;
@@ -394,6 +400,8 @@ function ($, comm, enums, map_knowledge, messages, options) {
         percentage_color("hp");
         percentage_color("mp");
         update_bar("hp");
+        if (player.mounted)
+            update_bar("mount_hp");
         update_bar("mp");
 
         update_defense("ac");
@@ -507,6 +515,7 @@ function ($, comm, enums, map_knowledge, messages, options) {
             $.extend(player, {
                 name: "", god: "", title: "", species: "",
                 hp: 0, hp_max: 0, real_hp_max: 0, poison_survival: 0,
+                mounted: false, mount_hp:0, mount_hp_max:0,
                 mp: 0, mp_max: 0, dd_real_mp_max: 0,
                 ac: 0, ev: 0, sh: 0,
                 xl: 0, progress: 0,
