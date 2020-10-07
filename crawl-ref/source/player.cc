@@ -6355,28 +6355,31 @@ int player::adjusted_shield_penalty(int scale) const
     const item_def *shield1 = slot_item(EQ_WEAPON1, false);
 
     int base_shield_penalty = 0;
+    int adjusted_shield_penalty = 0;
     int lantern_penalty = 0;
     
     if (shield0)
     {
         if (shield0->base_type == OBJ_SHIELDS)
-            base_shield_penalty += -property(*shield0, PSHD_ER);
+        {
+            base_shield_penalty = -property(*shield0, PSHD_ER);
+            adjusted_shield_penalty = max(0, base_shield_penalty * scale - skill(item_attack_skill(*shield0), scale) / player_shield_racial_factor() * 10);
+        }
         else if (shield0->is_type(OBJ_MISCELLANY, MISC_LANTERN_OF_SHADOWS))
-            lantern_penalty += 20;
+            lantern_penalty += 2;
     }
     if (shield1)
     {
         if (shield1->base_type == OBJ_SHIELDS)
-            base_shield_penalty += -property(*shield1, PSHD_ER);
+        {
+            base_shield_penalty = -property(*shield1, PSHD_ER);
+            adjusted_shield_penalty += max(0, base_shield_penalty * scale - skill(item_attack_skill(*shield1), scale) / player_shield_racial_factor() * 10);
+        }
         else if (shield1->is_type(OBJ_MISCELLANY, MISC_LANTERN_OF_SHADOWS))
-            lantern_penalty += 20;
+            lantern_penalty += 2;
     }
 
-    if (base_shield_penalty + lantern_penalty == 0)
-        return 0;
-
-    return (max(0, ((base_shield_penalty * scale) - skill(SK_SHIELDS, scale)
-                  / player_shield_racial_factor() * 5) / 10) + (lantern_penalty * scale / 10));
+    return adjusted_shield_penalty / 10 + lantern_penalty * scale;
 }
 
 float player::get_shield_skill_to_offset_penalty(const item_def &item)
