@@ -1773,14 +1773,14 @@ static string _describe_shield(const item_def &item, bool verbose)
         if (crawl_state.need_save)
         {
             description += "\n                            "
-                + _your_skill_desc(SK_SHIELDS,
+                + _your_skill_desc(item_attack_skill(item),
                     could_set_target && in_inventory(item), target_skill);
         }
         else
             description += "\n";
         if (could_set_target)
         {
-            _append_skill_target_desc(description, SK_SHIELDS,
+            _append_skill_target_desc(description, item_attack_skill(item),
                 target_skill, false);
         }
     }
