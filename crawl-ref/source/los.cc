@@ -882,13 +882,17 @@ void losight(los_grid& sh, const coord_def& center,
 
 opacity_type mons_opacity(const monster* mon, los_type how)
 {
-    if (have_passive(passive_t::monster_shadows))
-        return OPC_OPAQUE;
     // no regard for LOS_ARENA
     if (mons_class_holiness(mon->type) == MH_PLANT && mons_class_is_stationary(mon->type)
         && how != LOS_SOLID)
     {
         return OPC_HALF;
+    }
+    if (have_passive(passive_t::monster_shadows))
+    {
+        if (mon->friendly())
+            return OPC_CLEAR;
+        return OPC_OPAQUE;
     }
 
     return OPC_CLEAR;
