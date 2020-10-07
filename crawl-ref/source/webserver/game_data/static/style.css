@@ -127,7 +127,7 @@ body {
     display:none;
     visibility:hidden;
 }
- /* Visible for Lava Orcs */
+ /* Visible while mounted */
 #stats[data-mounted="y"] #stats_mountline {
     display:block;
     visibility:visible;

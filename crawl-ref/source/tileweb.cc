@@ -935,7 +935,7 @@ void TilesFramework::_send_player(bool force_full)
     if (you.mounted())
     {
         _update_int(force_full, c.mount_hp_max, you.mount_hp_max, "mount_hp_max");
-        _update_int(force_full, c.mount_mp, you.mount_hp, "mount_hp");
+        _update_int(force_full, c.mount_hp, you.mount_hp, "mount_hp");
     }
 
     _update_int(force_full, c.mp, you.magic_points, "mp");
