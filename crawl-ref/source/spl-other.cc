@@ -575,11 +575,3 @@ spret gain_mount(mount_type mount, int pow, bool fail)
     return spret::success;
 }
 
-void dismount()
-{
-    if (you.duration[DUR_MOUNTED])
-        you.duration[DUR_MOUNTED] = 0;
-    you.mount = mount_type::none;
-    you.mount_hp = you.mount_hp_max = 0;
-    redraw_screen();
-}

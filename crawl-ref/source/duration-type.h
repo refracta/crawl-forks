@@ -26,8 +26,8 @@ enum duration_type
 
     DUR_LIQUID_FLAMES,
     DUR_ICY_ARMOUR,
+    DUR_MOUNT_POISONING,
 #if TAG_MAJOR_VERSION == 34
-    DUR_REPEL_MISSILES,
     DUR_JELLY_PRAYER,
 #endif
     DUR_PIETY_POOL,             // distribute piety over time

@@ -2422,6 +2422,26 @@ static bool _curare_hits_player(actor* agent, int levels, string name,
 {
     ASSERT(!crawl_state.game_is_arena());
 
+    if (mount_hit())
+    {
+        if (you.mount == mount_type::hydra && !one_chance_in(3))
+            return false;
+
+        poison_mount(roll_dice(levels, 12) + 1);
+
+        int hurted = roll_dice(levels, 6);
+
+        if (hurted)
+        {
+            mprf("The curare asphyxiates your mount (%d).", hurted);
+            damage_mount(hurted);
+        }
+
+        // BCADDO: Slow Mount here.
+
+        return true;
+    }
+
     if (player_res_poison() >= 3
         || player_res_poison() > 0 && !one_chance_in(3))
     {
@@ -2438,7 +2458,7 @@ static bool _curare_hits_player(actor* agent, int levels, string name,
 
         if (hurted)
         {
-            mpr("You have difficulty breathing.");
+            mprf("You have difficulty breathing (%d).", hurted);
             ouch(hurted, KILLED_BY_CURARE, agent->mid,
                  "curare-induced apnoea");
         }

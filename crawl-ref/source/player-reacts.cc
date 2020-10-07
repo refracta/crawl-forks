@@ -881,6 +881,25 @@ static void _regenerate_hp_and_mp(int delay)
 
     update_amulet_attunement_by_health();
 
+    // Mount HP Regeneration
+    if (you.mounted() && (you.mount_hp < you.mount_hp_max))
+    {
+        bool regen_mod = (you.mount == mount_type::hydra) ? 2 : 1;
+        you.mount_hp_regen += div_rand_round((10 + you.mount_hp_max / 3) * delay * regen_mod, BASELINE_DELAY);
+    }
+    
+    while (you.mount_hp_regen >= 100)
+    {
+        if (you.mount_hp < you.mount_hp_max)
+        {
+            you.mount_hp++;
+            you.redraw_hit_points = true;
+        }
+        you.mount_hp_regen -= 100;
+    }
+
+    ASSERT_RANGE(you.mount_hp_regen, 0, 100);
+
     // MP Regeneration
     if (!player_regenerates_mp())
         return;
@@ -1001,7 +1020,10 @@ void player_reacts()
 
     dec_disease_player(you.time_taken);
     if (you.duration[DUR_POISONING])
-        handle_player_poison(you.time_taken);
+        handle_player_poison(you.time_taken, false);
+    if (you.duration[DUR_MOUNT_POISONING])
+        handle_player_poison(you.time_taken, true);
+
 
     // Reveal adjacent mimics.
     for (adjacent_iterator ai(you.pos(), false); ai; ++ai)

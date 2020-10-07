@@ -158,7 +158,7 @@ static void _describe_regen(status_info& inf);
 static void _describe_rotting(status_info& inf);
 static void _describe_sickness(status_info& inf);
 static void _describe_speed(status_info& inf);
-static void _describe_poison(status_info& inf);
+static void _describe_poison(status_info& inf, bool mount);
 static void _describe_transform(status_info& inf);
 static void _describe_stat_zero(status_info& inf, stat_type st);
 static void _describe_terrain(status_info& inf);
@@ -242,6 +242,9 @@ bool fill_status_info(int status, status_info& inf)
             inf.light_text = "spider";
             break;
         }
+
+        if (you.duration[DUR_MOUNT_POISONING])
+            inf.light_text += " (Pois)";
     }
         break;
 
@@ -379,7 +382,8 @@ bool fill_status_info(int status, status_info& inf)
     }
 
     case DUR_POISONING:
-        _describe_poison(inf);
+    case DUR_MOUNT_POISONING:
+        _describe_poison(inf, status == DUR_MOUNT_POISONING);
         break;
 
     case DUR_POWERED_BY_DEATH:
@@ -905,21 +909,39 @@ static void _describe_regen(status_info& inf)
     }
 }
 
-static void _describe_poison(status_info& inf)
+static void _describe_poison(status_info& inf, bool mount)
 {
-    int pois_perc = (you.hp <= 0) ? 100
+    int pois_perc;
+    if (mount)
+    {
+        // BCADDO: Fix this after giving mounts natural regen.
+        pois_perc = (you.mount_hp - you.duration[DUR_MOUNT_POISONING] / 1000) * 100 / you.mount_hp;
+    }
+    else
+    {
+        pois_perc = (you.hp <= 0) ? 100
                                   : ((you.hp - max(0, poison_survival())) * 100 / you.hp);
-    inf.light_colour = (player_res_poison(false) >= 3
-                         ? DARKGREY : _bad_ench_colour(pois_perc, 35, 100));
-    inf.light_text   = "Pois";
+    }
+    
     const string adj =
          (pois_perc >= 100) ? "lethally" :
          (pois_perc > 65)   ? "seriously" :
          (pois_perc > 35)   ? "quite"
                             : "mildly";
-    inf.short_text   = adj + " poisoned"
-        + make_stringf(" (%d -> %d)", you.hp, poison_survival());
-    inf.long_text    = "You are " + inf.short_text + ".";
+    if (mount)
+    {
+        inf.short_text = adj + " poisoned mount";
+        inf.long_text = "Your mount is " + inf.short_text + ".";
+    }
+    else
+    {
+        inf.light_colour = (player_res_poison(false) >= 3
+            ? DARKGREY : _bad_ench_colour(pois_perc, 35, 100));
+        inf.light_text = "Pois";
+        inf.short_text = adj + " poisoned"
+            + make_stringf(" (%d -> %d)", you.hp, poison_survival());
+        inf.long_text = "You are " + inf.short_text + ".";
+    }
 }
 
 static void _describe_speed(status_info& inf)

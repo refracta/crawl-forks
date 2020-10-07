@@ -4825,6 +4825,41 @@ bool poison_player(int amount, string source, string source_aux, bool force)
     return amount;
 }
 
+bool poison_mount(int amount, bool force)
+{
+    ASSERT(!crawl_state.game_is_arena());
+
+    if (crawl_state.disables[DIS_AFFLICTIONS])
+        return false;
+
+    if (!force && (you.mount == mount_type::hydra) && !one_chance_in(3))
+        return false;
+
+    const int old_value = you.duration[DUR_MOUNT_POISONING];
+    const bool was_fatal = (you.duration[DUR_MOUNT_POISONING] / 1000) >= you.mount_hp;
+
+    if (you.mount == mount_type::spider)
+        amount *= 2;
+
+    you.duration[DUR_MOUNT_POISONING] += amount * 1000;
+    
+    if (you.duration[DUR_MOUNT_POISONING] > old_value)
+    {
+        if ((you.duration[DUR_MOUNT_POISONING] / 1000) >= you.mount_hp && !was_fatal)
+            mprf(MSGCH_DANGER, "Your mount is lethally poisoned!");
+        else
+        {
+            mprf(MSGCH_WARN, "Your mount is %spoisoned.",
+                old_value > 0 ? "more " : "");
+        }
+    }
+
+    // Display the poisoned segment of our health, in case we take no damage
+    you.redraw_hit_points = true;
+
+    return amount;
+}
+
 int get_player_poisoning()
 {
     if (player_res_poison() < 3)
@@ -4871,9 +4906,9 @@ static double _poison_aut_to_dur(double aut)
     return 15.0 * 10000.0 + 1000.0 * (aut - aut_from_max_speed);
 }
 
-void handle_player_poison(int delay)
+void handle_player_poison(int delay, bool mount)
 {
-    const double cur_dur = you.duration[DUR_POISONING];
+    const double cur_dur = you.duration[mount ? DUR_MOUNT_POISONING : DUR_POISONING];
     const double cur_aut = _poison_dur_to_aut(cur_dur);
 
     // If Cheibriados has slowed your life processes, poison affects you less
@@ -4885,28 +4920,29 @@ void handle_player_poison(int delay)
     const double new_aut = cur_aut - ((double) delay) * delay_scaling;
     const double new_dur = _poison_aut_to_dur(new_aut);
 
-    const int decrease = you.duration[DUR_POISONING] - (int) new_dur;
+    const int decrease = you.duration[mount ? DUR_MOUNT_POISONING : DUR_POISONING] - (int) new_dur;
 
     // Transforming into a form with no metabolism merely suspends the poison
     // but doesn't let your body get rid of it.
-    // Hungry vampires are less affected by poison (not at all when bloodless).
-    if (you.is_nonliving() || you.undead_state()
-        && (you.undead_state() != US_SEMI_UNDEAD
-            || x_chance_in_y(4 - you.hunger_state, 4)))
+    if (!mount && (you.is_nonliving() || you.undead_state()))
     {
         return;
     }
 
     // Other sources of immunity (Zin) let poison dissipate.
     bool do_dmg = (player_res_poison() >= 3 ? false : true);
+    if (mount)
+        do_dmg = true;
 
-    int dmg = (you.duration[DUR_POISONING] / 1000)
-               - ((you.duration[DUR_POISONING] - decrease) / 1000);
+    int dmg = (you.duration[mount ? DUR_MOUNT_POISONING : DUR_POISONING] / 1000)
+               - ((you.duration[mount ? DUR_MOUNT_POISONING : DUR_POISONING] - decrease) / 1000);
 
     // Approximate old damage shaving by giving immunity to small amounts
     // of poison. Stronger poison will do the same damage as for non-DD
     // until it goes below the threshold, which is a bit weird, but
     // so is damage shaving.
+    // BCADDO: Restore/fix this when making vampire god.
+    /*
     if (you.species == SP_DEEP_DWARF && you.duration[DUR_POISONING] - decrease < 25000)
     {
         dmg = (you.duration[DUR_POISONING] / 1000)
@@ -4914,6 +4950,7 @@ void handle_player_poison(int delay)
         if (dmg < 0)
             dmg = 0;
     }
+    */
 
     msg_channel_type channel = MSGCH_PLAIN;
     const char *adj = "";
@@ -4931,33 +4968,54 @@ void handle_player_poison(int delay)
 
     if (do_dmg && dmg > 0)
     {
-        int oldhp = you.hp;
-        ouch(dmg, KILLED_BY_POISON);
-        if (you.hp < oldhp)
-            mprf(channel, "You feel %ssick.", adj);
+        if (mount)
+        {
+            you.mount_hp -= dmg;
+            if (you.mount_hp <= 0)
+            {
+                mprf(MSGCH_DANGER, "Your mount succumbs to poisoning.");
+                dismount();
+            }
+            else
+                mprf(MSGCH_WARN, "Your mount looks %ssick. (%d)", adj, dmg);
+        }
+        else
+        {
+            int oldhp = you.hp;
+            ouch(dmg, KILLED_BY_POISON);
+            if (you.hp < oldhp)
+                mprf(channel, "You feel %ssick. (%d)", adj, dmg);
+        }
     }
 
     // Now decrease the poison in our system
     reduce_player_poison(decrease);
 }
 
-void reduce_player_poison(int amount)
+void reduce_player_poison(int amount, bool mount)
 {
     if (amount <= 0)
         return;
 
-    you.duration[DUR_POISONING] -= amount;
+    duration_type poison = mount ? DUR_MOUNT_POISONING : DUR_POISONING;
+
+    you.duration[poison] -= amount;
 
     // Less than 1 point of damage remaining, so just end the poison
-    if (you.duration[DUR_POISONING] < 1000)
-        you.duration[DUR_POISONING] = 0;
+    if (you.duration[poison] < 1000)
+        you.duration[poison] = 0;
 
-    if (you.duration[DUR_POISONING] <= 0)
+    if (you.duration[poison] <= 0)
     {
-        you.duration[DUR_POISONING] = 0;
-        you.props.erase("poisoner");
-        you.props.erase("poison_aux");
-        mprf(MSGCH_RECOVERY, "You are no longer poisoned.");
+        you.duration[poison] = 0;
+        if (mount)
+            mprf(MSGCH_RECOVERY, "Your mount recovers from its poison.");
+        else
+        {
+            you.props.erase("poisoner");
+            you.props.erase("poison_aux");
+            mprf(MSGCH_RECOVERY, "You are no longer poisoned.");
+        }
     }
 
     you.redraw_hit_points = true;
@@ -5670,6 +5728,7 @@ player::player()
     mount           = mount_type::none;
     mount_hp_max    = 0;
     mount_hp        = 0;
+    mount_hp_regen  = 0;
 
     for (auto &item : inv)
         item.clear();
@@ -9143,4 +9202,33 @@ bool player::mounted() const
     if (you.duration[DUR_MOUNTED] && you.mount != mount_type::none)
         return true;
     return false;
+}
+
+void damage_mount(int amount)
+{
+    you.mount_hp -= amount;
+    if (you.mount_hp <= 0)
+    {
+        mpr("Your mount dies.");
+        dismount();
+    }
+}
+
+void dismount()
+{
+    if (you.duration[DUR_MOUNTED])
+        you.duration[DUR_MOUNTED] = 0;
+    if (you.duration[DUR_MOUNT_POISONING])
+        you.duration[DUR_MOUNT_POISONING] = 0;
+    you.mount = mount_type::none;
+    you.mount_hp = you.mount_hp_max = you.mount_hp_regen = 0;
+    redraw_screen();
+}
+
+// Returns whether a hit should hit you (false) or a mount (true)
+bool mount_hit()
+{
+    if (!you.mounted())
+        return false;
+    return !x_chance_in_y(you.body_size(PSIZE_BODY), you.body_size(PSIZE_BODY) + 5);
 }
