@@ -1239,8 +1239,8 @@ misc/unseen PLAYER
 %sdir player/transform
 bat_form TRAN_BAT
 bat_form_spectral TRAN_BAT_SPECTRAL
-spider_form TRAN_SPIDER
-spider_form_spectral TRAN_SPIDER_SPECTRAL
+scorpion_form TRAN_SCORPION
+scorpion_form_spectral TRAN_SCORPION_SPECTRAL
 pig_form TRAN_PIG
 pig_form_spectral TRAN_PIG_SPECTRAL
 ice_form TRAN_ICE_BEAST

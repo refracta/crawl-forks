@@ -2142,8 +2142,8 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
     case SPELL_BLADE_HANDS:
         return cast_transform(powc, transformation::blade_hands, fail);
 
-    case SPELL_SPIDER_FORM:
-        return cast_transform(powc, transformation::spider, fail);
+    case SPELL_SCORPION_FORM:
+        return cast_transform(powc, transformation::scorpion, fail);
 
     case SPELL_STATUE_FORM:
         return cast_transform(powc, transformation::statue, fail);

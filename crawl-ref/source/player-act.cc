@@ -225,8 +225,16 @@ brand_type player::damage_brand(int which_attack)
     if (duration[DUR_CONFUSING_TOUCH])
         return SPWPN_CONFUSE;
 
-    if (you.wearing(EQ_GLOVES, ARM_CLAW))
+    if (you.wearing(EQ_GLOVES, ARM_CLAW) && !melded[EQ_GLOVES])
         return get_weapon_brand(inv[equip[EQ_GLOVES]]);
+
+    if (you.form == transformation::scorpion)
+    { 
+        if (which_attack < 2)
+            return SPWPN_PROTECTION; // Used in a Hack.
+        else if (which_attack == 2)
+            return SPWPN_NORMAL;
+    }
 
     return get_form()->get_uc_brand();
 }
@@ -385,21 +393,22 @@ item_def *player::slot_item(equipment_type eq, bool include_melded) const
 // Returns the item in the player's weapon slot.
 item_def *player::weapon(int which_attack) const
 {
-    if (which_attack < 1)
+    if (which_attack == 0)
     {
         if (melded[EQ_WEAPON0])
             return nullptr;
 
         return slot_item(EQ_WEAPON0, false);
     }
-    else
+    else if (which_attack == 1)
     {
         if (melded[EQ_WEAPON1])
             return nullptr;
 
         return slot_item(EQ_WEAPON1, false);
-
     }
+    else
+        return nullptr;
 }
 
 // Give hands required to wield weapon.
@@ -937,8 +946,8 @@ bool player::antimagic_susceptible() const
 
 bool player::is_web_immune() const
 {
-    // Spider form
-    if (form == transformation::spider)
+    // Spider mount
+    if (you.mounted() && you.mount == mount_type::spider)
         return true;
     else if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
         return true;

@@ -1015,11 +1015,11 @@ tileidx_t tileidx_player()
         else    
             ch = TILEP_TRAN_BAT;       
         break;
-    case transformation::spider:
+    case transformation::scorpion:
         if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
-            ch = TILEP_TRAN_SPIDER_SPECTRAL;
+            ch = TILEP_TRAN_SCORPION_SPECTRAL;
         else
-            ch = TILEP_TRAN_SPIDER;
+            ch = TILEP_TRAN_SCORPION;
         break;
     case transformation::pig:
         if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)

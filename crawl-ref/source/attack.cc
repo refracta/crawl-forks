@@ -1324,6 +1324,8 @@ int attack::calc_base_unarmed_damage()
     if (!attacker->is_player())
         return 0;
 
+    // BCADDO: It's a little wack that it's just a base damage additive then skill for most forms
+    // Consider revising.
     int damage = get_form()->get_base_unarmed_damage();
 
     // Claw damage only applies for bare hands.
@@ -1332,6 +1334,8 @@ int attack::calc_base_unarmed_damage()
 
     if (you.form_uses_xl())
         damage += div_rand_round(you.experience_level, 3);
+    else if (you.form == transformation::scorpion)
+        damage += div_rand_round(you.skill_rdiv(wpn_skill), 3);
     else
         damage += div_rand_round(2 * you.skill_rdiv(wpn_skill), 3);
 
@@ -1445,6 +1449,8 @@ int attack::apply_defender_ac(int damage, int damage_max) const
         stab_bypass = random2(div_rand_round(stab_bypass, 100 * stab_bonus));
     }
     if (damage_brand == SPWPN_MOLTEN)
+        local_ac = ac_type::half;
+    if (attacker->is_player() && you.form == transformation::scorpion && damage_brand != SPWPN_NORMAL)
         local_ac = ac_type::half;
     int after_ac = defender->apply_ac(damage, damage_max,
                                       local_ac, stab_bypass);

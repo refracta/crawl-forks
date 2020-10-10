@@ -907,9 +907,9 @@ ITEM:   any potion
 ITEM:   Young Poisoner's Handbook / book of Changes / \
         randbook disc:Poison disc2:Transmutation slevels:8 w:5 / \
         randbook numspells:4 title:Nature \
-        spells:beastly_appendage&summon_small_mammal&call_canine_familiar&spider_form / \
+        spells:beastly_appendage&summon_small_mammal&call_canine_familiar&scorpion_form / \
         randbook numspells:4 title:Nature \
-        spells:beastly_appendage&sting&sticks_to_snakes&spider_form
+        spells:beastly_appendage&sting&sticks_to_snakes&scorpion_form
 KMASK:  'f = opaque
 KITEM:  f = scroll of random uselessness
 KITEM:  g = any potion q:2-3
@@ -959,9 +959,9 @@ ITEM:   any potion
 ITEM:   Young Poisoner's Handbook / book of Changes / \
         randbook disc:Poison disc2:Transmutation slevels:8 w:5 / \
         randbook numspells:4 title:Nature \
-        spells:beastly_appendage&summon_small_mammal&call_canine_familiar&spider_form / \
+        spells:beastly_appendage&summon_small_mammal&call_canine_familiar&scorpion_form / \
         randbook numspells:4 title:Nature \
-        spells:beastly_appendage&sting&sticks_to_snakes&spider_form
+        spells:beastly_appendage&sting&sticks_to_snakes&scorpion_form
 KITEM:  f = scroll of random uselessness
 KITEM:  g = any potion q:2 / any potion q:3
 MONS:   plant, oklob sapling, ball python

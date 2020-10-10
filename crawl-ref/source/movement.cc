@@ -565,12 +565,12 @@ void move_player_action(coord_def move)
         return;
     }
 
-    const string walkverb = you.airborne()                     ? "fly"
-                          : you.swimming()                     ? "swim"
-                          : you.form == transformation::spider ? "crawl"
+    const string walkverb = you.airborne()                       ? "fly"
+                          : you.swimming()                       ? "swim"
+                          : you.form == transformation::scorpion ? "crawl"
                           : (you.species == SP_NAGA
-                             && form_keeps_mutations())        ? "slither"
-                                                               : "walk";
+                             && form_keeps_mutations())          ? "slither"
+                                                                 : "walk";
 
     monster* targ_monst = monster_at(targ);
     if (fedhas_passthrough(targ_monst) && !you.is_stationary())

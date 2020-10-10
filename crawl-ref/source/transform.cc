@@ -471,13 +471,13 @@ public:
     string get_transform_description() const override { return "your old self."; }
 };
 
-class FormSpider : public Form
+class FormScorpion : public Form
 {
 private:
-    FormSpider() : Form(transformation::spider) { }
-    DISALLOW_COPY_AND_ASSIGN(FormSpider);
+    FormScorpion() : Form(transformation::scorpion) { }
+    DISALLOW_COPY_AND_ASSIGN(FormScorpion);
 public:
-    static const FormSpider &instance() { static FormSpider inst; return inst; }
+    static const FormScorpion &instance() { static FormScorpion inst; return inst; }
 };
 
 class FormBlade : public Form
@@ -964,7 +964,7 @@ public:
 static const Form* forms[] =
 {
     &FormNone::instance(),
-    &FormSpider::instance(),
+    &FormScorpion::instance(),
     &FormBlade::instance(),
     &FormStatue::instance(),
 
@@ -1798,7 +1798,7 @@ bool transform(int pow, transformation which_trans, bool involuntary,
             abil_swap(draconian_breath(false), ABIL_BREATHE_METAL);
         break;
 
-    case transformation::spider:
+    case transformation::scorpion:
         leave_web();
         break;
 

@@ -100,10 +100,12 @@ static bool _handle_player_attack(actor * defender, bool simu, int atk_num,
     if (attk.cancel_remaining)
         return true;
 
+    // BCADNOTE: Should the Spectral Weapon trigger on attacks other than those with the cloned weapon?
     // A spectral weapon attacks whenever the player does
     if (!simu && you.props.exists("spectral_weapon"))
         trigger_spectral_weapon(&you, defender);
 
+    // BCADNOTE: Should Dithmenos copy mount's attacks?
     if (!simu && will_have_passive(passive_t::shadow_attacks))
         dithmenos_shadow_melee(defender);
 
@@ -174,42 +176,74 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
         // We're trying to hit a monster, break out of travel/explore now.
         interrupt_activity(activity_interrupt::hit_monster, defender->as_monster());
 
+        // BCADNOTE: The numbers involving auxilliary attacks are technically wrong for scorpion form
+        // and will need to be changed should it be possible to get auxilliaries in scorpion form.
         bool local_time = false; // Not sure this is necessary; but I'm going to use it.
+        bool attacked = false;
+        coord_def pos = defender->pos();
 
         if (!you.weapon(0) || is_melee_weapon(*you.weapon(0)))
         {
+            attacked = true;
             if (!you.weapon(1) || is_melee_weapon(*you.weapon(1)))
             {
                 if (you.weapon(0) && you.hands_reqd(*you.weapon(0)) == HANDS_TWO)
-                    return _handle_player_attack(defender, simu, 0, 2, did_hit, wu, wu_num);
+                    local_time = _handle_player_attack(defender, simu, 0, 2, did_hit, wu, wu_num);
                 else if (you.weapon(1) && you.hands_reqd(*you.weapon(1)) == HANDS_TWO)
-                    return _handle_player_attack(defender, simu, 1, 2, did_hit, wu, wu_num);
+                    local_time = _handle_player_attack(defender, simu, 1, 2, did_hit, wu, wu_num);
                 else
                 {
-                    coord_def pos = defender->pos();
                     local_time = _handle_player_attack(defender, simu, 0, 0, did_hit, wu, wu_num);
                     if (!defender->alive()
                         || defender->pos() != pos
                         || defender->is_banished()
                         || defender->temp_attitude()) // If it's not hostile the melee attack charmed or pacified it.
+                    {
                         return local_time;
+                    }
                     else
-                        return _handle_player_attack(defender, simu, 1, 1, did_hit, wu, wu_num) || local_time;
+                        local_time |= _handle_player_attack(defender, simu, 1, 1, did_hit, wu, wu_num);
                 }
             }
             else
-                return _handle_player_attack(defender, simu, 0, 2, did_hit, wu, wu_num);
+                local_time = _handle_player_attack(defender, simu, 0, 2, did_hit, wu, wu_num);
         }
         else if (!you.weapon(1) || is_melee_weapon(*you.weapon(1)))
         {
             if (!(you.weapon(0) && you.hands_reqd(*you.weapon(0)) == HANDS_TWO))
-                return _handle_player_attack(defender, simu, 1, 2, did_hit, wu, wu_num);
+            {
+                attacked = true;
+                local_time = _handle_player_attack(defender, simu, 1, 2, did_hit, wu, wu_num);
+            }
         }
 
-        mpr("You can't melee attack with what you're currently wielding.");
-        
-        you.turn_is_over = false;
-        return false;
+        if (!attacked)
+        {
+            mpr("You can't melee attack with what you're currently wielding.");
+
+            you.turn_is_over = false;
+            return false;
+        }
+        else
+        {
+            if (!defender->alive()
+                || defender->pos() != pos
+                || defender->is_banished()
+                || defender->temp_attitude()) // If it's not hostile the melee attack charmed or pacified it.
+            {
+                return local_time;
+            }
+
+            if (you.mounted())
+                return (_handle_player_attack(defender, simu, 2, 3, did_hit, wu, wu_num) || local_time);
+            else if (you.form == transformation::scorpion)
+            {
+                local_time |= _handle_player_attack(defender, simu, 2, 3, did_hit, wu, wu_num);
+                return (_handle_player_attack(defender, simu, 3, 3, did_hit, wu, wu_num) || local_time);
+            }
+        }
+
+        return local_time;
     }
 
     // If execution gets here, attacker != Player, so we can safely continue

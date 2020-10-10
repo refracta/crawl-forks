@@ -63,14 +63,14 @@ static const form_entry formdata[] =
     "", 0, "", "", "", ""
 },
 {
-    transformation::spider, MONS_SPIDER, "Spider", "spider-form", "spider",
+    transformation::scorpion, MONS_SCORPION, "Scorpion", "scorpion-form", "scorpion",
     "a venomous arachnid creature.",
     EQF_PHYSICAL, MR_VUL_POISON | MR_RES_ACID,
     FormDuration(10, PS_DOUBLE, 60), 0, 5, SIZE_TINY, 10,
-    2, 0, 0, true, 10, 5,
-    SPWPN_VENOM, LIGHTGREEN, "Fangs", ANIMAL_VERBS,
+    2, 0, 0, true, 10, 1,
+    SPWPN_VENOM, LIGHTGREEN, "Pincers, Fangs and Stinger", ANIMAL_VERBS,
     FC_DEFAULT, FC_FORBID, FC_FORBID, true, false,
-    "hiss", -4, "front leg", "", "crawl onto", "flesh"
+    "hiss", -4, "pincer", "", "crawl onto", "flesh"
 },
 {
     transformation::blade_hands, MONS_PLAYER, "Blade", "", "blade",

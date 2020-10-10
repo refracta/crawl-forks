@@ -488,8 +488,8 @@ static bool _transformation_check(const spell_type spell)
     case SPELL_BEASTLY_APPENDAGE:
         tran = transformation::appendage;
         break;
-    case SPELL_SPIDER_FORM:
-        tran = transformation::spider;
+    case SPELL_SCORPION_FORM:
+        tran = transformation::scorpion;
         break;
     case SPELL_STATUE_FORM:
         tran = transformation::statue;
@@ -1974,7 +1974,7 @@ static void _xom_pseudo_miscast(int /*sever*/)
     {
         string str = "A monocle briefly appears over your ";
         str += random_choose("right", "left");
-        if (you.form == transformation::spider)
+        if (you.form == transformation::scorpion)
         {
             if (coinflip())
                 str += " primary";
@@ -2145,7 +2145,7 @@ static void _get_hand_type(string &hand, bool &can_plural)
         plural_vec.push_back(plural);
     }
 
-    if (you.form == transformation::spider)
+    if (you.form == transformation::scorpion)
     {
         hand_vec.emplace_back("mandible");
         plural_vec.push_back(true);

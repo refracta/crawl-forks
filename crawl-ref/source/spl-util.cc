@@ -1177,7 +1177,7 @@ bool spell_is_form(spell_type spell)
         case SPELL_DRAGON_FORM:
         case SPELL_HYDRA_FORM:
         case SPELL_ICE_FORM:
-        case SPELL_SPIDER_FORM:
+        case SPELL_SCORPION_FORM:
         case SPELL_STATUE_FORM:
         case SPELL_NECROMUTATION:
             return true;
@@ -1300,7 +1300,7 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
     case SPELL_BLADE_HANDS:
     case SPELL_HYDRA_FORM:
     case SPELL_ICE_FORM:
-    case SPELL_SPIDER_FORM:
+    case SPELL_SCORPION_FORM:
         if (you.species == SP_FAIRY)
             return "you cannot grow enough in size to do this.";
         if (you.undead_state(temp) == US_UNDEAD

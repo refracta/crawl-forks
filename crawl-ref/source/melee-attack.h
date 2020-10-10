@@ -31,7 +31,23 @@ enum unarmed_attack_type
 class melee_attack : public attack
 {
 public:
-    // mon_attack_def stuff
+
+    // For player:
+    // Attack Number 0: Weapon 0.
+    // Attack Number 1: Weapon 1
+    // Attack Number 2/3: Mount Attacks. Scorpion Form's Bite and Sting.
+    // Effective Attack 0: Runs attack delay; doesn't do auxillaries.
+    // Effective Attack 1: Does Auxillaries; doesn't run attack delay.
+    // Effective Attack 2: Does both Auxillaries and attack delay.
+    // Additionally (For a few logic checks):
+    // 0 is treated as the first of multiple attacks in the turn
+    // 1 is treated as the last of multiple attacks
+    // 2 is treated as the only attack
+    // 3 gets no special treatment and should be used for the middle of many attacks.
+
+    // For enemies:
+    // Attack Number - Which of the 4 mon_spec attacks run.
+    // Effective Attack Number - used as a counter of how many times its hit this turn for some purposes.
     int       attack_number;
     int       effective_attack_number;
 

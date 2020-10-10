@@ -1191,14 +1191,14 @@ static const struct spell_desc spelldata[] =
 },
 
 {
-    SPELL_SPIDER_FORM, "Spider Form", "",
+    SPELL_SCORPION_FORM, "Scorpion Form", "",
     spschool::transmutation | spschool::poison,
     spflag::helpful | spflag::chaotic | spflag::utility,
     3,
     200,
     -1, -1,
     2, 0,
-    TILEG_SPIDER_FORM,
+    TILEG_SCORPION_FORM,
 },
 
 {

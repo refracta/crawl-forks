@@ -2162,6 +2162,36 @@ void melee_attack::set_attack_verb(int damage)
     case -1: // unarmed
     {
         const FormAttackVerbs verbs = get_form(you.form)->uc_attack_verbs;
+
+        if (you.form == transformation::scorpion)
+        {
+            if (attack_number < 2) // Pincer
+            {
+                if (damage < HIT_WEAK)
+                    attack_verb = "pinch";
+                else if (damage < HIT_MED)
+                    attack_verb = "pinch";
+                else if (damage < HIT_STRONG)
+                    attack_verb = "crush";
+                else
+                    attack_verb = "rend";
+                break;
+            }
+            // if attack_number == 2 the mauling works for bites.
+            else if (attack_number == 3) // Stinger
+            {
+                if (damage < HIT_WEAK)
+                    attack_verb = "sting";
+                else if (damage < HIT_MED)
+                    attack_verb = "sting";
+                else if (damage < HIT_STRONG)
+                    attack_verb = "pierce";
+                else
+                    attack_verb = "perforate";
+                break;
+            }
+        }
+
         if (verbs.weak != nullptr)
         {
             if (damage < HIT_WEAK)

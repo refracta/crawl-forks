@@ -3685,7 +3685,7 @@ int player_stealth()
         && !you.airborne())
     {
         stealth -= STEALTH_PIP; // klack klack klack go the blade paws
-        // this is an absurd special case but also it's really funny so w/e
+        // BCADDO: Change this into actually making noise. It's funnier and less spoilery
     }
 
     // Roots!

@@ -3,7 +3,7 @@
 enum class transformation
 {
     none,
-    spider,
+    scorpion,
     blade_hands,
     statue,
     ice_beast,

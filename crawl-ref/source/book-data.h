@@ -116,7 +116,7 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_BEASTLY_APPENDAGE,
     SPELL_STICKS_TO_SNAKES,
     SPELL_SNAKES_TO_STICKS,
-    SPELL_SPIDER_FORM,
+    SPELL_SCORPION_FORM,
     SPELL_ICE_FORM,
     SPELL_BLADE_HANDS,
 },
@@ -208,7 +208,7 @@ static const vector<spell_type> spellbook_templates[] =
 
 #if TAG_MAJOR_VERSION == 34
 {   // Book of Envenomations
-    SPELL_SPIDER_FORM,
+    SPELL_SCORPION_FORM,
     SPELL_OLGREBS_TOXIC_RADIANCE,
 },
 #endif
