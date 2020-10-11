@@ -2341,9 +2341,7 @@ string mon_attack_name(attack_type attack, bool with_object)
         "rake",
         "clamp down on",
         "pounce on",
-#if TAG_MAJOR_VERSION == 34
-        "sting",
-#endif
+        "pinch",
         "hit, bite, peck, or gore", // AT_CHERUB
         "bite", // AT_MULTIBITE
         "hit", // AT_WEAP_ONLY,

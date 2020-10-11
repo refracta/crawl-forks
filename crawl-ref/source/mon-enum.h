@@ -45,12 +45,8 @@ enum attack_type
     AT_RAKE,
     AT_CLAMP,
     AT_POUNCE,
-#if TAG_MAJOR_VERSION == 34
-    AT_REACH_STING,
-    AT_LAST_REAL_ATTACK = AT_REACH_STING,
-#else
-    AT_LAST_REAL_ATTACK = AT_POUNCE,
-#endif
+    AT_PINCER,
+    AT_LAST_REAL_ATTACK = AT_PINCER,
 
     AT_CHERUB,
     AT_MULTIBITE,
@@ -99,9 +95,7 @@ enum attack_flavour
     AF_STICKY_FLAME,
     AF_CHAOTIC,
     AF_STEAL,
-#if TAG_MAJOR_VERSION == 34
-    AF_STEAL_FOOD,
-#endif
+    AF_PIERCE_AC,
     AF_CRUSH,
     AF_REACH,
     AF_HOLY,

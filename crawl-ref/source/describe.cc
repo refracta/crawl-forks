@@ -4133,6 +4133,7 @@ static string _flavour_base_desc(attack_flavour flavour)
         { AF_CRUSH,             "begin ongoing constriction" },
         { AF_REACH,             "" },
         { AF_HOLY,              "deal extra damage to undead and demons" },
+        { AF_PIERCE_AC,         " partially ignoring the target's armour" },
         { AF_ANTIMAGIC,         "drain magic" },
         { AF_PAIN,              "cause pain to the living" },
         { AF_ENSNARE,           "ensnare with webbing" },
@@ -4176,6 +4177,9 @@ static string _flavour_effect(attack_flavour flavour, int HD)
 
     const int flavour_dam = flavour_damage(flavour, HD, false);
     const string flavour_desc = make_stringf(base_desc.c_str(), flavour_dam);
+
+    if (flavour == AF_PIERCE_AC)
+        return flavour_desc;
 
     if (!flavour_triggers_damageless(flavour)
         && flavour != AF_KITE && flavour != AF_SWOOP)

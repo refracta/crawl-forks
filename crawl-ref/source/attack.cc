@@ -1450,6 +1450,8 @@ int attack::apply_defender_ac(int damage, int damage_max) const
     }
     if (damage_brand == SPWPN_MOLTEN)
         local_ac = ac_type::half;
+    if (attk_flavour == AF_PIERCE_AC)
+        local_ac = ac_type::half;
     if (attacker->is_player() && you.form == transformation::scorpion && damage_brand != SPWPN_NORMAL)
         local_ac = ac_type::half;
     int after_ac = defender->apply_ac(damage, damage_max,
