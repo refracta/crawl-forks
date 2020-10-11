@@ -732,9 +732,7 @@ bool throw_it(bolt &pbolt, int throw_2, dist *target)
     if (!teleport)
         pbolt.set_target(thr);
 
-    const int bow_brand = (projected == launch_retval::LAUNCHED)
-                          ? get_weapon_brand(*you.weapon())
-                          : SPWPN_NORMAL;
+    int bow_brand        = SPWPN_NORMAL;
     const int ammo_brand = get_ammo_brand(*thrown);
 
     switch (projected)
@@ -748,6 +746,7 @@ bool throw_it(bolt &pbolt, int throw_2, dist *target)
             launcher = you.weapon(1);
         ASSERT(launcher);
         practise_launching(*launcher);
+        bow_brand = get_weapon_brand(*launcher);
         if (is_unrandom_artefact(*launcher)
             && get_unrand_entry(launcher->unrand_idx)->type_name)
         {
