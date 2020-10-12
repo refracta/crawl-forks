@@ -239,6 +239,15 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
             else if (you.form == transformation::scorpion)
             {
                 local_time |= _handle_player_attack(defender, simu, 2, 3, did_hit, wu, wu_num);
+
+                if (!defender->alive()
+                    || defender->pos() != pos
+                    || defender->is_banished()
+                    || defender->temp_attitude()) // If it's not hostile the melee attack charmed or pacified it.
+                {
+                    return local_time;
+                }
+
                 return (_handle_player_attack(defender, simu, 3, 3, did_hit, wu, wu_num) || local_time);
             }
         }
