@@ -1404,6 +1404,25 @@ int actor_apply_cloud(actor *act)
     if (final_damage)
     {
         actor *oppressor = cloud.agent();
+
+        actor *blame = oppressor;
+
+        if (!player && act->confused())
+        {
+            if (!blame || coinflip())
+                blame = act->as_monster()->get_ench(ENCH_CONFUSION).agent();
+        }
+        else if (act->props.exists(KNOCKBACK_KEY))
+        {
+            if (!blame || coinflip())
+                blame = actor_by_mid(act->props[KNOCKBACK_KEY].get_int());
+        }
+        else if (act->props.exists(PULLED_KEY))
+        {
+            if (!blame || coinflip())
+                blame = actor_by_mid(act->props[PULLED_KEY].get_int());
+        }
+
         const string oppr_name =
             oppressor ? " "+apostrophise(oppressor->name(DESC_THE))
                       : "";

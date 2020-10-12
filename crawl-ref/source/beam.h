@@ -18,6 +18,9 @@
 #define BEAM_STOP       1000        // all beams stopped by subtracting this
                                     // from remaining range
 
+#define KNOCKBACK_KEY   "knocked back by" // if knockback sends into water/lava; credit the correct thing with the kill.
+#define PULLED_KEY      "pulled by"
+
 class monster;
 
 enum mon_resist_type

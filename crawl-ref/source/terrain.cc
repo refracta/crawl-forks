@@ -1682,8 +1682,32 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
     int hurted = 0;
     int actual = 0;
     monster *mon = act->as_monster();
+    mid_t source = MID_NOBODY;
+    string aux_source = "";
+
+    // Handling death messages and who gets the EXP.
+    if (act->confused())
+    {
+        if (act->is_monster())
+            source = act->as_monster()->get_ench(ENCH_CONFUSION).agent()->mid;
+        aux_source = "blundered into %s while confused.";
+    }
+    else if (act->props.exists(KNOCKBACK_KEY))
+    {
+        source = act->props[KNOCKBACK_KEY].get_int();
+        aux_source = "knocked back into %s.";
+    }
+    else if (act->props.exists(PULLED_KEY))
+    {
+        source = act->props[PULLED_KEY].get_int();
+        aux_source = "wretched into %s.";
+    }
+
     if (feat_is_lava(terrain))
     {
+        if (aux_source.length() > 1)
+            aux_source = make_stringf(aux_source.c_str(), "lava");
+
         if (act->is_player())
         {
             original = (12 + roll_dice(3, 21));
@@ -1695,7 +1719,7 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
                 mprf("The lava burns%s", attack_strength_punctuation(actual).c_str());
             if (hurted < original)
                 canned_msg(MSG_YOU_RESIST);
-            ouch(actual , KILLED_BY_LAVA, MID_NOBODY, "Lava");
+            ouch(actual , KILLED_BY_LAVA, source, aux_source.c_str());
         }
         else
         {
@@ -1707,11 +1731,19 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
             if (you.can_see(*act) && hurted > 0)
                 mpr(make_stringf("The lava burns %s%s%s%s", act->name(DESC_THE).c_str(), hurted > original ? " terribly" : "", 
                     attack_strength_punctuation(actual).c_str(), hurted < original ? " It resists." : ""));
-            act->hurt(nullptr, actual, BEAM_FIRE, KILLED_BY_LAVA, "Lava", "", true, true);
+            act->hurt(actor_by_mid(source), actual, BEAM_FIRE, KILLED_BY_LAVA, "", aux_source.c_str(), true, true);
         }
     }
     else if (terrain == DNGN_DEEP_WATER || terrain == DNGN_DEEP_SLIMY_WATER)
     {
+        if (aux_source.length() > 1)
+        {
+            if (terrain == DNGN_DEEP_SLIMY_WATER)
+                aux_source = make_stringf(aux_source.c_str(), "deep slime");
+            else
+                aux_source = make_stringf(aux_source.c_str(), "deep water");
+        }
+
         if (act->is_player())
         {
             if (you.drowning())
@@ -1720,7 +1752,7 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
                 {
                     actual = timescale_damage(act, roll_dice(2, 10));
                     mprf("You are drowning%s", attack_strength_punctuation(actual).c_str());
-                    ouch(actual, KILLED_BY_WATER, MID_NOBODY, "Deep Water");
+                    ouch(actual, KILLED_BY_WATER, source, aux_source.c_str());
                 }
                 else if (coinflip())
                 {
@@ -1744,7 +1776,7 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
                     }
                     else
                         mprf("You injest ooze%s", attack_strength_punctuation(actual).c_str());
-                    ouch(actual, KILLED_BY_WATER, MID_NOBODY, "Deep Water");
+                    ouch(actual, KILLED_BY_WATER, source, aux_source.c_str());
                 }
             }
         }
@@ -1758,13 +1790,16 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
             if (actual)
             {
                 mprf("%s drowns%s", act->name(DESC_THE).c_str(), attack_strength_punctuation(actual).c_str());
-                act->hurt(nullptr, actual, BEAM_WATER, KILLED_BY_WATER, "Deep Water", "", true, true);
+                act->hurt(actor_by_mid(source), actual, BEAM_WATER, KILLED_BY_WATER, "", aux_source.c_str(), true, true);
             }
         }
     }
 
     if (terrain == DNGN_SLIMY_WATER || terrain == DNGN_DEEP_SLIMY_WATER)
     {
+        if (aux_source.length() > 1)
+            aux_source = make_stringf(aux_source.c_str(), "slime");
+
         original = (1 + roll_dice(2, 4));
         hurted = resist_adjust_damage(act, BEAM_ACID, original);
         actual = timescale_damage(act, hurted);
@@ -1780,14 +1815,14 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
                 mprf("The acidic ooze burns%s", attack_strength_punctuation(actual).c_str());
             if (hurted < original)
                 canned_msg(MSG_YOU_RESIST);
-            ouch(actual, KILLED_BY_ACID, MID_NOBODY, "Slime Pit");
+            ouch(actual, KILLED_BY_ACID, source, aux_source.c_str());
         }
 
         else if (act->is_monster() && !(mons_primary_habitat(*mon) == HT_SLIME) && !(mon->res_acid() > 2))
         {
             mprf("The acidic ooze burns %s%s%s%s", act->name(DESC_THE).c_str(), original > hurted ? " terribly" : "",
                 attack_strength_punctuation(actual).c_str(), original < hurted ? " It resists." : "");
-            act->hurt(nullptr, actual, BEAM_ACID, KILLED_BY_ACID, "Slime Pit", "", true, true);
+            act->hurt(actor_by_mid(source), actual, BEAM_ACID, KILLED_BY_ACID, "", aux_source.c_str(), true, true);
         }
 
         else
@@ -2138,7 +2173,7 @@ void set_terrain_changed(const coord_def p)
 }
 
 /**
- * Does this cell count for exploraation piety?
+ * Does this cell count for exploration piety?
  *
  * Don't count: endless map borders, deep water, lava, and cells explicitly
  * marked. (player_view_update_at in view.cc updates the flags)

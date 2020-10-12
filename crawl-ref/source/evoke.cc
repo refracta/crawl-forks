@@ -1262,6 +1262,8 @@ void wind_blast(actor* agent, int pow, coord_def target, int source)
             }
             else
                 player_affected = true;
+
+            act->props[KNOCKBACK_KEY] = (int)agent->mid;
         }
     }
 

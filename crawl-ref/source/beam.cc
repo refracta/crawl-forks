@@ -4651,7 +4651,7 @@ void bolt::affect_player()
     }
 
     if (origin_spell == SPELL_BECKONING && you.alive())
-        beckon(source, you, *this, damage.size);
+        beckon(source, you, *this, damage.size, *agent());
 
     // Apply resistances to damage, but don't print "You resist" messages yet
     int final_dam = check_your_resists(pre_res_dam, flavour, "", this, false);
@@ -5310,7 +5310,7 @@ void bolt::monster_post_hit(monster* mon, int dmg)
         if (origin_spell == SPELL_BECKONING && mon->alive())
         {
             actor &ma = *mon;
-            beckon(source, ma, *this, damage.size);
+            beckon(source, ma, *this, damage.size, *agent());
         }
 
         if (item && item->base_type == OBJ_MISSILES
@@ -5495,18 +5495,30 @@ void bolt::knockback_actor(actor *act, int dam)
     const int weight = max_corpse_chunks(act->is_monster() ? act->type :
                                    player_species_to_mons_species(you.species));
 
-    if (source == target && actor_by_mid(source_id))
-    {
-        if (!find_ray(actor_by_mid(source_id)->pos(), act->pos(), ray, opc_fullyopaque))
-            return;
-    }
+    // Can't knockback self (Should never happen anyways).
+    if (agent() == act)
+        return;
 
     const coord_def oldpos = act->pos();
 
+    if (source == target && agent())
+    {
+        if (!find_ray(agent()->pos(), act->pos(), ray, opc_fullyopaque))
+            return;
+
+        int infinite_loop_protection = 0;
+
+        while (ray.pos() != oldpos)
+        {
+            infinite_loop_protection++;
+            ray.advance();
+
+            if (infinite_loop_protection > 15)
+                return;
+        }
+    }
+
     if (act->is_stationary())
-        return;
-    // We can't do knockback if the beam starts and ends on the same space
-    if (source == oldpos)
         return;
     // Tornado moved it or distortion blinked it away on the same turn it was hit.
     if (ray.pos() != oldpos)
@@ -5526,8 +5538,7 @@ void bolt::knockback_actor(actor *act, int dam)
         if (newpos == oldray.pos()
             || cell_is_solid(newpos)
             || actor_at(newpos)
-            || !act->can_pass_through(newpos)
-            || !act->is_habitable(newpos))
+            || !act->can_pass_through(newpos))
         {
             ray = oldray;
             break;
@@ -5548,6 +5559,8 @@ void bolt::knockback_actor(actor *act, int dam)
                 act->conj_verb("are").c_str(),
                 name.c_str());
     }
+
+    act->props[KNOCKBACK_KEY] = (int)agent()->mid;
 
     if (act->pos() != newpos)
         act->collide(newpos, agent(), ench_power);
@@ -5604,6 +5617,8 @@ void bolt::pull_actor(actor *act, int dam)
         mprf("%s %s yanked forward by the %s.", act->name(DESC_THE).c_str(),
              act->conj_verb("are").c_str(), name.c_str());
     }
+
+    act->props[PULLED_KEY] = (int)agent()->mid;
 
     if (act->pos() != newpos)
         act->collide(newpos, agent(), ench_power);

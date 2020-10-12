@@ -4234,6 +4234,8 @@ bool melee_attack::do_knockback(bool trample)
     else
         defender->move_to_pos(new_pos);
 
+    defender->props[KNOCKBACK_KEY] = (int)attacker->mid;
+
     return true;
 }
 

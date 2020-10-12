@@ -1238,7 +1238,7 @@ spret cast_gravitas(int pow, const coord_def& where, bool fail)
  * @return              The closest point for the actor to be moved to;
  *                      guaranteed to be on the path or its original location.
  */
-static coord_def _beckon_destination(const coord_def &origin, const actor &beckoned, const bolt &path, int pow)
+static coord_def _beckon_destination(const coord_def &origin, const actor &beckoned, const bolt &path, int pow, const actor &agent)
 {
     if (beckoned.is_stationary()  // don't move statues, etc
         || mons_is_tentacle_or_tentacle_segment(beckoned.type)) // a mess...
@@ -1250,31 +1250,46 @@ static coord_def _beckon_destination(const coord_def &origin, const actor &becko
     int distance = grid_distance(origin, beckoned.pos());
     distance -= div_rand_round(pow, 4);
     coord_def retval = beckoned.pos();
-    bool sniped = (path.source == path.target) && actor_by_mid(path.source_id);
     ray_def ray;
 
-    if (sniped)
+    if (path.source == path.target)
     {
-        if (!find_ray(actor_by_mid(path.source_id)->pos(), beckoned.pos(), ray, opc_fully_no_trans, 8))
+        if (!find_ray(beckoned.pos(), agent.pos(), ray, opc_fully_no_trans, 8))
             return beckoned.pos();
 
-        while (ray.advance())
+        distance = grid_distance(beckoned.pos(), agent.pos());
+        distance -= div_rand_round(pow, 4);
+
+        int loops = 0;
+
+        while (loops < 15)
         {
+            ray.advance();
+
             coord_def pos = ray.pos();
-            if (actor_at(pos) || !beckoned.is_habitable(pos))
+
+            if (pos == agent.pos())
+            {
+                loops += 30;
+                continue;
+            }
+
+            if (actor_at(pos) || !beckoned.can_pass_through(pos))
                 continue; // actor could be caster, or a bush
 
-            int x = grid_distance(pos, origin);
+            int x = grid_distance(pos, agent.pos());
 
-            if (x >= distance && x < grid_distance(retval, origin))
+            if (x >= distance && x < grid_distance(retval, agent.pos()))
                 retval = pos;
+
+            loops++;
         }
         return retval;
     }
 
     for (coord_def pos : path.path_taken)
     {
-        if (actor_at(pos) || !beckoned.is_habitable(pos))
+        if (actor_at(pos) || !beckoned.can_pass_through(pos))
             continue; // actor could be caster, or a bush
 
         int x = grid_distance(pos, origin);
@@ -1295,9 +1310,9 @@ static coord_def _beckon_destination(const coord_def &origin, const actor &becko
  * @param path      The path to move the creature along.
  * @return          Whether the beckoned creature actually moved.
  */
-bool beckon(coord_def &origin, actor &beckoned, const bolt &path, int pow)
+bool beckon(coord_def &origin, actor &beckoned, const bolt &path, int pow, actor &agent)
 {
-    const coord_def dest = _beckon_destination(origin, beckoned, path, pow);
+    const coord_def dest = _beckon_destination(origin, beckoned, path, pow, agent);
     if (dest == beckoned.pos())
         return false;
 
@@ -1308,6 +1323,8 @@ bool beckon(coord_def &origin, actor &beckoned, const bolt &path, int pow)
     mprf("%s %s wrenched violently forward by a lasso of force!",
         beckoned.name(DESC_THE).c_str(),
         beckoned.is_player() ? "are" : "is");
+
+    beckoned.props[PULLED_KEY] = (int)agent.mid;
 
     // If pulled adjacent ministun.
     if (adjacent(origin, dest) && beckoned.is_monster())
