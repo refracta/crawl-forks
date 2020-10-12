@@ -154,4 +154,5 @@ spectral_hydra2
 spectral_hydra3
 spectral_hydra4
 spectral_hydra5
+spectral_scorpion MONS_SPECTRAL_SCORPION
 %rim 1

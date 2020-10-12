@@ -1111,6 +1111,7 @@ static tileidx_t _zombie_tile_to_spectral(const tileidx_t z_tile)
     case TILEP_MONS_ZOMBIE_LIZARD:
         return TILEP_MONS_SPECTRAL_LIZARD;
     case TILEP_MONS_ZOMBIE_SCORPION:
+        return TILEP_MONS_SPECTRAL_SCORPION;
     case TILEP_MONS_ZOMBIE_SPIDER_LARGE:
     case TILEP_MONS_ZOMBIE_SPIDER_SMALL:
         return TILEP_MONS_SPECTRAL_SPIDER;
@@ -1350,7 +1351,6 @@ static tileidx_t _mon_to_zombie_tile(const monster_info &mon)
         { MONS_JACKAL,                  TILEP_MONS_ZOMBIE_JACKAL },
         { MONS_ADDER,                   TILEP_MONS_ZOMBIE_ADDER },
         { MONS_WOLF_SPIDER,             TILEP_MONS_ZOMBIE_SPIDER_LARGE },
-        { MONS_EMPEROR_SCORPION,        TILEP_MONS_ZOMBIE_SPIDER_LARGE },
         { MONS_HOWLER_MONKEY,           TILEP_MONS_ZOMBIE_MONKEY },
         { MONS_IRON_DRAGON,             TILEP_MONS_ZOMBIE_IRON_DRAGON },
         { MONS_GOLDEN_DRAGON,           TILEP_MONS_ZOMBIE_GOLDEN_DRAGON },
