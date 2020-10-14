@@ -1026,6 +1026,11 @@ static formatted_string _describe_god_powers(god_type which_god)
     }
 #endif
 
+    case GOD_KIKUBAAQUDGHA:
+        have_any = true;
+        desc.cprintf("Any undead you create from corpses or the souls of the recently fallen remain intact longer.\n");
+        break;
+
     case GOD_LUGONU:
         have_any = true;
         desc.cprintf("You are protected from the effects of unwielding distortion weapons.\n");

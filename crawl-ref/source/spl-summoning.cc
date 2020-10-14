@@ -28,6 +28,7 @@
 #include "god-companions.h"
 #include "god-conduct.h"
 #include "god-item.h"
+#include "god-passive.h"
 #include "invent.h"
 #include "item-prop.h"
 #include "item-status-flag-type.h"
@@ -1945,11 +1946,10 @@ static bool _raise_remains(const coord_def &pos, int corps, beh_type beha,
     if (!mons)
         return false;
 
-    if (god == GOD_NO_GOD) // only Yred dead-raising lasts forever.
-    {
-        chaos_summon(SPELL_ANIMATE_DEAD, mons, as, false);
-        mons->add_ench(mon_enchant(ENCH_FAKE_ABJURATION, 6));
-    }
+    chaos_summon(SPELL_ANIMATE_DEAD, mons, as, false);
+
+    if (!have_passive(passive_t::extend_undead)) // only Kiku dead-raising lasts forever.
+        mons->add_ench(mon_enchant(ENCH_FAKE_ABJURATION, 5));
 
     // If the original monster has been levelled up, its HD might be different
     // from its class HD, in which case its HP should be rerolled to match.
@@ -2277,7 +2277,7 @@ spret cast_simulacrum(int pow, god_type god, bool fail)
         {
             count++;
             chaos_summon(SPELL_SIMULACRUM, sim, &you, false);
-            sim->add_ench(mon_enchant(ENCH_FAKE_ABJURATION, 4));
+            sim->add_ench(mon_enchant(ENCH_FAKE_ABJURATION, have_passive(passive_t::extend_undead) ? 6 : 3));
         }
     }
 

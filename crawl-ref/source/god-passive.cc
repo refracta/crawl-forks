@@ -181,6 +181,8 @@ static const vector<god_passive> god_passives[] =
 
     // Kikubaaqudgha
     {
+        { -1, passive_t::extend_undead, 
+              "GOD now extends the duration of your undead creations" },
         {  2, passive_t::miscast_protection_necromancy,
               "GOD NOW protects you from necromancy miscasts"
               " and mummy death curses"

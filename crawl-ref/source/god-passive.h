@@ -152,6 +152,9 @@ enum class passive_t
     /// Protection against necromancy miscasts and mummy death curses.
     miscast_protection_necromancy,
 
+    /// Increased duration of created derived undead.
+    extend_undead,
+
     /// Chance to extend berserk duration and avoid paralysis, piety dependent.
     extend_berserk,
 

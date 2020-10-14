@@ -15,6 +15,7 @@
 #include "english.h"
 #include "env.h"
 #include "god-abil.h"
+#include "god-passive.h"
 #include "libutil.h"
 #include "message.h"
 #include "mon-abil.h"
@@ -568,7 +569,14 @@ void make_derived_undead_fineff::fire()
         if (!mg.mname.empty())
             name_zombie(*undead, mg.base_type, mg.mname);
 
-        undead->add_ench(mon_enchant(ENCH_FAKE_ABJURATION, 6));
+        if (mg.summoner == &you)
+        {
+            if (!have_passive(passive_t::extend_undead))
+                undead->add_ench(mon_enchant(ENCH_FAKE_ABJURATION, 5));
+        }
+        else
+            undead->add_ench(mon_enchant(ENCH_FAKE_ABJURATION, 6));
+
         if (!agent.empty())
         {
             mons_add_blame(undead,
