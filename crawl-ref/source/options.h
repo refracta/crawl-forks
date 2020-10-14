@@ -572,6 +572,7 @@ public:
     bool        tile_misc_anim;
     vector<string> tile_layout_priority;
     monster_type tile_use_monster;
+    bool        tile_show_armour;
     tileidx_t   tile_player_tile;
     pair<int, int> tile_weapon_offsets;
     pair<int, int> tile_shield_offsets;

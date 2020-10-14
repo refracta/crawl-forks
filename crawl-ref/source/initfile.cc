@@ -1130,6 +1130,7 @@ void game_options::reset_options()
 
     tile_use_monster         = MONS_PROGRAM_BUG;
     tile_player_tile         = 0;
+    tile_show_armour         = true;
     tile_weapon_offsets.first  = INT_MAX;
     tile_weapon_offsets.second = INT_MAX;
     tile_shield_offsets.first  = INT_MAX;
@@ -2012,12 +2013,14 @@ void game_options::set_player_tile(const string &field)
     {
         tile_use_monster = MONS_0;
         tile_player_tile = 0;
+        tile_show_armour = true;
         return;
     }
     else if (field == "playermons")
     {
         tile_use_monster = MONS_PLAYER;
         tile_player_tile = 0;
+        tile_show_armour = false;
         return;
     }
 
@@ -2025,7 +2028,7 @@ void game_options::set_player_tile(const string &field)
     // Handle tile:<tile-name> values
     if (fields.size() == 2 && fields[0] == "tile")
     {
-        // A variant tile. We have to find the base tile to look this up inthe
+        // A variant tile. We have to find the base tile to look this up in the
         // tile index.
         if (isdigit(*(fields[1].rbegin())))
         {
@@ -2044,6 +2047,7 @@ void game_options::set_player_tile(const string &field)
                                  fields[1].c_str());
                     return;
                 }
+                tile_show_armour = false;
                 tile_player_tile = tileidx_mon_clamp(base_tile, offset);
             }
         }
@@ -2053,6 +2057,7 @@ void game_options::set_player_tile(const string &field)
             return;
         }
         tile_use_monster = MONS_PLAYER;
+        tile_show_armour = false;
     }
     else if (fields.size() == 2 && fields[0] == "mons")
     {
@@ -2064,6 +2069,7 @@ void game_options::set_player_tile(const string &field)
         {
             tile_use_monster = m;
             tile_player_tile = 0;
+            tile_show_armour = false;
         }
     }
     else
@@ -3405,6 +3411,15 @@ void game_options::read_option_line(const string &str, bool runscript)
     }
     else if (key == "tile_player_tile")
         set_player_tile(field);
+    else if (key == "tile_show_armour")
+    {
+        if (field == "true")
+            tile_show_armour = true;
+        else if (field == "false")
+            tile_show_armour = false;
+        else
+            mprf(MSGCH_ERROR, "Invalid value for tile_show_armour. Only true or false is accepted.");
+    }
     else if (key == "tile_weapon_offsets")
         set_tile_offsets(field, false);
     else if (key == "tile_shield_offsets")

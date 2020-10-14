@@ -331,10 +331,9 @@ void fill_doll_equipment(dolls_data &result)
         result.parts[TILEP_PART_CLOAK] = 0;
         break;
     default:
-        // A monster tile is being used for the player.
-        if (Options.tile_use_monster != MONS_0)
+        // Player wants to be naked or is using a tile where gear makes no sense.
+        if (Options.tile_show_armour == false)
         {
-            result.parts[TILEP_PART_BASE] = tileidx_player_mons();
             result.parts[TILEP_PART_DRCHEAD] = 0;
             result.parts[TILEP_PART_HAIR] = 0;
             result.parts[TILEP_PART_BEARD] = 0;
@@ -345,6 +344,9 @@ void fill_doll_equipment(dolls_data &result)
             result.parts[TILEP_PART_ARM] = 0;
             result.parts[TILEP_PART_CLOAK] = 0;
         }
+        // Using a monster tile for the player
+        if (Options.tile_use_monster != MONS_0)
+            result.parts[TILEP_PART_BASE] = tileidx_player_mons();
         break;
     }
 
