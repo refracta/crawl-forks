@@ -1193,6 +1193,8 @@ static string _describe_action(caction_type type)
         return "Throw";
     case CACT_ARMOUR:
         return "Armor"; // "Armour" is too long
+    case CACT_MOUNT:
+        return "MtDmg";
     case CACT_BLOCK:
         return "Block";
     case CACT_DODGE:
@@ -1293,9 +1295,24 @@ static string _describe_action_subtype(caction_type type, int compound_subtype)
             return uppercase_first(item_base_name(OBJ_SHIELDS, auxtype));
         }
         return uppercase_first(item_base_name(OBJ_WEAPONS, subtype));
-    case CACT_ARMOUR:
+    case CACT_ARMOUR: // BCADDO: Racial skin equivalents.
         return (subtype == -1) ? "Skin"
                : uppercase_first(item_base_name(OBJ_ARMOURS, subtype));
+    case CACT_MOUNT:
+    {
+        switch ((mount_type)subtype)
+        {
+        case mount_type::drake:
+            return "Drake";
+        case mount_type::hydra:
+            return "Hydra";
+        case mount_type::spider:
+            return "Spider";
+        default:
+            mprf(MSGCH_ERROR, "Unhandled mount type tanking hit.");
+            return "???";
+        }
+    }
     case CACT_BLOCK:
     {
         if (subtype > -1)

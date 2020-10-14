@@ -9232,3 +9232,8 @@ bool mount_hit()
         return false;
     return !x_chance_in_y(you.body_size(PSIZE_BODY), you.body_size(PSIZE_BODY) + 5);
 }
+
+int apply_mount_ac(int damage)
+{
+    return you.apply_ac(damage, 0, ac_type::normal, 0, true, true);
+}

@@ -349,10 +349,33 @@ int actor::spirit_shield(bool calc_unid, bool items) const
     return ss;
 }
 
-int actor::apply_ac(int damage, int max_damage, ac_type ac_rule,
-                    int stab_bypass, bool for_real) const
+static int _mount_ac()
 {
-    int ac = max(armour_class() - stab_bypass, 0);
+    ASSERT(you.mounted());
+
+    switch (you.mount)
+    {
+    case mount_type::hydra:
+        return 3;
+    case mount_type::spider:
+        return 9;
+    case mount_type::drake:
+        return 6;
+    default:
+        mprf(MSGCH_ERROR, "Unhandled Mount AC.");
+        break;
+    }
+    return 0;
+}
+
+int actor::apply_ac(int damage, int max_damage, ac_type ac_rule,
+                    int stab_bypass, bool for_real, bool mount) const
+{
+    int ac = armour_class();
+    if (mount)
+        ac = _mount_ac();
+    ac = max(ac - stab_bypass, 0);
+
     int gdr = gdr_perc();
     int saved = 0;
     switch (ac_rule)
@@ -386,11 +409,16 @@ int actor::apply_ac(int damage, int max_damage, ac_type ac_rule,
     saved = max(saved, min(gdr * max_damage / 100, ac / 2));
     if (for_real && (damage > 0) && (saved >= damage) && is_player())
     {
-        const item_def *body_armour = slot_item(EQ_BODY_ARMOUR);
-        if (body_armour)
-            count_action(CACT_ARMOUR, body_armour->sub_type);
+        if (mount)
+            count_action(CACT_MOUNT, (int)you.mount);
         else
-            count_action(CACT_ARMOUR, -1); // unarmoured subtype
+        {
+            const item_def *body_armour = slot_item(EQ_BODY_ARMOUR);
+            if (body_armour)
+                count_action(CACT_ARMOUR, body_armour->sub_type);
+            else
+                count_action(CACT_ARMOUR, -1); // unarmoured subtype
+        }
     }
 
     return max(damage - saved, 0);

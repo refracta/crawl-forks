@@ -261,7 +261,7 @@ public:
     virtual int gdr_perc() const = 0;
     int apply_ac(int damage, int max_damage = 0,
                  ac_type ac_rule = ac_type::normal, int stab_bypass = 0,
-                 bool for_real = true) const;
+                 bool for_real = true, bool mount = false) const;
     virtual int evasion(ev_ignore_type ign = ev_ignore::none,
                         const actor *attacker = nullptr) const = 0;
     virtual bool shielded() const = 0;

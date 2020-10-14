@@ -12,6 +12,7 @@
 #include <cmath>
 
 #include "areas.h"
+#include "attack.h"
 #include "bloodspatter.h"
 #include "branch.h"
 #include "cloud.h"
@@ -1253,15 +1254,31 @@ void trap_def::shoot_ammo(actor& act, bool was_known)
 
         if (act.is_player())
         {
-            mprf("%s shoots out and hits you!", shot.name(DESC_A).c_str());
+            bool mount = you.mounted();
 
-            string n = name(DESC_A);
+            if (mount)
+                damage_taken = apply_mount_ac(shot_damage(act));
 
-            // Needle traps can poison.
-            if (poison)
-                poison_player(1 + roll_dice(2, 9), "", n);
+            mprf("%s shoots out and hits you%s%s", shot.name(DESC_A).c_str(), mount ? "r mount" : "", attack_strength_punctuation(damage_taken).c_str());
 
-            ouch(damage_taken, KILLED_BY_TRAP, MID_NOBODY, n.c_str());
+            // Traps always hit the mount
+            if (mount)
+            {
+                if (poison)
+                    poison_mount(1 + roll_dice(2, 9));
+
+                damage_mount(damage_taken);
+            }
+
+            else
+            {
+                string n = name(DESC_A);
+
+                if (poison)
+                    poison_player(1 + roll_dice(2, 9), "", n);
+
+                ouch(damage_taken, KILLED_BY_TRAP, MID_NOBODY, n.c_str());
+            }
         }
         else
         {

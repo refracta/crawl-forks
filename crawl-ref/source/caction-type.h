@@ -17,6 +17,7 @@ enum caction_type    // Primary categorization of counted actions.
     CACT_STAB,       // stab_type
     CACT_EAT,        // food_type, or subtype = -1 for corpse
     CACT_ARMOUR,     // armour subtype or subtype = -1 for unarmoured
+    CACT_MOUNT,      // hits tanked by mounts
     CACT_DODGE,      // dodge_type
     CACT_BLOCK,      // armour subtype or subtype = -1 and
                      //   auxtype used for special cases

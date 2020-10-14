@@ -1192,3 +1192,4 @@ void change_drac_colour(draconian_colour new_colour);
 void damage_mount(int amount);
 void dismount();
 bool mount_hit();
+int apply_mount_ac(int amount);
