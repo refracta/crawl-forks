@@ -1843,10 +1843,8 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
     }
     case spret::fail:
     {
-#if TAG_MAJOR_VERSION == 34
         if (antimagic)
             return spret::fail;
-#endif
 
         mprf("You miscast %s.", spell_title(spell));
         flush_input_buffer(FLUSH_ON_FAILURE);
@@ -2078,7 +2076,7 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
         return cast_summon_forest(&you, powc, beam.target, god, fail);
 
     case SPELL_ANIMATE_SKELETON:
-        return cast_animate_skeleton(god, fail);
+        return pryten(powc, fail);
 
     case SPELL_ANIMATE_DEAD:
         return cast_animate_dead(powc, god, fail);

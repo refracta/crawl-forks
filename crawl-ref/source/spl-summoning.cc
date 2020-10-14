@@ -2119,11 +2119,11 @@ int animate_dead(actor *caster, int /*pow*/, beh_type beha,
     return number_raised;
 }
 
-spret cast_animate_skeleton(god_type god, bool fail)
+bool cast_animate_skeleton(god_type god, bool fail, coord_def pos)
 {
     bool found = false;
 
-    for (stack_iterator si(you.pos(), true); si; ++si)
+    for (stack_iterator si(pos, true); si; ++si)
     {
         if (si->base_type == OBJ_CORPSES
             && mons_class_can_be_zombified(si->mon_type)
@@ -2134,29 +2134,31 @@ spret cast_animate_skeleton(god_type god, bool fail)
     }
 
     if (!found)
+        return false;
+
+    if (fail)
     {
-        mpr("There is nothing here that can be animated!");
-        return spret::abort;
+        mpr("You fail to channel necromantic magic through your feet.");
+        return false;
     }
 
-    fail_check();
     canned_msg(MSG_ANIMATE_REMAINS);
 
     const char* no_space = "...but the skeleton had no space to rise!";
 
     // First, we try to animate a skeleton if there is one.
-    const int animate_skel_result = animate_remains(you.pos(), CORPSE_SKELETON,
+    const int animate_skel_result = animate_remains(pos, CORPSE_SKELETON,
                                                     BEH_FRIENDLY, MHITYOU,
                                                     &you, "", god);
     if (animate_skel_result != -1)
     {
         if (animate_skel_result == 0)
             mpr(no_space);
-        return spret::success;
+        return false;
     }
 
     // If not, look for a corpse and butcher it.
-    for (stack_iterator si(you.pos(), true); si; ++si)
+    for (stack_iterator si(pos, true); si; ++si)
     {
         if (si->is_type(OBJ_CORPSES, CORPSE_BODY)
             && mons_skeleton(si->mon_type)
@@ -2172,14 +2174,14 @@ spret cast_animate_skeleton(god_type god, bool fail)
 
     // Now we try again to animate a skeleton.
     // this return type is insanely stupid
-    const int animate_result = animate_remains(you.pos(), CORPSE_SKELETON,
+    const int animate_result = animate_remains(pos, CORPSE_SKELETON,
                                                BEH_FRIENDLY, MHITYOU, &you, "",
                                                god);
     dprf("result: %d", animate_result);
     switch (animate_result)
     {
         case -1:
-            mpr("There is no skeleton here to animate!");
+            // No need for failure message.
             break;
         case 0:
             mpr(no_space);
@@ -2189,7 +2191,7 @@ spret cast_animate_skeleton(god_type god, bool fail)
             break;
     }
 
-    return spret::success;
+    return true;
 }
 
 spret cast_animate_dead(int pow, god_type god, bool fail)

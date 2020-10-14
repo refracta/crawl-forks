@@ -365,6 +365,9 @@ static const ability_def Ability_List[] =
 
     { ABIL_END_TRANSFORMATION, "End Transformation",
       0, 0, 0, 0, {}, abflag::starve_ok },
+    { ABIL_END_UPRISING, "End Uprising",
+        0, 0, 0, 0,{}, abflag::starve_ok },
+
 
     // INVOCATIONS:
     // Zin
@@ -2616,6 +2619,12 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         untransform();
         break;
 
+    case ABIL_END_UPRISING:
+        fail_check();
+        mprf(MSGCH_DURATION, "You stop raising skeletons from your steps.");
+        you.attribute[ATTR_SKELETON] = 0;
+        break;
+
     // INVOCATIONS:
     case ABIL_ZIN_RECITE:
     {
@@ -3908,6 +3917,9 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
 
     if (you.duration[DUR_TRANSFORMATION] && !you.transform_uncancellable)
         _add_talent(talents, ABIL_END_TRANSFORMATION, check_confused);
+
+    if (you.attribute[ATTR_SKELETON])
+        _add_talent(talents, ABIL_END_UPRISING, check_confused);
 
     if (you.get_mutation_level(MUT_BLINK))
         _add_talent(talents, ABIL_BLINK, check_confused);

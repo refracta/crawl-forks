@@ -237,6 +237,10 @@ End Transformation ability
 
 Reverts you to your normal form.
 %%%%
+End Uprising ability
+
+Stops channeling necromantic energy through your steps.
+%%%%
 # Zin
 Recite ability
 

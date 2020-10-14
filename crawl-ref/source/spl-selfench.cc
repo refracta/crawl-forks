@@ -81,6 +81,15 @@ spret deflection(int /*pow*/, bool fail)
     return spret::success;
 }
 
+spret pryten(int /*pow*/, bool fail)
+{
+    fail_check();
+    you.attribute[ATTR_SKELETON] = 1;
+    mpr("Skeletons will now rise from your step.");
+
+    return spret::success;
+}
+
 spret cast_regen(int pow, bool fail)
 {
     fail_check();

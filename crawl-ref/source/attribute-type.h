@@ -53,9 +53,7 @@ enum attribute_type
     ATTR_SEARING_RAY,          // Are we currently firing a searing ray?
     ATTR_RECITE_TYPE,          // Recitation type.
     ATTR_RECITE_SEED,          // Recite text seed.
-#if TAG_MAJOR_VERSION == 34
-    ATTR_RECITE_HP,            // HP on start of recitation.
-#endif
+    ATTR_SKELETON,             // Animate Skeleton active
     ATTR_SWIFTNESS,            // Duration of future antiswiftness.
 #if TAG_MAJOR_VERSION == 34
     ATTR_BARBS_MSG,            // Have we already printed a message on move?

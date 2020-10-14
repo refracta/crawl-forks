@@ -371,6 +371,7 @@ static void _dispellable_player_buffs(player_debuff_effects &buffs)
     // attributes
     static const attribute_type dispellable_attributes[] = {
         ATTR_DEFLECT_MISSILES,
+        ATTR_SKELETON,
     };
 
     for (auto attribute : dispellable_attributes)

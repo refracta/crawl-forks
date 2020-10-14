@@ -273,7 +273,7 @@ static const vector<spell_type> spellbook_templates[] =
 
 {   // Book of Cantrips
     SPELL_CONFUSING_TOUCH,
-    SPELL_ANIMATE_SKELETON,
+    SPELL_MAGIC_CANDLE,
     SPELL_SUMMON_SMALL_MAMMAL,
     SPELL_FLAME_TONGUE,
 },

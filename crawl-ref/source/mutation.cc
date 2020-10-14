@@ -1711,7 +1711,6 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
         break;
     }
 
-
     if (!_is_valid_mutation(mutat))
         return false;
 
@@ -1833,6 +1832,16 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
                      replace_all(mdef.gain[cur_base_level - 1], "hands",
                                  hands).c_str());
                 gain_msg = false;
+            }
+            break;
+
+        case MUT_NO_LOVE:
+            {
+            if (you.attribute[ATTR_SKELETON])
+            {
+                you.attribute[ATTR_SKELETON] = 0;
+                mprf(MSGCH_DURATION, "Skeletons will no longer rise from your steps.");
+            }
             }
             break;
 

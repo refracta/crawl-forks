@@ -58,6 +58,19 @@ Reanimates a single skeleton as a follower, even if that skeleton is still
 encased in flesh. This magic is unstable, so eventually those reanimated will
 crumble to dust. Skeletons cannot leave the level they were created on.
 %%%%
+Pryten's Skeletal Uprising spell
+
+Upon casting the user is filled with a necromantic energy that will travel through 
+their feet to the ground as they walk. Upon stepping off of a skeleton or corpse 
+the skeleton may animate coming to the aid of the user. This often expends a small 
+amount of magical energy as it happens.
+
+You may use the spell's fail rate to determine the odds of a skeletal ally being 
+created with the status active and the spellpower to determine the amount of mana 
+which will be discharged:
+
+0 at 200 spellpower; 1 at 100; 2 at 0; randomized between those.
+%%%%
 Apportation spell
 
 Pulls the top item or group of similar items from a distant pile to the floor

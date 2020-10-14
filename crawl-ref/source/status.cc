@@ -473,6 +473,16 @@ bool fill_status_info(int status, status_info& inf)
         }
         break;
 
+    case STATUS_SKELETON:
+        if (you.attribute[ATTR_SKELETON] > 0)
+        {
+            inf.light_colour = WHITE;
+            inf.light_text   = "Skeleton";
+            inf.short_text   = "skeletal uprising";
+            inf.long_text    = "Skeletons rise behind you as you walk.";
+        }
+        break;
+
     case STATUS_SERPENTS_LASH:
         if (you.attribute[ATTR_SERPENTS_LASH] > 0)
         {

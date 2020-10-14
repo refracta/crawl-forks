@@ -3174,7 +3174,7 @@ KFEAT:   B = altar_sif_muna
 KFEAT:   C = altar_vehumet
 ITEM:    randbook owner:Kikubaaqudgha disc:necromancy spells:pain \
          numspells:1 / \
-         randbook owner:Kikubaaqudgha disc:necromancy spells:animate_skeleton \
+         randbook owner:Kikubaaqudgha disc:necromancy spells:pryten's_skeletal_uprising \
          numspells:1
 # You already got a direct damage spell by looting the other gods' altars.
 ITEM:    randbook owner:Sif_Muna disc:hexes numspells:1 slevels:1 / \

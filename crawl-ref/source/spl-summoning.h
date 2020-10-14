@@ -87,7 +87,7 @@ int animate_remains(const coord_def &a, corpse_type class_allowed,
                     bool quiet = false, bool force_beh = false,
                     monster** mon = nullptr, int* motions = nullptr);
 
-spret cast_animate_skeleton(god_type god, bool fail);
+bool cast_animate_skeleton(god_type god, bool fail, coord_def pos);
 spret cast_animate_dead(int pow, god_type god, bool fail);
 int animate_dead(actor *caster, int /*pow*/, beh_type beha,
                  unsigned short hitting, actor *as = nullptr, string nas = "",

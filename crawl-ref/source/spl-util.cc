@@ -358,6 +358,12 @@ static void _remove_spell_attributes(spell_type spell)
                                  : "your spell is no longer protecting you");
         }
         break;
+    case SPELL_ANIMATE_SKELETON:
+        if (you.attribute[ATTR_SKELETON])
+        {
+            you.attribute[ATTR_SKELETON] = 0;
+            mprf(MSGCH_DURATION, "Skeletons will no longer rise from your steps.");
+        }
     default:
         break;
     }
@@ -1414,8 +1420,11 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
             return "you can't move.";
         break;
 
-    case SPELL_ANIMATE_DEAD:
     case SPELL_ANIMATE_SKELETON:
+        if (temp && you.attribute[ATTR_SKELETON])
+            return "skeletons already rise from your steps.";
+        // intentional fallthrough
+    case SPELL_ANIMATE_DEAD:
     case SPELL_DEATH_CHANNEL:
     case SPELL_SIMULACRUM:
     case SPELL_INFESTATION:

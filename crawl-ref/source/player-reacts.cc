@@ -884,7 +884,9 @@ static void _regenerate_hp_and_mp(int delay)
     // Mount HP Regeneration
     if (you.mounted() && (you.mount_hp < you.mount_hp_max))
     {
-        bool regen_mod = (you.mount == mount_type::hydra) ? 2 : 1;
+        bool regen_mod = 1;
+        if (you.mount == mount_type::hydra) 
+            regen_mod = 2;
         you.mount_hp_regen += div_rand_round((10 + you.mount_hp_max / 3) * delay * regen_mod, BASELINE_DELAY);
     }
     

@@ -13,6 +13,7 @@ int harvest_corpses(const actor &harvester,
 spret corpse_armour(int pow, bool fail);
 
 spret deflection(int pow, bool fail);
+spret pryten(int pow, bool fail);
 
 spret cast_regen(int pow, bool fail);
 spret cast_revivification(int pow, bool fail);

@@ -43,6 +43,7 @@
 #include "stringutil.h"
 #include "spl-damage.h"
 #include "spl-selfench.h" // noxious_bog_cell
+#include "spl-summoning.h" // new animate skeleton
 #include "terrain.h"
 #include "traps.h"
 #include "travel.h"
@@ -947,6 +948,16 @@ void move_player_action(coord_def move)
     {
         did_wu_jian_attack = wu_jian_post_move_effects(did_wall_jump,
                                                        initial_position);
+    }
+
+    if (you.attribute[ATTR_SKELETON])
+    {
+        bool fail = x_chance_in_y(failure_rate_to_int(raw_spell_fail(SPELL_ANIMATE_SKELETON)), 100);
+        if (cast_animate_skeleton(you.religion, fail, initial_position))
+        {
+            int spellpower = calc_spell_power(SPELL_ANIMATE_SKELETON, true);
+            dec_mp(div_rand_round(spellpower, 100));
+        }
     }
 
     // If you actually moved you are eligible for amulet of the acrobat.
