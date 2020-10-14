@@ -2815,7 +2815,7 @@ static void _rebrand_armour(item_def &arm)
     {
         new_brand = generate_armour_type_ego((armour_type)arm.sub_type);
         if (one_chance_in(3) || new_brand == SPARM_NORMAL)
-            new_brand = random_choose(SPARM_FIRE_RESISTANCE, SPARM_COLD_RESISTANCE, SPARM_STEALTH);
+            new_brand = random_choose(SPARM_FIRE_RESISTANCE, SPARM_COLD_RESISTANCE, SPARM_STRENGTH, SPARM_DEXTERITY);
     }
 
     arm.brand = new_brand;
