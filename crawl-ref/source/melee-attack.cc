@@ -869,27 +869,19 @@ bool melee_attack::handle_phase_blocked()
 
 bool melee_attack::handle_phase_aux()
 {
-    if (attacker->is_player()
-        && !cleaving
-        && wu_jian_attack != WU_JIAN_ATTACK_TRIGGERED_AUX)
+    if (attacker->is_player() && ((effective_attack_number == 1) || (effective_attack_number == 2)))
     {
         // returns whether an aux attack successfully took place
         // additional attacks from cleave don't get aux
         if (!defender->as_monster()->friendly()
             && adjacent(defender->pos(), attack_position)
-            && ((effective_attack_number == 1)||(effective_attack_number == 2)))
+            && !cleaving
+            && wu_jian_attack != WU_JIAN_ATTACK_TRIGGERED_AUX)
         {
             player_aux_unarmed();
         }
 
-        // Don't print wounds after the first attack with Gyre/Gimble.
-        // DUR_CLEAVE and Gyre/Gimble interact poorly together at the moment,
-        // so don't try to skip print_wounds in that case.
-        if (!(weapon && is_unrandom_artefact(*weapon, UNRAND_GYRE)
-              && !you.duration[DUR_CLEAVE]))
-        {
-            print_wounds(*defender->as_monster());
-        }
+        print_wounds(*defender->as_monster());
     }
 
     return true;

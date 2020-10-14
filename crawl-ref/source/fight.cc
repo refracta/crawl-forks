@@ -130,7 +130,7 @@ static bool _handle_player_attack(actor * defender, bool simu, int atk_num,
  * @return Whether the attack took time (i.e. wasn't cancelled).
  */
 bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
-                 bool simu, wu_jian_attack_type wu, int wu_num)
+    bool simu, wu_jian_attack_type wu, int wu_num)
 {
     ASSERT(attacker); // XXX: change to actor &attacker
     ASSERT(defender); // XXX: change to actor &defender
@@ -182,15 +182,17 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
         bool attacked = false;
         coord_def pos = defender->pos();
 
+        bool xtra_atk = (you.mounted() || you.form == transformation::scorpion);
+
         if (!you.weapon(0) || is_melee_weapon(*you.weapon(0)))
         {
             attacked = true;
             if (!you.weapon(1) || is_melee_weapon(*you.weapon(1)))
             {
                 if (you.weapon(0) && you.hands_reqd(*you.weapon(0)) == HANDS_TWO)
-                    local_time = _handle_player_attack(defender, simu, 0, 2, did_hit, wu, wu_num);
+                    local_time = _handle_player_attack(defender, simu, 0, xtra_atk ? 0 : 2, did_hit, wu, wu_num);
                 else if (you.weapon(1) && you.hands_reqd(*you.weapon(1)) == HANDS_TWO)
-                    local_time = _handle_player_attack(defender, simu, 1, 2, did_hit, wu, wu_num);
+                    local_time = _handle_player_attack(defender, simu, 1, xtra_atk ? 0 : 2, did_hit, wu, wu_num);
                 else
                 {
                     local_time = _handle_player_attack(defender, simu, 0, 0, did_hit, wu, wu_num);
@@ -202,18 +204,18 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
                         return local_time;
                     }
                     else
-                        local_time |= _handle_player_attack(defender, simu, 1, 1, did_hit, wu, wu_num);
+                        local_time |= _handle_player_attack(defender, simu, 1, xtra_atk ? 3 : 1, did_hit, wu, wu_num);
                 }
             }
             else
-                local_time = _handle_player_attack(defender, simu, 0, 2, did_hit, wu, wu_num);
+                local_time = _handle_player_attack(defender, simu, 0, xtra_atk ? 0 : 2, did_hit, wu, wu_num);
         }
         else if (!you.weapon(1) || is_melee_weapon(*you.weapon(1)))
         {
             if (!(you.weapon(0) && you.hands_reqd(*you.weapon(0)) == HANDS_TWO))
             {
                 attacked = true;
-                local_time = _handle_player_attack(defender, simu, 1, 2, did_hit, wu, wu_num);
+                local_time = _handle_player_attack(defender, simu, 1, xtra_atk ? 0 : 2, did_hit, wu, wu_num);
             }
         }
 
@@ -235,7 +237,7 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
             }
 
             if (you.mounted())
-                return (_handle_player_attack(defender, simu, 2, 3, did_hit, wu, wu_num) || local_time);
+                return (_handle_player_attack(defender, simu, 2, 1, did_hit, wu, wu_num) || local_time);
             else if (you.form == transformation::scorpion)
             {
                 local_time |= _handle_player_attack(defender, simu, 2, 3, did_hit, wu, wu_num);
@@ -248,7 +250,7 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
                     return local_time;
                 }
 
-                return (_handle_player_attack(defender, simu, 3, 3, did_hit, wu, wu_num) || local_time);
+                return (_handle_player_attack(defender, simu, 3, 1, did_hit, wu, wu_num) || local_time);
             }
         }
 
