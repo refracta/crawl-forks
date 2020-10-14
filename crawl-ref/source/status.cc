@@ -514,6 +514,15 @@ bool fill_status_info(int status, status_info& inf)
                            you.props[SONG_OF_SLAYING_KEY].get_int());
         break;
 
+
+    case DUR_DRAGON_CALL:
+    {
+        int turns = you.attribute[ATTR_NEXT_DRAGON_TIME] / 10;
+        int aut = you.attribute[ATTR_NEXT_DRAGON_TIME] % 10;
+        inf.light_text = make_stringf("dragon's call (%d.%d)", turns, aut);
+        break;
+    }
+
     case STATUS_BEOGH:
         if (env.level_state & LSTATE_BEOGH && can_convert_to_beogh())
         {
