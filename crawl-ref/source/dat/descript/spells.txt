@@ -1532,10 +1532,11 @@ destructive spells known to its due to an entropic infusion during the casting
 process, chaos versions of the spells, rather than the more common ones the
 summoner more likely knows are used.
 %%%%
-Spider Form spell
+Scorpion Form spell
 
-Transforms the caster into a venomous, spider-like creature. The caster becomes
-highly evasive and gains a poisonous bite, but gains vulnerability to poison.
+Transforms the caster into a venomous, scorpion. The caster becomes highly 
+evasive and gains a pincers which partially ignore armour and a venomous sting, 
+but gains vulnerability to poison.
 
 While transformed, any equipped weapons and armour are melded, and casting
 spells becomes slightly more difficult.
