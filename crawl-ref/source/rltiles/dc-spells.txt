@@ -143,6 +143,7 @@ monstrous_menagerie MONSTROUS_MENAGERIE
 summon_mana_viper SUMMON_MANA_VIPER
 spellforged_servitor SPELLFORGED_SERVITOR
 summon_spider_mount SUMMON_SPIDER_MOUNT
+summon_hydra_mount SUMMON_HYDRA_MOUNT
 
 %sdir gui/spells/translocation
 apportation APPORTATION
