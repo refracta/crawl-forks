@@ -1564,12 +1564,14 @@ ninja_black MASK_NINJA_BLACK
 
 ## Front
 %parts_ctg MOUNT_FRONT
-drake_mount_front DRAKE
+drake_mount_front  DRAKE
+spider_mount_front SPIDER
 %end_ctg
 
 ## Back
 %parts_ctg MOUNT_BACK
 drake_mount_back  DRAKE
+spider_mount_back SPIDER
 %end_ctg
 
 

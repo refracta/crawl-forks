@@ -514,10 +514,18 @@ void fill_doll_equipment(dolls_data &result)
     {
         if (you.mounted())
         {
-            if (you.mount == mount_type::drake)
+            switch (you.mount)
+            {
+            case mount_type::drake:
                 result.parts[TILEP_PART_MOUNT_FRONT] = TILEP_MOUNT_FRONT_DRAKE;
-            else
-                result.parts[TILEP_PART_MOUNT_FRONT] = 0;
+                break;
+            case mount_type::spider:
+                result.parts[TILEP_PART_MOUNT_FRONT] = TILEP_MOUNT_FRONT_SPIDER;
+                break;
+            default:
+                result.parts[TILEP_PART_MOUNT_BACK] = 0;
+                break;
+            }
         }
     }
 
@@ -526,10 +534,17 @@ void fill_doll_equipment(dolls_data &result)
     {
         if (you.mounted())
         {
-            if (you.mount == mount_type::drake)
+            switch (you.mount)
+            {
+            case mount_type::drake:
                 result.parts[TILEP_PART_MOUNT_BACK] = TILEP_MOUNT_BACK_DRAKE;
-            else
+                break;
+            case mount_type::spider:
+                result.parts[TILEP_PART_MOUNT_BACK] = TILEP_MOUNT_BACK_SPIDER;
+                break;
+            default:
                 result.parts[TILEP_PART_MOUNT_BACK] = 0;
+                break;
         }
     }
 
