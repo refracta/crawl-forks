@@ -390,7 +390,7 @@ NSUBST:   ! = 4:! / *:w
 NSUBST:   w = 8:1 / *:w
 KFEAT:    1! = w
 COLOUR:   1! = green
-KMONS:    ! = spiny frog / prince ribbit / crocodile
+KMONS:    ! = prince ribbit , crocodile / bullfrog
 : sewer_setup(_G)
 MAP
 c.@@@1cccccccccccccc
@@ -420,7 +420,7 @@ KMONS:    W = cinder newt / giant cockroach w:30 / \
 KFEAT:    W = W
 KFEAT:    ! = w
 COLOUR:   ! = green
-KMONS:    ! = spiny frog / prince ribbit / crocodile
+KMONS:    ! = prince ribbit , crocodile / bullfrog
 SHUFFLE:  edfgh$*
 ITEM:     ration, any ring
 ITEM:     scroll of teleportation w:2 / scroll of blinking
@@ -459,7 +459,7 @@ ORIENT:  southeast
 SHUFFLE: de
 MONS:    ooze w:2 / sewer rat
 MONS:    slime creature w:3 / adder w:5 / ooze w:1
-MONS:    bullfrog / spiny frog / prince ribbit / crocodile
+MONS:    prince ribbit , crocodile / bullfrog / water moccasin
 ITEM:    potion of curing / potion of heal wounds / potion of might /\
          potion of magic / potion of haste w:5 / potion of brilliance w:5
 ITEM:    scroll of teleportation / scroll of blinking w:5 /\
