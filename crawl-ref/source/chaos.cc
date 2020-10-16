@@ -360,10 +360,7 @@ void chaotic_debuff(actor* act, int dur, actor * attacker)
     case CD_PETRIFY:
         mprf(player ? MSGCH_DANGER : MSGCH_MONSTER_DAMAGE, "Earth magic residue begins to slowly turns %s to stone.",
             player ? "you" : act->name(DESC_THE).c_str());
-        if (player)
-            you.increase_duration(DUR_PETRIFYING, 3 + random2(5));
-        else
-            act->as_monster()->add_ench(mon_enchant(ENCH_PETRIFYING, 0, attacker, 30 + random2(50)));
+        act->petrify(attacker);
         break;
     case CD_POLY:
         act->polymorph(dur * 2, false);
