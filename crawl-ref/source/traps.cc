@@ -587,11 +587,26 @@ void trap_def::trigger(actor& triggerer)
                 }
                 else
                 {
-                    mpr("A huge blade swings out and slices into you!");
-                    const int damage = you.apply_ac(48 + random2avg(29, 2));
-                    string n = name(DESC_A);
-                    ouch(damage, KILLED_BY_TRAP, MID_NOBODY, n.c_str());
-                    bleed_onto_floor(you.pos(), MONS_PLAYER, damage, true);
+                    bool mount = you.mounted();
+
+                    int damage;
+
+                    if (mount)
+                        damage = apply_mount_ac(48 + random2avg(29, 2));
+                    else
+                        damage = you.apply_ac(48 + random2avg(29, 2));
+
+                    mprf("A huge blade swings out and slices into you%s%s", mount ? "r mount" : "", attack_strength_punctuation(damage).c_str());
+
+                    // Traps always hit the mount
+                    if (mount)
+                        damage_mount(damage);
+                    else
+                    {
+                        string n = name(DESC_A);
+                        ouch(damage, KILLED_BY_TRAP, MID_NOBODY, n.c_str());
+                    }
+                    bleed_onto_floor(you.pos(), mount ? mount_mons() : MONS_PLAYER, damage, true);
                 }
             }
             else if (m)

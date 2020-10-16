@@ -1193,3 +1193,4 @@ void damage_mount(int amount);
 void dismount();
 bool mount_hit();
 int apply_mount_ac(int amount);
+monster_type mount_mons();

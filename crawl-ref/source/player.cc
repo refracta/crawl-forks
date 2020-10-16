@@ -9244,3 +9244,19 @@ int apply_mount_ac(int damage)
 {
     return you.apply_ac(damage, 0, ac_type::normal, 0, true, true);
 }
+
+monster_type mount_mons()
+{
+    switch (you.mount)
+    {
+    case mount_type::drake:
+        return MONS_RIME_DRAKE;
+    case mount_type::hydra:
+        return MONS_HYDRA;
+    case mount_type::spider:
+        return MONS_JUMPING_SPIDER;
+    default:
+        break;
+    }
+    return MONS_PROGRAM_BUG;
+}
