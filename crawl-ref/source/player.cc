@@ -5181,7 +5181,7 @@ void dec_napalm_player(int delay)
     }
 }
 
-bool slow_player(int turns)
+bool slow_player(int turns, bool do_msg)
 {
     ASSERT(!crawl_state.game_is_arena());
 
@@ -5208,13 +5208,20 @@ bool slow_player(int turns)
     int threshold = haste_mul(100);
 
     if (you.duration[DUR_SLOW] >= threshold * BASELINE_DELAY)
-        mpr("You already are as slow as you could be.");
+    {
+        if (do_msg)
+            mpr("You already are as slow as you could be.");
+        return false;
+    }
     else
     {
-        if (you.duration[DUR_SLOW] == 0)
-            mpr("You feel yourself slow down.");
-        else
-            mpr("You feel as though you will be slow longer.");
+        if (do_msg)
+        {
+            if (you.duration[DUR_SLOW] == 0)
+                mpr("You feel yourself slow down.");
+            else
+                mpr("You feel as though you will be slow longer.");
+        }
 
         you.increase_duration(DUR_SLOW, turns, threshold);
         learned_something_new(HINT_YOU_ENCHANTED);
@@ -7663,9 +7670,9 @@ bool player::fully_petrify(actor */*foe*/, bool /*quiet*/)
     return true;
 }
 
-void player::slow_down(actor */*foe*/, int str)
+void player::slow_down(actor */*foe*/, int str, bool do_msg)
 {
-    ::slow_player(str);
+    ::slow_player(str, do_msg);
 }
 
 

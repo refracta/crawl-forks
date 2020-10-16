@@ -735,7 +735,7 @@ public:
     void paralyse(actor *, int str, string source = "") override;
     void petrify(actor *, bool force = false) override;
     bool fully_petrify(actor *foe, bool quiet = false) override;
-    void slow_down(actor *, int str) override;
+    void slow_down(actor *, int str, bool do_msg = true) override;
     void confuse(actor *, int strength) override;
     void weaken(actor *attacker, int pow) override;
     bool heal(int amount) override;
@@ -1151,7 +1151,7 @@ bool napalm_player(int amount, string source, string source_aux = "");
 void dec_napalm_player(int delay);
 
 bool spell_slow_player(int pow);
-bool slow_player(int turns);
+bool slow_player(int turns, bool do_msg = true);
 void dec_slow_player(int delay);
 void dec_berserk_recovery_player(int delay);
 

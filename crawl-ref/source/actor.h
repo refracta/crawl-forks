@@ -221,7 +221,7 @@ public:
     virtual void paralyse(actor *attacker, int strength, string source = "") = 0;
     virtual void petrify(actor *attacker, bool force = false) = 0;
     virtual bool fully_petrify(actor *foe, bool quiet = false) = 0;
-    virtual void slow_down(actor *attacker, int strength) = 0;
+    virtual void slow_down(actor *attacker, int strength, bool do_msg = true) = 0;
     virtual void confuse(actor *attacker, int strength) = 0;
     virtual void put_to_sleep(actor *attacker, int strength,
                               bool hibernate = false) = 0;

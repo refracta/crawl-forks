@@ -4598,7 +4598,7 @@ bool monster::fully_petrify(actor *atk, bool quiet)
     return msg;
 }
 
-void monster::slow_down(actor *atk, int strength)
+void monster::slow_down(actor *atk, int strength, bool /*do_msg*/)
 {
     enchant_actor_with_flavour(this, atk, BEAM_SLOW, strength);
 }

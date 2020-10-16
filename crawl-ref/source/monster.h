@@ -476,7 +476,7 @@ public:
     void paralyse(actor *, int str, string source = "") override;
     void petrify(actor *, bool force = false) override;
     bool fully_petrify(actor *foe, bool quiet = false) override;
-    void slow_down(actor *, int str) override;
+    void slow_down(actor *, int str, bool do_msg = true) override;
     void confuse(actor *, int strength) override;
     bool drain_exp(actor *, bool quiet = false, int pow = 3) override;
     bool rot(actor *, int amount, bool quiet = false, bool no_cleanup = false)

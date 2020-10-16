@@ -1322,7 +1322,7 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
         if (you.undead_state(temp) == US_UNDEAD)
             return "you're too dead to regenerate.";
         if (you.undead_state(temp) == US_GHOST)
-            return "you need a body to regenerate in this way.";
+            return "you need a body to regenerate.";
         break;
 
     case SPELL_EXCRUCIATING_WOUNDS:

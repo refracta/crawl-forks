@@ -122,11 +122,16 @@ void chaotic_buff(actor* act, int dur, actor * attacker)
         }
         break;
     case CB_HASTE:
-        mprf(player ? MSGCH_DURATION : MSGCH_MONSTER_ENCHANT, "A spark of chaos speeds %s up.", player ? "you" : act->name(DESC_THE).c_str());
         if (player)
-            you.increase_duration(DUR_HASTE, dur);
+        {
+            if (haste_player(dur, false, false))
+                mprf(MSGCH_DURATION, "A spark of chaos speeds you up.");
+        }
         else
+        {
             act->as_monster()->add_ench(mon_enchant(ENCH_HASTE, 0, attacker, dur * BASELINE_DELAY));
+            mprf(player ? MSGCH_DURATION : MSGCH_MONSTER_ENCHANT, "A spark of chaos speeds %s up.", player ? "you" : act->name(DESC_THE).c_str());
+        }
         break;
     case CB_AGIL:
         mprf(player ? MSGCH_DURATION : MSGCH_MONSTER_ENCHANT, "A spark of chaos increases %s%s.",
@@ -159,7 +164,7 @@ void chaotic_buff(actor* act, int dur, actor * attacker)
     case CB_INVIS:
         if (player)
         {
-            mprf(MSGCH_DURATION, "A chaotic spark makes you fade into invisibility.");
+            mprf(MSGCH_DURATION, "A chaotic spark makes you %s.", invis_allowed(true) ? "fade into invisibility" : "translucent, though still outlined in light.");
             you.increase_duration(DUR_INVIS, dur);
         }
         else
@@ -187,7 +192,8 @@ void chaotic_buff(actor* act, int dur, actor * attacker)
     case CB_REGEN:
         if (player)
         {
-            mprf(MSGCH_DURATION, "A lively spark makes your skin crawl.");
+            string useless = spell_uselessness_reason(SPELL_REGENERATION);
+            mprf(MSGCH_DURATION, "A lively spark makes you%s.", useless.empty() ? "r skin crawl" : " magically regain health");
             you.increase_duration(DUR_REGENERATION, dur);
         }
         else
@@ -366,15 +372,12 @@ void chaotic_debuff(actor* act, int dur, actor * attacker)
         act->polymorph(dur * 2, false);
         break;
     case CD_SLOW:
-        if (player)
-        {
+        if (player && slow_player(dur, false))
             mprf(MSGCH_WARN, "You feel yourself slow down as chaos touches upon you.");
-            you.increase_duration(DUR_SLOW, dur);
-        }
         else
         {
+            act->slow_down(attacker, dur);
             mprf("Chaos touches upon %s, slowing it down.", act->name(DESC_THE).c_str());
-            act->as_monster()->add_ench(mon_enchant(ENCH_SLOW, 0, attacker, dur * BASELINE_DELAY));
         }
         break;
     case CD_STAT_DRAIN:
