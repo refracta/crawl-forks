@@ -49,9 +49,8 @@ void give_specific_item(monster* mon, int thing)
 
     if (mon->undead_or_demonic() || mon->god == GOD_YREDELEMNUL)
     {
-        convert2bad(mthing);
         if (get_weapon_brand(mthing) == SPWPN_HOLY_WRATH)
-            _strip_item_ego(mthing);
+            set_item_ego_type(mthing, SPWPN_DRAINING);
     }
 
     if (!is_artefact(mthing)
