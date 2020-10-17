@@ -662,8 +662,11 @@ void full_describe_view()
                      + (g.ch == '<' ? "<<" : stringize_glyph(g.ch))
                      + "</" + col_string + ">) ";
 #endif
+            string str = "";
 
-            string str = get_monster_equipment_desc(mi, DESC_FULL, DESC_A, true);
+            if (const monster * mon = monster_at(mi.pos))
+                str += get_monster_equipment_desc(*mon, DESC_FULL, DESC_A, true);
+
             if (mi.is(MB_MESMERIZING))
                 str += ", keeping you mesmerised";
 
@@ -1479,7 +1482,7 @@ void direction_chooser::print_target_monster_description(bool &did_cloud) const
         monster_info mi(mon);
         // Only describe the monster if you can actually see it.
         _append_container(suffixes, monster_description_suffixes(mi));
-        text = get_monster_equipment_desc(mi);
+        text = get_monster_equipment_desc(*mon);
     }
     else
         text = "Disturbance";
@@ -2160,8 +2163,9 @@ void get_square_desc(const coord_def &c, describe_info &inf)
 
     if (const monster_info *mi = env.map_knowledge(c).monsterinfo())
     {
+        monster * mon = monster_at(c);
         // First priority: monsters.
-        string desc = uppercase_first(get_monster_equipment_desc(*mi))
+        string desc = uppercase_first(get_monster_equipment_desc(*mon))
                     + ".\n";
         const string wounds = mi->wounds_description_sentence();
         if (!wounds.empty())
@@ -3013,23 +3017,19 @@ string feature_description_at(const coord_def& where, bool covering,
     }
 }
 
-static string _describe_monster_weapon(const monster_info& mi, bool ident)
+static string _describe_monster_weapon(const monster & mon, bool ident)
 {
+    const monster_info mi(&mon);
     string desc = "";
     string name1, name2;
-    const item_def *weap = mi.inv[MSLOT_WEAPON].get();
-    const item_def *alt  = mi.inv[MSLOT_ALT_WEAPON].get();
+    const item_def *weap = mon.mslot_item(MSLOT_WEAPON);
+    const item_def *alt  = mon.mslot_item(MSLOT_ALT_WEAPON);
 
     if (weap && (!ident || item_type_known(*weap)))
-    {
-        name1 = weap->name(DESC_A, false, false, true,
-                           false, ISFLAG_KNOW_CURSE);
-    }
+        name1 = weap->name(DESC_A);
+
     if (alt && (!ident || item_type_known(*alt)) && mi.wields_two_weapons())
-    {
-        name2 = alt->name(DESC_A, false, false, true,
-                          false, ISFLAG_KNOW_CURSE);
-    }
+        name2 = alt->name(DESC_A);
 
     if (name1.empty() && !name2.empty())
         name1.swap(name2);
@@ -3038,8 +3038,7 @@ static string _describe_monster_weapon(const monster_info& mi, bool ident)
     {
         item_def dup = *weap;
         ++dup.quantity;
-        name1 = dup.name(DESC_A, false, false, true, true,
-                         ISFLAG_KNOW_CURSE);
+        name1 = dup.name(DESC_A, false, false, true, true);
         name2.clear();
     }
 
@@ -3341,10 +3340,11 @@ static string _get_monster_desc(const monster_info& mi)
     return text;
 }
 
-static void _describe_monster(const monster_info& mi)
+static void _describe_monster(const monster& mon)
 {
+    const monster_info mi(&mon);
     // First print type and equipment.
-    string text = uppercase_first(get_monster_equipment_desc(mi)) + ".";
+    string text = uppercase_first(get_monster_equipment_desc(mon)) + ".";
     const string wounds_desc = mi.wounds_description_sentence();
     if (!wounds_desc.empty())
         text += " " + uppercase_first(wounds_desc);
@@ -3362,11 +3362,12 @@ static void _describe_monster(const monster_info& mi)
 // This method is called in two cases:
 // a) Monsters coming into view: "An ogre comes into view. It is wielding ..."
 // b) Monster description via 'x': "An ogre, wielding a club, and wearing ..."
-string get_monster_equipment_desc(const monster_info& mi,
+string get_monster_equipment_desc(const monster& mon,
                                   mons_equip_desc_level_type level,
                                   description_level_type mondtype,
                                   bool print_attitude)
 {
+    const monster_info mi(&mon);
     string desc = "";
     if (mondtype != DESC_NONE)
     {
@@ -3422,14 +3423,14 @@ string get_monster_equipment_desc(const monster_info& mi,
         }
     }
 
-    string weap = _describe_monster_weapon(mi, level == DESC_IDENTIFIED);
+    string weap = _describe_monster_weapon(mon, level == DESC_IDENTIFIED);
 
-    item_def* mon_arm = mi.inv[MSLOT_ARMOUR].get();
-    item_def* mon_shd = mi.inv[MSLOT_SHIELD].get();
-    item_def* mon_qvr = mi.inv[MSLOT_MISSILE].get();
-    item_def* mon_alt = mi.inv[MSLOT_ALT_WEAPON].get();
-    item_def* mon_wnd = mi.inv[MSLOT_WAND].get();
-    item_def* mon_rng = mi.inv[MSLOT_JEWELLERY].get();
+    item_def* mon_arm = mon.mslot_item(MSLOT_ARMOUR);
+    item_def* mon_shd = mon.mslot_item(MSLOT_SHIELD);
+    item_def* mon_qvr = mon.mslot_item(MSLOT_MISSILE);
+    item_def* mon_alt = mon.mslot_item(MSLOT_ALT_WEAPON);
+    item_def* mon_wnd = mon.mslot_item(MSLOT_WAND);
+    item_def* mon_rng = mon.mslot_item(MSLOT_JEWELLERY);
 
 #define uninteresting(x) (x && !item_is_branded(*x) && !is_artefact(*x))
     // For "comes into view" msgs, only care about branded stuff and artefacts
@@ -3640,7 +3641,7 @@ static void _describe_cell(const coord_def& where, bool in_range)
 #endif
 
         monster_info mi(mon);
-        _describe_monster(mi);
+        _describe_monster(*mon);
 
         if (!in_range)
         {

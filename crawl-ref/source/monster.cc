@@ -2062,7 +2062,7 @@ void monster::swap_weapons(maybe_bool maybe_msg)
 void monster::wield_melee_weapon(maybe_bool msg)
 {
     const item_def *weap = mslot_item(MSLOT_WEAPON);
-    if (!weap || (!weap->cursed() && is_range_weapon(*weap)))
+    if (!weap || is_range_weapon(*weap))
     {
         const item_def *alt = mslot_item(MSLOT_ALT_WEAPON);
 

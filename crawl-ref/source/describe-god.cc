@@ -653,11 +653,10 @@ static formatted_string _beogh_extra_description()
         }
         else
         {
-            monster_info mi(mons);
             if (red)
-                desc += formatted_string::parse_string("<lightred>" + get_monster_equipment_desc(mi) + "</lightred>");
+                desc += formatted_string::parse_string("<lightred>" + get_monster_equipment_desc(*mons) + "</lightred>");
             else
-                desc += formatted_string::parse_string("<lightblue>" + get_monster_equipment_desc(mi) + "</lightblue>");
+                desc += formatted_string::parse_string("<lightblue>" + get_monster_equipment_desc(*mons) + "</lightblue>");
             red = !red;
         }
         desc.cprintf("\n");
