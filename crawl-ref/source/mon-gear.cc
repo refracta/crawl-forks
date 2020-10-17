@@ -147,7 +147,12 @@ static void _give_jewels(monster* mon, int level)
         return;
 
     if (fragile)
-        apply_curse(mitm[idx], ARTP_FRAGILE, true);
+    {
+        if (is_unrandom_artefact(mitm[idx]))
+            curse_item(mitm[idx]);
+        else
+            apply_curse(mitm[idx], ARTP_FRAGILE, true);
+    }
 
     give_specific_item(mon, idx);
 }
@@ -1337,7 +1342,12 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
         return NON_ITEM;
 
     if (fragile)
-        apply_curse(mitm[thing_created], ARTP_FRAGILE, true);
+    {
+        if (is_unrandom_artefact(mitm[thing_created]))
+            curse_item(mitm[thing_created]);
+        else
+            apply_curse(mitm[thing_created], ARTP_FRAGILE, true);
+    }
 
     // Copy temporary item into the item array if were forcing it, since
     // items() won't have done it for us.
@@ -1441,7 +1451,12 @@ static item_def* make_item_for_monster(
     mitm[thing_created].flags |= flags;
 
     if (fragile)
-        apply_curse(mitm[thing_created], ARTP_FRAGILE, true);
+    {
+        if (is_unrandom_artefact(mitm[thing_created]))
+            curse_item(mitm[thing_created]);
+        else
+            apply_curse(mitm[thing_created], ARTP_FRAGILE, true);
+    }
 
     give_specific_item(mons, thing_created);
     return &mitm[thing_created];
@@ -2084,7 +2099,12 @@ int make_mons_armour(monster_type type, int level)
         mitm[thing_created] = item;
 
     if (fragile)
-        apply_curse(mitm[thing_created], ARTP_FRAGILE, true);
+    {
+        if (is_unrandom_artefact(mitm[thing_created]))
+            curse_item(mitm[thing_created]);
+        else
+            apply_curse(mitm[thing_created], ARTP_FRAGILE, true);
+    }
 
     item_def &i = mitm[thing_created];
 

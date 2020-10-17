@@ -674,6 +674,7 @@ static bool _artp_can_go_on_item(artefact_prop_type prop, const item_def &item,
             // rings have 2 slots, so little swap pressure
         case ARTP_FRAGILE:
             return item_class != OBJ_ARMOURS
+                   && !is_unrandom_artefact(item)
                    && (item_class != OBJ_JEWELLERY
                        || jewellery_is_amulet(item));
 
