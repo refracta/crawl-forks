@@ -204,8 +204,11 @@ bool monster_habitable_grid(monster_type mt,
 }
 
 // Returns true if the monster can submerge in the given grid.
+// BCADDO: Restore this or delete it as part of new submersion. kthx.
 bool monster_can_submerge(const monster* mon, dungeon_feature_type feat)
 {
+    UNUSED(mon);
+    UNUSED(feat);
     return false;
 }
 

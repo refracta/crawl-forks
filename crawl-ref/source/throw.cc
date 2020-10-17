@@ -50,7 +50,7 @@
 
 static int  _fire_prompt_for_item();
 static bool _fire_validate_item(int selected, string& err);
-static int  _get_blowgun_chance(const int hd);
+// static int  _get_blowgun_chance(const int hd);
 
 // BCADNOTE: Preserving unused attacker parameter in case of future self-enchantment
 // for force penetration; etc.

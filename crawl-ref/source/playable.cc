@@ -123,10 +123,7 @@ static JsonNode *_species_metadata_array()
 {
     JsonNode *species(json_mkarray());
     for (const species_type sp : all_species())
-    {
-        const species_type derives = SP_UNKNOWN;
         json_append_element(species, _species_metadata(sp));
-    }
     return species;
 }
 

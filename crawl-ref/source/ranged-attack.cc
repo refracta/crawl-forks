@@ -72,6 +72,7 @@ ranged_attack::ranged_attack(actor *attk, actor *defn, item_def *proj,
 
 int ranged_attack::calc_to_hit(bool random, bool player_aux)
 {
+    UNUSED(player_aux); // Needs to get passed because melee-attack needs it and both inherit from attack.
     orig_to_hit = attack::calc_to_hit(random);
 
     if (orig_to_hit == AUTOMATIC_HIT)
@@ -433,7 +434,7 @@ bool ranged_attack::handle_phase_hit()
     }
     else
     {
-        for (attack_count; attack_count > 0; --attack_count)
+        for (; attack_count > 0; --attack_count)
         {
             damage_done = calc_damage();
 

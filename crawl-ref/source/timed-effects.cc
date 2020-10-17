@@ -1235,9 +1235,9 @@ void timeout_terrain_changes(int duration, bool force)
     }
 
     if (!warning.empty())
-        mprf(MSGCH_DANGER, warning.c_str());
+        mprf(MSGCH_DANGER, "%s", warning.c_str());
     else if (!statement.empty())
-        mprf(MSGCH_PLAIN, statement.c_str());
+        mprf(MSGCH_PLAIN, "%s", statement.c_str());
 
     if (num_seen[TERRAIN_CHANGE_DOOR_SEAL] > 1)
         mpr("The runic seals fade away.");

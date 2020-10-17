@@ -656,8 +656,8 @@ static void _DEMON_AXE_unequip(item_def */*item*/, bool */*show_msgs*/)
 
 ///////////////////////////////////////////////////
 
-static void _WYRMBANE_melee_effects(item_def* weapon, actor* attacker,
-                                    actor* defender, bool mondied, int dam)
+static void _WYRMBANE_melee_effects(item_def* weapon, actor* /*attacker*/,
+                                    actor* defender, bool mondied, int /*dam*/)
 {
     if (!defender || !defender->is_dragonkind())
         return;
@@ -1293,7 +1293,7 @@ static void _ZHOR_world_reacts(item_def */*item*/)
 
 ////////////////////////////////////////////////////
 
-static void _BATTLE_unequip(item_def */*item*/, bool *show_msgs)
+static void _BATTLE_unequip(item_def */*item*/, bool */*show_msgs*/)
 {
     end_battlesphere(find_battlesphere(&you), false);
 }

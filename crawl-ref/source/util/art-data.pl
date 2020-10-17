@@ -67,6 +67,7 @@ my %field_type = (
     RND_TELE => "bool",
     SEEINV   => "bool",
     SKIP_EGO => "bool",
+	INACC    => "bool",
     SLAY     => "num",
     SPECIAL  => "bool",
     SLOW     => "bool",

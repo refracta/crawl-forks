@@ -137,6 +137,7 @@ static void _wizard_make_friendly(monster* m)
     if (crawl_state.arena_suspended && att == ATT_FRIENDLY)
         att = ATT_NEUTRAL;
 
+    // BCADNOTE: Consider changing this function around should we need passives for debugging.
     switch (att)
     {
     case ATT_FRIENDLY:
@@ -154,6 +155,7 @@ static void _wizard_make_friendly(monster* m)
         m->attitude = ATT_HOSTILE;
         m->flags &= ~MF_WAS_NEUTRAL;
         break;
+    case ATT_PASSIVE:
     case ATT_HOSTILE:
         m->attitude = ATT_FRIENDLY;
         m->flags |= MF_NO_REWARD;

@@ -2018,11 +2018,6 @@ LUAFN(dgn_spotty_map)
     return 0;
 }
 
-LUAFN(borderize)
-{
-
-}
-
 LUAFN(dgn_add_pools)
 {
     LINES(ls, 1, map, lines);
