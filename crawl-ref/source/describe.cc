@@ -589,7 +589,7 @@ static string _randart_descrip(const item_def &item, bool curse = false)
         { ARTP_CORRODE, "It may corrode you when you take damage.", false},
         { ARTP_DRAIN, "It causes draining when unequipped.", false},
         { ARTP_SLOW, "It may slow you when you take damage.", false},
-        { ARTP_FRAGILE, "It will be destroyed if unequipped.", false },
+        { ARTP_FRAGILE, "It will be destroyed if unequipped or dropped on death.", false },
         { ARTP_SHIELDING, "It affects your SH (%d).", false},
         { ARTP_HARM, "It increases damage dealt and taken.", false},
     };

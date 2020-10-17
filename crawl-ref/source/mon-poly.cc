@@ -84,9 +84,10 @@ void monster_drop_things(monster* mons,
 
         if (item != NON_ITEM && suitable(mitm[item]))
         {
-            const bool summoned_item =
-                testbits(mitm[item].flags, ISFLAG_SUMMONED);
-            if (summoned_item || mitm[item].base_type == OBJ_MISSILES)
+            bool destroy = testbits(mitm[item].flags, ISFLAG_SUMMONED);
+                 destroy |= mitm[item].base_type == OBJ_MISSILES;
+                 destroy |= (is_artefact(mitm[item]) || mitm[item].cursed()) && artefact_property(mitm[item], ARTP_FRAGILE);
+            if (destroy)
             {
                 item_was_destroyed(mitm[item]);
                 destroy_item(item);
