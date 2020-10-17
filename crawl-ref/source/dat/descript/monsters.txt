@@ -1983,8 +1983,7 @@ grasp.
 %%%%
 program bug
 
-A ravenous and incredibly buggy monster. Please report its existence to the
-DevTeam.
+A ravenous and incredibly buggy monster. Please report its existence to Bcadren.
 %%%%
 pulsating mass
 
@@ -2407,6 +2406,10 @@ stench.
 swamp worm
 
 A large slimy worm, adept at traversing swamps and marshes.
+%%%%
+swooping magpie
+
+A quick and very territorial raptor. Has a penchant for collecting shiny things.
 %%%%
 tarantella
 

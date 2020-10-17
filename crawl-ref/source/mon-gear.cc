@@ -119,6 +119,16 @@ static void _give_book(monster* mon, int level)
     give_specific_item(mon, thing_created);
 }
 
+static void _give_jewels(monster* mon, int level)
+{
+    if (mon->type != MONS_SWOOPING_MAGPIE && !one_chance_in(6))
+        return;
+
+    int idx = items(false, OBJ_JEWELLERY, OBJ_RANDOM, level);
+
+    give_specific_item(mon, idx);
+}
+
 static void _give_wand(monster* mon, int level, bool summoned)
 {
     bool wand_allowed = mons_itemuse(*mon) & MU_WAND;
@@ -2073,6 +2083,11 @@ void give_shield(monster *mons)
     _give_shield(mons, -1);
 }
 
+void give_jewels(monster *mons)
+{
+    _give_jewels(mons, -1);
+}
+
 void give_item(monster *mons, int level_number, bool mons_summoned)
 {
     ASSERT(level_number > -1); // debugging absdepth0 changes
@@ -2081,6 +2096,16 @@ void give_item(monster *mons, int level_number, bool mons_summoned)
         _give_gold(mons, level_number);
 
     monuse_flags itemuse = mons_itemuse(*mons);
+
+    if (mons->type == MONS_SWOOPING_MAGPIE)
+    {
+        if (one_chance_in(5))
+            _give_jewels(mons, level_number);
+        else
+            _give_gold(mons, level_number);
+    }
+    else if (itemuse & MU_JEWELS)
+        _give_jewels(mons, level_number);
 
     if (mons->type == MONS_ROXANNE)
         _give_book(mons, level_number);
