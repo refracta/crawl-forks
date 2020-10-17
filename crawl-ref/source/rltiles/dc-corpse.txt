@@ -24,6 +24,7 @@ queen_ant CORPSE_QUEEN_ANT
 bat CORPSE_BAT
 caustic_shrike CORPSE_CAUSTIC_SHRIKE
 shard_shrike CORPSE_SHARD_SHRIKE
+swooping_magpie CORPSE_SWOOPING_MAGPIE
 
 ## Beetles ('B')
 %back blood_green blood_green1 blood_green2 blood_green3 blood_green4

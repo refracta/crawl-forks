@@ -6301,6 +6301,22 @@ confused Bennu permanently killed
 
 @Bennu permanently killed@
 %%%%
+############### Swooping Magpie ############################
+swooping magpie
+
+w:1
+@The_monster@ cries out "Nevermore."
+
+w:50
+@The_monster@ beats its wings defensively.
+
+w:50
+@The_monster@ clacks its beak.
+
+w:50
+@The_monster@ makes a course angry caw.
+
+%%%%
 ################## Bullfrog ################################
 bullfrog
 

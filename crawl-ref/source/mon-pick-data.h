@@ -239,7 +239,7 @@ static const pop_entry pop_lair[] =
   {  1,  5, 1000, FLAT, MONS_BULLFROG },
   {  1,  6,  990, FLAT, MONS_CROCODILE },
   {  1,  6,  990, FLAT, MONS_WATER_MOCCASIN },
-  {  1,  6,  515, FLAT, MONS_HIPPOGRIFF },
+  {  1,  8,  515, FLAT, MONS_SWOOPING_MAGPIE },
   {  1,  6,  215, FLAT, MONS_YAK },
   {  2,  6,  315, FLAT, MONS_GIRAFFE },
   {  1,  6,  100, FLAT, MONS_QUOKKA },

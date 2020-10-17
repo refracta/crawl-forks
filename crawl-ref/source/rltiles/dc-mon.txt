@@ -65,6 +65,7 @@ fire_bat MONS_FIRE_BAT
 bennu MONS_BENNU
 caustic_shrike MONS_CAUSTIC_SHRIKE
 shard_shrike MONS_SHARD_SHRIKE
+swooping_magpie MONS_SWOOPING_MAGPIE
 %sdir mon/vault
 microbat MONS_MICROBAT
 %rim 1
