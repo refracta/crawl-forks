@@ -124,7 +124,7 @@ void artefact_learn_prop(item_def &item, artefact_prop_type prop);
 
 bool curse_item(item_def &item);
 bool uncurse_item(item_def &item);
-bool apply_curse(item_def &item, artefact_prop_type prop);
+bool apply_curse(item_def &item, artefact_prop_type prop, bool silent = false);
 
 bool make_item_randart(item_def &item, bool force_mundane = false);
 bool make_item_unrandart(item_def &item, int unrand_index);

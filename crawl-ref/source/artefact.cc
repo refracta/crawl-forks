@@ -1785,7 +1785,7 @@ bool curse_item(item_def &item)
     return true;
 }
 
-bool apply_curse(item_def &item, artefact_prop_type prop)
+bool apply_curse(item_def &item, artefact_prop_type prop, bool silent)
 {
     bool already_cursed = (item.flags & ISFLAG_CURSED);
 
@@ -1805,7 +1805,8 @@ bool apply_curse(item_def &item, artefact_prop_type prop)
 
     if (!artp_potentially_bad(prop))
     {
-        mpr("Failed. Trying to curse an item with a positive property.");
+        if (!silent)
+            mpr("Failed. Trying to curse an item with a positive property.");
         return false;
     }
 
@@ -1815,13 +1816,15 @@ bool apply_curse(item_def &item, artefact_prop_type prop)
         {
             if (rap[i].get_short() > 0)
             {
-                mprf("%s was already cursed with %s.", item.name(DESC_YOUR).c_str(), artp_data[i].name);
+                if (!silent)
+                    mprf("%s was already cursed with %s.", item.name(DESC_YOUR).c_str(), artp_data[i].name);
                 return false;
             }
             else
             {
                 rap[i] = static_cast<short>(artp_data[i].gen_bad_value());
-                mprf("%s glows black for a second.", item.name(DESC_YOUR).c_str());
+                if (!silent)
+                    mprf("%s glows black for a second.", item.name(DESC_YOUR).c_str());
             }
         }
         else if (!already_cursed)
@@ -1829,6 +1832,7 @@ bool apply_curse(item_def &item, artefact_prop_type prop)
     }
 
     item.flags |= ISFLAG_CURSED;
+    item.flags |= ISFLAG_IDENT_MASK;
 
     if (in_inventory(item))
         ash_check_bondage();

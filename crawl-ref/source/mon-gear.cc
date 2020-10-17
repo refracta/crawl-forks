@@ -118,12 +118,36 @@ static void _give_book(monster* mon, int level)
     give_specific_item(mon, thing_created);
 }
 
+static bool _level_adjust(monster_type mon, int* level)
+{
+    if (*level == (int)ISPEC_GOOD_ITEM || *level < 0)
+        return false;
+
+    if ((mons_is_unique(mon) && one_chance_in(3)) || 
+        x_chance_in_y(mons_class_hit_dice(mon), 30))
+    {
+        // BCADDO: Consider an even higher level for these monster-only items.
+        *level = ISPEC_GOOD_ITEM;
+        return true;
+    }
+    return false;
+}
+
 static void _give_jewels(monster* mon, int level)
 {
     if (mon->type != MONS_SWOOPING_MAGPIE && !one_chance_in(6))
         return;
 
-    int idx = items(false, OBJ_JEWELLERY, OBJ_RANDOM, level);
+    bool fragile = _level_adjust(mon->type, &level);
+
+    // BCADDO: OBJ_RANDOM variant for monster jewels that avoids useless for monster brands.
+    int idx = items(true, OBJ_JEWELLERY, OBJ_RANDOM, level);
+
+    if (idx == NON_ITEM)
+        return;
+
+    if (fragile)
+        apply_curse(mitm[idx], ARTP_FRAGILE, true);
 
     give_specific_item(mon, idx);
 }
@@ -206,8 +230,8 @@ static void _give_potion(monster* mon, int level)
         mitm[thing_created].flags = ISFLAG_KNOW_TYPE;
         give_specific_item(mon, thing_created);
     }
-    else if (mons_is_unique(mon->type) && one_chance_in(4)
-                && _should_give_unique_item(mon))
+    else if ((mons_is_unique(mon->type) && one_chance_in(4)
+                && _should_give_unique_item(mon)) || one_chance_in(18))
     {
         const int thing_created = items(false, OBJ_POTIONS, OBJ_RANDOM,
                                         level);
@@ -1202,7 +1226,7 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
         break;
 
     case MONS_NIKOLA:
-        if (one_chance_in(100) && !get_unique_item_status(UNRAND_ARC_BLADE))
+        if (one_chance_in(4) && !get_unique_item_status(UNRAND_ARC_BLADE))
             make_item_unrandart(item, UNRAND_ARC_BLADE);
         break;
 
@@ -1211,7 +1235,7 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
         item.base_type = OBJ_STAVES;
         item.sub_type = STAFF_POISON;
         item.flags    |= ISFLAG_KNOW_TYPE;
-        if (one_chance_in(100) && !get_unique_item_status(UNRAND_OLGREB))
+        if (one_chance_in(4) && !get_unique_item_status(UNRAND_OLGREB))
             make_item_unrandart(item, UNRAND_OLGREB);
         break;
 
@@ -1257,7 +1281,7 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
         break;
 
     case MONS_MAGGIE:
-        if (one_chance_in(100) && !get_unique_item_status(UNRAND_WYRMBANE))
+        if (one_chance_in(4) && !get_unique_item_status(UNRAND_WYRMBANE))
         {
             make_item_unrandart(item, UNRAND_WYRMBANE);
             item.plus = 9; // Since she's wearing a dragon armour
@@ -1266,7 +1290,7 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
         break;
 
     case MONS_MARGERY:
-        if (one_chance_in(100) && !get_unique_item_status(UNRAND_WYRMBANE))
+        if (one_chance_in(4) && !get_unique_item_status(UNRAND_WYRMBANE))
         {
             make_item_unrandart(item, UNRAND_WYRMBANE);
             item.plus = 10 + random2(2); // Now she's killed at least 2 dragons
@@ -1300,6 +1324,8 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
     const object_class_type xitc = item.base_type;
     const int xitt = item.sub_type;
 
+    bool fragile = _level_adjust(type, &level);
+
     // Note this mess, all the work above doesn't mean much unless
     // force_item is set... otherwise we're just going to take the base
     // and subtype and create a new item. - bwr
@@ -1309,6 +1335,9 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
 
     if (thing_created == NON_ITEM)
         return NON_ITEM;
+
+    if (fragile)
+        apply_curse(mitm[thing_created], ARTP_FRAGILE, true);
 
     // Copy temporary item into the item array if were forcing it, since
     // items() won't have done it for us.
@@ -1403,11 +1432,16 @@ static item_def* make_item_for_monster(
     if (bp == NON_ITEM)
         return 0;
 
+    bool fragile = _level_adjust(mons->type, &level);
+
     const int thing_created = items(allow_uniques, base, subtype, level);
     if (thing_created == NON_ITEM)
         return 0;
 
     mitm[thing_created].flags |= flags;
+
+    if (fragile)
+        apply_curse(mitm[thing_created], ARTP_FRAGILE, true);
 
     give_specific_item(mons, thing_created);
     return &mitm[thing_created];
@@ -2033,6 +2067,8 @@ int make_mons_armour(monster_type type, int level)
             level = level * 2 + 5;
     }
 
+    bool fragile = _level_adjust(type, &level);
+
     // Note this mess, all the work above doesn't mean much unless
     // force_item is set... otherwise we're just going to take the base
     // and subtype and create a new item. - bwr
@@ -2046,6 +2082,9 @@ int make_mons_armour(monster_type type, int level)
     // items() won't have done it for us.
     if (force_item)
         mitm[thing_created] = item;
+
+    if (fragile)
+        apply_curse(mitm[thing_created], ARTP_FRAGILE, true);
 
     item_def &i = mitm[thing_created];
 
