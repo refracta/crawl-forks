@@ -1689,7 +1689,11 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
     if (act->confused())
     {
         if (act->is_monster())
-            source = act->as_monster()->get_ench(ENCH_CONFUSION).agent()->mid;
+        {
+            actor * agent = act->as_monster()->get_ench(ENCH_CONFUSION).agent();
+            if (agent)
+                source = agent->mid;
+        }
         aux_source = "blundered into %s while confused.";
     }
     else if (act->props.exists(KNOCKBACK_KEY))
