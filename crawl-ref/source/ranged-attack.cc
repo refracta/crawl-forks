@@ -540,6 +540,10 @@ int ranged_attack::apply_damage_modifiers(int damage)
         const int bonus = attacker->get_hit_dice() * 4 / 3;
         damage += random2avg(bonus, 2);
     }
+
+    if (damage_brand == SPWPN_MOLTEN)
+        damage = div_rand_round(damage * 3, 5);
+
     return damage;
 }
 

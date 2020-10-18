@@ -3703,6 +3703,41 @@ bool monster::res_damnation() const
     return get_mons_resist(*this, MR_RES_DAMNATION);
 }
 
+// Returns the monster's strength bonus
+int monster::strength_bonus() const
+{
+    if (mons_itemuse(*this) & MU_WIELD_MASK)
+    {
+        int retval = 0;
+
+        retval += scan_artefacts(ARTP_STRENGTH);
+
+        const int armour = inv[MSLOT_ARMOUR];
+        const int shld = inv[MSLOT_SHIELD];
+        const int jewellery = inv[MSLOT_JEWELLERY];
+
+        if (armour != NON_ITEM && mitm[armour].base_type == OBJ_ARMOURS
+            && get_armour_ego_type(mitm[armour]) == SPARM_STRENGTH)
+        {
+            retval += 3;
+        }
+
+        if (shld != NON_ITEM && mitm[shld].base_type == OBJ_ARMOURS
+            && get_armour_ego_type(mitm[shld]) == SPARM_STRENGTH)
+        {
+            retval += 3;
+        }
+
+        if (jewellery != NON_ITEM && mitm[jewellery].is_type(OBJ_JEWELLERY, RING_STRENGTH))
+            retval += 5;
+
+        // Don't let this go too negative.
+        return max(-5, retval);
+    }
+
+    return 0;
+}
+
 int monster::res_fire() const
 {
     int u = get_mons_resist(*this, MR_RES_FIRE);

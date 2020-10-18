@@ -4397,6 +4397,8 @@ int melee_attack::apply_damage_modifiers(int damage)
     if (as_mon->has_ench(ENCH_MIGHT) || as_mon->has_ench(ENCH_BERSERK))
         damage = damage * 3 / 2;
 
+    damage = div_rand_round(damage * (10 + as_mon->strength_bonus()), 10);
+
     if (as_mon->has_ench(ENCH_IDEALISED))
         damage *= 2; // !
 
