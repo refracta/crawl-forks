@@ -3650,8 +3650,8 @@ int monster::known_chaos(bool check_spells_god) const
     // chaotic enough for Zin's chaos recitation. Having chaotic
     // abilities (not actual spells) does mean you're truly changed
     // by chaos.
-    if (has_chaotic_spell() && (!is_actual_spellcaster()
-                                || check_spells_god))
+    if ((!is_actual_spellcaster() || check_spells_god) && 
+          has_chaotic_spell())
     {
         chaotic++;
     }
@@ -4993,6 +4993,8 @@ void monster::load_ghost_spells()
             spells[i].spell = SPELL_DIG;
         if (spells[i].spell == SPELL_FORCEFUL_DISMISSAL)
             spells[i].spell = SPELL_SUMMON_DEMON;
+        if (!is_valid_spell(spells[i].spell))
+            spells[i].spell = SPELL_BLINK;
         dprf(DIAG_MONPLACE, "Spell #%d: %d (%s)",
              i, spells[i].spell, spell_title(spells[i].spell));
     }
