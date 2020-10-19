@@ -289,6 +289,7 @@ monster_info::monster_info(monster_type p_type, monster_type p_base_type)
     current_hp = mons_avg_hp(type);
     ac = get_mons_class_ac(type);
     ev = base_ev = get_mons_class_ev(type);
+    sh = 0; // Monster without items is always 0 sh.
     mresists = get_mons_class_resists(type);
     mr = mons_class_res_magic(type, base_type);
     can_see_invis = mons_class_sees_invis(type, base_type);
@@ -518,6 +519,7 @@ monster_info::monster_info(const monster* m, int milev)
     ac = m->armour_class(false);
     ev = m->evasion(ev_ignore::unided);
     base_ev = m->base_evasion();
+    sh = max(0, m->shield_bonus(false));
     mr = m->res_magic(false);
     can_see_invis = m->can_see_invisible();
     mresists = get_mons_resists(*m);

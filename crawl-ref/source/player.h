@@ -848,7 +848,7 @@ public:
     int stealth() const override     { return player_stealth(); }
 
     bool shielded() const override;
-    int shield_bonus() const override;
+    int shield_bonus(bool random = true) const override;
     int shield_block_penalty() const override;
     int shield_bypass_ability(int tohit) const override;
     void shield_block_succeeded(actor *foe) override;

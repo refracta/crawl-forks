@@ -6314,13 +6314,16 @@ bool player::shielded() const
            || you.branch_SH(true) > 0;
 }
 
-int player::shield_bonus() const
+// BCADDO: Turn this into the displayed shield value for player precise knowledge?
+int player::shield_bonus(bool random) const
 {
     const int shield_class = player_shield_class();
     if (shield_class <= 0)
         return -100;
 
-    return random2avg(shield_class * 2, 2) / 3 - 1;
+    if (random)
+        return random2avg(shield_class * 2, 2) / 3 - 1;
+    return max(0, shield_class / 3 - 1);
 }
 
 int player::shield_bypass_ability(int tohit) const

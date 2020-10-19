@@ -3074,21 +3074,21 @@ bool monster::shielded() const
            || wearing(EQ_AMULET, AMU_REFLECTION) > 0;
 }
 
-// BCADDO: Show this to the player.
-int monster::shield_bonus() const
+int monster::shield_bonus(bool random) const
 {
-    if (incapacitated())
+    if (incapacitated() && random)
         return -100;
 
     int sh = 0;
     const item_def *shld = shield();
     if (shld && shld->base_type == OBJ_SHIELDS)
     {
-        int shld_c = property(*shld, PSHD_SH) + shld->plus * 2;
-        shld_c = shld_c * 2 + (body_size(PSIZE_TORSO) - SIZE_MEDIUM)
-                            * (property(*shld, PSHD_SIZE));
-        shld_c = (shld_c * (20 + dexterity_bonus()))/20;
-        sh = random2avg(shld_c + get_hit_dice() * 4 / 3, 2) / 2;
+        sh = property(*shld, PSHD_SH) + shld->plus * 2;
+        sh = sh * 2 + (body_size(PSIZE_TORSO) - SIZE_MEDIUM)
+                    * (property(*shld, PSHD_SIZE));
+        sh = (sh * (20 + dexterity_bonus()))/20;
+        sh += get_hit_dice() * 4 / 3;
+        sh /= 2;
     }
 
     // Condensation Shield
@@ -3110,6 +3110,9 @@ int monster::shield_bonus() const
     const item_def *amulet = mslot_item(MSLOT_JEWELLERY);
     if (amulet && amulet->sub_type == AMU_REFLECTION)
         sh += 10;
+
+    if (random)
+        sh = random2avg(2 * sh, 2);
 
     return sh;
 }

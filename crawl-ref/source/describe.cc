@@ -4419,6 +4419,28 @@ static void _describe_monster_ev(const monster_info& mi, ostringstream &result)
     result << "EV: " << mi.ev << msg << "\n";
 }
 
+static bool _incap(const monster_info& mi)
+{
+    return (mi.is(MB_CONFUSED) || mi.is(MB_PARALYSED)  || mi.is(MB_SLEEPING)
+        || mi.is(MB_PETRIFIED) || mi.is(MB_PETRIFYING) || mi.is(MB_CAUGHT)
+        || mi.is(MB_INSANE)    || mi.is(MB_MAD)        || mi.is(MB_PINNED)
+        || mi.is(MB_WEBBED)    || mi.is(MB_WITHDRAWN));
+}
+
+/**
+* Append information about a given monster's SH to the provided stream.
+*
+* @param mi[in]            Player-visible info about the monster in question.
+* @param result[in,out]    The stringstream to append to.
+*/
+static void _describe_monster_sh(const monster_info& mi, ostringstream &result)
+{
+    if (mi.sh > 0 && _incap(mi))
+        result << "SH: 0 (incap)" << "\n";
+    else
+        result << "SH: " << mi.sh << "\n";
+}
+
 /**
  * Append information about a given monster's MR to the provided stream.
  *
@@ -4484,6 +4506,7 @@ static string _monster_stat_description(const monster_info& mi)
     _describe_monster_hp(mi, result);
     _describe_monster_ac(mi, result);
     _describe_monster_ev(mi, result);
+    _describe_monster_sh(mi, result);
     _describe_monster_mr(mi, result);
     _describe_experience_value(mi, result);
     _describe_summon_duration(mi, result);

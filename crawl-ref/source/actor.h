@@ -265,7 +265,7 @@ public:
     virtual int evasion(ev_ignore_type ign = ev_ignore::none,
                         const actor *attacker = nullptr) const = 0;
     virtual bool shielded() const = 0;
-    virtual int shield_bonus() const = 0;
+    virtual int shield_bonus(bool random = true) const = 0;
     virtual int shield_block_penalty() const = 0;
     virtual int shield_bypass_ability(int tohit) const = 0;
     virtual void shield_block_succeeded(actor *foe);

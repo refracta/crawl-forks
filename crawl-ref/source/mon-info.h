@@ -216,6 +216,7 @@ struct monster_info_base
     int ac;
     int ev;
     int base_ev;
+    int sh;
     int mr;
     int dur;
     int xp_val;
