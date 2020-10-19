@@ -4227,6 +4227,9 @@ struct mon_attack_info
  */
 static const item_def* _weapon_for_attack(const monster_info& mi, int atk)
 {
+    if (mi.attack[atk].type == AT_SHIELD)
+        return mi.inv[MSLOT_SHIELD].get();
+
     const item_def* weapon
        = atk == 0 ? mi.inv[MSLOT_WEAPON].get() :
          atk == 1 && mi.wields_two_weapons() ? mi.inv[MSLOT_ALT_WEAPON].get() :
@@ -4252,8 +4255,9 @@ static string _monster_attacks_description(const monster_info& mi)
     for (int i = 0; i < MAX_NUM_ATTACKS; ++i)
     {
         const mon_attack_def &atk = mi.attack[i];
+
         if (atk.type == AT_NONE)
-            break; // assumes there are no gaps in attack arrays
+            continue;
 
         const item_def* weapon = _weapon_for_attack(mi, i);
         const mon_attack_info &info = { atk, weapon };
