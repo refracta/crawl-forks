@@ -3733,8 +3733,8 @@ int monster::strength_bonus() const
             retval += 3;
         }
 
-        if (shld != NON_ITEM && 
-            mitm[shld].base_type == OBJ_SHIELDS && !is_hybrid(mitm[shld].sub_type)
+        if (shld != NON_ITEM && (mitm[shld].base_type == OBJ_ARMOURS ||
+            mitm[shld].base_type == OBJ_SHIELDS && !is_hybrid(mitm[shld].sub_type))
             && get_armour_ego_type(mitm[shld]) == SPARM_STRENGTH)
         {
             retval += 3;
@@ -3819,8 +3819,8 @@ int monster::res_fire() const
         if (armour != NON_ITEM && mitm[armour].base_type == OBJ_ARMOURS)
             u += get_armour_res_fire(mitm[armour], false);
 
-        if (shld != NON_ITEM &&
-            mitm[shld].base_type == OBJ_SHIELDS && !is_hybrid(mitm[shld].sub_type))
+        if (shld != NON_ITEM && (mitm[shld].base_type == OBJ_ARMOURS ||
+            mitm[shld].base_type == OBJ_SHIELDS && !is_hybrid(mitm[shld].sub_type)))
         {
             u += get_armour_res_fire(mitm[shld], false);
         }
@@ -3876,8 +3876,8 @@ int monster::res_cold() const
         if (armour != NON_ITEM && mitm[armour].base_type == OBJ_ARMOURS)
             u += get_armour_res_cold(mitm[armour], false);
 
-        if (shld != NON_ITEM &&
-            mitm[shld].base_type == OBJ_SHIELDS && !is_hybrid(mitm[shld].sub_type))
+        if (shld != NON_ITEM && (mitm[shld].base_type == OBJ_ARMOURS ||
+            mitm[shld].base_type == OBJ_SHIELDS && !is_hybrid(mitm[shld].sub_type)))
         {
             u += get_armour_res_cold(mitm[shld], false);
         }
@@ -3982,8 +3982,8 @@ int monster::res_poison(bool temp) const
         if (armour != NON_ITEM && mitm[armour].base_type == OBJ_ARMOURS)
             u += get_armour_res_poison(mitm[armour], false);
 
-        if (shld != NON_ITEM &&
-            mitm[shld].base_type == OBJ_SHIELDS && !is_hybrid(mitm[shld].sub_type))
+        if (shld != NON_ITEM && (mitm[shld].base_type == OBJ_ARMOURS ||
+            mitm[shld].base_type == OBJ_SHIELDS && !is_hybrid(mitm[shld].sub_type)))
         {
             u += get_armour_res_poison(mitm[shld], false);
         }
@@ -4076,8 +4076,8 @@ int monster::res_negative_energy(bool intrinsic_only) const
         if (armour != NON_ITEM && mitm[armour].base_type == OBJ_ARMOURS)
             u += get_armour_life_protection(mitm[armour], false);
 
-        if (shld != NON_ITEM &&
-            mitm[shld].base_type == OBJ_SHIELDS && !is_hybrid(mitm[shld].sub_type))
+        if (shld != NON_ITEM && (mitm[shld].base_type == OBJ_ARMOURS ||
+            mitm[shld].base_type == OBJ_SHIELDS && !is_hybrid(mitm[shld].sub_type)))
         {
             u += get_armour_life_protection(mitm[shld], false);
         }
@@ -4210,8 +4210,8 @@ int monster::res_magic(bool calc_unid) const
         u += get_armour_res_magic(mitm[armour], false);
     }
 
-    if (shld != NON_ITEM 
-        && mitm[shld].base_type == OBJ_SHIELDS && !is_hybrid(mitm[shld].sub_type)
+    if (shld != NON_ITEM  && (mitm[shld].base_type == OBJ_ARMOURS ||
+        mitm[shld].base_type == OBJ_SHIELDS && !is_hybrid(mitm[shld].sub_type))
         && (calc_unid || (mitm[shld].flags & ISFLAG_KNOW_TYPE)))
     {
         u += get_armour_res_magic(mitm[shld], false);
