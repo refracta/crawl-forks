@@ -2495,12 +2495,13 @@ int food_value(const item_def &item)
 //
 int get_armour_res_fire(const item_def &arm, bool check_artp)
 {
-    ASSERT(arm.base_type == OBJ_ARMOURS);
+    ASSERT(arm.base_type == OBJ_ARMOURS || (arm.base_type == OBJ_SHIELDS && !is_hybrid(arm.sub_type)));
 
     int res = 0;
 
     // intrinsic armour abilities
-    res += armour_type_prop(arm.sub_type, ARMF_RES_FIRE);
+    if (arm.base_type == OBJ_ARMOURS)
+        res += armour_type_prop(arm.sub_type, ARMF_RES_FIRE);
 
     // check ego resistance
     const int ego = get_armour_ego_type(arm);
@@ -2515,12 +2516,13 @@ int get_armour_res_fire(const item_def &arm, bool check_artp)
 
 int get_armour_res_cold(const item_def &arm, bool check_artp)
 {
-    ASSERT(arm.base_type == OBJ_ARMOURS);
+    ASSERT(arm.base_type == OBJ_ARMOURS || (arm.base_type == OBJ_SHIELDS && !is_hybrid(arm.sub_type)));
 
     int res = 0;
 
     // intrinsic armour abilities
-    res += armour_type_prop(arm.sub_type, ARMF_RES_COLD);
+    if (arm.base_type == OBJ_ARMOURS)
+        res += armour_type_prop(arm.sub_type, ARMF_RES_COLD);
 
     // check ego resistance
     const int ego = get_armour_ego_type(arm);
@@ -2535,12 +2537,13 @@ int get_armour_res_cold(const item_def &arm, bool check_artp)
 
 int get_armour_res_poison(const item_def &arm, bool check_artp)
 {
-    ASSERT(arm.base_type == OBJ_ARMOURS);
+    ASSERT(arm.base_type == OBJ_ARMOURS || (arm.base_type == OBJ_SHIELDS && !is_hybrid(arm.sub_type)));
 
     int res = 0;
 
     // intrinsic armour abilities
-    res += armour_type_prop(arm.sub_type, ARMF_RES_POISON);
+    if (arm.base_type == OBJ_ARMOURS)
+        res += armour_type_prop(arm.sub_type, ARMF_RES_POISON);
 
     // check ego resistance
     if (get_armour_ego_type(arm) == SPARM_POISON_RESISTANCE)
@@ -2554,7 +2557,7 @@ int get_armour_res_poison(const item_def &arm, bool check_artp)
 
 int get_armour_res_elec(const item_def &arm, bool check_artp)
 {
-    ASSERT(arm.base_type == OBJ_ARMOURS);
+    ASSERT(arm.base_type == OBJ_ARMOURS || (arm.base_type == OBJ_SHIELDS && !is_hybrid(arm.sub_type)));
 
     int res = 0;
 
@@ -2562,7 +2565,8 @@ int get_armour_res_elec(const item_def &arm, bool check_artp)
         res++;
 
     // intrinsic armour abilities
-    res += armour_type_prop(arm.sub_type, ARMF_RES_ELEC);
+    if (arm.base_type == OBJ_ARMOURS)
+        res += armour_type_prop(arm.sub_type, ARMF_RES_ELEC);
 
     if (check_artp && is_artefact(arm))
         res += artefact_property(arm, ARTP_ELECTRICITY);
@@ -2572,12 +2576,13 @@ int get_armour_res_elec(const item_def &arm, bool check_artp)
 
 int get_armour_life_protection(const item_def &arm, bool check_artp)
 {
-    ASSERT(arm.base_type == OBJ_ARMOURS);
+    ASSERT(arm.base_type == OBJ_ARMOURS || (arm.base_type == OBJ_SHIELDS && !is_hybrid(arm.sub_type)));
 
     int res = 0;
 
     // intrinsic armour abilities
-    res += armour_type_prop(arm.sub_type, ARMF_RES_NEG);
+    if (arm.base_type == OBJ_ARMOURS)
+        res += armour_type_prop(arm.sub_type, ARMF_RES_NEG);
 
     // check for ego resistance
     if (get_armour_ego_type(arm) == SPARM_POSITIVE_ENERGY)
@@ -2591,12 +2596,13 @@ int get_armour_life_protection(const item_def &arm, bool check_artp)
 
 int get_armour_res_magic(const item_def &arm, bool check_artp)
 {
-    ASSERT(arm.base_type == OBJ_ARMOURS);
+    ASSERT(arm.base_type == OBJ_ARMOURS || (arm.base_type == OBJ_SHIELDS && !is_hybrid(arm.sub_type)));
 
     int res = 0;
 
     // intrinsic armour abilities
-    res += armour_type_prop(arm.sub_type, ARMF_RES_MAGIC) * MR_PIP;
+    if (arm.base_type == OBJ_ARMOURS)
+        res += armour_type_prop(arm.sub_type, ARMF_RES_MAGIC) * MR_PIP;
 
     // check for ego resistance
     if (get_armour_ego_type(arm) == SPARM_MAGIC_RESISTANCE)
