@@ -3069,6 +3069,7 @@ bool monster::shielded() const
            || wearing(EQ_AMULET, AMU_REFLECTION) > 0;
 }
 
+// BCADDO: Show this to the player.
 int monster::shield_bonus() const
 {
     if (incapacitated())
@@ -3078,10 +3079,10 @@ int monster::shield_bonus() const
     const item_def *shld = shield();
     if (shld && shld->base_type == OBJ_SHIELDS)
     {
-
         int shld_c = property(*shld, PARM_AC) + shld->plus * 2;
         shld_c = shld_c * 2 + (body_size(PSIZE_TORSO) - SIZE_MEDIUM)
             * (shld->sub_type - SHD_LARGE_SHIELD);
+        shld_c = (shld_c * (20 + dexterity_bonus()))/20;
         sh = random2avg(shld_c + get_hit_dice() * 4 / 3, 2) / 2;
     }
 
@@ -3434,6 +3435,8 @@ int monster::evasion(ev_ignore_type evit, const actor* /*act*/) const
 
     int ev = base_evasion();
 
+    ev = (ev * (20 + dexterity_bonus()))/20;
+
     // account for armour
     for (int slot = MSLOT_ARMOUR; slot <= MSLOT_SHIELD; slot++)
     {
@@ -3729,6 +3732,60 @@ int monster::strength_bonus() const
         }
 
         if (jewellery != NON_ITEM && mitm[jewellery].is_type(OBJ_JEWELLERY, RING_STRENGTH))
+            retval += 5;
+
+        // Don't let this go too negative.
+        return max(-5, retval);
+    }
+
+    return 0;
+}
+
+int monster::intelligence_bonus() const
+{
+    if (mons_itemuse(*this) & MU_WIELD_MASK)
+    {
+        int retval = 0;
+
+        retval += scan_artefacts(ARTP_INTELLIGENCE);
+
+        const int armour = inv[MSLOT_ARMOUR];
+        const int jewellery = inv[MSLOT_JEWELLERY];
+
+        if (armour != NON_ITEM && mitm[armour].base_type == OBJ_ARMOURS
+            && get_armour_ego_type(mitm[armour]) == SPARM_INTELLIGENCE)
+        {
+            retval += 3;
+        }
+
+        if (jewellery != NON_ITEM && mitm[jewellery].is_type(OBJ_JEWELLERY, RING_INTELLIGENCE))
+            retval += 5;
+
+        // Don't let this go too negative.
+        return retval;
+    }
+
+    return 0;
+}
+
+int monster::dexterity_bonus() const
+{
+    if (mons_itemuse(*this) & MU_WIELD_MASK)
+    {
+        int retval = 0;
+
+        retval += scan_artefacts(ARTP_DEXTERITY);
+
+        const int armour = inv[MSLOT_ARMOUR];
+        const int jewellery = inv[MSLOT_JEWELLERY];
+
+        if (armour != NON_ITEM && mitm[armour].base_type == OBJ_ARMOURS
+            && get_armour_ego_type(mitm[armour]) == SPARM_DEXTERITY)
+        {
+            retval += 3;
+        }
+
+        if (jewellery != NON_ITEM && mitm[jewellery].is_type(OBJ_JEWELLERY, RING_DEXTERITY))
             retval += 5;
 
         // Don't let this go too negative.
@@ -6744,6 +6801,7 @@ bool monster::is_jumpy() const
 
 // HD for spellcasting purposes.
 // Currently only used for Aura of Brilliance and Hep ancestors.
+// Now also used for gear giving an Int Bonus.
 int monster::spell_hd(spell_type spell) const
 {
     UNUSED(spell);
@@ -6754,7 +6812,8 @@ int monster::spell_hd(spell_type spell) const
         hd *= 2;
     if (has_ench(ENCH_EMPOWERED_SPELLS))
         hd += 5;
-    return hd;
+    hd += intelligence_bonus();
+    return max(1, hd);
 }
 
 /**

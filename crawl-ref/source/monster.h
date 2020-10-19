@@ -382,6 +382,8 @@ public:
     bool is_insubstantial() const override;
     bool res_damnation() const override;
     int strength_bonus() const;
+    int intelligence_bonus() const;
+    int dexterity_bonus() const;
     int res_fire() const override;
     int res_steam() const override;
     int res_cold() const override;
