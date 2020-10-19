@@ -204,6 +204,10 @@ struct shield_def
     int                 hit;
     /// The number of aut it takes to swing the weapon with 0 skill.
     int                 speed;
+    /// A value used to determine the bonus SH smaller monsters get using this shield.
+    /// Derived from a mainline function that just uses the enum; which doesn't work
+    /// With the enum changed. 0 for Large, -1 for average and -2 for small shields.
+    int                 size_factor;
     /// The weapon skill corresponding to this weapon's use.
     skill_type          skill;
     /// A union of vorpal_damage_type flags (slash, crush, etc)
@@ -233,22 +237,22 @@ static int Shield_index[NUM_SHIELDS];
 static const shield_def Shield_prop[] =
 {
     // Standard Shields
-    { SHD_BUCKLER, "buckler", 0, 0, 8, SK_SHIELDS, DAMV_CRUSHING,
+    { SHD_BUCKLER, "buckler", 0, 0, 8, -2, SK_SHIELDS, DAMV_CRUSHING,
         3, -8, SIZE_TINY, SIZE_LITTLE, SIZE_MEDIUM, 20, 45 },
-    { SHD_SHIELD, "heater shield", 0, 0, 12, SK_SHIELDS, DAMV_CRUSHING,
+    { SHD_SHIELD, "heater shield", 0, 0, 12, -1, SK_SHIELDS, DAMV_CRUSHING,
         8, -30, SIZE_LITTLE, SIZE_SMALL, SIZE_LARGE, 20, 45 },
-    { SHD_LARGE_SHIELD, "scutum", 0, 0, 14, SK_SHIELDS, DAMV_CRUSHING,
+    { SHD_LARGE_SHIELD, "scutum", 0, 0, 14, 0, SK_SHIELDS, DAMV_CRUSHING,
         13, -50, SIZE_SMALL, SIZE_MEDIUM, SIZE_GIANT, 5, 45 },
 
     // Hybrid Shield/Weapons
     { SHD_SAI, "sai",
-        5, 3, 12, SK_SHORT_BLADES, DAMV_PIERCING,
+        5, 3, 12, -2, SK_SHORT_BLADES, DAMV_PIERCING,
         3, -5, SIZE_TINY, SIZE_LITTLE, SIZE_MEDIUM, 5, 60 },
     { SHD_TARGE, "targe",
-        7, 0, 13, SK_SHIELDS, DAMV_CRUSHING,
+        7, 0, 13, -1, SK_SHIELDS, DAMV_CRUSHING,
         7, -35, SIZE_LITTLE, SIZE_SMALL, SIZE_GIANT, 10, 45 },
     { SHD_NUNCHAKU, "nunchaku",
-        9, 2, 12, SK_WHIPS_FLAILS, DAMV_CRUSHING,
+        9, 2, 12, -1, SK_WHIPS_FLAILS, DAMV_CRUSHING,
         4, -15, SIZE_LITTLE, SIZE_LITTLE, SIZE_LARGE, 5, 90 },
 };
 
@@ -2812,6 +2816,8 @@ int property(const item_def &item, int prop_type)
             return Shield_prop[Shield_index[item.sub_type]].dam;
         case PSHD_HIT:
             return Shield_prop[Shield_index[item.sub_type]].hit;
+        case PSHD_SIZE:
+            return Shield_prop[Shield_index[item.sub_type]].size_factor;
         }
 
     case OBJ_WEAPONS:

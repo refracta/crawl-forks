@@ -749,6 +749,7 @@ enum shield_property_type
     PSHD_HIT,
     PSHD_DAMAGE,
     PSHD_SPEED,
+    PSHD_SIZE,
 };
 
 enum vorpal_damage_type

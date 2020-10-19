@@ -2614,9 +2614,9 @@ int player_shield_class()
         int base_shield1 = 0;
         int size_factor = (SIZE_GIANT - you.body_size(PSIZE_TORSO));
         if (you.weapon(0) && you.weapon(0)->base_type == OBJ_SHIELDS)
-            base_shield0 += property(*you.weapon(0), PSHD_SH) * 2 + size_factor;
+            base_shield0 += property(*you.weapon(0), PSHD_SH) * 2 + size_factor * property(*you.weapon(0), PSHD_SIZE);
         if (you.weapon(1) && you.weapon(1)->base_type == OBJ_SHIELDS)
-            base_shield1 += property(*you.weapon(1), PSHD_SH) * 2 + size_factor;
+            base_shield1 += property(*you.weapon(1), PSHD_SH) * 2 + size_factor * property(*you.weapon(1), PSHD_SIZE);
 
         // bonus applied only to base, see above for effect:
         shield += (base_shield0 + base_shield1) * 50;

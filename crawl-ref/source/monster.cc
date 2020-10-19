@@ -3079,9 +3079,9 @@ int monster::shield_bonus() const
     const item_def *shld = shield();
     if (shld && shld->base_type == OBJ_SHIELDS)
     {
-        int shld_c = property(*shld, PARM_AC) + shld->plus * 2;
+        int shld_c = property(*shld, PSHD_SH) + shld->plus * 2;
         shld_c = shld_c * 2 + (body_size(PSIZE_TORSO) - SIZE_MEDIUM)
-            * (shld->sub_type - SHD_LARGE_SHIELD);
+                            * (property(*shld, PSHD_SIZE));
         shld_c = (shld_c * (20 + dexterity_bonus()))/20;
         sh = random2avg(shld_c + get_hit_dice() * 4 / 3, 2) / 2;
     }
