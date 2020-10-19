@@ -3481,7 +3481,7 @@ string get_monster_equipment_desc(const monster& mon,
 
     if (mon_shd)
     {
-        const string shield_desc = make_stringf("w%ing %s",
+        const string shield_desc = make_stringf("w%sing %s",
                                                 is_hybrid(mon_shd->sub_type) ? "ield" : "ear",
                                                 mon_shd->name(DESC_A).c_str());
         item_descriptions.push_back(shield_desc);
