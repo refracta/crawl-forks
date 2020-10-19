@@ -554,7 +554,7 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
         { MONS_GNOLL,                   { GNOLL_WEAPONS } },
         { MONS_OGRE_MAGE,               { GNOLL_WEAPONS } },
         { MONS_NAGA_MAGE,               { GNOLL_WEAPONS } },
-        { MONS_NAGARAJA,            { GNOLL_WEAPONS } },
+        { MONS_NAGARAJA,                { GNOLL_WEAPONS } },
         { MONS_GNOLL_SHAMAN,
             { { { WPN_CLUB,             1 },
                 { WPN_WHIP,             1 },
@@ -669,6 +669,9 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
         { MONS_PLATINUM_DRACONIAN,      { NAGA_WEAPONS } },
         { MONS_MAGENTA_DRACONIAN,       { NAGA_WEAPONS } },
         { MONS_TENGU,                   { NAGA_WEAPONS } },
+        { MONS_GUARDIAN_MUMMY,          { NAGA_WEAPONS } },
+        { MONS_GREATER_MUMMY,           { NAGA_WEAPONS } },
+        { MONS_MUMMY_PRIEST,            { NAGA_WEAPONS } },
         { MONS_NAGA_RITUALIST,
             { { { WPN_DAGGER,           12 },
                 { WPN_SCIMITAR,         5 },
@@ -1480,12 +1483,16 @@ static void _give_shield(monster* mon, int level)
     switch (mon->type)
     {
     case MONS_ASTERION:
-        make_item_for_monster(mon, OBJ_SHIELDS, SHD_SHIELD,
+        make_item_for_monster(mon, OBJ_SHIELDS, 
+                              one_chance_in(3) ? SHD_TARGE 
+                                               : SHD_SHIELD,
                               level * 2 + 1, 1);
         break;
     case MONS_DAEVA:
     case MONS_MENNAS:
-        make_item_for_monster(mon, OBJ_SHIELDS, SHD_LARGE_SHIELD,
+        make_item_for_monster(mon, OBJ_SHIELDS, 
+                              one_chance_in(3) ? SHD_TARGE 
+                                               : SHD_LARGE_SHIELD,
                               level * 2 + 1, 1);
         break;
 
@@ -1494,6 +1501,7 @@ static void _give_shield(monster* mon, int level)
         make_item_for_monster(mon, OBJ_SHIELDS, SHD_BUCKLER, level, 1);
         break;
 
+    case MONS_GUARDIAN_MUMMY:
     case MONS_NAGA_WARRIOR:
     case MONS_VAULT_GUARD:
     case MONS_VAULT_WARDEN:
@@ -1505,39 +1513,61 @@ static void _give_shield(monster* mon, int level)
                                                    : SHD_SHIELD,
                                   level);
         }
+        else if (one_chance_in(3))
+        {
+            make_item_for_monster(mon, OBJ_SHIELDS,
+                                  one_chance_in(3) ? SHD_SAI
+                                                   : SHD_NUNCHAKU,
+                                  level);
+        }
         break;
 
     case MONS_DRACONIAN_KNIGHT:
         if (coinflip())
         {
             make_item_for_monster(mon, OBJ_SHIELDS,
+                                  one_chance_in(5) ? SHD_TARGE :
                                   random_choose(SHD_LARGE_SHIELD, SHD_SHIELD),
                                   level);
         }
         break;
+    case MONS_DRACONIAN_MONK:
+        make_item_for_monster(mon, OBJ_SHIELDS,
+                                one_chance_in(3) ? SHD_SAI
+                                                 : SHD_NUNCHAKU,
+                                level);
+        break;
     case MONS_TENGU_WARRIOR:
         if (one_chance_in(3))
             level = ISPEC_GOOD_ITEM;
-        // deliberate fall-through
+        
+        make_item_for_monster(mon, OBJ_SHIELDS,
+                                random_choose(SHD_TARGE, SHD_SHIELD),
+                                level);
+        break;
     case MONS_TENGU:
     case MONS_GNOLL_SERGEANT:
-        if (mon->type != MONS_TENGU_WARRIOR && !one_chance_in(3))
-            break;
-        make_item_for_monster(mon, OBJ_SHIELDS,
-                              random_choose(SHD_BUCKLER, SHD_SHIELD),
-                              level);
+        if (one_chance_in(3))
+        {
+            make_item_for_monster(mon, OBJ_SHIELDS,
+                                  random_choose(SHD_BUCKLER, SHD_SHIELD),
+                                  level);
+        }
         break;
 
     case MONS_TENGU_REAVER:
         if (one_chance_in(3))
             level = ISPEC_GOOD_ITEM;
-        make_item_for_monster(mon, OBJ_SHIELDS, SHD_BUCKLER, level);
+        make_item_for_monster(mon, OBJ_SHIELDS, random_choose(SHD_SAI, SHD_TARGE), level);
         break;
 
+    case MONS_FAUN:
+    case MONS_MUMMY_PRIEST:
+    case MONS_GREATER_MUMMY:
     case MONS_TENGU_CONJURER:
     case MONS_DEEP_ELF_KNIGHT:
         if (one_chance_in(3))
-            make_item_for_monster(mon, OBJ_SHIELDS, SHD_BUCKLER, level);
+            make_item_for_monster(mon, OBJ_SHIELDS, random_choose(SHD_BUCKLER, SHD_SAI), level);
         break;
 
     case MONS_SPRIGGAN:
@@ -1547,11 +1577,13 @@ static void _give_shield(monster* mon, int level)
     // else fall-through
     case MONS_SPRIGGAN_DEFENDER:
     case MONS_THE_ENCHANTRESS:
-        shield = make_item_for_monster(mon, OBJ_SHIELDS, SHD_BUCKLER,
+        shield = make_item_for_monster(mon, OBJ_SHIELDS, 
+                      one_chance_in(3) ? random_choose(SHD_SAI, SHD_NUNCHAKU)
+                                       : SHD_BUCKLER,
                       mon->type == MONS_THE_ENCHANTRESS ? ISPEC_GOOD_ITEM :
                       mon->type == MONS_SPRIGGAN_DEFENDER ? level * 2 + 1 :
                       level);
-        if (shield && !is_artefact(*shield)) // ineligible...
+        if (shield && shield->sub_type == SHD_BUCKLER && !is_artefact(*shield)) // ineligible...
         {
             shield->props["item_tile_name"] = "buckler_spriggan";
             shield->props["worn_tile_name"] = "buckler_spriggan";
@@ -1609,14 +1641,14 @@ static void _give_shield(monster* mon, int level)
     case MONS_BLACK_SUN:
         if (one_chance_in(3))
         {
-            shield_type type = random_choose(SHD_BUCKLER, SHD_SHIELD);
+            shield_type type = random_choose(SHD_SAI, SHD_TARGE, SHD_SHIELD);
             make_item_for_monster(mon, OBJ_SHIELDS, type, level);
         }
         break;
 
     case MONS_WARMONGER:
         make_item_for_monster(mon, OBJ_SHIELDS,
-                              random_choose(SHD_LARGE_SHIELD, SHD_SHIELD),
+                              random_choose(SHD_LARGE_SHIELD, SHD_TARGE),
                               ISPEC_GOOD_ITEM);
         break;
 
