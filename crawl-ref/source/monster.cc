@@ -451,6 +451,11 @@ static int _mons_offhand_weapon_index(const monster* m)
 item_def *monster::weapon(int which_attack) const
 {
     const mon_attack_def attk = mons_attack_spec(*this, which_attack);
+
+    // Assumption: If we got here we already checked the shield.
+    if (attk.type == AT_SHIELD)
+        return mslot_item(MSLOT_SHIELD);
+
     if (attk.type != AT_HIT && attk.type != AT_WEAP_ONLY)
         return nullptr;
 
@@ -4161,7 +4166,7 @@ int monster::res_acid(bool calc_unid) const
  *                      know about.
  * @return              The monster's magic resistance value.
  */
-// BCADDO: Retire calc_unid since monster gear is always fully ided.
+// BCADNOTE: calc_unid is still neede because of stochaistics.
 int monster::res_magic(bool calc_unid) const
 {
     if (mons_immune_magic(*this))

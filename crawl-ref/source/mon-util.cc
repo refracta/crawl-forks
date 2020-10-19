@@ -2249,20 +2249,27 @@ mon_attack_def mons_attack_spec(const monster& m, int attk_number,
         return attk;
     }
 
+    if (attk.type == AT_SHIELD)
+    {
+        item_def * shld = mon.mslot_item(MSLOT_SHIELD);
+        if (!shld || shld->base_type != OBJ_SHIELDS || !is_hybrid(shld->sub_type))
+            return { AT_NONE, AF_PLAIN, 0 };
+    }
+
     // Nonbase draconians inherit aux attacks from their base type.
     // Implicit assumption: base draconian types only get one aux
-    // attack, and it's in their second attack slot.
+    // attack, and it's in their third attack slot.
     // If that changes this code will need to be changed.
     if (mons_species(mon.type) == MONS_DRACONIAN
         && mon.type != MONS_DRACONIAN
         && attk.type == AT_NONE
-        && attk_number > 0
+        && attk_number > 1
         && smc->attack[attk_number - 1].type != AT_NONE)
     {
         const monsterentry* mbase =
             get_monster_data (draco_or_demonspawn_subspecies(mon));
         ASSERT(mbase);
-        return mbase->attack[1];
+        return mbase->attack[2];
     }
 
     if (mon.type == MONS_PLAYER_SHADOW && attk_number == 0)
@@ -2342,6 +2349,7 @@ string mon_attack_name(attack_type attack, bool with_object)
         "clamp down on",
         "pounce on",
         "pinch",
+        "hit",          // shield attack should only actually use the shield's vorpal type. 
         "hit, bite, peck, or gore", // AT_CHERUB
         "bite", // AT_MULTIBITE
         "hit", // AT_WEAP_ONLY,

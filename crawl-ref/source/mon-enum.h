@@ -46,12 +46,13 @@ enum attack_type
     AT_CLAMP,
     AT_POUNCE,
     AT_PINCER,
-    AT_LAST_REAL_ATTACK = AT_PINCER,
+    AT_SHIELD,
+    AT_LAST_REAL_ATTACK = AT_SHIELD,
 
     AT_CHERUB,
     AT_MULTIBITE,
     AT_WEAP_ONLY,   // AT_HIT if wielding a melee weapon, AT_NONE otherwise
-    AT_RANDOM,      // Anything but AT_SHOOT and AT_WEAP_ONLY.
+    AT_RANDOM,      // Currently AT_HIT or AT_GORE BCADDO: Consider further randomization (It's Chaos Spawn's Signature).
     NUM_ATTACK_TYPES,
 };
 
