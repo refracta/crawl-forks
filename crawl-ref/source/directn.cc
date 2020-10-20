@@ -364,12 +364,15 @@ void direction_chooser::print_top_prompt() const
         //encapsulation-wise it needs to be here, unless adding an accessor just for this purpose.
     {
         int loc_ran = grid_distance(you.pos(), target());
-        int dam = 120;
-        if (loc_ran > 4)
-            dam -= ((loc_ran-4) * 30);
+        int dam = 125;
+        if (loc_ran > 5)
+        {
+            dam -= ((loc_ran - 5) * 25);
+            dam = max(dam, 75); // Bu special case
+        }
         else if (loc_ran < 4)
-            dam -= ((4-loc_ran) * 30);
-        dam = max(30, dam); // Bu special case
+            dam -= ((5-loc_ran) * 25);
+        dam = max(25, dam); // just to show it still does damage on self target.
         mprf(MSGCH_PROMPT, "%s, Range: %d (%d%%)", top_prompt.c_str(), loc_ran, dam);
     }
 }

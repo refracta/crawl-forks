@@ -442,14 +442,16 @@ bool ranged_attack::handle_phase_hit()
             {
                 // Sweetspotting!
                 int lrange = grid_distance(attacker->pos(), defender->pos());
-                int multiplier = 10;
-                if (lrange >= 8)
-                    multiplier = 3;
-                else if (lrange > 4)
-                    multiplier = 10 - (3 * (lrange - 4));
-                else if (lrange < 4)
-                    multiplier = max(1, 10 - (3 * (4 - lrange)));
-                damage_done = div_rand_round(damage_done * multiplier, 10);
+                int multiplier = 125;
+                if (lrange > 5)
+                {
+                    multiplier -= ((lrange - 5) * 25);
+                    multiplier = max(multiplier, 75); // Bu special case
+                }
+                else if (lrange < 5)
+                    multiplier -= ((5 - lrange) * 25);
+                multiplier = max(multiplier, 25);
+                damage_done = div_rand_round(damage_done * multiplier, 100);
                 if (!handle_phase_damaged())
                     return false;
             }
