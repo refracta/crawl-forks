@@ -1446,6 +1446,8 @@ TAGS:   arrival no_monster_gen
 ORIENT: float
 SHUFFLE: ({[
 MONS:   plant
+FTILE:  1wtG = floor_grass
+FTILE:  .{ = floor_mud
 MAP
 ttt@ttttt
 t{t.....t
@@ -1462,6 +1464,8 @@ NAME:   tarquinn_simple_flora_water_b
 TAGS:   arrival no_monster_gen
 ORIENT: float
 MONS:   plant
+FTILE:  Gt1w = floor_grass
+FTILE:  .{+ = floor_mud
 MAP
 xxxxxxxxxxxxx
 +...wwwww...+
@@ -1487,6 +1491,8 @@ SHUFFLE: ([{ABC
 SUBST:  A = }11
 SUBST:  ABC = 1
 MONS:   plant
+FTILE:  Gt1w = floor_grass
+FTILE:  .{([+ = floor_mud
 MAP
 xxxxxxxxxxxxxxxxxxxx
 xttttt..C.wwwwwwwwwx
@@ -1502,6 +1508,8 @@ NAME:   tarquinn_simple_flora_water_d
 TAGS:   arrival no_monster_gen
 ORIENT: float
 MONS:   plant, fungus
+FTILE:  Gt1w = floor_grass
+FTILE:  .{+ = floor_mud
 MAP
 xxxxxxxxxx
 +....t1x2xxx
@@ -1515,7 +1523,8 @@ ENDMAP
 NAME:   tarquinn_simple_flora_water_e
 TAGS:   arrival no_monster_gen
 ORIENT: float
-FTILE:  1 = floor_grass
+FTILE:  Gt1w = floor_grass
+FTILE:  .{+ = floor_mud
 MONS:   plant
 MAP
   xxx
@@ -1532,6 +1541,8 @@ TAGS:   arrival no_monster_gen
 ORIENT: float
 SHUFFLE: 123wwttt
 MONS:   plant, bush, fungus
+FTILE:  Gt1w2 = floor_grass
+FTILE:  .{+3 = floor_mud
 MAP
 xxxxxx+xxx
 x12213.1tx
