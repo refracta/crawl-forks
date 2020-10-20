@@ -145,7 +145,7 @@ void give_job_skills(job_type job)
         int amount = entry.second;
         if (skill == SK_WEAPON)
         {
-            const item_def *weap = you.weapon();
+            const item_def *weap = you.slot_item(EQ_WEAPON0);
             skill = weap ? item_attack_skill(*weap) : SK_UNARMED_COMBAT;
             //XXX: WTF?
             if (you.species == SP_FELID && job == JOB_FIGHTER)
