@@ -140,6 +140,9 @@ static void _give_jewels(monster* mon, int level)
 
     bool fragile = _level_adjust(mon->type, &level);
 
+    if (mon->type != MONS_SWOOPING_MAGPIE)
+        fragile |= !one_chance_in(3);
+
     // BCADDO: OBJ_RANDOM variant for monster jewels that avoids useless for monster brands.
     int idx = items(true, OBJ_JEWELLERY, OBJ_RANDOM, level);
 
