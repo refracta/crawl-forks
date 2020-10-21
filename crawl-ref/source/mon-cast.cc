@@ -332,9 +332,8 @@ static const map<spell_type, mons_spell_logic> spell_to_logic = {
             const string msg = make_stringf(" invokes %s protection!",
                                             god.c_str());
             simple_monster_message(caster, msg.c_str(), MSGCH_MONSTER_SPELL);
-            // Not spell_hd(spell_cast); this is an invocation
             const int dur = BASELINE_DELAY
-                * min(5 + roll_dice(2, (caster.get_hit_dice() * 10) / 3 + 1),
+                * min(5 + roll_dice(2, (caster.spell_hd(SPELL_TROGS_HAND) * 10) / 3 + 1),
                       100);
             caster.add_ench(mon_enchant(ENCH_RAISED_MR, 0, &caster, dur));
             caster.add_ench(mon_enchant(ENCH_REGENERATION, 0, &caster, dur));
@@ -711,7 +710,13 @@ static function<void(bolt&, const monster&, int)> _zap_setup(spell_type spell)
 
 static void _setup_healing_beam(bolt &beam, const monster &caster)
 {
-    beam.damage   = dice_def(2, caster.spell_hd(SPELL_MINOR_HEALING) / 2);
+    mon_spell_slot spell = caster.seek_spell(SPELL_MINOR_HEALING);
+
+    // Didn't have minor healing, maybe it's heal other.
+    if (spell.spell == SPELL_NO_SPELL)
+        spell = caster.seek_spell(SPELL_HEAL_OTHER);
+
+    beam.damage   = dice_def(2, caster.spell_hd(spell) / 2);
     beam.flavour  = BEAM_HEALING;
 }
 
@@ -1222,7 +1227,7 @@ static int _ench_power(spell_type spell, const monster &mons)
  */
 int mons_spell_range(spell_type spell, const monster * mons)
 {
-    int hd = mons->spell_hd();
+    int hd = mons->spell_hd(spell);
     switch (spell)
     {
         case SPELL_FLAME_TONGUE:
@@ -1487,7 +1492,7 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
         beam.damage   = dice_def(5, 7);
 
         // Natural ability, so don't use spell_hd here
-        beam.hit      = 20 + (3 * mons->get_hit_dice());
+        beam.hit      = 20 + (3 * mons->spell_hd(spell_cast));
         beam.flavour  = BEAM_ACID;
         break;
 
@@ -1497,7 +1502,7 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
         beam.damage   = dice_def(5, 7);
 
         // Natural ability, so don't use spell_hd here
-        beam.hit      = 20 + (3 * mons->get_hit_dice());
+        beam.hit      = 20 + (3 * mons->spell_hd(spell_cast));
         beam.flavour  = BEAM_ACID;
         break;
 
@@ -1610,7 +1615,7 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
         beam.name       = "blast of flame";
         beam.aux_source = "blast of fiery breath";
         beam.short_name = "flames";
-        beam.damage     = dice_def(3, (mons->get_hit_dice() * 2));
+        beam.damage     = dice_def(3, (mons->spell_hd(spell_cast) * 2));
         beam.colour     = RED;
         beam.hit        = 30;
         beam.flavour    = BEAM_FIRE;
@@ -1627,7 +1632,7 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
     case SPELL_CHAOS_BREATH:
         beam.name         = "blast of chaos";
         beam.aux_source   = "blast of chaotic breath";
-        beam.damage       = dice_def(1, 3 * mons->get_hit_dice() / 2);
+        beam.damage       = dice_def(1, 3 * mons->spell_hd(spell_cast) / 2);
         beam.colour       = ETC_RANDOM;
         beam.hit          = 30;
         beam.flavour      = BEAM_CHAOS;
@@ -1637,7 +1642,7 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
 	case SPELL_RADIATION_BREATH:
         beam.name         = "blast of radiation";
         beam.aux_source   = "blast of radiation breath";
-        beam.damage       = dice_def(1, 3 * mons->get_hit_dice() / 2);
+        beam.damage       = dice_def(1, 3 * mons->spell_hd(spell_cast) / 2);
         beam.colour       = LIGHTRED;
         beam.hit          = 30;
         beam.flavour      = BEAM_FIRE;
@@ -1649,7 +1654,7 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
         beam.name       = "blast of cold";
         beam.aux_source = "blast of icy breath";
         beam.short_name = "frost";
-        beam.damage     = dice_def(3, (mons->get_hit_dice() * 2));
+        beam.damage     = dice_def(3, (mons->spell_hd(spell_cast) * 2));
         beam.colour     = WHITE;
         beam.hit        = 30;
         beam.flavour    = BEAM_COLD;
@@ -1665,7 +1670,7 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
 
     case SPELL_HOLY_BREATH:
         beam.name     = "blast of cleansing flame";
-        beam.damage   = dice_def(3, mons->get_hit_dice());
+        beam.damage   = dice_def(3, mons->spell_hd(spell_cast));
         beam.colour   = ETC_HOLY;
         beam.flavour  = BEAM_HOLY;
         beam.hit      = 18 + power / 25;
@@ -1802,7 +1807,7 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
 
     case SPELL_ELECTRICAL_BOLT:
         beam.name        = "bolt of electricity";
-        beam.damage      = dice_def(3, 3 + mons->get_hit_dice());
+        beam.damage      = dice_def(3, 3 + mons->spell_hd(spell_cast));
         beam.hit         = 35;
         beam.colour      = LIGHTCYAN;
         beam.glyph       = dchar_glyph(DCHAR_FIRED_ZAP);
@@ -1814,7 +1819,7 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
         beam.name         = "blast of flame";
         beam.aux_source   = "blast of fiery breath";
         beam.short_name   = "flames";
-        beam.damage       = dice_def(1, 3 * mons->get_hit_dice() / 2);
+        beam.damage       = dice_def(1, 3 * mons->spell_hd(spell_cast) / 2);
         beam.colour       = RED;
         beam.hit          = 30;
         beam.flavour      = BEAM_FIRE;
@@ -4810,7 +4815,7 @@ static void _mons_summon_elemental(monster &mons, mon_spell_slot slot, bolt&)
     const monster_type* mtyp = map_find(elemental_types, slot.spell);
     ASSERT(mtyp);
 
-    const int spell_hd = mons.spell_hd(slot.spell);
+    const int spell_hd = mons.spell_hd(slot);
     const int count = 1 + (spell_hd > 15) + random2(spell_hd / 7 + 1);
 
     for (int i = 0; i < count; i++)
@@ -5115,7 +5120,7 @@ static bool _mons_irradiate(monster *mons)
     if (mons->wont_attack() && adjacent(you.pos(), mons->pos()))
         return true;
     int logic = 0;
-    int hd = mons->spell_hd();
+    int hd = mons->spell_hd(SPELL_IRRADIATE);
     
     for (adjacent_iterator ai(mons->pos()); ai; ++ai)
     {
@@ -6276,8 +6281,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
     }
 
     const god_type god = _find_god(*mons, slot_flags);
-    const int splpow = evoke ? mons->get_hit_dice() * 1.5 // Didn't I already change this?
-                             : _mons_spellpower(spell_cast, *mons);
+    const int splpow = _mons_spellpower(spell_cast, *mons);
     const bool chaos = (determine_chaos(mons, spell_cast) && !evoke);
     const bool eldritch = (mons->staff() && is_unrandom_artefact(*mons->staff(), UNRAND_MAJIN));
     monster * x;
@@ -6317,7 +6321,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         if (eldritch)
             pbolt.flavour = eldritch_damage_type();
 
-        int damage_taken = 10 + 2 * mons->get_hit_dice();
+        int damage_taken = 10 + 2 * mons->spell_hd(spell_cast);
         damage_taken = foe->beam_resists(pbolt, damage_taken, false);
 
         // Previous method of damage calculation (in line with player
@@ -6705,10 +6709,9 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
 
     case SPELL_BROTHERS_IN_ARMS:
     {
-        // Invocation; don't use spell_hd
-        int power = (mons->get_hit_dice() * 20)
-                          + random2(mons->get_hit_dice() * 5);
-        power -= random2(mons->get_hit_dice() * 5); // force a sequence point
+        int spell = mons->spell_hd(SPELL_BROTHERS_IN_ARMS);
+        int power = (spell * 20) + random2(spell * 5);
+        power -= random2(spell * 5); // force a sequence point
         monster_type to_summon;
 
         if (mons->type == MONS_SPRIGGAN_BERSERKER)

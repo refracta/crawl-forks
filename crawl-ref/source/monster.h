@@ -568,7 +568,9 @@ public:
     // Jumping spiders (jump instead of blink)
     bool is_jumpy() const;
 
-    int  spell_hd(spell_type spell = SPELL_NO_SPELL) const;
+    mon_spell_slot seek_spell(spell_type spell) const;
+    int  spell_hd(spell_type spell) const;
+    int  spell_hd(mon_spell_slot spell = mon_spell_slot(SPELL_NO_SPELL, 1, MON_SPELL_NO_FLAGS)) const;
     void align_summons();
     void note_spell_cast(spell_type spell);
 

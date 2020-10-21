@@ -3149,12 +3149,12 @@ void monster::ablate_deflection()
     // TODO: deduplicate this code
     if (has_ench(ENCH_DEFLECT_MISSILES))
     {
-        if (one_chance_in(2 + spell_hd()))
+        if (one_chance_in(2 + spell_hd(SPELL_DEFLECT_MISSILES)))
             del_ench(ENCH_DEFLECT_MISSILES);
     }
     else if (has_ench(ENCH_REPEL_MISSILES))
     {
-        if (one_chance_in(2 + spell_hd()))
+        if (one_chance_in(2 + spell_hd(SPELL_REPEL_MISSILES)))
             del_ench(ENCH_REPEL_MISSILES);
     }
 }
@@ -6822,21 +6822,98 @@ bool monster::is_jumpy() const
     return type == MONS_JUMPING_SPIDER;
 }
 
-// HD for spellcasting purposes.
-// Currently only used for Aura of Brilliance and Hep ancestors.
-// Now also used for gear giving an Int Bonus.
+mon_spell_slot monster::seek_spell(spell_type spell) const
+{
+    for (const mon_spell_slot &sp : spells)
+    {
+        if (sp.spell == spell)
+            return sp;
+
+        // No monster actually knows Abjuration; 
+        // it's a side effect of having a summoning spell
+        // return the first summoning spell we find instead. (fine for spellpower purposes).
+        if (spell == SPELL_ABJURATION)
+        {
+            if (bool(get_spell_disciplines(sp.spell) | spschool::summoning))
+                return sp;
+        }
+    }
+    return mon_spell_slot(SPELL_NO_SPELL, 1, MON_SPELL_NO_FLAGS);
+}
+
 int monster::spell_hd(spell_type spell) const
 {
-    UNUSED(spell);
+    mon_spell_slot slot = seek_spell(spell);
+
+    // I'm casting a spell I don't know I must be evoking it from an item.
+    if (slot.spell == SPELL_NO_SPELL)
+    {
+        slot.spell = spell;
+        slot.flags = MON_SPELL_EVOKE;
+    }
+
+    return spell_hd(slot);
+}
+
+int monster::spell_hd(mon_spell_slot spell) const
+{
+    bool wizard = bool(spell.flags & (MON_SPELL_MAGICAL | MON_SPELL_WIZARD));
+    bool priest = bool(spell.flags & MON_SPELL_PRIEST);
+    bool evoked = bool(spell.flags & MON_SPELL_EVOKE);
+
     int hd = get_hit_dice();
     if (mons_is_hepliaklqana_ancestor(type))
         hd = max(1, hd * 2 / 3);
     if (has_ench(ENCH_IDEALISED))
         hd *= 2;
-    if (has_ench(ENCH_EMPOWERED_SPELLS))
-        hd += 5;
-    hd += intelligence_bonus();
-    return max(1, hd);
+
+    if (wizard)
+    {
+        // BCADDO: Let monsters with wizard spells use Brilliance.
+
+        if (has_ench(ENCH_EMPOWERED_SPELLS))
+            hd += 5;
+        hd += intelligence_bonus();
+
+        hd = max(hd, 1); // in case of severely negative int items.
+
+        // Staff brands handled in the actual cast.
+        if (staff() && staff_enhances_spell(staff(), spell.spell))
+        {
+            hd = div_rand_round(5 * hd, 4);
+            hd += staff()->plus / 3;
+        }
+        
+        const item_def * ring = mslot_item(MSLOT_JEWELLERY);
+        const item_def * armour = mslot_item(MSLOT_ARMOUR);
+
+        if (armour && armour->base_type == OBJ_ARMOURS && get_armour_ego_type(*armour) == SPARM_ARCHMAGI)
+            hd = div_rand_round(5 * hd, 4);
+
+        if (ring)
+        {
+            const spschools_type typeflags = get_spell_disciplines(spell.spell);
+
+            if (ring->is_type(OBJ_JEWELLERY, RING_FIRE) && bool(typeflags & spschool::fire))
+                hd = div_rand_round(5 * hd, 4);
+            else if (ring->is_type(OBJ_JEWELLERY, RING_ICE) && bool(typeflags & spschool::ice))
+                hd = div_rand_round(5 * hd, 4);
+            else if (ring->is_type(OBJ_JEWELLERY, RING_MAGICAL_POWER)) // Different than what it does for players, but *shrug*.
+                hd = div_rand_round(11 * hd, 10);
+        }
+    }
+    else if (evoked)
+        hd = div_rand_round(hd * 3, 2); // to line up with player scaling.
+    else if (priest)
+    {
+        const item_def * armour = mslot_item(MSLOT_ARMOUR);
+
+        if (armour && armour->base_type == OBJ_ARMOURS && get_armour_ego_type(*armour) == SPARM_HIGH_PRIEST)
+            hd = div_rand_round(5 * hd, 4);
+    }
+    // If it didn't get a particular check it's a natural ability and unaffected by tag-specific boosts.
+
+    return hd;
 }
 
 /**

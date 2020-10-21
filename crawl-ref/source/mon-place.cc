@@ -1284,6 +1284,9 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
         mon->add_ench(mon_enchant(ENCH_OZOCUBUS_ARMOUR, 20 + rnd_power, mon));
     }
 
+    if (mon->has_spell(SPELL_CONDENSATION_SHIELD))
+        mon->add_ench(ENCH_CONDENSATION_SHIELD);
+
     if (mon->has_spell(SPELL_SHROUD_OF_GOLUBRIA))
         mon->add_ench(ENCH_SHROUD);
 

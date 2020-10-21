@@ -4366,10 +4366,8 @@ static void _add_energy_to_string(int speed, int energy, string what,
 
 static void _describe_monster_hd(const monster_info& mi, ostringstream &result)
 {
-    string spell = "";
-    if (mi.hd != mi.spell_hd())
-        spell = make_stringf(" (%d for spells)", mi.spell_hd());
-    result << "HD: " << mi.hd << spell << "\n";
+    // BCADDO: Find a way to describe spell HD here again. Deprecating this since it's usually nonsense now.
+    result << "HD: " << mi.hd << "\n";
 }
 
 /**

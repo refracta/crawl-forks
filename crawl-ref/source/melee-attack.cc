@@ -733,7 +733,7 @@ bool melee_attack::handle_phase_blocked()
     }
 
     else if (defender->is_monster() && defender->staff() && defender->staff()->sub_type == STAFF_FIRE
-        && defender->staff()->brand == SPSTF_SHIELD && x_chance_in_y(defender->as_monster()->spell_hd(), 18))
+        && defender->staff()->brand == SPSTF_SHIELD && x_chance_in_y(defender->as_monster()->spell_hd(mon_spell_slot(SPELL_RING_OF_FLAMES, 1, MON_SPELL_WIZARD)), 18))
     {
         int orig = 1 + random2(defender->as_monster()->spell_hd());
         int dam = resist_adjust_damage(attacker, BEAM_FIRE, orig);

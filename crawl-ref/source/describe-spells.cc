@@ -515,7 +515,6 @@ static void _describe_book(const spellbook_contents &book,
     const bool doublecolumn = _list_spells_doublecolumn(source_item);
 
     bool first_line_element = true;
-    const int hd = mon_owner ? mon_owner->spell_hd() : 0;
     for (auto spell : book.spells)
     {
         description.cprintf(" ");
@@ -531,6 +530,8 @@ static void _describe_book(const spellbook_contents &book,
                 });
         const char spell_letter = entry != spell_map.end()
                                             ? entry->second : ' ';
+
+        const int hd = mon_owner ? mon_owner->spell_hd(spell) : 0;
 
         string range_str = _range_string(spell, mon_owner, hd);
 
@@ -623,11 +624,11 @@ static void _write_book(const spellbook_contents &book,
 {
     tiles.json_open_object();
     tiles.json_write_string("label", book.label);
-    const int hd = mon_owner ? mon_owner->spell_hd() : 0;
     tiles.json_open_array("spells");
 
     for (auto spell : book.spells)
     {
+        const int hd = mon_owner ? mon_owner->spell_hd(spell) : 0;
         tiles.json_open_object();
         tiles.json_write_string("title", mi_spell_title(spell, mon_owner));
         tiles.json_write_int("colour", _spell_colour(spell, source_item));

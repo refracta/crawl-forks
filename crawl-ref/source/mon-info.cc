@@ -1757,7 +1757,19 @@ bool monster_info::has_spells() const
 /// What hd does this monster cast spells with? May vary from actual HD.
 int monster_info::spell_hd(spell_type spell) const
 {
-    UNUSED(spell);
+    // I'm getting tired of monster_info; monster duality, let's just check if it's an actual monster.
+    monster * mon = monster_at(pos);
+
+    // If there's an actual monster calc its HD for display.
+    if (mon)
+    {
+        if (spell == SPELL_NO_SPELL)
+            return mon->spell_hd();
+        else
+            return mon->spell_hd(mon->seek_spell(spell));
+    }
+    
+    // Otherwise default to old behavior.
     if (!props.exists(SPELL_HD_KEY))
         return hd;
     return props[SPELL_HD_KEY].get_int();
