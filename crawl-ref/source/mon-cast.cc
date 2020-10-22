@@ -3681,7 +3681,7 @@ void aura_of_brilliance(monster* agent)
             mon_enchant ench = mon->get_ench(ENCH_EMPOWERED_SPELLS);
             if (ench.ench != ENCH_NONE)
             {
-                ench.duration = 2 * BASELINE_DELAY;
+                ench.duration = max(ench.duration, 2 * BASELINE_DELAY);
                 mon->update_ench(ench);
             }
             else

@@ -5990,23 +5990,20 @@ bool monster::can_drink_potion(potion_type ptype) const
 
     switch (ptype)
     {
+        case POT_INVISIBILITY:
+            return !mons_class_flag(type, M_INVIS);
         case POT_CURING:
         case POT_HEAL_WOUNDS:
             return !(holiness() & (MH_NONLIVING | MH_PLANT));
         case POT_BLOOD:
-#if TAG_MAJOR_VERSION == 34
-        case POT_BLOOD_COAGULATED:
-#endif
             return mons_species() == MONS_VAMPIRE;
         case POT_BERSERK_RAGE:
             return can_go_berserk();
         case POT_HASTE:
         case POT_MIGHT:
         case POT_AGILITY:
-        case POT_INVISIBILITY:
         case POT_RESISTANCE:
-            // If there are any item using monsters that are permanently
-            // invisible, this might have to be restricted.
+        case POT_BRILLIANCE:
             return true;
         default:
             break;
@@ -6027,9 +6024,6 @@ bool monster::should_drink_potion(potion_type ptype) const
     case POT_HEAL_WOUNDS:
         return hit_points <= max_hit_points / 2;
     case POT_BLOOD:
-#if TAG_MAJOR_VERSION == 34
-    case POT_BLOOD_COAGULATED:
-#endif
         return hit_points <= max_hit_points / 2;
     case POT_BERSERK_RAGE:
         // this implies !berserk()
@@ -6039,6 +6033,8 @@ bool monster::should_drink_potion(potion_type ptype) const
         return !has_ench(ENCH_HASTE);
     case POT_MIGHT:
         return !has_ench(ENCH_MIGHT) && foe_distance() <= 2;
+    case POT_BRILLIANCE:
+        return !has_ench(ENCH_EMPOWERED_SPELLS) && is_actual_spellcaster();
     case POT_AGILITY:
         return !has_ench(ENCH_AGILE);
     case POT_RESISTANCE:
@@ -6084,9 +6080,6 @@ bool monster::drink_potion_effect(potion_type pot_eff, bool card)
         break;
 
     case POT_BLOOD:
-#if TAG_MAJOR_VERSION == 34
-    case POT_BLOOD_COAGULATED:
-#endif
         if (mons_species() == MONS_VAMPIRE)
         {
             heal(10 + random2avg(28, 3));
@@ -6096,6 +6089,11 @@ bool monster::drink_potion_effect(potion_type pot_eff, bool card)
 
     case POT_BERSERK_RAGE:
         enchant_actor_with_flavour(this, this, BEAM_BERSERK);
+        break;
+
+    case POT_BRILLIANCE:
+        add_ench(mon_enchant(ENCH_EMPOWERED_SPELLS, 1, 0, (15 + random2(30)) * BASELINE_DELAY));
+        simple_monster_message(*this, " looks brilliant all of the sudden.");
         break;
 
     case POT_HASTE:
