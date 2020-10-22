@@ -5938,6 +5938,13 @@ void monster::lose_energy(energy_use_type et, int div, int mult)
     if ((et == EUT_SPELL && type == MONS_SPELLFORGED_SERVITOR))
         energy_loss += random2(16);
 
+    if (et == EUT_SPELL)
+    {
+        item_def * ring = mslot_item(MSLOT_JEWELLERY);
+        if (ring->is_type(OBJ_JEWELLERY, RING_WIZARDRY))
+            energy_loss = div_rand_round(energy_loss * 7, 10);
+    }
+
     // Randomize movement cost slightly, to make it less predictable,
     // and make pillar-dancing not entirely safe.
     // No randomization for allies following you to avoid traffic jam
@@ -6867,8 +6874,6 @@ int monster::spell_hd(mon_spell_slot spell) const
 
     if (wizard)
     {
-        // BCADDO: Let monsters with wizard spells use Brilliance.
-
         if (has_ench(ENCH_EMPOWERED_SPELLS))
             hd += 5;
         hd += intelligence_bonus();
