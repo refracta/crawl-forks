@@ -5941,7 +5941,7 @@ void monster::lose_energy(energy_use_type et, int div, int mult)
     if (et == EUT_SPELL)
     {
         item_def * ring = mslot_item(MSLOT_JEWELLERY);
-        if (ring->is_type(OBJ_JEWELLERY, RING_WIZARDRY))
+        if (ring && ring->is_type(OBJ_JEWELLERY, RING_WIZARDRY))
             energy_loss = div_rand_round(energy_loss * 7, 10);
     }
 
