@@ -467,8 +467,8 @@ enum scroll_type
 #endif
     SCR_ENCHANT,
     SCR_TORMENT,
-#if TAG_MAJOR_VERSION == 34
     SCR_RANDOM_USELESSNESS,
+#if TAG_MAJOR_VERSION == 34
     SCR_CURSE_WEAPON,
     SCR_CURSE_ARMOUR,
 #endif

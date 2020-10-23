@@ -1686,7 +1686,6 @@ static void _generate_scroll_item(item_def& item, int force_type,
         item.sub_type = force_type;
     else
     {
-        const int depth_mod = random2(1 + item_level);
         int tries = 500;
 
         // If this item is created by Xom, keep looping until an
@@ -1694,9 +1693,8 @@ static void _generate_scroll_item(item_def& item, int force_type,
         // _is_boring_item). Otherwise just weighted-choose a scroll.
         do
         {
-            // total weight:    501 if depth_mod < 4
-            //                  574  otherwise
-            //                 -376  in sprint
+            // total weight:    574
+            //                  474  in sprint
             item.sub_type = random_choose_weighted(
                 112, SCR_RANDOM_USELESSNESS,
                  // [Cha] don't generate teleportation scrolls if in sprint
@@ -1710,14 +1708,14 @@ static void _generate_scroll_item(item_def& item, int force_type,
                  32, SCR_BLINKING,
                  32, SCR_IMMOLATION,
                  // Higher-level scrolls.
-                 36, (depth_mod < 4 ? NUM_SCROLLS : SCR_BLESS_ITEM),
-                 27, (depth_mod < 4 ? NUM_SCROLLS : SCR_VULNERABILITY),
-                 17, (depth_mod < 4 ? NUM_SCROLLS : SCR_SUMMONING),
-                 15, (depth_mod < 4 ? NUM_SCROLLS : SCR_ACQUIREMENT),
-                 15, (depth_mod < 4 ? NUM_SCROLLS : SCR_NOISE),
-                 15, (depth_mod < 4 ? NUM_SCROLLS : SCR_SILENCE),
-                 15, (depth_mod < 4 ? NUM_SCROLLS : SCR_TORMENT),
-                 15, (depth_mod < 4 ? NUM_SCROLLS : SCR_HOLY_WORD));
+                 36, SCR_BLESS_ITEM,
+                 27, SCR_VULNERABILITY,
+                 17, SCR_SUMMONING,
+                 15, SCR_ACQUIREMENT,
+                 15, SCR_NOISE,
+                 15, SCR_SILENCE,
+                 15, SCR_TORMENT,
+                 15, SCR_HOLY_WORD);
         }
         while (item.sub_type == NUM_SCROLLS
                || agent == GOD_XOM
