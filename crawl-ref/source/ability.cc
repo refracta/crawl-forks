@@ -412,7 +412,7 @@ static const ability_def Ability_List[] =
     { ABIL_YRED_ENSLAVE_SOUL, "Enslave Soul",
       8, 0, 500, 10, {fail_basis::invo, 80, 4, 25}, abflag::none },
     { ABIL_YRED_DRAIN_LIFE, "Drain Life",
-        9, 0, 800, 20,{ fail_basis::invo, 150, 5, 10 }, abflag::none },
+        9, 0, 800, 20, {fail_basis::invo, 100, 4, 25}, abflag::none },
 
     // Okawaru
     { ABIL_OKAWARU_HEROISM, "Heroism",
