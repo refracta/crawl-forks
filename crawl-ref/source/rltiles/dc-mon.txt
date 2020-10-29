@@ -453,13 +453,6 @@ octopode_ancestor_hexer
 abomination_large MONS_ABOMINATION_LARGE
 abomination_large1
 abomination_large2
-abomination_large3
-abomination_large4
-abomination_large5
-abomination_large6
-abomination_large7
-abomination_large8
-abomination_large9
 tentacled_monstrosity MONS_TENTACLED_MONSTROSITY
 gammafunk MONS_GAMMAFUNK
 %sdir mon/vault

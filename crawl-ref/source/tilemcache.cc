@@ -750,26 +750,6 @@ bool mcache_monster::get_weapon_offset(tileidx_t mon_tile,
         *ofs_x = -1;
         *ofs_y = 1;
         break;
-    case TILEP_MONS_ABOMINATION_LARGE_1:
-        *ofs_x = -2;
-        *ofs_y = -8;
-        break;
-    case TILEP_MONS_ABOMINATION_LARGE_2:
-        *ofs_x = -3;
-        *ofs_y = 0;
-        break;
-    case TILEP_MONS_ABOMINATION_LARGE_3:
-        *ofs_x = -4;
-        *ofs_y = -5;
-        break;
-    case TILEP_MONS_ABOMINATION_LARGE_4:
-        *ofs_x = -3;
-        *ofs_y = -10;
-        break;
-    case TILEP_MONS_ABOMINATION_LARGE_6:
-        *ofs_x = -4;
-        *ofs_y = -11;
-        break;
     case TILEP_MONS_CHAOS_SPAWN:
         *ofs_x = 0;
         *ofs_y = -5;
@@ -1148,31 +1128,6 @@ bool mcache_monster::get_shield_offset(tileidx_t mon_tile,
     case TILEP_MONS_IJYB:
         *ofs_x = 1;
         *ofs_y = 4;
-        break;
-
-    case TILEP_MONS_ABOMINATION_LARGE_1:
-        *ofs_x = 2;
-        *ofs_y = -8;
-        break;
-
-    case TILEP_MONS_ABOMINATION_LARGE_2:
-        *ofs_x = 2;
-        *ofs_y = 0;
-        break;
-
-    case TILEP_MONS_ABOMINATION_LARGE_3:
-        *ofs_x = -2;
-        *ofs_y = -2;
-        break;
-
-    case TILEP_MONS_ABOMINATION_LARGE_4:
-        *ofs_x = 2;
-        *ofs_y = -7;
-        break;
-
-    case TILEP_MONS_ABOMINATION_LARGE_6:
-        *ofs_x = 3;
-        *ofs_y = -10;
         break;
 
     case TILEP_MONS_CHAOS_SPAWN:
