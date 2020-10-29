@@ -136,9 +136,6 @@ const vector<god_power> god_powers[NUM_GODS] =
     // Yredelemnul
     { { 1, ABIL_YRED_ANIMATE_REMAINS, "reanimate corpses into twisted abominations" },
       { 2, ABIL_YRED_RECALL_UNDEAD_SLAVES, "recall your undead slaves" },
-      { 3, "Yredelemnul will now gift you servants as you gain piety.",
-           "Yredelemnul will no longer gift you servants.",
-           "Yredelemnul will gift you servants as you gain piety." },
       { 3, ABIL_YRED_DRAIN_LIFE, "drain ambient life force" },
       { 4, ABIL_YRED_INJURY_MIRROR, "mirror injuries on your foes" },
       { 5, ABIL_YRED_ENSLAVE_SOUL, "enslave living souls" },
@@ -1144,31 +1141,6 @@ static int _preferably_unseen_item(const vector<int> &item_types,
 }
 #endif
 
-static void _delayed_gift_callback(const mgen_data &/*mg*/, monster *&mon,
-                                   int placed)
-{
-    if (placed <= 0)
-        return;
-    ASSERT(mon);
-
-    // Make sure monsters are shown.
-    viewwindow();
-    more();
-    _inc_gift_timeout(4 + random2avg(7, 2));
-    you.num_current_gifts[you.religion]++;
-    you.num_total_gifts[you.religion]++;
-    string gift;
-    if (placed == 1)
-        gift = mon->name(DESC_A);
-    else
-    {
-        gift = make_stringf("%d %s", placed,
-                            pluralise(mon->name(DESC_PLAIN)).c_str());
-    }
-
-    take_note(Note(NOTE_GOD_GIFT, you.religion, 0, gift));
-}
-
 static bool _jiyva_mutate()
 {
     simple_god_message(" alters your body.");
@@ -1468,29 +1440,6 @@ static bool _give_equipment_gift()
         you.num_current_gifts[you.religion]++;
         you.num_total_gifts[you.religion]++;
         take_note(Note(NOTE_GOD_GIFT, you.religion));
-    }
-    return success;
-}
-
-static bool _give_yred_gift(bool forced)
-{
-    bool success = false;
-    if (forced || (random2(you.piety) >= piety_breakpoint(2)
-                   && one_chance_in(4)))
-    {
-        unsigned int threshold = MIN_YRED_SERVANT_THRESHOLD
-                                 + you.num_current_gifts[you.religion] / 2;
-        threshold = max(threshold,
-            static_cast<unsigned int>(MIN_YRED_SERVANT_THRESHOLD));
-        threshold = min(threshold,
-            static_cast<unsigned int>(MAX_YRED_SERVANT_THRESHOLD));
-
-        if (yred_random_servants(threshold) != -1)
-        {
-            delayed_monster_done(" grants you @servant@!",
-                                 _delayed_gift_callback);
-            success = true;
-        }
     }
     return success;
 }
@@ -2173,10 +2122,6 @@ bool do_god_gift(bool forced)
         case GOD_OKAWARU:
         case GOD_TROG:
             success = _give_equipment_gift();
-            break;
-
-        case GOD_YREDELEMNUL:
-            success = _give_yred_gift(forced);
             break;
 
         case GOD_JIYVA:
