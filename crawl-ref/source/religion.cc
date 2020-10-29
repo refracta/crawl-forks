@@ -135,10 +135,10 @@ const vector<god_power> god_powers[NUM_GODS] =
 
     // Yredelemnul
     { { 1, ABIL_YRED_ANIMATE_REMAINS, "reanimate corpses into twisted abominations" },
-      { 2, ABIL_YRED_RECALL_UNDEAD_SLAVES, "recall your undead slaves" },
-      { 3, ABIL_YRED_DRAIN_LIFE, "drain ambient life force" },
-      { 4, ABIL_YRED_INJURY_MIRROR, "mirror injuries on your foes" },
-      { 5, ABIL_YRED_ENSLAVE_SOUL, "enslave living souls" },
+      { 1, ABIL_YRED_RECALL_UNDEAD_SLAVES, "recall your undead slaves" },
+      { 2, ABIL_YRED_INJURY_MIRROR, "mirror injuries on your foes" },
+      { 4, ABIL_YRED_ENSLAVE_SOUL, "enslave living souls" },
+      { 5, ABIL_YRED_DRAIN_LIFE, "drain ambient life force" },
     },
 
     // Xom
