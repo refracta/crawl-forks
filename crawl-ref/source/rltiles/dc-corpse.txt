@@ -315,6 +315,12 @@ troll CORPSE_TROLL
 iron_troll CORPSE_IRON_TROLL
 deep_troll CORPSE_DEEP_TROLL
 
+## Vampires ('V')
+%sdir mon/undead
+vampire CORPSE_VAMPIRE
+%back blood_green blood_green1 blood_green2 blood_green3 blood_green4
+jiangshi CORPSE_JIANGSHI
+
 ## Cephalopods ('x')
 %sdir player
 base/octopode1 CORPSE_OCTOPODE
