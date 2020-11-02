@@ -86,6 +86,7 @@
 #include "tiles-build-specific.h"
 #include "transform.h"
 #include "traps.h"
+#include "unwind.h"
 #include "viewchar.h"
 #include "view.h"
 #include "xom.h"
@@ -3084,6 +3085,11 @@ void bolt::affect_endpoint()
                 mpr("The magic candle falls to the ground, lighting the tile it fell upon for a short while.");
                 const int expiry = you.elapsed_time + 60;
                 env.sunlight.emplace_back(pos(), expiry);
+
+                {
+                    unwind_var<int> no_time(you.time_taken, 0);
+                    process_sunlights(false);
+                }
             }
         }
         break;
