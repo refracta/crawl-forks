@@ -58,6 +58,12 @@ iguana CORPSE_IGUANA
 basilisk CORPSE_BASILISK
 komodo_dragon CORPSE_KOMODO_DRAGON
 
+## Mummies ('M')
+%sdir mon/undead
+%back blood_sand blood_sand1 blood_sand2 blood_sand3 blood_sand4
+mummy CORPSE_MUMMY
+%sdir mon/animals
+
 ## Rodents ('r')
 rat CORPSE_RAT
 quokka CORPSE_QUOKKA
