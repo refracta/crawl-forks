@@ -4989,7 +4989,7 @@ void handle_player_poison(int delay, bool mount)
     }
 
     // Now decrease the poison in our system
-    reduce_player_poison(decrease);
+    reduce_player_poison(decrease, mount);
 }
 
 void reduce_player_poison(int amount, bool mount)

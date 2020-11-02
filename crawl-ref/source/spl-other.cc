@@ -549,16 +549,18 @@ spret gain_mount(mount_type mount, int pow, bool fail)
 
     if (pow == 0)
     {
-        dur = 15 + roll_dice(3, you.skill(SK_INVOCATIONS));
+        dur = 100 + you.skill(SK_INVOCATIONS) * 2 + random2(you.skill(SK_INVOCATIONS));
         mount_hp *= 10 + you.skill(SK_INVOCATIONS);
         mount_hp = div_rand_round(mount_hp, 10);
     }
     else
     {
-        dur = 15 + roll_dice(3, pow / 8);
+        dur = 100 + pow/2 + random2(pow/2);
         mount_hp *= 100 + pow;
         mount_hp = div_rand_round(mount_hp, 100);
     }
+
+    dur *= BASELINE_DELAY;
 
     you.increase_duration(DUR_MOUNTED, dur, 200);
     if (already_mount)
