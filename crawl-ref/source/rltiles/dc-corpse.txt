@@ -13,7 +13,7 @@
 %sdir mon/animals
 
 ## Insects ('a')
-%back blood_green blood_green1 blood_green2 blood_green3 blood_green4
+%back blood_blue blood_blue1 blood_blue2 blood_blue3 blood_blue4
 giant_cockroach CORPSE_GIANT_COCKROACH
 worker_ant CORPSE_WORKER_ANT
 soldier_ant CORPSE_SOLDIER_ANT
@@ -27,7 +27,7 @@ shard_shrike CORPSE_SHARD_SHRIKE
 swooping_magpie CORPSE_SWOOPING_MAGPIE
 
 ## Beetles ('B')
-%back blood_green blood_green1 blood_green2 blood_green3 blood_green4
+%back blood_blue blood_blue1 blood_blue2 blood_blue3 blood_blue4
 boulder_beetle CORPSE_BOULDER_BEETLE
 boring_beetle CORPSE_BORING_BEETLE
 giant_mite CORPSE_GIANT_MITE
@@ -73,7 +73,7 @@ porcupine CORPSE_PORCUPINE
 %sdir mon/animals
 
 ## Spiders and insects ('s')
-%back blood_green blood_green1 blood_green2 blood_green3 blood_green4
+%back blood_blue blood_blue1 blood_blue2 blood_blue3 blood_blue4
 scorpion CORPSE_SCORPION
 emperor_scorpion CORPSE_EMPEROR_SCORPION
 tarantella CORPSE_TARANTELLA
@@ -82,11 +82,11 @@ wolf_spider CORPSE_WOLF_SPIDER
 redback CORPSE_REDBACK
 orb_spider CORPSE_ORB_SPIDER
 %sdir mon/demons
+%back blood_puddle_red blood_puddle_red1 blood_puddle_red2 blood_puddle_red3 blood_puddle_red4
 demonic_crawler CORPSE_DEMONIC_CRAWLER
 
 ## Turtles and crocodiles ('t')
 %sdir mon/animals
-%back blood_puddle_red blood_puddle_red1 blood_puddle_red2 blood_puddle_red3 blood_puddle_red4
 crocodile CORPSE_CROCODILE
 alligator CORPSE_ALLIGATOR
 snapping_turtle CORPSE_SNAPPING_TURTLE
@@ -104,10 +104,11 @@ worm CORPSE_WORM
 ../aquatic/swamp_worm CORPSE_SWAMP_WORM
 ../aquatic/lava_worm CORPSE_LAVA_WORM
 tyrant_leech CORPSE_TYRANT_LEECH
+rock_worm CORPSE_ROCK_WORM
+%back blood_blue blood_blue1 blood_blue2 blood_blue3 blood_blue4
 torpor_snail CORPSE_TORPOR_SNAIL
 elephant_slug CORPSE_ELEPHANT_SLUG
 dart_slug CORPSE_DART_SLUG
-rock_worm CORPSE_ROCK_WORM
 
 ## Flying Insects ('y')
 killer_bee CORPSE_KILLER_BEE
@@ -133,11 +134,12 @@ shark CORPSE_SHARK
 slimehead CORPSE_SLIMEHEAD
 giant_goldfish CORPSE_GIANT_GOLDFISH
 kraken_head CORPSE_KRAKEN /*'x'*/
-%back blood_green blood_green1 blood_green2 blood_green3 blood_green4
+%back blood_blue blood_blue1 blood_blue2 blood_blue3 blood_blue4
 jellyfish CORPSE_JELLYFISH
 
 ## Beetles ('B')
 %sdir mon/undead
+%back blood_green blood_green1 blood_green2 blood_green3 blood_green4
 death_scarab CORPSE_DEATH_SCARAB
 
 ## Frogs ('F')
@@ -231,13 +233,11 @@ killer_klown_purple
 killer_klown_red
 killer_klown_yellow
 mon/demihumanoids/entropy_weaver CORPSE_ENTROPY_WEAVER
-%back blood_green blood_green1 blood_green2 blood_green3 blood_green4
 %sdir mon/amorphous
 shapeshifter CORPSE_SHAPESHIFTER
 glowing_shapeshifter CORPSE_GLOWING_SHAPESHIFTER
 
 ## Dwarves ('q')
-%back blood_puddle_red blood_puddle_red1 blood_puddle_red2 blood_puddle_red3 blood_puddle_red4
 %sdir mon/humanoids
 dwarf CORPSE_DWARF
 deep_dwarf CORPSE_DEEP_DWARF
@@ -329,6 +329,7 @@ jiangshi CORPSE_JIANGSHI
 
 ## Cephalopods ('x')
 %sdir player
+%back blood_blue blood_blue1 blood_blue2 blood_blue3 blood_blue4
 base/octopode1 CORPSE_OCTOPODE
 
 ## Draconians ('d')
