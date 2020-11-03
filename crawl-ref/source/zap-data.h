@@ -1137,7 +1137,7 @@ _mon_hex_zap(ZAP_BANISHMENT, BEAM_BANISH, 150),
 {
     ZAP_AGONY,
     "agony",
-    100,
+    200,
     nullptr,
     new tohit_calculator<0, 5, 1>,
     nullptr,

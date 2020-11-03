@@ -1180,12 +1180,11 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_AGONY, "Agony", "",
-    spschool::necromancy | spschool::hexes,
-    spflag::dir_or_target | spflag::not_self | spflag::needs_tracer
-        | spflag::MR_check,
-    5,
-    200,
-    LOS_RADIUS, LOS_RADIUS,
+    spschool::necromancy,
+    spflag::dir_or_target | spflag::not_self | spflag::needs_tracer,
+    6,
+    180,
+    1, 7,
     4, 0,
     TILEG_AGONY,
 },
@@ -1374,7 +1373,7 @@ static const struct spell_desc spelldata[] =
     spschool::fire,
     spflag::dir_or_target | spflag::not_self | spflag::needs_tracer,
     1,
-    40, // cap for range; damage cap is at 25
+    30, // cap for range; damage cap is at 25
     2, 5,
     1, 0,
     TILEG_FLAME_TONGUE,

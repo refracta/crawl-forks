@@ -110,7 +110,7 @@ void init_spell_descs()
 
         ASSERTM(data.min_range <= data.max_range,
                 "spell '%s' has min_range larger than max_range", data.title);
-
+        
         ASSERTM(!(data.flags & spflag::targeting_mask)
                 || (data.min_range >= 0 && data.max_range > 0),
                 "targeted/directed spell '%s' has invalid range", data.title);
@@ -1111,9 +1111,10 @@ int spell_range(spell_type spell, int pow, bool allow_bonus)
     if (powercap <= pow)
         return min(maxrange, (int)you.current_vision);
 
+    int range = minrange + (maxrange - minrange) * pow / powercap;
+
     // Round appropriately.
-    return min((int)you.current_vision,
-           (pow * (maxrange - minrange) + powercap / 2) / powercap + minrange);
+    return max(1, min((int)you.current_vision, range));
 }
 
 /**
