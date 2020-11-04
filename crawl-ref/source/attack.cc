@@ -1617,22 +1617,34 @@ bool attack::apply_damage_brand(const char *what)
         break;
 
     case SPWPN_ELECTROCUTION:
-        if (defender->res_elec() > 0)
-            break;
-        else
+    {
+        int original = roll_dice(2, 4);
+        special_damage = resist_adjust_damage(defender, BEAM_ELECTRICITY,
+                                                original);
+        if (special_damage)
         {
-            special_damage = roll_dice(2,4);
-            const string punctuation =
+            if (special_damage == 1 && coinflip())
+                special_damage = 0;
+            else
+            {
+                const string punctuation =
                     attack_strength_punctuation(special_damage);
-            special_damage_message =
-                defender->is_player()
-                ? make_stringf("You are electrocuted%s", punctuation.c_str())
-                : make_stringf("Lightning courses through %s%s",
-                               defender->name(DESC_THE).c_str(),
-                               punctuation.c_str());
-            special_damage_flavour = BEAM_ELECTRICITY;
-            defender->expose_to_element(BEAM_ELECTRICITY, 1);
+                special_damage_message =
+                    defender->is_player()
+                    ? make_stringf("You are %s%s", special_damage < original ? "lightly shocked" :
+                                                   special_damage > original ? "electrocuted"
+                                                                             : "shocked", punctuation.c_str())
+                    : make_stringf("Lightning %scourses through %s%s",
+                        special_damage < original ? "weakly " :
+                        special_damage > original ? "violently "
+                        : "",
+                        defender->name(DESC_THE).c_str(),
+                        punctuation.c_str());
+                special_damage_flavour = BEAM_ELECTRICITY;
+                defender->expose_to_element(BEAM_ELECTRICITY, 1);
+            }
         }
+    }
         break;
 
     case SPWPN_SILVER:
