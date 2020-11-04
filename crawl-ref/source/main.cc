@@ -2362,12 +2362,6 @@ static void _swing_at_target(coord_def move)
         return;
     }
 
-    if (you.drowning())
-    {
-        mpr("You can't attack, while struggling to swim!");
-        return;
-    }
-
     if (you.confused())
     {
         if (!you.is_stationary())

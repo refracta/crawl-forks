@@ -1261,6 +1261,9 @@ int attack::player_apply_fighting_skill(int damage, bool aux)
 
 int attack::player_apply_misc_modifiers(int damage)
 {
+    if (you.submerged() && !you.can_swim())
+        damage = div_rand_round(2 * damage, 3);
+
     return damage;
 }
 
@@ -1418,6 +1421,21 @@ int attack::calc_damage()
     }
 
     return 0;
+}
+
+// Only include universal monster modifiers here; melee and ranged go in their own classes.
+int attack::apply_damage_modifiers(int damage)
+{
+    ASSERT(attacker->is_monster());
+    monster *as_mon = attacker->as_monster();
+
+    if (as_mon->submerged() && !as_mon->swimming())
+        damage = div_rand_round(2 * damage, 3);
+
+    if (damage_brand == SPWPN_MOLTEN)
+        damage = div_rand_round(damage * 3, 5);
+
+    return damage;
 }
 
 int attack::test_hit(int to_land, int ev, bool randomise_ev)

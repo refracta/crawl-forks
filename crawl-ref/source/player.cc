@@ -131,6 +131,9 @@ bool check_moveto_cloud(const coord_def& p, const string &move_verb,
     if (you.confused())
         return true;
 
+    if (you.can_submerge_in(p))
+        return true;
+
     const cloud_type ctype = env.map_knowledge(p).cloud();
     // Don't prompt if already in a cloud of the same type.
     if (is_damaging_cloud(ctype, true, cloud_is_yours_at(p))
@@ -1559,6 +1562,9 @@ int player_res_fire(bool calc_unid, bool temp, bool items)
         if (you.duration[DUR_QAZLAL_FIRE_RES])
             rf++;
 
+        if (you.submerged())
+            rf++;
+
         rf += get_form()->res_fire();
     }
 
@@ -1605,6 +1611,9 @@ int player_res_cold(bool calc_unid, bool temp, bool items)
             rc -= 2;
 
         if (you.duration[DUR_QAZLAL_COLD_RES])
+            rc++;
+
+        if (you.submerged())
             rc++;
 
         if (you.duration[DUR_COLD_VULN])
@@ -1786,6 +1795,9 @@ int player_res_electricity(bool calc_unid, bool temp, bool items)
             re++;
 
         if (you.duration[DUR_ELEC_VULN])
+            re--;
+
+        if (you.submerged())
             re--;
     }
 
@@ -6806,6 +6818,9 @@ int player::armour_class(bool /*calc_unid*/) const
     if (duration[DUR_CORROSION])
         AC -= 400 * you.props["corrosion_amount"].get_int();
 
+    if (submerged())
+        AC += 400;
+
     AC += sanguine_armour_bonus();
 
     if (duration[DUR_PHYS_VULN])
@@ -6866,7 +6881,15 @@ int player::gdr_perc() const
  */
 int player::evasion(ev_ignore_type evit, const actor* act) const
 {
-    const int base_evasion = _player_evasion(evit);
+    int base_evasion = _player_evasion(evit);
+
+    if (submerged())
+    {
+        if (you.can_swim())
+            base_evasion *= 1.5;
+        else
+            base_evasion /= 2;
+    }
 
     const int constrict_penalty = is_constricted() ? 3 : 0;
 

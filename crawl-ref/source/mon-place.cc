@@ -203,15 +203,6 @@ bool monster_habitable_grid(monster_type mt,
     return false;
 }
 
-// Returns true if the monster can submerge in the given grid.
-// BCADDO: Restore this or delete it as part of new submersion. kthx.
-bool monster_can_submerge(const monster* mon, dungeon_feature_type feat)
-{
-    UNUSED(mon);
-    UNUSED(feat);
-    return false;
-}
-
 static void _apply_ood(level_id &place)
 {
     // OODs do not apply to any portal vaults, any 1-level branches, Zot and

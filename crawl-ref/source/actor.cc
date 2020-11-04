@@ -898,6 +898,31 @@ void actor::handle_constriction()
     clear_invalid_constrictions();
 }
 
+bool actor::submerged() const
+{
+    return can_submerge_in(pos());
+}
+
+bool actor::can_submerge_in(const coord_def &c) const
+{
+    if (body_size(PSIZE_BODY) >= SIZE_GIANT)
+        return false;
+    if (airborne())
+        return false;
+
+    const dungeon_feature_type grid = grd(c);
+
+    if (feat_is_watery(grid))
+    {
+        if (grid == DNGN_DEEP_SLIMY_WATER || grid == DNGN_DEEP_WATER)
+            return true;
+        else
+            return (swimming() && body_size(PSIZE_BODY) <= SIZE_LITTLE);
+    }
+
+    return false;
+}
+
 string actor::describe_props() const
 {
     ostringstream oss;

@@ -1363,6 +1363,9 @@ static int _actor_cloud_damage(const actor *act,
 // the damage dealt.
 int actor_apply_cloud(actor *act)
 {
+    if (act->submerged())
+        return 0;
+
     const cloud_struct* cl = cloud_at(act->pos());
     if (!cl)
         return 0;
@@ -1599,6 +1602,9 @@ static bool _mons_avoids_cloud(const monster* mons, const cloud_struct& cloud,
 bool mons_avoids_cloud(const monster* mons, coord_def pos, bool placement)
 {
     if (!cloud_at(pos))
+        return false;
+
+    if (mons->can_submerge_in(pos))
         return false;
 
     // Is the target cloud okay?

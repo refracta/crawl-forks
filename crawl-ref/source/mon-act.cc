@@ -76,7 +76,6 @@
 #include "view.h"
 
 static bool _handle_pickup(monster* mons);
-static void _mons_in_cloud(monster& mons);
 static bool _monster_move(monster* mons);
 
 // [dshaligram] Doesn't need to be extern.
@@ -1779,7 +1778,7 @@ static void _pre_monster_move(monster& mons)
     // Handle clouds on nonmoving monsters.
     if (mons.speed == 0)
     {
-        _mons_in_cloud(mons);
+        actor_apply_cloud(&mons);
 
         // Update constriction durations
         mons.accum_has_constricted();
@@ -1966,7 +1965,7 @@ void handle_monster_move(monster* mons)
 
     mons->shield_blocks = 0;
 
-    _mons_in_cloud(*mons);
+    actor_apply_cloud(mons);
     actor_apply_toxic_bog(mons);
 
     if (!mons->alive())
@@ -3806,6 +3805,7 @@ static bool _monster_move(monster* mons)
     const habitat_type habitat = mons_primary_habitat(*mons);
     bool deep_water_available = false;
     bool solid_available = false;
+    bool land_available = false;
 
     // Berserking monsters make a lot of racket.
     if (mons->berserk_or_insane())
@@ -3900,6 +3900,12 @@ static bool _monster_move(monster* mons)
             if (feat_is_solid(target_grid))
                 solid_available = true;
 
+            if (feat_has_dry_floor(target_grid))
+                land_available = true;
+
+            if (mons->body_size(PSIZE_BODY) >= SIZE_MEDIUM && feat_has_solid_floor(target_grid))
+                land_available = true;
+
             good_move[count_x][count_y] =
                 mon_can_move_to_pos(mons, coord_def(count_x-1, count_y-1));
         }
@@ -3926,6 +3932,26 @@ static bool _monster_move(monster* mons)
                 if (good_move[cx][cy]
                     && grd[mons->pos().x + cx - 1][mons->pos().y + cy - 1]
                             == DNGN_DEEP_WATER)
+                {
+                    if (one_chance_in(++count))
+                    {
+                        mmov.x = cx - 1;
+                        mmov.y = cy - 1;
+                    }
+                }
+            }
+    }
+
+    // Duplicating this again! hah
+    if (mons->submerged() && !mons->swimming() && land_available && newpos != you.pos())
+    {
+        int count = 0;
+
+        for (int cx = 0; cx < 3; cx++)
+            for (int cy = 0; cy < 3; cy++)
+            {
+                if (good_move[cx][cy]
+                    && feat_has_solid_floor(grd[mons->pos().x + cx - 1][mons->pos().y + cy - 1]))
                 {
                     if (one_chance_in(++count))
                     {
@@ -4158,11 +4184,3 @@ static bool _monster_move(monster* mons)
     return ret;
 }
 
-static void _mons_in_cloud(monster& mons)
-{
-    // Submerging in water or lava saves from clouds.
-    if (mons.submerged())
-        return;
-
-    actor_apply_cloud(&mons);
-}

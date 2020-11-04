@@ -610,7 +610,6 @@ public:
     bool      is_perm_summoned() const override { return false; };
 
     bool        swimming() const override;
-    bool        submerged() const override;
     bool        floundering() const override;
     bool        extra_balanced() const override;
     bool        shove(const char* feat_name = "") override;

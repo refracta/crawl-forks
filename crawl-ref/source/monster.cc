@@ -250,19 +250,16 @@ mon_attitude_type monster::temp_attitude() const
 
 bool monster::swimming() const
 {
-    const dungeon_feature_type grid = grd(pos());
-    return feat_is_watery(grid) && mons_primary_habitat(*this) == HT_WATER;
-}
+    if (airborne())
+        return false;
 
-bool monster::submerged() const
-{
-    return false;
+    const dungeon_feature_type grid = grd(pos());
+    return feat_is_watery(grid) && mons_secondary_habitat(*this) == HT_WATER;
 }
 
 bool monster::extra_balanced_at(const coord_def p) const
 {
-    const dungeon_feature_type grid = grd(p);
-    return grid == DNGN_SHALLOW_WATER
+    return grd(p) == DNGN_SHALLOW_WATER
                 && (mons_genus(type) == MONS_NAGA // tails, not feet
                     || mons_genus(type) == MONS_SALAMANDER
                     || body_size(PSIZE_BODY) >= SIZE_LARGE);
@@ -3336,6 +3333,9 @@ int monster::armour_class(bool calc_unid) const
     if (has_ench(ENCH_IDEALISED))
         ac += 4 + get_hit_dice() / 3;
 
+    if (submerged())
+        ac += 4;
+
     // Penalty due to bad temp mutations.
     if (has_ench(ENCH_WRETCHED))
         ac -= 8;
@@ -3470,6 +3470,16 @@ int monster::evasion(ev_ignore_type evit, const actor* /*act*/) const
 
     if (evit & ev_ignore::helpless)
         return max(ev, 0);
+
+    if (submerged())
+    {
+        // Assumptions: Can only submerge in deep water/slime.
+        // All amphibious monsters have Water listed as their secondary habitat.
+        if (mons_secondary_habitat(*this) != HT_WATER)
+            ev /= 2;
+        else
+            ev = ev * 1.5;
+    }
 
     if (paralysed() || petrified() || petrifying() || asleep())
         return 0;
@@ -3836,6 +3846,9 @@ int monster::res_fire() const
     if (has_ench(ENCH_FIRE_VULN))
         u--;
 
+    if (submerged())
+        u++;
+
     if (has_ench(ENCH_RESISTANCE))
         u++;
 
@@ -3896,6 +3909,9 @@ int monster::res_cold() const
     if (has_ench(ENCH_RESISTANCE))
         u++;
 
+    if (submerged())
+        u++;
+
     if (u < -3)
         u = -3;
     else if (u > 3)
@@ -3934,6 +3950,9 @@ int monster::res_elec() const
     }
 
     if (has_ench(ENCH_ELEC_VULN))
+        u--;
+
+    if (submerged())
         u--;
 
     if (has_ench(ENCH_RESISTANCE))

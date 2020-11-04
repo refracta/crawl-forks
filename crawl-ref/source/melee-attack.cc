@@ -4405,9 +4405,6 @@ int melee_attack::apply_damage_modifiers(int damage)
     if (as_mon->has_ench(ENCH_WEAK))
         damage = damage * 2 / 3;
 
-    if (damage_brand == SPWPN_MOLTEN)
-        damage = div_rand_round(damage * 3, 5);
-
     // If the defender is asleep, the attacker gets a stab.
     if (defender && (defender->asleep()
                      || (attk_flavour == AF_SHADOWSTAB
@@ -4422,7 +4419,7 @@ int melee_attack::apply_damage_modifiers(int damage)
     if (cleaving)
         damage = cleave_damage_mod(damage);
 
-    return damage;
+    return attack::apply_damage_modifiers(damage);
 }
 
 int melee_attack::calc_damage()

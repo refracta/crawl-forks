@@ -114,7 +114,7 @@ static bool _reaching_weapon_attack(const item_def& wpn)
 
     if (you.drowning())
     {
-        mpr("You can't attack while struggling to swim!");
+        mpr("You can't reach while struggling to swim!");
         return false;
     }
 

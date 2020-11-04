@@ -543,10 +543,7 @@ int ranged_attack::apply_damage_modifiers(int damage)
         damage += random2avg(bonus, 2);
     }
 
-    if (damage_brand == SPWPN_MOLTEN)
-        damage = div_rand_round(damage * 3, 5);
-
-    return damage;
+    return attack::apply_damage_modifiers(damage);
 }
 
 int ranged_attack::player_apply_misc_modifiers(int damage)

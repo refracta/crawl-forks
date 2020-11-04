@@ -676,14 +676,6 @@ void move_player_action(coord_def move)
                 return;
             }
 
-            if (you.drowning())
-            {
-                mpr("You can't attack, while struggling to swim!");
-                stop_running();
-                you.turn_is_over = false;
-                return;
-            }
-
             you.turn_is_over = true;
             fight_melee(&you, targ_monst);
 

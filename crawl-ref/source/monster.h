@@ -262,7 +262,6 @@ public:
     bool     swimming() const override;
     bool     wants_submerge() const;
 
-    bool     submerged() const override;
     bool     can_drown() const;
     bool     floundering_at(const coord_def p) const;
     bool     floundering() const override;
