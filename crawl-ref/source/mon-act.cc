@@ -75,8 +75,11 @@
 #include "viewchar.h"
 #include "view.h"
 
+typedef FixedArray< bool, 3, 3 > move_array;
+
 static bool _handle_pickup(monster* mons);
 static bool _monster_move(monster* mons);
+static bool _can_move(monster* mons, move_array * moves, bool * preferred_available);
 
 // [dshaligram] Doesn't need to be extern.
 static coord_def mmov;
@@ -475,8 +478,6 @@ static void _set_mons_move_dir(const monster* mons,
         *dir *= -1;
     }
 }
-
-typedef FixedArray< bool, 3, 3 > move_array;
 
 static void _fill_good_move(const monster* mons, move_array* good_move)
 {
@@ -941,6 +942,7 @@ static bool _handle_reaching(monster* mons)
         || range <= REACH_NONE
         || is_sanctuary(mons->pos())
         || is_sanctuary(foe->pos())
+        || (mons->submerged() && !mons->swimming())
         || (mons_aligned(mons, foe) && !mons->has_ench(ENCH_INSANE))
         || (mons_is_fleeing(*mons)
         || mons->pacified()))
@@ -1358,7 +1360,8 @@ bool handle_throw(monster* mons, bolt & beem, spell_type call_spell, bool check_
     // Yes, there is a logic to this ordering {dlb}:
     if (mons->incapacitated()
         || mons->caught()
-        || mons_is_confused(*mons))
+        || mons_is_confused(*mons)
+        || (mons->submerged() && !mons->swimming()))
     {
         return false;
     }
@@ -2186,7 +2189,22 @@ void handle_monster_move(monster* mons)
 
     if (!mons->caught())
     {
-        if (mons->pos() + mmov == you.pos())
+        bool preferred_available = false;
+        bool want_move = false;
+        move_array unused;
+
+        if (!mons->is_stationary() && _can_move(mons, &unused, &preferred_available))
+        {
+            // If a monster can move and the move would pull it out of danger it prefers this to attacking.
+            // Wants to stop drowning.
+            want_move = (mons->submerged() && !mons->swimming());
+            // Wants to get into a wall.
+            want_move |= ((mons_primary_habitat(*mons) == HT_ROCK || mons_primary_habitat(*mons) == HT_STEEL) && !feat_is_solid(grd(mons->pos())) && preferred_available);
+            // Wants to get out of the cloud.
+            want_move |= (mons_avoids_cloud(mons, mons->pos()) && preferred_available);
+        }
+
+        if (mons->pos() + mmov == you.pos() && !want_move)
         {
             ASSERT(!crawl_state.game_is_arena());
 
@@ -2205,7 +2223,7 @@ void handle_monster_move(monster* mons)
                     if (does_ru_wanna_redirect(mons))
                     {
                         ru_interference interference =
-                                get_ru_attack_interference_level();
+                            get_ru_attack_interference_level();
                         if (interference == DO_BLOCK_ATTACK)
                         {
                             simple_monster_message(*mons,
@@ -2242,7 +2260,7 @@ void handle_monster_move(monster* mons)
                     mons->target = new_target->pos();
                     mons->foe = new_target->mindex();
                     mprf(MSGCH_GOD, "You redirect %s's attack!",
-                         mons->name(DESC_THE).c_str());
+                        mons->name(DESC_THE).c_str());
                     fight_melee(mons, new_target);
                 }
                 else
@@ -2267,7 +2285,7 @@ void handle_monster_move(monster* mons)
         if (targ && mons_tentacle_adjacent(mons, targ))
         {
             const bool basis = targ->props.exists("outwards");
-            monster* outward =  basis ? monster_by_mid(targ->props["outwards"].get_int()) : nullptr;
+            monster* outward = basis ? monster_by_mid(targ->props["outwards"].get_int()) : nullptr;
             if (outward)
                 outward->props["inwards"].get_int() = mons->mid;
 
@@ -2278,7 +2296,7 @@ void handle_monster_move(monster* mons)
         if (targ
             && targ != mons
             && mons->behaviour != BEH_WITHDRAW
-            && (!(mons_aligned(mons, targ) || targ->type == MONS_FOXFIRE 
+            && (!(mons_aligned(mons, targ) || targ->type == MONS_FOXFIRE
                 || targ->type == MONS_EPHEMERAL_SPIRIT)
                 || mons->has_ench(ENCH_INSANE))
             && monster_can_hit_monster(mons, targ))
@@ -2291,8 +2309,9 @@ void handle_monster_move(monster* mons)
             }
             // Figure out if they fight.
             else if ((!mons_is_firewood(*targ)
-                      || mons->is_child_tentacle())
-                          && fight_melee(mons, targ))
+                || mons->is_child_tentacle())
+                && !want_move
+                && fight_melee(mons, targ))
             {
                 if (mons_is_batty(*mons))
                 {
@@ -2307,8 +2326,8 @@ void handle_monster_move(monster* mons)
             }
         }
         else if (mons->behaviour == BEH_WITHDRAW
-                 && ((targ && targ != mons && targ->friendly())
-                      || (you.pos() == mons->pos() + mmov)))
+            && ((targ && targ != mons && targ->friendly())
+                || (you.pos() == mons->pos() + mmov)))
         {
             // Don't count turns spent blocked by friendly creatures
             // (or the player) as an indication that we're stuck
@@ -3797,15 +3816,82 @@ static bool _do_move_monster(monster& mons, const coord_def& delta)
     return true;
 }
 
+static void _preferential_move(move_array good_move, monster* mons, function<bool(monster* m, coord_def c)> logic)
+{
+    int count = 0;
+
+    for (int cx = 0; cx < 3; cx++)
+        for (int cy = 0; cy < 3; cy++)
+        {
+            if (good_move[cx][cy] && logic(mons, coord_def(cx, cy)))
+            {
+                if (one_chance_in(++count))
+                {
+                    mmov.x = cx - 1;
+                    mmov.y = cy - 1;
+                }
+            }
+        }
+}
+
+static bool _can_move(monster* mons, move_array * moves, bool * preferred_available)
+{
+    *preferred_available = false;
+    bool retval = false;
+
+    for (int count_x = 0; count_x < 3; count_x++)
+        for (int count_y = 0; count_y < 3; count_y++)
+        {
+            const int targ_x = mons->pos().x + count_x - 1;
+            const int targ_y = mons->pos().y + count_y - 1;
+
+            // Bounds check: don't consider moving out of grid!
+            if (!in_bounds(targ_x, targ_y))
+            {
+                (*moves)[count_x][count_y] = false;
+                continue;
+            }
+
+            if (mon_can_move_to_pos(mons, coord_def(count_x - 1, count_y - 1)))
+            {
+                const dungeon_feature_type target_grid = grd[targ_x][targ_y];
+                const habitat_type habitat = mons_primary_habitat(*mons);
+
+                retval = true;
+                (*moves)[count_x][count_y] = true;
+
+                if ((target_grid == DNGN_DEEP_WATER) && (habitat == HT_WATER))
+                    *preferred_available = true;
+
+                if (feat_is_solid(target_grid) && (habitat == HT_ROCK || habitat == HT_STEEL))
+                    *preferred_available = true;
+
+                if (mons->submerged() && !mons->swimming())
+                {
+                    if (feat_has_dry_floor(target_grid))
+                        *preferred_available = true;
+
+                    if (mons->body_size(PSIZE_BODY) >= SIZE_MEDIUM && feat_has_solid_floor(target_grid))
+                        *preferred_available = true;
+                }
+
+                if (mons_avoids_cloud(mons, mons->pos()) && !mons_avoids_cloud(mons, coord_def(targ_x, targ_y)))
+                    *preferred_available = true;
+            }
+            else
+                (*moves)[count_x][count_y] = false;
+        }
+
+    return retval;
+}
+
 static bool _monster_move(monster* mons)
 {
     ASSERT(mons); // XXX: change to monster &mons
     move_array good_move;
 
     const habitat_type habitat = mons_primary_habitat(*mons);
-    bool deep_water_available = false;
-    bool solid_available = false;
-    bool land_available = false;
+    bool preferred_available = false;
 
     // Berserking monsters make a lot of racket.
     if (mons->berserk_or_insane())
@@ -3880,35 +3966,8 @@ static bool _monster_move(monster* mons)
     if (mmov.origin())
         return false;
 
-    for (int count_x = 0; count_x < 3; count_x++)
-        for (int count_y = 0; count_y < 3; count_y++)
-        {
-            const int targ_x = mons->pos().x + count_x - 1;
-            const int targ_y = mons->pos().y + count_y - 1;
-
-            // Bounds check: don't consider moving out of grid!
-            if (!in_bounds(targ_x, targ_y))
-            {
-                good_move[count_x][count_y] = false;
-                continue;
-            }
-            dungeon_feature_type target_grid = grd[targ_x][targ_y];
-
-            if (target_grid == DNGN_DEEP_WATER)
-                deep_water_available = true;
-
-            if (feat_is_solid(target_grid))
-                solid_available = true;
-
-            if (feat_has_dry_floor(target_grid))
-                land_available = true;
-
-            if (mons->body_size(PSIZE_BODY) >= SIZE_MEDIUM && feat_has_solid_floor(target_grid))
-                land_available = true;
-
-            good_move[count_x][count_y] =
-                mon_can_move_to_pos(mons, coord_def(count_x-1, count_y-1));
-        }
+    if (!_can_move(mons, &good_move, &preferred_available))
+        return false;
 
     // Now we know where we _can_ move.
 
@@ -3917,72 +3976,49 @@ static bool _monster_move(monster* mons)
     // [ds] Weakened the powerful attraction to deep water if the monster
     // is in good health.
     if (habitat == HT_WATER
-        && deep_water_available
+        && preferred_available
         && grd(mons->pos()) != DNGN_DEEP_WATER
         && grd(newpos) != DNGN_DEEP_WATER
         && newpos != you.pos()
         && (one_chance_in(3)
             || mons->hit_points <= (mons->max_hit_points * 3) / 4))
     {
-        int count = 0;
-
-        for (int cx = 0; cx < 3; cx++)
-            for (int cy = 0; cy < 3; cy++)
-            {
-                if (good_move[cx][cy]
-                    && grd[mons->pos().x + cx - 1][mons->pos().y + cy - 1]
-                            == DNGN_DEEP_WATER)
-                {
-                    if (one_chance_in(++count))
-                    {
-                        mmov.x = cx - 1;
-                        mmov.y = cy - 1;
-                    }
-                }
-            }
+        _preferential_move(good_move, mons,
+            [](monster * m, coord_def c) 
+        { return grd[m->pos().x + c.x - 1][m->pos().y + c.y - 1] == DNGN_DEEP_WATER; });
     }
 
-    // Duplicating this again! hah
-    if (mons->submerged() && !mons->swimming() && land_available && newpos != you.pos())
+    // Submerged non-aquatic monsters prefer to get out of water (even over attacking)
+    else if (mons->submerged() && !mons->swimming() && preferred_available)
     {
-        int count = 0;
-
-        for (int cx = 0; cx < 3; cx++)
-            for (int cy = 0; cy < 3; cy++)
-            {
-                if (good_move[cx][cy]
-                    && feat_has_solid_floor(grd[mons->pos().x + cx - 1][mons->pos().y + cy - 1]))
-                {
-                    if (one_chance_in(++count))
-                    {
-                        mmov.x = cx - 1;
-                        mmov.y = cy - 1;
-                    }
-                }
-            }
+        _preferential_move(good_move, mons,
+            [](monster * m, coord_def c)
+        { return feat_has_solid_floor(grd[m->pos().x + c.x - 1][m->pos().y + c.y - 1]) 
+             && !actor_at(coord_def(m->pos().x + c.x - 1,m->pos().y + c.y - 1))
+             && (grid_distance(m->target, coord_def(m->pos().x + c.x - 1, m->pos().y + c.y - 1)) <=
+                 grid_distance(m->target, m->pos())); });
     }
 
-    // Yay for duplicated logic!
-    if ((habitat == HT_ROCK || habitat == HT_STEEL)
-        && solid_available
-        && !feat_is_solid(grd(mons->pos()))
-        && !feat_is_solid(grd(newpos))
-        && newpos != you.pos())
+    // Monsters that can go through walls prefer to do so.
+    else if ((habitat == HT_ROCK || habitat == HT_STEEL)
+        && preferred_available
+        && !feat_is_solid(grd(newpos)))
     {
-        for (int cx = 0; cx < 3; cx++)
-            for (int cy = 0; cy < 3; cy++)
-            {
-                if (good_move[cx][cy]
-                    && feat_is_solid(grd[mons->pos().x + cx - 1][mons->pos().y + cy - 1])
-                    && (grid_distance(mons->target, coord_def(mons->pos().x + cx - 1,mons->pos().y + cy - 1)) <
-                        grid_distance(mons->target, mons->pos())))
-                {
-                    mmov.x = cx - 1;
-                    mmov.y = cy - 1;
-                }
-            }
+        _preferential_move(good_move, mons,
+            [](monster * m, coord_def c)
+        { return grid_distance(m->target, coord_def(m->pos().x + c.x - 1, m->pos().y + c.y - 1)) <=
+            grid_distance(m->target, m->pos()); });
     }
 
+    // Monsters in damaging clouds prefer to leave the cloud
+    else if (mons_avoids_cloud(mons, mons->pos()) && mons_avoids_cloud(mons, newpos) && preferred_available)
+    {
+        _preferential_move(good_move, mons,
+            [](monster * m, coord_def c)
+        { return !mons_avoids_cloud(m, coord_def(m->pos().x + c.x - 1, m->pos().y + c.y - 1))
+            && (grid_distance(m->target, coord_def(m->pos().x + c.x - 1, m->pos().y + c.y - 1)) <=
+                grid_distance(m->target, m->pos())); });
+    }
 
     // Now, if a monster can't move in its intended direction, try
     // either side. If they're both good, move in whichever dir
