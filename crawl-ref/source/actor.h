@@ -81,7 +81,7 @@ public:
 
     virtual bool      swimming() const = 0;
     bool submerged() const;
-    bool can_submerge_in(const coord_def &c) const;
+    virtual bool      can_submerge_in(const coord_def &c) const;
     virtual bool      floundering() const = 0;
 
     // Returns true if the actor is exceptionally well balanced.

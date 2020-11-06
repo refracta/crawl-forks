@@ -257,6 +257,14 @@ bool monster::swimming() const
     return feat_is_watery(grid) && mons_secondary_habitat(*this) == HT_WATER;
 }
 
+bool monster::can_submerge_in(const coord_def &c) const
+{
+    if (invalid_monster(this) || !alive())
+        return false;
+
+    return actor::can_submerge_in(c);
+}
+
 bool monster::extra_balanced_at(const coord_def p) const
 {
     return grd(p) == DNGN_SHALLOW_WATER
