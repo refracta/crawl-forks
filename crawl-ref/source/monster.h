@@ -260,7 +260,6 @@ public:
     bool     alive() const override;
     bool     defined() const { return alive(); }
     bool     swimming() const override;
-    bool     wants_submerge() const;
     bool     can_submerge_in(const coord_def &c) const override;
 
     bool     can_drown() const;
