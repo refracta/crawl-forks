@@ -3646,7 +3646,8 @@ tileidx_t tileidx_ability(const ability_type ability)
     // Others
     case ABIL_END_UPRISING:
         return TILEG_ABILITY_END_UPRISING;
-    case ABIL_END_TRANSFORMATION:
+    case ABIL_END_TRANSFORMATION: // intentional fallthrough.
+    case ABIL_DISMOUNT: 
         return TILEG_ABILITY_END_TRANSFORMATION;
     case ABIL_STOP_RECALL:
         return TILEG_ABILITY_STOP_RECALL;

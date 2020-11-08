@@ -367,6 +367,8 @@ static const ability_def Ability_List[] =
       0, 0, 0, 0, {}, abflag::starve_ok },
     { ABIL_END_UPRISING, "End Uprising",
         0, 0, 0, 0,{}, abflag::starve_ok },
+    { ABIL_DISMOUNT, "Dismount",
+        0, 0, 0, 0,{}, abflag::starve_ok },
 
 
     // INVOCATIONS:
@@ -1031,8 +1033,6 @@ ability_type fixup_ability(ability_type ability)
         return ability;
 
     case ABIL_CHOOSE_BAHAMUT_DRAKE:
-        // BCADDO: Reenable when you feel comfortable
-        return ABIL_NON_ABILITY;
     case ABIL_CHOOSE_TIAMAT_DRAKE:
         if (you.props.exists(BAHAMUT_TIAMAT_CHOICE2_KEY))
             return ABIL_NON_ABILITY;
@@ -2625,6 +2625,12 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         you.attribute[ATTR_SKELETON] = 0;
         break;
 
+    case ABIL_DISMOUNT:
+        fail_check();
+        mprf(MSGCH_DURATION, "You dismiss your mount.");
+        dismount();
+        break;
+
     // INVOCATIONS:
     case ABIL_ZIN_RECITE:
     {
@@ -3920,6 +3926,9 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
 
     if (you.attribute[ATTR_SKELETON])
         _add_talent(talents, ABIL_END_UPRISING, check_confused);
+
+    if (you.mounted())
+        _add_talent(talents, ABIL_DISMOUNT, check_confused);
 
     if (you.get_mutation_level(MUT_BLINK))
         _add_talent(talents, ABIL_BLINK, check_confused);
