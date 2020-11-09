@@ -3898,12 +3898,11 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
         _add_talent(talents, ABIL_TRAN_BAT, check_confused);
     }
 
-    if (you.racial_permanent_flight() && !you.attribute[ATTR_PERM_FLIGHT])
+    if (you.racial_permanent_flight() && !you.attribute[ATTR_PERM_FLIGHT] && !you.mounted())
     {
         // Tengu can fly starting at XL 5
-        // Black draconians and gargoyles get permaflight at XL 14, but they
+        // Draconians and gargoyles get permaflight at XL 14, but they
         // don't get the tengu movement/evasion bonuses
-        // Other dracs can mutate big wings whenever as well.
         _add_talent(talents, ABIL_FLY, check_confused);
     }
 

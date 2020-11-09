@@ -601,6 +601,7 @@ spret gain_mount(mount_type mount, int pow, bool fail)
         you.mount = mount;
         you.mount_hp = you.mount_hp_max = mount_hp;
     }
+    land_player();
     redraw_screen();
     return spret::success;
 }

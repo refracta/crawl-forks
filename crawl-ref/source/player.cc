@@ -6054,6 +6054,13 @@ bool player::airborne() const
         || you.petrified())
         return false;
 
+    if (you.mounted())
+    {
+        if (you.mount == mount_type::drake)
+            return true;
+        return false;
+    }
+
     if (duration[DUR_FLIGHT]
         || attribute[ATTR_PERM_FLIGHT]
         || get_form()->enables_flight())
