@@ -200,7 +200,21 @@ int player::damage_type(int)
 brand_type player::damage_brand(int which_attack)
 {
     equipment_type slot; 
-    
+
+    if (you.mounted() && which_attack >= 2)
+    {
+        switch (you.mount)
+        {
+        default:
+        case mount_type::hydra:
+            return SPWPN_NORMAL;
+        case mount_type::drake:
+            return SPWPN_FREEZING;
+        case mount_type::spider:
+            return SPWPN_VENOM;
+        }
+    }
+
     if (which_attack == 0)
         slot = EQ_WEAPON0;
     if (which_attack == 1)

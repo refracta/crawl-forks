@@ -176,6 +176,8 @@ public:
     int mount_hp_max;
     int mount_hp;
     int mount_hp_regen;
+    int mount_energy;
+    int mount_heads; // for hydra mount
 
     FixedVector< item_def, ENDOFPACK > inv;
     FixedBitVector<NUM_RUNE_TYPES> runes;
@@ -921,6 +923,7 @@ public:
 
     bool is_dragonkind() const override;
     bool mounted() const override;
+    string mount_name(bool terse = false) const;
 
 protected:
     void _removed_beholder(bool quiet = false);

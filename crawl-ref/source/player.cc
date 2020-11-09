@@ -7409,6 +7409,7 @@ bool player::nightvision() const
     return have_passive(passive_t::nightvision);
 }
 
+// BCADNOTE: This is wrong, what's it used for?
 reach_type player::reach_range() const
 {
     const item_def *wpn = weapon();
@@ -9259,6 +9260,27 @@ bool player::mounted() const
     if (you.duration[DUR_MOUNTED] && you.mount != mount_type::none)
         return true;
     return false;
+}
+
+string player::mount_name(bool terse) const
+{
+    ASSERT(you.mounted());
+
+    switch (you.mount)
+    {
+    case mount_type::hydra:
+        return terse ? "Your hydra" 
+                     : make_stringf("Your %s-headed hydra", number_in_words(you.mount_heads).c_str());
+
+    case mount_type::drake:
+        return "Your rime drake";
+
+    case mount_type::spider:
+        return "Your jumping spider";
+
+    default:
+        return "Your buggy mount";
+    }
 }
 
 void damage_mount(int amount)

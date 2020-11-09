@@ -49,7 +49,6 @@ public:
     // For enemies:
     // Attack Number - Which of the 4 mon_spec attacks run.
     // Effective Attack Number - used as a counter of how many times its hit this turn for some purposes.
-    int       attack_number;
     int       effective_attack_number;
 
     list<actor*> cleave_targets;

@@ -1410,6 +1410,8 @@ static void tag_construct_you(writer &th)
     marshallInt(th, you.mount_hp_max);
     marshallInt(th, you.mount_hp);
     marshallInt(th, you.mount_hp_regen);
+    marshallInt(th, you.mount_energy);
+    marshallInt(th, you.mount_heads);
     CANARY;
 
     // how many you.equip?
@@ -2442,6 +2444,11 @@ static void tag_read_you(reader &th)
     }
     if (th.getMinorVersion() >= TAG_MINOR_MOUNT_REGEN)
         you.mount_hp_regen  = unmarshallInt(th);
+    if (th.getMinorVersion() >= TAG_MINOR_MOUNT_ENERGY)
+    {
+        you.mount_energy    = unmarshallInt(th);
+        you.mount_heads     = unmarshallInt(th);
+    }
 #endif
     EAT_CANARY;
 

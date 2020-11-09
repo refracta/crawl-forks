@@ -56,6 +56,8 @@ public:
     attack_flavour  attk_flavour;
     int             attk_damage;
 
+    int             attack_number;
+
     item_def        *weapon;
     brand_type      damage_brand;
     skill_type      wpn_skill;
@@ -119,7 +121,7 @@ public:
 
 // Private Methods
 protected:
-    virtual void init_attack(skill_type unarmed_skill, int attack_number);
+    virtual void init_attack(skill_type unarmed_skill, int attk_num);
 
     /* Attack Phases */
     virtual bool handle_phase_attempted();
@@ -166,6 +168,7 @@ protected:
     void do_miscast();
     void drain_defender();
     void drain_defender_speed();
+    bool mount_attack();
 
     virtual int inflict_damage(int dam, beam_type flavour = NUM_BEAMS,
                                bool clean = false);

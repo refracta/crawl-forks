@@ -600,6 +600,14 @@ spret gain_mount(mount_type mount, int pow, bool fail)
     {
         you.mount = mount;
         you.mount_hp = you.mount_hp_max = mount_hp;
+        you.mount_energy = 10;
+
+        if (mount == mount_type::hydra)
+        {
+            you.mount_heads = 4 + max(0, div_round_up(pow - 50, 13));
+        }
+        else
+            you.mount_heads = 1;
     }
     land_player();
     redraw_screen();

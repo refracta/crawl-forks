@@ -182,7 +182,10 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
         bool attacked = false;
         coord_def pos = defender->pos();
 
-        bool xtra_atk = (you.mounted() || you.form == transformation::scorpion);
+        bool xtra_atk = ((you.mounted() && you.mount_energy >= 10) || you.form == transformation::scorpion);
+
+        if (you.mounted() && xtra_atk)
+            you.mount_energy -= 10;
 
         if (!you.weapon(0) || is_melee_weapon(*you.weapon(0)))
         {
@@ -236,9 +239,7 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
                 return local_time;
             }
 
-            if (you.mounted())
-                return (_handle_player_attack(defender, simu, 2, 1, did_hit, wu, wu_num) || local_time);
-            else if (you.form == transformation::scorpion)
+            if (you.form == transformation::scorpion)
             {
                 local_time |= _handle_player_attack(defender, simu, 2, 3, did_hit, wu, wu_num);
 
@@ -250,7 +251,27 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
                     return local_time;
                 }
 
-                return (_handle_player_attack(defender, simu, 3, 1, did_hit, wu, wu_num) || local_time);
+                local_time |= (_handle_player_attack(defender, simu, 3, 1, did_hit, wu, wu_num) || local_time);
+            }
+            else if (xtra_atk)
+            {
+                if (you.mount == mount_type::hydra)
+                {
+                    for (int i = 1; i < you.mount_heads; i++)
+                    {
+                        local_time |= _handle_player_attack(defender, simu, 2, 3, did_hit, wu, wu_num);
+
+                        if (!defender->alive()
+                            || defender->pos() != pos
+                            || defender->is_banished()
+                            || defender->temp_attitude() // If it's not hostile the melee attack charmed or pacified it.
+                            || !you.mounted()) // Spines killed your hydra. 
+                        {
+                            return local_time;
+                        }
+                    }
+                }
+                local_time |= (_handle_player_attack(defender, simu, 2, 1, did_hit, wu, wu_num) || local_time);
             }
         }
 

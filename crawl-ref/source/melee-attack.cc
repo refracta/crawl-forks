@@ -72,15 +72,15 @@ melee_attack::melee_attack(actor *attk, actor *defn,
                            bool is_cleaving)
     :  // Call attack's constructor
     ::attack(attk, defn),
-
-    attack_number(attack_num), effective_attack_number(effective_attack_num),
+    
+    effective_attack_number(effective_attack_num),
     cleaving(is_cleaving), is_riposte(false),
     wu_jian_attack(WU_JIAN_ATTACK_NONE),
     wu_jian_number_of_targets(1)
 {
     attack_occurred = false;
+    init_attack(SK_UNARMED_COMBAT, attack_num);
     damage_brand = attacker->damage_brand(attack_number);
-    init_attack(SK_UNARMED_COMBAT, attack_number);
     if (weapon && !using_weapon())
         wpn_skill = SK_FIGHTING;
 
@@ -225,9 +225,10 @@ bool melee_attack::handle_phase_attempted()
         // Set delay now that we know the attack won't be cancelled.
         if (!is_riposte
              && (wu_jian_attack == WU_JIAN_ATTACK_NONE)
-            && ((effective_attack_number == 0)||(effective_attack_number==2)))
+            && ((effective_attack_number == 0)||(effective_attack_number == 2)))
         {
             you.time_taken = you.attack_delay().roll();
+            you.mount_energy += you.time_taken;
         }
 
         const caction_type cact_typ = is_riposte ? CACT_RIPOSTE : CACT_MELEE;
@@ -582,6 +583,11 @@ bool melee_attack::handle_phase_hit()
                       ? attack_verb
                       : attacker->conj_verb(mons_attack_verb());
 
+        string attacker_name = attacker->name(DESC_THE);
+        
+        if (mount_attack())
+            attacker_name = you.mount_name();
+
         if (attacker->is_player() && weapon && weapon->is_type(OBJ_STAVES, STAFF_SUMMONING))
         {
             mprf("You lightly tap %s.",
@@ -591,7 +597,7 @@ bool melee_attack::handle_phase_hit()
         else
         {
             mprf("%s %s %s but %s no damage.",
-                attacker->name(DESC_THE).c_str(),
+                attacker_name.c_str(),
                 attack_verb.c_str(),
                 defender_name(true).c_str(),
                 attacker->is_player() ? "do" : "does");
@@ -1950,6 +1956,33 @@ void melee_attack::set_attack_verb(int damage)
     if (!attacker->is_player())
         return;
 
+    if (mount_attack())
+    {
+        switch (you.mount)
+        {
+        case mount_type::drake: // fallthrough
+        case mount_type::hydra:
+            if (damage < HIT_WEAK)
+                attack_verb = "nips";
+            else if (damage < HIT_MED)
+                attack_verb = "bites";
+            else if (damage < HIT_STRONG)
+                attack_verb = "chomps";
+            else
+                attack_verb = "mauls";
+            break;
+
+        case mount_type::spider:
+            attack_verb = "stings";
+            break;
+
+        default:
+            attack_verb = "buggily bashes";
+            break;
+        }
+        return;
+    }
+
     int weap_type = WPN_UNKNOWN;
 
     if (Options.has_fake_lang(flang_t::grunt))
@@ -3188,13 +3221,20 @@ void melee_attack::announce_hit()
 
     if (attacker->is_monster())
     {
-        mprf("%s %s %s%s%s%s",
+        mprf("%s %s %s%s%s",
              atk_name(DESC_THE).c_str(),
              attacker->conj_verb(mons_attack_verb()).c_str(),
              defender_name(true).c_str(),
-             debug_damage_number().c_str(),
              mons_attack_desc().c_str(),
              attack_strength_punctuation(damage_done).c_str());
+    }
+    else if (mount_attack())
+    {
+        mprf("%s %s %s%s",
+            you.mount_name(true).c_str(),
+            attack_verb.c_str(),
+            defender->name(DESC_THE).c_str(),
+            attack_strength_punctuation(damage_done).c_str());
     }
     else
     {
@@ -3204,10 +3244,10 @@ void melee_attack::announce_hit()
             verb_degree = " " + verb_degree;
         }
 
-        mprf("You %s %s%s%s%s",
+        mprf("You %s %s%s%s",
              attack_verb.c_str(),
              defender->name(DESC_THE).c_str(),
-             verb_degree.c_str(), debug_damage_number().c_str(),
+             verb_degree.c_str(),
              attack_strength_punctuation(damage_done).c_str());
     }
 }

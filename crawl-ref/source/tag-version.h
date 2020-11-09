@@ -240,6 +240,7 @@ enum tag_minor_version
     TAG_MINOR_MANGROVE_MUSHROOM,   // Allowing Mangroves outside of Swamp and Giant Mushrooms outside of slime.
     TAG_MINOR_MOUNTS,              // Adding a mount to player.h
     TAG_MINOR_MOUNT_REGEN,         // Additional part of mounts in player.h
+    TAG_MINOR_MOUNT_ENERGY,        // Mount melee part to player.h
 #endif
     NUM_TAG_MINORS,
     TAG_MINOR_VERSION = NUM_TAG_MINORS - 1
