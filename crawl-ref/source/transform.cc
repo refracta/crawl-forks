@@ -1626,6 +1626,19 @@ bool transform(int pow, transformation which_trans, bool involuntary,
         return false;
     }
 
+    if (you.mounted())
+    {
+        if (crawl_state.disables[DIS_CONFIRMATIONS])
+            mprf(MSGCH_DURATION, "Your mount is dismissed as you change form.");
+        else if (!yesno("You have to dismiss your mount to transform. Continue?", true, 0))
+        {
+            canned_msg(MSG_OK);
+            return false;
+        }
+        if (!just_check)
+            dismount();
+    }
+
     // This must occur before the untransform() and the undead_state() check.
     if (previous_trans == which_trans)
     {

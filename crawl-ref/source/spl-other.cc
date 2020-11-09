@@ -18,9 +18,12 @@
 #include "mon-util.h"
 #include "output.h"
 #include "place.h"
+#include "prompt.h"
 #include "religion.h"
 #include "spl-util.h"
+#include "state.h"
 #include "terrain.h"
+#include "transform.h"
 
 spret cast_sublimation_of_blood(int pow, bool fail)
 {
@@ -528,6 +531,22 @@ spret cast_SMD(const coord_def& target, int pow, bool fail)
 
 spret gain_mount(mount_type mount, int pow, bool fail)
 {
+    if (you.transform_uncancellable)
+    {
+        mprf("You can't mount anything outside of your normal form.");
+        return spret::abort;
+    }
+    else if (you.form != transformation::none)
+    {
+        if (!crawl_state.disables[DIS_CONFIRMATIONS] && 
+            !yesno("You have to untransform in order to properly ride a mount. Continue?", true, 0))
+        {
+            canned_msg(MSG_OK);
+            return spret::abort;
+        }
+        untransform();
+    }
+
     fail_check();
     int dur = 0;
     int mount_hp = 0;
