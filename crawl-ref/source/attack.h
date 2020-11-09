@@ -57,6 +57,7 @@ public:
     int             attk_damage;
 
     int             attack_number;
+    bool            mount_attack;
 
     item_def        *weapon;
     brand_type      damage_brand;
@@ -168,7 +169,6 @@ protected:
     void do_miscast();
     void drain_defender();
     void drain_defender_speed();
-    bool mount_attack();
 
     virtual int inflict_damage(int dam, beam_type flavour = NUM_BEAMS,
                                bool clean = false);

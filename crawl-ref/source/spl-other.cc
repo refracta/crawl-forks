@@ -550,6 +550,7 @@ spret gain_mount(mount_type mount, int pow, bool fail)
     fail_check();
     int dur = 0;
     int mount_hp = 0;
+    bool were_flying = you.airborne();
     bool already_mount = you.mounted();
 
     switch (mount)
@@ -609,7 +610,12 @@ spret gain_mount(mount_type mount, int pow, bool fail)
         else
             you.mount_heads = 1;
     }
-    land_player();
+
+    mprf(MSGCH_DURATION, "You summon a %s and ride upon its back.", you.mount_name().c_str());
+    
+    if (were_flying)
+        land_player();
+
     redraw_screen();
     return spret::success;
 }

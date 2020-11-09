@@ -3822,7 +3822,7 @@ int monster::dexterity_bonus() const
     return 0;
 }
 
-int monster::res_fire() const
+int monster::res_fire(bool /*mount*/) const
 {
     int u = get_mons_resist(*this, MR_RES_FIRE);
 
@@ -3868,7 +3868,7 @@ int monster::res_fire() const
     return u;
 }
 
-int monster::res_steam() const
+int monster::res_steam(bool /*mount*/) const
 {
     int res = get_mons_resist(*this, MR_RES_STEAM);
     if (wearing(EQ_BODY_ARMOUR, ARM_STEAM_DRAGON_ARMOUR))
@@ -3882,7 +3882,7 @@ int monster::res_steam() const
     return res;
 }
 
-int monster::res_cold() const
+int monster::res_cold(bool /*mount*/) const
 {
     int u = get_mons_resist(*this, MR_RES_COLD);
 
@@ -3928,7 +3928,7 @@ int monster::res_cold() const
     return u;
 }
 
-int monster::res_elec() const
+int monster::res_elec(bool /*mount*/) const
 {
     // This is a variable, not a player_xx() function, so can be above 1.
     int u = 0;
@@ -3971,7 +3971,7 @@ int monster::res_elec() const
     return u;
 }
 
-int monster::res_water_drowning() const
+int monster::res_water_drowning(bool /*mount*/) const
 {
     int rw = 0;
 
@@ -3988,7 +3988,7 @@ int monster::res_water_drowning() const
     return sgn(rw);
 }
 
-int monster::res_poison(bool temp) const
+int monster::res_poison(bool temp, bool /*mount*/) const
 {
     int u = get_mons_resist(*this, MR_RES_POISON);
 
@@ -4038,7 +4038,7 @@ bool monster::res_sticky_flame() const
     return is_insubstantial() || get_mons_resist(*this, MR_RES_STICKY_FLAME) > 0;
 }
 
-int monster::res_rotting(bool /*temp*/) const
+int monster::res_rotting(bool /*temp*/, bool /*mount*/) const
 {
     int res = 0;
     const mon_holy_type holi = holiness();
@@ -4066,7 +4066,7 @@ int monster::res_rotting(bool /*temp*/) const
     return min(3, res);
 }
 
-int monster::res_holy_energy() const
+int monster::res_holy_energy(bool /*mount*/) const
 {
     if (type == MONS_PROFANE_SERVITOR)
         return 3;
@@ -4084,7 +4084,7 @@ int monster::res_holy_energy() const
     return 0;
 }
 
-int monster::res_negative_energy(bool intrinsic_only) const
+int monster::res_negative_energy(bool intrinsic_only, bool /*mount*/) const
 {
     // If you change this, also change get_mons_resists.
     if (!(holiness() & MH_NATURAL) && !(holiness() & MH_DEMONIC))
@@ -4123,14 +4123,14 @@ int monster::res_negative_energy(bool intrinsic_only) const
     return u;
 }
 
-bool monster::res_torment() const
+bool monster::res_torment(bool /*mount*/) const
 {
     const mon_holy_type holy = holiness();
     return holy & (MH_UNDEAD | MH_DEMONIC | MH_PLANT | MH_NONLIVING)
            || get_mons_resist(*this, MR_RES_TORMENT) > 0;
 }
 
-bool monster::res_tornado() const
+bool monster::res_tornado(bool /*mount*/) const
 {
     return has_ench(ENCH_TORNADO)
            || has_ench(ENCH_CHAOSNADO)
@@ -4138,7 +4138,7 @@ bool monster::res_tornado() const
            || get_mons_resist(*this, MR_RES_WIND) > 0;
 }
 
-bool monster::res_wind() const
+bool monster::res_wind(bool /*mount*/) const
 {
     return get_mons_resist(*this, MR_RES_WIND) > 0;
 }
@@ -4153,7 +4153,7 @@ bool monster::res_petrify(bool /*temp*/) const
     return is_insubstantial() || get_mons_resist(*this, MR_RES_PETRIFY) > 0;
 }
 
-int monster::res_constrict() const
+int monster::res_constrict(bool /*mt*/) const
 {
     // 3 is immunity, 1 or 2 reduces damage
     if (is_insubstantial())
@@ -4166,12 +4166,12 @@ int monster::res_constrict() const
     return 0;
 }
 
-bool monster::res_corr(bool calc_unid, bool items) const
+bool monster::res_corr(bool calc_unid, bool items, bool /*mount*/) const
 {
     return actor::res_corr(calc_unid, items);
 }
 
-int monster::res_acid(bool calc_unid) const
+int monster::res_acid(bool calc_unid, bool /*mount*/) const
 {
     int u = get_mons_resist(*this, MR_RES_ACID);
 

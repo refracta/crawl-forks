@@ -372,7 +372,7 @@ bool melee_attack::handle_phase_dodged()
     {
         // TODO: Unify these, placed player_warn_miss here so I can remove
         // player_attack
-        if (attacker->is_player())
+        if (attacker->is_player() && !mount_attack)
             player_warn_miss();
         else
         {
@@ -585,8 +585,11 @@ bool melee_attack::handle_phase_hit()
 
         string attacker_name = attacker->name(DESC_THE);
         
-        if (mount_attack())
-            attacker_name = you.mount_name();
+        if (mount_attack)
+        {
+            attacker_name  = "Your ";
+            attacker_name += you.mount_name();
+        }
 
         if (attacker->is_player() && weapon && weapon->is_type(OBJ_STAVES, STAFF_SUMMONING))
         {
@@ -600,7 +603,8 @@ bool melee_attack::handle_phase_hit()
                 attacker_name.c_str(),
                 attack_verb.c_str(),
                 defender_name(true).c_str(),
-                attacker->is_player() ? "do" : "does");
+                mount_attack          ? "does" :
+                attacker->is_player() ? "do"   : "does");
         }
     }
 
@@ -1138,6 +1142,10 @@ bool melee_attack::attack()
         {
             // Check for defender Spines
             do_spines();
+
+            // Return early due to mount death.
+            if (mount_attack && !you.mounted())
+                return false;
 
             // Spines can kill! With Usk's pain bond, they can even kill the
             // defender.
@@ -1956,7 +1964,7 @@ void melee_attack::set_attack_verb(int damage)
     if (!attacker->is_player())
         return;
 
-    if (mount_attack())
+    if (mount_attack)
     {
         switch (you.mount)
         {
@@ -2599,11 +2607,15 @@ void melee_attack::attacker_sustain_passive_damage()
     if (!adjacent(attacker->pos(), defender->pos()) || is_riposte)
         return;
 
-    const int acid_strength = resist_adjust_damage(attacker, BEAM_ACID, 5);
+    int acid_strength; 
+    
+    acid_strength = resist_adjust_damage(attacker, BEAM_ACID, 5, mount_attack);
 
     // Spectral weapons can't be corroded (but can take acid damage).
-    const bool avatar = attacker->is_monster()
-                        && mons_is_avatar(attacker->as_monster()->type);
+    // Mounts can't be corroded either (at least for now).
+    const bool avatar = (attacker->is_monster()
+                        && mons_is_avatar(attacker->as_monster()->type)
+                        || mount_attack);
 
     if (!avatar)
     {
@@ -2611,15 +2623,25 @@ void melee_attack::attacker_sustain_passive_damage()
             attacker->corrode_equipment();
     }
 
-    if (attacker->is_player())
-        mpr(you.hands_act("burn", "!"));
+    acid_strength = roll_dice(1, acid_strength);
+
+    if (mount_attack)
+    {
+        mprf("Your %s is burned by acid%s", you.mount_name(true).c_str(), attack_strength_punctuation(acid_strength).c_str());
+        damage_mount(acid_strength);
+    }
+    else if (attacker->is_player())
+        mpr(you.hands_act("burn", attack_strength_punctuation(acid_strength)));
     else
     {
         simple_monster_message(*attacker->as_monster(),
-                               " is burned by acid!");
+                               make_stringf("is burned by acid%s", attack_strength_punctuation(acid_strength).c_str()).c_str());
     }
-    attacker->hurt(defender, roll_dice(1, acid_strength), BEAM_ACID,
-                   KILLED_BY_ACID, "", "", false);
+
+    if (!mount_attack)
+    {
+        attacker->hurt(defender, acid_strength, BEAM_ACID, KILLED_BY_ACID, "", "", false);
+    }
 }
 
 int melee_attack::staff_damage(skill_type skill)
@@ -3228,9 +3250,9 @@ void melee_attack::announce_hit()
              mons_attack_desc().c_str(),
              attack_strength_punctuation(damage_done).c_str());
     }
-    else if (mount_attack())
+    else if (mount_attack)
     {
-        mprf("%s %s %s%s",
+        mprf("Your %s %s %s%s",
             you.mount_name(true).c_str(),
             attack_verb.c_str(),
             defender->name(DESC_THE).c_str(),
@@ -4011,10 +4033,6 @@ void melee_attack::mons_do_tendril_disarm()
 
 void melee_attack::do_spines()
 {
-    // Monsters only get struck on their first attack per round
-    if (attacker->is_monster() && effective_attack_number > 0)
-        return;
-
     if (defender->is_player())
     {
         const int mut = you.get_mutation_level(MUT_SPINY);
@@ -4030,7 +4048,7 @@ void melee_attack::do_spines()
                 return;
 
             simple_monster_message(*attacker->as_monster(),
-                                   " is struck by your spines.");
+                                   make_stringf(" is struck by your spines%s", attack_strength_punctuation(hurt).c_str()).c_str());
 
             attacker->hurt(&you, hurt);
         }
@@ -4056,13 +4074,17 @@ void melee_attack::do_spines()
                 return;
             if (you.can_see(*defender) || attacker->is_player())
             {
-                mprf("%s %s struck by %s %s.", attacker->name(DESC_THE).c_str(),
-                     attacker->conj_verb("are").c_str(),
+                mprf("%s %s struck by %s %s%s", 
+                     mount_attack ? make_stringf("Your %s", you.mount_name(true).c_str()).c_str()
+                                  : attacker->name(DESC_THE).c_str(),
+                     mount_attack ? "is" 
+                                  : attacker->conj_verb("are").c_str(),
                      defender->name(DESC_ITS).c_str(),
                      defender->type == MONS_BRIAR_PATCH ? "thorns" :
                      defender->type == MONS_WAR_DOG     ? "spiked collar" :
                      defender->type == MONS_SPINY_FROG  ? "venomous spines"
-                                                        : "spines");
+                                                        : "spines",
+                    attack_strength_punctuation(hurt).c_str());
             }
 
             beam_type damtype = BEAM_MISSILE;
@@ -4080,7 +4102,10 @@ void melee_attack::do_spines()
                     poison_monster(attacker->as_monster(), defender, (resist ? pois / 2 : pois), true, true);
             }
 
-            attacker->hurt(defender, hurt, damtype, KILLED_BY_SPINES);
+            if (mount_attack)
+                damage_mount(hurt);
+            else
+                attacker->hurt(defender, hurt, damtype, KILLED_BY_SPINES);
         }
     }
 }

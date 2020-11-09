@@ -202,7 +202,7 @@ bool actor::gourmand(bool calc_unid, bool items) const
     return items && wearing(EQ_AMULET, AMU_THE_GOURMAND, calc_unid);
 }
 
-bool actor::res_corr(bool calc_unid, bool items) const
+bool actor::res_corr(bool calc_unid, bool items, bool /*mount*/) const
 {
     return items && (wearing(EQ_RINGS, RING_RESIST_CORROSION, calc_unid)
                      || wearing(EQ_BODY_ARMOUR, ARM_ACID_DRAGON_ARMOUR, calc_unid)
@@ -905,8 +905,6 @@ bool actor::submerged() const
 
 bool actor::can_submerge_in(const coord_def &c) const
 {
-    if (is_monster())
-
     if (body_size(PSIZE_BODY) >= SIZE_GIANT)
         return false;
     if (airborne())

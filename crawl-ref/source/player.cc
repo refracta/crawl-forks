@@ -89,6 +89,11 @@
 #include "wizard-option-type.h"
 #include "xom.h"
 
+static int _clamp(int value, int minimum, int maximum)
+{
+    return max(min(value, maximum), minimum);
+}
+
 static void _moveto_maybe_repel_stairs()
 {
     const dungeon_feature_type new_grid = env.grid(you.pos());
@@ -1495,6 +1500,25 @@ bool player_likes_chunks(bool permanently)
            || you.get_mutation_level(MUT_CARNIVOROUS) > 0;
 }
 
+static int _rf_globals()
+{
+    int rf = 0;
+
+    if (you.submerged())
+        rf++;
+
+    else if (you.duration[DUR_FIRE_SHIELD])
+        rf += 2;
+
+    if (you.duration[DUR_QAZLAL_FIRE_RES])
+        rf++;
+
+    if (you.duration[DUR_FIRE_VULN])
+        rf--;
+    
+    return rf;
+}
+
 // If temp is set to false, temporary sources or resistance won't be counted.
 int player_res_fire(bool calc_unid, bool temp, bool items)
 {
@@ -1556,24 +1580,12 @@ int player_res_fire(bool calc_unid, bool temp, bool items)
         if (you.duration[DUR_RESISTANCE])
             rf++;
 
-        if (you.duration[DUR_FIRE_SHIELD])
-            rf += 2;
-
-        if (you.duration[DUR_QAZLAL_FIRE_RES])
-            rf++;
-
-        if (you.submerged())
-            rf++;
+        rf += _rf_globals();
 
         rf += get_form()->res_fire();
     }
 
-    if (rf > 3)
-        rf = 3;
-    if (temp && you.duration[DUR_FIRE_VULN])
-        rf--;
-    if (rf < -3)
-        rf = -3;
+    _clamp(rf, -3, temp && you.duration[DUR_FIRE_VULN] ? 2 : 3);
 
     return rf;
 }
@@ -1592,10 +1604,31 @@ int player_res_steam(bool calc_unid, bool temp, bool items)
 
     res += rf * 2;
 
-    if (res > 2)
+    if (you.submerged())
         res = 2;
 
+    _clamp(res, -3, 2);
+
     return res;
+}
+
+static int _rc_globals()
+{
+    int rc = 0;
+
+    if (you.duration[DUR_FIRE_SHIELD])
+        rc -= 2;
+
+    if (you.duration[DUR_QAZLAL_COLD_RES])
+        rc++;
+
+    if (you.submerged())
+        rc++;
+
+    if (you.duration[DUR_COLD_VULN])
+        rc--;
+
+    return rc;
 }
 
 int player_res_cold(bool calc_unid, bool temp, bool items)
@@ -1607,27 +1640,9 @@ int player_res_cold(bool calc_unid, bool temp, bool items)
         if (you.duration[DUR_RESISTANCE])
             rc++;
 
-        if (you.duration[DUR_FIRE_SHIELD])
-            rc -= 2;
-
-        if (you.duration[DUR_QAZLAL_COLD_RES])
-            rc++;
-
-        if (you.submerged())
-            rc++;
-
-        if (you.duration[DUR_COLD_VULN])
-            rc--;
+        rc += _rc_globals();
 
         rc += get_form()->res_cold();
-
-        if (you.species == SP_VAMPIRE)
-        {
-            if (you.hunger_state <= HS_STARVING)
-                rc += 2;
-            else if (you.hunger_state < HS_SATIATED)
-                rc++;
-        }
     }
 
     if (items)
@@ -1678,16 +1693,25 @@ int player_res_cold(bool calc_unid, bool temp, bool items)
             rc++;
     }
 
-    if (rc < -3)
-        rc = -3;
-    else if (rc > 3)
-        rc = 3;
+    _clamp(rc, -3, temp && you.duration[DUR_COLD_VULN] ? 2 : 3);
 
     return rc;
 }
 
-bool player::res_corr(bool calc_unid, bool items) const
+bool player::res_corr(bool calc_unid, bool items, bool mt) const
 {
+    if (mt)
+    {
+        switch (you.mount)
+        {
+            case mount_type::spider:
+            case mount_type::hydra:
+                return 1;
+            default:
+                return 0;
+        }
+    }
+
     if (have_passive(passive_t::resist_corrosion))
         return true;
 
@@ -1734,6 +1758,22 @@ bool player::res_corr(bool calc_unid, bool items) const
 int player_res_acid(bool calc_unid, bool items)
 {
     return you.res_corr(calc_unid, items) ? 1 : 0;
+}
+
+static int _relec_globals()
+{
+    int re = 0;
+
+    if (you.duration[DUR_QAZLAL_ELEC_RES])
+        re++;
+
+    if (you.duration[DUR_ELEC_VULN])
+        re--;
+
+    if (you.submerged())
+        re--;
+
+    return re;
 }
 
 int player_res_electricity(bool calc_unid, bool temp, bool items)
@@ -1787,18 +1827,11 @@ int player_res_electricity(bool calc_unid, bool temp, bool items)
         if (you.duration[DUR_RESISTANCE])
             re++;
 
-        if (you.duration[DUR_QAZLAL_ELEC_RES])
-            re++;
+        re += _relec_globals();
 
         // transformations:
         if (get_form()->res_elec())
             re++;
-
-        if (you.duration[DUR_ELEC_VULN])
-            re--;
-
-        if (you.submerged())
-            re--;
     }
 
     if (re > 1)
@@ -1857,12 +1890,9 @@ int player_res_poison(bool calc_unid, bool temp, bool items)
             break;
         case US_HUNGRY_DEAD: //ghouls
         case US_UNDEAD: // mummies & lichform
-            return 3;
         case US_GHOST: // spectres
+        case US_SEMI_UNDEAD:
             return 3;
-        case US_SEMI_UNDEAD: // vampire
-            if (you.hunger_state <= HS_STARVING) // XXX: && temp?
-                return 3;
             break;
     }
 
@@ -2070,14 +2100,10 @@ int player_energy()
     return 0;
 }
 
-// If temp is set to false, temporary sources of resistance won't be
-// counted.
-int player_prot_life(bool calc_unid, bool temp, bool items)
+static int _rn_globals()
 {
     int pl = 0;
 
-    // Same here. Your piety status, and, hence, TSO's protection, is
-    // something you can more or less control.
     if (you_worship(GOD_SHINING_ONE))
     {
         if (you.piety >= piety_breakpoint(1))
@@ -2088,9 +2114,20 @@ int player_prot_life(bool calc_unid, bool temp, bool items)
             pl++;
     }
 
+    return pl;
+}
+
+// If temp is set to false, temporary sources of resistance won't be
+// counted.
+int player_prot_life(bool calc_unid, bool temp, bool items)
+{
+    int pl = 0;
+
     if (temp)
     {
         pl += get_form()->res_neg();
+
+        pl += _rn_globals();
 
         // completely stoned, unlike statue which has some life force
         if (you.petrified())
@@ -5761,6 +5798,8 @@ player::player()
     mount_hp_max    = 0;
     mount_hp        = 0;
     mount_hp_regen  = 0;
+    mount_energy    = 0;
+    mount_heads     = 1;
 
     for (auto &item : inv)
         item.clear();
@@ -7027,33 +7066,81 @@ bool player::is_insubstantial() const
         return false;
 }
 
-int player::res_acid(bool calc_unid) const
+int player::res_acid(bool calc_unid, bool mt) const
 {
+    if (mt)
+    {
+
+    }
     return player_res_acid(calc_unid);
 }
 
-int player::res_fire() const
+int player::res_fire(bool mt) const
 {
+    if (mt)
+    {
+        int mount_resist = 0;
+
+        if (you.mount == mount_type::drake)
+            mount_resist--;
+
+        mount_resist += _rf_globals();
+
+        return _clamp(mount_resist, -3, 3);
+    }
+
     return player_res_fire();
 }
 
-int player::res_steam() const
+int player::res_steam(bool mt) const
 {
+    if (mt)
+    {
+        if (you.submerged())
+            return 2;
+        else
+            return _clamp(you.res_fire(true) * 2, -3, 3);
+    }
+
     return player_res_steam();
 }
 
-int player::res_cold() const
+int player::res_cold(bool mt) const
 {
+    if (mt)
+    {
+        int mount_resist = 0;
+
+        if (you.mount == mount_type::drake)
+            mount_resist += 2;
+
+        mount_resist += _rc_globals();
+
+        return _clamp(mount_resist, -3, 3);
+    }
+
     return player_res_cold();
 }
 
-int player::res_elec() const
+int player::res_elec(bool mt) const
 {
+    if (mt)
+    {
+        return _clamp(_relec_globals(), -3, 3);
+    }
+
     return player_res_electricity();
 }
 
-int player::res_water_drowning() const
+int player::res_water_drowning(bool mt) const
 {
+    if (mt)
+    {
+        if (you.mount == mount_type::hydra)
+            return 1;
+        return 0;
+    }
+
     int rw = 0;
 
     if (is_unbreathing()
@@ -7067,13 +7154,38 @@ int player::res_water_drowning() const
     return rw;
 }
 
-int player::res_poison(bool temp) const
+int player::res_poison(bool temp, bool mt) const
 {
+    if (mt)
+    {
+        int rp = 0;
+
+        switch (you.mount)
+        {
+        case mount_type::hydra:
+            rp++;
+            break;
+        case mount_type::spider:
+            rp--;
+            break;
+        default:
+            break;
+        }
+
+        if (you.duration[DUR_POISON_VULN])
+            rp--;
+
+        return _clamp(rp, -3, 3);
+    }
+
     return player_res_poison(true, temp);
 }
 
-int player::res_rotting(bool temp) const
+int player::res_rotting(bool temp, bool mt) const
 {
+    if (mt)
+        return 0; // No mount resists rotting.
+
     if (get_mutation_level(MUT_ROT_IMMUNITY)
         || is_nonliving(temp)
         || temp && get_form()->res_rot())
@@ -7108,8 +7220,11 @@ bool player::res_sticky_flame() const
     return player_res_sticky_flame();
 }
 
-int player::res_holy_energy() const
+int player::res_holy_energy(bool mt) const
 {
+    if (mt)
+        return 0;
+
     if (undead_or_demonic())
         return -1;
 
@@ -7119,27 +7234,36 @@ int player::res_holy_energy() const
     return 0;
 }
 
-int player::res_negative_energy(bool intrinsic_only) const
+int player::res_negative_energy(bool intrinsic_only, bool mt) const
 {
+    if (mt)
+        return _clamp(_rn_globals(), 0, 3);
+
     return player_prot_life(!intrinsic_only, true, !intrinsic_only);
 }
 
-bool player::res_torment() const
+bool player::res_torment(bool mt) const
 {
+    if (mt)
+        return false;
+
     return player_res_torment();
 }
 
-bool player::res_tornado() const
+bool player::res_tornado(bool mt) const
 {
     // Full control of the winds around you can negate a hostile tornado.
     if (duration[DUR_TORNADO] || duration[DUR_CHAOSNADO])
         return true;
 
-    return player::res_wind();
+    return player::res_wind(mt);
 }
 
-bool player::res_wind() const
+bool player::res_wind(bool mt) const
 {
+    if (mt)
+        return false;
+
     if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE) && (you.drac_colour == DR_CYAN))
         return true;
 
@@ -7155,8 +7279,11 @@ bool player::res_petrify(bool temp) const
            || temp && get_form()->res_petrify();
 }
 
-int player::res_constrict() const
+int player::res_constrict(bool mt) const
 {
+    if (mt)
+        return 0;
+
     if (is_insubstantial())
         return 3;
 
@@ -9269,26 +9396,28 @@ string player::mount_name(bool terse) const
     switch (you.mount)
     {
     case mount_type::hydra:
-        return terse ? "Your hydra" 
-                     : make_stringf("Your %s-headed hydra", number_in_words(you.mount_heads).c_str());
+        return terse ? "hydra" 
+                     : make_stringf("%s-headed hydra", number_in_words(you.mount_heads).c_str());
 
     case mount_type::drake:
-        return "Your rime drake";
+        return "rime drake";
 
     case mount_type::spider:
-        return "Your jumping spider";
+        return "jumping spider";
 
     default:
-        return "Your buggy mount";
+        return "buggy mount";
     }
 }
 
 void damage_mount(int amount)
 {
+    ASSERT(you.mounted());
+
     you.mount_hp -= amount;
     if (you.mount_hp <= 0)
     {
-        mpr("Your mount dies.");
+        mprf(MSGCH_DANGER, "Your %s dies.", you.mount_name().c_str());
         dismount();
     }
 }

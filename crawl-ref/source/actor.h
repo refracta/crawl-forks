@@ -291,23 +291,23 @@ public:
     virtual int  how_chaotic(bool check_spells_god = false) const = 0;
     virtual bool is_unbreathing() const = 0;
     virtual bool is_insubstantial() const = 0;
-    virtual int res_acid(bool calc_unid = true) const = 0;
+    virtual int res_acid(bool calc_unid = true, bool mt = false) const = 0;
     virtual bool res_damnation() const = 0;
-    virtual int res_fire() const = 0;
-    virtual int res_steam() const = 0;
-    virtual int res_cold() const = 0;
-    virtual int res_elec() const = 0;
-    virtual int res_poison(bool temp = true) const = 0;
-    virtual int res_rotting(bool temp = true) const = 0;
-    virtual int res_water_drowning() const = 0;
+    virtual int res_fire(bool mt = false) const = 0;
+    virtual int res_steam(bool mt = false) const = 0;
+    virtual int res_cold(bool mt = false) const = 0;
+    virtual int res_elec(bool mt = false) const = 0;
+    virtual int res_poison(bool temp = true, bool mt = false) const = 0;
+    virtual int res_rotting(bool temp = true, bool mt = false) const = 0;
+    virtual int res_water_drowning(bool mt = false) const = 0;
     virtual bool res_sticky_flame() const = 0;
-    virtual int res_holy_energy() const = 0;
-    virtual int res_negative_energy(bool intrinsic_only = false) const = 0;
-    virtual bool res_torment() const = 0;
-    virtual bool res_tornado() const = 0;
-    virtual bool res_wind() const = 0;
+    virtual int res_holy_energy(bool mt = false) const = 0;
+    virtual int res_negative_energy(bool intrinsic_only = false, bool mt = false) const = 0;
+    virtual bool res_torment(bool mt = false) const = 0;
+    virtual bool res_tornado(bool mt = false) const = 0;
+    virtual bool res_wind(bool mt = false) const = 0;
     virtual bool res_petrify(bool temp = true) const = 0;
-    virtual int res_constrict() const = 0;
+    virtual int res_constrict(bool mt = false) const = 0;
     virtual int res_magic(bool calc_unid = true) const = 0;
     virtual int check_res_magic(int power);
     virtual bool no_tele(bool calc_unid = true, bool permit_id = true,
@@ -317,7 +317,7 @@ public:
 
     virtual bool gourmand(bool calc_unid = true, bool items = true) const;
 
-    virtual bool res_corr(bool calc_unid = true, bool items = true) const;
+    virtual bool res_corr(bool calc_unid = true, bool items = true, bool mount = false) const;
     bool has_notele_item(bool calc_unid = true,
                          vector<item_def> *matches = nullptr) const;
     virtual bool stasis() const = 0;

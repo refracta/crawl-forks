@@ -439,6 +439,7 @@ void attack::init_attack(skill_type unarmed_skill, int attk_num)
     ASSERT(attacker);
     attack_number   = attk_num;
     weapon          = attacker->weapon(attack_number);
+    mount_attack    = (you.mounted() && attacker->is_player() && attack_number >= 2);
 
     wpn_skill       = weapon ? item_attack_skill(*weapon) : unarmed_skill;
     if (attacker->is_player() && you.form_uses_xl())
@@ -1164,19 +1165,14 @@ void attack::stab_message()
     defender->props.erase("helpless");
 }
 
-bool attack::mount_attack()
-{
-    return you.mounted() && attacker->is_player() && attack_number >= 2;
-}
-
 /* Returns the attacker's name
  *
  * Helper method to easily access the attacker's name
  */
 string attack::atk_name(description_level_type desc)
 {
-    if (mount_attack())
-        return you.mount_name();
+    if (mount_attack)
+        return make_stringf("Your %s", you.mount_name().c_str());
 
     return actor_name(attacker, desc, attacker_visible);
 }
@@ -1336,7 +1332,7 @@ int attack::calc_base_unarmed_damage()
     if (!attacker->is_player())
         return 0;
 
-    if (mount_attack())
+    if (mount_attack)
     {
         switch (you.mount)
         {
@@ -1575,7 +1571,7 @@ bool attack::apply_poison_damage_brand()
 
         int splpow_bonus = 0;
 
-        if (mount_attack() && you.mount == mount_type::spider)
+        if (mount_attack && you.mount == mount_type::spider)
         {
             splpow_bonus = random2(calc_spell_power(SPELL_SUMMON_SPIDER_MOUNT, true));
             splpow_bonus /= 8;
@@ -1929,8 +1925,8 @@ void attack::calc_elemental_brand_damage(beam_type flavour,
         special_damage_message = make_stringf(
             "%s %s %s%s",
             what ? what : atk_name(DESC_THE).c_str(),
-            what || mount_attack() ? conjugate_verb(verb, false).c_str()
-                                   : attacker->conj_verb(verb).c_str(),
+            what || mount_attack ? conjugate_verb(verb, false).c_str()
+                                 : attacker->conj_verb(verb).c_str(),
             // Don't allow reflexive if the subject wasn't the attacker.
             defender_name(!what).c_str(),
             attack_strength_punctuation(special_damage).c_str());

@@ -257,7 +257,7 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
             {
                 if (you.mount == mount_type::hydra)
                 {
-                    for (int i = 1; i < you.mount_heads; i++)
+                    for (int i = 1; i < you.mount_heads; ++i)
                     {
                         local_time |= _handle_player_attack(defender, simu, 2, 3, did_hit, wu, wu_num);
 
@@ -271,6 +271,7 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
                         }
                     }
                 }
+
                 local_time |= (_handle_player_attack(defender, simu, 2, 1, did_hit, wu, wu_num) || local_time);
             }
         }
@@ -596,39 +597,39 @@ static inline int get_resistible_fraction(beam_type flavour)
     }
 }
 
-static int _beam_to_resist(const actor* defender, beam_type flavour)
+static int _beam_to_resist(const actor* defender, beam_type flavour, bool mount)
 {
     switch (flavour)
     {
         case BEAM_CRYSTAL_FIRE:
         case BEAM_FIRE:
         case BEAM_LAVA:
-            return defender->res_fire();
+            return defender->res_fire(mount);
         case BEAM_DAMNATION:
             return defender->res_damnation();
         case BEAM_STEAM:
-            return defender->res_steam();
+            return defender->res_steam(mount);
         case BEAM_COLD:
         case BEAM_ICY_DEVASTATION:
         case BEAM_FREEZE:
         case BEAM_ICE:
         case BEAM_CRYSTAL_ICE:
-            return defender->res_cold();
+            return defender->res_cold(mount);
         case BEAM_WATER:
-            return defender->res_water_drowning();
+            return defender->res_water_drowning(mount);
         case BEAM_ELECTRICITY:
-            return defender->res_elec();
+            return defender->res_elec(mount);
         case BEAM_NEG:
         case BEAM_PAIN:
         case BEAM_MALIGN_OFFERING:
-            return defender->res_negative_energy();
+            return defender->res_negative_energy(false, mount);
         case BEAM_ACID:
-            return defender->res_acid();
+            return defender->res_acid(true, mount);
         case BEAM_POISON:
         case BEAM_POISON_ARROW:
-            return defender->res_poison();
+            return defender->res_poison(true, mount);
         case BEAM_HOLY:
-            return defender->res_holy_energy();
+            return defender->res_holy_energy(mount);
         default:
             return 0;
     }
@@ -672,15 +673,16 @@ static bool _dragonskin_affected (beam_type flavour)
  * @param flavour       The type of attack having its damage adjusted.
  *                      (Does not necessarily imply the attack is a beam.)
  * @param rawdamage     The base damage, to be adjusted by resistance.
+ * @param mount         Checking the mount's resistance instead of the players (defender is a player).
  * @return              The amount of damage done, after resists are applied.
  */
-int resist_adjust_damage(const actor* defender, beam_type flavour, int rawdamage)
+int resist_adjust_damage(const actor* defender, beam_type flavour, int rawdamage, bool mount)
 {
-    if (defender->is_fairy())
+    if (defender->is_fairy() && !mount)
         return rawdamage;
 
-    int res = _beam_to_resist(defender, flavour);
-    const bool is_mon = defender->is_monster();
+    int res = _beam_to_resist(defender, flavour, mount);
+    bool is_mon = defender->is_monster();
 
     // This special case is like 90% for Tiamat; unless a different draconian picks up 
     // her cloak since most monsters don't use armour for non-body slot; but it's good
@@ -700,6 +702,8 @@ int resist_adjust_damage(const actor* defender, beam_type flavour, int rawdamage
                 && _dragonskin_affected(flavour))
             res++;
     }
+
+    is_mon |= mount; // Mounts act like monsters in this way.
 
     if (!res)
         return rawdamage;
