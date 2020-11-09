@@ -831,6 +831,10 @@ void move_player_action(coord_def move)
         int wall_jump_modifier =
             (did_wall_jump && you.attribute[ATTR_SERPENTS_LASH] != 1) ? 2 : 1;
 
+        // Mount movement ignores player slow/haste.
+        if (you.mounted())
+            you.time_taken = 10;
+
         you.time_taken *= wall_jump_modifier * player_movement_speed();
         you.time_taken = div_rand_round(you.time_taken, 10);
         you.time_taken += additional_time_taken;

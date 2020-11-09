@@ -3871,7 +3871,7 @@ static void _display_vampire_status()
 
 static void _display_movement_speed()
 {
-    const int move_cost = (player_speed() * player_movement_speed()) / 10;
+    const int move_cost = ((you.mounted() ? 10 : player_speed()) * player_movement_speed()) / 10;
 
     const bool water  = you.in_liquid();
     const bool swim   = you.swimming();
