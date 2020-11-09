@@ -2205,9 +2205,38 @@ int player_movement_speed()
     else if (you.fishtail || you.form == transformation::hydra && you.in_water())
         mv = 6;
 
-    // draconian scales:
-    if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, true) && you.drac_colour == DR_PLATINUM)
-        mv--;
+    if (you.mounted())
+    {
+        if (you.mount == mount_type::drake)
+            mv = 9;
+        else if (you.mount == mount_type::hydra && you.in_water())
+            mv = 6;
+        else if (you.mount == mount_type::spider)
+            mv = 8;
+    }
+
+    else // Species innates don't work while mounted.
+    {
+        // draconian scales:
+        if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, true) && you.drac_colour == DR_PLATINUM)
+            mv--;
+
+        // armour
+        if (you.run()) // BCADDO: for SC: this will need to be able to stack.
+            mv -= 1;
+
+        mv += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_PONDEROUSNESS);
+
+        // Mutations: -2, -3, -4, unless innate and shapechanged.
+        if (int fast = you.get_mutation_level(MUT_FAST))
+            mv -= fast + 1;
+
+        if (int slow = you.get_mutation_level(MUT_SLOW))
+        {
+            mv *= 10 + slow * 2;
+            mv /= 10;
+        }
+    }
 
     // Wading through water is very slow.
     if (you.in_water() && !you.can_swim()
@@ -2222,12 +2251,6 @@ int player_movement_speed()
 
     if (you.in_lava())
         mv += 6;
-
-    // armour
-    if (you.run()) // BCADDO: for SC: this will need to be able to stack.
-        mv -= 1;
-
-    mv += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_PONDEROUSNESS);
 
     // Cheibriados
     if (have_passive(passive_t::slowed))
@@ -2244,16 +2267,6 @@ int player_movement_speed()
 
     if (you.duration[DUR_GRASPING_ROOTS])
         mv += 3;
-
-    // Mutations: -2, -3, -4, unless innate and shapechanged.
-    if (int fast = you.get_mutation_level(MUT_FAST))
-        mv -= fast + 1;
-
-    if (int slow = you.get_mutation_level(MUT_SLOW))
-    {
-        mv *= 10 + slow * 2;
-        mv /= 10;
-    }
 
     if (you.duration[DUR_SWIFTNESS] > 0 && !you.in_liquid())
     {
@@ -6084,9 +6097,10 @@ bool player::can_swim(bool permanently) const
 {
     // Transforming could be fatal if it would cause unequipment of
     // stat-boosting boots or heavy armour.
-    return (species_can_swim(species)
+    return ((!mounted() && species_can_swim(species))
             || body_size(PSIZE_BODY) >= SIZE_GIANT
-            || (!permanently && form_can_swim()));
+            || (!permanently && form_can_swim())
+            || (!permanently && mounted() && mount == mount_type::hydra));
 }
 
 /// Can the player do a passing imitation of a notorious Palestinian?
@@ -7340,6 +7354,9 @@ bool player::racial_permanent_flight() const
 
 bool player::tengu_flight() const
 {
+    if (you.mounted() || you.form != transformation::none)
+        return false;
+
     // Only Tengu get perks for flying.
     return species == SP_TENGU && airborne();
 }
