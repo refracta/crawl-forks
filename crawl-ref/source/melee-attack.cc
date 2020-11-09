@@ -229,6 +229,9 @@ bool melee_attack::handle_phase_attempted()
         {
             you.time_taken = you.attack_delay().roll();
             you.mount_energy += you.time_taken;
+
+            if (you.mount_energy > 20)
+                you.mount_energy = 20; // Prevents a possible exploit of "storing" attacks by attacking with a slow weapon then using a fast one later.
         }
 
         const caction_type cact_typ = is_riposte ? CACT_RIPOSTE : CACT_MELEE;
