@@ -62,9 +62,10 @@ komodo_dragon CORPSE_KOMODO_DRAGON
 %sdir mon/undead
 %back blood_sand blood_sand1 blood_sand2 blood_sand3 blood_sand4
 mummy CORPSE_MUMMY
-%sdir mon/animals
 
 ## Rodents ('r')
+%sdir mon/animals
+%back blood_puddle_red blood_puddle_red1 blood_puddle_red2 blood_puddle_red3 blood_puddle_red4
 rat CORPSE_RAT
 quokka CORPSE_QUOKKA
 green_rat CORPSE_GREEN_RAT
