@@ -4070,7 +4070,7 @@ void melee_attack::do_spines()
         if (attacker->alive())
         {
             int dmg = random2(defender->get_hit_dice());
-            int hurt = attacker->apply_ac(dmg, 0, ac_type::half);
+            int hurt = attacker->apply_ac(dmg, 0, ac_type::half, 0, true, mount_attack);
             dprf(DIAG_COMBAT, "Spiny: dmg = %d hurt = %d", dmg, hurt);
 
             if (hurt <= 0)
