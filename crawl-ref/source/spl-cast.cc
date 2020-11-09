@@ -2036,8 +2036,11 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
     case SPELL_DRAGON_CALL:
         return cast_dragon_call(powc, fail);
 
-    case SPELL_SUMMON_HYDRA:
-        return cast_summon_hydra(&you, powc, god, fail);
+    case SPELL_SUMMON_HYDRA_MOUNT:
+        return gain_mount(mount_type::hydra, powc, fail);
+
+    case SPELL_SUMMON_SPIDER_MOUNT:
+        return gain_mount(mount_type::spider, powc, fail);
 
     case SPELL_SUMMON_MANA_VIPER:
         return cast_summon_mana_viper(powc, god, fail);
@@ -2148,9 +2151,6 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
 
     case SPELL_ICE_FORM:
         return cast_transform(powc, transformation::ice_beast, fail);
-
-    case SPELL_HYDRA_FORM:
-        return cast_transform(powc, transformation::hydra, fail);
 
     case SPELL_DRAGON_FORM:
         return cast_transform(powc, transformation::dragon, fail);

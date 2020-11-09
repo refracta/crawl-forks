@@ -2637,12 +2637,34 @@ static const struct spell_desc spelldata[] =
 {
     SPELL_SUMMON_HYDRA, "Summon Hydra", "",
     spschool::summoning,
-    spflag::mons_abjure,
+    spflag::mons_abjure | spflag::monster,
     7,
     200,
     -1, -1,
     6, 0,
     TILEG_SUMMON_HYDRA,
+},
+
+{
+    SPELL_SUMMON_HYDRA_MOUNT, "Summon Hydra Mount", "",
+    spschool::summoning,
+    spflag::none,
+    6,
+    200,
+    -1, -1,
+    6, 0,
+    TILEG_SUMMON_HYDRA_MOUNT,
+},
+
+{
+    SPELL_SUMMON_SPIDER_MOUNT, "Summon Spider Mount", "",
+    spschool::summoning | spschool::poison,
+    spflag::none,
+    5,
+    200,
+    -1, -1,
+    6, 0,
+    TILEG_SUMMON_SPIDER_MOUNT,
 },
 
 {

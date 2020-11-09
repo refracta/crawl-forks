@@ -905,6 +905,8 @@ bool actor::submerged() const
 
 bool actor::can_submerge_in(const coord_def &c) const
 {
+    if (is_monster())
+
     if (body_size(PSIZE_BODY) >= SIZE_GIANT)
         return false;
     if (airborne())

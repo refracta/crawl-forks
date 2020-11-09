@@ -565,8 +565,17 @@ spret gain_mount(mount_type mount, int pow, bool fail)
     you.increase_duration(DUR_MOUNTED, dur, 200);
     if (already_mount)
     {
-        mprf(MSGCH_DURATION, "You heal your mount and increase the time it has in this world.");
-        you.mount_hp = you.mount_hp_max;
+        if (you.mount == mount)
+        {
+            mprf(MSGCH_DURATION, "You heal your mount and increase the time it has in this world.");
+            you.mount_hp = you.mount_hp_max;
+        }
+        else
+        {
+            mprf(MSGCH_DURATION, "You dismiss your previous mount to call another one.");
+            you.mount = mount;
+            you.mount_hp = you.mount_hp_max = mount_hp;
+        }
     }
     else
     {
