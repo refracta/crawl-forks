@@ -1026,7 +1026,6 @@ void player_reacts()
     if (you.duration[DUR_MOUNT_POISONING])
         handle_player_poison(you.time_taken, true);
 
-
     // Reveal adjacent mimics.
     for (adjacent_iterator ai(you.pos(), false); ai; ++ai)
         discover_mimic(*ai);

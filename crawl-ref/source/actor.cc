@@ -1181,12 +1181,5 @@ bool actor::evil() const
 
 bool actor::is_dragonkind() const
 {
-    if (mons_genus(mons_species()) == MONS_DRAGON
-        || mons_genus(mons_species()) == MONS_DRAKE
-        || mons_genus(mons_species()) == MONS_HYDRA)
-    {
-        return true;
-    }
-
-    return false;
+    return is_draconic_type(mons_genus(mons_species()));
 }

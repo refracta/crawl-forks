@@ -580,14 +580,27 @@ spret gain_mount(mount_type mount, int pow, bool fail)
         mount_hp = div_rand_round(mount_hp, 100);
     }
 
-    dur *= BASELINE_DELAY;
-
-    you.increase_duration(DUR_MOUNTED, dur, 200);
     if (already_mount)
     {
         if (you.mount == mount)
         {
-            mprf(MSGCH_DURATION, "You heal your mount and increase the time it has in this world.");
+            bool extend = you.duration[DUR_MOUNTED] < dur;
+            bool heal = (you.mount_hp != you.mount_hp_max) || (mount_statuses() > 0);
+            if (!extend)
+            {
+                if (!heal)
+                    mprf(MSGCH_DURATION, "You fail to extend your %s's duration any further.", you.mount_name().c_str());
+                else
+                    mprf(MSGCH_DURATION, "You heal your %s's injuries.", you.mount_name().c_str());
+            }
+            else
+            {
+                if (!heal)
+                    mprf(MSGCH_DURATION, "You increase the time your %s has in this world.", you.mount_name().c_str());
+                else
+                    mprf(MSGCH_DURATION, "You heal your %s and increase the time it has in this world.", you.mount_name().c_str());
+            }
+            cure_mount_debuffs();
             you.mount_hp = you.mount_hp_max;
         }
         else
@@ -611,6 +624,9 @@ spret gain_mount(mount_type mount, int pow, bool fail)
         else
             you.mount_heads = 1;
     }
+
+    dur = max(you.duration[DUR_MOUNTED], dur);
+    you.set_duration(DUR_MOUNTED, dur, 200);
 
     mprf(MSGCH_DURATION, "You summon a %s and ride upon its back.", you.mount_name().c_str());
     

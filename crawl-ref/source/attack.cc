@@ -151,7 +151,8 @@ bool attack::handle_phase_damaged()
     // We have to check in_bounds() because removed kraken tentacles are
     // temporarily returned to existence (without a position) when they
     // react to damage.
-    if (defender->can_bleed()
+    if (!mount_defend
+        && defender->can_bleed()
         && !defender->is_summoned()
         && in_bounds(defender->pos())
         && !simu)
@@ -439,7 +440,9 @@ void attack::init_attack(skill_type unarmed_skill, int attk_num)
     ASSERT(attacker);
     attack_number   = attk_num;
     weapon          = attacker->weapon(attack_number);
+
     mount_attack    = (you.mounted() && attacker->is_player() && attack_number >= 2);
+    mount_defend    = defender->is_player() && mount_hit();
 
     wpn_skill       = weapon ? item_attack_skill(*weapon) : unarmed_skill;
     if (attacker->is_player() && you.form_uses_xl())
@@ -1019,13 +1022,16 @@ void attack::do_miscast()
 
 void attack::drain_defender()
 {
-    if (defender->is_monster() && coinflip())
+    if ((defender->is_monster() || mount_defend) && coinflip())
         return;
 
     special_damage = resist_adjust_damage(defender, BEAM_NEG,
-                                          (1 + random2(damage_done)) / 2);
+                                          (1 + random2(damage_done)) / 2, mount_defend);
 
-    if (defender->drain_exp(attacker, true, 20 + min(35, damage_done)))
+    if (mount_defend)
+        obvious_effect = drain_mount(10 + min(special_damage, 35));
+
+    else if (defender->drain_exp(attacker, true, 20 + min(35, damage_done)))
     {
         if (defender->is_player())
             obvious_effect = true;
@@ -1067,8 +1073,15 @@ int attack::inflict_damage(int dam, beam_type flavour, bool clean)
         // gets the zombie. Too rare a case to care any more.
         defender->props["reaper"].get_int() = attacker->mid;
     }
-    return defender->hurt(responsible, dam, flavour, kill_type,
-                          "", aux_source.c_str(), clean);
+    if (mount_defend)
+        damage_mount(dam);
+    else
+    {
+        return defender->hurt(responsible, dam, flavour, kill_type,
+            "", aux_source.c_str(), clean);
+    }
+
+    return dam;
 }
 
 /* If debug, return formatted damage done
@@ -1183,6 +1196,9 @@ string attack::atk_name(description_level_type desc)
  */
 string attack::def_name(description_level_type desc)
 {
+    if (mount_defend)
+        return make_stringf("your %s", you.mount_name().c_str());
+
     return actor_name(defender, desc, defender_visible);
 }
 
@@ -1436,6 +1452,9 @@ int attack::calc_damage()
 
         if (you.duration[DUR_MOUNT_CORROSION])
             damage -= random2(4 * you.props["mount_corrosion_amount"].get_int());
+
+        if (you.duration[DUR_MOUNT_DRAINING])
+            damage = div_rand_round(4 * damage, 5);
     }
     else
     {
@@ -1590,7 +1609,9 @@ bool attack::apply_poison_damage_brand()
     {
         int old_poison;
 
-        if (defender->is_player())
+        if (mount_defend)
+            old_poison = you.duration[DUR_MOUNT_POISONING];
+        else if (defender->is_player())
             old_poison = you.duration[DUR_POISONING];
         else
         {
@@ -1606,13 +1627,14 @@ bool attack::apply_poison_damage_brand()
             splpow_bonus /= 8;
         }
 
-        defender->poison(attacker, 6 + random2(8) + splpow_bonus + random2(damage_done * 3 / 2));
+        if (mount_defend)
+            poison_mount(6 + random2(8) + random2(damage_done * 3 / 2));
+        else
+            defender->poison(attacker, 6 + random2(8) + splpow_bonus + random2(damage_done * 3 / 2));
 
-        if (defender->is_player()
-               && old_poison < you.duration[DUR_POISONING]
-            || !defender->is_player()
-               && old_poison <
-                  (defender->as_monster()->get_ench(ENCH_POISON)).degree)
+        if (mount_defend && old_poison < you.duration[DUR_MOUNT_POISONING] ||
+            !mount_defend && defender->is_player() && old_poison < you.duration[DUR_POISONING] ||
+            !defender->is_player() && old_poison < (defender->as_monster()->get_ench(ENCH_POISON)).degree)
         {
             return true;
         }
@@ -1652,7 +1674,7 @@ bool attack::apply_damage_brand(const char *what)
         return false;
     }
     
-    const bool fae = defender->is_fairy();
+    const bool fae = !mount_defend && defender->is_fairy();
 
     switch (brand)
     {
@@ -1661,24 +1683,30 @@ bool attack::apply_damage_brand(const char *what)
 
     case SPWPN_MOLTEN:
         if (!fae)
+        {
             calc_elemental_brand_damage(BEAM_FIRE,
-                                        defender->is_icy() ? "melt" : "burn",
-                                        what);
-        defender->expose_to_element(BEAM_FIRE, 2);
-        if (defender->is_player())
-            maybe_melt_player_enchantments(BEAM_FIRE, special_damage);
+                defender->is_icy() ? "melt" : "burn",
+                what);
+        }
         break;
 
     case SPWPN_FREEZING:
         if (!fae)
             calc_elemental_brand_damage(BEAM_COLD, "freeze", what);
-        defender->expose_to_element(BEAM_COLD, 2);
         break;
 
     case SPWPN_HOLY_WRATH:
         if (defender->holy_wrath_susceptible())
             special_damage = 1 + (random2(damage_done * 15) / 10);
 
+        if (mount_defend)
+        {
+            special_damage_message =
+                make_stringf(
+                    "Your %s convulses%s",
+                    you.mount_name(true).c_str(),
+                    attack_strength_punctuation(special_damage).c_str());
+        }
         if (special_damage && defender_visible)
         {
             special_damage_message =
@@ -1704,15 +1732,16 @@ bool attack::apply_damage_brand(const char *what)
                 const string punctuation =
                     attack_strength_punctuation(special_damage);
                 special_damage_message =
-                    defender->is_player()
+                    defender->is_player() && !mount_defend
                     ? make_stringf("You are %s%s", special_damage < original ? "lightly shocked" :
                                                    special_damage > original ? "electrocuted"
                                                                              : "shocked", punctuation.c_str())
-                    : make_stringf("Lightning %scourses through %s%s",
+                    : make_stringf("Lightning %scourses through %s%s%s",
                         special_damage < original ? "weakly " :
                         special_damage > original ? "violently "
                         : "",
-                        defender->name(DESC_THE).c_str(),
+                        mount_defend ? "your " : "",
+                        mount_defend ? you.mount_name(true).c_str() : defender->name(DESC_THE).c_str(),
                         punctuation.c_str());
                 special_damage_flavour = BEAM_ELECTRICITY;
                 defender->expose_to_element(BEAM_ELECTRICITY, 1);
@@ -1722,10 +1751,20 @@ bool attack::apply_damage_brand(const char *what)
         break;
 
     case SPWPN_SILVER:
-        special_damage = silver_damages_victim(defender, damage_done, special_damage_message);
+        special_damage = silver_damages_victim(defender, damage_done, special_damage_message, mount_defend);
         break;
 
     case SPWPN_DRAGON_SLAYING:
+        if (mount_defend && is_draconic_type(you.mount_as_monster()))
+        {
+            special_damage = 1 + (random2(damage_done * 15) / 10);
+            special_damage_message =
+                make_stringf(
+                    "Your %s convulses%s",
+                    you.mount_name(true).c_str(),
+                    attack_strength_punctuation(special_damage).c_str());
+        }
+
         if (defender->is_dragonkind())
         {
             special_damage = 1 + (random2(damage_done * 15) / 10);
@@ -1941,12 +1980,12 @@ void attack::calc_elemental_brand_damage(beam_type flavour,
                                          const char *what)
 {
     if (flavour == BEAM_FIRE)
-        special_damage = resist_adjust_damage(defender, flavour,
-                                          damage_done);
+        special_damage = damage_done;
 
     else if (flavour == BEAM_COLD)
-        special_damage = resist_adjust_damage(defender, flavour,
-                            div_rand_round(damage_done + random2(damage_done),4));
+        special_damage = div_rand_round(damage_done + random2(damage_done), 4);
+
+    special_damage = resist_adjust_damage(defender, flavour, special_damage, mount_defend);
 
     if (needs_message && special_damage > 0 && verb)
     {
@@ -1959,6 +1998,13 @@ void attack::calc_elemental_brand_damage(beam_type flavour,
             // Don't allow reflexive if the subject wasn't the attacker.
             defender_name(!what).c_str(),
             attack_strength_punctuation(special_damage).c_str());
+    }
+
+    if (!mount_defend)
+    {
+        defender->expose_to_element(BEAM_FIRE, 2);
+        if (defender->is_player())
+            maybe_melt_player_enchantments(BEAM_FIRE, special_damage);
     }
 }
 

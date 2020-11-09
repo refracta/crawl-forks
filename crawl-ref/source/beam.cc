@@ -2482,10 +2482,17 @@ bool curare_actor(actor* source, actor* target, int levels, string name,
 
 // XXX: This is a terrible place for this, but it at least does go with
 // curare_actor().
-int silver_damages_victim(actor* victim, int damage, string &dmg_msg)
+int silver_damages_victim(actor* victim, int damage, string &dmg_msg, bool mount)
 {
     int ret = 0;
-    if (victim->how_chaotic() || victim->is_player() && player_is_shapechanged())
+    if (mount)
+    {
+        if (is_chaotic_type(you.mount_as_monster()))
+            ret = div_rand_round(damage * 3, 4);
+        else
+            return 0;
+    }
+    else if (victim->how_chaotic() || victim->is_player() && player_is_shapechanged())
     {
         ret = div_rand_round(damage * 3, 4);
     }
@@ -2508,8 +2515,9 @@ int silver_damages_victim(actor* victim, int damage, string &dmg_msg)
     else
         return 0;
 
-    dmg_msg = make_stringf("The silver sears %s%s", victim->name(DESC_THE).c_str(), 
-                                                    attack_strength_punctuation(ret).c_str());
+    dmg_msg = make_stringf("The silver sears %s%s%s", mount ? "your " : "", 
+                                                      mount ? you.mount_name(true).c_str() : victim->name(DESC_THE).c_str(), 
+                                                      attack_strength_punctuation(ret).c_str());
     return ret;
 }
 

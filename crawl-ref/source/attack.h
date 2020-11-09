@@ -57,7 +57,8 @@ public:
     int             attk_damage;
 
     int             attack_number;
-    bool            mount_attack;
+    bool            mount_attack;   // Is the mount attacking?
+    bool            mount_defend;   // Is the mount being hit?
 
     item_def        *weapon;
     brand_type      damage_brand;

@@ -924,6 +924,7 @@ public:
     bool is_dragonkind() const override;
     bool mounted() const override;
     string mount_name(bool terse = false) const;
+    monster_type mount_as_monster() const;
 
 protected:
     void _removed_beholder(bool quiet = false);
@@ -1192,6 +1193,9 @@ bool player_on_orb_run();
 void change_drac_colour(draconian_colour new_colour);
 void damage_mount(int amount);
 void dismount();
+void cure_mount_debuffs();
 bool mount_hit();
 int apply_mount_ac(int amount);
 monster_type mount_mons();
+bool drain_mount(int strength);
+int mount_statuses();

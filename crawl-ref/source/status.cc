@@ -165,19 +165,6 @@ static void _describe_terrain(status_info& inf);
 static void _describe_missiles(status_info& inf);
 static void _describe_invisible(status_info& inf);
 
-static int _mount_statuses()
-{
-    int retval = 0;
-
-    if (you.duration[DUR_MOUNT_POISONING])
-        retval++;
-
-    if (you.duration[DUR_MOUNT_CORROSION])
-        retval++;
-
-    return retval;
-}
-
 bool fill_status_info(int status, status_info& inf)
 {
     inf = status_info();
@@ -249,7 +236,7 @@ bool fill_status_info(int status, status_info& inf)
             break;
         }
 
-        int statuses = _mount_statuses();
+        int statuses = mount_statuses();
 
         if (statuses > 0)
         {
@@ -266,6 +253,15 @@ bool fill_status_info(int status, status_info& inf)
             if (you.duration[DUR_MOUNT_CORROSION])
             {
                 inf.light_text += make_stringf("Corr [%d]", (-4 * you.props["mount_corrosion_amount"].get_int()));
+                statuses--;
+                if (statuses <= 0)
+                    inf.light_text += ")";
+                else
+                    inf.light_text += ", ";
+            }
+            if (you.duration[DUR_MOUNT_DRAINING])
+            {
+                inf.light_text += "Drain";
                 statuses--;
                 if (statuses <= 0)
                     inf.light_text += ")";

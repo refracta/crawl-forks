@@ -9410,6 +9410,24 @@ string player::mount_name(bool terse) const
     }
 }
 
+monster_type player::mount_as_monster() const
+{
+    switch (you.mount)
+    {
+    case mount_type::hydra:
+        return MONS_HYDRA;
+
+    case mount_type::drake:
+        return MONS_RIME_DRAKE;
+
+    case mount_type::spider:
+        return MONS_JUMPING_SPIDER;
+
+    default:
+        return MONS_PROGRAM_BUG;
+    }
+}
+
 void damage_mount(int amount)
 {
     ASSERT(you.mounted());
@@ -9424,6 +9442,15 @@ void damage_mount(int amount)
 
 void dismount()
 {
+    cure_mount_debuffs();
+    you.mount = mount_type::none;
+    you.mount_hp = you.mount_hp_max = you.mount_hp_regen = 0;
+    redraw_screen();
+}
+
+// Ends all mount debuffs when a mount is dismissed or resummoned.
+void cure_mount_debuffs()
+{
     if (you.duration[DUR_MOUNTED])
         you.duration[DUR_MOUNTED] = 0;
     if (you.duration[DUR_MOUNT_POISONING])
@@ -9433,9 +9460,8 @@ void dismount()
         you.duration[DUR_MOUNT_CORROSION] = 0;
         you.props["mount_corrosion_amount"] = 0;
     }
-    you.mount = mount_type::none;
-    you.mount_hp = you.mount_hp_max = you.mount_hp_regen = 0;
-    redraw_screen();
+    if (you.duration[DUR_MOUNT_DRAINING])
+        you.duration[DUR_MOUNT_DRAINING] = 0;
 }
 
 // Returns whether a hit should hit you (false) or a mount (true)
@@ -9465,4 +9491,32 @@ monster_type mount_mons()
         break;
     }
     return MONS_PROGRAM_BUG;
+}
+
+int mount_statuses()
+{
+    int retval = 0;
+
+    if (you.duration[DUR_MOUNT_POISONING])
+        retval++;
+
+    if (you.duration[DUR_MOUNT_CORROSION])
+        retval++;
+
+    if (you.duration[DUR_MOUNT_DRAINING])
+        retval++;
+
+    return retval;
+}
+
+bool drain_mount(int strength)
+{
+    if (you.res_negative_energy(false, true) >= 3)
+        return false;
+
+    mprf("Your %s is drained.", you.mount_name(true).c_str());
+
+    you.increase_duration(DUR_MOUNT_DRAINING, strength);
+
+    return true;
 }

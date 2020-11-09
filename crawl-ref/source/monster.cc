@@ -3657,19 +3657,8 @@ int monster::known_chaos(bool check_spells_god) const
 {
     int chaotic = 0;
 
-    if (type == MONS_UGLY_THING
-        || type == MONS_VERY_UGLY_THING
-        || type == MONS_ABOMINATION_SMALL
-        || type == MONS_ABOMINATION_LARGE
-        || type == MONS_WRETCHED_STAR
-        || type == MONS_KILLER_KLOWN      // For their random attacks.
-        || type == MONS_TIAMAT            // For her colour-changing.
-        || type == MONS_BAI_SUZHEN
-        || type == MONS_BAI_SUZHEN_DRAGON // For her transformation.
-        || mons_is_demonspawn(type))      // Like player demonspawn.
-    {
+    if (is_chaotic_type(type))
         chaotic++;
-    }
 
     if (is_shapeshifter() && (flags & MF_KNOWN_SHIFTER))
         chaotic++;
@@ -4446,11 +4435,13 @@ bool monster::drain_exp(actor *agent, bool quiet, int /*pow*/)
     if (res_negative_energy() >= 3)
         return false;
 
-    if (!quiet && you.can_see(*this))
-        mprf("%s is drained!", name(DESC_THE).c_str());
+    int dmg = 2 + random2(3);
 
     // If quiet, don't clean up the monster in order to credit properly.
-    hurt(agent, 2 + random2(3), BEAM_NEG, KILLED_BY_DRAINING, "", "", !quiet);
+    hurt(agent, dmg, BEAM_NEG, KILLED_BY_DRAINING, "", "", !quiet);
+
+    if (!quiet && you.can_see(*this))
+        mprf("%s is drained%s", name(DESC_THE).c_str(), attack_strength_punctuation(dmg));
 
     if (alive())
     {

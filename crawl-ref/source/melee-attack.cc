@@ -2697,15 +2697,25 @@ bool melee_attack::apply_staff_damage()
         special_damage =
             resist_adjust_damage(defender,
                                  BEAM_ELECTRICITY,
-                                 staff_damage(SK_AIR_MAGIC));
+                                 staff_damage(SK_AIR_MAGIC), mount_defend);
 
         if (special_damage)
         {
-            special_damage_message =
-                make_stringf("%s %s electrocuted%s",
-                             defender->name(DESC_THE).c_str(),
-                             defender->conj_verb("are").c_str(),
-                             attack_strength_punctuation(special_damage).c_str());
+            if (mount_defend)
+            {
+                special_damage_message =
+                    make_stringf("Your %s is electrocuted%s",
+                        you.mount_name(true).c_str(),
+                        attack_strength_punctuation(special_damage).c_str());
+            }
+            else
+            {
+                special_damage_message =
+                    make_stringf("%s %s electrocuted%s",
+                        defender->name(DESC_THE).c_str(),
+                        defender->conj_verb("are").c_str(),
+                        attack_strength_punctuation(special_damage).c_str());
+            }
             special_damage_flavour = BEAM_ELECTRICITY;
         }
 
@@ -2734,16 +2744,17 @@ bool melee_attack::apply_staff_damage()
         special_damage =
             resist_adjust_damage(defender,
                                  BEAM_COLD,
-                                 staff_damage(SK_ICE_MAGIC));
+                                 staff_damage(SK_ICE_MAGIC), mount_defend);
 
         if (special_damage)
         {
             special_damage_message =
                 make_stringf(
-                    "%s freeze%s %s%s",
+                    "%s freeze%s %s%s%s",
                     attacker->name(DESC_THE).c_str(),
                     attacker->is_player() ? "" : "s",
-                    defender->name(DESC_THE).c_str(),
+                    mount_defend ? "your " : "",
+                    mount_defend ? you.mount_name(true).c_str() : defender->name(DESC_THE).c_str(),
                     attack_strength_punctuation(special_damage).c_str());
             special_damage_flavour = BEAM_COLD;
         }
@@ -2771,16 +2782,20 @@ bool melee_attack::apply_staff_damage()
 
     case STAFF_EARTH:
         special_damage = staff_damage(SK_EARTH_MAGIC);
-        special_damage = apply_defender_ac(special_damage);
+        if (mount_defend)
+            special_damage = apply_mount_ac(special_damage);
+        else
+            special_damage = apply_defender_ac(special_damage);
 
         if (special_damage > 0)
         {
             special_damage_message =
                 make_stringf(
-                    "%s crush%s %s%s",
+                    "%s crush%s %s%s%s",
                     attacker->name(DESC_THE).c_str(),
                     attacker->is_player() ? "" : "es",
-                    defender->name(DESC_THE).c_str(),
+                    mount_defend ? "your " : "",
+                    mount_defend ? you.mount_name(true).c_str() : defender->name(DESC_THE).c_str(),
                     attack_strength_punctuation(special_damage).c_str());
         }
 
@@ -2809,20 +2824,21 @@ bool melee_attack::apply_staff_damage()
         special_damage =
             resist_adjust_damage(defender,
                                  BEAM_FIRE,
-                                 staff_damage(SK_FIRE_MAGIC));
+                                 staff_damage(SK_FIRE_MAGIC), mount_defend);
 
         if (special_damage)
         {
             special_damage_message =
                 make_stringf(
-                    "%s burn%s %s%s",
+                    "%s burn%s %s%s%s",
                     attacker->name(DESC_THE).c_str(),
                     attacker->is_player() ? "" : "s",
-                    defender->name(DESC_THE).c_str(),
+                    mount_defend ? "your " : "",
+                    mount_defend ? you.mount_name(true).c_str() : defender->name(DESC_THE).c_str(),
                     attack_strength_punctuation(special_damage).c_str());
             special_damage_flavour = BEAM_FIRE;
 
-            if (defender->is_player())
+            if (defender->is_player() && !mount_defend)
                 maybe_melt_player_enchantments(BEAM_FIRE, special_damage);
         }
 
@@ -2855,7 +2871,10 @@ bool melee_attack::apply_staff_damage()
         // Base chance at 50% -- like mundane weapons.
         if (x_chance_in_y(80 + attacker->skill(SK_POISON_MAGIC, 10), 160))
         {
-            defender->poison(attacker, 2);
+            if (mount_defend)
+                poison_mount(2);
+            else
+                defender->poison(attacker, 2);
 
             if (flay_resist)
             {
@@ -2880,6 +2899,9 @@ bool melee_attack::apply_staff_damage()
     }
 
     case STAFF_DEATH:
+        // BCADDO: Case for undead mount at least taking the dispel effect? No undead mounts as of now but...
+        if (mount_defend)
+            break;
         if (defender->holiness() == MH_UNDEAD)
         {
             if (staff_damage(SK_NECROMANCY) > div_rand_round(defender->res_magic(), 4))
@@ -2989,7 +3011,7 @@ bool melee_attack::apply_staff_damage()
         if (is_unrandom_artefact(*weapon, UNRAND_MAJIN))
         {
             special_damage = staff_damage(SK_NECROMANCY);
-            special_damage = resist_adjust_damage(defender, BEAM_NEG, special_damage);
+            special_damage = resist_adjust_damage(defender, BEAM_NEG, special_damage, mount_defend);
 
             if (special_damage)
             {
@@ -3024,7 +3046,7 @@ bool melee_attack::apply_staff_damage()
             {
                  special_damage = random2((skill + attacker->skill(SK_EVOCATIONS, 50)) / 80);
                  beam_type dam_type = random_choose(BEAM_FIRE, BEAM_COLD, BEAM_NONE, BEAM_ELECTRICITY);
-                 special_damage = resist_adjust_damage(defender, dam_type, special_damage);
+                 special_damage = resist_adjust_damage(defender, dam_type, special_damage, mount_defend);
                  string verb = "burn";
                  switch (dam_type)
                  {
@@ -3510,7 +3532,7 @@ void melee_attack::mons_apply_attack_flavour()
         special_damage =
             resist_adjust_damage(defender,
                                  BEAM_FIRE,
-                                 base_damage);
+                                 base_damage, mount_defend);
         special_damage_flavour = BEAM_FIRE;
 
         if (needs_message && base_damage)
@@ -3530,7 +3552,7 @@ void melee_attack::mons_apply_attack_flavour()
         special_damage =
             resist_adjust_damage(defender,
                                  BEAM_COLD,
-                                 base_damage);
+                                 base_damage, mount_defend);
         special_damage_flavour = BEAM_COLD;
 
         if (needs_message && base_damage)
@@ -3551,7 +3573,7 @@ void melee_attack::mons_apply_attack_flavour()
         special_damage =
             resist_adjust_damage(defender,
                                  BEAM_ELECTRICITY,
-                                 base_damage);
+                                 base_damage, mount_defend);
         special_damage_flavour = BEAM_ELECTRICITY;
 
         if (needs_message && base_damage)
@@ -3584,6 +3606,8 @@ void melee_attack::mons_apply_attack_flavour()
         // deliberate fall-through
     case AF_VAMPIRIC:
         if (!actor_is_susceptible_to_vampirism(*defender))
+            break;
+        if (mount_defend)
             break;
 
         if (defender->stat_hp() < defender->stat_maxhp())
@@ -3868,7 +3892,7 @@ void melee_attack::mons_apply_attack_flavour()
         special_damage = defender->apply_ac(base_damage, 0, ac_type::half);
         special_damage = resist_adjust_damage(defender,
                                               BEAM_FIRE,
-                                              special_damage);
+                                              special_damage, mount_defend);
 
         if (needs_message && special_damage)
         {
