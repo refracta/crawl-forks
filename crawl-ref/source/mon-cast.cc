@@ -4778,12 +4778,12 @@ static monster_type _pick_drake(bool eldritch = false)
                                   3, MONS_ACID_DRAGON);
 }
 
-static monster_type _pick_spider(bool eldritch = false)
+static monster_type _pick_spider()
 {
     return random_choose_weighted(2, MONS_WOLF_SPIDER, 
                                   1, MONS_ORB_SPIDER, 
                                   3, MONS_TARANTELLA, 
-                                  4, MONS_REDBACK
+                                  4, MONS_REDBACK,
                                   3, MONS_JUMPING_SPIDER);
 }
 
@@ -6825,7 +6825,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
 
             for (sumcount = 0; sumcount < sumcount2; ++sumcount)
             {
-                monster_type mon = _pick_spider(eldritch);
+                monster_type mon = _pick_spider();
                 monsters.push_back(mon);
             }
 
