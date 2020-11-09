@@ -7648,10 +7648,10 @@ bool player::rot(actor */*who*/, int amount, bool quiet, bool /*no_cleanup*/)
     return true;
 }
 
-bool player::corrode_equipment(const char* corrosion_source, int degree)
+bool player::corrode_equipment(const char* corrosion_source, int degree, bool mt)
 {
     // rCorr protects against 50% of corrosion.
-    if (res_corr())
+    if (res_corr(true, true, mt))
     {
         degree = binomial(degree, 50);
         if (!degree)
@@ -7661,22 +7661,22 @@ bool player::corrode_equipment(const char* corrosion_source, int degree)
         }
     }
     // always increase duration, but...
-    increase_duration(DUR_CORROSION, 10 + roll_dice(2, 4), 50,
-                      make_stringf("%s corrodes you!",
-                                   corrosion_source).c_str());
+    increase_duration(mt ? DUR_MOUNT_CORROSION : DUR_CORROSION, 10 + roll_dice(2, 4), 50,
+                      make_stringf("%s corrodes %s!",
+                                   corrosion_source, mt ? you.mount_name().c_str() : "you").c_str());
 
     // the more corrosion you already have, the lower the odds of more
-    int prev_corr = props["corrosion_amount"].get_int();
+    int prev_corr = props[mt ? "mount_corrosion_amount" : "corrosion_amount"].get_int();
     bool did_corrode = false;
     for (int i = 0; i < degree; i++)
         if (!x_chance_in_y(prev_corr, prev_corr + 7))
         {
-            props["corrosion_amount"].get_int()++;
+            props[mt ? "mount_corrosion_amount" : "corrosion_amount"].get_int()++;
             prev_corr++;
             did_corrode = true;
         }
 
-    if (did_corrode)
+    if (did_corrode && !mt)
     {
         redraw_armour_class = true;
         wield_change = true;
@@ -9428,6 +9428,11 @@ void dismount()
         you.duration[DUR_MOUNTED] = 0;
     if (you.duration[DUR_MOUNT_POISONING])
         you.duration[DUR_MOUNT_POISONING] = 0;
+    if (you.duration[DUR_MOUNT_CORROSION])
+    {
+        you.duration[DUR_MOUNT_CORROSION] = 0;
+        you.props["mount_corrosion_amount"] = 0;
+    }
     you.mount = mount_type::none;
     you.mount_hp = you.mount_hp_max = you.mount_hp_regen = 0;
     redraw_screen();

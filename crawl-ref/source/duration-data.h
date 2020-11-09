@@ -22,6 +22,11 @@ static void _end_invis()
     you.attribute[ATTR_INVIS_UNCANCELLABLE] = 0;
 }
 
+static void _end_mount_corrosion()
+{
+    you.props["mount_corrosion_amount"] = 0;
+}
+
 static void _end_corrosion()
 {
     you.props["corrosion_amount"] = 0;
@@ -572,6 +577,11 @@ static const duration_def duration_data[] =
       "corroded", "corrosion",
       "You are corroded.", D_DISPELLABLE,
       {{ "You are no longer corroded.", _end_corrosion }}},
+    { DUR_MOUNT_CORROSION,
+      RED, "",
+      "", "",
+      "Your mount is corroded.", D_DISPELLABLE,
+      {{ "Your mount is no longer corroded.", _end_mount_corrosion }}},
     { DUR_HORROR,
       RED, "Horr",
       "horrified", "",
@@ -712,7 +722,6 @@ static const duration_def duration_data[] =
     { DUR_ANTENNAE_EXTEND, 0, "", "", "old antennae extend", "", D_NO_FLAGS},
     { DUR_NEGATIVE_VULN, 0, "", "", "old negative vuln", "", D_NO_FLAGS},
     { DUR_CONTROL_TELEPORT, 0, "", "", "old control teleport", "", D_NO_FLAGS},
-    { DUR_DOOM_HOWL_IMMUNITY, 0, "", "", "old howl immunity", "", D_NO_FLAGS, {{""}}},
     { DUR_CONDENSATION_SHIELD, 0, "", "", "old condensation shield", "", D_NO_FLAGS},
     { DUR_PHASE_SHIFT, 0, "", "", "old phase shift", "", D_NO_FLAGS},
     { DUR_ANTIMAGIC,

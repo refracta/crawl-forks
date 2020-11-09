@@ -528,6 +528,7 @@ void revive()
 
     update_vision_range(); // in case you had darkness cast before
     you.props["corrosion_amount"] = 0;
+    you.props["mount_corrosion_amount"] = 0;
     you.props.erase(SAP_MAGIC_KEY);
 
     unrot_hp(9999);

@@ -353,18 +353,36 @@ static int _mount_ac()
 {
     ASSERT(you.mounted());
 
+    int ac = 0;
+
     switch (you.mount)
     {
     case mount_type::hydra:
-        return 3;
+        ac = 3;
     case mount_type::spider:
-        return 9;
+        ac = 9;
     case mount_type::drake:
-        return 6;
+        ac = 6;
     default:
         mprf(MSGCH_ERROR, "Unhandled Mount AC.");
         break;
     }
+
+    if (you.submerged())
+        ac += 4;
+
+    if (you.duration[DUR_QAZLAL_AC])
+        ac += 3;
+
+    if (you.duration[DUR_MOUNT_CORROSION])
+        ac -= 4 * you.props["mount_corrosion_amount"].get_int();
+
+    if (you.duration[DUR_ICY_ARMOUR])
+        ac += 5 + you.props[ICY_ARMOUR_KEY].get_int() / 25;
+
+    if (you.duration[DUR_PHYS_VULN])
+        ac -= 4;
+
     return 0;
 }
 

@@ -4492,7 +4492,7 @@ bool monster::rot(actor *agent, int amount, bool quiet, bool no_cleanup)
     return true;
 }
 
-bool monster::corrode_equipment(const char* corrosion_source, int degree)
+bool monster::corrode_equipment(const char* corrosion_source, int degree, bool /*mt*/)
 {
     // Don't corrode spectral weapons or temporary items.
     if (mons_is_avatar(type) || type == MONS_PLAYER_SHADOW)

@@ -593,6 +593,7 @@ spret gain_mount(mount_type mount, int pow, bool fail)
         else
         {
             mprf(MSGCH_DURATION, "You dismiss your previous mount to call another one.");
+            dismount();
             you.mount = mount;
             you.mount_hp = you.mount_hp_max = mount_hp;
         }

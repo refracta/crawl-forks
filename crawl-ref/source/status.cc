@@ -165,6 +165,19 @@ static void _describe_terrain(status_info& inf);
 static void _describe_missiles(status_info& inf);
 static void _describe_invisible(status_info& inf);
 
+static int _mount_statuses()
+{
+    int retval = 0;
+
+    if (you.duration[DUR_MOUNT_POISONING])
+        retval++;
+
+    if (you.duration[DUR_MOUNT_CORROSION])
+        retval++;
+
+    return retval;
+}
+
 bool fill_status_info(int status, status_info& inf)
 {
     inf = status_info();
@@ -212,7 +225,7 @@ bool fill_status_info(int status, status_info& inf)
     
     case DUR_MOUNTED:
     {
-        string longtxt = "You are mounted upon a ";
+        inf.long_text = make_stringf("You are mounted upon a %s", you.mount_name().c_str()).c_str();
         switch (you.mount)
         {
         case mount_type::none:
@@ -221,30 +234,45 @@ bool fill_status_info(int status, status_info& inf)
             break;
         case mount_type::drake:
             inf.light_colour = LIGHTCYAN;
-            longtxt += "rime drake.";
-            inf.long_text = longtxt;
             inf.short_text = "drake mount";
             inf.light_text = "drake";
             break;
         case mount_type::hydra:
             inf.light_colour = LIGHTGREEN;
-            // BCADDO: Head count?
-            longtxt += "hydra.";
-            inf.long_text = longtxt;
             inf.short_text = "hydra mount";
             inf.light_text = "hydra";
             break;
         case mount_type::spider:
             inf.light_colour = BROWN;
-            longtxt += "giant spider.";
-            inf.long_text = longtxt;
             inf.short_text = "spider mount";
             inf.light_text = "spider";
             break;
         }
 
-        if (you.duration[DUR_MOUNT_POISONING])
-            inf.light_text += " (Pois)";
+        int statuses = _mount_statuses();
+
+        if (statuses > 0)
+        {
+            inf.light_text += " (";
+            if (you.duration[DUR_MOUNT_POISONING])
+            {
+                inf.light_text += "Pois";
+                statuses--;
+                if (statuses <= 0)
+                    inf.light_text += ")";
+                else
+                    inf.light_text += ", ";
+            }
+            if (you.duration[DUR_MOUNT_CORROSION])
+            {
+                inf.light_text += make_stringf("Corr [%d]", (-4 * you.props["mount_corrosion_amount"].get_int()));
+                statuses--;
+                if (statuses <= 0)
+                    inf.light_text += ")";
+                else
+                    inf.light_text += ", ";
+            }
+        }
     }
         break;
 

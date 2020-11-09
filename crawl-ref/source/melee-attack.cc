@@ -2617,13 +2617,12 @@ void melee_attack::attacker_sustain_passive_damage()
     // Spectral weapons can't be corroded (but can take acid damage).
     // Mounts can't be corroded either (at least for now).
     const bool avatar = (attacker->is_monster()
-                        && mons_is_avatar(attacker->as_monster()->type)
-                        || mount_attack);
+                        && mons_is_avatar(attacker->as_monster()->type));
 
     if (!avatar)
     {
         if (x_chance_in_y(acid_strength + 1, 30))
-            attacker->corrode_equipment();
+            attacker->corrode_equipment("the acid", 1, mount_attack);
     }
 
     acid_strength = roll_dice(1, acid_strength);
@@ -2642,9 +2641,7 @@ void melee_attack::attacker_sustain_passive_damage()
     }
 
     if (!mount_attack)
-    {
         attacker->hurt(defender, acid_strength, BEAM_ACID, KILLED_BY_ACID, "", "", false);
-    }
 }
 
 int melee_attack::staff_damage(skill_type skill)
