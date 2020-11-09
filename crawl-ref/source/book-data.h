@@ -134,7 +134,7 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_STONE_ARROW,
     SPELL_SUMMON_FOREST,
     SPELL_NOXIOUS_BOG,
-    SPELL_SUMMON_SPIDER_MOUNT
+    SPELL_SUMMON_HYDRA_MOUNT,
 },
 
 #if TAG_MAJOR_VERSION > 34
@@ -341,7 +341,7 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_CALL_CANINE_FAMILIAR,
     SPELL_SUMMON_ICE_BEAST,
     SPELL_SUMMON_MANA_VIPER,
-    SPELL_SUMMON_HYDRA_MOUNT,
+    SPELL_SUMMON_SPIDER_MOUNT,
 },
 
 {   // Book of Annihilations
