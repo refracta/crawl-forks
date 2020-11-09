@@ -1980,9 +1980,7 @@ bool setup_mons_cast(const monster* mons, bolt &pbolt, spell_type spell_cast,
 #endif
     case SPELL_CALL_IMP:
     case SPELL_SUMMON_MINOR_DEMON:
-#if TAG_MAJOR_VERSION == 34
-    case SPELL_SUMMON_SCORPIONS:
-#endif
+    case SPELL_SUMMON_SPIDERS:
     case SPELL_SUMMON_UFETUBUS:
     case SPELL_SUMMON_HELL_BEAST:  // Geryon
     case SPELL_SUMMON_UNDEAD:
@@ -4780,6 +4778,15 @@ static monster_type _pick_drake(bool eldritch = false)
                                   3, MONS_ACID_DRAGON);
 }
 
+static monster_type _pick_spider(bool eldritch = false)
+{
+    return random_choose_weighted(2, MONS_WOLF_SPIDER, 
+                                  1, MONS_ORB_SPIDER, 
+                                  3, MONS_TARANTELLA, 
+                                  4, MONS_REDBACK
+                                  3, MONS_JUMPING_SPIDER);
+}
+
 static void _do_high_level_summon(monster* mons, spell_type spell_cast,
                                   monster_type (*mpicker)(), int nsummons,
                                   god_type god, const coord_def *target = nullptr,
@@ -6808,6 +6815,31 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         }
         return;
 
+    case SPELL_SUMMON_SPIDERS:
+        sumcount2 = 1 + random2(mons->spell_hd(spell_cast) / 5 + 1);
+
+        duration = min(2 + mons->spell_hd(spell_cast) / 10, 6);
+
+        {
+            vector<monster_type> monsters;
+
+            for (sumcount = 0; sumcount < sumcount2; ++sumcount)
+            {
+                monster_type mon = _pick_spider(eldritch);
+                monsters.push_back(mon);
+            }
+
+            for (monster_type type : monsters)
+            {
+                x = create_monster(
+                    mgen_data(type, SAME_ATTITUDE(mons), mons->pos(),
+                        mons->foe)
+                    .set_summoned(mons, duration, spell_cast, god));
+                chaos_summon(spell_cast, x, mons);
+            }
+        }
+        return;
+
     case SPELL_DRUIDS_CALL:
         _cast_druids_call(mons);
         return;
@@ -8817,7 +8849,6 @@ static bool _ms_waste_of_time(monster* mon, mon_spell_slot slot)
     case SPELL_SUMMON_TWISTER:
     case SPELL_SHAFT_SELF:
     case SPELL_MISLEAD:
-    case SPELL_SUMMON_SCORPIONS:
     case SPELL_SUMMON_ELEMENTAL:
     case SPELL_EPHEMERAL_INFUSION:
     case SPELL_SINGULARITY:

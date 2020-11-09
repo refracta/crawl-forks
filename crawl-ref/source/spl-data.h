@@ -485,18 +485,16 @@ static const struct spell_desc spelldata[] =
     TILEG_MASS_ABJURATION,
 },
 
-#if TAG_MAJOR_VERSION == 34
 {
-    SPELL_SUMMON_SCORPIONS, "Summon Scorpions", "",
+    SPELL_SUMMON_SPIDERS, "Summon Spiders", "",
     spschool::summoning | spschool::poison,
-    spflag::none,
+    spflag::monster,
     4,
     200,
     -1, -1,
     3, 0,
     TILEG_ERROR,
 },
-#endif
 
 {
     SPELL_BOLT_OF_DRAINING, "Bolt of Draining", "Chaos Bolt",
