@@ -1369,9 +1369,9 @@ int attack::calc_base_unarmed_damage()
 
 int attack::calc_damage()
 {
+    int damage = 0;
     if (attacker->is_monster())
     {
-        int damage = 0;
         int damage_max = 0;
         if (using_weapon() || wpn_skill == SK_FIGHTING)
         {
@@ -1407,9 +1407,39 @@ int attack::calc_damage()
         set_attack_verb(damage);
         return apply_defender_ac(damage, damage_max);
     }
+    else if (mount_attack)
+    {
+        int potential_damage;
+
+        potential_damage = calc_base_unarmed_damage();
+        damage = random2avg(potential_damage + 1, 3);
+
+        // weapon skill-like bonus using spellpower/invocations
+        switch (you.mount)
+        {
+        case mount_type::drake:
+            damage *= 2500 + random2(you.skill(SK_INVOCATIONS, 100) + 1);
+            break;
+        case mount_type::spider:
+            damage *= 2500 + random2(13 * calc_spell_power(SPELL_SUMMON_SPIDER_MOUNT, true) + 1);
+            break;
+        case mount_type::hydra:
+            damage *= 2500 + random2(13 * calc_spell_power(SPELL_SUMMON_HYDRA_MOUNT, true) + 1);
+            break;
+        default:
+            break;
+        }
+        damage /= 2500;
+
+        if (you.submerged() && !you.can_swim())
+            damage = div_rand_round(2 * damage, 3); // Spider can't swim either.
+
+        if (you.duration[DUR_MOUNT_CORROSION])
+            damage -= random2(4 * you.props["mount_corrosion_amount"].get_int());
+    }
     else
     {
-        int potential_damage, damage;
+        int potential_damage;
 
         potential_damage = using_weapon() ? weapon_damage() : calc_base_unarmed_damage();
 
@@ -1431,15 +1461,14 @@ int attack::calc_damage()
         if (!defender->alive())
             return 0;
         damage = player_apply_final_multipliers(damage);
-        damage = apply_defender_ac(damage);
-
-        damage = max(0, damage);
-        set_attack_verb(damage);
-
-        return damage;
     }
 
-    return 0;
+    damage = apply_defender_ac(damage);
+
+    damage = max(0, damage);
+    set_attack_verb(damage);
+
+    return damage;
 }
 
 // Only include universal monster modifiers here; melee and ranged go in their own classes.
