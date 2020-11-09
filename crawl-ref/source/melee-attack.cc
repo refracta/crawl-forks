@@ -410,7 +410,7 @@ bool melee_attack::handle_phase_dodged()
             return false;
 
         const item_def * wpn0 = defender->weapon(0);
-        const item_def * wpn1 = defender->weapon(0);
+        const item_def * wpn1 = defender->weapon(1);
         const bool using_lbl0 = wpn0 && item_attack_skill(*wpn0) == SK_LONG_BLADES;
         const bool using_lbl1 = (defender->is_player() || mons_wields_two_weapons(*defender->as_monster()))
             && wpn1 && item_attack_skill(*wpn1) == SK_LONG_BLADES;
