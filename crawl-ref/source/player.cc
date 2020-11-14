@@ -7693,29 +7693,47 @@ bool player::corrode_equipment(const char* corrosion_source, int degree, bool mt
  * @param hurt_msg A message to display when dealing damage.
  */
 void player::splash_with_acid(const actor* evildoer, int acid_strength,
-                              bool allow_corrosion, const char* /*hurt_msg*/)
+                              bool allow_corrosion, const char* /*hurt_msg*/, bool mt)
 {
     if (allow_corrosion && binomial(3, acid_strength + 1, 30))
-        corrode_equipment();
+        corrode_equipment("the acid", 1, mt);
 
     const int dam = roll_dice(4, acid_strength);
-    const int post_res_dam = resist_adjust_damage(&you, BEAM_ACID, dam);
+    const int post_res_dam = resist_adjust_damage(&you, BEAM_ACID, dam, mt);
 
-    if (you.species == SP_FAIRY)
+    if (you.species == SP_FAIRY && !mt)
     {
         mprf("You are splashed with acid.");
         return; // No bonus damage (corrosion probably doesn't do much either but whatever).
     }
-    mprf("You are splashed with acid%s%s",
-         post_res_dam > 0 ? "" : " but take no damage",
-         attack_strength_punctuation(post_res_dam).c_str());
+    
+    if (mt)
+    {
+        mprf("Your %s is splashed with acid%s%s%s",
+            you.mount_name(true).c_str(),
+            post_res_dam > 0 ? "" : " but takes no damage",
+            attack_strength_punctuation(post_res_dam).c_str(),
+            post_res_dam > 0 && post_res_dam < dam ? " It resists." : "");
+    }
+    else
+    {
+        mprf("You are splashed with acid%s%s",
+            post_res_dam > 0 ? "" : " but take no damage",
+            attack_strength_punctuation(post_res_dam).c_str());
+    }
+
     if (post_res_dam > 0)
     {
-        if (post_res_dam < dam)
-            canned_msg(MSG_YOU_RESIST);
+        if (mt)
+            damage_mount(post_res_dam);
+        else
+        {
+            if (post_res_dam < dam)
+                canned_msg(MSG_YOU_RESIST);
 
-        ouch(post_res_dam, KILLED_BY_ACID,
-             evildoer ? evildoer->mid : MID_NOBODY);
+            ouch(post_res_dam, KILLED_BY_ACID,
+                evildoer ? evildoer->mid : MID_NOBODY);
+        }
     }
 }
 

@@ -570,10 +570,9 @@ bool attack::distortion_affects_defender()
         if (defender->is_fairy())
             return false;
         special_damage += 1 + random2avg(7, 2);
-        // No need to call attack_strength_punctuation here,
-        // since special damage < 7, so it will always return "."
-        special_damage_message = make_stringf("Space bends around %s.",
-                                              defender_name(false).c_str());
+        special_damage_message = make_stringf("Space bends around %s%s",
+                                              defender_name(false).c_str(),
+                                              attack_strength_punctuation(special_damage).c_str());
         break;
     case BIG_DMG:
         special_damage += 3 + random2avg(24, 2);
@@ -589,10 +588,18 @@ bool attack::distortion_affects_defender()
             blink_fineff::schedule(defender);
         break;
     case BANISH:
-        if (defender_visible)
-            obvious_effect = true;
-        defender->banish(attacker, attacker->name(DESC_PLAIN, true),
-                         attacker->get_experience_level());
+        if (mount_defend)
+        {
+            mprf(MSGCH_WARN, "Your %s was banished out from underneath you!", you.mount_name().c_str());
+            dismount();
+        }
+        else
+        {
+            if (defender_visible)
+                obvious_effect = true;
+            defender->banish(attacker, attacker->name(DESC_PLAIN, true),
+                attacker->get_experience_level());
+        }
         return true;
     case TELE_INSTANT:
     case TELE_DELAYED:
@@ -621,8 +628,14 @@ bool attack::distortion_affects_defender()
 
 void attack::antimagic_affects_defender(int pow)
 {
-    obvious_effect =
-        enchant_actor_with_flavour(defender, nullptr, BEAM_DRAIN_MAGIC, pow);
+    // Caster mount not only doesn't exist but is probably a completely nonsense thought...
+    // Yes, I'm riding an Orc Wizard. Hah. Anyways not coding antimagic affects mount for now.
+    // Maybe a cat could ride on a ogre mage hahahaha.
+    if (!mount_defend) 
+    {
+        obvious_effect =
+            enchant_actor_with_flavour(defender, nullptr, BEAM_DRAIN_MAGIC, pow);
+    }
 }
 
 /// Whose skill should be used for a pain-weapon effect?
@@ -647,7 +660,7 @@ void attack::pain_affects_defender()
     if (!one_chance_in(user->skill_rdiv(SK_NECROMANCY) + 1))
     {
         special_damage += resist_adjust_damage(defender, BEAM_NEG,
-                              random2(1 + user->skill_rdiv(SK_NECROMANCY)));
+                              random2(1 + user->skill_rdiv(SK_NECROMANCY)), mount_defend);
 
         if (special_damage && defender->is_fairy() && x_chance_in_y(30 - special_damage, 30))
             special_damage = 0;
@@ -655,9 +668,12 @@ void attack::pain_affects_defender()
         if (special_damage && defender_visible)
         {
             special_damage_message =
-                make_stringf("%s %s in agony%s",
-                             defender->name(DESC_THE).c_str(),
-                             defender->conj_verb("writhe").c_str(),
+                make_stringf("%s%s %s in agony%s",
+                             mount_defend ? "Your " : "",
+                             mount_defend ? you.mount_name(true).c_str()
+                                          : defender->name(DESC_THE).c_str(),
+                             mount_defend ? "writhes"
+                                          : defender->conj_verb("writhe").c_str(),
                            attack_strength_punctuation(special_damage).c_str());
         }
     }
@@ -781,7 +797,9 @@ static const vector<chaos_effect> chaos_effects = {
             return you.can_see(*attack.defender);
         },
     },
-    { "hasting", 10, _is_chaos_slowable, BEAM_HASTE },
+    { "hasting", 10, [](const actor &defender) {
+            return _is_chaos_slowable(defender);
+        }, BEAM_HASTE },
     { "invisible", 10, nullptr, BEAM_INVISIBILITY, },
     { "mighting", 10, nullptr, BEAM_MIGHT, },
     { "agility", 10, nullptr, BEAM_AGILITY, },
@@ -1796,7 +1814,7 @@ bool attack::apply_damage_brand(const char *what)
 
     case SPWPN_VAMPIRISM:
     {
-        if (damage_done < 1
+        if (damage_done < 1 || mount_defend
             || !actor_is_susceptible_to_vampirism(*defender)
             || attacker->stat_hp() == attacker->stat_maxhp()
             || attacker->is_player() && you.duration[DUR_DEATHS_DOOR])
@@ -1804,13 +1822,15 @@ bool attack::apply_damage_brand(const char *what)
             break;
         }
 
-        int hp_boost = max(div_rand_round(roll_dice(3, damage_done), 6), 1);
+        int hp_boost; 
 
         if (weapon && (is_unrandom_artefact(*weapon, UNRAND_VAMPIRES_TOOTH) ||
                        is_unrandom_artefact(*weapon, UNRAND_LEECH)))
         {
             hp_boost = damage_done;
         }
+        else
+            hp_boost = max(div_rand_round(roll_dice(3, damage_done), 6), 1);
 
         if (fae && hp_boost)
             hp_boost = 1; // Suck on my non-HP. :)
@@ -1864,7 +1884,7 @@ bool attack::apply_damage_brand(const char *what)
         // AF_CONFUSE.
         if (attacker->is_monster())
         {
-            if (one_chance_in(3))
+            if (one_chance_in(3) && !mount_defend)
             {
                 defender->confuse(attacker,
                                   1 + random2(3+attacker->get_hit_dice()));

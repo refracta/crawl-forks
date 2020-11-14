@@ -232,7 +232,8 @@ public:
     virtual void drain_stat(stat_type /*stat*/, int /*amount*/) { }
     virtual void splash_with_acid(const actor* evildoer, int acid_strength = -1,
                                   bool allow_corrosion = true,
-                                  const char* hurt_msg = nullptr) = 0;
+                                  const char* hurt_msg = nullptr,
+                                  bool mt = false) = 0;
     virtual bool corrode_equipment(const char* corrosion_source = "the acid",
                                    int degree = 1, bool mt = false) = 0;
 

@@ -745,7 +745,8 @@ public:
         override;
     void splash_with_acid(const actor* evildoer, int acid_strength,
                           bool allow_corrosion = true,
-                          const char* hurt_msg = nullptr) override;
+                          const char* hurt_msg = nullptr,
+                          bool mt = false) override;
     bool corrode_equipment(const char* corrosion_source = "the acid",
                            int degree = 1, bool mt = false) override;
     void sentinel_mark(bool trap = false);

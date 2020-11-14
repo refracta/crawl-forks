@@ -580,6 +580,16 @@ spret gain_mount(mount_type mount, int pow, bool fail)
         mount_hp = div_rand_round(mount_hp, 100);
     }
 
+    if (you.mount != mount)
+    {
+        if (mount == mount_type::hydra)
+        {
+            you.mount_heads = 4 + max(0, div_round_up(pow - 50, 13));
+        }
+        else
+            you.mount_heads = 1;
+    }
+
     if (already_mount)
     {
         if (you.mount == mount)
@@ -616,24 +626,21 @@ spret gain_mount(mount_type mount, int pow, bool fail)
         you.mount = mount;
         you.mount_hp = you.mount_hp_max = mount_hp;
         you.mount_energy = 10;
-
-        if (mount == mount_type::hydra)
-        {
-            you.mount_heads = 4 + max(0, div_round_up(pow - 50, 13));
-        }
-        else
-            you.mount_heads = 1;
     }
 
     dur = max(you.duration[DUR_MOUNTED], dur);
     you.set_duration(DUR_MOUNTED, dur, 200);
 
-    mprf(MSGCH_DURATION, "You summon a %s and ride upon its back.", you.mount_name().c_str());
-    
-    if (were_flying)
-        land_player();
+    if (!already_mount)
+    {
+        mprf(MSGCH_DURATION, "You summon a %s and ride upon its back.", you.mount_name().c_str());
 
-    redraw_screen();
+        if (were_flying)
+            land_player();
+
+        redraw_screen();
+    }
+
     return spret::success;
 }
 
