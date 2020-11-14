@@ -1935,6 +1935,7 @@ static weapon_type _starting_weapon_upgrade(weapon_type wp, job_type job,
                                             species_type species)
 {
     const bool fighter = job == JOB_FIGHTER;
+    const bool gladiator = job == JOB_GLADIATOR;
     const size_type size = species_size(species, PSIZE_TORSO);
 
     // TODO: actually query itemprop for one-handedness.
@@ -1952,7 +1953,7 @@ static weapon_type _starting_weapon_upgrade(weapon_type wp, job_type job,
     case WPN_FALCHION:
         return WPN_LONG_SWORD;
     case WPN_MACE:
-        return fighter ? WPN_MORNINGSTAR : WPN_QUARTERSTAFF;
+        return gladiator ? WPN_QUARTERSTAFF : WPN_MORNINGSTAR;
     default:
         return wp;
     }
