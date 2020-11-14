@@ -276,7 +276,7 @@ static const map<job_type, job_def> job_data =
     { SP_HILL_ORC, SP_FORMICID, SP_MERFOLK, },
     { "robe" },
     WCHOICE_STAT,
-    { {SK_DODGING, 2} , {SK_STEALTH, 2} , {SK_UNARMED_COMBAT,3} , {SK_INVOCATIONS, 4} ,},
+    { {SK_DODGING, 2} , {SK_STEALTH, 2} , {SK_UNARMED_COMBAT, 3} , {SK_INVOCATIONS, 4} ,},
 } },
 
 { JOB_DEMIGOD,{
@@ -285,7 +285,7 @@ static const map<job_type, job_def> job_data =
     { SP_GNOLL, SP_SPRIGGAN, SP_TROLL, SP_MINOTAUR, SP_DRACONIAN },
     { "leather armour" , "book of Minor Magic" },
     WCHOICE_GOOD,
-    { { SK_DODGING, 3 } ,{ SK_STEALTH, 2 } ,{ SK_WEAPON,2 } ,{ SK_FIGHTING, 2 } , {SK_SPELLCASTING, 2} },
+    { { SK_DODGING, 3 } ,{ SK_STEALTH, 2 } ,{ SK_WEAPON,2 } ,{ SK_FIGHTING, 1 } , {SK_SPELLCASTING, 1}, { SK_FIRE_MAGIC, 2 } },
 } },
 
 { JOB_MUMMY,{
@@ -303,7 +303,7 @@ static const map<job_type, job_def> job_data =
     { SP_HILL_ORC, SP_TROLL, SP_FELID, SP_LIGNIFITE, SP_DRACONIAN },
     { "leather armour"  , "book of Minor Magic" },
     WCHOICE_GOOD,
-    { { SK_DODGING, 3 } ,{ SK_STEALTH, 2 } ,{ SK_WEAPON,2 } ,{ SK_FIGHTING, 2 } ,{ SK_INVOCATIONS,3 } ,{ SK_SPELLCASTING, 2 } },
+    { { SK_DODGING, 3 } ,{ SK_STEALTH, 2 } ,{ SK_WEAPON,2 } ,{ SK_FIGHTING, 1 } ,{ SK_INVOCATIONS,3 } ,{ SK_SPELLCASTING, 1 }, { SK_FIRE_MAGIC, 2} },
 } },
 
 #if TAG_MAJOR_VERSION == 34
