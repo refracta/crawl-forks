@@ -127,17 +127,11 @@ char_choice_restriction weapon_restriction(weapon_type wpn,
 
     // These recommend short blades because they're good at stabbing,
     // but the fighter's armour hinders that.
-    if ((ng.species == SP_NAGA || ng.species == SP_VAMPIRE)
-         && ng.job == JOB_FIGHTER && wpn == WPN_RAPIER)
-    {
+    if (ng.species == SP_NAGA && ng.job == JOB_FIGHTER && wpn == WPN_RAPIER)
         return CC_RESTRICTED;
-    }
 
-    if (wpn == WPN_QUARTERSTAFF && ng.job != JOB_GLADIATOR
-        && !(ng.job == JOB_FIGHTER && ng.species == SP_FORMICID))
-    {
+    if (wpn == WPN_QUARTERSTAFF && ng.job != JOB_GLADIATOR)
         return CC_BANNED;
-    }
 
     if (species_recommends_weapon(ng.species, wpn))
         return CC_UNRESTRICTED;
