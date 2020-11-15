@@ -55,6 +55,10 @@ enum ability_type
     // Naga
     ABIL_SPIT_POISON = 110,
 
+    // Mount actives
+    ABIL_SPIDER_JUMP = 150,
+    ABIL_SPIDER_WEB,
+
     // Not-tied to species
     ABIL_BLINK = 200,
     ABIL_FLY,

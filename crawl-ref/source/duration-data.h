@@ -27,6 +27,11 @@ static void _end_mount_corrosion()
     you.props["mount_corrosion_amount"] = 0;
 }
 
+static void _end_ensnare()
+{
+    you.increase_duration(DUR_MOUNT_BREATH, 3 + random2(6));
+}
+
 static void _end_corrosion()
 {
     you.props["corrosion_amount"] = 0;
@@ -581,7 +586,12 @@ static const duration_def duration_data[] =
       "Your mount is corroded.", D_DISPELLABLE,
       {{ "Your mount is no longer corroded.", _end_mount_corrosion }}},
     { DUR_MOUNT_POISONING, 0, "", "", "", "Your mount is poisoned.", D_NO_FLAGS },
-    { DUR_MOUNT_DRAINING, 0, "", "", "", "Your mount is drained.", D_NO_FLAGS },
+    { DUR_MOUNT_DRAINING, 0, "", "", "", "Your mount is drained.", D_NO_FLAGS,
+      {{ "Your mount is no longer drained."}} },
+    { DUR_MOUNT_BREATH, 0, "", "", "", "Your mount is out of breath.", D_NO_FLAGS,
+      {{ "Your mount catches its breath."}} },
+    { DUR_ENSNARE, 0, "", "", "", "Your mount has prepared a web to catch an enemy.", D_NO_FLAGS,
+      {{ "Your spider's web falls apart, your spider is still exhausted from the attempt.", _end_ensnare }}},
     { DUR_HORROR,
       RED, "Horr",
       "horrified", "",
@@ -705,7 +715,6 @@ static const duration_def duration_data[] =
     { DUR_MAGIC_SAPPED, 0, "", "", "old magic sapped", "", D_NO_FLAGS},
     { DUR_DEFLECT_MISSILES, 0, "", "", "old deflect missiles", "", D_NO_FLAGS},
     { DUR_JELLY_PRAYER, 0, "", "", "old jelly prayer", "", D_NO_FLAGS},
-    { DUR_CONTROLLED_FLIGHT, 0, "", "", "old controlled flight", "", D_NO_FLAGS},
     { DUR_SEE_INVISIBLE, 0, "", "", "old see invisible", "", D_NO_FLAGS},
     { DUR_INSULATION, 0, "", "", "old insulation", "", D_NO_FLAGS},
     { DUR_BARGAIN, 0, "", "", "old bargain", "", D_NO_FLAGS},
@@ -719,7 +728,6 @@ static const duration_def duration_data[] =
     { DUR_SPIRIT_HOWL, 0, "", "", "old spirit howl", "", D_NO_FLAGS},
     { DUR_SONG_OF_SHIELDING, 0, "", "", "old song of shielding", "", D_NO_FLAGS},
     { DUR_NEGATIVE_VULN, 0, "", "", "old negative vuln", "", D_NO_FLAGS},
-    { DUR_CONTROL_TELEPORT, 0, "", "", "old control teleport", "", D_NO_FLAGS},
     { DUR_CONDENSATION_SHIELD, 0, "", "", "old condensation shield", "", D_NO_FLAGS},
     { DUR_PHASE_SHIFT, 0, "", "", "old phase shift", "", D_NO_FLAGS},
     { DUR_ANTIMAGIC,

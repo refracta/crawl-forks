@@ -9480,6 +9480,10 @@ void cure_mount_debuffs()
     }
     if (you.duration[DUR_MOUNT_DRAINING])
         you.duration[DUR_MOUNT_DRAINING] = 0;
+    if (you.duration[DUR_MOUNT_BREATH])
+        you.duration[DUR_MOUNT_BREATH] = 0;
+    if (you.duration[DUR_ENSNARE])
+        you.duration[DUR_ENSNARE] = 0;
 }
 
 // Returns whether a hit should hit you (false) or a mount (true)
@@ -9522,6 +9526,12 @@ int mount_statuses()
         retval++;
 
     if (you.duration[DUR_MOUNT_DRAINING])
+        retval++;
+
+    if (you.duration[DUR_MOUNT_BREATH])
+        retval++;
+
+    if (you.duration[DUR_ENSNARE])
         retval++;
 
     return retval;

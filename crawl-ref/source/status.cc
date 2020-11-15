@@ -165,6 +165,16 @@ static void _describe_terrain(status_info& inf);
 static void _describe_missiles(status_info& inf);
 static void _describe_invisible(status_info& inf);
 
+static int _mount_status_iterate(int statuses, status_info& inf)
+{
+    statuses--;
+    if (statuses <= 0)
+        inf.light_text += ")";
+    else
+        inf.light_text += ", ";
+    return statuses;
+}
+
 bool fill_status_info(int status, status_info& inf)
 {
     inf = status_info();
@@ -241,32 +251,30 @@ bool fill_status_info(int status, status_info& inf)
         if (statuses > 0)
         {
             inf.light_text += " (";
+            if (you.duration[DUR_ENSNARE])
+            {
+                inf.light_text += "web";
+                _mount_status_iterate(statuses, inf);
+            }
             if (you.duration[DUR_MOUNT_POISONING])
             {
-                inf.light_text += "Pois";
-                statuses--;
-                if (statuses <= 0)
-                    inf.light_text += ")";
-                else
-                    inf.light_text += ", ";
+                inf.light_text += "pois";
+                _mount_status_iterate(statuses, inf);
             }
             if (you.duration[DUR_MOUNT_CORROSION])
             {
                 inf.light_text += make_stringf("Corr [%d]", (-4 * you.props["mount_corrosion_amount"].get_int()));
-                statuses--;
-                if (statuses <= 0)
-                    inf.light_text += ")";
-                else
-                    inf.light_text += ", ";
+                _mount_status_iterate(statuses, inf);
             }
             if (you.duration[DUR_MOUNT_DRAINING])
             {
-                inf.light_text += "Drain";
-                statuses--;
-                if (statuses <= 0)
-                    inf.light_text += ")";
-                else
-                    inf.light_text += ", ";
+                inf.light_text += "drain";
+                _mount_status_iterate(statuses, inf);
+            }
+            if (you.duration[DUR_MOUNT_BREATH])
+            {
+                inf.light_text += "breath";
+                _mount_status_iterate(statuses, inf);
             }
         }
     }

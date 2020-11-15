@@ -137,6 +137,7 @@ enum class fail_basis
     xl,
     evo,
     invo,
+    spider, // spellpower-based fail chance for spider mount.
 };
 
 /**
@@ -211,6 +212,8 @@ struct failure_info
                 = piety_fail_denom ? you.piety / piety_fail_denom : 0;
             return base_chance - sk_mod - piety_mod;
         }
+        case fail_basis::spider:
+            return base_chance - (calc_spell_power(SPELL_SUMMON_SPIDER_MOUNT, true) / 10 * variable_fail_mult);
         default:
             die("unknown failure basis %d!", (int)basis);
         }
@@ -331,6 +334,9 @@ static const ability_def Ability_List[] =
     { ABIL_SHAFT_SELF, "Shaft Self", 0, 0, 250, 0, {}, abflag::delay },
 
     { ABIL_HOP, "Hop", 0, 0, 0, 0, {}, abflag::none },
+
+    { ABIL_SPIDER_JUMP, "Spider Jump", 0, 0, 0, 0, {fail_basis::spider, 60, 8}, abflag::none },
+    { ABIL_SPIDER_WEB, "Web Snare", 0, 0, 0, 0, {fail_basis::spider, 80, 6}, abflag::none },
 
     // EVOKE abilities use Evocations and come from items.
     // Teleportation and Blink can also come from mutations
@@ -1351,6 +1357,25 @@ static bool _can_hop(bool quiet)
     return false;
 }
 
+static bool _can_jump(bool quiet, bool jump)
+{
+    if (!you.duration[DUR_MOUNT_BREATH] && !you.duration[DUR_ENSNARE])
+        return true;
+    if (!quiet)
+    {
+        if (you.duration[DUR_MOUNT_BREATH])
+            mpr("Your spider is still catching its breath.");
+        if (you.duration[DUR_ENSNARE])
+        {
+            if (jump)
+                mpr("Your spider can't jump while it's legs are covered in web.");
+            else
+                mpr("Your spider already prepped a web.");
+        }
+    }
+    return false;
+}
+
 // Check prerequisites for a number of abilities.
 // Abort any attempt if these cannot be met, without losing the turn.
 // TODO: Many more cases need to be added!
@@ -1688,6 +1713,10 @@ static bool _check_ability_possible(const ability_def& abil, bool quiet = false)
 
     case ABIL_HOP:
         return _can_hop(quiet);
+
+    case ABIL_SPIDER_WEB:
+    case ABIL_SPIDER_JUMP:
+        return _can_jump(quiet, abil.ability == ABIL_SPIDER_JUMP);
 
     case ABIL_BLINK:
     case ABIL_EVOKE_BLINK:
@@ -2036,6 +2065,23 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
     case ABIL_HOP:
         if (_can_hop(false))
             return frog_hop(fail);
+        else
+            return spret::abort;
+
+    case ABIL_SPIDER_JUMP:
+        if (_can_jump(false, true))
+            return frog_hop(fail, true);
+        else
+            return spret::abort;
+
+    case ABIL_SPIDER_WEB:
+        if (_can_jump(false, false))
+        {
+            fail_check();
+            you.set_duration(DUR_ENSNARE, 3 + random2(calc_spell_power(SPELL_SUMMON_SPIDER_MOUNT, true) / 20));
+            mprf(MSGCH_DURATION, "Your spider prepares a web to ensnare its next melee target.");
+            return spret::success;
+        }
         else
             return spret::abort;
 
@@ -4008,6 +4054,13 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
             if (you.airborne() && !you.attribute[ATTR_FLIGHT_UNCANCELLABLE])
                 _add_talent(talents, ABIL_STOP_FLYING, check_confused);
         }
+    }
+
+    // Mount-based Talents (currently only Spider Mount has any)
+    if (you.mounted() && you.mount == mount_type::spider)
+    {
+        _add_talent(talents, ABIL_SPIDER_JUMP, check_confused);
+        _add_talent(talents, ABIL_SPIDER_WEB, check_confused);
     }
 
     // Find hotkeys for the non-hotkeyed talents.

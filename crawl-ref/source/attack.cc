@@ -44,6 +44,7 @@
 #include "stepdown.h"
 #include "stringutil.h"
 #include "transform.h"
+#include "traps.h" // ensnare
 #include "xom.h"
 
 /*
@@ -1697,6 +1698,15 @@ bool attack::apply_damage_brand(const char *what)
     switch (brand)
     {
     case SPWPN_PROTECTION:
+        if (mount_attack) // Should only get here on a spider with ensnare active
+        {
+            mprf("Your spider casts its web at %s.", defender->name(DESC_THE).c_str());
+            int splpow = calc_spell_power(SPELL_SUMMON_SPIDER_MOUNT, true);
+            splpow /= 10;
+            ensnare(defender, splpow);
+            you.increase_duration(DUR_MOUNT_BREATH, 1 + random2(30 - splpow));
+            you.duration[DUR_ENSNARE] = 0;
+        }
         break;
 
     case SPWPN_MOLTEN:

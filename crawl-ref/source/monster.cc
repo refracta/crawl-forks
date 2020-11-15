@@ -4441,7 +4441,7 @@ bool monster::drain_exp(actor *agent, bool quiet, int /*pow*/)
     hurt(agent, dmg, BEAM_NEG, KILLED_BY_DRAINING, "", "", !quiet);
 
     if (!quiet && you.can_see(*this))
-        mprf("%s is drained%s", name(DESC_THE).c_str(), attack_strength_punctuation(dmg));
+        mprf("%s is drained%s", name(DESC_THE).c_str(), attack_strength_punctuation(dmg).c_str());
 
     if (alive())
     {

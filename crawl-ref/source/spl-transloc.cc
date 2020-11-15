@@ -293,6 +293,7 @@ void wizard_blink()
 }
 
 static const int HOP_FUZZ_RADIUS = 2;
+static const int SPIDER_FUZZ_RADIUS = 1;
 
 /**
  * Randomly choose one of the spaces near the given target for the player's hop
@@ -301,11 +302,11 @@ static const int HOP_FUZZ_RADIUS = 2;
  * @param target    The tile the player wants to land on.
  * @return          A nearby, unoccupied, inhabitable tile.
  */
-static coord_def _fuzz_hop_destination(coord_def target)
+static coord_def _fuzz_hop_destination(coord_def target, int radius)
 {
     coord_def chosen;
     int seen = 0;
-    for (radius_iterator ri(target, HOP_FUZZ_RADIUS, C_SQUARE, LOS_NO_TRANS);
+    for (radius_iterator ri(target, radius, C_SQUARE, LOS_NO_TRANS);
          ri; ++ri)
     {
         if (valid_blink_destination(&you, *ri) && one_chance_in(++seen))
@@ -321,15 +322,18 @@ static coord_def _fuzz_hop_destination(coord_def target)
  *                      therefore fail after selecting a target)
  * @return              Whether the hop succeeded, aborted, or was miscast.
  */
-spret frog_hop(bool fail)
+spret frog_hop(bool fail, bool spider)
 {
-    const int hop_range = 2 + you.get_mutation_level(MUT_HOP) * 2; // 4-6
+    const int splpow = calc_spell_power(SPELL_SUMMON_SPIDER_MOUNT, true);
+
+    const int hop_range = spider ? (2 + div_round_up(splpow, 50)) // 3-6.
+                                 : (2 + you.get_mutation_level(MUT_HOP) * 2); // 4-6
     coord_def target;
-    targeter_smite tgt(&you, hop_range, 0, HOP_FUZZ_RADIUS);
+    targeter_smite tgt(&you, hop_range, 0, spider ? SPIDER_FUZZ_RADIUS : HOP_FUZZ_RADIUS);
     tgt.obeys_mesmerise = true;
     while (true)
     {
-        if (!_find_cblink_target(target, true, "hop", &tgt))
+        if (!_find_cblink_target(target, true, spider ? "jump" : "hop", &tgt))
             return spret::abort;
         if (grid_distance(you.pos(), target) > hop_range)
         {
@@ -338,7 +342,7 @@ spret frog_hop(bool fail)
         }
         break;
     }
-    target = _fuzz_hop_destination(target);
+    target = _fuzz_hop_destination(target, spider ? SPIDER_FUZZ_RADIUS : HOP_FUZZ_RADIUS);
 
     fail_check();
 
@@ -348,7 +352,8 @@ spret frog_hop(bool fail)
     // invisible monster that the targeter didn't know to avoid, or similar
     if (target.origin())
     {
-        mpr("You tried to hop, but there was no room to land!");
+        mprf("You%s tried to %s, but there was no room to land!", 
+                spider ? "r spider" : "", spider ? "jump" : "hop");
         // TODO: what to do here?
         return spret::success; // of a sort
     }
@@ -358,8 +363,16 @@ spret frog_hop(bool fail)
     move_player_to_grid(target, false);
     crawl_state.cancel_cmd_again();
     crawl_state.cancel_cmd_repeat();
-    mpr("Boing!");
-    you.increase_duration(DUR_NO_HOP, 12 + random2(13));
+    if (spider)
+    {
+        mpr("Woah!");
+        you.increase_duration(DUR_MOUNT_BREATH, 1 + random2(26 - div_rand_round(splpow, 10)));
+    }
+    else
+    {
+        mpr("Boing!");
+        you.increase_duration(DUR_NO_HOP, 12 + random2(13));
+    }
 
     return spret::success; // TODO
 }
