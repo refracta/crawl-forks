@@ -1698,7 +1698,7 @@ bool attack::apply_damage_brand(const char *what)
     switch (brand)
     {
     case SPWPN_PROTECTION:
-        if (mount_attack) // Should only get here on a spider with ensnare active
+        if (mount_attack && defender->alive()) // Should only get here on a spider with ensnare active
         {
             mprf("Your spider casts its web at %s.", defender->name(DESC_THE).c_str());
             int splpow = calc_spell_power(SPELL_SUMMON_SPIDER_MOUNT, true);
