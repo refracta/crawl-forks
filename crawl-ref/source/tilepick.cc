@@ -3637,7 +3637,10 @@ tileidx_t tileidx_ability(const ability_type ability)
     case ABIL_BLINK:
         return TILEG_ABILITY_BLINK;
     case ABIL_HOP:
+    case ABIL_SPIDER_JUMP:
         return TILEG_ABILITY_HOP;
+    case ABIL_SPIDER_WEB:
+        return TILEG_ABILITY_SPIDER_ENSNARE;
     case ABIL_PLANT_ROOTS:
         return TILEG_ABILITY_PLANT_ROOTS;
     case ABIL_DEROOT:
