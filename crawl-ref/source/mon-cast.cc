@@ -1180,13 +1180,7 @@ int mons_power_for_hd(spell_type spell, int hd)
 */
 int mons_evokepower(const monster &mons)
 {
-    int xp = mons.get_experience_level();
-    if (xp < 8)
-        return 2 * xp;
-    else if (xp < 16)
-        return 8 + xp;
-    else
-        return 16 + xp / 2;
+    return div_rand_round(3 * mons.get_experience_level(), 2);
 }
 
 /**
