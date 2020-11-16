@@ -6294,7 +6294,8 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
     }
 
     const god_type god = _find_god(*mons, slot_flags);
-    const int splpow = _mons_spellpower(spell_cast, *mons);
+    const int splpow = evoke ? mons_evokepower(*mons)
+                             : _mons_spellpower(spell_cast, *mons);
     const bool chaos = (determine_chaos(mons, spell_cast) && !evoke);
     const bool eldritch = (mons->staff() && is_unrandom_artefact(*mons->staff(), UNRAND_MAJIN));
     monster * x;
