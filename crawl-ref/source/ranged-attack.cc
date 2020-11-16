@@ -815,7 +815,9 @@ bool ranged_attack::apply_missile_brand()
         {
             int old_poison;
 
-            if (defender->is_player())
+            if (mount_defend)
+                old_poison = you.duration[DUR_MOUNT_POISONING];
+            else if (defender->is_player())
                 old_poison = you.duration[DUR_POISONING];
             else
             {
@@ -823,10 +825,21 @@ bool ranged_attack::apply_missile_brand()
                     (defender->as_monster()->get_ench(ENCH_POISON)).degree;
             }
 
-            defender->poison(attacker,
-                             projectile->is_type(OBJ_MISSILES, MI_NEEDLE)
-                             ? damage_done
-                             : 6 + random2(8) + random2(damage_done * 3 / 2));
+            int pois = projectile->is_type(OBJ_MISSILES, MI_NEEDLE)
+                ? damage_done
+                : 6 + random2(8) + random2(damage_done * 3 / 2);
+
+            if (mount_defend)
+            {
+                poison_mount(pois);
+
+                if (old_poison < you.duration[DUR_MOUNT_POISONING])
+                    obvious_effect = true;
+
+                break;
+            }
+
+            defender->poison(attacker, pois);
 
             if (defender->is_player()
                    && old_poison < you.duration[DUR_POISONING]
@@ -836,7 +849,6 @@ bool ranged_attack::apply_missile_brand()
             {
                 obvious_effect = true;
             }
-
         }
         break;
     case SPMSL_CURARE:
@@ -879,7 +891,7 @@ bool ranged_attack::apply_missile_brand()
         break;
     case SPMSL_SILVER:
         special_damage = silver_damages_victim(defender, damage_done,
-                                               special_damage_message);
+                                               special_damage_message, mount_defend);
         break;
     case SPMSL_PETRIFICATION:
         if (!blowgun_check(brand))
