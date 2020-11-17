@@ -180,9 +180,9 @@ size_type player::body_size(size_part_type psize, bool base) const
     }
 }
 
-int player::damage_type(int)
+int player::damage_type(int attack_number)
 {
-    if (const item_def* wp = weapon())
+    if (const item_def* wp = weapon(attack_number))
         return get_vorpal_type(*wp);
     else if (form == transformation::blade_hands)
         return DVORP_SLICING;
