@@ -2325,7 +2325,7 @@ bool melee_attack::player_monattk_hit_effects()
 
     // Returns true if the hydra was killed by the decapitation, in which case
     // nothing more should be done to the hydra.
-    if (consider_decapitation(damage_done))
+    if (consider_decapitation(damage_done, attacker->damage_type(attack_number)))
         return false;
 
     return true;
