@@ -112,6 +112,57 @@ static bool _handle_player_attack(actor * defender, bool simu, int atk_num,
     return true;
 }
 
+static actor * _hydra_target(actor * original_target)
+{
+    if (original_target->alive()
+        && adjacent(original_target->pos(), you.pos())
+        && !original_target->is_banished()
+        && !original_target->temp_attitude()) // If it's not hostile the melee attack charmed or pacified it.
+    {
+        return original_target;
+    }
+
+    int possible_targets = 0;
+    actor * target = nullptr;
+
+    for (adjacent_iterator ai(you.pos()); ai; ++ai)
+    {
+        actor * enemy = actor_at(*ai);
+
+        if (enemy && !enemy->wont_attack())
+        {
+            possible_targets++;
+            if (one_chance_in(possible_targets))
+                target = enemy;
+        }
+    }
+
+    return target;
+}
+
+// Hydra mount will keep attacking as long as there is a valid adjacent target (pseudocleave).
+static bool _handle_hydra_attack(actor * target, bool simu, bool * did_hit, wu_jian_attack_type wu, int wu_num)
+{
+    if (you.mount != mount_type::hydra)
+        return false;
+
+    bool hit = false;
+
+    for (int i = 1; i <= you.mount_heads; ++i)
+    {
+        target = _hydra_target(target);
+
+        if (!target)
+            return hit;
+
+        hit |= _handle_player_attack(target, simu, 2, i == you.mount_heads ? 1 : 3, did_hit, wu, wu_num);
+
+        if (!you.mounted()) // Spines killed your hydra.
+            return hit;
+    }
+    return hit;
+}
+
 /**
  * Handle melee combat between attacker and defender.
  *
@@ -204,6 +255,7 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
                         || defender->is_banished()
                         || defender->temp_attitude()) // If it's not hostile the melee attack charmed or pacified it.
                     {
+                        local_time |= _handle_hydra_attack(defender, simu, did_hit, wu, wu_num);
                         return local_time;
                     }
                     else
@@ -236,6 +288,7 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
                 || defender->is_banished()
                 || defender->temp_attitude()) // If it's not hostile the melee attack charmed or pacified it.
             {
+                local_time |= _handle_hydra_attack(defender, simu, did_hit, wu, wu_num);
                 return local_time;
             }
 
@@ -251,28 +304,14 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
                     return local_time;
                 }
 
-                local_time |= (_handle_player_attack(defender, simu, 3, 1, did_hit, wu, wu_num) || local_time);
+                local_time |= _handle_player_attack(defender, simu, 3, 1, did_hit, wu, wu_num);
             }
             else if (xtra_atk)
             {
                 if (you.mount == mount_type::hydra)
-                {
-                    for (int i = 1; i < you.mount_heads; ++i)
-                    {
-                        local_time |= _handle_player_attack(defender, simu, 2, 3, did_hit, wu, wu_num);
-
-                        if (!defender->alive()
-                            || defender->pos() != pos
-                            || defender->is_banished()
-                            || defender->temp_attitude() // If it's not hostile the melee attack charmed or pacified it.
-                            || !you.mounted()) // Spines killed your hydra. 
-                        {
-                            return local_time;
-                        }
-                    }
-                }
-
-                local_time |= (_handle_player_attack(defender, simu, 2, 1, did_hit, wu, wu_num) || local_time);
+                    local_time |= _handle_hydra_attack(defender, simu, did_hit, wu, wu_num);
+                else
+                    local_time |= _handle_player_attack(defender, simu, 2, 1, did_hit, wu, wu_num);
             }
         }
 
