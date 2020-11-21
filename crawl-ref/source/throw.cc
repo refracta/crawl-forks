@@ -879,10 +879,11 @@ bool throw_it(bolt &pbolt, int throw_2, dist *target)
 
     if (!teleport
         && projected != launch_retval::FUMBLED
-        && will_have_passive(passive_t::shadow_attacks)
         && thrown->base_type == OBJ_MISSILES)
     {
-        dithmenos_shadow_throw(thr, *thrown);
+        mount_drake_breath(&pbolt);
+        if (will_have_passive(passive_t::shadow_attacks))
+            dithmenos_shadow_throw(thr, *thrown);
     }
 
     if (throw_2 == -1)

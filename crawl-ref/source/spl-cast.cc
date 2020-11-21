@@ -1827,16 +1827,20 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
         if (you.props.exists("battlesphere") && allow_fail)
             trigger_battlesphere(&you, beam);
         actor* victim = actor_at(beam.target);
-        if (will_have_passive(passive_t::shadow_spells)
-            && allow_fail
-            && !god_hates_spell(spell, you.religion, !allow_fail)
+        if (allow_fail
             && (flags & spflag::targeting_mask)
             && !(flags & spflag::neutral)
             && (beam.is_enchantment()
                 || battlesphere_can_mirror(spell))
             && (!old_target || (victim && !victim->is_player())))
         {
-            dithmenos_shadow_spell(&beam, spell);
+            mount_drake_breath(&beam);
+
+            if (will_have_passive(passive_t::shadow_spells)
+                && !god_hates_spell(spell, you.religion, !allow_fail))
+            {
+                dithmenos_shadow_spell(&beam, spell);
+            }
         }
         _spellcasting_side_effects(spell, god, !allow_fail);
         return spret::success;

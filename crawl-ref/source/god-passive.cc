@@ -1583,6 +1583,44 @@ void dithmenos_shadow_throw(const dist &d, const item_def &item)
     shadow_monster_reset(mon);
 }
 
+// Strange place for this but it's called at similar times to dithmenos_shadow_spell
+// and dithmenos shadow throw so it makes sense to have them together.
+// Also making it work the same way because, easy.
+void mount_drake_breath(bolt* orig_beam)
+{
+    if (!orig_beam)
+        return;
+
+    if (!you.mounted() || you.mount != mount_type::drake || you.duration[DUR_MOUNT_BREATH])
+        return;
+
+    const coord_def target = orig_beam->target;
+
+    if (orig_beam->target.origin() || orig_beam->is_enchantment() || monster_at(target)->has_ench(ENCH_FROZEN))
+        return;
+
+    monster* mon = shadow_monster();
+    if (!mon)
+        return;
+
+    mon->set_hit_dice(max (1, apply_pity(you.skill(SK_INVOCATIONS)) * 2 / 3));
+    mon->target = clamp_in_bounds(target);
+
+    if (actor_at(target))
+        mon->foe = actor_at(target)->mindex();
+
+    bolt beem;
+    beem.target = target;
+    beem.aimed_at_spot = orig_beam->aimed_at_spot;
+
+    mprf(MSGCH_FRIEND_SPELL, "Your rime drake breathes a chilling wave!");
+    mons_cast(mon, beem, SPELL_FLASH_FREEZE, MON_SPELL_MAGICAL, false);
+
+    shadow_monster_reset(mon);
+
+    you.set_duration(DUR_MOUNT_BREATH, 2 + random2(3));
+}
+
 void dithmenos_shadow_spell(bolt* orig_beam, spell_type spell)
 {
     if (!orig_beam)

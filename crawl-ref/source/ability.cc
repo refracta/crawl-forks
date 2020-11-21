@@ -2233,6 +2233,8 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
                 &you, div_round_up(power, 10) - 1);
         }
 
+        mount_drake_breath(&beam);
+
         you.increase_duration(DUR_BREATH_WEAPON,
             3 + random2(10) + random2(30 - you.experience_level));
         break;
@@ -2262,6 +2264,8 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
 
         zapping(ZAP_BREATHE_ACID, drac_breath_power(empowered),
                 beam, false, "You spit a glob of acid.");
+
+        mount_drake_breath(&beam);
 
         you.increase_duration(DUR_BREATH_WEAPON,
                           3 + random2(10) + random2(30 - you.experience_level));
@@ -2465,6 +2469,9 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         if (empowered && zap != ZAP_BREATHE_CHAOS)
             beam.origin_spell = SPELL_EMPOWERED_BREATH;
 
+        if (zapping(zap, power, beam, true, m.c_str()) == spret::abort)
+            return spret::abort;
+
         if (empowered && zap == ZAP_BREATHE_HOLY_FLAMES)
         {
             targeter_radius hitfunc(&you, LOS_NO_TRANS);
@@ -2481,9 +2488,6 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
 
             holy_word(power * 5, HOLY_WORD_BREATH, you.pos(), false, &you);
         }
-
-        if (zapping(zap, power, beam, true, m.c_str()) == spret::abort)
-            return spret::abort;
 
         if (empowered && zap == ZAP_BREATHE_CHAOS)
             create_vortices(&you);
@@ -2523,6 +2527,8 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
                 }
             }
         }
+
+        mount_drake_breath(&beam);
 
         you.increase_duration(DUR_BREATH_WEAPON,
                       3 + random2(10) + random2(30 - you.experience_level));
