@@ -233,10 +233,24 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
         bool attacked = false;
         coord_def pos = defender->pos();
 
-        bool xtra_atk = ((you.mounted() && you.mount_energy >= 10) || you.form == transformation::scorpion);
+        bool xtra_atk = you.form == transformation::scorpion;
 
-        if (you.mounted() && xtra_atk)
-            you.mount_energy -= 10;
+        if (you.mounted())
+        {
+            if (you.duration[DUR_MOUNT_SLOW])
+            {
+                if (you.mount_energy >= 15)
+                {
+                    xtra_atk = true;
+                    you.mount_energy -= 15;
+                }
+            }
+            else if (you.mount_energy >= 10)
+            {
+                xtra_atk = true;
+                you.mount_energy -= 10;
+            }
+        }
 
         if (!you.weapon(0) || is_melee_weapon(*you.weapon(0)))
         {

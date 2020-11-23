@@ -1199,4 +1199,7 @@ bool mount_hit();
 int apply_mount_ac(int amount);
 monster_type mount_mons();
 bool drain_mount(int strength);
+bool miasma_mount();
+void slow_mount(int duration);
+void rot_mount(int amount, bool needs_message = true);
 int mount_statuses();

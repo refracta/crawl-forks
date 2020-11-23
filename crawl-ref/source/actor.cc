@@ -217,9 +217,9 @@ bool actor::cloud_immune(bool calc_unid, bool items) const
                         && is_unrandom_artefact(*body_armour, UNRAND_RCLOUDS)));
 }
 
-bool actor::holy_wrath_susceptible() const
+bool actor::holy_wrath_susceptible(bool mt) const
 {
-    return res_holy_energy() < 0;
+    return res_holy_energy(mt) < 0;
 }
 
 // This is a bit confusing. This is not the function that determines whether or

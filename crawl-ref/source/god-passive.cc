@@ -1603,7 +1603,12 @@ void mount_drake_breath(bolt* orig_beam)
     if (!mon)
         return;
 
-    mon->set_hit_dice(max (1, apply_pity(you.skill(SK_INVOCATIONS)) * 2 / 3));
+    int hd = div_rand_round(you.skill(SK_INVOCATIONS) * 2, 3);
+    if (you.duration[DUR_MOUNT_DRAINING])
+        hd = div_rand_round(hd * 3, 4);
+    hd = max(1, hd);
+
+    mon->set_hit_dice(hd);
     mon->target = clamp_in_bounds(target);
 
     if (actor_at(target))

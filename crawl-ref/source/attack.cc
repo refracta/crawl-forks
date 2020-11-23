@@ -1076,7 +1076,10 @@ void attack::drain_defender_speed()
              attacker->conj_verb("drain").c_str(),
              def_name(DESC_ITS).c_str());
     }
-    defender->slow_down(attacker, 5 + random2(7));
+    if (mount_defend)
+        slow_mount(5 + random2(7));
+    else
+        defender->slow_down(attacker, 5 + random2(7));
 }
 
 int attack::inflict_damage(int dam, beam_type flavour, bool clean)
@@ -1474,6 +1477,9 @@ int attack::calc_damage()
 
         if (you.duration[DUR_MOUNT_DRAINING])
             damage = div_rand_round(4 * damage, 5);
+
+        if (you.duration[DUR_MOUNT_WRETCHED])
+            damage = div_rand_round(4 * damage, 5);
     }
     else
     {
@@ -1724,7 +1730,7 @@ bool attack::apply_damage_brand(const char *what)
         break;
 
     case SPWPN_HOLY_WRATH:
-        if (defender->holy_wrath_susceptible())
+        if (defender->holy_wrath_susceptible(mount_defend))
             special_damage = 1 + (random2(damage_done * 15) / 10);
 
         if (mount_defend)

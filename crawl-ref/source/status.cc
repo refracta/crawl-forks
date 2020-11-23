@@ -251,6 +251,11 @@ bool fill_status_info(int status, status_info& inf)
         if (statuses > 0)
         {
             inf.light_text += " (";
+            if (you.duration[DUR_MOUNT_BREATH])
+            {
+                inf.light_text += "breath";
+                _mount_status_iterate(statuses, inf);
+            }
             if (you.duration[DUR_ENSNARE])
             {
                 inf.light_text += "web";
@@ -259,6 +264,11 @@ bool fill_status_info(int status, status_info& inf)
             if (you.duration[DUR_MOUNT_POISONING])
             {
                 inf.light_text += "pois";
+                _mount_status_iterate(statuses, inf);
+            }
+            if (you.duration[DUR_MOUNT_SLOW])
+            {
+                inf.light_text += "slow";
                 _mount_status_iterate(statuses, inf);
             }
             if (you.duration[DUR_MOUNT_CORROSION])
@@ -271,9 +281,9 @@ bool fill_status_info(int status, status_info& inf)
                 inf.light_text += "drain";
                 _mount_status_iterate(statuses, inf);
             }
-            if (you.duration[DUR_MOUNT_BREATH])
+            if (you.duration[DUR_MOUNT_WRETCHED])
             {
-                inf.light_text += "breath";
+                inf.light_text += "wretched";
                 _mount_status_iterate(statuses, inf);
             }
         }

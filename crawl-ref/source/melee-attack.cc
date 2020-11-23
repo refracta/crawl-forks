@@ -2377,8 +2377,10 @@ bool melee_attack::player_monattk_hit_effects()
 
 void melee_attack::rot_defender(int amount)
 {
+    if (mount_defend)
+        rot_mount(amount, needs_message);
     // Keep the defender alive so that we credit kills properly.
-    if (defender->rot(attacker, amount, true, true))
+    else if (defender->rot(attacker, amount, true, true))
     {
         if (needs_message)
         {
@@ -3312,17 +3314,26 @@ bool melee_attack::mons_do_poison()
                               attacker->get_hit_dice() * 4);
     }
 
-    if (!defender->poison(attacker, amount))
-        return false;
+    if (mount_defend)
+    {
+        if (!poison_mount(amount))
+            return false;
+    }
+    else
+    {
+        if (!defender->poison(attacker, amount))
+            return false;
 
-    if (attk_flavour == AF_POISON_STR && one_chance_in(3))
-        defender->drain_stat(STAT_STR, 1);
+        if (attk_flavour == AF_POISON_STR && one_chance_in(3))
+            defender->drain_stat(STAT_STR, 1);
+    }
 
     if (needs_message)
     {
-        mprf("%s poisons %s!",
+        mprf("%s poisons %s%s",
                 atk_name(DESC_THE).c_str(),
-                defender_name(true).c_str());
+                defender_name(true).c_str(),
+                attack_strength_punctuation(amount).c_str());
     }
 
     return true;
@@ -3509,9 +3520,14 @@ void melee_attack::mons_apply_attack_flavour()
     case AF_MUTATE:
         if (one_chance_in(4))
         {
-            defender->malmutate(you.can_see(*attacker) ?
-                apostrophise(attacker->name(DESC_PLAIN)) + " mutagenic touch" :
-                "mutagenic touch");
+            if (mount_defend)
+                you.increase_duration(DUR_MOUNT_WRETCHED, 3 + random2(attacker->get_hit_dice()), 30);
+            else
+            {
+                defender->malmutate(you.can_see(*attacker) ?
+                    apostrophise(attacker->name(DESC_PLAIN)) + " mutagenic touch" :
+                    "mutagenic touch");
+            }
         }
         break;
 
@@ -3539,7 +3555,7 @@ void melee_attack::mons_apply_attack_flavour()
         {
             mprf("%s %s engulfed in flames%s",
                  defender_name(false).c_str(),
-                 defender->conj_verb("are").c_str(),
+                 mount_defend ? "is" : defender->conj_verb("are").c_str(),
                  attack_strength_punctuation(special_damage).c_str());
 
             _print_resist_messages(defender, base_damage, BEAM_FIRE);
@@ -3592,7 +3608,9 @@ void melee_attack::mons_apply_attack_flavour()
         break;
 
     case AF_MIASMATA:
-        if (defender->is_player())
+        if (mount_defend)
+            miasma_mount();
+        else if (defender->is_player())
             miasma_player(attacker, "vile bite");
         else
             miasma_monster(defender->as_monster(), attacker);
@@ -3644,6 +3662,8 @@ void melee_attack::mons_apply_attack_flavour()
     case AF_HUNGER:
         if (defender->holiness() & MH_UNDEAD)
             break;
+        if (mount_defend)
+            break;
 
         defender->make_hungry(you.hunger / 4, false);
         break;
@@ -3667,13 +3687,14 @@ void melee_attack::mons_apply_attack_flavour()
 
             if (defender_visible)
             {
-                mprf("%s %s engulfed in a cloud of spores!",
+                mprf("%s %s engulfed in a cloud of spores%s",
                      defender->name(DESC_THE).c_str(),
-                     defender->conj_verb("are").c_str());
+                     mount_defend ? "is" : defender->conj_verb("are").c_str(),
+                     mount_defend ? "to no avail." : "!");
             }
         }
 
-        if (one_chance_in(3))
+        if (!mount_defend && one_chance_in(3))
         {
             defender->confuse(attacker,
                               1 + random2(3+attacker->get_hit_dice()));
@@ -3686,7 +3707,12 @@ void melee_attack::mons_apply_attack_flavour()
         break;
 
 	case AF_CONTAM:	
-		if(defender->is_player())
+        if (mount_defend)
+        {
+            if (one_chance_in(8))
+                you.increase_duration(DUR_MOUNT_WRETCHED, 3 + random2(attacker->get_hit_dice()), 30);
+        }
+		else if (defender->is_player())
 		{
 			contaminate_player(1000 + random2(1000), false);
 		}
@@ -3780,11 +3806,14 @@ void melee_attack::mons_apply_attack_flavour()
         if (!defender->is_player())
             break;
 
+        if (mount_defend)
+            break;
+
         attacker->as_monster()->steal_item_from_player();
         break;
 
     case AF_HOLY:
-        if (defender->holy_wrath_susceptible())
+        if (defender->holy_wrath_susceptible(mount_defend))
             special_damage = attk_damage * 0.75;
 
         if (needs_message && special_damage)

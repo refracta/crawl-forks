@@ -2250,6 +2250,9 @@ int player_movement_speed()
             mv = 6;
         else if (you.mount == mount_type::spider)
             mv = 8;
+
+        if (you.duration[DUR_MOUNT_SLOW])
+            mv *= 1.5;
     }
 
     else // Species innates don't work while mounted.
@@ -9484,6 +9487,10 @@ void cure_mount_debuffs()
         you.duration[DUR_MOUNT_BREATH] = 0;
     if (you.duration[DUR_ENSNARE])
         you.duration[DUR_ENSNARE] = 0;
+    if (you.duration[DUR_MOUNT_WRETCHED])
+        you.duration[DUR_MOUNT_WRETCHED] = 0;
+    if (you.duration[DUR_MOUNT_SLOW])
+        you.duration[DUR_MOUNT_SLOW] = 0;
 }
 
 // Returns whether a hit should hit you (false) or a mount (true)
@@ -9528,6 +9535,12 @@ int mount_statuses()
     if (you.duration[DUR_MOUNT_DRAINING])
         retval++;
 
+    if (you.duration[DUR_MOUNT_WRETCHED])
+        retval++;
+
+    if (you.duration[DUR_MOUNT_SLOW])
+        retval++;
+
     if (you.duration[DUR_MOUNT_BREATH])
         retval++;
 
@@ -9547,4 +9560,53 @@ bool drain_mount(int strength)
     you.increase_duration(DUR_MOUNT_DRAINING, strength);
 
     return true;
+}
+
+void slow_mount(int duration)
+{
+    if (!you.duration[DUR_MOUNT_SLOW])
+        mprf("Your %s seems to slow down.", you.mount_name(true).c_str());
+
+    you.increase_duration(DUR_MOUNT_SLOW, duration, 25);
+}
+
+bool miasma_mount()
+{
+    if (you.res_rotting(true, true))
+        return false;
+
+    bool success = poison_mount(5 + roll_dice(3, 12));
+
+    if (one_chance_in(3))
+    {
+        slow_mount(10 + random2(5));
+        success = true;
+    }
+
+    if (coinflip())
+    {
+        rot_mount(1);
+        success = true;
+    }
+
+    return success;
+}
+
+void rot_mount(int amount, bool needs_message)
+{
+    if (you.res_rotting(true, true))
+        return;
+
+    if (needs_message)
+        mprf("Some of your %s's flesh rots away.", you.mount_name(true).c_str());
+
+    you.mount_hp_max -= amount;
+    if (you.mount_hp > you.mount_hp_max)
+        you.mount_hp = you.mount_hp_max;
+
+    if (you.mount_hp <= 0) // This will never happen, right? O_O;
+    {
+        mprf("Your %s dies!", you.mount_name(true).c_str());
+        dismount();
+    }
 }
