@@ -1192,14 +1192,4 @@ bool player_has_orb();
 bool player_on_orb_run();
 
 void change_drac_colour(draconian_colour new_colour);
-void damage_mount(int amount);
-void dismount();
-void cure_mount_debuffs();
-bool mount_hit();
-int apply_mount_ac(int amount);
-monster_type mount_mons();
-bool drain_mount(int strength);
-bool miasma_mount();
-void slow_mount(int duration);
-void rot_mount(int amount, bool needs_message = true);
-int mount_statuses();
+
