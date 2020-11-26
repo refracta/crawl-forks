@@ -734,8 +734,8 @@ public:
     bool poison(actor *agent, int amount = 1, bool force = false) override;
     bool sicken(int amount) override;
     void paralyse(actor *, int str, string source = "") override;
-    void petrify(actor *, bool force = false) override;
-    bool fully_petrify(actor *foe, bool quiet = false) override;
+    void petrify(actor *, bool force = false, bool mt = false) override;
+    bool fully_petrify(actor *foe, bool quiet = false, bool mt = false) override;
     void slow_down(actor *, int str, bool do_msg = true) override;
     void confuse(actor *, int strength) override;
     void weaken(actor *attacker, int pow) override;
@@ -786,7 +786,7 @@ public:
     bool res_torment(bool mt = false) const override;
     bool res_tornado(bool mt = false) const override;
     bool res_wind(bool mt = false) const override;
-    bool res_petrify(bool temp = true) const override;
+    bool res_petrify(bool temp = true, bool mt = false) const override;
     int res_constrict(bool mt = false) const override;
     int res_magic(bool /*calc_unid*/ = true) const override;
     bool no_tele(bool calc_unid = true, bool /*permit_id*/ = true,
@@ -819,8 +819,8 @@ public:
     int silence_radius() const override;
     int liquefying_radius() const override;
     int umbra_radius() const override;
-    bool petrifying() const override;
-    bool petrified() const override;
+    bool petrifying(bool mt = false) const override;
+    bool petrified(bool mt = false) const override;
     bool liquefied_ground() const override;
     bool incapacitated() const override
     {

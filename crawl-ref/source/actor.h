@@ -220,8 +220,8 @@ public:
     virtual bool poison(actor *attacker, int amount = 1, bool force = false) = 0;
     virtual bool sicken(int amount) = 0;
     virtual void paralyse(actor *attacker, int strength, string source = "") = 0;
-    virtual void petrify(actor *attacker, bool force = false) = 0;
-    virtual bool fully_petrify(actor *foe, bool quiet = false) = 0;
+    virtual void petrify(actor *attacker, bool force = false, bool mt = false) = 0;
+    virtual bool fully_petrify(actor *foe, bool quiet = false, bool mt = false) = 0;
     virtual void slow_down(actor *attacker, int strength, bool do_msg = true) = 0;
     virtual void confuse(actor *attacker, int strength) = 0;
     virtual void put_to_sleep(actor *attacker, int strength,
@@ -307,7 +307,7 @@ public:
     virtual bool res_torment(bool mt = false) const = 0;
     virtual bool res_tornado(bool mt = false) const = 0;
     virtual bool res_wind(bool mt = false) const = 0;
-    virtual bool res_petrify(bool temp = true) const = 0;
+    virtual bool res_petrify(bool temp = true, bool mt = false) const = 0;
     virtual int res_constrict(bool mt = false) const = 0;
     virtual int res_magic(bool calc_unid = true) const = 0;
     virtual int check_res_magic(int power);
@@ -378,8 +378,8 @@ public:
     virtual int liquefying_radius() const = 0;
     virtual int umbra_radius() const = 0;
 
-    virtual bool petrifying() const = 0;
-    virtual bool petrified() const = 0;
+    virtual bool petrifying(bool mt = false) const = 0;
+    virtual bool petrified(bool mt = false) const = 0;
 
     virtual bool liquefied_ground() const = 0;
 

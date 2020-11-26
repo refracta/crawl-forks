@@ -368,6 +368,12 @@ static int _mount_ac()
         break;
     }
 
+    if (you.duration[DUR_MOUNT_PETRIFYING])
+        ac *= 2;
+
+    if (you.duration[DUR_MOUNT_PETRIFIED])
+        ac *= 3;
+
     if (you.submerged())
         ac += 4;
 

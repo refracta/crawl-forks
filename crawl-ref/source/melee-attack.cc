@@ -3650,6 +3650,8 @@ void melee_attack::mons_apply_attack_flavour()
     case AF_DRAIN_STR:
     case AF_DRAIN_INT:
     case AF_DRAIN_DEX:
+        if (mount_defend)
+            break;
         if (one_chance_in(20) || one_chance_in(3))
         {
             stat_type drained_stat = (flavour == AF_DRAIN_STR ? STAT_STR :
@@ -3727,12 +3729,12 @@ void melee_attack::mons_apply_attack_flavour()
     case AF_POISON_PETRIFY:
     {
         // Doesn't affect the poison-immune.
-        if (defender->is_player() && you.duration[DUR_DIVINE_STAMINA] > 0)
+        if (!mount_defend && defender->is_player() && you.duration[DUR_DIVINE_STAMINA] > 0)
         {
             mpr("Your divine stamina protects you from poison!");
             break;
         }
-        else if (defender->res_poison() >= 3)
+        else if (defender->res_poison(true, mount_defend) >= 3)
             break;
 
         // Same frequency as AF_POISON and AF_POISON_STRONG.
@@ -3740,17 +3742,19 @@ void melee_attack::mons_apply_attack_flavour()
         {
             int dmg = random_range(attacker->get_hit_dice() * 3 / 2,
                                    attacker->get_hit_dice() * 5 / 2);
-            defender->poison(attacker, dmg);
+            if (mount_defend)
+                poison_mount(dmg);
+            else
+                defender->poison(attacker, dmg);
         }
 
         // Try to apply petrification, with the normal 2/3
         // chance to resist with rPois.
         // Don't petrify things that are already petrified or petrifying. Since this is an on-melee effect it's too strong to allow it to extend durations.
-        if ((defender->res_poison() <= 0 || one_chance_in(3)) && !((defender->is_player() && (you.duration[DUR_PETRIFYING] || 
-            you.duration[DUR_PETRIFIED])) || (defender->is_monster() && (defender->as_monster()->has_ench(ENCH_PETRIFYING) ||
-            defender->as_monster()->has_ench(ENCH_PETRIFIED)))))
+        if ((defender->res_poison(true, mount_defend) <= 0 || one_chance_in(3)) && 
+            !(defender->petrifying(mount_defend) || defender->petrified(mount_defend)))
         {
-            defender->petrify(attacker);
+            defender->petrify(attacker, false, mount_defend);
         }
 
         break;

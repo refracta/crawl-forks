@@ -2254,6 +2254,9 @@ int player_movement_speed()
 
         if (you.duration[DUR_MOUNT_SLOW])
             mv *= 1.5;
+
+        if (you.petrifying(true))
+            mv *= 1.5;
     }
 
     else // Species innates don't work while mounted.
@@ -2422,7 +2425,10 @@ void update_acrobat_status()
 static int _player_evasion_size_factor(bool base = false)
 {
     // XXX: you.body_size() implementations are incomplete, fix.
-    const size_type size = you.body_size(PSIZE_BODY, base);
+    int size = (int)you.body_size(PSIZE_BODY, base);
+    if (you.mounted())
+        size += 2;
+    size = max(6, size);
     return 2 * (SIZE_MEDIUM - size);
 }
 
@@ -2493,10 +2499,15 @@ static int _player_evasion_bonuses()
 // Player EV scaling for being flying tengu or swimming merfolk.
 static int _player_scale_evasion(int prescaled_ev, const int scale)
 {
-    if (you.duration[DUR_PETRIFYING] || you.caught())
+    if (you.petrifying() || you.caught())
         prescaled_ev /= 2;
     else if (you.duration[DUR_GRASPING_ROOTS])
         prescaled_ev = prescaled_ev * 2 / 3;
+
+    if (you.petrifying(true))
+        prescaled_ev = prescaled_ev * 3 / 4;
+    else if (you.petrified(true))
+        prescaled_ev /= 2;
 
     // Merfolk get a 25% evasion bonus in water.
     if (you.fishtail)
@@ -5595,8 +5606,14 @@ void force_land_player(actor */*foe*/, bool damage)
                 mprf(MSGCH_WARN, "You fall straight down and make a sizzling splash on the lava!");
             else
             {
-                mprf(MSGCH_WARN, "You crash to the ground with a thud.");
-                ouch(roll_dice(2, 10), KILLED_BY_FALLING);
+                int dam = roll_dice(2, 10);
+
+                mprf(MSGCH_WARN, "You crash to the ground with a thud%s", attack_strength_punctuation(dam).c_str());
+
+                if (you.mounted())
+                    damage_mount(dam);
+                else
+                    ouch(roll_dice(2, 10), KILLED_BY_FALLING);
             }
             noisy(15, you.pos());
         }
@@ -6318,13 +6335,17 @@ bool player::caught() const
     return attribute[ATTR_HELD];
 }
 
-bool player::petrifying() const
+bool player::petrifying(bool mt) const
 {
+    if (mt)
+        return duration[DUR_MOUNT_PETRIFYING];
     return duration[DUR_PETRIFYING];
 }
 
-bool player::petrified() const
+bool player::petrified(bool mt) const
 {
+    if (mt)
+        return duration[DUR_MOUNT_PETRIFIED];
     return duration[DUR_PETRIFIED];
 }
 
@@ -7239,8 +7260,11 @@ bool player::res_wind(bool mt) const
     return false;
 }
 
-bool player::res_petrify(bool temp) const
+bool player::res_petrify(bool temp, bool mt) const
 {
+    if (mt)
+        return false;
+
     if (you.wearing_ego(EQ_BODY_ARMOUR, SPARM_SOFT) || you.wearing_ego(EQ_CLOAK, SPARM_SOFT))
         return true;
 
@@ -7768,69 +7792,84 @@ void player::paralyse(actor *who, int str, string source)
     end_searing_ray();
 }
 
-void player::petrify(actor *who, bool force)
+void player::petrify(actor *who, bool force, bool mt)
 {
     ASSERT(!crawl_state.game_is_arena());
 
-    if (res_petrify() && !force)
+    if (res_petrify(true, mt) && !force)
     {
         canned_msg(MSG_YOU_UNAFFECTED);
         return;
     }
 
-    if (you.stasis() || you.is_insubstantial())
+    if (!mt)
     {
-        canned_msg(MSG_YOU_UNAFFECTED);
+        if (you.stasis() || you.is_insubstantial())
+        {
+            canned_msg(MSG_YOU_UNAFFECTED);
+            return;
+        }
+
+        if (duration[DUR_DIVINE_STAMINA] > 0)
+        {
+            mprf(MSGCH_DURATION, "Your divine stamina protects you from petrification!");
+            return;
+        }
+
+        if (have_passive(passive_t::bahamut_tiamat_passive)
+            && you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY)
+            && you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+        {
+            mprf(MSGCH_DURATION, "Bahamut protects you from petrification.");
+            return;
+        }
+
+        // Petrification always wakes you up
+        if (asleep())
+            you.awaken();
+    }
+
+    if (petrifying(mt))
+    {
+        mprf("Your %s %s turned to stone.", mt ? mount_name(true).c_str() : "limbs", 
+                                            mt ? "has" : "have");
+        duration[mt ? DUR_MOUNT_PETRIFYING : DUR_PETRIFYING] = 1;
         return;
     }
 
-    if (duration[DUR_DIVINE_STAMINA] > 0)
-    {
-        mprf(MSGCH_DURATION, "Your divine stamina protects you from petrification!");
-        return;
-    }
-
-    if (have_passive(passive_t::bahamut_tiamat_passive)
-        && you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY)
-        && you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
-    {
-        mprf(MSGCH_DURATION, "Bahamut protects you from petrification.");
-        return;
-    }
-
-    // Petrification always wakes you up
-    if (asleep())
-        you.awaken();
-
-    if (petrifying())
-    {
-        mpr("Your limbs have turned to stone.");
-        duration[DUR_PETRIFYING] = 1;
-        return;
-    }
-
-    if (petrified())
+    if (petrified(mt))
         return;
 
-    duration[DUR_PETRIFYING] = 30;
+    duration[mt ? DUR_MOUNT_PETRIFYING : DUR_PETRIFYING] = 30;
 
-    if (who)
+    if (!mt && who)
         props[PETRIFIED_BY_KEY] = who->name(DESC_A, true);
 
     redraw_evasion = true;
-    mprf(MSGCH_WARN, "You are slowing down.");
+
+    if (mt)
+        mprf(MSGCH_WARN, "Your %s is slowing down.", mount_name(true).c_str());
+
+    else
+        mprf(MSGCH_WARN, "You are slowing down.");
 }
 
-bool player::fully_petrify(actor */*foe*/, bool /*quiet*/)
+bool player::fully_petrify(actor */*foe*/, bool /*quiet*/, bool mt)
 {
-    duration[DUR_PETRIFIED] = 60
+    duration[mt ? DUR_MOUNT_PETRIFIED : DUR_PETRIFIED] = 60
                         + random2(40);
     redraw_evasion = true;
-    mpr("You have turned to stone.");
+    
+    if (mt)
+        mprf("Your %s has turned to stone.", mount_name(true).c_str());
+    else
+        mpr("You have turned to stone.");
 
-    force_land_player(nullptr, true);
+    if (mt && you.mounted() || !mt && !you.mounted())
+        force_land_player(nullptr, true);
 
-    end_searing_ray();
+    if (!mt)
+        end_searing_ray();
 
     return true;
 }
@@ -8223,7 +8262,7 @@ bool player::can_bleed(bool allow_tran) const
 bool player::is_stationary() const
 {
     return (form == transformation::tree || you.attribute[ATTR_ROOTED]
-        || you.duration[DUR_LAVA_CAKE]);
+        || you.duration[DUR_LAVA_CAKE] || you.petrified(true));
 }
 
 bool player::malmutate(const string &reason)

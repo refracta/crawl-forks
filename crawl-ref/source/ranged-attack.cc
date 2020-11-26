@@ -925,14 +925,13 @@ bool ranged_attack::apply_missile_brand()
     case SPMSL_PETRIFICATION:
         if (!blowgun_check(brand))
             break;
-        // BCADDO: Petrify mount.
-        defender->petrify(attacker);
+        defender->petrify(attacker, false, mount_defend);
         break;
     case SPMSL_SLEEP:
         if (!blowgun_check(brand))
             break;
         if (mount_defend)
-            mprf("Your %s falls asleep momentarily but you shake it awake.", you.mount_name(true).c_str());
+            mprf("Your %s falls asleep momentarily.", you.mount_name(true).c_str());
         else
         {
             defender->put_to_sleep(attacker, damage_done);
@@ -950,7 +949,6 @@ bool ranged_attack::apply_missile_brand()
     case SPMSL_FRENZY:
         if (!blowgun_check(brand))
             break;
-        // BCADDO: Lose control of your mount.
         if (defender->is_monster())
         {
             monster* mon = defender->as_monster();

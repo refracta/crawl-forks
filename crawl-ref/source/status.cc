@@ -283,7 +283,17 @@ bool fill_status_info(int status, status_info& inf)
             }
             if (you.duration[DUR_MOUNT_WRETCHED])
             {
-                inf.light_text += "wretched";
+                inf.light_text += "mutat";
+                _mount_status_iterate(statuses, inf);
+            }
+            if (you.duration[DUR_MOUNT_PETRIFYING])
+            {
+                inf.light_text += "petr";
+                _mount_status_iterate(statuses, inf);
+            }
+            if (you.duration[DUR_MOUNT_PETRIFIED])
+            {
+                inf.light_text += "PETR";
                 _mount_status_iterate(statuses, inf);
             }
         }

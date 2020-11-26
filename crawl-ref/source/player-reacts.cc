@@ -194,6 +194,13 @@ static void _decrement_petrification(int delay)
             you.props.erase(PETRIFIED_BY_KEY);
     }
 
+    if (_decrement_a_duration(DUR_MOUNT_PETRIFIED, delay))
+    {
+        you.redraw_evasion = true;
+
+        mprf(MSGCH_DURATION, "Your %s returns to flesh and can move again.", you.mount_name(true).c_str());
+    }
+
     if (you.duration[DUR_PETRIFYING])
     {
         int &dur = you.duration[DUR_PETRIFYING];
@@ -205,6 +212,19 @@ static void _decrement_petrification(int delay)
         }
         else if (dur < 15 && old_dur >= 15)
             mpr("Your limbs are stiffening.");
+    }
+
+    if (you.duration[DUR_MOUNT_PETRIFYING])
+    {
+        int &dur = you.duration[DUR_MOUNT_PETRIFYING];
+        int old_dur = dur;
+        if ((dur -= delay) <= 0)
+        {
+            dur = 0;
+            you.fully_petrify(nullptr, false, true);
+        }
+        else if (dur < 15 && old_dur >= 15)
+            mpr("You mount is stiffening.");
     }
 }
 

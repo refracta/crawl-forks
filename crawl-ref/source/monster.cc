@@ -2999,12 +2999,12 @@ bool monster::caught() const
     return has_ench(ENCH_HELD);
 }
 
-bool monster::petrified() const
+bool monster::petrified(bool /*mt*/) const
 {
     return has_ench(ENCH_PETRIFIED);
 }
 
-bool monster::petrifying() const
+bool monster::petrifying(bool /*mt*/) const
 {
     return has_ench(ENCH_PETRIFYING);
 }
@@ -4132,7 +4132,7 @@ bool monster::res_wind(bool /*mount*/) const
     return get_mons_resist(*this, MR_RES_WIND) > 0;
 }
 
-bool monster::res_petrify(bool /*temp*/) const
+bool monster::res_petrify(bool /*temp*/, bool /*mt*/) const
 {
     const int armour = inv[MSLOT_ARMOUR];
 
@@ -4702,12 +4702,12 @@ void monster::paralyse(actor *atk, int strength, string /*cause*/)
     add_ench(mon_enchant(ENCH_PARALYSIS, 1, atk, strength));
 }
 
-void monster::petrify(actor *atk, bool /*force*/)
+void monster::petrify(actor *atk, bool /*force*/, bool /*mt*/)
 {
     enchant_actor_with_flavour(this, atk, BEAM_PETRIFY);
 }
 
-bool monster::fully_petrify(actor *atk, bool quiet)
+bool monster::fully_petrify(actor *atk, bool quiet, bool /*mt*/)
 {
     bool msg = !quiet && simple_monster_message(*this, mons_is_immotile(*this) ?
                          " turns to stone!" : " stops moving altogether!");

@@ -173,6 +173,10 @@ void cure_mount_debuffs()
         you.duration[DUR_MOUNT_WRETCHED] = 0;
     if (you.duration[DUR_MOUNT_SLOW])
         you.duration[DUR_MOUNT_SLOW] = 0;
+    if (you.petrifying(true))
+        you.duration[DUR_MOUNT_PETRIFYING] = 0;
+    if (you.petrified(true))
+        you.duration[DUR_MOUNT_PETRIFIED] = 0;
 }
 
 // Returns whether a hit should hit you (false) or a mount (true)
@@ -262,6 +266,12 @@ int mount_statuses()
         retval++;
 
     if (you.duration[DUR_ENSNARE])
+        retval++;
+
+    if (you.duration[DUR_MOUNT_PETRIFYING])
+        retval++;
+
+    if (you.duration[DUR_MOUNT_PETRIFIED])
         retval++;
 
     return retval;

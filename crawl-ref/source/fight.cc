@@ -235,9 +235,9 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
 
         bool xtra_atk = you.form == transformation::scorpion;
 
-        if (you.mounted())
+        if (you.mounted() && !you.petrified(true))
         {
-            if (you.duration[DUR_MOUNT_SLOW])
+            if (you.duration[DUR_MOUNT_SLOW] || you.petrifying(true))
             {
                 if (you.mount_energy >= 15)
                 {
