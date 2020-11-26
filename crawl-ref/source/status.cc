@@ -296,6 +296,11 @@ bool fill_status_info(int status, status_info& inf)
                 inf.light_text += "PETR";
                 _mount_status_iterate(statuses, inf);
             }
+            if (you.duration[DUR_MOUNT_PETRIFIED])
+            {
+                inf.light_text += "barbs";
+                _mount_status_iterate(statuses, inf);
+            }
         }
     }
         break;

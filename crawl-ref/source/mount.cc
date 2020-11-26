@@ -274,6 +274,9 @@ int mount_statuses()
     if (you.duration[DUR_MOUNT_PETRIFIED])
         retval++;
 
+    if (you.duration[DUR_MOUNT_BARBS])
+        retval++;
+
     return retval;
 }
 

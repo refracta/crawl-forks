@@ -3761,16 +3761,16 @@ void melee_attack::mons_apply_attack_flavour()
     }
 
     case AF_ACID:
-        defender->splash_with_acid(attacker, 3);
+        defender->splash_with_acid(attacker, 3, true, nullptr, mount_defend);
         break;
 
     case AF_CORRODE:
-        defender->corrode_equipment(atk_name(DESC_THE).c_str());
+        defender->corrode_equipment(atk_name(DESC_THE).c_str(), 1, mount_defend);
         break;
 
     case AF_BARBS:
         if (defender->is_player())
-            impale_player_with_barbs();
+            impale_player_with_barbs(mount_defend);
         else
             impale_monster_with_barbs(defender->as_monster(), attacker);
         break;
@@ -3780,7 +3780,7 @@ void melee_attack::mons_apply_attack_flavour()
         break;
 
     case AF_RAGE:
-        if (!one_chance_in(3) || !defender->can_go_berserk())
+        if (!one_chance_in(3) || !defender->can_go_berserk() || mount_defend)
             break;
 
         if (needs_message)
@@ -3807,10 +3807,7 @@ void melee_attack::mons_apply_attack_flavour()
 
     case AF_STEAL:
         // Ignore monsters, for now.
-        if (!defender->is_player())
-            break;
-
-        if (mount_defend)
+        if (!defender->is_player() || mount_defend)
             break;
 
         attacker->as_monster()->steal_item_from_player();

@@ -114,9 +114,7 @@ enum duration_type
     DUR_WATER_HOLD_IMMUNITY,
 #endif
     DUR_FLAYED,
-#if TAG_MAJOR_VERSION == 34
-    DUR_RETCHING,
-#endif
+    DUR_MOUNT_BARBS,
     DUR_WEAK,
     DUR_DIMENSION_ANCHOR,
 #if TAG_MAJOR_VERSION == 34

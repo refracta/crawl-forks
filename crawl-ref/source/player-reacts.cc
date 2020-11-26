@@ -803,7 +803,10 @@ static void _decrement_durations()
     {
         extract_manticore_spikes(
             make_stringf("You %s the barbed spikes from your body.",
-                you.berserk() ? "rip and tear" : "carefully extract").c_str());
+                you.berserk() ? "rip and tear" : "carefully extract").c_str(), false);
+        extract_manticore_spikes(
+            make_stringf("You %s the barbed spikes from your mount's flesh.",
+                you.berserk() ? "rip and tear" : "carefully extract").c_str(), true);
     }
 
     if (!env.sunlight.empty())
@@ -1060,9 +1063,9 @@ void player_reacts()
         qazlal_storm_clouds();
 }
 
-void extract_manticore_spikes(const char* endmsg)
+void extract_manticore_spikes(const char* endmsg, bool mount)
 {
-    if (_decrement_a_duration(DUR_BARBS, you.time_taken, endmsg))
+    if (!mount && _decrement_a_duration(DUR_BARBS, you.time_taken, endmsg))
     {
         // Note: When this is called in _move player(), ATTR_BARBS_POW
         // has already been used to calculated damage for the player.
@@ -1072,4 +1075,6 @@ void extract_manticore_spikes(const char* endmsg)
 
         you.props.erase(BARBS_MOVE_KEY);
     }
+    if (mount && _decrement_a_duration(DUR_MOUNT_BARBS, you.time_taken, endmsg))
+        you.props.erase(BARBS_MOVE_KEY);
 }

@@ -4518,24 +4518,37 @@ static pie_effect _random_pie_effect(const actor &defender)
     return *random_choose_weighted(weights);
 }
 
-void impale_player_with_barbs()
+// Mount toggle is doing something completely different here but it still helps in calls from attack.
+void impale_player_with_barbs(bool mt)
 {
-    if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
-        mpr("The barbed spikes sting slightly as they fall through your immaterial body.");
-    else {
-        mpr("The barbed spikes become lodged in your body.");
-        if (!you.duration[DUR_BARBS])
-            you.set_duration(DUR_BARBS, random_range(4, 8));
+    if (mt)
+    {
+        mprf("The barbed spikes become lodged in your %s.", you.mount_name(true).c_str());
+        if (!you.duration[DUR_MOUNT_BARBS])
+            you.set_duration(DUR_MOUNT_BARBS, random_range(4, 8));
         else
-            you.increase_duration(DUR_BARBS, random_range(2, 4), 12);
-
-        if (you.attribute[ATTR_BARBS_POW])
+            you.increase_duration(DUR_MOUNT_BARBS, random_range(2, 4), 12);
+    }
+    else
+    {
+        if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
+            mpr("The barbed spikes sting slightly as they fall through your immaterial body.");
+        else
         {
-            you.attribute[ATTR_BARBS_POW] =
-                min(6, you.attribute[ATTR_BARBS_POW]++);
+            mpr("The barbed spikes become lodged in your body.");
+            if (!you.duration[DUR_BARBS])
+                you.set_duration(DUR_BARBS, random_range(4, 8));
+            else
+                you.increase_duration(DUR_BARBS, random_range(2, 4), 12);
+
+            if (you.attribute[ATTR_BARBS_POW])
+            {
+                you.attribute[ATTR_BARBS_POW] =
+                    min(6, you.attribute[ATTR_BARBS_POW]++);
+            }
+            else
+                you.attribute[ATTR_BARBS_POW] = 4;
         }
-        else
-            you.attribute[ATTR_BARBS_POW] = 4;
     }
 }
 
