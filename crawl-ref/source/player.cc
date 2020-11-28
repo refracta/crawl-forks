@@ -2169,7 +2169,12 @@ int player_prot_life(bool calc_unid, bool temp, bool items)
     if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, temp))
     {
         if (you.drac_colour == DR_PEARL)
-            pl += 3;
+        {
+            if (you.char_class == JOB_DEMONSPAWN)
+                pl++;
+            else
+                pl += 3;
+        }
         if (you.drac_colour == DR_SCINTILLATING && one_chance_in(3))
             pl++;
     }
@@ -7215,11 +7220,11 @@ int player::res_holy_energy(bool mt) const
     if (mt)
         return 0;
 
-    if (undead_or_demonic())
-        return -1;
-
     if (is_holy())
         return 3;
+
+    if (undead_or_demonic())
+        return -1;
 
     return 0;
 }

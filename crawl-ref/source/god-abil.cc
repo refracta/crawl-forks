@@ -7618,7 +7618,11 @@ static string _name_from_colour(draconian_colour col)
     case DR_LIME:           return "Lime                Transmutations             rCorr              Acid Spit";
     case DR_MAGENTA:        return "Magenta             Charms                     rMsl               Fog";
     case DR_OLIVE:          return "Olive (no Potions)  Poison, Air                rMut (less rot)    Foul Miasma";
-    case DR_PEARL:          return "Pearl               Charms, Summon, Earth      rN+++, AC+         Holy Flames";
+    case DR_PEARL:  
+        if (you.char_class == JOB_DEMONSPAWN)
+                            return "Pearl               Charms, Summon, Earth      rHoly, rN+, AC+    Holy Flames";
+        else
+                            return "Pearl               Charms, Summon, Earth      rN+++, AC+         Holy Flames";
     case DR_PINK:           return "Pink                Summonings                 clarity            Butterflies";
     case DR_PLATINUM:       return "Platinum            Translo, Transmut, Hexes   Fast, rMut         Radiation Blast";
     case DR_PURPLE:         return "Purple              Hexes                      MR++               Dispelling Energy";
