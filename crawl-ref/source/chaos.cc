@@ -260,7 +260,7 @@ void chaotic_debuff(actor* act, int dur, actor * attacker)
     switch (debuff)
     {
     case CD_INNER:
-        if (act->is_player())
+        if (player)
             break;
         act->as_monster()->add_ench(mon_enchant(ENCH_ENTROPIC_BURST, 0, attacker, dur * BASELINE_DELAY));
         break;
