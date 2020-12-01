@@ -2409,7 +2409,7 @@ static bool _olgreb_check(actor * agent)
             {
                 if (act->is_player() && you.duration[DUR_POISONING])
                     return true;
-                else if (act->as_monster()->has_ench(ENCH_POISON))
+                else if (act->is_monster() && act->as_monster()->has_ench(ENCH_POISON))
                     return true;
             }
             if (cloud_struct * c = cloud_at(*ri))
