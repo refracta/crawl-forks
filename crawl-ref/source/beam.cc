@@ -3121,11 +3121,11 @@ bool bolt::stop_at_target() const
 
 void bolt::drop_object()
 {
-    ASSERT(item != nullptr);
-    ASSERT(item->defined());
-
+    // BCADNOTE: Removed an assert due to a rare crash. Shouldn't be a behavior change (undefined item that
+    // would likely be destroyed anyways. Consider restoring if the removal causes some issue down the line
+    // I don't see why it would, but leaving note in case.)
     // Conditions: beam is missile and not tracer.
-    if (is_tracer || !was_missile)
+    if ((item == nullptr) || !item->defined() || is_tracer || !was_missile)
         return;
 
     // Summoned creatures' thrown items disappear.
