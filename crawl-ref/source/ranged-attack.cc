@@ -709,7 +709,7 @@ special_missile_type ranged_attack::random_chaos_missile_brand()
 
 bool ranged_attack::blowgun_check(special_missile_type type)
 {
-    mon_holy_type holy = mount_defend ? mons_class_holiness(you.mount_as_monster())
+    mon_holy_type holy = mount_defend ? mons_class_holiness(mount_mons())
                                       : defender->holiness();
 
     if (holy & (MH_UNDEAD | MH_NONLIVING))
@@ -732,22 +732,7 @@ bool ranged_attack::blowgun_check(special_missile_type type)
     int defense_hd = 0;
 
     if (mount_defend)
-    {
-        switch (you.mount)
-        {
-        case mount_type::hydra:
-            defense_hd = div_rand_round(calc_spell_power(SPELL_SUMMON_HYDRA_MOUNT, true), 10);
-            break;
-        case mount_type::spider:
-            defense_hd = div_rand_round(calc_spell_power(SPELL_SUMMON_SPIDER_MOUNT, true), 10);
-            break;
-        case mount_type::drake:
-            defense_hd = 2 + div_rand_round(you.skill(SK_INVOCATIONS) * 2, 3);
-            break;
-        default:
-            break;
-        }
-    }
+        defense_hd = mount_hd();
     else
         defense_hd = defender->get_hit_dice();
 

@@ -9440,21 +9440,3 @@ string player::mount_name(bool terse) const
         return "buggy mount";
     }
 }
-
-monster_type player::mount_as_monster() const
-{
-    switch (you.mount)
-    {
-    case mount_type::hydra:
-        return MONS_HYDRA;
-
-    case mount_type::drake:
-        return MONS_RIME_DRAKE;
-
-    case mount_type::spider:
-        return MONS_JUMPING_SPIDER;
-
-    default:
-        return MONS_PROGRAM_BUG;
-    }
-}

@@ -925,7 +925,6 @@ public:
     bool is_dragonkind() const override;
     bool mounted() const override;
     string mount_name(bool terse = false) const;
-    monster_type mount_as_monster() const;
 
 protected:
     void _removed_beholder(bool quiet = false);

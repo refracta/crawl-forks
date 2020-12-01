@@ -340,3 +340,19 @@ void rot_mount(int amount, bool needs_message)
         dismount();
     }
 }
+
+int mount_hd()
+{
+    switch (you.mount)
+    {
+    case mount_type::hydra:
+        return div_rand_round(calc_spell_power(SPELL_SUMMON_HYDRA_MOUNT, true), 10);
+    case mount_type::spider:
+        return div_rand_round(calc_spell_power(SPELL_SUMMON_SPIDER_MOUNT, true), 10);
+    case mount_type::drake:
+        return (2 + div_rand_round(you.skill(SK_INVOCATIONS) * 2, 3));
+    default:
+        break;
+    }
+    return 1;
+}

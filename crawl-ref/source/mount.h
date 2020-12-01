@@ -22,5 +22,6 @@ bool miasma_mount();
 void slow_mount(int duration);
 void rot_mount(int amount, bool needs_message = true);
 int mount_statuses();
+int mount_hd();
 
 spret gain_mount(mount_type mount, int pow, bool fail);

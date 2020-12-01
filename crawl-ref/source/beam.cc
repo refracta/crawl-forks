@@ -2487,7 +2487,7 @@ int silver_damages_victim(actor* victim, int damage, string &dmg_msg, bool mount
     int ret = 0;
     if (mount)
     {
-        if (is_chaotic_type(you.mount_as_monster()))
+        if (is_chaotic_type(mount_mons()))
             ret = div_rand_round(damage * 3, 4);
         else
             return 0;

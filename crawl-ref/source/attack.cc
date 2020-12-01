@@ -1789,7 +1789,7 @@ bool attack::apply_damage_brand(const char *what)
         break;
 
     case SPWPN_DRAGON_SLAYING:
-        if (mount_defend && is_draconic_type(you.mount_as_monster()))
+        if (mount_defend && is_draconic_type(mount_mons()))
         {
             special_damage = 1 + (random2(damage_done * 15) / 10);
             special_damage_message =
