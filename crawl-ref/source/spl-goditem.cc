@@ -952,7 +952,7 @@ bool cast_smiting(int pow, monster* mons)
 
 void holy_word_player(holy_word_source_type source)
 {
-    if (!you.undead_or_demonic())
+    if (you.res_holy_energy() >= 0)
         return;
 
     int hploss = max(0, you.hp / 2 - 1);
