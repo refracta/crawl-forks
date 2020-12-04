@@ -711,9 +711,7 @@ static const duration_def duration_data[] =
     { DUR_STILL_WINDS,
       BROWN, "", "", "", "You are stilling the winds.", D_DISPELLABLE,
       {{ "You release your hold on the winds." , end_still_winds}}},
-    { DUR_MOUNTED,
-      BROWN, "", "", "mount", "", D_NO_FLAGS,
-      {{ "Your mount expires." , dismount}}},
+    { DUR_MOUNTED, BROWN, "", "", "mount", "", D_NO_FLAGS, {}, 10},
 
 #if TAG_MAJOR_VERSION == 34
     // And removed ones

@@ -607,6 +607,15 @@ static void _decrement_durations()
         }
     }
 
+    if (you.mounted())
+    {
+        if (_decrement_a_duration(DUR_MOUNTED, delay, "Your mount expires.", random2(3),
+            "Your mount's time in this world is almost up."))
+        {
+            dismount();
+        }
+    }
+
     if (you.attribute[ATTR_SWIFTNESS] >= 0)
     {
         if (_decrement_a_duration(DUR_SWIFTNESS, delay,

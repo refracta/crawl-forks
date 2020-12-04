@@ -8728,6 +8728,8 @@ bool need_expiration_warning(duration_type dur, dungeon_feature_type feat)
     {
         return true;
     }
+    else if (dur == DUR_MOUNTED && (you.mount == mount_type::hydra || you.mount == mount_type::drake))
+        return true;
     return false;
 }
 
