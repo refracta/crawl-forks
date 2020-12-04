@@ -3129,11 +3129,11 @@ bool bolt::stop_at_target() const
 
 void bolt::drop_object()
 {
-    ASSERT(item != nullptr);
-    ASSERT(item->defined());
-
+    // BCADNOTE: Removed an assert due to a rare crash. Shouldn't be a behavior change (undefined item that
+    // would likely be destroyed anyways. Consider restoring if the removal causes some issue down the line
+    // I don't see why it would, but leaving note in case.)
     // Conditions: beam is missile and not tracer.
-    if (is_tracer || !was_missile)
+    if ((item == nullptr) || !item->defined() || is_tracer || !was_missile)
         return;
 
     // Summoned creatures' thrown items disappear.
@@ -4624,12 +4624,11 @@ void bolt::affect_player()
         {
             int dur = damage.roll();
             dur += damage.size;
-
-            chaotic_status(&you, dur, actor_by_mid(source_id));
+            chaotic_status(&you, dur, agent());
         }
 
         if (real_flavour == BEAM_CHAOTIC_DEVASTATION)
-            chaotic_status(&you, roll_dice(5, 20), actor_by_mid(source_id));
+            chaotic_status(&you, roll_dice(5, 20), agent());
     }
 
     const bool engulfs = is_explosion || is_big_cloud();
@@ -5552,6 +5551,15 @@ void bolt::monster_post_hit(monster* mon, int dmg)
     if (origin_spell == SPELL_CHILLING_BREATH && dmg > 0)
         do_slow_monster(*mon, agent(), max(random2(10), dmg / 3));
 
+    // Apply chaos effects.
+    if (mon->alive() && (real_flavour == BEAM_CHAOTIC || real_flavour == BEAM_CHAOTIC_DEVASTATION) && !mons_class_is_firewood(mon->type))
+    {
+        int dur = damage.roll();
+        dur += damage.size;
+
+        chaotic_status(mon, dur, agent());
+    }
+
     if (origin_spell == SPELL_EMPOWERED_BREATH)
     {
         if (flavour == BEAM_COLD && dmg > 0)
@@ -6113,15 +6121,6 @@ void bolt::affect_monster(monster* mon)
             mon->hurt(agent(), final, real_flavour, KILLED_BY_BEAM, "", "", false);
         else
             mon->hurt(agent(), final, flavour, KILLED_BY_BEAM, "", "", false);
-    }
-
-    // Apply chaos effects.
-    if (mon->alive() && (real_flavour == BEAM_CHAOTIC || real_flavour == BEAM_CHAOTIC_DEVASTATION) && !mons_class_is_firewood(mon->type))
-    {
-        int dur = damage.roll();
-        dur += damage.size;
-
-        chaotic_status(mon, dur, actor_by_mid(source_id));
     }
 
     if (mon->alive())

@@ -6825,6 +6825,9 @@ int player::base_ac(int scale) const
         // Claws give UC slaying from enchant instead of AC.
         if (item.sub_type != ARM_CLAW)
             AC += item.plus * 100;
+        // Protection claws have protection brand.
+        else if (get_weapon_brand(item) == SPWPN_PROTECTION)
+            AC += 300;
     }
 
     AC += wearing(EQ_RINGS, RING_PROTECTION) * 500;
@@ -7235,7 +7238,7 @@ int player::res_holy_energy(bool mt) const
 {
     if (mt)
         return 0;
-
+  
     if (is_holy())
         return 3;
 
