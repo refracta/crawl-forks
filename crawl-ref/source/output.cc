@@ -2759,7 +2759,15 @@ string _status_mut_rune_list(int sw)
             status.emplace_back(inf.short_text);
     }
 
-    int move_cost = (player_speed() * player_movement_speed()) / 10;
+    int move_cost = player_movement_speed();
+
+    if (you.mounted())
+        move_cost *= 10;
+    else
+        move_cost *= player_speed();
+
+    move_cost /= 10;
+
     if (move_cost != 10)
     {
         const char *help = (move_cost <   8) ? "very quick" :

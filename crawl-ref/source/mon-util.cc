@@ -6705,3 +6705,26 @@ bool apply_visible_monsters(monster_func f, const coord_def& where, los_type los
 {
     return _apply_to_monsters(f, radius_iterator(where, los, true));
 }
+
+bool is_chaotic_type(monster_type type)
+{
+    if (type == MONS_UGLY_THING
+        || type == MONS_VERY_UGLY_THING
+        || type == MONS_ABOMINATION_SMALL
+        || type == MONS_ABOMINATION_LARGE
+        || type == MONS_WRETCHED_STAR
+        || type == MONS_KILLER_KLOWN      // For their random attacks.
+        || type == MONS_TIAMAT            // For her colour-changing.
+        || type == MONS_BAI_SUZHEN
+        || type == MONS_BAI_SUZHEN_DRAGON // For her transformation.
+        || mons_is_demonspawn(type))      // Like player demonspawn.
+    {
+        return true;
+    }
+    return false;
+}
+
+bool is_draconic_type(monster_type type)
+{
+    return (type == MONS_DRAGON || type == MONS_DRAKE || type == MONS_HYDRA);
+}

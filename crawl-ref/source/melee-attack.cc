@@ -72,15 +72,15 @@ melee_attack::melee_attack(actor *attk, actor *defn,
                            bool is_cleaving)
     :  // Call attack's constructor
     ::attack(attk, defn),
-
-    attack_number(attack_num), effective_attack_number(effective_attack_num),
+    
+    effective_attack_number(effective_attack_num),
     cleaving(is_cleaving), is_riposte(false),
     wu_jian_attack(WU_JIAN_ATTACK_NONE),
     wu_jian_number_of_targets(1)
 {
     attack_occurred = false;
+    init_attack(SK_UNARMED_COMBAT, attack_num);
     damage_brand = attacker->damage_brand(attack_number);
-    init_attack(SK_UNARMED_COMBAT, attack_number);
     if (weapon && !using_weapon())
         wpn_skill = SK_FIGHTING;
 
@@ -225,9 +225,13 @@ bool melee_attack::handle_phase_attempted()
         // Set delay now that we know the attack won't be cancelled.
         if (!is_riposte
              && (wu_jian_attack == WU_JIAN_ATTACK_NONE)
-            && ((effective_attack_number == 0)||(effective_attack_number==2)))
+            && ((effective_attack_number == 0)||(effective_attack_number == 2)))
         {
             you.time_taken = you.attack_delay().roll();
+            you.mount_energy += you.time_taken;
+
+            if (you.mount_energy > 20)
+                you.mount_energy = 20; // Prevents a possible exploit of "storing" attacks by attacking with a slow weapon then using a fast one later.
         }
 
         const caction_type cact_typ = is_riposte ? CACT_RIPOSTE : CACT_MELEE;
@@ -371,7 +375,7 @@ bool melee_attack::handle_phase_dodged()
     {
         // TODO: Unify these, placed player_warn_miss here so I can remove
         // player_attack
-        if (attacker->is_player())
+        if (attacker->is_player() && !mount_attack)
             player_warn_miss();
         else
         {
@@ -582,6 +586,14 @@ bool melee_attack::handle_phase_hit()
                       ? attack_verb
                       : attacker->conj_verb(mons_attack_verb());
 
+        string attacker_name = attacker->name(DESC_THE);
+        
+        if (mount_attack)
+        {
+            attacker_name  = "Your ";
+            attacker_name += you.mount_name();
+        }
+
         if (attacker->is_player() && weapon && weapon->is_type(OBJ_STAVES, STAFF_SUMMONING))
         {
             mprf("You lightly tap %s.",
@@ -591,10 +603,11 @@ bool melee_attack::handle_phase_hit()
         else
         {
             mprf("%s %s %s but %s no damage.",
-                attacker->name(DESC_THE).c_str(),
+                attacker_name.c_str(),
                 attack_verb.c_str(),
                 defender_name(true).c_str(),
-                attacker->is_player() ? "do" : "does");
+                mount_attack          ? "does" :
+                attacker->is_player() ? "do"   : "does");
         }
     }
 
@@ -623,6 +636,8 @@ bool melee_attack::handle_phase_hit()
                     damage_done / 5);
         defender->as_monster()->flags |= MF_EXPLODE_KILL;
     }
+
+
 
     if (check_unrand_effects())
         return false;
@@ -659,7 +674,7 @@ bool melee_attack::handle_phase_damaged()
 
     // TODO: Move this somewhere else, this is a terrible place for a
     // block-like (prevents all damage) effect.
-    if (attacker != defender
+    if (attacker != defender && !mount_defend
         && (defender->is_player() && you.duration[DUR_SHROUD_OF_GOLUBRIA]
             || defender->is_monster()
                && defender->as_monster()->has_ench(ENCH_SHROUD))
@@ -1132,6 +1147,10 @@ bool melee_attack::attack()
         {
             // Check for defender Spines
             do_spines();
+
+            // Return early due to mount death.
+            if (mount_attack && !you.mounted())
+                return false;
 
             // Spines can kill! With Usk's pain bond, they can even kill the
             // defender.
@@ -1950,6 +1969,33 @@ void melee_attack::set_attack_verb(int damage)
     if (!attacker->is_player())
         return;
 
+    if (mount_attack)
+    {
+        switch (you.mount)
+        {
+        case mount_type::drake: // fallthrough
+        case mount_type::hydra:
+            if (damage < HIT_WEAK)
+                attack_verb = "nips";
+            else if (damage < HIT_MED)
+                attack_verb = "bites";
+            else if (damage < HIT_STRONG)
+                attack_verb = "chomps";
+            else
+                attack_verb = "mauls";
+            break;
+
+        case mount_type::spider:
+            attack_verb = "stings";
+            break;
+
+        default:
+            attack_verb = "buggily bashes";
+            break;
+        }
+        return;
+    }
+
     int weap_type = WPN_UNKNOWN;
 
     if (Options.has_fake_lang(flang_t::grunt))
@@ -2333,8 +2379,10 @@ bool melee_attack::player_monattk_hit_effects()
 
 void melee_attack::rot_defender(int amount)
 {
+    if (mount_defend)
+        rot_mount(amount, needs_message);
     // Keep the defender alive so that we credit kills properly.
-    if (defender->rot(attacker, amount, true, true))
+    else if (defender->rot(attacker, amount, true, true))
     {
         if (needs_message)
         {
@@ -2566,27 +2614,38 @@ void melee_attack::attacker_sustain_passive_damage()
     if (!adjacent(attacker->pos(), defender->pos()) || is_riposte)
         return;
 
-    const int acid_strength = resist_adjust_damage(attacker, BEAM_ACID, 5);
+    int acid_strength; 
+    
+    acid_strength = resist_adjust_damage(attacker, BEAM_ACID, 5, mount_attack);
 
     // Spectral weapons can't be corroded (but can take acid damage).
-    const bool avatar = attacker->is_monster()
-                        && mons_is_avatar(attacker->as_monster()->type);
+    // Mounts can't be corroded either (at least for now).
+    const bool avatar = (attacker->is_monster()
+                        && mons_is_avatar(attacker->as_monster()->type));
 
     if (!avatar)
     {
         if (x_chance_in_y(acid_strength + 1, 30))
-            attacker->corrode_equipment();
+            attacker->corrode_equipment("the acid", 1, mount_attack);
     }
 
-    if (attacker->is_player())
-        mpr(you.hands_act("burn", "!"));
+    acid_strength = roll_dice(1, acid_strength);
+
+    if (mount_attack)
+    {
+        mprf("Your %s is burned by acid%s", you.mount_name(true).c_str(), attack_strength_punctuation(acid_strength).c_str());
+        damage_mount(acid_strength);
+    }
+    else if (attacker->is_player())
+        mpr(you.hands_act("burn", attack_strength_punctuation(acid_strength)));
     else
     {
         simple_monster_message(*attacker->as_monster(),
-                               " is burned by acid!");
+                               make_stringf("is burned by acid%s", attack_strength_punctuation(acid_strength).c_str()).c_str());
     }
-    attacker->hurt(defender, roll_dice(1, acid_strength), BEAM_ACID,
-                   KILLED_BY_ACID, "", "", false);
+
+    if (!mount_attack)
+        attacker->hurt(defender, acid_strength, BEAM_ACID, KILLED_BY_ACID, "", "", false);
 }
 
 int melee_attack::staff_damage(skill_type skill)
@@ -2642,15 +2701,25 @@ bool melee_attack::apply_staff_damage()
         special_damage =
             resist_adjust_damage(defender,
                                  BEAM_ELECTRICITY,
-                                 staff_damage(SK_AIR_MAGIC));
+                                 staff_damage(SK_AIR_MAGIC), mount_defend);
 
         if (special_damage)
         {
-            special_damage_message =
-                make_stringf("%s %s electrocuted%s",
-                             defender->name(DESC_THE).c_str(),
-                             defender->conj_verb("are").c_str(),
-                             attack_strength_punctuation(special_damage).c_str());
+            if (mount_defend)
+            {
+                special_damage_message =
+                    make_stringf("Your %s is electrocuted%s",
+                        you.mount_name(true).c_str(),
+                        attack_strength_punctuation(special_damage).c_str());
+            }
+            else
+            {
+                special_damage_message =
+                    make_stringf("%s %s electrocuted%s",
+                        defender->name(DESC_THE).c_str(),
+                        defender->conj_verb("are").c_str(),
+                        attack_strength_punctuation(special_damage).c_str());
+            }
             special_damage_flavour = BEAM_ELECTRICITY;
         }
 
@@ -2679,16 +2748,17 @@ bool melee_attack::apply_staff_damage()
         special_damage =
             resist_adjust_damage(defender,
                                  BEAM_COLD,
-                                 staff_damage(SK_ICE_MAGIC));
+                                 staff_damage(SK_ICE_MAGIC), mount_defend);
 
         if (special_damage)
         {
             special_damage_message =
                 make_stringf(
-                    "%s freeze%s %s%s",
+                    "%s freeze%s %s%s%s",
                     attacker->name(DESC_THE).c_str(),
                     attacker->is_player() ? "" : "s",
-                    defender->name(DESC_THE).c_str(),
+                    mount_defend ? "your " : "",
+                    mount_defend ? you.mount_name(true).c_str() : defender->name(DESC_THE).c_str(),
                     attack_strength_punctuation(special_damage).c_str());
             special_damage_flavour = BEAM_COLD;
         }
@@ -2716,16 +2786,20 @@ bool melee_attack::apply_staff_damage()
 
     case STAFF_EARTH:
         special_damage = staff_damage(SK_EARTH_MAGIC);
-        special_damage = apply_defender_ac(special_damage);
+        if (mount_defend)
+            special_damage = apply_mount_ac(special_damage);
+        else
+            special_damage = apply_defender_ac(special_damage);
 
         if (special_damage > 0)
         {
             special_damage_message =
                 make_stringf(
-                    "%s crush%s %s%s",
+                    "%s crush%s %s%s%s",
                     attacker->name(DESC_THE).c_str(),
                     attacker->is_player() ? "" : "es",
-                    defender->name(DESC_THE).c_str(),
+                    mount_defend ? "your " : "",
+                    mount_defend ? you.mount_name(true).c_str() : defender->name(DESC_THE).c_str(),
                     attack_strength_punctuation(special_damage).c_str());
         }
 
@@ -2754,20 +2828,21 @@ bool melee_attack::apply_staff_damage()
         special_damage =
             resist_adjust_damage(defender,
                                  BEAM_FIRE,
-                                 staff_damage(SK_FIRE_MAGIC));
+                                 staff_damage(SK_FIRE_MAGIC), mount_defend);
 
         if (special_damage)
         {
             special_damage_message =
                 make_stringf(
-                    "%s burn%s %s%s",
+                    "%s burn%s %s%s%s",
                     attacker->name(DESC_THE).c_str(),
                     attacker->is_player() ? "" : "s",
-                    defender->name(DESC_THE).c_str(),
+                    mount_defend ? "your " : "",
+                    mount_defend ? you.mount_name(true).c_str() : defender->name(DESC_THE).c_str(),
                     attack_strength_punctuation(special_damage).c_str());
             special_damage_flavour = BEAM_FIRE;
 
-            if (defender->is_player())
+            if (defender->is_player() && !mount_defend)
                 maybe_melt_player_enchantments(BEAM_FIRE, special_damage);
         }
 
@@ -2800,7 +2875,10 @@ bool melee_attack::apply_staff_damage()
         // Base chance at 50% -- like mundane weapons.
         if (x_chance_in_y(80 + attacker->skill(SK_POISON_MAGIC, 10), 160))
         {
-            defender->poison(attacker, 2);
+            if (mount_defend)
+                poison_mount(2);
+            else
+                defender->poison(attacker, 2);
 
             if (flay_resist)
             {
@@ -2825,6 +2903,9 @@ bool melee_attack::apply_staff_damage()
     }
 
     case STAFF_DEATH:
+        // BCADDO: Case for undead mount at least taking the dispel effect? No undead mounts as of now but...
+        if (mount_defend)
+            break;
         if (defender->holiness() == MH_UNDEAD)
         {
             if (staff_damage(SK_NECROMANCY) > div_rand_round(defender->res_magic(), 4))
@@ -2934,7 +3015,7 @@ bool melee_attack::apply_staff_damage()
         if (is_unrandom_artefact(*weapon, UNRAND_MAJIN))
         {
             special_damage = staff_damage(SK_NECROMANCY);
-            special_damage = resist_adjust_damage(defender, BEAM_NEG, special_damage);
+            special_damage = resist_adjust_damage(defender, BEAM_NEG, special_damage, mount_defend);
 
             if (special_damage)
             {
@@ -2969,7 +3050,7 @@ bool melee_attack::apply_staff_damage()
             {
                  special_damage = random2((skill + attacker->skill(SK_EVOCATIONS, 50)) / 80);
                  beam_type dam_type = random_choose(BEAM_FIRE, BEAM_COLD, BEAM_NONE, BEAM_ELECTRICITY);
-                 special_damage = resist_adjust_damage(defender, dam_type, special_damage);
+                 special_damage = resist_adjust_damage(defender, dam_type, special_damage, mount_defend);
                  string verb = "burn";
                  switch (dam_type)
                  {
@@ -3188,13 +3269,20 @@ void melee_attack::announce_hit()
 
     if (attacker->is_monster())
     {
-        mprf("%s %s %s%s%s%s",
+        mprf("%s %s %s%s%s",
              atk_name(DESC_THE).c_str(),
              attacker->conj_verb(mons_attack_verb()).c_str(),
              defender_name(true).c_str(),
-             debug_damage_number().c_str(),
              mons_attack_desc().c_str(),
              attack_strength_punctuation(damage_done).c_str());
+    }
+    else if (mount_attack)
+    {
+        mprf("Your %s %s %s%s",
+            you.mount_name(true).c_str(),
+            attack_verb.c_str(),
+            defender->name(DESC_THE).c_str(),
+            attack_strength_punctuation(damage_done).c_str());
     }
     else
     {
@@ -3204,10 +3292,10 @@ void melee_attack::announce_hit()
             verb_degree = " " + verb_degree;
         }
 
-        mprf("You %s %s%s%s%s",
+        mprf("You %s %s%s%s",
              attack_verb.c_str(),
              defender->name(DESC_THE).c_str(),
-             verb_degree.c_str(), debug_damage_number().c_str(),
+             verb_degree.c_str(),
              attack_strength_punctuation(damage_done).c_str());
     }
 }
@@ -3228,17 +3316,26 @@ bool melee_attack::mons_do_poison()
                               attacker->get_hit_dice() * 4);
     }
 
-    if (!defender->poison(attacker, amount))
-        return false;
+    if (mount_defend)
+    {
+        if (!poison_mount(amount))
+            return false;
+    }
+    else
+    {
+        if (!defender->poison(attacker, amount))
+            return false;
 
-    if (attk_flavour == AF_POISON_STR && one_chance_in(3))
-        defender->drain_stat(STAT_STR, 1);
+        if (attk_flavour == AF_POISON_STR && one_chance_in(3))
+            defender->drain_stat(STAT_STR, 1);
+    }
 
     if (needs_message)
     {
-        mprf("%s poisons %s!",
+        mprf("%s poisons %s%s",
                 atk_name(DESC_THE).c_str(),
-                defender_name(true).c_str());
+                defender_name(true).c_str(),
+                attack_strength_punctuation(amount).c_str());
     }
 
     return true;
@@ -3425,9 +3522,14 @@ void melee_attack::mons_apply_attack_flavour()
     case AF_MUTATE:
         if (one_chance_in(4))
         {
-            defender->malmutate(you.can_see(*attacker) ?
-                apostrophise(attacker->name(DESC_PLAIN)) + " mutagenic touch" :
-                "mutagenic touch");
+            if (mount_defend)
+                you.increase_duration(DUR_MOUNT_WRETCHED, 3 + random2(attacker->get_hit_dice()), 30);
+            else
+            {
+                defender->malmutate(you.can_see(*attacker) ?
+                    apostrophise(attacker->name(DESC_PLAIN)) + " mutagenic touch" :
+                    "mutagenic touch");
+            }
         }
         break;
 
@@ -3448,14 +3550,14 @@ void melee_attack::mons_apply_attack_flavour()
         special_damage =
             resist_adjust_damage(defender,
                                  BEAM_FIRE,
-                                 base_damage);
+                                 base_damage, mount_defend);
         special_damage_flavour = BEAM_FIRE;
 
         if (needs_message && base_damage)
         {
             mprf("%s %s engulfed in flames%s",
                  defender_name(false).c_str(),
-                 defender->conj_verb("are").c_str(),
+                 mount_defend ? "is" : defender->conj_verb("are").c_str(),
                  attack_strength_punctuation(special_damage).c_str());
 
             _print_resist_messages(defender, base_damage, BEAM_FIRE);
@@ -3468,7 +3570,7 @@ void melee_attack::mons_apply_attack_flavour()
         special_damage =
             resist_adjust_damage(defender,
                                  BEAM_COLD,
-                                 base_damage);
+                                 base_damage, mount_defend);
         special_damage_flavour = BEAM_COLD;
 
         if (needs_message && base_damage)
@@ -3489,7 +3591,7 @@ void melee_attack::mons_apply_attack_flavour()
         special_damage =
             resist_adjust_damage(defender,
                                  BEAM_ELECTRICITY,
-                                 base_damage);
+                                 base_damage, mount_defend);
         special_damage_flavour = BEAM_ELECTRICITY;
 
         if (needs_message && base_damage)
@@ -3508,7 +3610,9 @@ void melee_attack::mons_apply_attack_flavour()
         break;
 
     case AF_MIASMATA:
-        if (defender->is_player())
+        if (mount_defend)
+            miasma_mount();
+        else if (defender->is_player())
             miasma_player(attacker, "vile bite");
         else
             miasma_monster(defender->as_monster(), attacker);
@@ -3522,6 +3626,8 @@ void melee_attack::mons_apply_attack_flavour()
         // deliberate fall-through
     case AF_VAMPIRIC:
         if (!actor_is_susceptible_to_vampirism(*defender))
+            break;
+        if (mount_defend)
             break;
 
         if (defender->stat_hp() < defender->stat_maxhp())
@@ -3546,6 +3652,8 @@ void melee_attack::mons_apply_attack_flavour()
     case AF_DRAIN_STR:
     case AF_DRAIN_INT:
     case AF_DRAIN_DEX:
+        if (mount_defend)
+            break;
         if (one_chance_in(20) || one_chance_in(3))
         {
             stat_type drained_stat = (flavour == AF_DRAIN_STR ? STAT_STR :
@@ -3557,6 +3665,8 @@ void melee_attack::mons_apply_attack_flavour()
 
     case AF_HUNGER:
         if (defender->holiness() & MH_UNDEAD)
+            break;
+        if (mount_defend)
             break;
 
         defender->make_hungry(you.hunger / 4, false);
@@ -3581,13 +3691,14 @@ void melee_attack::mons_apply_attack_flavour()
 
             if (defender_visible)
             {
-                mprf("%s %s engulfed in a cloud of spores!",
+                mprf("%s %s engulfed in a cloud of spores%s",
                      defender->name(DESC_THE).c_str(),
-                     defender->conj_verb("are").c_str());
+                     mount_defend ? "is" : defender->conj_verb("are").c_str(),
+                     mount_defend ? "to no avail." : "!");
             }
         }
 
-        if (one_chance_in(3))
+        if (!mount_defend && one_chance_in(3))
         {
             defender->confuse(attacker,
                               1 + random2(3+attacker->get_hit_dice()));
@@ -3600,7 +3711,12 @@ void melee_attack::mons_apply_attack_flavour()
         break;
 
 	case AF_CONTAM:	
-		if(defender->is_player())
+        if (mount_defend)
+        {
+            if (one_chance_in(8))
+                you.increase_duration(DUR_MOUNT_WRETCHED, 3 + random2(attacker->get_hit_dice()), 30);
+        }
+		else if (defender->is_player())
 		{
 			contaminate_player(1000 + random2(1000), false);
 		}
@@ -3615,12 +3731,12 @@ void melee_attack::mons_apply_attack_flavour()
     case AF_POISON_PETRIFY:
     {
         // Doesn't affect the poison-immune.
-        if (defender->is_player() && you.duration[DUR_DIVINE_STAMINA] > 0)
+        if (!mount_defend && defender->is_player() && you.duration[DUR_DIVINE_STAMINA] > 0)
         {
             mpr("Your divine stamina protects you from poison!");
             break;
         }
-        else if (defender->res_poison() >= 3)
+        else if (defender->res_poison(true, mount_defend) >= 3)
             break;
 
         // Same frequency as AF_POISON and AF_POISON_STRONG.
@@ -3628,33 +3744,35 @@ void melee_attack::mons_apply_attack_flavour()
         {
             int dmg = random_range(attacker->get_hit_dice() * 3 / 2,
                                    attacker->get_hit_dice() * 5 / 2);
-            defender->poison(attacker, dmg);
+            if (mount_defend)
+                poison_mount(dmg);
+            else
+                defender->poison(attacker, dmg);
         }
 
         // Try to apply petrification, with the normal 2/3
         // chance to resist with rPois.
         // Don't petrify things that are already petrified or petrifying. Since this is an on-melee effect it's too strong to allow it to extend durations.
-        if ((defender->res_poison() <= 0 || one_chance_in(3)) && !((defender->is_player() && (you.duration[DUR_PETRIFYING] || 
-            you.duration[DUR_PETRIFIED])) || (defender->is_monster() && (defender->as_monster()->has_ench(ENCH_PETRIFYING) ||
-            defender->as_monster()->has_ench(ENCH_PETRIFIED)))))
+        if ((defender->res_poison(true, mount_defend) <= 0 || one_chance_in(3)) && 
+            !(defender->petrifying(mount_defend) || defender->petrified(mount_defend)))
         {
-            defender->petrify(attacker);
+            defender->petrify(attacker, false, mount_defend);
         }
 
         break;
     }
 
     case AF_ACID:
-        defender->splash_with_acid(attacker, 3);
+        defender->splash_with_acid(attacker, 3, true, nullptr, mount_defend);
         break;
 
     case AF_CORRODE:
-        defender->corrode_equipment(atk_name(DESC_THE).c_str());
+        defender->corrode_equipment(atk_name(DESC_THE).c_str(), 1, mount_defend);
         break;
 
     case AF_BARBS:
         if (defender->is_player())
-            impale_player_with_barbs();
+            impale_player_with_barbs(mount_defend);
         else
             impale_monster_with_barbs(defender->as_monster(), attacker);
         break;
@@ -3664,7 +3782,7 @@ void melee_attack::mons_apply_attack_flavour()
         break;
 
     case AF_RAGE:
-        if (!one_chance_in(3) || !defender->can_go_berserk())
+        if (!one_chance_in(3) || !defender->can_go_berserk() || mount_defend)
             break;
 
         if (needs_message)
@@ -3691,14 +3809,14 @@ void melee_attack::mons_apply_attack_flavour()
 
     case AF_STEAL:
         // Ignore monsters, for now.
-        if (!defender->is_player())
+        if (!defender->is_player() || mount_defend)
             break;
 
         attacker->as_monster()->steal_item_from_player();
         break;
 
     case AF_HOLY:
-        if (defender->holy_wrath_susceptible())
+        if (defender->holy_wrath_susceptible(mount_defend))
             special_damage = attk_damage * 0.75;
 
         if (needs_message && special_damage)
@@ -3806,7 +3924,7 @@ void melee_attack::mons_apply_attack_flavour()
         special_damage = defender->apply_ac(base_damage, 0, ac_type::half);
         special_damage = resist_adjust_damage(defender,
                                               BEAM_FIRE,
-                                              special_damage);
+                                              special_damage, mount_defend);
 
         if (needs_message && special_damage)
         {
@@ -3971,10 +4089,6 @@ void melee_attack::mons_do_tendril_disarm()
 
 void melee_attack::do_spines()
 {
-    // Monsters only get struck on their first attack per round
-    if (attacker->is_monster() && effective_attack_number > 0)
-        return;
-
     if (defender->is_player())
     {
         const int mut = you.get_mutation_level(MUT_SPINY);
@@ -3990,7 +4104,7 @@ void melee_attack::do_spines()
                 return;
 
             simple_monster_message(*attacker->as_monster(),
-                                   " is struck by your spines.");
+                                   make_stringf(" is struck by your spines%s", attack_strength_punctuation(hurt).c_str()).c_str());
 
             attacker->hurt(&you, hurt);
         }
@@ -4009,20 +4123,24 @@ void melee_attack::do_spines()
         if (attacker->alive())
         {
             int dmg = random2(defender->get_hit_dice());
-            int hurt = attacker->apply_ac(dmg, 0, ac_type::half);
+            int hurt = attacker->apply_ac(dmg, 0, ac_type::half, 0, true, mount_attack);
             dprf(DIAG_COMBAT, "Spiny: dmg = %d hurt = %d", dmg, hurt);
 
             if (hurt <= 0)
                 return;
             if (you.can_see(*defender) || attacker->is_player())
             {
-                mprf("%s %s struck by %s %s.", attacker->name(DESC_THE).c_str(),
-                     attacker->conj_verb("are").c_str(),
+                mprf("%s %s struck by %s %s%s", 
+                     mount_attack ? make_stringf("Your %s", you.mount_name(true).c_str()).c_str()
+                                  : attacker->name(DESC_THE).c_str(),
+                     mount_attack ? "is" 
+                                  : attacker->conj_verb("are").c_str(),
                      defender->name(DESC_ITS).c_str(),
                      defender->type == MONS_BRIAR_PATCH ? "thorns" :
                      defender->type == MONS_WAR_DOG     ? "spiked collar" :
                      defender->type == MONS_SPINY_FROG  ? "venomous spines"
-                                                        : "spines");
+                                                        : "spines",
+                    attack_strength_punctuation(hurt).c_str());
             }
 
             beam_type damtype = BEAM_MISSILE;
@@ -4040,7 +4158,10 @@ void melee_attack::do_spines()
                     poison_monster(attacker->as_monster(), defender, (resist ? pois / 2 : pois), true, true);
             }
 
-            attacker->hurt(defender, hurt, damtype, KILLED_BY_SPINES);
+            if (mount_attack)
+                damage_mount(hurt);
+            else
+                attacker->hurt(defender, hurt, damtype, KILLED_BY_SPINES);
         }
     }
 }
@@ -4269,10 +4390,12 @@ int melee_attack::martial_damage_mod(int dam)
     return dam;
 }
 
-void melee_attack::chaos_affect_actor(actor *victim)
+void melee_attack::chaos_affect_actor(actor *victim, bool md)
 {
     ASSERT(victim); // XXX: change to actor &victim
     melee_attack attk(victim, victim);
+    if (md)
+        attk.mount_defend = true;
     attk.weapon = nullptr;
     attk.fake_chaos_attack = true;
     attk.chaos_affects_defender();

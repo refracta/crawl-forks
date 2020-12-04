@@ -237,7 +237,7 @@ private:
     set<string> message_cache;
     void emit_message(const char* msg);
 
-    int apply_AC(const actor* victim, int hurted);
+    int apply_AC(const actor* victim, int hurted, int max_dmg, bool mount = false);
     bool determine_damage(monster* mon, int& preac, int& postac, int& final);
 
     // Functions which handle actually affecting things. They all
@@ -303,7 +303,7 @@ public:
 int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
                           bool doFlavouredEffects = true);
 
-void impale_player_with_barbs();
+void impale_player_with_barbs(bool mt = false);
 void impale_monster_with_barbs(monster* mon, actor* agent, string what = "barbed spikes");
 
 // Return whether the effect was visible.
@@ -324,8 +324,8 @@ bool miasma_monster(monster* mons, const actor* who);
 bool napalm_monster(monster* mons, const actor* who, int levels = 1,
                     bool verbose = true);
 bool curare_actor(actor* source, actor* target, int levels, string name,
-                  string source_name);
-int silver_damages_victim(actor* victim, int damage, string &dmg_msg);
+                  string source_name, bool mount = false);
+int silver_damages_victim(actor* victim, int damage, string &dmg_msg, bool mount = false);
 void fire_tracer(const monster* mons, bolt &pbolt,
                   bool explode_only = false, bool explosion_hole = false);
 bool imb_can_splash(coord_def origin, coord_def center,

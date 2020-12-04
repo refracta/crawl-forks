@@ -44,6 +44,7 @@
 #include "stepdown.h"
 #include "stringutil.h"
 #include "transform.h"
+#include "traps.h" // ensnare
 #include "xom.h"
 
 /*
@@ -151,7 +152,8 @@ bool attack::handle_phase_damaged()
     // We have to check in_bounds() because removed kraken tentacles are
     // temporarily returned to existence (without a position) when they
     // react to damage.
-    if (defender->can_bleed()
+    if (!mount_defend
+        && defender->can_bleed()
         && !defender->is_summoned()
         && in_bounds(defender->pos())
         && !simu)
@@ -434,10 +436,14 @@ string attack::anon_pronoun(pronoun_type pron)
  * Although this method will get overloaded by the derived class, we are
  * calling it from attack::attack(), before the overloading has taken place.
  */
-void attack::init_attack(skill_type unarmed_skill, int attack_number)
+void attack::init_attack(skill_type unarmed_skill, int attk_num)
 {
     ASSERT(attacker);
+    attack_number   = attk_num;
     weapon          = attacker->weapon(attack_number);
+
+    mount_attack    = (you.mounted() && attacker->is_player() && attack_number >= 2);
+    mount_defend    = defender->is_player() && mount_hit();
 
     wpn_skill       = weapon ? item_attack_skill(*weapon) : unarmed_skill;
     if (attacker->is_player() && you.form_uses_xl())
@@ -565,10 +571,9 @@ bool attack::distortion_affects_defender()
         if (defender->is_fairy())
             return false;
         special_damage += 1 + random2avg(7, 2);
-        // No need to call attack_strength_punctuation here,
-        // since special damage < 7, so it will always return "."
-        special_damage_message = make_stringf("Space bends around %s.",
-                                              defender_name(false).c_str());
+        special_damage_message = make_stringf("Space bends around %s%s",
+                                              defender_name(false).c_str(),
+                                              attack_strength_punctuation(special_damage).c_str());
         break;
     case BIG_DMG:
         special_damage += 3 + random2avg(24, 2);
@@ -584,10 +589,18 @@ bool attack::distortion_affects_defender()
             blink_fineff::schedule(defender);
         break;
     case BANISH:
-        if (defender_visible)
-            obvious_effect = true;
-        defender->banish(attacker, attacker->name(DESC_PLAIN, true),
-                         attacker->get_experience_level());
+        if (mount_defend)
+        {
+            mprf(MSGCH_WARN, "Your %s was banished out from underneath you!", you.mount_name().c_str());
+            dismount();
+        }
+        else
+        {
+            if (defender_visible)
+                obvious_effect = true;
+            defender->banish(attacker, attacker->name(DESC_PLAIN, true),
+                attacker->get_experience_level());
+        }
         return true;
     case TELE_INSTANT:
     case TELE_DELAYED:
@@ -616,8 +629,14 @@ bool attack::distortion_affects_defender()
 
 void attack::antimagic_affects_defender(int pow)
 {
-    obvious_effect =
-        enchant_actor_with_flavour(defender, nullptr, BEAM_DRAIN_MAGIC, pow);
+    // Caster mount not only doesn't exist but is probably a completely nonsense thought...
+    // Yes, I'm riding an Orc Wizard. Hah. Anyways not coding antimagic affects mount for now.
+    // Maybe a cat could ride on a ogre mage hahahaha.
+    if (!mount_defend) 
+    {
+        obvious_effect =
+            enchant_actor_with_flavour(defender, nullptr, BEAM_DRAIN_MAGIC, pow);
+    }
 }
 
 /// Whose skill should be used for a pain-weapon effect?
@@ -642,7 +661,7 @@ void attack::pain_affects_defender()
     if (!one_chance_in(user->skill_rdiv(SK_NECROMANCY) + 1))
     {
         special_damage += resist_adjust_damage(defender, BEAM_NEG,
-                              random2(1 + user->skill_rdiv(SK_NECROMANCY)));
+                              random2(1 + user->skill_rdiv(SK_NECROMANCY)), mount_defend);
 
         if (special_damage && defender->is_fairy() && x_chance_in_y(30 - special_damage, 30))
             special_damage = 0;
@@ -650,16 +669,22 @@ void attack::pain_affects_defender()
         if (special_damage && defender_visible)
         {
             special_damage_message =
-                make_stringf("%s %s in agony%s",
-                             defender->name(DESC_THE).c_str(),
-                             defender->conj_verb("writhe").c_str(),
+                make_stringf("%s%s %s in agony%s",
+                             mount_defend ? "Your " : "",
+                             mount_defend ? you.mount_name(true).c_str()
+                                          : defender->name(DESC_THE).c_str(),
+                             mount_defend ? "writhes"
+                                          : defender->conj_verb("writhe").c_str(),
                            attack_strength_punctuation(special_damage).c_str());
         }
     }
 }
 
-static bool _is_chaos_polyable(const actor &defender)
+static bool _is_chaos_polyable(const actor &defender, const bool md)
 {
+    if (md)
+        return false; // no polymorphing mounts (they don't have enough forms).
+
     if (!defender.can_safely_mutate())
         return false;  // no polymorphing undead
 
@@ -670,8 +695,11 @@ static bool _is_chaos_polyable(const actor &defender)
     return !mons_is_firewood(*mon) && !mons_immune_magic(*mon);
 }
 
-static bool _is_chaos_slowable(const actor &defender)
+static bool _is_chaos_slowable(const actor &defender, const bool md)
 {
+    if (md)
+        return true; 
+
     const monster* mon = defender.as_monster();
     if (!mon)
         return true;
@@ -684,25 +712,23 @@ struct chaos_effect
 {
     string name;
     int chance;
-    function<bool(const actor& def)> valid;
+    function<bool(const actor& def, const bool md)> valid;
     beam_type flavour;
-    function<bool(attack &attack)> misc_effect;
+    function<bool(attack &attack, const bool md)> misc_effect;
 };
 
 // Total Weight: 69 (Arbitrary)
 static const vector<chaos_effect> chaos_effects = {
     {
-        "clone", 1, [](const actor &d) {
-            return d.is_monster() && mons_clonable(d.as_monster(), true);
+        "clone", 1, [](const actor &d, const bool md) {
+            return md || (d.is_monster() && mons_clonable(d.as_monster(), true));
         },
-        BEAM_NONE, [](attack &attack) {
+        BEAM_NONE, [](attack &attack, const bool /*md*/) {
             actor &defender = *attack.defender;
-            ASSERT(defender.is_monster());
-            monster *clone = clone_mons(defender.as_monster(), true);
+            bool obvious_effect;
+            monster *clone = clone_mons(&defender, true, &obvious_effect);
             if (!clone)
                 return false;
-
-            const bool obvious_effect = you.can_see(defender) && you.can_see(*clone);
 
             if (one_chance_in(3))
                 clone->attitude = coinflip() ? ATT_FRIENDLY : ATT_NEUTRAL;
@@ -720,16 +746,16 @@ static const vector<chaos_effect> chaos_effects = {
         "polymorph", 2, _is_chaos_polyable, BEAM_POLYMORPH,
     },
     {
-        "shifter", 1, [](const actor &defender)
+        "shifter", 1, [](const actor &defender, const bool md)
         {
             const monster *mon = defender.as_monster();
-            return _is_chaos_polyable(defender)
+            return _is_chaos_polyable(defender, md)
                    && mon && !mon->is_shapeshifter()
                    && defender.holiness() & MH_NATURAL;
         },
-        BEAM_NONE, [](attack &attack) {
+        BEAM_NONE, [](attack &attack, const bool /*md*/) {
             monster* mon = attack.defender->as_monster();
-            ASSERT(_is_chaos_polyable(*attack.defender));
+            ASSERT(_is_chaos_polyable(*attack.defender, false));
             ASSERT(mon);
             ASSERT(!mon->is_shapeshifter());
 
@@ -748,7 +774,9 @@ static const vector<chaos_effect> chaos_effects = {
         },
     },
     {
-        "miscast", 20, nullptr, BEAM_NONE, [](attack &attack) {
+        "miscast", 20, nullptr, BEAM_NONE, [](attack &attack, const bool /*md*/) {
+
+            // Mount Defend unused; just let miscasts go to the player.
 
             const int HD = attack.defender->get_hit_dice();
 
@@ -769,27 +797,29 @@ static const vector<chaos_effect> chaos_effects = {
         },
     },
     {
-        "rage", 5, [](const actor &defender) {
-            return defender.can_go_berserk();
-        }, BEAM_NONE, [](attack &attack) {
+        "rage", 5, [](const actor &defender, const bool md) {
+            return !md && defender.can_go_berserk();
+        }, BEAM_NONE, [](attack &attack, const bool /*md*/) {
             attack.defender->go_berserk(false);
             return you.can_see(*attack.defender);
         },
     },
-    { "hasting", 10, _is_chaos_slowable, BEAM_HASTE },
+    { "hasting", 10, [](const actor &defender, const bool md) {
+            return !md && _is_chaos_slowable(defender, md);
+        }, BEAM_HASTE },
     { "invisible", 10, nullptr, BEAM_INVISIBILITY, },
-    { "mighting", 10, nullptr, BEAM_MIGHT, },
-    { "agility", 10, nullptr, BEAM_AGILITY, },
-    { "entropic burst", 30, [](const actor &defender) {
+    { "mighting", 10, [](const actor &/*defender*/, const bool md) { return !md; }, BEAM_MIGHT, },
+    { "agility", 10, [](const actor &/*defender*/, const bool md) { return !md; }, BEAM_AGILITY, },
+    { "entropic burst", 30, [](const actor &defender, const bool /*md*/) {
             return defender.is_monster();
         }, BEAM_ENTROPIC_BURST, },
-    { "chaotic infusion", 30, [](const actor &defender) {
+    { "chaotic infusion", 30, [](const actor &defender, const bool /*md*/) {
             return defender.is_monster();
         }, BEAM_CHAOTIC_INFUSION, },
     { "slowing", 10, _is_chaos_slowable, BEAM_SLOW },
     {
-        "petrify", 10, [](const actor &defender) {
-            return _is_chaos_slowable(defender) && !defender.res_petrify();
+        "petrify", 10, [](const actor &defender, const bool md) {
+            return _is_chaos_slowable(defender, md) && !defender.res_petrify(true, md);
         }, BEAM_PETRIFY,
     },
 };
@@ -800,7 +830,7 @@ void attack::chaos_affects_defender()
 
     vector<pair<const chaos_effect&, int>> weights;
     for (const chaos_effect &effect : chaos_effects)
-        if (!effect.valid || effect.valid(*defender))
+        if (!effect.valid || effect.valid(*defender, mount_defend))
             weights.push_back({effect, effect.chance});
 
     const chaos_effect &effect = *random_choose_weighted(weights);
@@ -809,7 +839,7 @@ void attack::chaos_affects_defender()
     take_note(Note(NOTE_MESSAGE, 0, 0, "CHAOS effect: " + effect.name), true);
 #endif
 
-    if (effect.misc_effect && effect.misc_effect(*this))
+    if (effect.misc_effect && effect.misc_effect(*this, mount_defend))
         obvious_effect = true;
 
     bolt beam;
@@ -1017,13 +1047,16 @@ void attack::do_miscast()
 
 void attack::drain_defender()
 {
-    if (defender->is_monster() && coinflip())
+    if ((defender->is_monster() || mount_defend) && coinflip())
         return;
 
     special_damage = resist_adjust_damage(defender, BEAM_NEG,
-                                          (1 + random2(damage_done)) / 2);
+                                          (1 + random2(damage_done)) / 2, mount_defend);
 
-    if (defender->drain_exp(attacker, true, 20 + min(35, damage_done)))
+    if (mount_defend)
+        obvious_effect = drain_mount(10 + min(special_damage, 35));
+
+    else if (defender->drain_exp(attacker, true, 20 + min(35, damage_done)))
     {
         if (defender->is_player())
             obvious_effect = true;
@@ -1049,7 +1082,10 @@ void attack::drain_defender_speed()
              attacker->conj_verb("drain").c_str(),
              def_name(DESC_ITS).c_str());
     }
-    defender->slow_down(attacker, 5 + random2(7));
+    if (mount_defend)
+        slow_mount(5 + random2(7));
+    else
+        defender->slow_down(attacker, 5 + random2(7));
 }
 
 int attack::inflict_damage(int dam, beam_type flavour, bool clean)
@@ -1065,8 +1101,15 @@ int attack::inflict_damage(int dam, beam_type flavour, bool clean)
         // gets the zombie. Too rare a case to care any more.
         defender->props["reaper"].get_int() = attacker->mid;
     }
-    return defender->hurt(responsible, dam, flavour, kill_type,
-                          "", aux_source.c_str(), clean);
+    if (mount_defend)
+        damage_mount(dam);
+    else
+    {
+        return defender->hurt(responsible, dam, flavour, kill_type,
+            "", aux_source.c_str(), clean);
+    }
+
+    return dam;
 }
 
 /* If debug, return formatted damage done
@@ -1169,6 +1212,9 @@ void attack::stab_message()
  */
 string attack::atk_name(description_level_type desc)
 {
+    if (mount_attack)
+        return make_stringf("Your %s", you.mount_name().c_str());
+
     return actor_name(attacker, desc, attacker_visible);
 }
 
@@ -1178,6 +1224,9 @@ string attack::atk_name(description_level_type desc)
  */
 string attack::def_name(description_level_type desc)
 {
+    if (mount_defend)
+        return make_stringf("your %s", you.mount_name().c_str());
+
     return actor_name(defender, desc, defender_visible);
 }
 
@@ -1327,6 +1376,20 @@ int attack::calc_base_unarmed_damage()
     if (!attacker->is_player())
         return 0;
 
+    if (mount_attack)
+    {
+        switch (you.mount)
+        {
+        default:
+        case mount_type::hydra:
+            return 18;
+        case mount_type::drake:
+            return 12;
+        case mount_type::spider:
+            return 15;
+        }
+    }
+
     // BCADDO: It's a little wack that it's just a base damage additive then skill for most forms
     // Consider revising.
     int damage = get_form()->get_base_unarmed_damage();
@@ -1350,9 +1413,9 @@ int attack::calc_base_unarmed_damage()
 
 int attack::calc_damage()
 {
+    int damage = 0;
     if (attacker->is_monster())
     {
-        int damage = 0;
         int damage_max = 0;
         if (using_weapon() || wpn_skill == SK_FIGHTING)
         {
@@ -1384,13 +1447,47 @@ int attack::calc_damage()
         damage     += 1 + random2(attk_damage);
 
         damage = apply_damage_modifiers(damage);
-
-        set_attack_verb(damage);
         return apply_defender_ac(damage, damage_max);
+    }
+    else if (mount_attack)
+    {
+        int potential_damage;
+
+        potential_damage = calc_base_unarmed_damage();
+        damage = random2avg(potential_damage + 1, 3);
+
+        // weapon skill-like bonus using spellpower/invocations
+        switch (you.mount)
+        {
+        case mount_type::drake:
+            damage *= 2500 + random2(you.skill(SK_INVOCATIONS, 100) + 1);
+            break;
+        case mount_type::spider:
+            damage *= 2500 + random2(13 * calc_spell_power(SPELL_SUMMON_SPIDER_MOUNT, true) + 1);
+            break;
+        case mount_type::hydra:
+            damage *= 2500 + random2(13 * calc_spell_power(SPELL_SUMMON_HYDRA_MOUNT, true) + 1);
+            break;
+        default:
+            break;
+        }
+        damage /= 2500;
+
+        if (you.submerged() && !you.can_swim())
+            damage = div_rand_round(2 * damage, 3); // Spider can't swim either.
+
+        if (you.duration[DUR_MOUNT_CORROSION])
+            damage -= random2(4 * you.props["mount_corrosion_amount"].get_int());
+
+        if (you.duration[DUR_MOUNT_DRAINING])
+            damage = div_rand_round(4 * damage, 5);
+
+        if (you.duration[DUR_MOUNT_WRETCHED])
+            damage = div_rand_round(4 * damage, 5);
     }
     else
     {
-        int potential_damage, damage;
+        int potential_damage;
 
         potential_damage = using_weapon() ? weapon_damage() : calc_base_unarmed_damage();
 
@@ -1412,15 +1509,14 @@ int attack::calc_damage()
         if (!defender->alive())
             return 0;
         damage = player_apply_final_multipliers(damage);
-        damage = apply_defender_ac(damage);
-
-        damage = max(0, damage);
-        set_attack_verb(damage);
-
-        return damage;
     }
 
-    return 0;
+    damage = apply_defender_ac(damage);
+
+    damage = max(0, damage);
+    set_attack_verb(damage);
+
+    return damage;
 }
 
 // Only include universal monster modifiers here; melee and ranged go in their own classes.
@@ -1473,7 +1569,7 @@ int attack::apply_defender_ac(int damage, int damage_max) const
     if (attacker->is_player() && you.form == transformation::scorpion && damage_brand != SPWPN_NORMAL)
         local_ac = ac_type::half;
     int after_ac = defender->apply_ac(damage, damage_max,
-                                      local_ac, stab_bypass);
+                                      local_ac, stab_bypass, true, mount_defend);
     dprf(DIAG_COMBAT, "AC: att: %s, def: %s, ac: %d, gdr: %d, dam: %d -> %d",
                  attacker->name(DESC_PLAIN, true).c_str(),
                  defender->name(DESC_PLAIN, true).c_str(),
@@ -1542,7 +1638,9 @@ bool attack::apply_poison_damage_brand()
     {
         int old_poison;
 
-        if (defender->is_player())
+        if (mount_defend)
+            old_poison = you.duration[DUR_MOUNT_POISONING];
+        else if (defender->is_player())
             old_poison = you.duration[DUR_POISONING];
         else
         {
@@ -1550,13 +1648,22 @@ bool attack::apply_poison_damage_brand()
                 (defender->as_monster()->get_ench(ENCH_POISON)).degree;
         }
 
-        defender->poison(attacker, 6 + random2(8) + random2(damage_done * 3 / 2));
+        int splpow_bonus = 0;
 
-        if (defender->is_player()
-               && old_poison < you.duration[DUR_POISONING]
-            || !defender->is_player()
-               && old_poison <
-                  (defender->as_monster()->get_ench(ENCH_POISON)).degree)
+        if (mount_attack && you.mount == mount_type::spider)
+        {
+            splpow_bonus = random2(calc_spell_power(SPELL_SUMMON_SPIDER_MOUNT, true));
+            splpow_bonus /= 8;
+        }
+
+        if (mount_defend)
+            poison_mount(6 + random2(8) + random2(damage_done * 3 / 2));
+        else
+            defender->poison(attacker, 6 + random2(8) + splpow_bonus + random2(damage_done * 3 / 2));
+
+        if (mount_defend && old_poison < you.duration[DUR_MOUNT_POISONING] ||
+            !mount_defend && defender->is_player() && old_poison < you.duration[DUR_POISONING] ||
+            !defender->is_player() && old_poison < (defender->as_monster()->get_ench(ENCH_POISON)).degree)
         {
             return true;
         }
@@ -1596,33 +1703,48 @@ bool attack::apply_damage_brand(const char *what)
         return false;
     }
     
-    const bool fae = defender->is_fairy();
+    const bool fae = !mount_defend && defender->is_fairy();
 
     switch (brand)
     {
     case SPWPN_PROTECTION:
+        if (mount_attack && defender->alive()) // Should only get here on a spider with ensnare active
+        {
+            mprf("Your spider casts its web at %s.", defender->name(DESC_THE).c_str());
+            int splpow = calc_spell_power(SPELL_SUMMON_SPIDER_MOUNT, true);
+            splpow /= 10;
+            ensnare(defender, splpow);
+            you.increase_duration(DUR_MOUNT_BREATH, 1 + random2(30 - splpow));
+            you.duration[DUR_ENSNARE] = 0;
+        }
         break;
 
     case SPWPN_MOLTEN:
         if (!fae)
+        {
             calc_elemental_brand_damage(BEAM_FIRE,
-                                        defender->is_icy() ? "melt" : "burn",
-                                        what);
-        defender->expose_to_element(BEAM_FIRE, 2);
-        if (defender->is_player())
-            maybe_melt_player_enchantments(BEAM_FIRE, special_damage);
+                defender->is_icy() ? "melt" : "burn",
+                what);
+        }
         break;
 
     case SPWPN_FREEZING:
         if (!fae)
             calc_elemental_brand_damage(BEAM_COLD, "freeze", what);
-        defender->expose_to_element(BEAM_COLD, 2);
         break;
 
     case SPWPN_HOLY_WRATH:
-        if (defender->holy_wrath_susceptible())
+        if (defender->holy_wrath_susceptible(mount_defend))
             special_damage = 1 + (random2(damage_done * 15) / 10);
 
+        if (mount_defend)
+        {
+            special_damage_message =
+                make_stringf(
+                    "Your %s convulses%s",
+                    you.mount_name(true).c_str(),
+                    attack_strength_punctuation(special_damage).c_str());
+        }
         if (special_damage && defender_visible)
         {
             special_damage_message =
@@ -1648,15 +1770,16 @@ bool attack::apply_damage_brand(const char *what)
                 const string punctuation =
                     attack_strength_punctuation(special_damage);
                 special_damage_message =
-                    defender->is_player()
+                    defender->is_player() && !mount_defend
                     ? make_stringf("You are %s%s", special_damage < original ? "lightly shocked" :
                                                    special_damage > original ? "electrocuted"
                                                                              : "shocked", punctuation.c_str())
-                    : make_stringf("Lightning %scourses through %s%s",
+                    : make_stringf("Lightning %scourses through %s%s%s",
                         special_damage < original ? "weakly " :
                         special_damage > original ? "violently "
                         : "",
-                        defender->name(DESC_THE).c_str(),
+                        mount_defend ? "your " : "",
+                        mount_defend ? you.mount_name(true).c_str() : defender->name(DESC_THE).c_str(),
                         punctuation.c_str());
                 special_damage_flavour = BEAM_ELECTRICITY;
                 defender->expose_to_element(BEAM_ELECTRICITY, 1);
@@ -1666,10 +1789,20 @@ bool attack::apply_damage_brand(const char *what)
         break;
 
     case SPWPN_SILVER:
-        special_damage = silver_damages_victim(defender, damage_done, special_damage_message);
+        special_damage = silver_damages_victim(defender, damage_done, special_damage_message, mount_defend);
         break;
 
     case SPWPN_DRAGON_SLAYING:
+        if (mount_defend && is_draconic_type(mount_mons()))
+        {
+            special_damage = 1 + (random2(damage_done * 15) / 10);
+            special_damage_message =
+                make_stringf(
+                    "Your %s convulses%s",
+                    you.mount_name(true).c_str(),
+                    attack_strength_punctuation(special_damage).c_str());
+        }
+
         if (defender->is_dragonkind())
         {
             special_damage = 1 + (random2(damage_done * 15) / 10);
@@ -1701,7 +1834,7 @@ bool attack::apply_damage_brand(const char *what)
 
     case SPWPN_VAMPIRISM:
     {
-        if (damage_done < 1
+        if (damage_done < 1 || mount_defend
             || !actor_is_susceptible_to_vampirism(*defender)
             || attacker->stat_hp() == attacker->stat_maxhp()
             || attacker->is_player() && you.duration[DUR_DEATHS_DOOR])
@@ -1709,13 +1842,15 @@ bool attack::apply_damage_brand(const char *what)
             break;
         }
 
-        int hp_boost = max(div_rand_round(roll_dice(3, damage_done), 6), 1);
+        int hp_boost; 
 
         if (weapon && (is_unrandom_artefact(*weapon, UNRAND_VAMPIRES_TOOTH) ||
                        is_unrandom_artefact(*weapon, UNRAND_LEECH)))
         {
             hp_boost = damage_done;
         }
+        else
+            hp_boost = max(div_rand_round(roll_dice(3, damage_done), 6), 1);
 
         if (fae && hp_boost)
             hp_boost = 1; // Suck on my non-HP. :)
@@ -1769,7 +1904,7 @@ bool attack::apply_damage_brand(const char *what)
         // AF_CONFUSE.
         if (attacker->is_monster())
         {
-            if (one_chance_in(3))
+            if (one_chance_in(3) && !mount_defend)
             {
                 defender->confuse(attacker,
                                   1 + random2(3+attacker->get_hit_dice()));
@@ -1885,12 +2020,12 @@ void attack::calc_elemental_brand_damage(beam_type flavour,
                                          const char *what)
 {
     if (flavour == BEAM_FIRE)
-        special_damage = resist_adjust_damage(defender, flavour,
-                                          damage_done);
+        special_damage = damage_done;
 
     else if (flavour == BEAM_COLD)
-        special_damage = resist_adjust_damage(defender, flavour,
-                            div_rand_round(damage_done + random2(damage_done),4));
+        special_damage = div_rand_round(damage_done + random2(damage_done), 4);
+
+    special_damage = resist_adjust_damage(defender, flavour, special_damage, mount_defend);
 
     if (needs_message && special_damage > 0 && verb)
     {
@@ -1898,11 +2033,18 @@ void attack::calc_elemental_brand_damage(beam_type flavour,
         special_damage_message = make_stringf(
             "%s %s %s%s",
             what ? what : atk_name(DESC_THE).c_str(),
-            what ? conjugate_verb(verb, false).c_str()
-                 : attacker->conj_verb(verb).c_str(),
+            what || mount_attack ? conjugate_verb(verb, false).c_str()
+                                 : attacker->conj_verb(verb).c_str(),
             // Don't allow reflexive if the subject wasn't the attacker.
             defender_name(!what).c_str(),
             attack_strength_punctuation(special_damage).c_str());
+    }
+
+    if (!mount_defend)
+    {
+        defender->expose_to_element(BEAM_FIRE, 2);
+        if (defender->is_player())
+            maybe_melt_player_enchantments(BEAM_FIRE, special_damage);
     }
 }
 

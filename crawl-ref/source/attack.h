@@ -56,6 +56,10 @@ public:
     attack_flavour  attk_flavour;
     int             attk_damage;
 
+    int             attack_number;
+    bool            mount_attack;   // Is the mount attacking?
+    bool            mount_defend;   // Is the mount being hit?
+
     item_def        *weapon;
     brand_type      damage_brand;
     skill_type      wpn_skill;
@@ -119,7 +123,7 @@ public:
 
 // Private Methods
 protected:
-    virtual void init_attack(skill_type unarmed_skill, int attack_number);
+    virtual void init_attack(skill_type unarmed_skill, int attk_num);
 
     /* Attack Phases */
     virtual bool handle_phase_attempted();

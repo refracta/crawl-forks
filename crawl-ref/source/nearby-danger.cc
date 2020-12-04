@@ -287,7 +287,8 @@ bool i_feel_safe(bool announce, bool want_move, bool just_monsters,
                 {
                     if (you.airborne())
                         mprf(MSGCH_WARN, "The terrain you're above will be dangerous once your flight expires!");
-                    mprf(MSGCH_WARN, "You're standing in acidic ooze!");
+                    else
+                        mprf(MSGCH_WARN, "You're standing in acidic ooze!");
                 }
                 return false;
             }
@@ -298,18 +299,22 @@ bool i_feel_safe(bool announce, bool want_move, bool just_monsters,
                 {
                     if (you.airborne())
                         mprf(MSGCH_WARN, "The terrain you're above will be dangerous once your flight expires!");
-                    mprf(MSGCH_WARN, "You're standing in boiling hot magma!");
+                    else
+                        mprf(MSGCH_WARN, "You're standing in boiling hot magma!");
                 }
                 return false;
             }
 
-            if ((grd(you.pos()) == DNGN_DEEP_WATER || grd(you.pos()) == DNGN_DEEP_SLIMY_WATER) && !you.can_swim() && !you.can_water_walk())
+            if ((grd(you.pos()) == DNGN_DEEP_WATER || grd(you.pos()) == DNGN_DEEP_SLIMY_WATER) && !you.can_swim(true) && !you.can_water_walk())
             {
                 if (announce)
                 {
                     if (you.airborne())
                         mprf(MSGCH_WARN, "The terrain you're above will be dangerous once your flight expires!");
-                    mprf(MSGCH_WARN, "You're struggling to keep your head above water!");
+                    else if (you.can_swim())
+                        mprf(MSGCH_WARN, "You won't be able to swim when your %s expires!", you.mounted() ? "mount" : "form");
+                    else
+                        mprf(MSGCH_WARN, "You're struggling to keep your head above water!");
                 }
                 return false;
             }
@@ -320,7 +325,8 @@ bool i_feel_safe(bool announce, bool want_move, bool just_monsters,
                 {
                     if (you.airborne())
                         mprf(MSGCH_WARN, "The terrain you're above will be dangerous once your flight expires!");
-                    mprf(MSGCH_WARN, "You're standing in a festering bog!");
+                    else
+                        mprf(MSGCH_WARN, "You're standing in a festering bog!");
                 }
                 return false;
             }
@@ -331,7 +337,8 @@ bool i_feel_safe(bool announce, bool want_move, bool just_monsters,
                 {
                     if (you.airborne())
                         mprf(MSGCH_WARN, "The terrain you're above will be dangerous once your flight expires!");
-                    mprf(MSGCH_WARN, "You're standing in a chaotic quagmire!");
+                    else
+                        mprf(MSGCH_WARN, "You're standing in a chaotic quagmire!");
                 }
                 return false;
             }
@@ -528,6 +535,7 @@ void revive()
 
     update_vision_range(); // in case you had darkness cast before
     you.props["corrosion_amount"] = 0;
+    you.props["mount_corrosion_amount"] = 0;
     you.props.erase(SAP_MAGIC_KEY);
 
     unrot_hp(9999);

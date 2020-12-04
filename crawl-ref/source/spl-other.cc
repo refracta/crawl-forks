@@ -18,9 +18,12 @@
 #include "mon-util.h"
 #include "output.h"
 #include "place.h"
+#include "prompt.h"
 #include "religion.h"
 #include "spl-util.h"
+#include "state.h"
 #include "terrain.h"
+#include "transform.h"
 
 spret cast_sublimation_of_blood(int pow, bool fail)
 {
@@ -526,54 +529,4 @@ spret cast_SMD(const coord_def& target, int pow, bool fail)
     return spret::success;
 }
 
-spret gain_mount(mount_type mount, int pow, bool fail)
-{
-    fail_check();
-    int dur = 0;
-    int mount_hp = 0;
-    bool already_mount = you.mounted();
-
-    switch (mount)
-    {
-    case mount_type::drake:
-        mount_hp = 28 + random2(10);
-        break;
-    case mount_type::hydra:
-        mount_hp = 60 + random2(12);
-        break;
-    default:
-    case mount_type::spider:
-        mount_hp = 47 + random2(9);
-        break;
-    }
-
-    if (pow == 0)
-    {
-        dur = 100 + you.skill(SK_INVOCATIONS) * 2 + random2(you.skill(SK_INVOCATIONS));
-        mount_hp *= 10 + you.skill(SK_INVOCATIONS);
-        mount_hp = div_rand_round(mount_hp, 10);
-    }
-    else
-    {
-        dur = 100 + pow/2 + random2(pow/2);
-        mount_hp *= 100 + pow;
-        mount_hp = div_rand_round(mount_hp, 100);
-    }
-
-    dur *= BASELINE_DELAY;
-
-    you.increase_duration(DUR_MOUNTED, dur, 200);
-    if (already_mount)
-    {
-        mprf(MSGCH_DURATION, "You heal your mount and increase the time it has in this world.");
-        you.mount_hp = you.mount_hp_max;
-    }
-    else
-    {
-        you.mount = mount;
-        you.mount_hp = you.mount_hp_max = mount_hp;
-    }
-    redraw_screen();
-    return spret::success;
-}
 

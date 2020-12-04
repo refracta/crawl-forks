@@ -22,6 +22,16 @@ static void _end_invis()
     you.attribute[ATTR_INVIS_UNCANCELLABLE] = 0;
 }
 
+static void _end_mount_corrosion()
+{
+    you.props["mount_corrosion_amount"] = 0;
+}
+
+static void _end_ensnare()
+{
+    you.increase_duration(DUR_MOUNT_BREATH, 3 + random2(6));
+}
+
 static void _end_corrosion()
 {
     you.props["corrosion_amount"] = 0;
@@ -572,6 +582,22 @@ static const duration_def duration_data[] =
       "corroded", "corrosion",
       "You are corroded.", D_DISPELLABLE,
       {{ "You are no longer corroded.", _end_corrosion }}},
+    { DUR_MOUNT_CORROSION, 0, "", "", "",
+      "Your mount is corroded.", D_DISPELLABLE,
+      {{ "Your mount is no longer corroded.", _end_mount_corrosion }}},
+    { DUR_MOUNT_POISONING, 0, "", "", "", "Your mount is poisoned.", D_NO_FLAGS },
+    { DUR_MOUNT_FROZEN, 0, "", "", "", "Your mount is partially encased in ice.", D_NO_FLAGS },
+    { DUR_MOUNT_BARBS, 0, "", "", "", "Your mount is impaled with painful barbs.", D_NO_FLAGS },
+    { DUR_MOUNT_WRETCHED, 0, "", "", "", "Your mount is misshapen and mutated.", D_NO_FLAGS },
+    { DUR_MOUNT_SLOW, 0, "", "", "", "Your mount's reflexs are slowed.", D_NO_FLAGS },
+    { DUR_MOUNT_DRAINING, 0, "", "", "", "Your mount is drained.", D_NO_FLAGS,
+      {{ "Your mount is no longer drained."}} },
+    { DUR_MOUNT_PETRIFYING, 0, "", "", "", "Your mount is slowly turning to stone.", D_NO_FLAGS },
+    { DUR_MOUNT_PETRIFIED, 0, "", "", "", "Your mount has turned to stone.", D_NO_FLAGS },
+    { DUR_MOUNT_BREATH, 0, "", "", "", "Your mount is out of breath.", D_NO_FLAGS,
+      {{ "Your mount catches its breath."}} },
+    { DUR_ENSNARE, 0, "", "", "", "Your mount has prepared a web to catch an enemy.", D_NO_FLAGS,
+      {{ "Your spider's web falls apart, your spider is still exhausted from the attempt.", _end_ensnare }}},
     { DUR_HORROR,
       RED, "Horr",
       "horrified", "",
@@ -638,7 +664,6 @@ static const duration_def duration_data[] =
     { DUR_HASTE, 0, "", "", "haste", "", D_DISPELLABLE, {}, 6},
     { DUR_FLIGHT, 0, "", "", "flight", "", D_DISPELLABLE /*but special-cased*/, {}, 10},
     { DUR_POISONING, 0, "", "", "poisoning", "", D_NO_FLAGS},
-    { DUR_MOUNT_POISONING, 0, "", "", "mount poisoning", "", D_NO_FLAGS },
     { DUR_PIETY_POOL, 0, "", "", "piety pool", "", D_NO_FLAGS},
     { DUR_STAFF, 0, "", "", "staff attunement", "", D_NO_FLAGS,
       {{"You finish attuning to your staff."}}},
@@ -687,32 +712,20 @@ static const duration_def duration_data[] =
     { DUR_STILL_WINDS,
       BROWN, "", "", "", "You are stilling the winds.", D_DISPELLABLE,
       {{ "You release your hold on the winds." , end_still_winds}}},
-    { DUR_MOUNTED,
-      BROWN, "", "", "mount", "", D_NO_FLAGS,
-      {{ "Your mount expires." , dismount}}},
+    { DUR_MOUNTED, BROWN, "", "", "mount", "", D_NO_FLAGS, {}, 10},
 
 #if TAG_MAJOR_VERSION == 34
     // And removed ones
-    { DUR_MAGIC_SAPPED, 0, "", "", "old magic sapped", "", D_NO_FLAGS},
-    { DUR_DEFLECT_MISSILES, 0, "", "", "old deflect missiles", "", D_NO_FLAGS},
     { DUR_JELLY_PRAYER, 0, "", "", "old jelly prayer", "", D_NO_FLAGS},
-    { DUR_CONTROLLED_FLIGHT, 0, "", "", "old controlled flight", "", D_NO_FLAGS},
-    { DUR_SEE_INVISIBLE, 0, "", "", "old see invisible", "", D_NO_FLAGS},
     { DUR_INSULATION, 0, "", "", "old insulation", "", D_NO_FLAGS},
     { DUR_BARGAIN, 0, "", "", "old bargain", "", D_NO_FLAGS},
     { DUR_SLAYING, 0, "", "", "old slaying", "", D_NO_FLAGS},
     { DUR_MISLED, 0, "", "", "old misled", "", D_NO_FLAGS},
     { DUR_SCRYING, 0, "", "", "old scrying", "", D_NO_FLAGS },
-    { DUR_NAUSEA, 0, "", "", "old nausea", "", D_NO_FLAGS},
-    { DUR_TEMP_MUTATIONS, 0, "", "", "old temporary mutations", "", D_NO_FLAGS},
     { DUR_BATTLESPHERE, 0, "", "", "old battlesphere", "", D_NO_FLAGS},
-    { DUR_RETCHING, 0, "", "", "old retching", "", D_NO_FLAGS},
     { DUR_SPIRIT_HOWL, 0, "", "", "old spirit howl", "", D_NO_FLAGS},
     { DUR_SONG_OF_SHIELDING, 0, "", "", "old song of shielding", "", D_NO_FLAGS},
-    { DUR_ANTENNAE_EXTEND, 0, "", "", "old antennae extend", "", D_NO_FLAGS},
     { DUR_NEGATIVE_VULN, 0, "", "", "old negative vuln", "", D_NO_FLAGS},
-    { DUR_CONTROL_TELEPORT, 0, "", "", "old control teleport", "", D_NO_FLAGS},
-    { DUR_DOOM_HOWL_IMMUNITY, 0, "", "", "old howl immunity", "", D_NO_FLAGS, {{""}}},
     { DUR_CONDENSATION_SHIELD, 0, "", "", "old condensation shield", "", D_NO_FLAGS},
     { DUR_PHASE_SHIFT, 0, "", "", "old phase shift", "", D_NO_FLAGS},
     { DUR_ANTIMAGIC,

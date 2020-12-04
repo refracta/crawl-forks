@@ -709,11 +709,16 @@ special_missile_type ranged_attack::random_chaos_missile_brand()
 
 bool ranged_attack::blowgun_check(special_missile_type type)
 {
-    if (defender->holiness() & (MH_UNDEAD | MH_NONLIVING))
+    mon_holy_type holy = mount_defend ? mons_class_holiness(mount_mons())
+                                      : defender->holiness();
+
+    if (holy & (MH_UNDEAD | MH_NONLIVING))
     {
         if (needs_message)
         {
-            if (defender->is_monster())
+            if (mount_defend)
+                mprf("Your %s is unaffected.", you.mount_name(true).c_str());
+            else if (defender->is_monster())
             {
                 simple_monster_message(*defender->as_monster(),
                                        " is unaffected.");
@@ -724,9 +729,16 @@ bool ranged_attack::blowgun_check(special_missile_type type)
         return false;
     }
 
+    int defense_hd = 0;
+
+    if (mount_defend)
+        defense_hd = mount_hd();
+    else
+        defense_hd = defender->get_hit_dice();
+
     if (attacker->is_monster())
     {
-        int chance = 85 - ((defender->get_hit_dice()
+        int chance = 85 - ((defense_hd
                             - attacker->get_hit_dice()) * 5 / 2);
         chance = min(95, chance);
 
@@ -738,6 +750,8 @@ bool ranged_attack::blowgun_check(special_missile_type type)
         return x_chance_in_y(chance, 100);
     }
 
+    // BCADDO: This code never executes as the player doesn't use any of these
+    // brands anymore. Restore in the future with fixedarts/rare launcher brands.
     const int skill = you.skill_rdiv(SK_SLINGS);
 
     // You have a really minor chance of hitting with no skills or good
@@ -815,7 +829,9 @@ bool ranged_attack::apply_missile_brand()
         {
             int old_poison;
 
-            if (defender->is_player())
+            if (mount_defend)
+                old_poison = you.duration[DUR_MOUNT_POISONING];
+            else if (defender->is_player())
                 old_poison = you.duration[DUR_POISONING];
             else
             {
@@ -823,10 +839,21 @@ bool ranged_attack::apply_missile_brand()
                     (defender->as_monster()->get_ench(ENCH_POISON)).degree;
             }
 
-            defender->poison(attacker,
-                             projectile->is_type(OBJ_MISSILES, MI_NEEDLE)
-                             ? damage_done
-                             : 6 + random2(8) + random2(damage_done * 3 / 2));
+            int pois = projectile->is_type(OBJ_MISSILES, MI_NEEDLE)
+                ? damage_done
+                : 6 + random2(8) + random2(damage_done * 3 / 2);
+
+            if (mount_defend)
+            {
+                poison_mount(pois);
+
+                if (old_poison < you.duration[DUR_MOUNT_POISONING])
+                    obvious_effect = true;
+
+                break;
+            }
+
+            defender->poison(attacker, pois);
 
             if (defender->is_player()
                    && old_poison < you.duration[DUR_POISONING]
@@ -836,14 +863,14 @@ bool ranged_attack::apply_missile_brand()
             {
                 obvious_effect = true;
             }
-
         }
         break;
     case SPMSL_CURARE:
         obvious_effect = curare_actor(attacker, defender,
                                       damage_done,
                                       projectile->name(DESC_PLAIN),
-                                      atk_name(DESC_PLAIN));
+                                      atk_name(DESC_PLAIN),
+                                      mount_defend);
         break;
     case SPMSL_CHAOS:
         chaos_affects_defender();
@@ -879,23 +906,31 @@ bool ranged_attack::apply_missile_brand()
         break;
     case SPMSL_SILVER:
         special_damage = silver_damages_victim(defender, damage_done,
-                                               special_damage_message);
+                                               special_damage_message, mount_defend);
         break;
     case SPMSL_PETRIFICATION:
         if (!blowgun_check(brand))
             break;
-        defender->petrify(attacker);
+        defender->petrify(attacker, false, mount_defend);
         break;
     case SPMSL_SLEEP:
         if (!blowgun_check(brand))
             break;
-        defender->put_to_sleep(attacker, damage_done);
-        should_alert_defender = false;
+        if (mount_defend)
+            mprf("Your %s falls asleep momentarily.", you.mount_name(true).c_str());
+        else
+        {
+            defender->put_to_sleep(attacker, damage_done);
+            should_alert_defender = false;
+        }
         break;
     case SPMSL_CONFUSION:
         if (!blowgun_check(brand))
             break;
-        defender->confuse(attacker, damage_done);
+        if (mount_defend)
+            mprf("Your %s appears momentarily confused.", you.mount_name(true).c_str());
+        else
+            defender->confuse(attacker, damage_done);
         break;
     case SPMSL_FRENZY:
         if (!blowgun_check(brand))

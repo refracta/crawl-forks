@@ -81,7 +81,7 @@ static spell_type search_order_summon[] =
     SPELL_SUMMON_HORRIBLE_THINGS,
     SPELL_SHADOW_CREATURES,
     SPELL_SUMMON_EYEBALLS,
-    SPELL_SUMMON_VERMIN, // funny
+    SPELL_SUMMON_SPIDERS,
     SPELL_SUMMON_BUTTERFLIES, // funny
 };
 
@@ -655,6 +655,10 @@ spell_type ghost_demon::translate_spell(spell_type spell) const
         return SPELL_SUMMON_DRAGON;
     case SPELL_SWIFTNESS:
         return SPELL_SPRINT;
+    case SPELL_SUMMON_HYDRA:
+        return SPELL_SUMMON_HYDRA;
+    case SPELL_SUMMON_SPIDER_MOUNT:
+        return SPELL_SUMMON_SPIDERS;
     default:
         break;
     }

@@ -194,6 +194,13 @@ static void _decrement_petrification(int delay)
             you.props.erase(PETRIFIED_BY_KEY);
     }
 
+    if (_decrement_a_duration(DUR_MOUNT_PETRIFIED, delay))
+    {
+        you.redraw_evasion = true;
+
+        mprf(MSGCH_DURATION, "Your %s returns to flesh and can move again.", you.mount_name(true).c_str());
+    }
+
     if (you.duration[DUR_PETRIFYING])
     {
         int &dur = you.duration[DUR_PETRIFYING];
@@ -205,6 +212,19 @@ static void _decrement_petrification(int delay)
         }
         else if (dur < 15 && old_dur >= 15)
             mpr("Your limbs are stiffening.");
+    }
+
+    if (you.duration[DUR_MOUNT_PETRIFYING])
+    {
+        int &dur = you.duration[DUR_MOUNT_PETRIFYING];
+        int old_dur = dur;
+        if ((dur -= delay) <= 0)
+        {
+            dur = 0;
+            you.fully_petrify(nullptr, false, true);
+        }
+        else if (dur < 15 && old_dur >= 15)
+            mpr("You mount is stiffening.");
     }
 }
 
@@ -587,6 +607,15 @@ static void _decrement_durations()
         }
     }
 
+    if (you.mounted())
+    {
+        if (_decrement_a_duration(DUR_MOUNTED, delay, "Your mount expires.", random2(3),
+            "Your mount's time in this world is almost up."))
+        {
+            dismount();
+        }
+    }
+
     if (you.attribute[ATTR_SWIFTNESS] >= 0)
     {
         if (_decrement_a_duration(DUR_SWIFTNESS, delay,
@@ -783,7 +812,10 @@ static void _decrement_durations()
     {
         extract_manticore_spikes(
             make_stringf("You %s the barbed spikes from your body.",
-                you.berserk() ? "rip and tear" : "carefully extract").c_str());
+                you.berserk() ? "rip and tear" : "carefully extract").c_str(), false);
+        extract_manticore_spikes(
+            make_stringf("You %s the barbed spikes from your mount's flesh.",
+                you.berserk() ? "rip and tear" : "carefully extract").c_str(), true);
     }
 
     if (!env.sunlight.empty())
@@ -981,6 +1013,7 @@ void player_reacts()
     abyss_maybe_spawn_xp_exit();
 
     actor_apply_cloud(&you);
+    actor_apply_cloud(&you, true);
     actor_apply_toxic_bog(&you);
 
     if (!you.airborne())
@@ -1026,7 +1059,6 @@ void player_reacts()
     if (you.duration[DUR_MOUNT_POISONING])
         handle_player_poison(you.time_taken, true);
 
-
     // Reveal adjacent mimics.
     for (adjacent_iterator ai(you.pos(), false); ai; ++ai)
         discover_mimic(*ai);
@@ -1041,9 +1073,9 @@ void player_reacts()
         qazlal_storm_clouds();
 }
 
-void extract_manticore_spikes(const char* endmsg)
+void extract_manticore_spikes(const char* endmsg, bool mount)
 {
-    if (_decrement_a_duration(DUR_BARBS, you.time_taken, endmsg))
+    if (!mount && _decrement_a_duration(DUR_BARBS, you.time_taken, endmsg))
     {
         // Note: When this is called in _move player(), ATTR_BARBS_POW
         // has already been used to calculated damage for the player.
@@ -1053,4 +1085,6 @@ void extract_manticore_spikes(const char* endmsg)
 
         you.props.erase(BARBS_MOVE_KEY);
     }
+    if (mount && _decrement_a_duration(DUR_MOUNT_BARBS, you.time_taken, endmsg))
+        you.props.erase(BARBS_MOVE_KEY);
 }

@@ -54,6 +54,7 @@
 #include "message.h"
 #include "mon-death.h"
 #include "mon-place.h"
+#include "mount.h"
 #include "mutation.h"
 #include "nearby-danger.h"
 #include "notes.h"
@@ -88,6 +89,11 @@
 #include "view.h"
 #include "wizard-option-type.h"
 #include "xom.h"
+
+static int _clamp(int value, int minimum, int maximum)
+{
+    return max(min(value, maximum), minimum);
+}
 
 static void _moveto_maybe_repel_stairs()
 {
@@ -245,7 +251,12 @@ static bool _check_moveto_dangerous(const coord_def& p, const string& msg, const
     if (feat_is_water(env.grid(p)))
     {
         if (species_likes_water(you.species))
-            mpr("You can't swim in your current form.");
+        {
+            if (you.mounted())
+                mpr("Your mount can't swim.");
+            else
+                mpr("You can't swim in your current form.");
+        }
         prompt = make_stringf("Do you really want to %s into deep %s?",
             move_verb.c_str(), env.grid(p) == DNGN_DEEP_SLIMY_WATER ? "slime" : "water");
     }
@@ -554,7 +565,7 @@ void moveto_location_effects(dungeon_feature_type old_feat,
             {
                 if (!you.petrified())
                     mprf(MSGCH_WARN, "You %s the boiling magma.", stepped ? "enter" : "fall into");
-                mprf(MSGCH_WARN, "This stuff is boiling hot and burns your body!");
+                mprf(MSGCH_WARN, "This stuff is boiling hot and burns your %s!", you.mounted() ? "mount" : "body");
                 if (!you.petrified())
                     mprf(MSGCH_WARN, "The liquefied rock is difficult to stand upon; moving through it is going to be slow.");
             }
@@ -629,11 +640,12 @@ bool is_feat_dangerous(dungeon_feature_type grid, bool permanently,
     {
         return false;
     }
-    else if (grid == DNGN_DEEP_WATER && !player_likes_water(permanently)
-             || grid == DNGN_LAVA || grid == DNGN_DEEP_SLIMY_WATER && (!player_likes_water(permanently) || !you_worship(GOD_JIYVA)))
-    {
+    if (grid == DNGN_LAVA)
         return true;
-    }
+    if (grid == DNGN_SLIMY_WATER || grid == DNGN_DEEP_SLIMY_WATER && !you_worship(GOD_JIYVA))
+        return true;
+    if (grid == DNGN_DEEP_WATER || grid == DNGN_DEEP_SLIMY_WATER)
+        return (!player_likes_water(permanently) || !permanently && you.mounted() && !you.can_swim());
     else
         return false;
 }
@@ -1495,6 +1507,25 @@ bool player_likes_chunks(bool permanently)
            || you.get_mutation_level(MUT_CARNIVOROUS) > 0;
 }
 
+static int _rf_globals()
+{
+    int rf = 0;
+
+    if (you.submerged())
+        rf++;
+
+    else if (you.duration[DUR_FIRE_SHIELD])
+        rf += 2;
+
+    if (you.duration[DUR_QAZLAL_FIRE_RES])
+        rf++;
+
+    if (you.duration[DUR_FIRE_VULN])
+        rf--;
+    
+    return rf;
+}
+
 // If temp is set to false, temporary sources or resistance won't be counted.
 int player_res_fire(bool calc_unid, bool temp, bool items)
 {
@@ -1556,24 +1587,12 @@ int player_res_fire(bool calc_unid, bool temp, bool items)
         if (you.duration[DUR_RESISTANCE])
             rf++;
 
-        if (you.duration[DUR_FIRE_SHIELD])
-            rf += 2;
-
-        if (you.duration[DUR_QAZLAL_FIRE_RES])
-            rf++;
-
-        if (you.submerged())
-            rf++;
+        rf += _rf_globals();
 
         rf += get_form()->res_fire();
     }
 
-    if (rf > 3)
-        rf = 3;
-    if (temp && you.duration[DUR_FIRE_VULN])
-        rf--;
-    if (rf < -3)
-        rf = -3;
+    _clamp(rf, -3, temp && you.duration[DUR_FIRE_VULN] ? 2 : 3);
 
     return rf;
 }
@@ -1592,10 +1611,31 @@ int player_res_steam(bool calc_unid, bool temp, bool items)
 
     res += rf * 2;
 
-    if (res > 2)
+    if (you.submerged())
         res = 2;
 
+    _clamp(res, -3, 2);
+
     return res;
+}
+
+static int _rc_globals()
+{
+    int rc = 0;
+
+    if (you.duration[DUR_FIRE_SHIELD])
+        rc -= 2;
+
+    if (you.duration[DUR_QAZLAL_COLD_RES])
+        rc++;
+
+    if (you.submerged())
+        rc++;
+
+    if (you.duration[DUR_COLD_VULN])
+        rc--;
+
+    return rc;
 }
 
 int player_res_cold(bool calc_unid, bool temp, bool items)
@@ -1607,27 +1647,9 @@ int player_res_cold(bool calc_unid, bool temp, bool items)
         if (you.duration[DUR_RESISTANCE])
             rc++;
 
-        if (you.duration[DUR_FIRE_SHIELD])
-            rc -= 2;
-
-        if (you.duration[DUR_QAZLAL_COLD_RES])
-            rc++;
-
-        if (you.submerged())
-            rc++;
-
-        if (you.duration[DUR_COLD_VULN])
-            rc--;
+        rc += _rc_globals();
 
         rc += get_form()->res_cold();
-
-        if (you.species == SP_VAMPIRE)
-        {
-            if (you.hunger_state <= HS_STARVING)
-                rc += 2;
-            else if (you.hunger_state < HS_SATIATED)
-                rc++;
-        }
     }
 
     if (items)
@@ -1678,16 +1700,25 @@ int player_res_cold(bool calc_unid, bool temp, bool items)
             rc++;
     }
 
-    if (rc < -3)
-        rc = -3;
-    else if (rc > 3)
-        rc = 3;
+    _clamp(rc, -3, temp && you.duration[DUR_COLD_VULN] ? 2 : 3);
 
     return rc;
 }
 
-bool player::res_corr(bool calc_unid, bool items) const
+bool player::res_corr(bool calc_unid, bool items, bool mt) const
 {
+    if (mt)
+    {
+        switch (you.mount)
+        {
+            case mount_type::spider:
+            case mount_type::hydra:
+                return 1;
+            default:
+                return 0;
+        }
+    }
+
     if (have_passive(passive_t::resist_corrosion))
         return true;
 
@@ -1734,6 +1765,22 @@ bool player::res_corr(bool calc_unid, bool items) const
 int player_res_acid(bool calc_unid, bool items)
 {
     return you.res_corr(calc_unid, items) ? 1 : 0;
+}
+
+static int _relec_globals()
+{
+    int re = 0;
+
+    if (you.duration[DUR_QAZLAL_ELEC_RES])
+        re++;
+
+    if (you.duration[DUR_ELEC_VULN])
+        re--;
+
+    if (you.submerged())
+        re--;
+
+    return re;
 }
 
 int player_res_electricity(bool calc_unid, bool temp, bool items)
@@ -1787,18 +1834,11 @@ int player_res_electricity(bool calc_unid, bool temp, bool items)
         if (you.duration[DUR_RESISTANCE])
             re++;
 
-        if (you.duration[DUR_QAZLAL_ELEC_RES])
-            re++;
+        re += _relec_globals();
 
         // transformations:
         if (get_form()->res_elec())
             re++;
-
-        if (you.duration[DUR_ELEC_VULN])
-            re--;
-
-        if (you.submerged())
-            re--;
     }
 
     if (re > 1)
@@ -1857,12 +1897,9 @@ int player_res_poison(bool calc_unid, bool temp, bool items)
             break;
         case US_HUNGRY_DEAD: //ghouls
         case US_UNDEAD: // mummies & lichform
-            return 3;
         case US_GHOST: // spectres
+        case US_SEMI_UNDEAD:
             return 3;
-        case US_SEMI_UNDEAD: // vampire
-            if (you.hunger_state <= HS_STARVING) // XXX: && temp?
-                return 3;
             break;
     }
 
@@ -2070,14 +2107,10 @@ int player_energy()
     return 0;
 }
 
-// If temp is set to false, temporary sources of resistance won't be
-// counted.
-int player_prot_life(bool calc_unid, bool temp, bool items)
+static int _rn_globals()
 {
     int pl = 0;
 
-    // Same here. Your piety status, and, hence, TSO's protection, is
-    // something you can more or less control.
     if (you_worship(GOD_SHINING_ONE))
     {
         if (you.piety >= piety_breakpoint(1))
@@ -2088,9 +2121,20 @@ int player_prot_life(bool calc_unid, bool temp, bool items)
             pl++;
     }
 
+    return pl;
+}
+
+// If temp is set to false, temporary sources of resistance won't be
+// counted.
+int player_prot_life(bool calc_unid, bool temp, bool items)
+{
+    int pl = 0;
+
     if (temp)
     {
         pl += get_form()->res_neg();
+
+        pl += _rn_globals();
 
         // completely stoned, unlike statue which has some life force
         if (you.petrified())
@@ -2210,9 +2254,47 @@ int player_movement_speed()
     else if (you.fishtail || you.form == transformation::hydra && you.in_water())
         mv = 6;
 
-    // draconian scales:
-    if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, true) && you.drac_colour == DR_PLATINUM)
-        mv--;
+    if (you.mounted())
+    {
+        if (you.mount == mount_type::drake)
+            mv = 9;
+        else if (you.mount == mount_type::hydra && you.in_water())
+            mv = 6;
+        else if (you.mount == mount_type::spider)
+            mv = 8;
+
+        if (you.duration[DUR_MOUNT_SLOW])
+            mv *= 1.5;
+
+        if (you.petrifying(true))
+            mv *= 1.5;
+
+        if (you.duration[DUR_MOUNT_FROZEN])
+            mv += 3;
+    }
+
+    else // Species innates don't work while mounted.
+    {
+        // draconian scales:
+        if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, true) && you.drac_colour == DR_PLATINUM)
+            mv--;
+
+        // armour
+        if (you.run()) // BCADDO: for SC: this will need to be able to stack.
+            mv -= 1;
+
+        mv += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_PONDEROUSNESS);
+
+        // Mutations: -2, -3, -4, unless innate and shapechanged.
+        if (int fast = you.get_mutation_level(MUT_FAST))
+            mv -= fast + 1;
+
+        if (int slow = you.get_mutation_level(MUT_SLOW))
+        {
+            mv *= 10 + slow * 2;
+            mv /= 10;
+        }
+    }
 
     // Wading through water is very slow.
     if (you.in_water() && !you.can_swim()
@@ -2228,12 +2310,6 @@ int player_movement_speed()
     if (you.in_lava())
         mv += 6;
 
-    // armour
-    if (you.run()) // BCADDO: for SC: this will need to be able to stack.
-        mv -= 1;
-
-    mv += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_PONDEROUSNESS);
-
     // Cheibriados
     if (have_passive(passive_t::slowed))
         mv += 2 + min(div_rand_round(you.piety, 20), 8);
@@ -2244,21 +2320,11 @@ int player_movement_speed()
     if (you.tengu_flight())
         mv--;
 
-    if (you.duration[DUR_FROZEN])
+    if (!you.mounted() && you.duration[DUR_FROZEN])
         mv += 3;
 
     if (you.duration[DUR_GRASPING_ROOTS])
         mv += 3;
-
-    // Mutations: -2, -3, -4, unless innate and shapechanged.
-    if (int fast = you.get_mutation_level(MUT_FAST))
-        mv -= fast + 1;
-
-    if (int slow = you.get_mutation_level(MUT_SLOW))
-    {
-        mv *= 10 + slow * 2;
-        mv /= 10;
-    }
 
     if (you.duration[DUR_SWIFTNESS] > 0 && !you.in_liquid())
     {
@@ -2373,7 +2439,10 @@ void update_acrobat_status()
 static int _player_evasion_size_factor(bool base = false)
 {
     // XXX: you.body_size() implementations are incomplete, fix.
-    const size_type size = you.body_size(PSIZE_BODY, base);
+    int size = (int)you.body_size(PSIZE_BODY, base);
+    if (you.mounted())
+        size += 2;
+    size = max(6, size);
     return 2 * (SIZE_MEDIUM - size);
 }
 
@@ -2444,10 +2513,15 @@ static int _player_evasion_bonuses()
 // Player EV scaling for being flying tengu or swimming merfolk.
 static int _player_scale_evasion(int prescaled_ev, const int scale)
 {
-    if (you.duration[DUR_PETRIFYING] || you.caught())
+    if (you.petrifying() || you.caught())
         prescaled_ev /= 2;
     else if (you.duration[DUR_GRASPING_ROOTS])
         prescaled_ev = prescaled_ev * 2 / 3;
+
+    if (you.petrifying(true))
+        prescaled_ev = prescaled_ev * 3 / 4;
+    else if (you.petrified(true))
+        prescaled_ev /= 2;
 
     // Merfolk get a 25% evasion bonus in water.
     if (you.fishtail)
@@ -3863,7 +3937,7 @@ static void _display_vampire_status()
 
 static void _display_movement_speed()
 {
-    const int move_cost = (player_speed() * player_movement_speed()) / 10;
+    const int move_cost = ((you.mounted() ? 10 : player_speed()) * player_movement_speed()) / 10;
 
     const bool water  = you.in_liquid();
     const bool swim   = you.swimming();
@@ -4842,41 +4916,6 @@ bool poison_player(int amount, string source, string source_aux, bool force)
     return amount;
 }
 
-bool poison_mount(int amount, bool force)
-{
-    ASSERT(!crawl_state.game_is_arena());
-
-    if (crawl_state.disables[DIS_AFFLICTIONS])
-        return false;
-
-    if (!force && (you.mount == mount_type::hydra) && !one_chance_in(3))
-        return false;
-
-    const int old_value = you.duration[DUR_MOUNT_POISONING];
-    const bool was_fatal = (you.duration[DUR_MOUNT_POISONING] / 1000) >= you.mount_hp;
-
-    if (you.mount == mount_type::spider)
-        amount *= 2;
-
-    you.duration[DUR_MOUNT_POISONING] += amount * 1000;
-    
-    if (you.duration[DUR_MOUNT_POISONING] > old_value)
-    {
-        if ((you.duration[DUR_MOUNT_POISONING] / 1000) >= you.mount_hp && !was_fatal)
-            mprf(MSGCH_DANGER, "Your mount is lethally poisoned!");
-        else
-        {
-            mprf(MSGCH_WARN, "Your mount is %spoisoned.",
-                old_value > 0 ? "more " : "");
-        }
-    }
-
-    // Display the poisoned segment of our health, in case we take no damage
-    you.redraw_hit_points = true;
-
-    return amount;
-}
-
 int get_player_poisoning()
 {
     if (player_res_poison() < 3)
@@ -5581,8 +5620,14 @@ void force_land_player(actor */*foe*/, bool damage)
                 mprf(MSGCH_WARN, "You fall straight down and make a sizzling splash on the lava!");
             else
             {
-                mprf(MSGCH_WARN, "You crash to the ground with a thud.");
-                ouch(roll_dice(2, 10), KILLED_BY_FALLING);
+                int dam = roll_dice(2, 10);
+
+                mprf(MSGCH_WARN, "You crash to the ground with a thud%s", attack_strength_punctuation(dam).c_str());
+
+                if (you.mounted())
+                    damage_mount(dam);
+                else
+                    ouch(roll_dice(2, 10), KILLED_BY_FALLING);
             }
             noisy(15, you.pos());
         }
@@ -5753,6 +5798,8 @@ player::player()
     mount_hp_max    = 0;
     mount_hp        = 0;
     mount_hp_regen  = 0;
+    mount_energy    = 0;
+    mount_heads     = 1;
 
     for (auto &item : inv)
         item.clear();
@@ -6046,6 +6093,13 @@ bool player::airborne() const
         || you.petrified())
         return false;
 
+    if (you.mounted())
+    {
+        if (you.mount == mount_type::drake && !you.duration[DUR_MOUNT_PETRIFIED])
+            return true;
+        return false;
+    }
+
     if (duration[DUR_FLIGHT]
         || attribute[ATTR_PERM_FLIGHT]
         || get_form()->enables_flight())
@@ -6087,6 +6141,8 @@ bool player::in_liquid() const
 
 bool player::can_swim(bool permanently) const
 {
+    if (mounted())
+        return (!permanently || species_can_swim(species)) && mount == mount_type::hydra;
     // Transforming could be fatal if it would cause unequipment of
     // stat-boosting boots or heavy armour.
     return (species_can_swim(species)
@@ -6294,13 +6350,17 @@ bool player::caught() const
     return attribute[ATTR_HELD];
 }
 
-bool player::petrifying() const
+bool player::petrifying(bool mt) const
 {
+    if (mt)
+        return duration[DUR_MOUNT_PETRIFYING];
     return duration[DUR_PETRIFYING];
 }
 
-bool player::petrified() const
+bool player::petrified(bool mt) const
 {
+    if (mt)
+        return duration[DUR_MOUNT_PETRIFIED];
     return duration[DUR_PETRIFIED];
 }
 
@@ -6923,9 +6983,12 @@ bool player::heal(int amount)
  *                  petrification...
  * @return          The player's holiness category.
  */
-mon_holy_type player::holiness(bool temp) const
+mon_holy_type player::holiness(bool temp, bool mt) const
 {
     mon_holy_type holi;
+
+    if (mt)
+        return mons_class_holiness(mount_mons());
 
     // Lich form takes precedence over a species' base holiness
     if (undead_state(temp))
@@ -6997,8 +7060,11 @@ int player::how_chaotic(bool /*check_spells_god*/) const
  *
  * @return  Whether the player has no need to breathe.
  */
-bool player::is_unbreathing() const
+bool player::is_unbreathing(bool mt) const
 {
+    if (mt) // no mount is currently unbreathing.
+        return false;
+
     return !get_form()->breathes || petrified()
         || get_mutation_level(MUT_UNBREATHING)
         || get_mutation_level(MUT_UNBREATHING_FORM);
@@ -7014,33 +7080,81 @@ bool player::is_insubstantial() const
         return false;
 }
 
-int player::res_acid(bool calc_unid) const
+int player::res_acid(bool calc_unid, bool mt) const
 {
+    if (mt)
+    {
+
+    }
     return player_res_acid(calc_unid);
 }
 
-int player::res_fire() const
+int player::res_fire(bool mt) const
 {
+    if (mt)
+    {
+        int mount_resist = 0;
+
+        if (you.mount == mount_type::drake)
+            mount_resist--;
+
+        mount_resist += _rf_globals();
+
+        return _clamp(mount_resist, -3, 3);
+    }
+
     return player_res_fire();
 }
 
-int player::res_steam() const
+int player::res_steam(bool mt) const
 {
+    if (mt)
+    {
+        if (you.submerged())
+            return 2;
+        else
+            return _clamp(you.res_fire(true) * 2, -3, 3);
+    }
+
     return player_res_steam();
 }
 
-int player::res_cold() const
+int player::res_cold(bool mt) const
 {
+    if (mt)
+    {
+        int mount_resist = 0;
+
+        if (you.mount == mount_type::drake)
+            mount_resist += 2;
+
+        mount_resist += _rc_globals();
+
+        return _clamp(mount_resist, -3, 3);
+    }
+
     return player_res_cold();
 }
 
-int player::res_elec() const
+int player::res_elec(bool mt) const
 {
+    if (mt)
+    {
+        return _clamp(_relec_globals(), -3, 3);
+    }
+
     return player_res_electricity();
 }
 
-int player::res_water_drowning() const
+int player::res_water_drowning(bool mt) const
 {
+    if (mt)
+    {
+        if (you.mount == mount_type::hydra)
+            return 1;
+        return 0;
+    }
+
     int rw = 0;
 
     if (is_unbreathing()
@@ -7054,13 +7168,38 @@ int player::res_water_drowning() const
     return rw;
 }
 
-int player::res_poison(bool temp) const
+int player::res_poison(bool temp, bool mt) const
 {
+    if (mt)
+    {
+        int rp = 0;
+
+        switch (you.mount)
+        {
+        case mount_type::hydra:
+            rp++;
+            break;
+        case mount_type::spider:
+            rp--;
+            break;
+        default:
+            break;
+        }
+
+        if (you.duration[DUR_POISON_VULN])
+            rp--;
+
+        return _clamp(rp, -3, 3);
+    }
+
     return player_res_poison(true, temp);
 }
 
-int player::res_rotting(bool temp) const
+int player::res_rotting(bool temp, bool mt) const
 {
+    if (mt)
+        return 0; // No mount resists rotting.
+
     if (get_mutation_level(MUT_ROT_IMMUNITY)
         || is_nonliving(temp)
         || temp && get_form()->res_rot())
@@ -7095,8 +7234,11 @@ bool player::res_sticky_flame() const
     return player_res_sticky_flame();
 }
 
-int player::res_holy_energy() const
+int player::res_holy_energy(bool mt) const
 {
+    if (mt)
+        return 0;
+  
     if (is_holy())
         return 3;
 
@@ -7106,35 +7248,47 @@ int player::res_holy_energy() const
     return 0;
 }
 
-int player::res_negative_energy(bool intrinsic_only) const
+int player::res_negative_energy(bool intrinsic_only, bool mt) const
 {
+    if (mt)
+        return _clamp(_rn_globals(), 0, 3);
+
     return player_prot_life(!intrinsic_only, true, !intrinsic_only);
 }
 
-bool player::res_torment() const
+bool player::res_torment(bool mt) const
 {
+    if (mt)
+        return false;
+
     return player_res_torment();
 }
 
-bool player::res_tornado() const
+bool player::res_tornado(bool mt) const
 {
     // Full control of the winds around you can negate a hostile tornado.
     if (duration[DUR_TORNADO] || duration[DUR_CHAOSNADO])
         return true;
 
-    return player::res_wind();
+    return player::res_wind(mt);
 }
 
-bool player::res_wind() const
+bool player::res_wind(bool mt) const
 {
+    if (mt)
+        return false;
+
     if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE) && (you.drac_colour == DR_CYAN))
         return true;
 
     return false;
 }
 
-bool player::res_petrify(bool temp) const
+bool player::res_petrify(bool temp, bool mt) const
 {
+    if (mt)
+        return false;
+
     if (you.wearing_ego(EQ_BODY_ARMOUR, SPARM_SOFT) || you.wearing_ego(EQ_CLOAK, SPARM_SOFT))
         return true;
 
@@ -7142,8 +7296,11 @@ bool player::res_petrify(bool temp) const
            || temp && get_form()->res_petrify();
 }
 
-int player::res_constrict() const
+int player::res_constrict(bool mt) const
 {
+    if (mt)
+        return 0;
+
     if (is_insubstantial())
         return 3;
 
@@ -7348,6 +7505,9 @@ bool player::racial_permanent_flight() const
 
 bool player::tengu_flight() const
 {
+    if (you.mounted() || you.form != transformation::none)
+        return false;
+
     // Only Tengu get perks for flying.
     return species == SP_TENGU && airborne();
 }
@@ -7393,6 +7553,7 @@ bool player::nightvision() const
     return have_passive(passive_t::nightvision);
 }
 
+// BCADNOTE: This is wrong, what's it used for?
 reach_type player::reach_range() const
 {
     const item_def *wpn = weapon();
@@ -7504,10 +7665,10 @@ bool player::rot(actor */*who*/, int amount, bool quiet, bool /*no_cleanup*/)
     return true;
 }
 
-bool player::corrode_equipment(const char* corrosion_source, int degree)
+bool player::corrode_equipment(const char* corrosion_source, int degree, bool mt)
 {
     // rCorr protects against 50% of corrosion.
-    if (res_corr())
+    if (res_corr(true, true, mt))
     {
         degree = binomial(degree, 50);
         if (!degree)
@@ -7517,22 +7678,22 @@ bool player::corrode_equipment(const char* corrosion_source, int degree)
         }
     }
     // always increase duration, but...
-    increase_duration(DUR_CORROSION, 10 + roll_dice(2, 4), 50,
-                      make_stringf("%s corrodes you!",
-                                   corrosion_source).c_str());
+    increase_duration(mt ? DUR_MOUNT_CORROSION : DUR_CORROSION, 10 + roll_dice(2, 4), 50,
+                      make_stringf("%s corrodes %s!",
+                                   corrosion_source, mt ? you.mount_name().c_str() : "you").c_str());
 
     // the more corrosion you already have, the lower the odds of more
-    int prev_corr = props["corrosion_amount"].get_int();
+    int prev_corr = props[mt ? "mount_corrosion_amount" : "corrosion_amount"].get_int();
     bool did_corrode = false;
     for (int i = 0; i < degree; i++)
         if (!x_chance_in_y(prev_corr, prev_corr + 7))
         {
-            props["corrosion_amount"].get_int()++;
+            props[mt ? "mount_corrosion_amount" : "corrosion_amount"].get_int()++;
             prev_corr++;
             did_corrode = true;
         }
 
-    if (did_corrode)
+    if (did_corrode && !mt)
     {
         redraw_armour_class = true;
         wield_change = true;
@@ -7549,29 +7710,47 @@ bool player::corrode_equipment(const char* corrosion_source, int degree)
  * @param hurt_msg A message to display when dealing damage.
  */
 void player::splash_with_acid(const actor* evildoer, int acid_strength,
-                              bool allow_corrosion, const char* /*hurt_msg*/)
+                              bool allow_corrosion, const char* /*hurt_msg*/, bool mt)
 {
     if (allow_corrosion && binomial(3, acid_strength + 1, 30))
-        corrode_equipment();
+        corrode_equipment("the acid", 1, mt);
 
     const int dam = roll_dice(4, acid_strength);
-    const int post_res_dam = resist_adjust_damage(&you, BEAM_ACID, dam);
+    const int post_res_dam = resist_adjust_damage(&you, BEAM_ACID, dam, mt);
 
-    if (you.species == SP_FAIRY)
+    if (you.species == SP_FAIRY && !mt)
     {
         mprf("You are splashed with acid.");
         return; // No bonus damage (corrosion probably doesn't do much either but whatever).
     }
-    mprf("You are splashed with acid%s%s",
-         post_res_dam > 0 ? "" : " but take no damage",
-         attack_strength_punctuation(post_res_dam).c_str());
+    
+    if (mt)
+    {
+        mprf("Your %s is splashed with acid%s%s%s",
+            you.mount_name(true).c_str(),
+            post_res_dam > 0 ? "" : " but takes no damage",
+            attack_strength_punctuation(post_res_dam).c_str(),
+            post_res_dam > 0 && post_res_dam < dam ? " It resists." : "");
+    }
+    else
+    {
+        mprf("You are splashed with acid%s%s",
+            post_res_dam > 0 ? "" : " but take no damage",
+            attack_strength_punctuation(post_res_dam).c_str());
+    }
+
     if (post_res_dam > 0)
     {
-        if (post_res_dam < dam)
-            canned_msg(MSG_YOU_RESIST);
+        if (mt)
+            damage_mount(post_res_dam);
+        else
+        {
+            if (post_res_dam < dam)
+                canned_msg(MSG_YOU_RESIST);
 
-        ouch(post_res_dam, KILLED_BY_ACID,
-             evildoer ? evildoer->mid : MID_NOBODY);
+            ouch(post_res_dam, KILLED_BY_ACID,
+                evildoer ? evildoer->mid : MID_NOBODY);
+        }
     }
 }
 
@@ -7637,69 +7816,84 @@ void player::paralyse(actor *who, int str, string source)
     end_searing_ray();
 }
 
-void player::petrify(actor *who, bool force)
+void player::petrify(actor *who, bool force, bool mt)
 {
     ASSERT(!crawl_state.game_is_arena());
 
-    if (res_petrify() && !force)
+    if (res_petrify(true, mt) && !force)
     {
         canned_msg(MSG_YOU_UNAFFECTED);
         return;
     }
 
-    if (you.stasis() || you.is_insubstantial())
+    if (!mt)
     {
-        canned_msg(MSG_YOU_UNAFFECTED);
+        if (you.stasis() || you.is_insubstantial())
+        {
+            canned_msg(MSG_YOU_UNAFFECTED);
+            return;
+        }
+
+        if (duration[DUR_DIVINE_STAMINA] > 0)
+        {
+            mprf(MSGCH_DURATION, "Your divine stamina protects you from petrification!");
+            return;
+        }
+
+        if (have_passive(passive_t::bahamut_tiamat_passive)
+            && you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY)
+            && you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
+        {
+            mprf(MSGCH_DURATION, "Bahamut protects you from petrification.");
+            return;
+        }
+
+        // Petrification always wakes you up
+        if (asleep())
+            you.awaken();
+    }
+
+    if (petrifying(mt))
+    {
+        mprf("Your %s %s turned to stone.", mt ? mount_name(true).c_str() : "limbs", 
+                                            mt ? "has" : "have");
+        duration[mt ? DUR_MOUNT_PETRIFYING : DUR_PETRIFYING] = 1;
         return;
     }
 
-    if (duration[DUR_DIVINE_STAMINA] > 0)
-    {
-        mprf(MSGCH_DURATION, "Your divine stamina protects you from petrification!");
-        return;
-    }
-
-    if (have_passive(passive_t::bahamut_tiamat_passive)
-        && you.props.exists(BAHAMUT_TIAMAT_CHOICE0_KEY)
-        && you.props[BAHAMUT_TIAMAT_CHOICE0_KEY].get_bool())
-    {
-        mprf(MSGCH_DURATION, "Bahamut protects you from petrification.");
-        return;
-    }
-
-    // Petrification always wakes you up
-    if (asleep())
-        you.awaken();
-
-    if (petrifying())
-    {
-        mpr("Your limbs have turned to stone.");
-        duration[DUR_PETRIFYING] = 1;
-        return;
-    }
-
-    if (petrified())
+    if (petrified(mt))
         return;
 
-    duration[DUR_PETRIFYING] = 30;
+    duration[mt ? DUR_MOUNT_PETRIFYING : DUR_PETRIFYING] = 30;
 
-    if (who)
+    if (!mt && who)
         props[PETRIFIED_BY_KEY] = who->name(DESC_A, true);
 
     redraw_evasion = true;
-    mprf(MSGCH_WARN, "You are slowing down.");
+
+    if (mt)
+        mprf(MSGCH_WARN, "Your %s is slowing down.", mount_name(true).c_str());
+
+    else
+        mprf(MSGCH_WARN, "You are slowing down.");
 }
 
-bool player::fully_petrify(actor */*foe*/, bool /*quiet*/)
+bool player::fully_petrify(actor */*foe*/, bool /*quiet*/, bool mt)
 {
-    duration[DUR_PETRIFIED] = 60
+    duration[mt ? DUR_MOUNT_PETRIFIED : DUR_PETRIFIED] = 60
                         + random2(40);
     redraw_evasion = true;
-    mpr("You have turned to stone.");
+    
+    if (mt)
+        mprf("Your %s has turned to stone.", mount_name(true).c_str());
+    else
+        mpr("You have turned to stone.");
 
-    force_land_player(nullptr, true);
+    if (mt && you.mounted() || !mt && !you.mounted())
+        force_land_player(nullptr, true);
 
-    end_searing_ray();
+    if (!mt)
+        end_searing_ray();
 
     return true;
 }
@@ -8092,7 +8286,7 @@ bool player::can_bleed(bool allow_tran) const
 bool player::is_stationary() const
 {
     return (form == transformation::tree || you.attribute[ATTR_ROOTED]
-        || you.duration[DUR_LAVA_CAKE]);
+        || you.duration[DUR_LAVA_CAKE] || you.petrified(true));
 }
 
 bool player::malmutate(const string &reason)
@@ -8540,6 +8734,8 @@ bool need_expiration_warning(duration_type dur, dungeon_feature_type feat)
     {
         return true;
     }
+    else if (dur == DUR_MOUNTED && (you.mount == mount_type::hydra || you.mount == mount_type::drake))
+        return true;
     return false;
 }
 
@@ -9245,52 +9441,23 @@ bool player::mounted() const
     return false;
 }
 
-void damage_mount(int amount)
+string player::mount_name(bool terse) const
 {
-    you.mount_hp -= amount;
-    if (you.mount_hp <= 0)
-    {
-        mpr("Your mount dies.");
-        dismount();
-    }
-}
+    ASSERT(you.mounted());
 
-void dismount()
-{
-    if (you.duration[DUR_MOUNTED])
-        you.duration[DUR_MOUNTED] = 0;
-    if (you.duration[DUR_MOUNT_POISONING])
-        you.duration[DUR_MOUNT_POISONING] = 0;
-    you.mount = mount_type::none;
-    you.mount_hp = you.mount_hp_max = you.mount_hp_regen = 0;
-    redraw_screen();
-}
-
-// Returns whether a hit should hit you (false) or a mount (true)
-bool mount_hit()
-{
-    if (!you.mounted())
-        return false;
-    return !x_chance_in_y(you.body_size(PSIZE_BODY), you.body_size(PSIZE_BODY) + 5);
-}
-
-int apply_mount_ac(int damage)
-{
-    return you.apply_ac(damage, 0, ac_type::normal, 0, true, true);
-}
-
-monster_type mount_mons()
-{
     switch (you.mount)
     {
-    case mount_type::drake:
-        return MONS_RIME_DRAKE;
     case mount_type::hydra:
-        return MONS_HYDRA;
+        return terse ? "hydra" 
+                     : make_stringf("%s-headed hydra", number_in_words(you.mount_heads).c_str());
+
+    case mount_type::drake:
+        return "rime drake";
+
     case mount_type::spider:
-        return MONS_JUMPING_SPIDER;
+        return "jumping spider";
+
     default:
-        break;
+        return "buggy mount";
     }
-    return MONS_PROGRAM_BUG;
 }

@@ -165,6 +165,16 @@ static void _describe_terrain(status_info& inf);
 static void _describe_missiles(status_info& inf);
 static void _describe_invisible(status_info& inf);
 
+static int _mount_status_iterate(int statuses, status_info& inf)
+{
+    statuses--;
+    if (statuses <= 0)
+        inf.light_text += ")";
+    else
+        inf.light_text += ", ";
+    return statuses;
+}
+
 bool fill_status_info(int status, status_info& inf)
 {
     inf = status_info();
@@ -212,7 +222,7 @@ bool fill_status_info(int status, status_info& inf)
     
     case DUR_MOUNTED:
     {
-        string longtxt = "You are mounted upon a ";
+        inf.long_text = make_stringf("You are mounted upon a %s", you.mount_name().c_str()).c_str();
         switch (you.mount)
         {
         case mount_type::none:
@@ -221,30 +231,88 @@ bool fill_status_info(int status, status_info& inf)
             break;
         case mount_type::drake:
             inf.light_colour = LIGHTCYAN;
-            longtxt += "rime drake.";
-            inf.long_text = longtxt;
             inf.short_text = "drake mount";
             inf.light_text = "drake";
             break;
         case mount_type::hydra:
             inf.light_colour = LIGHTGREEN;
-            // BCADDO: Head count?
-            longtxt += "hydra.";
-            inf.long_text = longtxt;
             inf.short_text = "hydra mount";
             inf.light_text = "hydra";
             break;
         case mount_type::spider:
             inf.light_colour = BROWN;
-            longtxt += "giant spider.";
-            inf.long_text = longtxt;
             inf.short_text = "spider mount";
             inf.light_text = "spider";
             break;
         }
 
-        if (you.duration[DUR_MOUNT_POISONING])
-            inf.light_text += " (Pois)";
+        int statuses = mount_statuses();
+        statuses += you.submerged(true);
+
+        if (statuses > 0)
+        {
+            inf.light_text += " (";
+            if (you.submerged(true))
+            {
+                inf.light_text += "subm";
+                _mount_status_iterate(statuses, inf);
+            }
+            if (you.duration[DUR_MOUNT_BREATH])
+            {
+                inf.light_text += "breath";
+                _mount_status_iterate(statuses, inf);
+            }
+            if (you.duration[DUR_ENSNARE])
+            {
+                inf.light_text += "web";
+                _mount_status_iterate(statuses, inf);
+            }
+            if (you.duration[DUR_MOUNT_POISONING])
+            {
+                inf.light_text += "pois";
+                _mount_status_iterate(statuses, inf);
+            }
+            if (you.duration[DUR_MOUNT_SLOW])
+            {
+                inf.light_text += "slow";
+                _mount_status_iterate(statuses, inf);
+            }
+            if (you.duration[DUR_MOUNT_CORROSION])
+            {
+                inf.light_text += make_stringf("Corr [%d]", (-4 * you.props["mount_corrosion_amount"].get_int()));
+                _mount_status_iterate(statuses, inf);
+            }
+            if (you.duration[DUR_MOUNT_DRAINING])
+            {
+                inf.light_text += "drain";
+                _mount_status_iterate(statuses, inf);
+            }
+            if (you.duration[DUR_MOUNT_WRETCHED])
+            {
+                inf.light_text += "mutat";
+                _mount_status_iterate(statuses, inf);
+            }
+            if (you.duration[DUR_MOUNT_PETRIFYING])
+            {
+                inf.light_text += "petr";
+                _mount_status_iterate(statuses, inf);
+            }
+            if (you.duration[DUR_MOUNT_PETRIFIED])
+            {
+                inf.light_text += "PETR";
+                _mount_status_iterate(statuses, inf);
+            }
+            if (you.duration[DUR_MOUNT_BARBS])
+            {
+                inf.light_text += "barbs";
+                _mount_status_iterate(statuses, inf);
+            }
+            if (you.duration[DUR_MOUNT_FROZEN])
+            {
+                inf.light_text += "ice";
+                _mount_status_iterate(statuses, inf);
+            }
+        }
     }
         break;
 

@@ -13,6 +13,7 @@
 #include "movement.h"
 
 #include "abyss.h"
+#include "attack.h"
 #include "bloodspatter.h"
 #include "cloud.h"
 #include "coord.h"
@@ -142,10 +143,11 @@ static void _entered_malign_portal(actor* act)
 
 bool cancel_barbed_move()
 {
-    if (you.duration[DUR_BARBS] && !you.props.exists(BARBS_MOVE_KEY))
+    if ((!you.mounted() && you.duration[DUR_BARBS]) || you.duration[DUR_MOUNT_BARBS] && !you.props.exists(BARBS_MOVE_KEY))
     {
-        std::string prompt = "The barbs in your skin will harm you if you move."
-                        " Continue?";
+        string prompt = make_stringf("The spiked barbs in your %s will hurt %s if you move. Continue?", 
+            you.mounted() ? you.mount_name().c_str() : "flesh", 
+            you.mounted() ? "it" : "you");
         if (!yesno(prompt.c_str(), false, 'n'))
         {
             canned_msg(MSG_OK);
@@ -160,19 +162,35 @@ bool cancel_barbed_move()
 
 void apply_barbs_damage()
 {
-    if (you.duration[DUR_BARBS])
+    bool harm_you = you.duration[DUR_BARBS] && !you.mounted();
+    bool harm_mount = you.duration[DUR_MOUNT_BARBS];
+
+    if (harm_you || harm_mount)
     {
-        mprf(MSGCH_WARN, "The barbed spikes dig painfully into your body "
-                         "as you move.");
-        ouch(roll_dice(2, you.attribute[ATTR_BARBS_POW]), KILLED_BY_BARBS);
-        bleed_onto_floor(you.pos(), MONS_PLAYER, 2, false);
+        int dam = roll_dice(2, you.attribute[ATTR_BARBS_POW]);
+        mprf(MSGCH_WARN, "The barbed spikes %s%s as you move%s", 
+            harm_you ? "dig painfully into your body" : "cut into your ",
+            harm_you ? "" : you.mount_name(true).c_str(),
+            attack_strength_punctuation(dam).c_str());
+        if (harm_you)
+        {
+            ouch(dam, KILLED_BY_BARBS);
+            bleed_onto_floor(you.pos(), MONS_PLAYER, dam, false);
+        }
+        else
+        {
+            damage_mount(dam);
+            bleed_onto_floor(you.pos(), mount_mons(), dam, false);
+        }
 
         // Sometimes decrease duration even when we move.
         if (one_chance_in(3))
-            extract_manticore_spikes("The barbed spikes snap loose.");
+            extract_manticore_spikes("The barbed spikes snap loose.", harm_mount);
         // But if that failed to end the effect, duration stays the same.
-        if (you.duration[DUR_BARBS])
+        if (harm_you && you.duration[DUR_BARBS])
             you.duration[DUR_BARBS] += you.time_taken;
+        if (harm_mount && you.duration[DUR_MOUNT_BARBS])
+            you.duration[DUR_MOUNT_BARBS] += you.time_taken;
     }
 }
 
@@ -830,6 +848,10 @@ void move_player_action(coord_def move)
         // the modifier is 2 * 1/2 = 1;
         int wall_jump_modifier =
             (did_wall_jump && you.attribute[ATTR_SERPENTS_LASH] != 1) ? 2 : 1;
+
+        // Mount movement ignores player slow/haste.
+        if (you.mounted())
+            you.time_taken = 10;
 
         you.time_taken *= wall_jump_modifier * player_movement_speed();
         you.time_taken = div_rand_round(you.time_taken, 10);

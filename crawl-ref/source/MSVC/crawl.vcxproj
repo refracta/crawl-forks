@@ -452,6 +452,7 @@ perl.exe "util/gen-cflg.pl" compflag.h "&lt;UNKNOWN&gt;" "&lt;UNKNOWN&gt;"
     <ClCompile Include="..\branch.cc" />
     <ClCompile Include="..\butcher.cc" />
     <ClCompile Include="..\chardump.cc" />
+	<ClCompile Include="..\chaos.cc" />
     <ClCompile Include="..\cio.cc" />
     <ClCompile Include="..\cloud.cc" />
     <ClCompile Include="..\clua.cc" />
@@ -582,6 +583,7 @@ perl.exe "util/gen-cflg.pl" compflag.h "&lt;UNKNOWN&gt;" "&lt;UNKNOWN&gt;"
     <ClCompile Include="..\melee-attack.cc" />
     <ClCompile Include="..\mon-death.cc" />
     <ClCompile Include="..\mon-ench.cc" />
+	<ClCompile Include="..\mount.cc" />
     <ClCompile Include="..\movement.cc" />
     <ClCompile Include="..\ng-setup.cc" />
     <ClCompile Include="..\ng-wanderer.cc" />
@@ -859,6 +861,7 @@ perl.exe "util/gen-cflg.pl" compflag.h "&lt;UNKNOWN&gt;" "&lt;UNKNOWN&gt;"
     <ClInclude Include="..\butcher.h" />
     <ClInclude Include="..\caction-type.h" />
     <ClInclude Include="..\canned-message-type.h" />
+	<ClInclude Include="..\chaos.h" />
     <ClInclude Include="..\char-set-type.h" />
     <ClInclude Include="..\chardump.h" />
     <ClInclude Include="..\cio.h" />
@@ -1063,6 +1066,7 @@ perl.exe "util/gen-cflg.pl" compflag.h "&lt;UNKNOWN&gt;" "&lt;UNKNOWN&gt;"
     <ClInclude Include="..\monster-type.h" />
     <ClInclude Include="..\monster.h" />
     <ClInclude Include="..\montravel-target-type.h" />
+	<ClInclude Include="..\mount.h" />
     <ClInclude Include="..\movement.h" />
     <ClInclude Include="..\mpr.h" />
     <ClInclude Include="..\msvc.h" />

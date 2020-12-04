@@ -202,7 +202,7 @@ bool actor::gourmand(bool calc_unid, bool items) const
     return items && wearing(EQ_AMULET, AMU_THE_GOURMAND, calc_unid);
 }
 
-bool actor::res_corr(bool calc_unid, bool items) const
+bool actor::res_corr(bool calc_unid, bool items, bool /*mount*/) const
 {
     return items && (wearing(EQ_RINGS, RING_RESIST_CORROSION, calc_unid)
                      || wearing(EQ_BODY_ARMOUR, ARM_ACID_DRAGON_ARMOUR, calc_unid)
@@ -217,9 +217,9 @@ bool actor::cloud_immune(bool calc_unid, bool items) const
                         && is_unrandom_artefact(*body_armour, UNRAND_RCLOUDS)));
 }
 
-bool actor::holy_wrath_susceptible() const
+bool actor::holy_wrath_susceptible(bool mt) const
 {
-    return res_holy_energy() < 0;
+    return res_holy_energy(mt) < 0;
 }
 
 // This is a bit confusing. This is not the function that determines whether or
@@ -349,34 +349,15 @@ int actor::spirit_shield(bool calc_unid, bool items) const
     return ss;
 }
 
-static int _mount_ac()
-{
-    ASSERT(you.mounted());
-
-    switch (you.mount)
-    {
-    case mount_type::hydra:
-        return 3;
-    case mount_type::spider:
-        return 9;
-    case mount_type::drake:
-        return 6;
-    default:
-        mprf(MSGCH_ERROR, "Unhandled Mount AC.");
-        break;
-    }
-    return 0;
-}
-
 int actor::apply_ac(int damage, int max_damage, ac_type ac_rule,
                     int stab_bypass, bool for_real, bool mount) const
 {
     int ac = armour_class();
     if (mount)
-        ac = _mount_ac();
+        ac = mount_ac();
     ac = max(ac - stab_bypass, 0);
 
-    int gdr = gdr_perc();
+    int gdr = mount ? 10 : gdr_perc();
     int saved = 0;
     switch (ac_rule)
     {
@@ -898,7 +879,7 @@ void actor::handle_constriction()
     clear_invalid_constrictions();
 }
 
-bool actor::submerged() const
+bool actor::submerged(bool /*mt*/) const
 {
     return can_submerge_in(pos());
 }
@@ -1163,12 +1144,5 @@ bool actor::evil() const
 
 bool actor::is_dragonkind() const
 {
-    if (mons_genus(mons_species()) == MONS_DRAGON
-        || mons_genus(mons_species()) == MONS_DRAKE
-        || mons_genus(mons_species()) == MONS_HYDRA)
-    {
-        return true;
-    }
-
-    return false;
+    return is_draconic_type(mons_genus(mons_species()));
 }

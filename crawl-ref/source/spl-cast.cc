@@ -1827,16 +1827,20 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
         if (you.props.exists("battlesphere") && allow_fail)
             trigger_battlesphere(&you, beam);
         actor* victim = actor_at(beam.target);
-        if (will_have_passive(passive_t::shadow_spells)
-            && allow_fail
-            && !god_hates_spell(spell, you.religion, !allow_fail)
+        if (allow_fail
             && (flags & spflag::targeting_mask)
             && !(flags & spflag::neutral)
             && (beam.is_enchantment()
                 || battlesphere_can_mirror(spell))
             && (!old_target || (victim && !victim->is_player())))
         {
-            dithmenos_shadow_spell(&beam, spell);
+            mount_drake_breath(&beam);
+
+            if (will_have_passive(passive_t::shadow_spells)
+                && !god_hates_spell(spell, you.religion, !allow_fail))
+            {
+                dithmenos_shadow_spell(&beam, spell);
+            }
         }
         _spellcasting_side_effects(spell, god, !allow_fail);
         return spret::success;
@@ -2036,8 +2040,11 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
     case SPELL_DRAGON_CALL:
         return cast_dragon_call(powc, fail);
 
-    case SPELL_SUMMON_HYDRA:
-        return cast_summon_hydra(&you, powc, god, fail);
+    case SPELL_SUMMON_HYDRA_MOUNT:
+        return gain_mount(mount_type::hydra, powc, fail);
+
+    case SPELL_SUMMON_SPIDER_MOUNT:
+        return gain_mount(mount_type::spider, powc, fail);
 
     case SPELL_SUMMON_MANA_VIPER:
         return cast_summon_mana_viper(powc, god, fail);
@@ -2148,9 +2155,6 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
 
     case SPELL_ICE_FORM:
         return cast_transform(powc, transformation::ice_beast, fail);
-
-    case SPELL_HYDRA_FORM:
-        return cast_transform(powc, transformation::hydra, fail);
 
     case SPELL_DRAGON_FORM:
         return cast_transform(powc, transformation::dragon, fail);
@@ -2604,7 +2608,6 @@ const set<spell_type> removed_spells =
     SPELL_SEE_INVISIBLE,
     SPELL_SINGULARITY,
     SPELL_SONG_OF_SHIELDING,
-    SPELL_SUMMON_SCORPIONS,
     SPELL_SUMMON_ELEMENTAL,
     SPELL_TWISTED_RESURRECTION,
     SPELL_SURE_BLADE,

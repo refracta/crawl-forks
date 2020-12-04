@@ -176,6 +176,8 @@ public:
     int mount_hp_max;
     int mount_hp;
     int mount_hp_regen;
+    int mount_energy;
+    int mount_heads; // for hydra mount
 
     FixedVector< item_def, ENDOFPACK > inv;
     FixedBitVector<NUM_RUNE_TYPES> runes;
@@ -610,6 +612,7 @@ public:
     bool      is_perm_summoned() const override { return false; };
 
     bool        swimming() const override;
+    bool        submerged(bool mt = false) const override;
     bool        floundering() const override;
     bool        extra_balanced() const override;
     bool        shove(const char* feat_name = "") override;
@@ -732,8 +735,8 @@ public:
     bool poison(actor *agent, int amount = 1, bool force = false) override;
     bool sicken(int amount) override;
     void paralyse(actor *, int str, string source = "") override;
-    void petrify(actor *, bool force = false) override;
-    bool fully_petrify(actor *foe, bool quiet = false) override;
+    void petrify(actor *, bool force = false, bool mt = false) override;
+    bool fully_petrify(actor *foe, bool quiet = false, bool mt = false) override;
     void slow_down(actor *, int str, bool do_msg = true) override;
     void confuse(actor *, int strength) override;
     void weaken(actor *attacker, int pow) override;
@@ -743,9 +746,10 @@ public:
         override;
     void splash_with_acid(const actor* evildoer, int acid_strength,
                           bool allow_corrosion = true,
-                          const char* hurt_msg = nullptr) override;
+                          const char* hurt_msg = nullptr,
+                          bool mt = false) override;
     bool corrode_equipment(const char* corrosion_source = "the acid",
-                           int degree = 1) override;
+                           int degree = 1, bool mt = false) override;
     void sentinel_mark(bool trap = false);
     int hurt(const actor *attacker, int amount,
              beam_type flavour = BEAM_MISSILE,
@@ -761,30 +765,30 @@ public:
 
     monster_type mons_species(bool zombie_base = false) const override;
 
-    mon_holy_type holiness(bool temp = true) const override;
+    mon_holy_type holiness(bool temp = true, bool mt = false) const override;
     bool undead_or_demonic() const override;
     bool is_holy(bool spells = true) const override;
     bool is_nonliving(bool temp = true) const override;
     int how_chaotic(bool check_spells_god) const override;
-    bool is_unbreathing() const override;
+    bool is_unbreathing(bool mt = false) const override;
     bool is_insubstantial() const override;
-    int res_acid(bool calc_unid = true) const override;
+    int res_acid(bool calc_unid = true, bool mt = false) const override;
     bool res_damnation() const override { return false; };
-    int res_fire() const override;
-    int res_steam() const override;
-    int res_cold() const override;
-    int res_elec() const override;
-    int res_poison(bool temp = true) const override;
-    int res_rotting(bool temp = true) const override;
-    int res_water_drowning() const override;
+    int res_fire(bool mt = false) const override;
+    int res_steam(bool mt = false) const override;
+    int res_cold(bool mt = false) const override;
+    int res_elec(bool mt = false) const override;
+    int res_poison(bool temp = true, bool mt = false) const override;
+    int res_rotting(bool temp = true, bool mt = false) const override;
+    int res_water_drowning(bool mt = false) const override;
     bool res_sticky_flame() const override;
-    int res_holy_energy() const override;
-    int res_negative_energy(bool intrinsic_only = false) const override;
-    bool res_torment() const override;
-    bool res_tornado() const override;
-    bool res_wind() const override;
-    bool res_petrify(bool temp = true) const override;
-    int res_constrict() const override;
+    int res_holy_energy(bool mt = false) const override;
+    int res_negative_energy(bool intrinsic_only = false, bool mt = false) const override;
+    bool res_torment(bool mt = false) const override;
+    bool res_tornado(bool mt = false) const override;
+    bool res_wind(bool mt = false) const override;
+    bool res_petrify(bool temp = true, bool mt = false) const override;
+    int res_constrict(bool mt = false) const override;
     int res_magic(bool /*calc_unid*/ = true) const override;
     bool no_tele(bool calc_unid = true, bool /*permit_id*/ = true,
                  bool blink = false) const override;
@@ -793,7 +797,7 @@ public:
     bool antimagic_susceptible() const override;
 
     bool gourmand(bool calc_unid = true, bool items = true) const override;
-    bool res_corr(bool calc_unid = true, bool items = true) const override;
+    bool res_corr(bool calc_unid = true, bool items = true, bool mount = false) const override;
     bool clarity(bool calc_unid = true, bool items = true) const override;
     bool stasis() const override;
     bool is_fairy() const override;
@@ -816,8 +820,8 @@ public:
     int silence_radius() const override;
     int liquefying_radius() const override;
     int umbra_radius() const override;
-    bool petrifying() const override;
-    bool petrified() const override;
+    bool petrifying(bool mt = false) const override;
+    bool petrified(bool mt = false) const override;
     bool liquefied_ground() const override;
     bool incapacitated() const override
     {
@@ -921,6 +925,7 @@ public:
 
     bool is_dragonkind() const override;
     bool mounted() const override;
+    string mount_name(bool terse = false) const;
 
 protected:
     void _removed_beholder(bool quiet = false);
@@ -1188,8 +1193,3 @@ bool player_on_orb_run();
 
 void change_drac_colour(draconian_colour new_colour);
 
-void damage_mount(int amount);
-void dismount();
-bool mount_hit();
-int apply_mount_ac(int amount);
-monster_type mount_mons();

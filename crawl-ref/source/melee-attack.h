@@ -49,7 +49,6 @@ public:
     // For enemies:
     // Attack Number - Which of the 4 mon_spec attacks run.
     // Effective Attack Number - used as a counter of how many times its hit this turn for some purposes.
-    int       attack_number;
     int       effective_attack_number;
 
     list<actor*> cleave_targets;
@@ -71,7 +70,7 @@ public:
     // To-hit is a function of attacker/defender, inherited from attack
     int calc_to_hit(bool random = true, bool player_aux = false) override;
 
-    static void chaos_affect_actor(actor *victim);
+    static void chaos_affect_actor(actor *victim, bool md);
 
 private:
     /* Attack phases */

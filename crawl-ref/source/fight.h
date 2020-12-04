@@ -32,7 +32,7 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit = nullptr,
                  int wu_num = 1);
 
 int resist_adjust_damage(const actor *defender, beam_type flavour,
-                         int rawdamage);
+                         int rawdamage, bool mount = false);
 
 int apply_chunked_AC(int dam, int ac);
 

@@ -112,6 +112,57 @@ static bool _handle_player_attack(actor * defender, bool simu, int atk_num,
     return true;
 }
 
+static actor * _hydra_target(actor * original_target)
+{
+    if (original_target->alive()
+        && adjacent(original_target->pos(), you.pos())
+        && !original_target->is_banished()
+        && !original_target->temp_attitude()) // If it's not hostile the melee attack charmed or pacified it.
+    {
+        return original_target;
+    }
+
+    int possible_targets = 0;
+    actor * target = nullptr;
+
+    for (adjacent_iterator ai(you.pos()); ai; ++ai)
+    {
+        actor * enemy = actor_at(*ai);
+
+        if (enemy && !enemy->wont_attack())
+        {
+            possible_targets++;
+            if (one_chance_in(possible_targets))
+                target = enemy;
+        }
+    }
+
+    return target;
+}
+
+// Hydra mount will keep attacking as long as there is a valid adjacent target (pseudocleave).
+static bool _handle_hydra_attack(actor * target, bool simu, bool * did_hit, wu_jian_attack_type wu, int wu_num)
+{
+    if (you.mount != mount_type::hydra)
+        return false;
+
+    bool hit = false;
+
+    for (int i = 1; i <= you.mount_heads; ++i)
+    {
+        target = _hydra_target(target);
+
+        if (!target)
+            return hit;
+
+        hit |= _handle_player_attack(target, simu, 2, i == you.mount_heads ? 1 : 3, did_hit, wu, wu_num);
+
+        if (!you.mounted()) // Spines killed your hydra.
+            return hit;
+    }
+    return hit;
+}
+
 /**
  * Handle melee combat between attacker and defender.
  *
@@ -182,7 +233,24 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
         bool attacked = false;
         coord_def pos = defender->pos();
 
-        bool xtra_atk = (you.mounted() || you.form == transformation::scorpion);
+        bool xtra_atk = you.form == transformation::scorpion;
+
+        if (you.mounted() && !you.petrified(true))
+        {
+            if (you.duration[DUR_MOUNT_SLOW] || you.petrifying(true))
+            {
+                if (you.mount_energy >= 15)
+                {
+                    xtra_atk = true;
+                    you.mount_energy -= 15;
+                }
+            }
+            else if (you.mount_energy >= 10)
+            {
+                xtra_atk = true;
+                you.mount_energy -= 10;
+            }
+        }
 
         if (!you.weapon(0) || is_melee_weapon(*you.weapon(0)))
         {
@@ -201,6 +269,7 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
                         || defender->is_banished()
                         || defender->temp_attitude()) // If it's not hostile the melee attack charmed or pacified it.
                     {
+                        local_time |= _handle_hydra_attack(defender, simu, did_hit, wu, wu_num);
                         return local_time;
                     }
                     else
@@ -233,12 +302,11 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
                 || defender->is_banished()
                 || defender->temp_attitude()) // If it's not hostile the melee attack charmed or pacified it.
             {
+                local_time |= _handle_hydra_attack(defender, simu, did_hit, wu, wu_num);
                 return local_time;
             }
 
-            if (you.mounted())
-                return (_handle_player_attack(defender, simu, 2, 1, did_hit, wu, wu_num) || local_time);
-            else if (you.form == transformation::scorpion)
+            if (you.form == transformation::scorpion)
             {
                 local_time |= _handle_player_attack(defender, simu, 2, 3, did_hit, wu, wu_num);
 
@@ -250,7 +318,14 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
                     return local_time;
                 }
 
-                return (_handle_player_attack(defender, simu, 3, 1, did_hit, wu, wu_num) || local_time);
+                local_time |= _handle_player_attack(defender, simu, 3, 1, did_hit, wu, wu_num);
+            }
+            else if (xtra_atk)
+            {
+                if (you.mount == mount_type::hydra)
+                    local_time |= _handle_hydra_attack(defender, simu, did_hit, wu, wu_num);
+                else
+                    local_time |= _handle_player_attack(defender, simu, 2, 1, did_hit, wu, wu_num);
             }
         }
 
@@ -575,39 +650,39 @@ static inline int get_resistible_fraction(beam_type flavour)
     }
 }
 
-static int _beam_to_resist(const actor* defender, beam_type flavour)
+static int _beam_to_resist(const actor* defender, beam_type flavour, bool mount)
 {
     switch (flavour)
     {
         case BEAM_CRYSTAL_FIRE:
         case BEAM_FIRE:
         case BEAM_LAVA:
-            return defender->res_fire();
+            return defender->res_fire(mount);
         case BEAM_DAMNATION:
             return defender->res_damnation();
         case BEAM_STEAM:
-            return defender->res_steam();
+            return defender->res_steam(mount);
         case BEAM_COLD:
         case BEAM_ICY_DEVASTATION:
         case BEAM_FREEZE:
         case BEAM_ICE:
         case BEAM_CRYSTAL_ICE:
-            return defender->res_cold();
+            return defender->res_cold(mount);
         case BEAM_WATER:
-            return defender->res_water_drowning();
+            return defender->res_water_drowning(mount);
         case BEAM_ELECTRICITY:
-            return defender->res_elec();
+            return defender->res_elec(mount);
         case BEAM_NEG:
         case BEAM_PAIN:
         case BEAM_MALIGN_OFFERING:
-            return defender->res_negative_energy();
+            return defender->res_negative_energy(false, mount);
         case BEAM_ACID:
-            return defender->res_acid();
+            return defender->res_acid(true, mount);
         case BEAM_POISON:
         case BEAM_POISON_ARROW:
-            return defender->res_poison();
+            return defender->res_poison(true, mount);
         case BEAM_HOLY:
-            return defender->res_holy_energy();
+            return defender->res_holy_energy(mount);
         default:
             return 0;
     }
@@ -651,15 +726,16 @@ static bool _dragonskin_affected (beam_type flavour)
  * @param flavour       The type of attack having its damage adjusted.
  *                      (Does not necessarily imply the attack is a beam.)
  * @param rawdamage     The base damage, to be adjusted by resistance.
+ * @param mount         Checking the mount's resistance instead of the players (defender is a player).
  * @return              The amount of damage done, after resists are applied.
  */
-int resist_adjust_damage(const actor* defender, beam_type flavour, int rawdamage)
+int resist_adjust_damage(const actor* defender, beam_type flavour, int rawdamage, bool mount)
 {
-    if (defender->is_fairy())
+    if (defender->is_fairy() && !mount)
         return rawdamage;
 
-    int res = _beam_to_resist(defender, flavour);
-    const bool is_mon = defender->is_monster();
+    int res = _beam_to_resist(defender, flavour, mount);
+    bool is_mon = defender->is_monster();
 
     // This special case is like 90% for Tiamat; unless a different draconian picks up 
     // her cloak since most monsters don't use armour for non-body slot; but it's good
@@ -679,6 +755,8 @@ int resist_adjust_damage(const actor* defender, beam_type flavour, int rawdamage
                 && _dragonskin_affected(flavour))
             res++;
     }
+
+    is_mon |= mount; // Mounts act like monsters in this way.
 
     if (!res)
         return rawdamage;

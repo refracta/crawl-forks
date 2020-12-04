@@ -370,39 +370,39 @@ public:
 
     monster_type mons_species(bool zombie_base = false) const override;
 
-    mon_holy_type holiness(bool /*temp*/ = true) const override;
+    mon_holy_type holiness(bool /*temp*/ = true, bool /*mt*/ = false) const override;
     bool undead_or_demonic() const override;
     bool is_holy(bool check_spells = true) const override;
     bool is_nonliving(bool /*temp*/ = true) const override;
     int how_unclean(bool check_god = true) const;
     int known_chaos(bool check_spells_god = false) const;
     int how_chaotic(bool check_spells_god = false) const override;
-    bool is_unbreathing() const override;
+    bool is_unbreathing(bool /*mt*/ = false) const override;
     bool is_insubstantial() const override;
     bool res_damnation() const override;
     int strength_bonus() const;
     int intelligence_bonus() const;
     int dexterity_bonus() const;
-    int res_fire() const override;
-    int res_steam() const override;
-    int res_cold() const override;
-    int res_elec() const override;
-    int res_poison(bool temp = true) const override;
-    int res_rotting(bool /*temp*/ = true) const override;
-    int res_water_drowning() const override;
+    int res_fire(bool /*mt*/ = false) const override;
+    int res_steam(bool /*mt*/ = false) const override;
+    int res_cold(bool /*mt*/ = false) const override;
+    int res_elec(bool /*mt*/ = false) const override;
+    int res_poison(bool temp = true, bool /*mt*/ = false) const override;
+    int res_rotting(bool /*temp*/ = true, bool /*mt*/ = false) const override;
+    int res_water_drowning(bool /*mt*/ = false) const override;
     bool res_sticky_flame() const override;
-    int res_holy_energy() const override;
-    int res_negative_energy(bool intrinsic_only = false) const override;
-    bool res_torment() const override;
-    int res_acid(bool calc_unid = true) const override;
-    bool res_tornado() const override;
-    bool res_wind() const override;
-    bool res_petrify(bool /*temp*/ = true) const override;
-    int res_constrict() const override;
+    int res_holy_energy(bool /*mt*/ = false) const override;
+    int res_negative_energy(bool intrinsic_only = false, bool /*mt*/ = false) const override;
+    bool res_torment(bool /*mt*/ = false) const override;
+    int res_acid(bool calc_unid = true, bool /*mt*/ = false) const override;
+    bool res_tornado(bool /*mt*/ = false) const override;
+    bool res_wind(bool /*mt*/ = false) const override;
+    bool res_petrify(bool /*temp*/ = true, bool /*mt*/ = false) const override;
+    int res_constrict(bool /*mt*/ = false) const override;
     int res_magic(bool calc_unid = true) const override;
     bool no_tele(bool calc_unid = true, bool permit_id = true,
                  bool blink = false) const override;
-    bool res_corr(bool calc_unid = true, bool items = true) const override;
+    bool res_corr(bool calc_unid = true, bool items = true, bool /*mt*/ = false) const override;
     bool antimagic_susceptible() const override;
 
     bool stasis() const override;
@@ -437,8 +437,8 @@ public:
     int silence_radius() const override;
     int liquefying_radius() const override;
     int umbra_radius() const override;
-    bool petrified() const override;
-    bool petrifying() const override;
+    bool petrified(bool /*mt*/ = false) const override;
+    bool petrifying(bool /*mt*/ = false) const override;
     bool liquefied_ground() const override;
     int natural_regen_rate() const;
     int off_level_regen_rate() const;
@@ -476,8 +476,8 @@ public:
     bool poison(actor *agent, int amount = 1, bool force = false) override;
     bool sicken(int strength) override;
     void paralyse(actor *, int str, string source = "") override;
-    void petrify(actor *, bool force = false) override;
-    bool fully_petrify(actor *foe, bool quiet = false) override;
+    void petrify(actor *, bool force = false, bool /*mt*/ = false) override;
+    bool fully_petrify(actor *foe, bool quiet = false, bool /*mt*/ = false) override;
     void slow_down(actor *, int str, bool do_msg = true) override;
     void confuse(actor *, int strength) override;
     bool drain_exp(actor *, bool quiet = false, int pow = 3) override;
@@ -485,9 +485,10 @@ public:
         override;
     void splash_with_acid(const actor* evildoer, int /*acid_strength*/ = -1,
                           bool /*allow_corrosion*/ = true,
-                          const char* /*hurt_msg*/ = nullptr) override;
+                          const char* /*hurt_msg*/ = nullptr,
+                          bool /*mt*/ = false) override;
     bool corrode_equipment(const char* corrosion_source = "the acid",
-                           int degree = 1) override;
+                           int degree = 1, bool /*mt*/ = false) override;
     int hurt(const actor *attacker, int amount,
              beam_type flavour = BEAM_MISSILE,
              kill_method_type kill_type = KILLED_BY_MONSTER,

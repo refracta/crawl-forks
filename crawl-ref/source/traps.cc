@@ -333,6 +333,9 @@ bool player_caught_in_net()
     if (you.body_size(PSIZE_BODY) >= SIZE_GIANT)
         return false;
 
+    if (you.mounted()) // Player + mount together is too big.
+        return false;
+
     if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
     {
         mpr("A net falls through you.");
@@ -1633,6 +1636,9 @@ void place_webs(int num)
 bool ensnare(actor *fly, int pow)
 {
     ASSERT(fly); // XXX: change to actor &fly
+    if (fly->mounted()) // Player + Mount is always too big.
+        return false;
+
     if (fly->is_web_immune())
         return false;
 

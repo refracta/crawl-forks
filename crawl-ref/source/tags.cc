@@ -1410,6 +1410,8 @@ static void tag_construct_you(writer &th)
     marshallInt(th, you.mount_hp_max);
     marshallInt(th, you.mount_hp);
     marshallInt(th, you.mount_hp_regen);
+    marshallInt(th, you.mount_energy);
+    marshallInt(th, you.mount_heads);
     CANARY;
 
     // how many you.equip?
@@ -2337,6 +2339,37 @@ static void _cap_mutation_at(mutation_type mut, int cap)
     if (you.innate_mutation[mut] > cap)
         you.innate_mutation[mut] = cap;
 }
+
+static spell_type _fixup_player_spell(spell_type s)
+{
+    switch (s)
+    {
+    case SPELL_HYDRA_FORM:
+        return SPELL_NO_SPELL;
+
+    case SPELL_SUMMON_HYDRA:
+        return SPELL_SUMMON_HYDRA_MOUNT;
+
+    default:
+        return s;
+    }
+}
+
+static void _fixup_library_spells(FixedBitVector<NUM_SPELLS>& lib)
+{
+    for (int i = 0; i < NUM_SPELLS; ++i)
+    {
+        spell_type newspell = _fixup_player_spell((spell_type)i);
+
+        if (newspell == SPELL_NO_SPELL)
+            lib.set(i, false);
+        else if (newspell != (spell_type)i)
+        {
+            lib.set(newspell, lib[i]);
+            lib.set(i, false);
+        }
+    }
+}
 #endif
 
 static void tag_read_you(reader &th)
@@ -2411,6 +2444,11 @@ static void tag_read_you(reader &th)
     }
     if (th.getMinorVersion() >= TAG_MINOR_MOUNT_REGEN)
         you.mount_hp_regen  = unmarshallInt(th);
+    if (th.getMinorVersion() >= TAG_MINOR_MOUNT_ENERGY)
+    {
+        you.mount_energy    = unmarshallInt(th);
+        you.mount_heads     = unmarshallInt(th);
+    }
 #endif
     EAT_CANARY;
 
@@ -2557,7 +2595,10 @@ static void tag_read_you(reader &th)
 #endif
     unmarshallFixedBitVector<NUM_SPELLS>(th, you.spell_library);
     unmarshallFixedBitVector<NUM_SPELLS>(th, you.hidden_spells);
+
 #if TAG_MAJOR_VERSION == 34
+    _fixup_library_spells(you.spell_library);
+    _fixup_library_spells(you.hidden_spells);
     }
 #endif
     // how many spells?

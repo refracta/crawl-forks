@@ -137,6 +137,7 @@ enum class fail_basis
     xl,
     evo,
     invo,
+    spider, // spellpower-based fail chance for spider mount.
 };
 
 /**
@@ -211,6 +212,8 @@ struct failure_info
                 = piety_fail_denom ? you.piety / piety_fail_denom : 0;
             return base_chance - sk_mod - piety_mod;
         }
+        case fail_basis::spider:
+            return base_chance - (calc_spell_power(SPELL_SUMMON_SPIDER_MOUNT, true) / 10 * variable_fail_mult);
         default:
             die("unknown failure basis %d!", (int)basis);
         }
@@ -332,6 +335,9 @@ static const ability_def Ability_List[] =
 
     { ABIL_HOP, "Hop", 0, 0, 0, 0, {}, abflag::none },
 
+    { ABIL_SPIDER_JUMP, "Spider Jump", 0, 0, 0, 0, {fail_basis::spider, 60, 8}, abflag::none },
+    { ABIL_SPIDER_WEB, "Web Snare", 0, 0, 0, 0, {fail_basis::spider, 80, 6}, abflag::none },
+
     // EVOKE abilities use Evocations and come from items.
     // Teleportation and Blink can also come from mutations
     // so we have to distinguish them (see above). The off items
@@ -366,6 +372,8 @@ static const ability_def Ability_List[] =
     { ABIL_END_TRANSFORMATION, "End Transformation",
       0, 0, 0, 0, {}, abflag::starve_ok },
     { ABIL_END_UPRISING, "End Uprising",
+        0, 0, 0, 0,{}, abflag::starve_ok },
+    { ABIL_DISMOUNT, "Dismount",
         0, 0, 0, 0,{}, abflag::starve_ok },
 
 
@@ -1031,8 +1039,6 @@ ability_type fixup_ability(ability_type ability)
         return ability;
 
     case ABIL_CHOOSE_BAHAMUT_DRAKE:
-        // BCADDO: Reenable when you feel comfortable
-        return ABIL_NON_ABILITY;
     case ABIL_CHOOSE_TIAMAT_DRAKE:
         if (you.props.exists(BAHAMUT_TIAMAT_CHOICE2_KEY))
             return ABIL_NON_ABILITY;
@@ -1344,10 +1350,43 @@ bool activate_ability()
 
 static bool _can_hop(bool quiet)
 {
-    if (!you.duration[DUR_NO_HOP])
+    if (you.duration[DUR_NO_HOP])
+    {
+        if (!quiet)
+            mpr("Your legs are too worn out to hop.");
+        return false;
+    }
+    if (you.mounted())
+    {
+        if (!quiet)
+            mpr("You cannot hop off of your mount.");
+        return false;
+    }
+    if (!form_keeps_mutations())
+    {
+        if (!quiet)
+            mpr("You cannot hop in your current form.");
+        return false;
+    }
+    return true;
+}
+
+static bool _can_jump(bool quiet, bool jump)
+{
+    if (!you.duration[DUR_MOUNT_BREATH] && !you.duration[DUR_ENSNARE])
         return true;
     if (!quiet)
-        mpr("Your legs are too worn out to hop.");
+    {
+        if (you.duration[DUR_MOUNT_BREATH])
+            mpr("Your spider is still catching its breath.");
+        if (you.duration[DUR_ENSNARE])
+        {
+            if (jump)
+                mpr("Your spider can't jump while it's legs are covered in web.");
+            else
+                mpr("Your spider already prepped a web.");
+        }
+    }
     return false;
 }
 
@@ -1688,6 +1727,10 @@ static bool _check_ability_possible(const ability_def& abil, bool quiet = false)
 
     case ABIL_HOP:
         return _can_hop(quiet);
+
+    case ABIL_SPIDER_WEB:
+    case ABIL_SPIDER_JUMP:
+        return _can_jump(quiet, abil.ability == ABIL_SPIDER_JUMP);
 
     case ABIL_BLINK:
     case ABIL_EVOKE_BLINK:
@@ -2039,6 +2082,23 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         else
             return spret::abort;
 
+    case ABIL_SPIDER_JUMP:
+        if (_can_jump(false, true))
+            return frog_hop(fail, true);
+        else
+            return spret::abort;
+
+    case ABIL_SPIDER_WEB:
+        if (_can_jump(false, false))
+        {
+            fail_check();
+            you.set_duration(DUR_ENSNARE, 3 + random2(calc_spell_power(SPELL_SUMMON_SPIDER_MOUNT, true) / 20));
+            mprf(MSGCH_DURATION, "Your spider prepares a web to ensnare its next melee target.");
+            return spret::success;
+        }
+        else
+            return spret::abort;
+
     case ABIL_SPIT_POISON:      // Naga poison spit
     {
         int power = 10 + you.experience_level;
@@ -2187,6 +2247,8 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
                 &you, div_round_up(power, 10) - 1);
         }
 
+        mount_drake_breath(&beam);
+
         you.increase_duration(DUR_BREATH_WEAPON,
             3 + random2(10) + random2(30 - you.experience_level));
         break;
@@ -2216,6 +2278,8 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
 
         zapping(ZAP_BREATHE_ACID, drac_breath_power(empowered),
                 beam, false, "You spit a glob of acid.");
+
+        mount_drake_breath(&beam);
 
         you.increase_duration(DUR_BREATH_WEAPON,
                           3 + random2(10) + random2(30 - you.experience_level));
@@ -2419,6 +2483,9 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         if (empowered && zap != ZAP_BREATHE_CHAOS)
             beam.origin_spell = SPELL_EMPOWERED_BREATH;
 
+        if (zapping(zap, power, beam, true, m.c_str()) == spret::abort)
+            return spret::abort;
+
         if (empowered && zap == ZAP_BREATHE_HOLY_FLAMES)
         {
             targeter_radius hitfunc(&you, LOS_NO_TRANS);
@@ -2435,9 +2502,6 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
 
             holy_word(power * 5, HOLY_WORD_BREATH, you.pos(), false, &you);
         }
-
-        if (zapping(zap, power, beam, true, m.c_str()) == spret::abort)
-            return spret::abort;
 
         if (empowered && zap == ZAP_BREATHE_CHAOS)
             create_vortices(&you);
@@ -2477,6 +2541,8 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
                 }
             }
         }
+
+        mount_drake_breath(&beam);
 
         you.increase_duration(DUR_BREATH_WEAPON,
                       3 + random2(10) + random2(30 - you.experience_level));
@@ -2623,6 +2689,12 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         fail_check();
         mprf(MSGCH_DURATION, "You stop raising skeletons from your steps.");
         you.attribute[ATTR_SKELETON] = 0;
+        break;
+
+    case ABIL_DISMOUNT:
+        fail_check();
+        mprf(MSGCH_DURATION, "You dismiss your mount.");
+        dismount();
         break;
 
     // INVOCATIONS:
@@ -3861,7 +3933,7 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
             _add_talent(talents, ABIL_SHAFT_SELF, check_confused);
     }
 
-    if (you.get_mutation_level(MUT_HOP))
+    if (you.get_mutation_level(MUT_HOP) && (form_keeps_mutations() && !you.mounted() || include_unusable))
         _add_talent(talents, ABIL_HOP, check_confused);
 
     // Spit Poison, possibly upgraded to Breathe Poison.
@@ -3892,12 +3964,11 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
         _add_talent(talents, ABIL_TRAN_BAT, check_confused);
     }
 
-    if (you.racial_permanent_flight() && !you.attribute[ATTR_PERM_FLIGHT])
+    if (you.racial_permanent_flight() && !you.attribute[ATTR_PERM_FLIGHT] && !you.mounted())
     {
         // Tengu can fly starting at XL 5
-        // Black draconians and gargoyles get permaflight at XL 14, but they
+        // Draconians and gargoyles get permaflight at XL 14, but they
         // don't get the tengu movement/evasion bonuses
-        // Other dracs can mutate big wings whenever as well.
         _add_talent(talents, ABIL_FLY, check_confused);
     }
 
@@ -3920,6 +3991,9 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
 
     if (you.attribute[ATTR_SKELETON])
         _add_talent(talents, ABIL_END_UPRISING, check_confused);
+
+    if (you.mounted())
+        _add_talent(talents, ABIL_DISMOUNT, check_confused);
 
     if (you.get_mutation_level(MUT_BLINK))
         _add_talent(talents, ABIL_BLINK, check_confused);
@@ -4000,6 +4074,13 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
             if (you.airborne() && !you.attribute[ATTR_FLIGHT_UNCANCELLABLE])
                 _add_talent(talents, ABIL_STOP_FLYING, check_confused);
         }
+    }
+
+    // Mount-based Talents (currently only Spider Mount has any)
+    if (you.mounted() && (you.mount == mount_type::spider))
+    {
+        _add_talent(talents, ABIL_SPIDER_JUMP, check_confused);
+        _add_talent(talents, ABIL_SPIDER_WEB, check_confused);
     }
 
     // Find hotkeys for the non-hotkeyed talents.

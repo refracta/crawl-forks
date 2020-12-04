@@ -80,7 +80,7 @@ public:
     virtual bool blink_to(const coord_def &c, bool quiet = false) = 0;
 
     virtual bool      swimming() const = 0;
-    bool submerged() const;
+    virtual bool      submerged(bool mt = false) const;
     virtual bool      can_submerge_in(const coord_def &c) const;
     virtual bool      floundering() const = 0;
 
@@ -220,8 +220,8 @@ public:
     virtual bool poison(actor *attacker, int amount = 1, bool force = false) = 0;
     virtual bool sicken(int amount) = 0;
     virtual void paralyse(actor *attacker, int strength, string source = "") = 0;
-    virtual void petrify(actor *attacker, bool force = false) = 0;
-    virtual bool fully_petrify(actor *foe, bool quiet = false) = 0;
+    virtual void petrify(actor *attacker, bool force = false, bool mt = false) = 0;
+    virtual bool fully_petrify(actor *foe, bool quiet = false, bool mt = false) = 0;
     virtual void slow_down(actor *attacker, int strength, bool do_msg = true) = 0;
     virtual void confuse(actor *attacker, int strength) = 0;
     virtual void put_to_sleep(actor *attacker, int strength,
@@ -232,9 +232,10 @@ public:
     virtual void drain_stat(stat_type /*stat*/, int /*amount*/) { }
     virtual void splash_with_acid(const actor* evildoer, int acid_strength = -1,
                                   bool allow_corrosion = true,
-                                  const char* hurt_msg = nullptr) = 0;
+                                  const char* hurt_msg = nullptr,
+                                  bool mt = false) = 0;
     virtual bool corrode_equipment(const char* corrosion_source = "the acid",
-                                   int degree = 1) = 0;
+                                   int degree = 1, bool mt = false) = 0;
 
     virtual bool can_hibernate(bool holi_only = false,
                                bool intrinsic_only = false) const;
@@ -282,32 +283,32 @@ public:
 
     virtual monster_type mons_species(bool zombie_base = false) const = 0;
 
-    virtual mon_holy_type holiness(bool temp = true) const = 0;
+    virtual mon_holy_type holiness(bool temp = true, bool mt = false) const = 0;
     virtual bool undead_or_demonic() const = 0;
-    virtual bool holy_wrath_susceptible() const;
+    virtual bool holy_wrath_susceptible(bool mt = false) const;
     virtual bool is_holy(bool spells = true) const = 0;
     virtual bool is_nonliving(bool temp = true) const = 0;
     bool evil() const;
     virtual int  how_chaotic(bool check_spells_god = false) const = 0;
-    virtual bool is_unbreathing() const = 0;
+    virtual bool is_unbreathing(bool mt = false) const = 0;
     virtual bool is_insubstantial() const = 0;
-    virtual int res_acid(bool calc_unid = true) const = 0;
+    virtual int res_acid(bool calc_unid = true, bool mt = false) const = 0;
     virtual bool res_damnation() const = 0;
-    virtual int res_fire() const = 0;
-    virtual int res_steam() const = 0;
-    virtual int res_cold() const = 0;
-    virtual int res_elec() const = 0;
-    virtual int res_poison(bool temp = true) const = 0;
-    virtual int res_rotting(bool temp = true) const = 0;
-    virtual int res_water_drowning() const = 0;
+    virtual int res_fire(bool mt = false) const = 0;
+    virtual int res_steam(bool mt = false) const = 0;
+    virtual int res_cold(bool mt = false) const = 0;
+    virtual int res_elec(bool mt = false) const = 0;
+    virtual int res_poison(bool temp = true, bool mt = false) const = 0;
+    virtual int res_rotting(bool temp = true, bool mt = false) const = 0;
+    virtual int res_water_drowning(bool mt = false) const = 0;
     virtual bool res_sticky_flame() const = 0;
-    virtual int res_holy_energy() const = 0;
-    virtual int res_negative_energy(bool intrinsic_only = false) const = 0;
-    virtual bool res_torment() const = 0;
-    virtual bool res_tornado() const = 0;
-    virtual bool res_wind() const = 0;
-    virtual bool res_petrify(bool temp = true) const = 0;
-    virtual int res_constrict() const = 0;
+    virtual int res_holy_energy(bool mt = false) const = 0;
+    virtual int res_negative_energy(bool intrinsic_only = false, bool mt = false) const = 0;
+    virtual bool res_torment(bool mt = false) const = 0;
+    virtual bool res_tornado(bool mt = false) const = 0;
+    virtual bool res_wind(bool mt = false) const = 0;
+    virtual bool res_petrify(bool temp = true, bool mt = false) const = 0;
+    virtual int res_constrict(bool mt = false) const = 0;
     virtual int res_magic(bool calc_unid = true) const = 0;
     virtual int check_res_magic(int power);
     virtual bool no_tele(bool calc_unid = true, bool permit_id = true,
@@ -317,7 +318,7 @@ public:
 
     virtual bool gourmand(bool calc_unid = true, bool items = true) const;
 
-    virtual bool res_corr(bool calc_unid = true, bool items = true) const;
+    virtual bool res_corr(bool calc_unid = true, bool items = true, bool mount = false) const;
     bool has_notele_item(bool calc_unid = true,
                          vector<item_def> *matches = nullptr) const;
     virtual bool stasis() const = 0;
@@ -377,8 +378,8 @@ public:
     virtual int liquefying_radius() const = 0;
     virtual int umbra_radius() const = 0;
 
-    virtual bool petrifying() const = 0;
-    virtual bool petrified() const = 0;
+    virtual bool petrifying(bool mt = false) const = 0;
+    virtual bool petrified(bool mt = false) const = 0;
 
     virtual bool liquefied_ground() const = 0;
 
