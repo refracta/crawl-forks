@@ -2108,6 +2108,9 @@ bool is_brandable_weapon(const item_def &wpn, bool allow_ranged, bool divine)
     if (wpn.base_type == OBJ_SHIELDS && is_hybrid(wpn.sub_type))
         return true;
 
+    if (wpn.is_type(OBJ_ARMOURS, ARM_CLAW))
+        return true;
+
     return false;
 }
 
