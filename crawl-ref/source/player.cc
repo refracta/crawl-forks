@@ -251,7 +251,12 @@ static bool _check_moveto_dangerous(const coord_def& p, const string& msg, const
     if (feat_is_water(env.grid(p)))
     {
         if (species_likes_water(you.species))
-            mpr("You can't swim in your current form.");
+        {
+            if (you.mounted())
+                mpr("Your mount can't swim.");
+            else
+                mpr("You can't swim in your current form.");
+        }
         prompt = make_stringf("Do you really want to %s into deep %s?",
             move_verb.c_str(), env.grid(p) == DNGN_DEEP_SLIMY_WATER ? "slime" : "water");
     }
@@ -560,7 +565,7 @@ void moveto_location_effects(dungeon_feature_type old_feat,
             {
                 if (!you.petrified())
                     mprf(MSGCH_WARN, "You %s the boiling magma.", stepped ? "enter" : "fall into");
-                mprf(MSGCH_WARN, "This stuff is boiling hot and burns your body!");
+                mprf(MSGCH_WARN, "This stuff is boiling hot and burns your %s!", you.mounted() ? "mount" : "body");
                 if (!you.petrified())
                     mprf(MSGCH_WARN, "The liquefied rock is difficult to stand upon; moving through it is going to be slow.");
             }
@@ -635,11 +640,12 @@ bool is_feat_dangerous(dungeon_feature_type grid, bool permanently,
     {
         return false;
     }
-    else if (grid == DNGN_DEEP_WATER && !player_likes_water(permanently)
-             || grid == DNGN_LAVA || grid == DNGN_DEEP_SLIMY_WATER && (!player_likes_water(permanently) || !you_worship(GOD_JIYVA)))
-    {
+    if (grid == DNGN_LAVA)
         return true;
-    }
+    if (grid == DNGN_SLIMY_WATER || grid == DNGN_DEEP_SLIMY_WATER && !you_worship(GOD_JIYVA))
+        return true;
+    if (grid == DNGN_DEEP_WATER || grid == DNGN_DEEP_SLIMY_WATER)
+        return (!player_likes_water(permanently) || !permanently && you.mounted() && !you.can_swim());
     else
         return false;
 }
@@ -6086,7 +6092,7 @@ bool player::airborne() const
 
     if (you.mounted())
     {
-        if (you.mount == mount_type::drake)
+        if (you.mount == mount_type::drake && !you.duration[DUR_MOUNT_PETRIFIED])
             return true;
         return false;
     }
@@ -6132,12 +6138,13 @@ bool player::in_liquid() const
 
 bool player::can_swim(bool permanently) const
 {
+    if (mounted())
+        return (!permanently || species_can_swim(species)) && mount == mount_type::hydra;
     // Transforming could be fatal if it would cause unequipment of
     // stat-boosting boots or heavy armour.
-    return ((!mounted() && species_can_swim(species))
+    return (species_can_swim(species)
             || body_size(PSIZE_BODY) >= SIZE_GIANT
-            || (!permanently && form_can_swim())
-            || (!permanently && mounted() && mount == mount_type::hydra));
+            || (!permanently && form_can_swim()));
 }
 
 /// Can the player do a passing imitation of a notorious Palestinian?

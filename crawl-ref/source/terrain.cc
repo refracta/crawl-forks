@@ -1684,6 +1684,7 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
     monster *mon = act->as_monster();
     mid_t source = MID_NOBODY;
     string aux_source = "";
+    bool mount = act->is_player() && you.mounted();
 
     // Handling death messages and who gets the EXP.
     if (act->confused())
@@ -1715,15 +1716,29 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
         if (act->is_player())
         {
             original = (12 + roll_dice(3, 21));
-            hurted = resist_adjust_damage(act, BEAM_FIRE, original);
+            hurted = resist_adjust_damage(act, BEAM_FIRE, original, mount);
             actual = timescale_damage(act, hurted);
-            if (hurted > original)
-                mprf("The lava burns you terribly%s", attack_strength_punctuation(actual).c_str());
+
+            if (mount)
+            {
+                mprf("The lava burns your %s%s%s%s",
+                    you.mount_name(true).c_str(),
+                    hurted > original ? " terribly" : "",
+                    attack_strength_punctuation(actual).c_str(),
+                    hurted < original ? " It resists." : "");
+                damage_mount(actual);
+            }
             else
-                mprf("The lava burns%s", attack_strength_punctuation(actual).c_str());
-            if (hurted < original)
-                canned_msg(MSG_YOU_RESIST);
-            ouch(actual , KILLED_BY_LAVA, source, aux_source.c_str());
+            {
+                if (hurted > original)
+                    mprf("The lava burns you terribly%s", attack_strength_punctuation(actual).c_str());
+                else
+                    mprf("The lava burns%s", attack_strength_punctuation(actual).c_str());
+                if (hurted < original)
+                    canned_msg(MSG_YOU_RESIST);
+                ouch(actual, KILLED_BY_LAVA, source, aux_source.c_str());
+            }
+            you.expose_to_element(BEAM_FIRE, 4);
         }
         else
         {
@@ -1752,35 +1767,47 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
         {
             if (you.drowning())
             {
-                if (!you.res_water_drowning() && you.petrified())
+                if (mount) // Should only happen to spider mount most the time (drake will have it happen if forced down by roots, etc.)
                 {
-                    actual = timescale_damage(act, roll_dice(2, 10));
-                    mprf("You are drowning%s", attack_strength_punctuation(actual).c_str());
-                    ouch(actual, KILLED_BY_WATER, source, aux_source.c_str());
-                }
-                else if (coinflip())
-                {
-                    if (!silenced(you.pos()))
+                    if (!you.res_water_drowning(true))
                     {
-                        mpr("Your struggles to swim create loud splashing noises!");
-                        noisy(25, you.position);
+                        actual = timescale_damage(act, roll_dice(2, 10));
+                        mprf("Your %s drowns%s", you.mount_name(true).c_str(), attack_strength_punctuation(actual).c_str());
+                        damage_mount(actual);
                     }
                 }
-                else if (!you.res_water_drowning() && coinflip())
+                else
                 {
-                    actual = timescale_damage(act, roll_dice(2, 10));
-                    if (coinflip())
-                        mprf("Your lungs burn in need of oxygen%s", attack_strength_punctuation(actual).c_str());
-                    else if (terrain == DNGN_DEEP_WATER)
+                    if (!you.res_water_drowning() && you.petrified())
                     {
+                        actual = timescale_damage(act, roll_dice(2, 10));
+                        mprf("You are drowning%s", attack_strength_punctuation(actual).c_str());
+                        ouch(actual, KILLED_BY_WATER, source, aux_source.c_str());
+                    }
+                    else if (coinflip())
+                    {
+                        if (!silenced(you.pos()))
+                        {
+                            mpr("Your struggles to swim create loud splashing noises!");
+                            noisy(25, you.position);
+                        }
+                    }
+                    else if (!you.res_water_drowning() && coinflip())
+                    {
+                        actual = timescale_damage(act, roll_dice(2, 10));
                         if (coinflip())
-                            mprf("You are drowning%s", attack_strength_punctuation(actual).c_str());
+                            mprf("Your lungs burn in need of oxygen%s", attack_strength_punctuation(actual).c_str());
+                        else if (terrain == DNGN_DEEP_WATER)
+                        {
+                            if (coinflip())
+                                mprf("You are drowning%s", attack_strength_punctuation(actual).c_str());
+                            else
+                                mprf("You inhale water%s", attack_strength_punctuation(actual).c_str());
+                        }
                         else
-                            mprf("You inhale water%s", attack_strength_punctuation(actual).c_str());
+                            mprf("You injest ooze%s", attack_strength_punctuation(actual).c_str());
+                        ouch(actual, KILLED_BY_WATER, source, aux_source.c_str());
                     }
-                    else
-                        mprf("You injest ooze%s", attack_strength_punctuation(actual).c_str());
-                    ouch(actual, KILLED_BY_WATER, source, aux_source.c_str());
                 }
             }
         }
@@ -1805,7 +1832,7 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
             aux_source = make_stringf(aux_source.c_str(), "slime");
 
         original = (1 + roll_dice(2, 4));
-        hurted = resist_adjust_damage(act, BEAM_ACID, original);
+        hurted = resist_adjust_damage(act, BEAM_ACID, original, mount);
         actual = timescale_damage(act, hurted);
 
         if (!actual)
@@ -1813,13 +1840,25 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
 
         if (act->is_player() && !you_worship(GOD_JIYVA))
         {
-            if (hurted > original)
-                mprf("The acidic ooze burns you terribly%s", attack_strength_punctuation(actual).c_str());
+            if (mount)
+            {
+                mprf("The acidic ooze burns your %s%s%s%s",
+                    you.mount_name(true).c_str(),
+                    hurted > original ? " terribly" : "",
+                    attack_strength_punctuation(actual).c_str(),
+                    hurted < original ? " It resists." : "");
+                damage_mount(actual);
+            }
             else
-                mprf("The acidic ooze burns%s", attack_strength_punctuation(actual).c_str());
-            if (hurted < original)
-                canned_msg(MSG_YOU_RESIST);
-            ouch(actual, KILLED_BY_ACID, source, aux_source.c_str());
+            {
+                if (hurted > original)
+                    mprf("The acidic ooze burns you terribly%s", attack_strength_punctuation(actual).c_str());
+                else
+                    mprf("The acidic ooze burns%s", attack_strength_punctuation(actual).c_str());
+                if (hurted < original)
+                    canned_msg(MSG_YOU_RESIST);
+                ouch(actual, KILLED_BY_ACID, source, aux_source.c_str());
+            }
         }
 
         else if (act->is_monster() && !(mons_primary_habitat(*mon) == HT_SLIME) && !(mon->res_acid() > 2))
@@ -1833,7 +1872,7 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
             hurted = 0;
 
         if (act->alive() && x_chance_in_y(hurted, 20))
-            act->corrode_equipment("acidic ooze", 1);
+            act->corrode_equipment("acidic ooze", 1, mount);
     }
 }
 

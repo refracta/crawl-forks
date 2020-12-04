@@ -247,10 +247,16 @@ bool fill_status_info(int status, status_info& inf)
         }
 
         int statuses = mount_statuses();
+        statuses += you.submerged(true);
 
         if (statuses > 0)
         {
             inf.light_text += " (";
+            if (you.submerged(true))
+            {
+                inf.light_text += "subm";
+                _mount_status_iterate(statuses, inf);
+            }
             if (you.duration[DUR_MOUNT_BREATH])
             {
                 inf.light_text += "breath";
@@ -296,7 +302,7 @@ bool fill_status_info(int status, status_info& inf)
                 inf.light_text += "PETR";
                 _mount_status_iterate(statuses, inf);
             }
-            if (you.duration[DUR_MOUNT_PETRIFIED])
+            if (you.duration[DUR_MOUNT_BARBS])
             {
                 inf.light_text += "barbs";
                 _mount_status_iterate(statuses, inf);

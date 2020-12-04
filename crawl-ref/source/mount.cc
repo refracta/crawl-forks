@@ -128,6 +128,7 @@ spret gain_mount(mount_type mount, int pow, bool fail)
         if (were_flying)
             land_player();
 
+        you.redraw_hit_points = true;
         redraw_screen();
     }
 
@@ -137,6 +138,7 @@ spret gain_mount(mount_type mount, int pow, bool fail)
 void damage_mount(int amount)
 {
     you.mount_hp -= amount;
+    you.redraw_hit_points = true;
     if (you.mount_hp <= 0)
     {
         mprf(MSGCH_DANGER, "Your %s dies.", you.mount_name().c_str());
