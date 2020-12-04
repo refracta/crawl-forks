@@ -80,7 +80,7 @@ public:
     virtual bool blink_to(const coord_def &c, bool quiet = false) = 0;
 
     virtual bool      swimming() const = 0;
-    bool submerged() const;
+    virtual bool      submerged(bool mt = false) const;
     virtual bool      can_submerge_in(const coord_def &c) const;
     virtual bool      floundering() const = 0;
 
@@ -283,14 +283,14 @@ public:
 
     virtual monster_type mons_species(bool zombie_base = false) const = 0;
 
-    virtual mon_holy_type holiness(bool temp = true) const = 0;
+    virtual mon_holy_type holiness(bool temp = true, bool mt = false) const = 0;
     virtual bool undead_or_demonic() const = 0;
     virtual bool holy_wrath_susceptible(bool mt = false) const;
     virtual bool is_holy(bool spells = true) const = 0;
     virtual bool is_nonliving(bool temp = true) const = 0;
     bool evil() const;
     virtual int  how_chaotic(bool check_spells_god = false) const = 0;
-    virtual bool is_unbreathing() const = 0;
+    virtual bool is_unbreathing(bool mt = false) const = 0;
     virtual bool is_insubstantial() const = 0;
     virtual int res_acid(bool calc_unid = true, bool mt = false) const = 0;
     virtual bool res_damnation() const = 0;

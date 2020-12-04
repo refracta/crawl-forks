@@ -374,7 +374,7 @@ static int _mount_ac()
     if (you.duration[DUR_MOUNT_PETRIFIED])
         ac *= 3;
 
-    if (you.submerged())
+    if (you.submerged(true))
         ac += 4;
 
     if (you.duration[DUR_QAZLAL_AC])
@@ -922,7 +922,7 @@ void actor::handle_constriction()
     clear_invalid_constrictions();
 }
 
-bool actor::submerged() const
+bool actor::submerged(bool /*mt*/) const
 {
     return can_submerge_in(pos());
 }

@@ -370,14 +370,14 @@ public:
 
     monster_type mons_species(bool zombie_base = false) const override;
 
-    mon_holy_type holiness(bool /*temp*/ = true) const override;
+    mon_holy_type holiness(bool /*temp*/ = true, bool /*mt*/ = false) const override;
     bool undead_or_demonic() const override;
     bool is_holy(bool check_spells = true) const override;
     bool is_nonliving(bool /*temp*/ = true) const override;
     int how_unclean(bool check_god = true) const;
     int known_chaos(bool check_spells_god = false) const;
     int how_chaotic(bool check_spells_god = false) const override;
-    bool is_unbreathing() const override;
+    bool is_unbreathing(bool /*mt*/ = false) const override;
     bool is_insubstantial() const override;
     bool res_damnation() const override;
     int strength_bonus() const;

@@ -4388,10 +4388,12 @@ int melee_attack::martial_damage_mod(int dam)
     return dam;
 }
 
-void melee_attack::chaos_affect_actor(actor *victim)
+void melee_attack::chaos_affect_actor(actor *victim, bool md)
 {
     ASSERT(victim); // XXX: change to actor &victim
     melee_attack attk(victim, victim);
+    if (md)
+        attk.mount_defend = true;
     attk.weapon = nullptr;
     attk.fake_chaos_attack = true;
     attk.chaos_affects_defender();

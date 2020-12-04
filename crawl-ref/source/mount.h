@@ -23,5 +23,6 @@ void slow_mount(int duration);
 void rot_mount(int amount, bool needs_message = true);
 int mount_statuses();
 int mount_hd();
+bool mount_submerged();
 
 spret gain_mount(mount_type mount, int pow, bool fail);

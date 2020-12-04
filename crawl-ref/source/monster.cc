@@ -3548,7 +3548,7 @@ void monster::suicide(int hp_target)
     hit_points = hp_target;
 }
 
-mon_holy_type monster::holiness(bool /*temp*/) const
+mon_holy_type monster::holiness(bool /*temp*/, bool /*mount*/) const
 {
     // zombie kraken tentacles
     if (testbits(flags, MF_FAKE_UNDEAD))
@@ -3705,7 +3705,7 @@ int monster::how_chaotic(bool check_spells_god) const
         return is_shapeshifter() + known_chaos(check_spells_god);
 }
 
-bool monster::is_unbreathing() const
+bool monster::is_unbreathing(bool /*mount*/) const
 {
     return mons_is_unbreathing(type);
 }

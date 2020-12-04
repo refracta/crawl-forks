@@ -6970,9 +6970,12 @@ bool player::heal(int amount)
  *                  petrification...
  * @return          The player's holiness category.
  */
-mon_holy_type player::holiness(bool temp) const
+mon_holy_type player::holiness(bool temp, bool mt) const
 {
     mon_holy_type holi;
+
+    if (mt)
+        return mons_class_holiness(mount_mons());
 
     // Lich form takes precedence over a species' base holiness
     if (undead_state(temp))
@@ -7044,8 +7047,11 @@ int player::how_chaotic(bool /*check_spells_god*/) const
  *
  * @return  Whether the player has no need to breathe.
  */
-bool player::is_unbreathing() const
+bool player::is_unbreathing(bool mt) const
 {
+    if (mt) // no mount is currently unbreathing.
+        return false;
+
     return !get_form()->breathes || petrified()
         || get_mutation_level(MUT_UNBREATHING)
         || get_mutation_level(MUT_UNBREATHING_FORM);

@@ -126,6 +126,13 @@ bool player::swimming() const
     return in_water() && can_swim();
 }
 
+bool player::submerged(bool mt) const
+{
+    if (mt)
+        return mount_submerged();
+    return actor::submerged();
+}
+
 bool player::floundering() const
 {
     return in_water() && !can_swim() && !extra_balanced();

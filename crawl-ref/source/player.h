@@ -612,6 +612,7 @@ public:
     bool      is_perm_summoned() const override { return false; };
 
     bool        swimming() const override;
+    bool        submerged(bool mt = false) const override;
     bool        floundering() const override;
     bool        extra_balanced() const override;
     bool        shove(const char* feat_name = "") override;
@@ -764,12 +765,12 @@ public:
 
     monster_type mons_species(bool zombie_base = false) const override;
 
-    mon_holy_type holiness(bool temp = true) const override;
+    mon_holy_type holiness(bool temp = true, bool mt = false) const override;
     bool undead_or_demonic() const override;
     bool is_holy(bool spells = true) const override;
     bool is_nonliving(bool temp = true) const override;
     int how_chaotic(bool check_spells_god) const override;
-    bool is_unbreathing() const override;
+    bool is_unbreathing(bool mt = false) const override;
     bool is_insubstantial() const override;
     int res_acid(bool calc_unid = true, bool mt = false) const override;
     bool res_damnation() const override { return false; };

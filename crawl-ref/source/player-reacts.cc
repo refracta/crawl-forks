@@ -1004,6 +1004,7 @@ void player_reacts()
     abyss_maybe_spawn_xp_exit();
 
     actor_apply_cloud(&you);
+    actor_apply_cloud(&you, true);
     actor_apply_toxic_bog(&you);
 
     if (!you.airborne())

@@ -9,6 +9,7 @@
 
 #include <cstring>
 
+#include "env.h"
 #include "message.h"
 #include "mpr.h"
 #include "output.h"
@@ -355,4 +356,12 @@ int mount_hd()
         break;
     }
     return 1;
+}
+
+bool mount_submerged()
+{
+    if (you.airborne())
+        return false;
+
+    return (grd(you.pos()) == DNGN_DEEP_WATER || grd(you.pos()) == DNGN_DEEP_SLIMY_WATER);
 }
