@@ -1350,11 +1350,19 @@ bool activate_ability()
 
 static bool _can_hop(bool quiet)
 {
-    if (!you.duration[DUR_NO_HOP])
-        return true;
-    if (!quiet)
-        mpr("Your legs are too worn out to hop.");
-    return false;
+    if (you.duration[DUR_NO_HOP])
+    {
+        if (!quiet)
+            mpr("Your legs are too worn out to hop.");
+        return false;
+    }
+    if (you.mounted())
+    {
+        if (!quiet)
+            mpr("You cannot hop off of your mount.");
+        return false;
+    }
+    return true;
 }
 
 static bool _can_jump(bool quiet, bool jump)
@@ -3919,7 +3927,7 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
             _add_talent(talents, ABIL_SHAFT_SELF, check_confused);
     }
 
-    if (you.get_mutation_level(MUT_HOP))
+    if (you.get_mutation_level(MUT_HOP) && (form_keeps_mutations() && !you.mounted() || include_unusable))
         _add_talent(talents, ABIL_HOP, check_confused);
 
     // Spit Poison, possibly upgraded to Breathe Poison.
@@ -4063,7 +4071,7 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
     }
 
     // Mount-based Talents (currently only Spider Mount has any)
-    if (you.mounted() && you.mount == mount_type::spider)
+    if (you.mounted() && (you.mount == mount_type::spider))
     {
         _add_talent(talents, ABIL_SPIDER_JUMP, check_confused);
         _add_talent(talents, ABIL_SPIDER_WEB, check_confused);
