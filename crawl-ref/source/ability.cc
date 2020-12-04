@@ -1362,6 +1362,12 @@ static bool _can_hop(bool quiet)
             mpr("You cannot hop off of your mount.");
         return false;
     }
+    if (!form_keeps_mutations())
+    {
+        if (!quiet)
+            mpr("You cannot hop in your current form.");
+        return false;
+    }
     return true;
 }
 
