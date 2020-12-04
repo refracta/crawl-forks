@@ -183,6 +183,8 @@ static enchant_type _mount_dur_to_ench(duration_type dur)
         return ENCH_SLOW;
     case DUR_MOUNT_WRETCHED:
         return ENCH_WRETCHED;
+    case DUR_MOUNT_FROZEN:
+        return ENCH_FROZEN;
     default:
         break;
     }

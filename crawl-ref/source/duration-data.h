@@ -586,6 +586,7 @@ static const duration_def duration_data[] =
       "Your mount is corroded.", D_DISPELLABLE,
       {{ "Your mount is no longer corroded.", _end_mount_corrosion }}},
     { DUR_MOUNT_POISONING, 0, "", "", "", "Your mount is poisoned.", D_NO_FLAGS },
+    { DUR_MOUNT_FROZEN, 0, "", "", "", "Your mount is partially encased in ice.", D_NO_FLAGS },
     { DUR_MOUNT_BARBS, 0, "", "", "", "Your mount is impaled with painful barbs.", D_NO_FLAGS },
     { DUR_MOUNT_WRETCHED, 0, "", "", "", "Your mount is misshapen and mutated.", D_NO_FLAGS },
     { DUR_MOUNT_SLOW, 0, "", "", "", "Your mount's reflexs are slowed.", D_NO_FLAGS },
@@ -715,7 +716,6 @@ static const duration_def duration_data[] =
 
 #if TAG_MAJOR_VERSION == 34
     // And removed ones
-    { DUR_MAGIC_SAPPED, 0, "", "", "old magic sapped", "", D_NO_FLAGS},
     { DUR_JELLY_PRAYER, 0, "", "", "old jelly prayer", "", D_NO_FLAGS},
     { DUR_INSULATION, 0, "", "", "old insulation", "", D_NO_FLAGS},
     { DUR_BARGAIN, 0, "", "", "old bargain", "", D_NO_FLAGS},

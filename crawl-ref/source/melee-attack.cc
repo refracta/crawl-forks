@@ -637,6 +637,8 @@ bool melee_attack::handle_phase_hit()
         defender->as_monster()->flags |= MF_EXPLODE_KILL;
     }
 
+
+
     if (check_unrand_effects())
         return false;
 
@@ -672,7 +674,7 @@ bool melee_attack::handle_phase_damaged()
 
     // TODO: Move this somewhere else, this is a terrible place for a
     // block-like (prevents all damage) effect.
-    if (attacker != defender
+    if (attacker != defender && !mount_defend
         && (defender->is_player() && you.duration[DUR_SHROUD_OF_GOLUBRIA]
             || defender->is_monster()
                && defender->as_monster()->has_ench(ENCH_SHROUD))

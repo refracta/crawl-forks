@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ac-type.h"
 #include "monster-type.h"
 #include "spl-cast.h"
 
@@ -15,7 +16,7 @@ void damage_mount(int amount);
 void dismount();
 void cure_mount_debuffs();
 bool mount_hit();
-int apply_mount_ac(int amount);
+int apply_mount_ac(int amount, ac_type type = ac_type::normal);
 monster_type mount_mons();
 bool drain_mount(int strength);
 bool miasma_mount();
@@ -24,5 +25,6 @@ void rot_mount(int amount, bool needs_message = true);
 int mount_statuses();
 int mount_hd();
 bool mount_submerged();
+int mount_ac();
 
 spret gain_mount(mount_type mount, int pow, bool fail);

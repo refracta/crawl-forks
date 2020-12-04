@@ -307,6 +307,11 @@ bool fill_status_info(int status, status_info& inf)
                 inf.light_text += "barbs";
                 _mount_status_iterate(statuses, inf);
             }
+            if (you.duration[DUR_MOUNT_FROZEN])
+            {
+                inf.light_text += "ice";
+                _mount_status_iterate(statuses, inf);
+            }
         }
     }
         break;

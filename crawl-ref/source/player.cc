@@ -2268,6 +2268,9 @@ int player_movement_speed()
 
         if (you.petrifying(true))
             mv *= 1.5;
+
+        if (you.duration[DUR_MOUNT_FROZEN])
+            mv += 3;
     }
 
     else // Species innates don't work while mounted.
@@ -2317,7 +2320,7 @@ int player_movement_speed()
     if (you.tengu_flight())
         mv--;
 
-    if (you.duration[DUR_FROZEN])
+    if (!you.mounted() && you.duration[DUR_FROZEN])
         mv += 3;
 
     if (you.duration[DUR_GRASPING_ROOTS])

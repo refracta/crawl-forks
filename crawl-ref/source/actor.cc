@@ -349,58 +349,15 @@ int actor::spirit_shield(bool calc_unid, bool items) const
     return ss;
 }
 
-static int _mount_ac()
-{
-    ASSERT(you.mounted());
-
-    int ac = 0;
-
-    switch (you.mount)
-    {
-    case mount_type::hydra:
-        ac = 3;
-    case mount_type::spider:
-        ac = 9;
-    case mount_type::drake:
-        ac = 6;
-    default:
-        mprf(MSGCH_ERROR, "Unhandled Mount AC.");
-        break;
-    }
-
-    if (you.duration[DUR_MOUNT_PETRIFYING])
-        ac *= 2;
-
-    if (you.duration[DUR_MOUNT_PETRIFIED])
-        ac *= 3;
-
-    if (you.submerged(true))
-        ac += 4;
-
-    if (you.duration[DUR_QAZLAL_AC])
-        ac += 3;
-
-    if (you.duration[DUR_MOUNT_CORROSION])
-        ac -= 4 * you.props["mount_corrosion_amount"].get_int();
-
-    if (you.duration[DUR_ICY_ARMOUR])
-        ac += 5 + you.props[ICY_ARMOUR_KEY].get_int() / 25;
-
-    if (you.duration[DUR_PHYS_VULN])
-        ac -= 4;
-
-    return 0;
-}
-
 int actor::apply_ac(int damage, int max_damage, ac_type ac_rule,
                     int stab_bypass, bool for_real, bool mount) const
 {
     int ac = armour_class();
     if (mount)
-        ac = _mount_ac();
+        ac = mount_ac();
     ac = max(ac - stab_bypass, 0);
 
-    int gdr = gdr_perc();
+    int gdr = mount ? 10 : gdr_perc();
     int saved = 0;
     switch (ac_rule)
     {

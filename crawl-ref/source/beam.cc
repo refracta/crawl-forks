@@ -2419,11 +2419,11 @@ bool napalm_monster(monster* mons, const actor *who, int levels, bool verbose)
 }
 
 static bool _curare_hits_player(actor* agent, int levels, string name,
-                                string source_name)
+                                string source_name, bool mount)
 {
     ASSERT(!crawl_state.game_is_arena());
 
-    if (mount_hit())
+    if (mount)
     {
         if (you.mount == mount_type::hydra && !one_chance_in(3))
             return false;
@@ -2434,11 +2434,11 @@ static bool _curare_hits_player(actor* agent, int levels, string name,
 
         if (hurted)
         {
-            mprf("The curare asphyxiates your mount (%d).", hurted);
+            mprf("The curare asphyxiates your %s (%d).", you.mount_name(true).c_str(), hurted);
             damage_mount(hurted);
         }
 
-        // BCADDO: Slow Mount here.
+        slow_mount(10 + random2(levels + random2(3 * levels)));
 
         return true;
     }
@@ -2472,10 +2472,10 @@ static bool _curare_hits_player(actor* agent, int levels, string name,
 
 
 bool curare_actor(actor* source, actor* target, int levels, string name,
-                  string source_name)
+                  string source_name, bool mount)
 {
     if (target->is_player())
-        return _curare_hits_player(source, levels, name, source_name);
+        return _curare_hits_player(source, levels, name, source_name, mount);
     else
         return _curare_hits_monster(source, target->as_monster(), levels);
 }
@@ -4591,7 +4591,7 @@ void bolt::affect_player()
         if (agent() && agent()->is_monster())
         {
             interrupt_activity(activity_interrupt::monster_attacks,
-                               agent()->as_monster());
+                agent()->as_monster());
         }
         else
             interrupt_activity(activity_interrupt::monster_attacks);
@@ -4615,16 +4615,22 @@ void bolt::affect_player()
     if (misses_player())
         return;
 
-    if (real_flavour == BEAM_CHAOTIC)
+    bool hits_mount = mount_hit() || in_explosion_phase;
+    bool hits_you = !hits_mount || in_explosion_phase;
+
+    if (hits_you)
     {
-        int dur = damage.roll();
-        dur += damage.size;
+        if (real_flavour == BEAM_CHAOTIC)
+        {
+            int dur = damage.roll();
+            dur += damage.size;
 
-        chaotic_status(&you, dur, actor_by_mid(source_id));
+            chaotic_status(&you, dur, actor_by_mid(source_id));
+        }
+
+        if (real_flavour == BEAM_CHAOTIC_DEVASTATION)
+            chaotic_status(&you, roll_dice(5, 20), actor_by_mid(source_id));
     }
-
-    if (real_flavour == BEAM_CHAOTIC_DEVASTATION)
-        chaotic_status(&you, roll_dice(5,20), actor_by_mid(source_id));
 
     const bool engulfs = is_explosion || is_big_cloud();
 
@@ -4645,27 +4651,35 @@ void bolt::affect_player()
 
     // FIXME: Lots of duplicated code here (compare handling of
     // monsters)
-    int pre_ac_dam = 0;
+    int yu_pre_ac_dam = 0;
+    int mt_pre_ac_dam = 0;
+    int max_dam = damage.num * damage.size;
 
     // Roll the damage.
-    if (!(origin_spell == SPELL_FLASH_FREEZE && you.duration[DUR_FROZEN]))
-        pre_ac_dam += (damage.roll() + damage.roll() + damage.roll());
+    if (hits_you && !(origin_spell == SPELL_FLASH_FREEZE && you.duration[DUR_FROZEN]))
+        yu_pre_ac_dam += (damage.roll() + damage.roll() + damage.roll());
+    if (hits_mount && !(origin_spell == SPELL_FLASH_FREEZE && you.duration[DUR_MOUNT_FROZEN]))
+        mt_pre_ac_dam += (damage.roll() + damage.roll() + damage.roll());
 
-    pre_ac_dam /= 3;
+    yu_pre_ac_dam /= 3;
+    mt_pre_ac_dam /= 3;
 
-    int pre_res_dam = apply_AC(&you, pre_ac_dam);
+    int yu_pre_res_dam = apply_AC(&you, yu_pre_ac_dam, max_dam);
+    int mt_pre_res_dam = apply_AC(&you, mt_pre_ac_dam, max_dam, true);
 
 #ifdef DEBUG_DIAGNOSTICS
     dprf(DIAG_BEAM, "Player damage: before AC=%d; after AC=%d",
-                    pre_ac_dam, pre_res_dam);
+        pre_ac_dam, pre_res_dam);
 #endif
 
     practise_being_shot();
 
     bool was_affected = false;
-    int  old_hp       = you.hp;
+    int  old_hp = you.hp;
+    int  old_mt_hp = you.mount_hp;
 
-    pre_res_dam = max(0, pre_res_dam);
+    yu_pre_res_dam = max(0, yu_pre_res_dam);
+    mt_pre_res_dam = max(0, mt_pre_res_dam);
 
     // If the beam is an actual missile or of the MMISSILE type (Earth magic)
     // we might bleed on the floor.
@@ -4673,77 +4687,129 @@ void bolt::affect_player()
         && (flavour == BEAM_MISSILE || flavour == BEAM_MMISSILE))
     {
         // assumes DVORP_PIERCING, factor: 0.5
-        int blood = min(you.hp, pre_res_dam / 2);
+        int blood = min(you.hp, yu_pre_res_dam / 2);
         bleed_onto_floor(you.pos(), MONS_PLAYER, blood, true);
+        blood = min(you.mount_hp, mt_pre_res_dam / 2);
+        bleed_onto_floor(you.pos(), mount_mons(), blood, true);
     }
 
     if (origin_spell == SPELL_BECKONING && you.alive())
         beckon(source, you, *this, damage.size, *agent());
 
     // Apply resistances to damage, but don't print "You resist" messages yet
-    int final_dam = check_your_resists(pre_res_dam, flavour, "", this, false);
+    int yu_final_dam = check_your_resists(yu_pre_res_dam, flavour, "", this, false);
+    int mt_final_dam = check_your_resists(mt_pre_res_dam, flavour, "", this, false);
 
     if (you.is_icy() && name == "icy shards")
-        final_dam = 0;
+        yu_final_dam = 0;
 
     // Tell the player the beam hit
     if (hit_verb.empty())
         hit_verb = engulfs ? "engulfs" : "hits";
 
     bool harmless = (flavour == BEAM_MAGIC_CANDLE || flavour == BEAM_WAND_HEALING
-                  || flavour == BEAM_FOG);
+        || flavour == BEAM_FOG);
 
     hit_something = true;
 
-    if (flavour != BEAM_VISUAL && !is_enchantment())
+    if (hits_you && flavour != BEAM_VISUAL && !is_enchantment())
     {
         mprf("The %s %s you%s%s", name.c_str(), hit_verb.c_str(),
-             (final_dam || harmless) ? "" : " but does no damage",
-             harmless ? "." : attack_strength_punctuation(final_dam).c_str());
+            (yu_final_dam || harmless) ? "" : " but does no damage",
+            harmless ? "." : attack_strength_punctuation(yu_final_dam).c_str());
+    }
+
+    if (hits_mount && flavour != BEAM_VISUAL && !is_enchantment())
+    {
+        mprf("The %s %s your %s%s%s", name.c_str(), hit_verb.c_str(),
+            you.mount_name(true).c_str(),
+            (mt_final_dam || harmless) ? "" : " but does no damage",
+            harmless ? "." : attack_strength_punctuation(mt_final_dam).c_str());
     }
 
     // Now print the messages associated with checking resistances, so that
     // these come after the beam actually hitting.
     // Note that this must be called with the pre-resistance damage, so that
     // poison effects etc work properly.
-    if (you.is_icy() && name == "icy shards")
-        mprf("You are unaffected (0).");
-    else
-        check_your_resists(pre_res_dam, flavour, "", this, true);
-
-    if (flavour == BEAM_MIASMA && final_dam > 0)
-        was_affected = miasma_player(agent(), name);
-
-    if (flavour == BEAM_ROT && final_dam > 0)
+    if (hits_you)
     {
-        bool success = false;
+        if (you.is_icy() && name == "icy shards")
+            mprf("You are unaffected (0).");
+        else
+            check_your_resists(yu_pre_res_dam, flavour, "", this, true);
+    }
 
-        mprf(MSGCH_WARN, "You feel yourself rotting from the inside.");
+    if (hits_mount)
+        check_your_resists(mt_pre_res_dam, flavour, "", this, true, true);
 
-        if (miasma_player(agent(), "vicious blight"))
-            success = true;
-        if (!success)
+    if (flavour == BEAM_MIASMA)
+    {
+        if (yu_final_dam > 0)
+            was_affected |= miasma_player(agent(), name);
+        if (mt_final_dam > 0)
+            was_affected |= miasma_mount();
+    }
+
+    if (flavour == BEAM_ROT)
+    {
+        if (yu_final_dam > 0)
         {
-            if (poison_player(5 + roll_dice(3, 8), agent() ? agent()->name(DESC_A) : "", "vicious blight", true))
+            bool success = false;
+
+            mprf(MSGCH_WARN, "You feel yourself rotting from the inside.");
+
+            if (miasma_player(agent(), "vicious blight"))
                 success = true;
+            if (!success)
+            {
+                if (poison_player(5 + roll_dice(3, 8), agent() ? agent()->name(DESC_A) : "", "vicious blight", true))
+                    success = true;
+            }
+            if (!success || one_chance_in(4))
+                you.drain_stat(STAT_RANDOM, 2 + random2(3));
         }
-        if (!success || one_chance_in(4))
-            you.drain_stat(STAT_RANDOM, 2 + random2(3));
+        if (mt_final_dam > 0)
+        {
+            bool success = false;
+
+            mprf(MSGCH_WARN, "Your mount seems to rot from the inside.");
+
+            if (miasma_mount())
+                success = true;
+            if (!success)
+            {
+                if (poison_mount(5 + roll_dice(3, 8), true))
+                    success = true;
+            }
+            if (!success || one_chance_in(4))
+                you.corrode_equipment("vicious blight", 1, true);
+        }
     }
 
     if (flavour == BEAM_DEVASTATION || flavour == BEAM_ENERGY
         || flavour == BEAM_ICY_DEVASTATION || real_flavour == BEAM_CHAOTIC_DEVASTATION) // DISINTEGRATION already handled
-        blood_spray(you.pos(), MONS_PLAYER, final_dam / 5);
+    {
+        blood_spray(you.pos(), MONS_PLAYER, yu_final_dam / 5);
+        blood_spray(you.pos(), MONS_PLAYER, mt_final_dam / 5);
+    }
 
     // Confusion effect for spore explosions
-    if (flavour == BEAM_SPORE && final_dam
+    if (flavour == BEAM_SPORE && yu_final_dam
         && !(you.holiness() & MH_UNDEAD)
         && !you.is_unbreathing())
     {
         confuse_player(2 + random2(3));
     }
 
-    if (flavour == BEAM_UNRAVELLED_MAGIC)
+    if (flavour == BEAM_SPORE && mt_final_dam
+        && !(you.holiness(true) & MH_UNDEAD)
+        && !you.is_unbreathing(true))
+    {
+        mprf("Your %s chokes on the spores.", you.mount_name(true).c_str());
+        you.increase_duration(DUR_MOUNT_BREATH, 3 + random2(4), 20);
+    }
+
+    if (flavour == BEAM_UNRAVELLED_MAGIC && hits_you)
         affect_player_enchantment();
 
     // handling of missiles
@@ -4760,21 +4826,26 @@ void bolt::affect_player()
         }
         else if (item->brand == SPMSL_CURARE)
         {
-            if (x_chance_in_y(90 - 3 * you.armour_class(), 100))
+            if (hits_you && x_chance_in_y(90 - 3 * you.armour_class(), 100))
             {
-                curare_actor(agent(), (actor*) &you, 2, name, source_name);
+                curare_actor(agent(), (actor*)&you, 2, name, source_name);
+                was_affected = true;
+            }
+            else if (hits_mount && x_chance_in_y(90 - 3 * mount_ac(), 100))
+            {
+                curare_actor(agent(), (actor*)&you, 2, name, source_name, true);
                 was_affected = true;
             }
         }
 
-        if (you.has_mutation(MUT_JELLY_MISSILE)
+        if (hits_you && you.has_mutation(MUT_JELLY_MISSILE)
             && you.hp < you.hp_max
             && !you.duration[DUR_DEATHS_DOOR]
             && item_is_jelly_edible(*item)
             && coinflip())
         {
             mprf("Your attached jelly eats %s!", item->name(DESC_THE).c_str());
-            inc_hp(random2(final_dam / 2));
+            inc_hp(random2(yu_final_dam / 2));
             canned_msg(MSG_GAIN_HEALTH);
             drop_item = false;
         }
@@ -4801,13 +4872,18 @@ void bolt::affect_player()
     you.expose_to_element(flavour, 2, false);
 
     // Manticore spikes
-    if (origin_spell == SPELL_THROW_BARBS && final_dam > 0)
-        impale_player_with_barbs();
+    if (origin_spell == SPELL_THROW_BARBS)
+    {
+        if (yu_final_dam > 0)
+            impale_player_with_barbs();
+        if (mt_final_dam > 0)
+            impale_player_with_barbs(true);
+    }
 
-    if (origin_spell == SPELL_QUICKSILVER_BOLT)
+    if (origin_spell == SPELL_QUICKSILVER_BOLT && hits_you)
         debuff_player();
 
-    if (origin_spell == SPELL_THROW_PIE && final_dam > 0)
+    if (origin_spell == SPELL_THROW_PIE && yu_final_dam > 0)
     {
         const pie_effect effect = _random_pie_effect(you);
         mprf("%s!", effect.desc);
@@ -4816,7 +4892,8 @@ void bolt::affect_player()
 
     dprf(DIAG_BEAM, "Damage: %d", final_dam);
 
-    if (final_dam > 0 || old_hp < you.hp || was_affected)
+    if (yu_final_dam > 0 || old_hp < you.hp || was_affected
+        || mt_final_dam > 0 || old_mt_hp < you.mount_hp)
     {
         if (mons_att_wont_attack(attitude))
         {
@@ -4837,43 +4914,76 @@ void bolt::affect_player()
             foe_info.hurt++;
     }
 
-    internal_ouch(final_dam);
+    internal_ouch(yu_final_dam);
+    damage_mount(mt_final_dam);
 
     // Acid. (Apply this afterward, to avoid bad message ordering.)
     if (flavour == BEAM_ACID)
-        you.splash_with_acid(agent(), div_round_up(final_dam, 10), true);
+    {
+        you.splash_with_acid(agent(), div_round_up(yu_final_dam, 10), true);
+        you.splash_with_acid(agent(), div_round_up(mt_final_dam, 10), true, nullptr, true);
+    }
 
     extra_range_used += range_used_on_hit();
 
-    knockback_actor(&you, final_dam);
-    pull_actor(&you, final_dam);
+    if (hits_mount)
+    {
+        knockback_actor(&you, mt_final_dam);
+        pull_actor(&you, mt_final_dam);
+    }
+    else
+    {
+        knockback_actor(&you, yu_final_dam);
+        pull_actor(&you, yu_final_dam);
+    }
 
     if (origin_spell == SPELL_FLASH_FREEZE
         || name == "blast of ice"
         || origin_spell == SPELL_GLACIATE && !is_explosion)
     {
-        if (you.duration[DUR_FROZEN])
+        if (hits_you)
         {
-            if (origin_spell == SPELL_FLASH_FREEZE)
-                canned_msg(MSG_YOU_UNAFFECTED);
+            if (you.duration[DUR_FROZEN])
+            {
+                if (origin_spell == SPELL_FLASH_FREEZE)
+                    canned_msg(MSG_YOU_UNAFFECTED);
+            }
+            else
+            {
+                mprf(MSGCH_WARN, "You are encased in ice.");
+                you.duration[DUR_FROZEN] = (2 + random2(3)) * BASELINE_DELAY;
+            }
         }
-        else
+        else if (hits_mount)
         {
-            mprf(MSGCH_WARN, "You are encased in ice.");
-            you.duration[DUR_FROZEN] = (2 + random2(3)) * BASELINE_DELAY;
+            if (you.duration[DUR_MOUNT_FROZEN])
+            {
+                if (origin_spell == SPELL_FLASH_FREEZE)
+                    mprf("Your %s is unaffected.", you.mount_name(true).c_str());
+            }
+            else
+            {
+                mprf(MSGCH_WARN, "Your %s is encased in ice.", you.mount_name(true).c_str());
+                you.duration[DUR_MOUNT_FROZEN] = (2 + random2(3)) * BASELINE_DELAY;
+            }
         }
     }
-    else if (origin_spell == SPELL_BLINDING_SPRAY
+    else if (hits_you && origin_spell == SPELL_BLINDING_SPRAY
              && !(you.holiness() & (MH_UNDEAD | MH_NONLIVING | MH_PLANT)))
     {
         if (x_chance_in_y(85 - you.experience_level * 3 , 100))
             you.confuse(agent(), 5 + random2(3));
     }
-    else if (origin_spell == SPELL_CHILLING_BREATH && final_dam)
-        you.slow_down(agent(), max(random2(10), final_dam / 3));
+    else if (origin_spell == SPELL_CHILLING_BREATH)
+    {
+        if (yu_final_dam)
+            you.slow_down(agent(), max(random2(10), yu_final_dam / 3));
+        if (mt_final_dam)
+            slow_mount(max(random2(10), mt_final_dam / 3));
+    }
 }
 
-int bolt::apply_AC(const actor *victim, int hurted)
+int bolt::apply_AC(const actor *victim, int hurted, int max_dmg, bool mount)
 {
     switch (flavour)
     {
@@ -4889,7 +4999,7 @@ int bolt::apply_AC(const actor *victim, int hurted)
     }
 
     // beams don't obey GDR -> max_damage is 0
-    return victim->apply_ac(hurted, 0, ac_rule, 0, !is_tracer);
+    return victim->apply_ac(hurted, max_dmg, ac_rule, 0, !is_tracer, mount);
 }
 
 void bolt::update_hurt_or_helped(monster* mon)
@@ -5007,7 +5117,7 @@ bool bolt::determine_damage(monster* mon, int& preac, int& postac, int& final)
 
     int tracer_postac_max = preac_max_damage;
 
-    postac = apply_AC(mon, preac);
+    postac = apply_AC(mon, preac, preac_max_damage);
 
     if (is_tracer)
     {

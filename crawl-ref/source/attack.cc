@@ -1447,8 +1447,6 @@ int attack::calc_damage()
         damage     += 1 + random2(attk_damage);
 
         damage = apply_damage_modifiers(damage);
-
-        set_attack_verb(damage);
         return apply_defender_ac(damage, damage_max);
     }
     else if (mount_attack)
@@ -1571,7 +1569,7 @@ int attack::apply_defender_ac(int damage, int damage_max) const
     if (attacker->is_player() && you.form == transformation::scorpion && damage_brand != SPWPN_NORMAL)
         local_ac = ac_type::half;
     int after_ac = defender->apply_ac(damage, damage_max,
-                                      local_ac, stab_bypass);
+                                      local_ac, stab_bypass, true, mount_defend);
     dprf(DIAG_COMBAT, "AC: att: %s, def: %s, ac: %d, gdr: %d, dam: %d -> %d",
                  attacker->name(DESC_PLAIN, true).c_str(),
                  defender->name(DESC_PLAIN, true).c_str(),

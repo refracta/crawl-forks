@@ -190,9 +190,9 @@ bool mount_hit()
     return !x_chance_in_y(you.body_size(PSIZE_BODY), you.body_size(PSIZE_BODY) + 5);
 }
 
-int apply_mount_ac(int damage)
+int apply_mount_ac(int damage, ac_type type)
 {
-    return you.apply_ac(damage, 0, ac_type::normal, 0, true, true);
+    return you.apply_ac(damage, 0, type, 0, true, true);
 }
 
 bool poison_mount(int amount, bool force)
@@ -278,6 +278,9 @@ int mount_statuses()
         retval++;
 
     if (you.duration[DUR_MOUNT_BARBS])
+        retval++;
+
+    if (you.duration[DUR_MOUNT_FROZEN])
         retval++;
 
     return retval;
@@ -366,4 +369,50 @@ bool mount_submerged()
         return false;
 
     return (grd(you.pos()) == DNGN_DEEP_WATER || grd(you.pos()) == DNGN_DEEP_SLIMY_WATER);
+}
+
+int mount_ac()
+{
+    ASSERT(you.mounted());
+
+    int ac = 0;
+
+    switch (you.mount)
+    {
+    case mount_type::hydra:
+        ac = 3;
+        break;
+    case mount_type::spider:
+        ac = 9;
+        break;
+    case mount_type::drake:
+        ac = 6;
+        break;
+    default:
+        mprf(MSGCH_ERROR, "Unhandled Mount AC.");
+        break;
+    }
+
+    if (you.duration[DUR_MOUNT_PETRIFYING])
+        ac *= 2;
+
+    if (you.duration[DUR_MOUNT_PETRIFIED])
+        ac *= 3;
+
+    if (you.submerged(true))
+        ac += 4;
+
+    if (you.duration[DUR_QAZLAL_AC])
+        ac += 3;
+
+    if (you.duration[DUR_MOUNT_CORROSION])
+        ac -= 4 * you.props["mount_corrosion_amount"].get_int();
+
+    if (you.duration[DUR_ICY_ARMOUR])
+        ac += 5 + you.props[ICY_ARMOUR_KEY].get_int() / 25;
+
+    if (you.duration[DUR_PHYS_VULN])
+        ac -= 4;
+
+    return 0;
 }

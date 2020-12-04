@@ -91,8 +91,18 @@ void maybe_melt_player_enchantments(beam_type flavour, int damage)
     }
 }
 
+static void _mount_resists(bool mount, bool partially = false)
+{
+    if (mount)
+        mprf("Your %s %sresists.", you.mount_name(true).c_str(), partially ? "partially " : "");
+    else if (partially)
+        canned_msg(MSG_YOU_PARTIALLY_RESIST);
+    else
+        canned_msg(MSG_YOU_RESIST);
+}
+
 int check_your_resists(int hurted, beam_type flavour, string source,
-                       bolt *beam, bool doEffects)
+                       bolt *beam, bool doEffects, bool mount)
 {
     int original = hurted;
 
@@ -119,19 +129,20 @@ int check_your_resists(int hurted, beam_type flavour, string source,
     switch (flavour)
     {
     case BEAM_WATER:
-        hurted = resist_adjust_damage(&you, flavour, hurted);
+        hurted = resist_adjust_damage(&you, flavour, hurted, mount);
         if (!hurted && doEffects)
-            mpr("You shrug off the wave.");
+            mprf("You%s%s shrug%s off the wave.", mount ? "r " : "", mount ? you.mount_name(true).c_str() : "", mount ? "s" : "");
         break;
 
     case BEAM_STEAM:
-        hurted = resist_adjust_damage(&you, flavour, hurted);
+        hurted = resist_adjust_damage(&you, flavour, hurted, mount);
         if (hurted < original && doEffects)
-            canned_msg(MSG_YOU_RESIST);
+            _mount_resists(mount);
         else if (hurted > original && doEffects)
         {
-            mpr("The steam scalds you terribly!");
-            xom_is_stimulated(200);
+            mprf("The steam scalds you%s%s terribly!", mount ? "r " : "", mount ? you.mount_name(true).c_str() : "");
+            if (!mount)
+                xom_is_stimulated(200);
         }
         break;
 
@@ -139,38 +150,41 @@ int check_your_resists(int hurted, beam_type flavour, string source,
         if (doEffects)
         {
             string msg;
-            silver_damages_victim(&you, hurted, msg);
+            silver_damages_victim(&you, hurted, msg, mount);
             if (!msg.empty())
                 mpr(msg);
         }
         break;
 
     case BEAM_FIRE:
-        hurted = resist_adjust_damage(&you, flavour, hurted);
+        hurted = resist_adjust_damage(&you, flavour, hurted, mount);
         if (hurted < original && doEffects)
-            canned_msg(MSG_YOU_RESIST);
+            _mount_resists(true);
         else if (hurted > original && doEffects)
         {
-            mpr("The fire burns you terribly!");
-            xom_is_stimulated(200);
+            mprf("The fire burns you%s%s terribly!", mount ? "r " : "", mount ? you.mount_name(true).c_str() : "");
+            if (!mount)
+                xom_is_stimulated(200);
         }
         break;
 
     case BEAM_DAMNATION:
-        if (you.drac_colour == DR_BLOOD)
+        if (!mount && you.drac_colour == DR_BLOOD)
         {
             hurted /= 2;
-            mpr("Your gory crimson scales reflect some of the hellish flames.");
+            if (doEffects)
+                mpr("Your gory crimson scales reflect some of the hellish flames.");
         }
         break;
 
     case BEAM_ROT:
-        if (you.is_insubstantial() && bool(you.holiness() & MH_UNDEAD))
+        if (!mount && you.is_insubstantial() && bool(you.holiness() & MH_UNDEAD))
             hurted = 0;
         break; // Only ghosts resist the foul blight!
 
     case BEAM_MAGIC_CANDLE:
-        you.backlight();
+        if (doEffects)
+            you.backlight();
         // Fallthrough
 
     case BEAM_BLOOD:
@@ -189,30 +203,35 @@ int check_your_resists(int hurted, beam_type flavour, string source,
         break;
 
     case BEAM_COLD:
-        hurted = resist_adjust_damage(&you, flavour, hurted);
+        hurted = resist_adjust_damage(&you, flavour, hurted, mount);
         if (hurted < original && doEffects)
-            canned_msg(MSG_YOU_RESIST);
+            _mount_resists(mount);
         else if (hurted > original && doEffects)
         {
-            mpr("You feel a terrible chill!");
-            xom_is_stimulated(200);
+            if (mount)
+                mprf("Your %s is chilled terribly!", you.mount_name(true).c_str());
+            else
+            {
+                mpr("You feel a terrible chill!");
+                xom_is_stimulated(200);
+            }
         }
         break;
 
     case BEAM_ELECTRICITY:
-        hurted = resist_adjust_damage(&you, flavour, hurted);
+        hurted = resist_adjust_damage(&you, flavour, hurted, mount);
 
         if (hurted < original && doEffects)
-            canned_msg(MSG_YOU_RESIST);
+            _mount_resists(mount);
         break;
 
     case BEAM_IRRADIATE:
-        if (doEffects)
+        if (doEffects && !mount)
             contaminate_player(2500 + random2(2500), true);
         break;
 
     case BEAM_POISON:
-        hurted = resist_adjust_damage(&you, flavour, hurted);
+        hurted = resist_adjust_damage(&you, flavour, hurted, mount);
 
         if (doEffects)
         {
@@ -222,10 +241,13 @@ int check_your_resists(int hurted, beam_type flavour, string source,
             ASSERT(beam);
             int pois = div_rand_round(beam->damage.num * beam->damage.size, 3);
             pois = 3 + random_range(pois * 2 / 3, pois * 4 / 3);
-            poison_player(pois, source, kaux);
+            if (mount)
+                poison_mount(pois);
+            else
+                poison_player(pois, source, kaux);
 
-            if (player_res_poison() > 0)
-                canned_msg(MSG_YOU_RESIST);
+            if (you.res_poison(true, mount) > 0)
+                _mount_resists(mount);
         }
 
         break;
@@ -240,35 +262,48 @@ int check_your_resists(int hurted, beam_type flavour, string source,
             int pois = div_rand_round(beam->damage.num * beam->damage.size, 3);
             pois = 3 + random_range(pois * 2 / 3, pois * 4 / 3);
 
-            const int resist = player_res_poison();
-            poison_player((resist ? pois / 2 : pois), source, kaux, true);
+            if (you.res_poison(mount))
+                pois /= 2;
+
+            if (mount)
+                poison_mount(pois, true);
+            else
+                poison_player(pois, source, kaux, true);
         }
 
-        hurted = resist_adjust_damage(&you, flavour, hurted);
+        hurted = resist_adjust_damage(&you, flavour, hurted, mount);
         if (hurted < original && doEffects)
-            canned_msg(MSG_YOU_PARTIALLY_RESIST);
+            _mount_resists(mount, true);
         break;
 
     case BEAM_NEG:
-        hurted = resist_adjust_damage(&you, flavour, hurted);
+        hurted = resist_adjust_damage(&you, flavour, hurted, mount);
 
         if (doEffects)
         {
             // drain_player handles the messaging here
-            drain_player(min(75, 35 + original * 2 / 3), true);
+            if (mount)
+                drain_mount(max (1 , original / 10));
+            else
+                drain_player(min(75, 35 + original * 2 / 3), true);
         }
         break;
 
     case BEAM_ICE:
     case BEAM_FREEZE:
-        hurted = resist_adjust_damage(&you, flavour, hurted);
+        hurted = resist_adjust_damage(&you, flavour, hurted, mount);
 
         if (hurted < original && doEffects)
-            canned_msg(MSG_YOU_PARTIALLY_RESIST);
+            _mount_resists(mount, true);
         else if (hurted > original && doEffects)
         {
-            mpr("You feel a painful chill!");
-            xom_is_stimulated(200);
+            if (mount)
+                mprf("Your %s is chill terribly!", you.mount_name(true).c_str());
+            else
+            {
+                mpr("You feel a painful chill!");
+                xom_is_stimulated(200);
+            }
         }
         break;
 
@@ -290,36 +325,41 @@ int check_your_resists(int hurted, beam_type flavour, string source,
         break;
 
     case BEAM_ACID:
-        hurted = resist_adjust_damage(&you, flavour, hurted);
+        hurted = resist_adjust_damage(&you, flavour, hurted, mount);
         if (hurted < original && doEffects)
-            canned_msg(MSG_YOU_RESIST);
+            _mount_resists(mount);
         break;
 
     case BEAM_MIASMA:
-        if (you.res_rotting())
+        if (you.res_rotting(true, mount))
         {
             if (doEffects)
-                canned_msg(MSG_YOU_RESIST);
+                _mount_resists(mount);
             hurted = 0;
         }
         break;
 
     case BEAM_HOLY:
     {
-        hurted = resist_adjust_damage(&you, flavour, hurted);
+        hurted = resist_adjust_damage(&you, flavour, hurted, mount);
         if (hurted < original && doEffects)
-            canned_msg(MSG_YOU_RESIST);
+            _mount_resists(mount);
         else if (hurted > original && doEffects)
         {
-            mpr("You writhe in agony!");
-            xom_is_stimulated(200);
+            if (mount)
+                mprf("Your %s convulses!", you.mount_name(true).c_str());
+            else
+            {
+                mpr("You writhe in agony!");
+                xom_is_stimulated(200);
+            }
         }
         break;
     }
 
     case BEAM_AIR:
     {
-        if (you.res_wind())
+        if (you.res_wind(mount))
             hurted = 0;
         // Airstrike.
         if (you.airborne())
