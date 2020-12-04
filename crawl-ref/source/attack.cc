@@ -680,8 +680,11 @@ void attack::pain_affects_defender()
     }
 }
 
-static bool _is_chaos_polyable(const actor &defender)
+static bool _is_chaos_polyable(const actor &defender, const bool md)
 {
+    if (md)
+        return false; // no polymorphing mounts (they don't have enough forms).
+
     if (!defender.can_safely_mutate())
         return false;  // no polymorphing undead
 
@@ -692,8 +695,11 @@ static bool _is_chaos_polyable(const actor &defender)
     return !mons_is_firewood(*mon) && !mons_immune_magic(*mon);
 }
 
-static bool _is_chaos_slowable(const actor &defender)
+static bool _is_chaos_slowable(const actor &defender, const bool md)
 {
+    if (md)
+        return true; 
+
     const monster* mon = defender.as_monster();
     if (!mon)
         return true;
@@ -706,25 +712,23 @@ struct chaos_effect
 {
     string name;
     int chance;
-    function<bool(const actor& def)> valid;
+    function<bool(const actor& def, const bool md)> valid;
     beam_type flavour;
-    function<bool(attack &attack)> misc_effect;
+    function<bool(attack &attack, const bool md)> misc_effect;
 };
 
 // Total Weight: 69 (Arbitrary)
 static const vector<chaos_effect> chaos_effects = {
     {
-        "clone", 1, [](const actor &d) {
-            return d.is_monster() && mons_clonable(d.as_monster(), true);
+        "clone", 1, [](const actor &d, const bool md) {
+            return md || (d.is_monster() && mons_clonable(d.as_monster(), true));
         },
-        BEAM_NONE, [](attack &attack) {
+        BEAM_NONE, [](attack &attack, const bool /*md*/) {
             actor &defender = *attack.defender;
-            ASSERT(defender.is_monster());
-            monster *clone = clone_mons(defender.as_monster(), true);
+            bool obvious_effect;
+            monster *clone = clone_mons(&defender, true, &obvious_effect);
             if (!clone)
                 return false;
-
-            const bool obvious_effect = you.can_see(defender) && you.can_see(*clone);
 
             if (one_chance_in(3))
                 clone->attitude = coinflip() ? ATT_FRIENDLY : ATT_NEUTRAL;
@@ -742,16 +746,16 @@ static const vector<chaos_effect> chaos_effects = {
         "polymorph", 2, _is_chaos_polyable, BEAM_POLYMORPH,
     },
     {
-        "shifter", 1, [](const actor &defender)
+        "shifter", 1, [](const actor &defender, const bool md)
         {
             const monster *mon = defender.as_monster();
-            return _is_chaos_polyable(defender)
+            return _is_chaos_polyable(defender, md)
                    && mon && !mon->is_shapeshifter()
                    && defender.holiness() & MH_NATURAL;
         },
-        BEAM_NONE, [](attack &attack) {
+        BEAM_NONE, [](attack &attack, const bool /*md*/) {
             monster* mon = attack.defender->as_monster();
-            ASSERT(_is_chaos_polyable(*attack.defender));
+            ASSERT(_is_chaos_polyable(*attack.defender, false));
             ASSERT(mon);
             ASSERT(!mon->is_shapeshifter());
 
@@ -770,7 +774,9 @@ static const vector<chaos_effect> chaos_effects = {
         },
     },
     {
-        "miscast", 20, nullptr, BEAM_NONE, [](attack &attack) {
+        "miscast", 20, nullptr, BEAM_NONE, [](attack &attack, const bool /*md*/) {
+
+            // Mount Defend unused; just let miscasts go to the player.
 
             const int HD = attack.defender->get_hit_dice();
 
@@ -791,29 +797,29 @@ static const vector<chaos_effect> chaos_effects = {
         },
     },
     {
-        "rage", 5, [](const actor &defender) {
-            return defender.can_go_berserk();
-        }, BEAM_NONE, [](attack &attack) {
+        "rage", 5, [](const actor &defender, const bool md) {
+            return !md && defender.can_go_berserk();
+        }, BEAM_NONE, [](attack &attack, const bool /*md*/) {
             attack.defender->go_berserk(false);
             return you.can_see(*attack.defender);
         },
     },
-    { "hasting", 10, [](const actor &defender) {
-            return _is_chaos_slowable(defender);
+    { "hasting", 10, [](const actor &defender, const bool md) {
+            return !md && _is_chaos_slowable(defender, md);
         }, BEAM_HASTE },
     { "invisible", 10, nullptr, BEAM_INVISIBILITY, },
-    { "mighting", 10, nullptr, BEAM_MIGHT, },
-    { "agility", 10, nullptr, BEAM_AGILITY, },
-    { "entropic burst", 30, [](const actor &defender) {
+    { "mighting", 10, [](const actor &/*defender*/, const bool md) { return !md; }, BEAM_MIGHT, },
+    { "agility", 10, [](const actor &/*defender*/, const bool md) { return !md; }, BEAM_AGILITY, },
+    { "entropic burst", 30, [](const actor &defender, const bool /*md*/) {
             return defender.is_monster();
         }, BEAM_ENTROPIC_BURST, },
-    { "chaotic infusion", 30, [](const actor &defender) {
+    { "chaotic infusion", 30, [](const actor &defender, const bool /*md*/) {
             return defender.is_monster();
         }, BEAM_CHAOTIC_INFUSION, },
     { "slowing", 10, _is_chaos_slowable, BEAM_SLOW },
     {
-        "petrify", 10, [](const actor &defender) {
-            return _is_chaos_slowable(defender) && !defender.res_petrify();
+        "petrify", 10, [](const actor &defender, const bool md) {
+            return _is_chaos_slowable(defender, md) && !defender.res_petrify(true, md);
         }, BEAM_PETRIFY,
     },
 };
@@ -824,7 +830,7 @@ void attack::chaos_affects_defender()
 
     vector<pair<const chaos_effect&, int>> weights;
     for (const chaos_effect &effect : chaos_effects)
-        if (!effect.valid || effect.valid(*defender))
+        if (!effect.valid || effect.valid(*defender, mount_defend))
             weights.push_back({effect, effect.chance});
 
     const chaos_effect &effect = *random_choose_weighted(weights);
@@ -833,7 +839,7 @@ void attack::chaos_affects_defender()
     take_note(Note(NOTE_MESSAGE, 0, 0, "CHAOS effect: " + effect.name), true);
 #endif
 
-    if (effect.misc_effect && effect.misc_effect(*this))
+    if (effect.misc_effect && effect.misc_effect(*this, mount_defend))
         obvious_effect = true;
 
     bolt beam;
