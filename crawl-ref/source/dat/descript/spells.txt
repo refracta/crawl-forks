@@ -1737,6 +1737,18 @@ Summon Hydra spell
 
 Summons a many-headed hydra to fight alongside the caster for a short time.
 %%%%
+Summon Hydra Mount spell
+
+Summons a many-headed hydra directly below the caster as a means of transportation 
+and battle companion. While this spell is active, the caster's movement speed 
+will be replaced with that of the hydra; that is average speed on land and very 
+fast speed in water. Additionally, the hydra will fight once per turn along with 
+its rider attacking the same target as the caster, then any adjacent hostiles should 
+the target die. Finally, as it occupies the same space as the caster many effects 
+intended for its master will strike it instead.  It is unaffected by any gear you 
+may be wearing; however, many charms and divine effects, such as ring of flames 
+may improve its resistances.
+%%%%
 Summon Ice Beast spell
 
 Calls forth a beast of ice to serve the caster.
@@ -1785,6 +1797,22 @@ Summon Spectral Orcs spell
 
 Summons between one and three spectral orcs, specialised for melee combat
 and equipped with spectral weaponry and armour.
+%%%%
+Summon Spider Mount spell
+
+Summons a crafy jumping spider directly below the caster as a means of transportation 
+and battle companion. While this spell is active, the caster's movement speed 
+will be replaced with that of the spider; that is fast speed on land with no swimming 
+capability whatsoever. Additionally, the spider will fight once per turn along with 
+its rider attacking the same target as the caster. While active, the caster may call 
+upon the spider to jump to nearby spaces or ensnare adjacent foes in webbing. Finally, 
+as it occupies the same space as the caster many effects intended for its master will 
+strike it instead. It is unaffected by any gear you may be wearing; however, many 
+charms and divine effects, such as ring of flames may improve its resistances.
+%%%%
+Summon Spiders spell
+
+Summons several of the arachnid denizens of the spider nest to the caster's aid.
 %%%%
 Summon Ufetubus spell
 

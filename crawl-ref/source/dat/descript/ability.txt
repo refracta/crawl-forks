@@ -1000,9 +1000,9 @@ Choose Bahamut's Drake Mount ability
 %%%%
 Drake Mount ability
 
-You summon a single rime drake and ride upon its back. It's takes two out of every three hits 
-in your place; melees along with you and fires its icy breath along the same trajectory as your 
-spell and ranged attacks. It's faster than average, but is not affected by any of your gear bonuses 
+You summon a single rime drake and ride upon its back. It takes many hits in your place. Melees along 
+with you once per turn and fires its icy breath along the same trajectory as your spell and ranged attacks,
+as long as it has it's breath. It's slightly faster than average, but is not affected by any of your gear bonuses 
 neither for speed, nor for resistances.
 %%%%
 Choose Tiamat's Summon Drakes ability
