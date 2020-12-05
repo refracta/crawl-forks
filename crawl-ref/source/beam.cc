@@ -4615,7 +4615,7 @@ void bolt::affect_player()
     if (misses_player())
         return;
 
-    bool hits_mount = mount_hit() || in_explosion_phase;
+    bool hits_mount = mount_hit() || you.mounted() && in_explosion_phase;
     bool hits_you = !hits_mount || in_explosion_phase;
 
     if (hits_you)
@@ -4664,7 +4664,7 @@ void bolt::affect_player()
     mt_pre_ac_dam /= 3;
 
     int yu_pre_res_dam = apply_AC(&you, yu_pre_ac_dam, max_dam);
-    int mt_pre_res_dam = apply_AC(&you, mt_pre_ac_dam, max_dam, true);
+    int mt_pre_res_dam = hits_mount ? apply_AC(&you, mt_pre_ac_dam, max_dam, true) : 0;
 
 #ifdef DEBUG_DIAGNOSTICS
     dprf(DIAG_BEAM, "Player damage: before AC=%d; after AC=%d",
@@ -4688,8 +4688,11 @@ void bolt::affect_player()
         // assumes DVORP_PIERCING, factor: 0.5
         int blood = min(you.hp, yu_pre_res_dam / 2);
         bleed_onto_floor(you.pos(), MONS_PLAYER, blood, true);
-        blood = min(you.mount_hp, mt_pre_res_dam / 2);
-        bleed_onto_floor(you.pos(), mount_mons(), blood, true);
+        if (hits_mount)
+        {
+            blood = min(you.mount_hp, mt_pre_res_dam / 2);
+            bleed_onto_floor(you.pos(), mount_mons(), blood, true);
+        }
     }
 
     if (origin_spell == SPELL_BECKONING && you.alive())
@@ -4697,7 +4700,7 @@ void bolt::affect_player()
 
     // Apply resistances to damage, but don't print "You resist" messages yet
     int yu_final_dam = check_your_resists(yu_pre_res_dam, flavour, "", this, false);
-    int mt_final_dam = check_your_resists(mt_pre_res_dam, flavour, "", this, false);
+    int mt_final_dam = hits_mount ? check_your_resists(mt_pre_res_dam, flavour, "", this, false, true) : 0;
 
     if (you.is_icy() && name == "icy shards")
         yu_final_dam = 0;
@@ -4789,7 +4792,8 @@ void bolt::affect_player()
         || flavour == BEAM_ICY_DEVASTATION || real_flavour == BEAM_CHAOTIC_DEVASTATION) // DISINTEGRATION already handled
     {
         blood_spray(you.pos(), MONS_PLAYER, yu_final_dam / 5);
-        blood_spray(you.pos(), MONS_PLAYER, mt_final_dam / 5);
+        if (hits_mount)
+            blood_spray(you.pos(), mount_mons(), mt_final_dam / 5);
     }
 
     // Confusion effect for spore explosions
@@ -4914,13 +4918,15 @@ void bolt::affect_player()
     }
 
     internal_ouch(yu_final_dam);
-    damage_mount(mt_final_dam);
+    if (hits_mount)
+        damage_mount(mt_final_dam);
 
     // Acid. (Apply this afterward, to avoid bad message ordering.)
     if (flavour == BEAM_ACID)
     {
         you.splash_with_acid(agent(), div_round_up(yu_final_dam, 10), true);
-        you.splash_with_acid(agent(), div_round_up(mt_final_dam, 10), true, nullptr, true);
+        if (hits_mount)
+            you.splash_with_acid(agent(), div_round_up(mt_final_dam, 10), true, nullptr, true);
     }
 
     extra_range_used += range_used_on_hit();
@@ -4930,7 +4936,7 @@ void bolt::affect_player()
         knockback_actor(&you, mt_final_dam);
         pull_actor(&you, mt_final_dam);
     }
-    else
+    else if (!you.mounted())
     {
         knockback_actor(&you, yu_final_dam);
         pull_actor(&you, yu_final_dam);
