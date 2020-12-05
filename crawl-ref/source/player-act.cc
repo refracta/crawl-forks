@@ -345,7 +345,7 @@ random_var player::attack_delay(const item_def *projectile, bool rescale) const
         else if (weap0 && projectile && projectile->launched_by(*weap0)) // Ranged
             weap = weap0;
 
-        else if (is_range_weapon(*weap0) && is_melee_weapon(*weap1)) // Melee weapon and Ranged weapon (only melee used)
+        else if (weap0 && weap1 && is_range_weapon(*weap0) && is_melee_weapon(*weap1)) // Melee weapon and Ranged weapon (only melee used)
             weap = weap1;
 
         const skill_type wpn_skill = item_attack_skill(*weap);

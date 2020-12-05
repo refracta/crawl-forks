@@ -1626,7 +1626,7 @@ bool transform(int pow, transformation which_trans, bool involuntary,
         return false;
     }
 
-    if (you.mounted())
+    if (you.mounted() && !just_check && !involuntary)
     {
         if (crawl_state.disables[DIS_CONFIRMATIONS])
             mprf(MSGCH_DURATION, "Your mount is dismissed as you change form.");
@@ -1635,8 +1635,7 @@ bool transform(int pow, transformation which_trans, bool involuntary,
             canned_msg(MSG_OK);
             return false;
         }
-        if (!just_check)
-            dismount();
+        dismount();
     }
 
     // This must occur before the untransform() and the undead_state() check.
