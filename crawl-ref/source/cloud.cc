@@ -918,29 +918,29 @@ bool actor_cloud_immune(const actor &act, cloud_type type, bool mount)
         case CLOUD_HOLY:
             return act.res_holy_energy(mount) >= 3;
         case CLOUD_COLD:
-            if (!act.is_player())
-                return act.res_cold(mount) >= 3;
+            if (act.res_cold(mount) >= 3)
+                return true;
             return you.has_mutation(MUT_FREEZING_CLOUD_IMMUNITY)
                 || player_equip_unrand(UNRAND_FROSTBITE);
         case CLOUD_MEPHITIC:
-            return act.res_poison(mount) > 0 || act.is_unbreathing(mount);
+            return act.res_poison(true, mount) > 0 || act.is_unbreathing(mount);
         case CLOUD_POISON:
-            return act.res_poison(mount) > 0;
+            return act.res_poison(true, mount) > 0;
         case CLOUD_STEAM:
             return act.res_steam(mount) > 0;
         case CLOUD_MIASMA:
-            return act.res_rotting(mount) > 0;
+            return act.res_rotting(true, mount) > 0;
         case CLOUD_PETRIFY:
-            return act.res_petrify(mount) || !mount && act.stasis();
+            return act.res_petrify(true, mount) || !mount && act.stasis();
         case CLOUD_SPECTRAL:
-            return bool(act.holiness(mount) & MH_UNDEAD);
+            return bool(act.holiness(true, mount) & MH_UNDEAD);
         case CLOUD_ACID:
-            return act.res_acid(mount) > 1;
+            return act.res_acid(true, mount) > 1;
         case CLOUD_STORM:
             return act.res_elec(mount) >= 3;
         case CLOUD_BLOOD:
         case CLOUD_NEGATIVE_ENERGY:
-            return act.res_negative_energy(mount) >= 3;
+            return act.res_negative_energy(false, mount) >= 3;
         case CLOUD_TORNADO:
             return act.res_tornado(mount);
         case CLOUD_RAIN:
@@ -961,12 +961,12 @@ bool actor_cloud_immune(const actor &act, const cloud_struct &cloud, bool mount)
     if (actor_cloud_immune(act, cloud.type, mount))
         return true;
 
-    const bool player = act.is_player();
+    const bool player = act.is_player() && !mount;
 
     if (!player
         && (you_worship(GOD_FEDHAS)
-            && fedhas_protects(act.as_monster())
-            || testbits(act.as_monster()->flags, MF_DEMONIC_GUARDIAN))
+            && (mount && fedhas_protects_species(mount_mons())) || (!mount && fedhas_protects(act.as_monster()))
+            || !mount && testbits(act.as_monster()->flags, MF_DEMONIC_GUARDIAN))
         && (cloud.whose == KC_YOU || cloud.whose == KC_FRIENDLY)
         && (act.as_monster()->friendly() || act.as_monster()->neutral()))
     {
@@ -974,9 +974,10 @@ bool actor_cloud_immune(const actor &act, const cloud_struct &cloud, bool mount)
     }
 
     int summon_type = 0;
-    act.is_summoned(nullptr, &summon_type);
+    if (!mount)
+        act.is_summoned(nullptr, &summon_type);
     if (!player && have_passive(passive_t::cloud_immunity)
-        && (act.as_monster()->friendly() && summon_type == MON_SUMM_AID))
+        && (mount || act.as_monster()->friendly() && summon_type == MON_SUMM_AID))
     {
         return true;
     }
@@ -1043,7 +1044,7 @@ static bool _actor_apply_cloud_side_effects(actor *act,
             maybe_melt_player_enchantments(BEAM_FIRE, final_damage);
     case CLOUD_RAIN:
     case CLOUD_STORM:
-        if (act->is_fiery() && final_damage > 0)
+        if (!mount && act->is_fiery() && final_damage > 0)
         {
             if (you.can_see(*act))
             {
@@ -1068,7 +1069,7 @@ static bool _actor_apply_cloud_side_effects(actor *act,
                 return true;
             }
         }
-        if (mount)
+        else if (mount)
         {
             if (_mephitic_cloud_roll(mount_hd()))
             {

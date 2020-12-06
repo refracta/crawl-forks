@@ -2750,7 +2750,7 @@ void lose_piety(int pgn)
 // If fedhas worshipers kill a protected monster they lose piety,
 // if they attack a friendly one they get penance,
 // if a friendly one dies they lose piety.
-static bool _fedhas_protects_species(monster_type mc)
+bool fedhas_protects_species(monster_type mc)
 {
     return mons_class_is_plant(mc)
            && mons_class_holiness(mc) & MH_PLANT;
@@ -2759,7 +2759,7 @@ static bool _fedhas_protects_species(monster_type mc)
 bool fedhas_protects(const monster *target)
 {
     return target
-        ? _fedhas_protects_species(mons_base_type(*target))
+        ? fedhas_protects_species(mons_base_type(*target))
         : false;
 }
 
@@ -3212,7 +3212,7 @@ bool god_hates_attacking_friend(god_type god, const monster& fr)
         case GOD_JIYVA:
             return mons_class_is_slime(species);
         case GOD_FEDHAS:
-            return _fedhas_protects_species(species);
+            return fedhas_protects_species(species);
         case GOD_BAHAMUT_TIAMAT:
             return mons_genus(species) == MONS_DRAGON || mons_genus(species) == MONS_DRAKE 
                 || mons_genus(species) == MONS_DRACONIAN;
