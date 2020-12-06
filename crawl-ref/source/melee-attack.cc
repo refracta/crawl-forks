@@ -1033,7 +1033,7 @@ bool melee_attack::handle_phase_killed()
     if (unrand_entry && weapon && weapon->unrand_idx == UNRAND_WYRMBANE)
     {
         unrand_entry->melee_effects(weapon, attacker, defender,
-                                               true, special_damage);
+                                               true, special_damage, mount_defend);
     }
 
     return attack::handle_phase_killed();
@@ -1270,17 +1270,17 @@ bool melee_attack::check_unrand_effects()
             {
                 if (cleaving)
                     unrand_entry->melee_effects(weapon, attacker, 
-                        defender, died, 1);
+                        defender, died, 1, mount_defend);
                 else
                     unrand_entry->melee_effects(weapon, attacker, 
-                        defender, died, 2);
+                        defender, died, 2, mount_defend);
             }
             return !defender->alive();
         }
 
         // Recent merge added damage_done to this method call
         unrand_entry->melee_effects(weapon, attacker, defender,
-                                    died, damage_done);
+                                    died, damage_done, mount_defend);
         return !defender->alive(); // may have changed
     }
 
@@ -3523,7 +3523,11 @@ void melee_attack::mons_apply_attack_flavour()
         if (one_chance_in(4))
         {
             if (mount_defend)
+            {
+                if (!you.duration[DUR_MOUNT_WRETCHED])
+                    mprf("Your %s twists and deforms!", you.mount_name(true).c_str());
                 you.increase_duration(DUR_MOUNT_WRETCHED, 3 + random2(attacker->get_hit_dice()), 30);
+            }
             else
             {
                 defender->malmutate(you.can_see(*attacker) ?
@@ -3714,7 +3718,11 @@ void melee_attack::mons_apply_attack_flavour()
         if (mount_defend)
         {
             if (one_chance_in(8))
+            {
+                if (!you.duration[DUR_MOUNT_WRETCHED])
+                    mprf("Your %s twists and deforms!", you.mount_name(true).c_str());
                 you.increase_duration(DUR_MOUNT_WRETCHED, 3 + random2(attacker->get_hit_dice()), 30);
+            }
         }
 		else if (defender->is_player())
 		{

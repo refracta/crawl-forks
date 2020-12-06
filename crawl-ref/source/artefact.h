@@ -71,7 +71,7 @@ struct unrandart_entry
     void (*unequip_func)(item_def* item, bool* show_msgs);
     void (*world_reacts_func)(item_def* item);
     void (*melee_effects)(item_def* item, actor* attacker,
-                          actor* defender, bool mondied, int damage);
+                          actor* defender, bool mondied, int damage, bool mount_hit);
     setup_missile_type (*launch)(item_def* item, bolt* beam,
                                  string* ammo_name, bool* returning);
     bool (*evoke_func)(item_def *item, bool* did_work, bool* unevokable);
