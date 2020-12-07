@@ -83,11 +83,11 @@ wolf_spider CORPSE_WOLF_SPIDER
 redback CORPSE_REDBACK
 orb_spider CORPSE_ORB_SPIDER
 %sdir mon/demons
-%back blood_puddle_red blood_puddle_red1 blood_puddle_red2 blood_puddle_red3 blood_puddle_red4
 demonic_crawler CORPSE_DEMONIC_CRAWLER
 
 ## Turtles and crocodiles ('t')
 %sdir mon/animals
+%back blood_puddle_red blood_puddle_red1 blood_puddle_red2 blood_puddle_red3 blood_puddle_red4
 crocodile CORPSE_CROCODILE
 alligator CORPSE_ALLIGATOR
 snapping_turtle CORPSE_SNAPPING_TURTLE
