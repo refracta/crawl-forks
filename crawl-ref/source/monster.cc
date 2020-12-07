@@ -4164,6 +4164,9 @@ int monster::res_acid(bool calc_unid, bool /*mount*/) const
 {
     int u = get_mons_resist(*this, MR_RES_ACID);
 
+    if (submerged())
+        u++;
+
     if (res_corr(calc_unid))
     {
         u++;

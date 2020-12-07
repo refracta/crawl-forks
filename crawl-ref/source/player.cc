@@ -1707,6 +1707,9 @@ int player_res_cold(bool calc_unid, bool temp, bool items)
 
 bool player::res_corr(bool calc_unid, bool items, bool mt) const
 {
+    if (submerged(mt))
+        return true;
+
     if (mt)
     {
         switch (you.mount)
