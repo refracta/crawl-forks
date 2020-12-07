@@ -3369,7 +3369,7 @@ void melee_attack::mons_do_napalm()
 }
 
 static void _print_resist_messages(actor* defender, int base_damage,
-                                   beam_type flavour)
+                                   beam_type flavour, bool mount_defend)
 {
     // check_your_resists is used for the player case to get additional
     // effects such as Xom amusement, melting of icy effects, etc.
@@ -3379,7 +3379,7 @@ static void _print_resist_messages(actor* defender, int base_damage,
     // basically calculating the damage twice in the case where messages
     // are needed.
     if (defender->is_player())
-        (void)check_your_resists(base_damage, flavour, "");
+        (void)check_your_resists(base_damage, flavour, "", 0, true, mount_defend);
     else
     {
         bolt beam;
@@ -3564,7 +3564,7 @@ void melee_attack::mons_apply_attack_flavour()
                  mount_defend ? "is" : defender->conj_verb("are").c_str(),
                  attack_strength_punctuation(special_damage).c_str());
 
-            _print_resist_messages(defender, base_damage, BEAM_FIRE);
+            _print_resist_messages(defender, base_damage, BEAM_FIRE, mount_defend);
         }
 
         defender->expose_to_element(BEAM_FIRE, 2);
@@ -3585,7 +3585,7 @@ void melee_attack::mons_apply_attack_flavour()
                  defender_name(true).c_str(),
                  attack_strength_punctuation(special_damage).c_str());
 
-            _print_resist_messages(defender, base_damage, BEAM_COLD);
+            _print_resist_messages(defender, base_damage, BEAM_COLD, mount_defend);
         }
 
         defender->expose_to_element(BEAM_COLD, 2);
@@ -3606,7 +3606,7 @@ void melee_attack::mons_apply_attack_flavour()
                  defender_name(true).c_str(),
                  attack_strength_punctuation(special_damage).c_str());
 
-            _print_resist_messages(defender, base_damage, BEAM_ELECTRICITY);
+            _print_resist_messages(defender, base_damage, BEAM_ELECTRICITY, mount_defend);
         }
 
         dprf(DIAG_COMBAT, "Shock damage: %d", special_damage);
@@ -3941,7 +3941,7 @@ void melee_attack::mons_apply_attack_flavour()
                     attacker->conj_verb("burn").c_str(),
                     defender_name(true).c_str());
 
-            _print_resist_messages(defender, special_damage, BEAM_FIRE);
+            _print_resist_messages(defender, special_damage, BEAM_FIRE, mount_defend);
         }
 
         defender->expose_to_element(BEAM_FIRE, 2);
