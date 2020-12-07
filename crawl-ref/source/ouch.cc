@@ -159,7 +159,7 @@ int check_your_resists(int hurted, beam_type flavour, string source,
     case BEAM_FIRE:
         hurted = resist_adjust_damage(&you, flavour, hurted, mount);
         if (hurted < original && doEffects)
-            _mount_resists(true);
+            _mount_resists(mount, true);
         else if (hurted > original && doEffects)
         {
             mprf("The fire burns you%s%s terribly!", mount ? "r " : "", mount ? you.mount_name(true).c_str() : "");
