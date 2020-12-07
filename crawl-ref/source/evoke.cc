@@ -499,7 +499,13 @@ void zap_wand(int slot)
         return;
     }
 
-    int power = you.skill(SK_EVOCATIONS, 15);
+    int scale = 25;
+    if (wand.sub_type == WAND_CLOUDS || wand.sub_type == WAND_HEAL_WOUNDS)
+        scale = 15;
+    if (wand.sub_type == WAND_ENSNARE)
+        scale = 10;
+
+    int power = you.skill(SK_EVOCATIONS, scale);
 
     const int m = mp_cost ? 1 : 0;
     power *= (m + 3);
