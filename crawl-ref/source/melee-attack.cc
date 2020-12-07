@@ -2371,7 +2371,7 @@ bool melee_attack::player_monattk_hit_effects()
 
     // Returns true if the hydra was killed by the decapitation, in which case
     // nothing more should be done to the hydra.
-    if (consider_decapitation(damage_done, attacker->damage_type(attack_number)))
+    if (consider_decapitation(damage_done))
         return false;
 
     return true;
@@ -2419,10 +2419,9 @@ void melee_attack::handle_noise(const coord_def & pos)
  * @param damage_type   The type of damage done in the attack.
  * @return              Whether the defender was killed by the decapitation.
  */
-bool melee_attack::consider_decapitation(int dam, int damage_type)
+bool melee_attack::consider_decapitation(int dam)
 {
-    const int dam_type = (damage_type != -1) ? damage_type :
-                                               attacker->damage_type();
+    const int dam_type = attacker->damage_type(attack_number);
 
     if (!attack_chops_heads(dam, dam_type))
         return false;
@@ -2440,14 +2439,14 @@ bool melee_attack::consider_decapitation(int dam, int damage_type)
     const int limit = defender->type == MONS_LERNAEAN_HYDRA ? 27
                                                             : MAX_HYDRA_HEADS;
 
-    if (attacker->damage_brand() == SPWPN_MOLTEN)
+    if (attacker->damage_brand(attack_number) == SPWPN_MOLTEN)
     {
         if (defender_visible)
             mpr("The heat cauterises the wound!");
         return false;
     }
 
-    if (attacker->damage_brand() == SPWPN_ACID)
+    if (attacker->damage_brand(attack_number) == SPWPN_ACID)
     {
         if (defender_visible)
             mpr("The acid burns away any new growth!");
@@ -3433,11 +3432,8 @@ bool melee_attack::mons_attack_effects()
     // consider_decapitation() returns true if the defender was killed
     // by the decapitation, in which case we should stop the rest of the
     // attack, too.
-    if (consider_decapitation(damage_done,
-                              attacker->damage_type(attack_number)))
-    {
+    if (consider_decapitation(damage_done))
         return false;
-    }
 
     if (attacker != defender && attk_flavour == AF_TRAMPLE
         && !defender->wearing_ego(EQ_BOOTS, SPARM_STURDY)
