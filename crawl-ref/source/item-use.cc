@@ -3717,7 +3717,7 @@ void read(item_def* scroll)
         }
     }
 
-    if (you.get_mutation_level(MUT_IMPAIRED_VISION)
+    if (you.vision() < 0
         && !i_feel_safe(false, false, true)
         && !you.haloed()
         && !yesno("Really read with impaired vision while enemies are nearby?",
@@ -3732,7 +3732,7 @@ void read(item_def* scroll)
 
     // if we have blurry vision, we need to start a delay before the actual
     // scroll effect kicks in.
-    if (you.get_mutation_level(MUT_IMPAIRED_VISION))
+    if (you.vision() < 0)
     {
         if (you.haloed())
         {
@@ -3793,7 +3793,7 @@ void read_scroll(item_def& scroll)
         }
 
         const bool safely_cancellable
-            = alreadyknown && !you.get_mutation_level(MUT_IMPAIRED_VISION)
+            = alreadyknown && (you.vision() >= 0)
              && !you.haloed();
 
         if (orb_limits_translocation())

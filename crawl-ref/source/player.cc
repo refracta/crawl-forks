@@ -8131,17 +8131,17 @@ int player::vision(bool calc_unid) const
     if (crawl_state.game_is_arena())
         return 1;
 
-    if (wearing_ego(EQ_HELMET, SPARM_IMPROVED_VISION)
-        // randart gear
-        || scan_artefacts(ARTP_IMPROVED_VISION, calc_unid) > 0)
-    {
+    if (wearing_ego(EQ_HELMET, SPARM_IMPROVED_VISION))
         x++;
-    }
 
-    if (scan_artefacts(ARTP_INACCURACY) > 0)
+    if (wearing(EQ_AMULET, AMU_INACCURACY, calc_unid))
         x--;
 
-    return min(x,1);
+    // randart gear
+    x += scan_artefacts(ARTP_IMPROVED_VISION, calc_unid);
+    x -= scan_artefacts(ARTP_INACCURACY, calc_unid);
+
+    return max(-1, min(x,1));
 }
 
 /// Can the player see invisible things without needing items' help?
