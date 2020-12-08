@@ -91,7 +91,7 @@ end
 local function have_melee()
   local wp = items.equipped_at("weapon")
   local wp0 = items.equipped_at("shield")
-  return (wp and not wp.is_ranged and not wp.is_melded) or (wp0 and not wp0.is_ranged and not wp0.is_melded)
+  return not wp or not wp.is_ranged or wp.is_melded or not wp0 or not wp0.is_ranged or wp0.is_melded
 end
 
 local function have_throwing(no_move)
