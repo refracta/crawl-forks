@@ -1596,7 +1596,7 @@ void mount_drake_breath(bolt* orig_beam)
 
     const coord_def target = orig_beam->target;
 
-    if (orig_beam->target.origin() || orig_beam->is_enchantment() || monster_at(target)->has_ench(ENCH_FROZEN))
+    if (target.origin() || orig_beam->is_enchantment())
         return;
 
     monster* mon = shadow_monster();
@@ -1619,7 +1619,7 @@ void mount_drake_breath(bolt* orig_beam)
     beem.aimed_at_spot = orig_beam->aimed_at_spot;
 
     mprf(MSGCH_FRIEND_SPELL, "Your rime drake breathes a chilling wave!");
-    mons_cast(mon, beem, SPELL_FLASH_FREEZE, MON_SPELL_MAGICAL, false);
+    mons_cast(mon, beem, SPELL_FLASH_FREEZE, MON_SPELL_NATURAL, false);
 
     shadow_monster_reset(mon);
 
