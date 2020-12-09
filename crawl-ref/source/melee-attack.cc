@@ -4299,6 +4299,10 @@ bool melee_attack::do_knockback(bool trample)
     if (attacker->cannot_move())
         return false;
 
+    // If the mount died before knockback would happen give the player a break.
+    if (mount_defend && !you.mounted())
+        return false;
+
     const int size_diff =
         attacker->body_size(PSIZE_BODY) - defender->body_size(PSIZE_BODY);
     const coord_def old_pos = defender->pos();
@@ -4319,8 +4323,8 @@ bool melee_attack::do_knockback(bool trample)
         {
             mprf("%s %s %s ground!",
                  defender_name(false).c_str(),
-                 defender->conj_verb("hold").c_str(),
-                 defender->pronoun(PRONOUN_POSSESSIVE).c_str());
+                 mount_defend ? "holds" : defender->conj_verb("hold").c_str(),
+                 mount_defend ? "its" : defender->pronoun(PRONOUN_POSSESSIVE).c_str());
         }
 
         return false;
@@ -4331,7 +4335,8 @@ bool melee_attack::do_knockback(bool trample)
         const bool can_stumble = !defender->airborne()
                                   && !defender->incapacitated();
         const string verb = can_stumble ? "stumble" : "are shoved";
-        mprf("%s %s backwards!",
+        mprf("%s%s %s backwards!",
+             mount_defend ? "You and your" : "",
              defender_name(false).c_str(),
              defender->conj_verb(verb).c_str());
     }
