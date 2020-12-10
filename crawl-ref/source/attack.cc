@@ -1224,7 +1224,7 @@ string attack::atk_name(description_level_type desc)
  */
 string attack::def_name(description_level_type desc)
 {
-    if (mount_defend)
+    if (mount_defend && you.mounted())
         return make_stringf("your %s", you.mount_name().c_str());
 
     return actor_name(defender, desc, defender_visible);
