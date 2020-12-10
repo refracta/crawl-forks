@@ -4939,7 +4939,7 @@ int get_player_poisoning()
 // This function gives the following behavior:
 // * 1/15 of current poison is removed every 10 aut normally
 // * but speed of poison is capped between 0.025 and 1.000 HP/aut
-static double _poison_dur_to_aut(double dur)
+double poison_dur_to_aut(double dur)
 {
     // Poison already at minimum speed.
     if (dur < 15.0 * 250.0)
@@ -4953,7 +4953,7 @@ static double _poison_dur_to_aut(double dur)
 
 // The inverse of the above function, i.e. the amount of poison needed
 // to last for aut time.
-static double _poison_aut_to_dur(double aut)
+double poison_aut_to_dur(double aut)
 {
     // Amount of time that poison lasts at minimum speed.
     if (aut < 150.0)
@@ -4968,7 +4968,7 @@ static double _poison_aut_to_dur(double aut)
 void handle_player_poison(int delay, bool mount)
 {
     const double cur_dur = you.duration[mount ? DUR_MOUNT_POISONING : DUR_POISONING];
-    const double cur_aut = _poison_dur_to_aut(cur_dur);
+    const double cur_aut = poison_dur_to_aut(cur_dur);
 
     // If Cheibriados has slowed your life processes, poison affects you less
     // quickly (you take the same total damage, but spread out over a longer
@@ -4977,7 +4977,7 @@ void handle_player_poison(int delay, bool mount)
                                ? 2.0 / 3.0 : 1.0;
 
     const double new_aut = cur_aut - ((double) delay) * delay_scaling;
-    const double new_dur = _poison_aut_to_dur(new_aut);
+    const double new_dur = poison_aut_to_dur(new_aut);
 
     const int decrease = you.duration[mount ? DUR_MOUNT_POISONING : DUR_POISONING] - (int) new_dur;
 
@@ -5101,7 +5101,7 @@ int poison_survival()
     const bool chei = have_passive(passive_t::slow_metabolism);
     const bool dd = (you.species == SP_DEEP_DWARF);
     const int amount = you.duration[DUR_POISONING];
-    const double full_aut = _poison_dur_to_aut(amount);
+    const double full_aut = poison_dur_to_aut(amount);
     // Calculate the poison amount at which regen starts to beat poison.
     double min_poison_rate = 0.25;
     if (dd)
@@ -5122,7 +5122,7 @@ int poison_survival()
         return min(you.hp, you.hp - amount / 1000 + regen_beats_poison / 1000);
 
     // Calculate the amount of time until regen starts to beat poison.
-    double poison_duration = full_aut - _poison_dur_to_aut(regen_beats_poison);
+    double poison_duration = full_aut - poison_dur_to_aut(regen_beats_poison);
 
     if (poison_duration < 0)
         poison_duration = 0;
@@ -5141,8 +5141,8 @@ int poison_survival()
         test_aut2 /= 1.5;
     }
 
-    const int test_amount1 = _poison_aut_to_dur(full_aut - test_aut1);
-    const int test_amount2 = _poison_aut_to_dur(full_aut - test_aut2);
+    const int test_amount1 = poison_aut_to_dur(full_aut - test_aut1);
+    const int test_amount2 = poison_aut_to_dur(full_aut - test_aut2);
 
     int prediction1 = you.hp;
     int prediction2 = you.hp;

@@ -1000,10 +1000,7 @@ static void _describe_poison(status_info& inf, bool mount)
 {
     int pois_perc;
     if (mount)
-    {
-        // BCADDO: Fix this after giving mounts natural regen.
-        pois_perc = (you.mount_hp - you.duration[DUR_MOUNT_POISONING] / 1000) * 100 / you.mount_hp;
-    }
+        pois_perc = ((you.mount_hp - max(0, mount_poison_survival())) * 100 / you.mount_hp);
     else
     {
         pois_perc = (you.hp <= 0) ? 100

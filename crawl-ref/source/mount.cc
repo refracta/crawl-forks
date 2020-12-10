@@ -230,6 +230,59 @@ bool poison_mount(int amount, bool force)
     return amount;
 }
 
+int mount_regen()
+{
+    bool regen_mod = 1;
+    if (you.mount == mount_type::hydra)
+        regen_mod = 2;
+    return (10 + you.mount_hp_max / 3) * regen_mod;
+}
+
+int mount_poison_survival()
+{
+    if (!you.duration[DUR_MOUNT_POISONING])
+        return you.mount_hp;
+    const int rr = mount_regen();
+    const int amount = you.duration[DUR_MOUNT_POISONING];
+    const double full_aut = poison_dur_to_aut(amount);
+    // Calculate the poison amount at which regen starts to beat poison.
+    double min_poison_rate = 0.25;
+
+    int regen_beats_poison;
+    if (rr <= (int)(100.0 * min_poison_rate))
+        regen_beats_poison = 0;
+    else
+        regen_beats_poison = 150 * rr;
+
+    if (rr == 0)
+        return min(you.mount_hp, you.mount_hp - amount / 1000 + regen_beats_poison / 1000);
+
+    // Calculate the amount of time until regen starts to beat poison.
+    double poison_duration = full_aut - poison_dur_to_aut(regen_beats_poison);
+
+    if (poison_duration < 0)
+        poison_duration = 0;
+
+    // Worst case scenario is right before natural regen gives you a point of
+    // HP, so consider the nearest two such points.
+    const int predicted_regen = (int)((((double)you.mount_hp_regen) + rr * poison_duration / 10.0) / 100.0);
+    double test_aut1 = (100.0 * predicted_regen - 1.0 - ((double)you.mount_hp_regen)) / (rr / 10.0);
+    double test_aut2 = (100.0 * predicted_regen + 99.0 - ((double)you.mount_hp_regen)) / (rr / 10.0);
+
+    const int test_amount1 = poison_aut_to_dur(full_aut - test_aut1);
+    const int test_amount2 = poison_aut_to_dur(full_aut - test_aut2);
+
+    int prediction1 = you.mount_hp;
+    int prediction2 = you.mount_hp;
+
+    // Don't look backwards in time.
+    if (test_aut1 > 0)
+        prediction1 -= (amount / 1000 - test_amount1 / 1000 - (predicted_regen - 1));
+    prediction2 -= (amount / 1000 - test_amount2 / 1000 - predicted_regen);
+
+    return min(prediction1, prediction2);
+}
+
 monster_type mount_mons()
 {
     switch (you.mount)

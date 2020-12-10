@@ -1552,7 +1552,8 @@ static void _do_rest()
         if ((you.hp == you.hp_max || !player_regenerates_hp())
             && (you.magic_points == you.max_magic_points
                 || !player_regenerates_mp())
-            && ancestor_full_hp())
+            && ancestor_full_hp()
+            && !you.mounted() || you.mount_hp == you.mount_hp_max)
         {
             mpr("You start waiting.");
             _start_running(RDIR_REST, RMODE_WAIT_DURATION);

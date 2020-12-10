@@ -26,5 +26,7 @@ int mount_statuses();
 int mount_hd();
 bool mount_submerged();
 int mount_ac();
+int mount_regen();
+int mount_poison_survival();
 
 spret gain_mount(mount_type mount, int pow, bool fail);

@@ -1149,6 +1149,9 @@ int get_player_poisoning();
 bool poison_is_lethal();
 int poison_survival();
 
+double poison_dur_to_aut(double dur);
+double poison_aut_to_dur(double aut);
+
 bool miasma_player(actor *who, string source_aux = "");
 
 bool napalm_player(int amount, string source, string source_aux = "");
