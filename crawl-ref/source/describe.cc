@@ -4629,9 +4629,9 @@ static string _monster_stat_description(const monster_info& mi)
         result << uppercase_first(pronoun) << " "
             << conjugate_verb("are", plural)
             << " submerged underwater, boosting general protection,"
-            << " insulating against extremes of temperature and making"
+            << " insulating against acids and extremes of temperature and making"
             << " it immune to the clouds above the water, but inflicting a"
-            << " weakness to electricity.\n";
+            << " weakness to electricity (rF+ rC+ AC+4 rCorr+ rElec-).\n";
     }
 
     if (mi.is(MB_CHAOTIC))
