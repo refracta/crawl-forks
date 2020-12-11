@@ -2098,7 +2098,7 @@ void merfolk_check_swimming(bool stepped)
     {
         merfolk_start_swimming(stepped);
     }
-    else if (!is_feat_dangerous(grid)) // don't bother, the player is dying
+    else
         merfolk_stop_swimming();
 }
 

@@ -50,7 +50,7 @@ level_id actor::shaft_dest() const
  */
 bool actor::ground_level() const
 {
-    return !airborne() && !is_wall_clinging();
+    return !airborne() && !is_wall_clinging() && !mounted();
 }
 
 // Give hands required to wield weapon.
