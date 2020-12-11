@@ -4390,16 +4390,30 @@ static void _describe_monster_hp(const monster_info& mi, ostringstream &result)
 static void _describe_monster_ac(const monster_info& mi, ostringstream &result)
 {
     string msg = "";
-    if (mi.is(MB_CORROSION))
+    bool applied = false;
+    if (mi.is(MB_CORROSION) || mi.is(MB_WRETCHED) || mi.is(MB_SUBMERGED))
     {
-        msg = " (corroded";
+        msg = " (";
+        if (mi.is(MB_CORROSION))
+        {
+            msg += "corroded";
+            applied = true;
+        }
         if (mi.is(MB_WRETCHED))
-            msg += ", wretched)";
-        else
-            msg += ")";
+        {
+            if (applied != 0)
+                msg += ", ";
+            msg += "wretched";
+            applied = true;
+        }
+        if (mi.is(MB_SUBMERGED))
+        {
+            if (applied != 0)
+                msg += ", ";
+            msg += "submerged";
+        }
+        msg += ")";
     }
-    else if (mi.is(MB_WRETCHED))
-        msg = " (wretched)";
     result << "AC: " << mi.ac << msg << "\n";
 }
 
@@ -4414,6 +4428,8 @@ static void _describe_monster_ev(const monster_info& mi, ostringstream &result)
     string msg = "";
     if (mi.ev < mi.base_ev)
         msg = " (incap)";
+    if (mi.ev > mi.base_ev && mi.is(MB_SUBMERGED))
+        msg = " (swimming)";
     result << "EV: " << mi.ev << msg << "\n";
 }
 
@@ -4606,6 +4622,16 @@ static string _monster_stat_description(const monster_info& mi)
                << conjugate_verb("are", plural) << " susceptible to "
                << comma_separated_line(suscept.begin(), suscept.end())
                << ".\n";
+    }
+
+    if (mi.is(MB_SUBMERGED))
+    {
+        result << uppercase_first(pronoun) << " "
+            << conjugate_verb("are", plural)
+            << " submerged underwater, boosting general protection,"
+            << " insulating against extremes of temperature and making"
+            << " it immune to the clouds above the water, but inflicting a"
+            << " weakness to electricity.\n";
     }
 
     if (mi.is(MB_CHAOTIC))
