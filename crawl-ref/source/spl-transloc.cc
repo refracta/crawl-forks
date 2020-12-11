@@ -848,6 +848,7 @@ spret cast_apportation(int pow, bool fail)
 {
     vector<int> items_to_apport;
     bool want_destroy = false;
+    bool seen = false;
 
     for (rectangle_iterator ri(you.pos(), LOS_RADIUS); ri; ++ri)
     {
@@ -862,11 +863,15 @@ spret cast_apportation(int pow, bool fail)
         // Let's look at the top item in that square...
         // And don't allow apporting from shop inventories.
         // Using visible_igrd takes care of deep water/lava where appropriate.
-        const int item_idx = you.visible_igrd(*ri);
+        const int item_idx = igrd(*ri);
         if (item_idx == NON_ITEM || !in_bounds(*ri))
             continue;
 
         item_def& item = mitm[item_idx];
+
+        const int seen_int = you.visible_igrd(*ri);
+        if (seen_int && seen_int == item_idx)
+            seen = true;
 
         // Nets can be apported when they have a victim trapped.
         if (item_is_stationary(item) && !item_is_stationary_net(item))
@@ -875,10 +880,10 @@ spret cast_apportation(int pow, bool fail)
         items_to_apport.push_back(item_idx);
     }
 
-    if (items_to_apport.size() == 0)
+    if (!seen) 
     {
-        mpr("There is nothing you can see to apport.");
-        return spret::abort;
+        if (!yesno("There is nothing you can see to apport. Continue anyway?", true, 0))
+            return spret::abort;
     }
 
     if (grd(you.pos()) == DNGN_TRAP_SHAFT)
@@ -888,7 +893,7 @@ spret cast_apportation(int pow, bool fail)
     }
     else if (feat_eliminates_items(grd(you.pos())))
     {
-        string msg = make_stringf("Items apported to you now will be %s. Continue anyways?", feat_destroys_items(grd(you.pos())) ? "destroyed" : "lost to you");
+        string msg = make_stringf("Items apported to you now will be %s. Continue anyways?", feat_destroys_items(grd(you.pos())) ? "destroyed" : "unreachable without apporting elsewhere");
         if (!yesno(msg.c_str(), true, 0))
             return spret::abort;
         want_destroy = true;

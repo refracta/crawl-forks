@@ -932,8 +932,8 @@ bool feat_destroys_items(dungeon_feature_type feat)
  */
 bool feat_eliminates_items(dungeon_feature_type feat)
 {
-    return feat_destroys_items(feat)
-           || ((feat == DNGN_DEEP_WATER || feat == DNGN_DEEP_SLIMY_WATER) && !species_likes_water(you.species));
+    return feat_destroys_items(feat) ||
+           ((feat == DNGN_DEEP_WATER || feat == DNGN_DEEP_SLIMY_WATER) && !species_likes_water(you.species));
 }
 
 static coord_def _dgn_find_nearest_square(
@@ -984,7 +984,7 @@ static coord_def _dgn_find_nearest_square(
 static bool _item_safe_square(const coord_def &pos)
 {
     const dungeon_feature_type feat = grd(pos);
-    return feat_is_traversable(feat) && !feat_destroys_items(feat);
+    return feat_is_traversable(feat) && !feat_eliminates_items(feat);
 }
 
 static bool _item_traversable_square(const coord_def &pos)
