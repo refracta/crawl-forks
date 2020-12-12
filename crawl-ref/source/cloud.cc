@@ -50,13 +50,10 @@ struct cloud_damage
 {
     int base; ///< Flat damage on every hit, pre-defenses.
     int random; ///< Damage rolled on hit.
-    bool extra_player_dam; //< HACK: does 4+random2(8) extra damage to players.
-    // Yes, we really hate players, damn their guts.
-    // BCADDO: Consider removing this extra damage; eventually.
 };
 
 /// Damage for most damaging clouds.
-static const cloud_damage NORMAL_CLOUD_DAM = { 6, 16, true };
+static const cloud_damage NORMAL_CLOUD_DAM = { 6, 16 };
 // 6+r2a(16,2) for monsters, 10+r2a(23,2) for players
 
 /// A portrait of a cloud_type.
@@ -187,7 +184,7 @@ static const cloud_data clouds[] = {
       ETC_HOLY,                                 // colour
       { TILE_CLOUD_YELLOW_SMOKE },              // tile
       BEAM_HOLY,                                // beam_effect
-      {4, 12, true},                            // base, random damage
+      {4, 12 },                                 // base, random damage
       true,                                     // opacity
     },
     // CLOUD_MIASMA,
@@ -311,7 +308,7 @@ static const cloud_data clouds[] = {
       ETC_INCARNADINE,                          // colour
       { TILE_CLOUD_BLOOD, CTVARY_DUR },         // tile
       BEAM_NEG,                                 // beam_effect
-      { 0, 12, false },                         // base, random damage
+      { 0, 12 },                                // base, random damage
     },
     // CLOUD_ROT,
     { "vicious blight", "vile decay",           // terse, verbose name
@@ -879,19 +876,13 @@ static int _cloud_damage_calc(int size, int n_average, int extra,
 
 // Calculates the base damage that the cloud does to an actor without
 // considering resistances and time spent in the cloud.
-static int _cloud_base_damage(const actor *act,
-                              cloud_type flavour,
-                              bool maximum_damage,
-                              bool mount)
+static int _cloud_base_damage(cloud_type flavour,
+                              bool maximum_damage)
 {
     const cloud_damage &dam = clouds[flavour].damage;
-    const bool extra_damage = dam.extra_player_dam && !mount && act->is_player();
-    const int random_dam = dam.random + (extra_damage ? 7 : 0);
-    const int base_dam = dam.base + (extra_damage ? 4 : 0);
     const int trials = dam.random/15 + 1;
 
-    return _cloud_damage_calc(random_dam, trials, base_dam, maximum_damage);
-
+    return _cloud_damage_calc(dam.random, trials, dam.base, maximum_damage);
 }
 
 /**
@@ -1291,7 +1282,7 @@ static int _actor_cloud_base_damage(const actor *act,
         return 0;
 
     const int cloud_raw_base_damage =
-        _cloud_base_damage(act, cloud.type, maximum_damage, mount);
+        _cloud_base_damage(cloud.type, maximum_damage);
     const int cloud_base_damage = (resist == MAG_IMMUNE ?
                                    0 : cloud_raw_base_damage);
     return cloud_base_damage;
