@@ -53,8 +53,8 @@ struct cloud_damage
 };
 
 /// Damage for most damaging clouds.
-static const cloud_damage NORMAL_CLOUD_DAM = { 6, 16 };
-// 6+r2a(16,2) for monsters, 10+r2a(23,2) for players
+static const cloud_damage NORMAL_CLOUD_DAM = { 4, 12 };
+// 4+r2a(12,2).
 
 /// A portrait of a cloud_type.
 struct cloud_data
@@ -92,7 +92,7 @@ static const cloud_data clouds[] = {
       GREEN,                                    // colour
       { TILE_CLOUD_MEPHITIC, CTVARY_DUR },      // tile
       BEAM_MEPHITIC,                            // beam_effect
-      {0, 3},                                   // base, random damage
+      {0, 2},                                   // base, random damage
     },
     // CLOUD_COLD,
     { "freezing vapour", "freezing vapours",    // terse, verbose name
@@ -106,7 +106,7 @@ static const cloud_data clouds[] = {
       LIGHTGREEN,                               // colour
       { TILE_CLOUD_POISON, CTVARY_DUR },        // tile
       BEAM_POISON,                              // beam_effect
-      {0, 10},                                  // base, random damage
+      {0, 7},                                  // base, random damage
     },
     // CLOUD_BLACK_SMOKE,
     { "black smoke",  nullptr,                  // terse, verbose name
@@ -155,7 +155,7 @@ static const cloud_data clouds[] = {
       LIGHTGREY,                                // colour
       { TILE_CLOUD_GREY_SMOKE, CTVARY_NONE },   // tile
       BEAM_STEAM,                               // beam_effect
-      {0, 16},                                  // base, random damage
+      {0, 12},                                  // base, random damage
       true,                                     // opacity
     },
 #if TAG_MAJOR_VERSION == 34
@@ -184,7 +184,7 @@ static const cloud_data clouds[] = {
       ETC_HOLY,                                 // colour
       { TILE_CLOUD_YELLOW_SMOKE },              // tile
       BEAM_HOLY,                                // beam_effect
-      {4, 12 },                                 // base, random damage
+      {3, 9 },                                  // base, random damage
       true,                                     // opacity
     },
     // CLOUD_MIASMA,
@@ -192,7 +192,7 @@ static const cloud_data clouds[] = {
       DARKGREY,                                 // colour
       { TILE_CLOUD_MIASMA, CTVARY_DUR },        // tile
       BEAM_MIASMA,                              // beam_effect
-      { 0, 12 },                                // base, random damage
+      { 0, 9 },                                 // base, random damage
     },
     // CLOUD_MIST,
     { "thin mist", nullptr,                     // terse, verbose name
@@ -210,7 +210,7 @@ static const cloud_data clouds[] = {
       ETC_MIST,                                 // colour
       { TILE_CLOUD_RAIN, CTVARY_RANDOM },       // tile
       BEAM_NONE,                                // unused
-      { 0, 9 },                                 // base, random damage
+      { 0, 7 },                                 // base, random damage
                                                 // but only for fiery mons
     },
     // CLOUD_MUTAGENIC,
@@ -238,7 +238,7 @@ static const cloud_data clouds[] = {
       ETC_ELECTRICITY,                          // colour
       { TILE_CLOUD_SPECTRAL, CTVARY_DUR },      // tile
       BEAM_NONE,                                // beam_effect
-      { 4, 15 },                                // base, random damage
+      { 3, 13 },                                // base, random damage
     },
     // CLOUD_ACID,
     { "acidic fog", nullptr,                    // terse, verbose name
@@ -252,7 +252,7 @@ static const cloud_data clouds[] = {
       ETC_DARK,                                 // colour
       { TILE_CLOUD_STORM, CTVARY_RANDOM },      // tile
       BEAM_ELECTRICITY,                         // beam_effect
-      {12, 12},         // fake damage - used only for monster pathing
+      {9, 9},         // Only actually used on lightning strike.
     },
     // CLOUD_NEGATIVE_ENERGY,
     { "negative energy", nullptr,               // terse, verbose name
@@ -308,14 +308,14 @@ static const cloud_data clouds[] = {
       ETC_INCARNADINE,                          // colour
       { TILE_CLOUD_BLOOD, CTVARY_DUR },         // tile
       BEAM_NEG,                                 // beam_effect
-      { 0, 12 },                                // base, random damage
+      { 0, 9 },                                // base, random damage
     },
     // CLOUD_ROT,
     { "vicious blight", "vile decay",           // terse, verbose name
       LIGHTGREEN,                               // colour
       { TILE_CLOUD_ROT, CTVARY_DUR },           // tile
       BEAM_ROT,                                 // beam_effect
-      { 4, 18 },                                // base, random damage
+      { 3, 15 },                                // base, random damage
     },
 };
 COMPILE_CHECK(ARRAYSZ(clouds) == NUM_CLOUD_TYPES);
@@ -1297,9 +1297,7 @@ static int _cloud_damage_output(const actor *actor,
     if (maximum_damage)
         return resist_adjust_damage(actor, flavour, base_damage, mount);
 
-    int dam = actor->apply_ac(base_damage, 0, ac_type::normal, 0, true, mount);
-    dam = resist_adjust_damage(actor, flavour, dam, mount);
-    return max(0, dam);
+    return max(0, resist_adjust_damage(actor, flavour, base_damage, mount));
 }
 
 /**
@@ -1339,7 +1337,6 @@ static int _actor_cloud_damage(const actor *act,
         break;
     case CLOUD_STORM:
     {
-
         // if we don't have thunder, there's always rain
         cloud_struct raincloud = cloud;
         raincloud.type = CLOUD_RAIN;
@@ -1359,7 +1356,7 @@ static int _actor_cloud_damage(const actor *act,
         const int aut_per_lightning = turns_per_lightning * BASELINE_DELAY;
 
         // if we fail our lightning roll, again, just rain.
-        if (!maximum_damage && mount || (!x_chance_in_y(you.time_taken,
+        if (!maximum_damage || mount || (!x_chance_in_y(you.time_taken,
             aut_per_lightning)))
         {
             return rain_damage;
@@ -1414,7 +1411,6 @@ static int _actor_cloud_damage(const actor *act,
                     : "You hear a clap of thunder!");
 
         return lightning_dam;
-
     }
     default:
         break;
