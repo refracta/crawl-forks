@@ -320,7 +320,7 @@ function ($, comm, enums, map_knowledge, messages, options) {
             $("#stats_" + name).addClass("colour_" + colour);
     }
 
-    var simple_stats = ["hp", "hp_max", "mp", "mp_max", "xl", "progress"];
+    var simple_stats = ["hp", "hp_max", "mp", "mp_max", "mount_hp", "mount_hp_max", "xl", "progress"];
     /**
      * Update the stats pane area based on the player's current properties.
      */
@@ -391,11 +391,7 @@ function ($, comm, enums, map_knowledge, messages, options) {
         else
             $("#stats_real_hp_max").text("");
       
-
-        if (player.species == "Deep Dwarf" && player.dd_real_mp_max != player.mp_max)
-            $("#stats_dd_real_mp_max").text("(" + player.dd_real_mp_max + ")");
-        else
-            $("#stats_dd_real_mp_max").text("");
+        $("#stats_dd_real_mp_max").text("");
 
         percentage_color("hp");
         percentage_color("mp");
