@@ -62,6 +62,9 @@ sacred_scourge WPN_SACRED_SCOURGE
 dagger WPN_DAGGER
 dagger2
 dagger3
+cleaver1 WPN_CLEAVER
+cleaver2
+cleaver3
 short_sword1 WPN_SHORT_SWORD
 short_sword2
 short_sword3

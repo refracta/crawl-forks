@@ -324,6 +324,11 @@ chunk of flesh
 
 A piece of raw meat found in the dungeon. It won't stay fresh for long.
 %%%%
+cleaver
+
+A butcher's tool used for slicing up large pieces of meat. Also a nasty weapon 
+favoured by serial killers. Very effective at slicing through bone.
+%%%%
 cloak
 
 A cloth cloak.

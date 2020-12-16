@@ -166,6 +166,9 @@ tileidx_t tilep_equ_hand1(const item_def &item)
     case WPN_DAGGER:
         tile = TILEP_HAND1_DAGGER_SLANT;
         break;
+    case WPN_CLEAVER:
+        tile = TILEP_HAND1_CLEAVER;
+        break;
     case WPN_SHORT_SWORD:
         tile = TILEP_HAND1_SHORT_SWORD_SLANT;
         break;
@@ -428,6 +431,9 @@ tileidx_t tilep_equ_hand2(const item_def &item)
         // Edge
     case WPN_DAGGER:
         tile = TILEP_HAND2_DAGGER_SLANT;
+        break;
+    case WPN_CLEAVER:
+        tile = TILEP_HAND2_CLEAVER;
         break;
     case WPN_SHORT_SWORD:
         tile = TILEP_HAND2_SHORT_SWORD_SLANT;
@@ -700,6 +706,9 @@ tileidx_t tilep_equ_weapon(const item_def &item)
     // Edge
     case WPN_DAGGER:
         tile = TILEP_HAND1_DAGGER_SLANT;
+        break;
+    case WPN_CLEAVER:
+        tile = TILEP_HAND1_CLEAVER;
         break;
     case WPN_SHORT_SWORD:
         tile = TILEP_HAND1_SHORT_SWORD_SLANT;

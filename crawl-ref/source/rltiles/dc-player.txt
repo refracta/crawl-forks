@@ -638,6 +638,7 @@ lshield_louise LSHIELD_LOUISE
 # blades
 dagger DAGGER
 dagger2 
+cleaver0 CLEAVER
 dagger_slant DAGGER_SLANT
 dagger_slant2 
 short_sword SHORT_SWORD
@@ -999,6 +1000,7 @@ sceptre_of_torment SCEPTRE_OF_TORMENT
 # blades
 dagger DAGGER
 dagger2 
+cleaver0 CLEAVER
 dagger_slant DAGGER_SLANT
 dagger_slant2 
 short_sword SHORT_SWORD

@@ -719,6 +719,8 @@ enum weapon_type
 
     WPN_MANGONEL,
 
+    WPN_CLEAVER,
+
     NUM_WEAPONS,
 
 // special cases
