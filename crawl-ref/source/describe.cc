@@ -4266,9 +4266,10 @@ static string _monster_attacks_description(const monster_info& mi)
         const string weapon_name =
               info.weapon ? info.weapon->name(DESC_PLAIN).c_str()
             : ghost_brand_name(special_flavour, mi.type).c_str();
+        const string dmg = info.weapon ? make_stringf(" (%d)", weapon_damage(*info.weapon)) : "";
         const string weapon_note = weapon_name.size() ?
-            make_stringf(" plus %s %s",
-                        mi.pronoun(PRONOUN_POSSESSIVE), weapon_name.c_str())
+            make_stringf(" plus %s %s%s",
+                        mi.pronoun(PRONOUN_POSSESSIVE), weapon_name.c_str(), dmg.c_str())
             : "";
 
         // XXX: hack alert
