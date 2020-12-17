@@ -5554,53 +5554,19 @@ bool monster::polymorph(poly_power_type power)
     return monster_polymorph(this, RANDOM_MONSTER, power);
 }
 
-static bool _mons_is_icy(int mc)
-{
-    return mc == MONS_ICE_BEAST
-           || mc == MONS_SIMULACRUM
-           || mc == MONS_ICE_STATUE
-           || mc == MONS_BLOCK_OF_ICE;
-}
-
 bool monster::is_icy() const
 {
-    return _mons_is_icy(type);
-}
-
-static bool _mons_is_fiery(int mc)
-{
-    return mc == MONS_FIRE_VORTEX
-           || mc == MONS_FIRE_ELEMENTAL
-           || mc == MONS_EFREET
-           || mc == MONS_AZRAEL
-           || mc == MONS_LAVA_SNAKE
-           || mc == MONS_SALAMANDER
-           || mc == MONS_SALAMANDER_MYSTIC
-           || mc == MONS_MOLTEN_GARGOYLE
-           || mc == MONS_ORB_OF_FIRE
-           || mc == MONS_CINDER_NEWT;
+    return is_icy_type(type);
 }
 
 bool monster::is_fiery() const
 {
-    return _mons_is_fiery(type);
-}
-
-static bool _mons_is_skeletal(int mc)
-{
-    return mc == MONS_SKELETON
-           || mc == MONS_BONE_DRAGON
-           || mc == MONS_SKELETAL_WARRIOR
-           || mc == MONS_ANCIENT_CHAMPION
-           || mc == MONS_REVENANT
-           || mc == MONS_FLYING_SKULL
-           || mc == MONS_CURSE_SKULL
-           || mc == MONS_MURRAY;
+    return is_fiery_type(type);
 }
 
 bool monster::is_skeletal() const
 {
-    return _mons_is_skeletal(type);
+    return is_skeletal_type(type);
 }
 
 /**
@@ -5883,7 +5849,7 @@ void monster::check_awaken(int)
     // XXX
 }
 
-int monster::beam_resists(bolt &beam, int hurted, bool doEffects, string /*source*/)
+int monster::beam_resists(bolt &beam, int hurted, bool doEffects, string /*source*/, bool /*mount*/)
 {
     return mons_adjust_flavoured(this, beam, hurted, doEffects);
 }

@@ -833,7 +833,7 @@ public:
     void put_to_sleep(actor *, int power = 0, bool hibernate = false) override;
     void awaken();
     void check_awaken(int disturbance) override;
-    int beam_resists(bolt &beam, int hurted, bool doEffects, string source)
+    int beam_resists(bolt &beam, int hurted, bool doEffects, string source, bool mount = false)
         override;
 
     bool can_smell() const;

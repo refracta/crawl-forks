@@ -1361,47 +1361,87 @@ spret cast_airstrike(int pow, const dist &beam, bool fail)
     return spret::success;
 }
 
+static int _dice_for_mon_type(const monster_type mc)
+{
+    // Removed a lot of silly monsters down here... people, just because
+    // it says ice, rock, or iron in the name doesn't mean it's actually
+    // made out of the substance. - bwr
+    switch (mc)
+    { 
+        // Double damage to stone, metal and crystal.
+        case MONS_EARTH_ELEMENTAL:
+        case MONS_USHABTI:
+        case MONS_STATUE:
+        case MONS_GARGOYLE:
+        case MONS_IRON_ELEMENTAL:
+        case MONS_IRON_GOLEM:
+        case MONS_PEACEKEEPER:
+        case MONS_WAR_GARGOYLE:
+        case MONS_SALTLING:
+        case MONS_CRYSTAL_GUARDIAN:
+        case MONS_OBSIDIAN_STATUE:
+        case MONS_ORANGE_STATUE:
+        case MONS_ROXANNE:
+            return 6;
+        default:
+            break;
+    }
+
+    if (mons_class_flag(mc, M_INSUBSTANTIAL))
+        return 0;
+    if (is_skeletal_type(mc) || is_icy_type(mc))
+        return 6;
+    if (mons_class_is_slime(mc))
+        return 1;
+    return 3;
+}
+
+static int _shatter_mount_dice()
+{
+    if (!you.mounted())
+        return 0;
+
+    int retval = 0;
+
+    if (you.petrified(true))
+        retval = 6;
+    else
+        retval = _dice_for_mon_type(mount_mons());
+
+    if (retval == 0)
+        return 0;
+
+    if (you.petrifying(true))
+        retval += 1;
+    if (you.airborne())
+        retval--;
+
+    retval--;
+
+    return max(retval, 1);
+}
+
 static int _shatter_mon_dice(const monster *mon)
 {
     if (!mon)
         return 0;
 
-    // Removed a lot of silly monsters down here... people, just because
-    // it says ice, rock, or iron in the name doesn't mean it's actually
-    // made out of the substance. - bwr
-    switch (mon->type)
-    {
-    // Double damage to stone, metal and crystal.
-    case MONS_EARTH_ELEMENTAL:
-    case MONS_USHABTI:
-    case MONS_STATUE:
-    case MONS_GARGOYLE:
-    case MONS_IRON_ELEMENTAL:
-    case MONS_IRON_GOLEM:
-    case MONS_PEACEKEEPER:
-    case MONS_WAR_GARGOYLE:
-    case MONS_SALTLING:
-    case MONS_CRYSTAL_GUARDIAN:
-    case MONS_OBSIDIAN_STATUE:
-    case MONS_ORANGE_STATUE:
-    case MONS_ROXANNE:
-        return 6;
+    int retval = 0;
 
-    default:
-        if (mon->is_insubstantial())
-            return 0;
-        if (mon->petrifying()) 
-            return 4;
-        if (mon->petrified())
-            return 6;
-        else if (mon->is_skeletal() || mon->is_icy())
-            return 6;
-        else if (mon->airborne() || mons_is_slime(*mon))
-            return 1;
-        // Normal damage to everything else.
-        else
-            return 3;
-    }
+    if (mon->petrified())
+        retval = 6;
+    else
+        retval = _dice_for_mon_type(mon->type);
+
+    if (retval == 0)
+        return 0;
+
+    if (mon->petrifying())
+        retval += 1;
+    if (mon->airborne())
+        retval -= 2;
+
+    return max(retval, 1);
 }
 
 static int _shatter_monsters(coord_def where, int pow, actor *agent, bool chaos)
@@ -1515,19 +1555,26 @@ static int _shatter_player_dice()
 {
     if (you.is_insubstantial())
         return 0;
-    if (you.petrified())
-        return 6;
+
+    int retval = 3;
+
+    if (you.form == transformation::statue
+        || you.form == transformation::ice_beast
+        || you.species == SP_GARGOYLE
+        || (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, true) && you.drac_colour == DR_BONE)
+        || you.petrified())
+    {
+        retval = 6;
+    }
+
     if (you.petrifying())
-        return 4; 
-    else if (you.form == transformation::statue
-             || you.form == transformation::ice_beast
-             || you.species == SP_GARGOYLE
-             || (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, true) && you.drac_colour == DR_BONE))
-        return 6;
-    else if (you.airborne())
-        return 1;
-    else
-        return 3;
+        retval++; 
+    if (you.airborne())
+        retval -= 2;
+    if (you.mounted())
+        retval--;
+
+    return max(1, retval);
 }
 
 /**
@@ -1741,11 +1788,21 @@ static int _shatter_player(int pow, actor *wielder, bool devastator = false)
         return 0;
 
     dice_def dam_dice(_shatter_player_dice(), 5 + pow / 3);
+    dice_def mount_dice(_shatter_mount_dice(), 5 + pow / 3);
 
     if (!devastator && dam_dice.num > 0 && _is_menacing(wielder, SPELL_SHATTER))
+    {
         dam_dice.num++;
+        mount_dice.num++;
+    }
 
     int damage = max(0, dam_dice.roll() - random2(you.armour_class()));
+    int mntdmg = 0;
+    
+    if (you.mounted())
+        mntdmg = max(0, mount_dice.roll() - random2(mount_ac()));
+
+    // BCADNOTE: Shatter uses AC, but not GDR, should I leave it this way?
 
     if (damage > 0)
     {
@@ -1756,6 +1813,15 @@ static int _shatter_player(int pow, actor *wielder, bool devastator = false)
             ouch(damage, KILLED_BY_MONSTER, wielder->mid);
         else
             ouch(damage, KILLED_BY_BEAM, wielder->mid, "by Shatter");
+    }
+
+    if (mntdmg)
+    {
+        mprf("Your %s trembles%s",
+            you.mount_name(true).c_str(),
+            attack_strength_punctuation(damage).c_str());
+
+        damage_mount(mntdmg);
     }
 
     return damage;
@@ -1900,9 +1966,27 @@ static int _irradiate_cell(coord_def where, int pow, actor *agent)
                               : 30 + div_rand_round(pow, 2);
     const dice_def dam_dice = calc_dice(dice, max_dam);
     const int dam = dam_dice.roll();
+    const int dam2 = dam_dice.roll();
     if (act->is_player())
+    {
         mprf("You are blasted with magical radiation%s",
             attack_strength_punctuation(dam).c_str());
+        if (you.mounted())
+        {
+            mprf("Your %s is also blasted by the radiation%s",
+                you.mount_name(true).c_str(),
+                attack_strength_punctuation(dam2).c_str());
+
+            damage_mount(dam2);
+
+            if (you.mounted())
+            {
+                if (!you.duration[DUR_MOUNT_WRETCHED])
+                    mprf("Your %s twists and deforms!", you.mount_name().c_str());
+                you.increase_duration(DUR_MOUNT_WRETCHED, 5 + roll_dice(3, 8), 50);
+            }
+        }
+    }
     else
         mprf("%s is blasted with magical radiation%s",
              act->name(DESC_THE).c_str(),
@@ -3753,6 +3837,18 @@ void toxic_radiance_effect(actor* agent, int mult, bool on_cast, bool chaos)
 
                 poison_player(roll_dice(2, 3), agent->name(DESC_A),
                               "toxic radiance", false);
+
+                if (you.mounted())
+                {
+                    int dam2 = roll_dice(menace ? 2 : 1, chaos ? 1 + pow / 16 : 1 + pow / 20)
+                        * div_rand_round(mult, BASELINE_DELAY);
+                    dam2 = resist_adjust_damage(*ai, damtype, dam2, true);
+
+                    damage_mount(dam2);
+
+                    if (you.mounted())
+                        poison_mount(roll_dice(2, 3));
+                }
             }
         }
         else

@@ -4959,7 +4959,7 @@ void bolt::affect_player()
                 you.duration[DUR_FROZEN] = (2 + random2(3)) * BASELINE_DELAY;
             }
         }
-        else if (hits_mount)
+        else if (hits_mount && you.mounted()) // Glaciate may have killed mount
         {
             if (you.duration[DUR_MOUNT_FROZEN])
             {

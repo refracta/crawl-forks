@@ -633,3 +633,6 @@ int derived_undead_avg_hp(monster_type mtype, int hd, int scale = 10);
 
 bool is_chaotic_type(monster_type type);
 bool is_draconic_type(monster_type type);
+bool is_skeletal_type(monster_type type);
+bool is_icy_type(monster_type type);
+bool is_fiery_type(monster_type type);

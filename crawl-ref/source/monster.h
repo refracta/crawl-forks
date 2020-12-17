@@ -508,7 +508,7 @@ public:
         override;
     void weaken(actor *attacker, int pow) override;
     void check_awaken(int disturbance) override;
-    int beam_resists(bolt &beam, int hurted, bool doEffects, string source = "")
+    int beam_resists(bolt &beam, int hurted, bool doEffects, string source = "", bool /*mount*/ = false)
         override;
 
     int stat_hp() const override    { return hit_points; }

@@ -6292,6 +6292,8 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
                              : _mons_spellpower(spell_cast, *mons);
     const bool chaos = (determine_chaos(mons, spell_cast) && !evoke);
     const bool eldritch = (mons->staff() && is_unrandom_artefact(*mons->staff(), UNRAND_MAJIN));
+    bool mount_defend = false;
+    const string mount_name = you.mounted() ? make_stringf("your %s", you.mount_name(true).c_str()) : "";
     monster * x;
 
     switch (spell_cast)
@@ -6301,27 +6303,37 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
     case SPELL_WATERSTRIKE:
     {
         pbolt.flavour    = BEAM_WATER;
+        mount_defend = you.mounted(); // Waterstrike always hits mount (it's from below).
 
-        int damage_taken = waterstrike_damage(*mons).roll();
-        damage_taken = foe->beam_resists(pbolt, damage_taken, false);
-        damage_taken = foe->apply_ac(damage_taken);
+        dice_def calc = waterstrike_damage(*mons);
+        int damage_taken = calc.roll();
+        int maximum_damage = calc.num * calc.size;
+        damage_taken = foe->beam_resists(pbolt, damage_taken, false, "", mount_defend);
+        maximum_damage = foe->beam_resists(pbolt, maximum_damage, false, "", mount_defend);
+        damage_taken = foe->apply_ac(damage_taken, maximum_damage, ac_type::normal, 0, true, mount_defend);
 
         if (you.can_see(*foe))
         {
                 mprf("The water %s and strikes %s%s",
                         foe->airborne() ? "rises up" : "swirls",
-                        foe->name(DESC_THE).c_str(),
+                        mount_defend ? mount_name.c_str() : foe->name(DESC_THE).c_str(),
                         attack_strength_punctuation(damage_taken).c_str());
         }
 
-        foe->hurt(mons, damage_taken, BEAM_MISSILE, KILLED_BY_BEAM,
-                      "", "by the raging water");
+        if (mount_defend)
+            damage_mount(damage_taken);
+        else
+        {
+            foe->hurt(mons, damage_taken, BEAM_MISSILE, KILLED_BY_BEAM,
+                "", "by the raging water");
+        }
         return;
     }
 
     case SPELL_AIRSTRIKE:
     {
         pbolt.flavour = BEAM_AIR;
+        // Airstrike never hits mount (it's from above).
 
         if (chaos)
             pbolt.flavour = chaos_damage_type();
@@ -6335,7 +6347,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         // Previous method of damage calculation (in line with player
         // airstrike) had absurd variance.
         int dam = random2avg(damage_taken, 3);
-        damage_taken = foe->apply_ac(dam);
+        damage_taken = foe->apply_ac(dam, damage_taken);
 
         if (you.can_see(*foe))
         {

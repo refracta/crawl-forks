@@ -8458,9 +8458,9 @@ void player::check_awaken(int disturbance)
     }
 }
 
-int player::beam_resists(bolt &beam, int hurted, bool doEffects, string source)
+int player::beam_resists(bolt &beam, int hurted, bool doEffects, string source, bool mount)
 {
-    return check_your_resists(hurted, beam.flavour, source, &beam, doEffects);
+    return check_your_resists(hurted, beam.flavour, source, &beam, doEffects, mount);
 }
 
 // Used for falling into traps and other bad effects, but is a slightly

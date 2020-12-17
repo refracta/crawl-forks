@@ -2009,7 +2009,7 @@ static void _wild_magic_card(int power, deck_rarity_type rarity)
 
 static void _torment_card()
 {
-    if (you.undead_or_demonic())
+    if (you.res_holy_energy() < 0)
         holy_word_player(HOLY_WORD_CARD);
     else
         torment_player(&you, TORMENT_CARDS);

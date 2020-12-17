@@ -6728,3 +6728,37 @@ bool is_draconic_type(monster_type type)
 {
     return (type == MONS_DRAGON || type == MONS_DRAKE || type == MONS_HYDRA);
 }
+
+bool is_skeletal_type(monster_type mc)
+{
+    return mc == MONS_SKELETON
+        || mc == MONS_BONE_DRAGON
+        || mc == MONS_SKELETAL_WARRIOR
+        || mc == MONS_ANCIENT_CHAMPION
+        || mc == MONS_REVENANT
+        || mc == MONS_FLYING_SKULL
+        || mc == MONS_CURSE_SKULL
+        || mc == MONS_MURRAY;
+}
+
+bool is_icy_type(monster_type mc)
+{
+    return mc == MONS_ICE_BEAST
+        || mc == MONS_SIMULACRUM
+        || mc == MONS_ICE_STATUE
+        || mc == MONS_BLOCK_OF_ICE;
+}
+
+bool is_fiery_type(monster_type mc)
+{
+    return mc == MONS_FIRE_VORTEX
+        || mc == MONS_FIRE_ELEMENTAL
+        || mc == MONS_EFREET
+        || mc == MONS_AZRAEL
+        || mc == MONS_LAVA_SNAKE
+        || mc == MONS_SALAMANDER
+        || mc == MONS_SALAMANDER_MYSTIC
+        || mc == MONS_MOLTEN_GARGOYLE
+        || mc == MONS_ORB_OF_FIRE
+        || mc == MONS_CINDER_NEWT;
+}

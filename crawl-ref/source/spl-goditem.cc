@@ -950,6 +950,23 @@ bool cast_smiting(int pow, monster* mons)
     return true;
 }
 
+static void _holy_torment_mount(bool holy)
+{
+    if (!you.mounted() || (holy && you.res_holy_energy(true) >= 0) || (!holy && you.res_torment(true) > 0))
+        return;
+
+    int hploss = max(0, you.mount_hp / 2 - 1);
+
+    if (!hploss)
+        return;
+
+    mprf("Your %s %s%s", you.mount_name(true).c_str(),
+        holy ? "is blasted by holy energy" : "writhes in agony",
+        attack_strength_punctuation(hploss).c_str());
+
+    damage_mount(hploss);
+}
+
 void holy_word_player(holy_word_source_type source)
 {
     if (you.res_holy_energy() >= 0)
@@ -960,7 +977,7 @@ void holy_word_player(holy_word_source_type source)
     if (!hploss)
         return;
 
-    mpr("You are blasted by holy energy!");
+    mprf("You are blasted by holy energy%s", attack_strength_punctuation(hploss).c_str());
 
     const char *aux = "holy word";
 
@@ -1003,7 +1020,10 @@ void holy_word_monsters(coord_def where, int pow, holy_word_source_type source,
 
     // Is the player in this cell?
     if (where == you.pos())
+    {
         holy_word_player(source);
+        _holy_torment_mount(true);
+    }
 
     // Is a monster in this cell?
     monster* mons = monster_at(where);
@@ -1177,6 +1197,7 @@ void torment_cell(coord_def where, actor *attacker, torment_source_type taux)
         && !(attacker && attacker->is_player() && taux == TORMENT_SCEPTRE))
     {
         torment_player(attacker, taux);
+        _holy_torment_mount(false);
     }
     // Don't return, since you could be standing on a monster.
 
