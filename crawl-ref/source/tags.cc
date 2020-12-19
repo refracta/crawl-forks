@@ -3012,15 +3012,16 @@ static void tag_read_you(reader &th)
     you.mutation[MUT_BREATHE_FLAMES] = 0;
     if (you.species != SP_NAGA)
         you.mutation[MUT_SPIT_POISON] = 0;
-#endif
 
-    // BCADNOTE: Next minor version bump; put one here so this doesn't need to be updated if another
-    // species gets rF-.
-    if (you.char_class != JOB_MUMMY && you.species != SP_LIGNIFITE)
-    {
-        you.mutation[MUT_NECRO_ENHANCER] = you.innate_mutation[MUT_NECRO_ENHANCER] = 0;
-        you.mutation[MUT_HEAT_VULNERABILITY] = you.innate_mutation[MUT_HEAT_VULNERABILITY] = 0;
+    if (th.getMinorVersion() < TAG_MINOR_MOUNT_ENERGY)
+    { 
+        if (you.char_class != JOB_MUMMY && you.species != SP_LIGNIFITE)
+        {
+            you.mutation[MUT_NECRO_ENHANCER] = you.innate_mutation[MUT_NECRO_ENHANCER] = 0;
+            you.mutation[MUT_HEAT_VULNERABILITY] = you.innate_mutation[MUT_HEAT_VULNERABILITY] = 0;
+        }
     }
+#endif
 
     for (int j = count; j < NUM_MUTATIONS; ++j)
         you.mutation[j] = you.innate_mutation[j] = you.sacrifices[j];
