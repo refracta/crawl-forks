@@ -5849,7 +5849,7 @@ void monster::check_awaken(int)
     // XXX
 }
 
-int monster::beam_resists(bolt &beam, int hurted, bool doEffects, string /*source*/, bool /*mount*/)
+int monster::beam_resists(bolt &beam, int hurted, bool doEffects, string /*source*/, bool /*mt*/)
 {
     return mons_adjust_flavoured(this, beam, hurted, doEffects);
 }

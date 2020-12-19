@@ -8458,7 +8458,7 @@ void player::check_awaken(int disturbance)
     }
 }
 
-int player::beam_resists(bolt &beam, int hurted, bool doEffects, string source, bool mount)
+int player::beam_resists(bolt &beam, int hurted, bool doEffects, string source, bool mt)
 {
     return check_your_resists(hurted, beam.flavour, source, &beam, doEffects, mount);
 }

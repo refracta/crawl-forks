@@ -242,7 +242,7 @@ public:
     virtual bool can_sleep(bool holi_only = false) const;
     virtual void check_awaken(int disturbance) = 0;
     virtual int beam_resists(bolt &beam, int hurted, bool doEffects,
-                             string source = "", bool mount = false) = 0;
+                             string source = "", bool mt = false) = 0;
 
     virtual int  skill(skill_type sk, int scale = 1,
                        bool real = false, bool drained = true,
