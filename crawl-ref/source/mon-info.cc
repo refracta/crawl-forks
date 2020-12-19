@@ -784,6 +784,9 @@ string monster_info::db_name() const
     if (type == MONS_SENSED)
         return get_monster_data(base_type)->name;
 
+    if (type == MONS_FULMINANT_PRISM && is_christmas())
+        return "fulminant present";
+
     return get_monster_data(type)->name;
 }
 
