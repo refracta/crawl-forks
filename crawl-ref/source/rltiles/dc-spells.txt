@@ -20,6 +20,7 @@ battlesphere BATTLESPHERE
 dazzling_spray BLINDING_SPRAY
 force_lance FORCE_LANCE
 fulminant_prism FULMINANT_PRISM
+fulminant_present FULMINANT_PRESENT
 searing_ray SEARING_RAY
 
 %sdir gui/spells/earth
