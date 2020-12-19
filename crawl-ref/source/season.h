@@ -8,3 +8,4 @@
 #include <chrono>
 
 bool is_halloween();
+bool is_christmas();

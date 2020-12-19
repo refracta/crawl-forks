@@ -96,6 +96,16 @@ struct flang_entry
     int value;
 };
 
+enum class holiday_state
+{
+    opt_out          = 0,
+    day,
+    week,
+    month,
+    halloween,
+    christmas
+};
+
 enum use_animation_type
 {
     UA_NONE             = 0,
@@ -387,6 +397,9 @@ public:
     bool        explore_auto_rest;
 
     bool        travel_key_stop;   // Travel stops on keypress.
+
+    // Options on holiday and seasonal effects.
+    holiday_state holiday;
 
     vector<sound_mapping> sound_mappings;
     string sound_file_path;

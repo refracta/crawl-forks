@@ -565,6 +565,8 @@ static string _welcome_spam_suffix()
         return " " + type;
     if (is_halloween())
         return " Halloween";
+    if (is_christmas())
+        return " Christmas";
     return "";
 }
 

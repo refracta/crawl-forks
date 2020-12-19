@@ -1050,6 +1050,8 @@ void game_options::reset_options()
     allow_self_target      = confirm_prompt_type::prompt;
     skill_focus            = SKM_FOCUS_ON;
 
+    holiday                = holiday_state::week;
+
     user_note_prefix       = "";
 
     arena_dump_msgs        = false;
@@ -2707,6 +2709,19 @@ void game_options::read_option_line(const string &str, bool runscript)
             auto_butcher = HS_NEAR_STARVING;
         else if (field == "false" || field == "starving")
             auto_butcher = HS_STARVING;
+    }
+    else if (key == "holiday")
+    {
+        if (field == "false" || field == "opt out" || field == "none")
+            holiday = holiday_state::opt_out;
+        else if (field == "week")
+            holiday = holiday_state::week;
+        else if (field == "month")
+            holiday = holiday_state::month;
+        else if (field == "christmas")
+            holiday = holiday_state::christmas;
+        else if (field == "halloween")
+            holiday = holiday_state::halloween;
     }
     else if (key == "lua_file" && runscript)
     {
