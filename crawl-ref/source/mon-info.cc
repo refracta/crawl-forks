@@ -31,6 +31,7 @@
 #include "nearby-danger.h"
 #include "options.h"
 #include "religion.h"
+#include "season.h"
 #include "skills.h"
 #include "spl-goditem.h" // dispellable_enchantments
 #include "state.h"
@@ -812,6 +813,8 @@ string monster_info::_core_name() const
         s = "Lernaean hydra"; // TODO: put this into mon-data.h
     else if (nametype == MONS_ROYAL_JELLY)
         s = "Royal Jelly";
+    else if (nametype == MONS_FULMINANT_PRISM && is_christmas())
+        s = "fulminant present";
     else if (mons_species(nametype) == MONS_SERPENT_OF_HELL)
         s = "Serpent of Hell";
     else if (invalid_monster_type(nametype) && nametype != MONS_PROGRAM_BUG)

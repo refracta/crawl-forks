@@ -55,6 +55,7 @@
 #include "random.h"
 #include "reach-type.h"
 #include "religion.h"
+#include "season.h"
 #include "showsymb.h"
 #include "species.h"
 #include "spl-util.h"
@@ -5490,6 +5491,9 @@ mon_body_shape get_mon_shape(const monster_type mc)
 tileidx_t get_mon_base_tile(monster_type mc)
 {
     ASSERT_smc();
+    if (mc == MONS_FULMINANT_PRISM && is_christmas())
+        return TILEP_MONS_FULMINANT_PRESENT;
+
     return smc->tile.base;
 }
 

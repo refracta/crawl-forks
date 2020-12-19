@@ -1197,6 +1197,12 @@ A giant with blue skin and hair like ice and snow. Its eyes are as bleak as
 winter skies. It marches grimly into battle with a great, frosty axe and
 howling blasts of cold.
 %%%%
+fulminant present
+
+A suspicious ticking present, which could explode at any moment. Any
+blow which tears its wrapping paper is likely to result in a violent
+explosion.
+%%%%
 fulminant prism
 
 A slender prism that crackles with barely-contained destructive energy. Any

@@ -747,7 +747,13 @@ Fulminant Prism spell
 
 Conjures a prism which unleashes a violent explosion of arcane force after a
 short duration. The prism is extremely fragile and any damage caused to it may
-result in premature detonation.
+result in a weaker premature detonation.
+%%%%
+Fulminant Present spell
+
+Conjures a suspicious present which will explode in a violent explosion of arcane 
+force after a short duration. The present is fragile and damage caused to it 
+may result in a weaker premature detonation.
 %%%%
 Gell's Gravitas spell
 

@@ -30,6 +30,7 @@
 #include "output.h"
 #include "prompt.h"
 #include "religion.h"
+#include "season.h"
 #include "spl-book.h"
 #include "spl-clouds.h"
 #include "spl-damage.h"
@@ -564,6 +565,9 @@ const char *get_spell_target_prompt(spell_type which_spell)
 /// What's the icon for the given spell?
 tileidx_t get_spell_tile(spell_type which_spell)
 {
+    if (which_spell == SPELL_FULMINANT_PRISM && is_christmas())
+        return TILEG_FULMINANT_PRESENT;
+
     return _seekspell(which_spell)->tile;
 }
 
@@ -592,6 +596,9 @@ int count_bits(uint64_t bits)
 
 static const char *_spell_title(spell_type spell, const actor * caster)
 {
+    if (spell == SPELL_FULMINANT_PRISM && is_christmas())
+        return "Fulminant Present";
+
     string chaosTitle = _seekspell(spell)->chaosTitle;
     if (!chaosTitle.size())
         return _seekspell(spell)->title; // No need for chaos check on spells without a chaos name.
