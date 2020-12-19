@@ -216,6 +216,7 @@ jellyfish6
 jellyfish7
 giant_goldfish MONS_GIANT_GOLDFISH
 slimehead MONS_SLIMEHEAD
+rainbow_trout MONS_RAINBOW_TROUT
 %rim 1
 
 %include dc-tentacles.txt

@@ -92,7 +92,7 @@ TAGS:   uniq_second_food extra chance_second_food
 TAGS:   no_rotate no_vmirror no_hmirror
 NSUBST: R = 1:9 / 00$
 SUBST:  M = BCDEEEFGGGH
-SUBST:  O = IIJJJKL
+SUBST:  O = IIJJJKLQ
 TILE:   c = wall_tomb 
 KITEM:  A = ration tile:food_ration
 KITEM:  B = ration tile:food_choko
@@ -107,6 +107,7 @@ KITEM:  J = ration tile:food_pizza
 KITEM:  K = ration tile:food_meat_ration
 KITEM:  L = ration tile:food_jerky
 KITEM:  P = ration tile:food_honeycomb
+KITEM:  Q = ration tile:food_fish_ration
 MAP
        c
       ccc
@@ -167,8 +168,6 @@ cccc....cccc
 cccccccccccc
 ENDMAP
 
-# Not really a fish farm now that fish are gone...
-# BCADDO: Readd fish.
 NAME:   hangedman_fish_farm
 DEPTH:  D:4-7
 : food_weight(_G, 4)
@@ -176,14 +175,15 @@ WEIGHT: 15
 TAGS:   uniq_second_food extra chance_second_food no_monster_gen no_pool_fixup \
         patrolling
 KMONS:  A = merfolk spells:throw_net.100.natural ; spear
-KFEAT:  g = shallow_water
-ITEM:   ration q:2
-:       dgn.delayed_decay(_G, 'g', 'electric eel corpse')
+KMONS:  G = rainbow trout
+KFEAT:  Gg = W
+ITEM:   ration q:2 tile:food_fish_ration
+:       dgn.delayed_decay(_G, 'g', 'rainbow trout corpse')
 MAP
 xxxxxx
 xgxedx
 +..fAx
-xWWWWx
+xGGGGx
 xxxxxx
 ENDMAP
 

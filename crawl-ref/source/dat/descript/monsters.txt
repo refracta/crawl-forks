@@ -2047,6 +2047,11 @@ raiju
 A profoundly unnatural hound, crackling with electricity. It travels in packs,
 and covers great distances by bursting into living lightning.
 %%%%
+rainbow trout
+
+A harmless freshwater fish commonly farmed for its meat. Magic used to accelerate 
+their growth also brings out a vibrant rainbow streak down the side.
+%%%%
 reaper
 
 A skeletal form wielding a giant scythe, ceaselessly harvesting the souls of

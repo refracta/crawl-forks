@@ -1840,6 +1840,7 @@ static const band_conditions mf_band_condition = { 0, 0, []() {
 /// Pack block: {{ Band_Enum, {Minimum Members, Maximum Members}, stick close to leader? }}}},
 static const map<monster_type, band_set> bands_by_leader = {
     { MONS_GIANT_BLOWFLY,   { {}, {{BAND_BLOWFLIES, {1, 4}, true}}}},
+    { MONS_RAINBOW_TROUT,   { {}, {{BAND_TROUT, {3, 8}, true}}}},
     { MONS_ORC,             { {2}, {{ BAND_ORCS, {2, 5} }}}},
     { MONS_FETID_CYST,      { {}, {{ BAND_CYSTS, {2, 5} }}}},
     { MONS_DEEP_ELF_DEATH_MAGE,  { {}, {{ BAND_CYSTS, {3, 4} }}}},
@@ -2227,6 +2228,7 @@ static const map<band_type, vector<member_possibilites>> band_membership = {
     { BAND_VASHNIA,             {{{MONS_NAGA_SHARPSHOOTER, 1}}}},
     { BAND_INSUBSTANTIAL_WISPS, {{{MONS_INSUBSTANTIAL_WISP, 1}}}},
     { BAND_PHANTASMAL_WARRIORS, {{{MONS_PHANTASMAL_WARRIOR, 1}}}},
+    { BAND_TROUT,               {{{MONS_RAINBOW_TROUT, 1}}}},
     { BAND_DEEP_ELF_KNIGHT,     {{{MONS_DEEP_ELF_MAGE, 92},
                                   {MONS_DEEP_ELF_KNIGHT, 24},
                                   {MONS_DEEP_ELF_ARCHER, 24},

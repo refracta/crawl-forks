@@ -292,10 +292,10 @@ enum monster_type                      // menv[].type
     MONS_FIRE_VORTEX,
     MONS_SPATIAL_VORTEX,
     MONS_INSUBSTANTIAL_WISP,
-#if TAG_MAJOR_VERSION == 34
-    MONS_VAPOUR,
+    MONS_RAINBOW_TROUT,
 
     // Mimics:
+#if TAG_MAJOR_VERSION == 34
     MONS_INEPT_ITEM_MIMIC,
     MONS_ITEM_MIMIC,
     MONS_RAVENOUS_ITEM_MIMIC,

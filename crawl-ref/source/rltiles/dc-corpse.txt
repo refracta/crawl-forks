@@ -27,6 +27,10 @@ shard_shrike CORPSE_SHARD_SHRIKE
 swooping_magpie CORPSE_SWOOPING_MAGPIE
 
 ## Beetles ('B')
+%sdir mon/undead
+%back blood_green blood_green1 blood_green2 blood_green3 blood_green4
+death_scarab CORPSE_DEATH_SCARAB
+%sdir mon/animals
 %back blood_blue blood_blue1 blood_blue2 blood_blue3 blood_blue4
 boulder_beetle CORPSE_BOULDER_BEETLE
 boring_beetle CORPSE_BORING_BEETLE
@@ -133,15 +137,11 @@ electric_eel CORPSE_ELECTRIC_EEL
 lava_snake CORPSE_LAVA_SNAKE
 shark CORPSE_SHARK
 slimehead CORPSE_SLIMEHEAD
+rainbow_trout CORPSE_RAINBOW_TROUT
 giant_goldfish CORPSE_GIANT_GOLDFISH
-kraken_head CORPSE_KRAKEN /*'x'*/
 %back blood_blue blood_blue1 blood_blue2 blood_blue3 blood_blue4
+kraken_head CORPSE_KRAKEN /*'x'*/
 jellyfish CORPSE_JELLYFISH
-
-## Beetles ('B')
-%sdir mon/undead
-%back blood_green blood_green1 blood_green2 blood_green3 blood_green4
-death_scarab CORPSE_DEATH_SCARAB
 
 ## Frogs ('F')
 %sdir mon/animals
