@@ -115,6 +115,7 @@
 #include "quiver.h"
 #include "random.h"
 #include "religion.h"
+#include "season.h"
 #include "shopping.h"
 #include "shout.h"
 #include "skills.h"
@@ -562,7 +563,7 @@ static string _welcome_spam_suffix()
     const string type = crawl_state.game_type_name();
     if (!type.empty())
         return " " + type;
-    if (today_is_halloween())
+    if (is_halloween())
         return " Halloween";
     return "";
 }

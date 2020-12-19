@@ -11,6 +11,7 @@
 #include "mon-util.h"
 #include "mutant-beast.h"
 #include "options.h"
+#include "season.h"
 #include "tile-flags.h"
 #include "rltiles/tiledef-player.h"
 #include "tiledoll.h"
@@ -1328,7 +1329,7 @@ mcache_ghost::mcache_ghost(const monster_info& mon)
     ac /= 10;
 
     // Become uncannily spooky!
-    if (today_is_halloween())
+    if (is_halloween())
         m_doll.parts[TILEP_PART_HELM] = TILEP_HELM_PUMPKIN;
     else if (m_doll.parts[TILEP_PART_HELM] == TILEP_HELM_PUMPKIN)
         m_doll.parts[TILEP_PART_HELM] = TILEP_HELM_FIRST_NORM; // every day is *not* halloween

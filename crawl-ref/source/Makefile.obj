@@ -203,6 +203,7 @@ ray.o \
 religion.o \
 rot.o \
 scroller.o \
+season.o \
 shopping.o \
 shout.o \
 show.o \

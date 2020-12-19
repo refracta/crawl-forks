@@ -712,6 +712,7 @@ perl.exe "util/gen-cflg.pl" compflag.h "&lt;UNKNOWN&gt;" "&lt;UNKNOWN&gt;"
     <ClCompile Include="..\rltiles\tiledef-wall.cc" />
     <ClCompile Include="..\rot.cc" />
     <ClCompile Include="..\scroller.cc" />
+    <ClInclude Include="..\season.cc" />
     <ClCompile Include="..\shopping.cc" />
     <ClCompile Include="..\shout.cc" />
     <ClCompile Include="..\show.cc" />
@@ -1141,6 +1142,7 @@ perl.exe "util/gen-cflg.pl" compflag.h "&lt;UNKNOWN&gt;" "&lt;UNKNOWN&gt;"
     <ClInclude Include="..\screen-mode.h" />
     <ClInclude Include="..\scroller.h" />
     <ClInclude Include="..\SDLMain.h" />
+    <ClInclude Include="..\season.h" />
     <ClInclude Include="..\seen-context-type.h" />
     <ClInclude Include="..\sense-type.h" />
     <ClInclude Include="..\shop-type.h" />

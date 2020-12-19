@@ -418,6 +418,9 @@
     <ClCompile Include="..\skill-menu.cc">
       <Filter>cc</Filter>
     </ClCompile>
+    <ClInclude Include="..\season.cc">
+      <Filter>cc</Filter>
+    </ClInclude>
     <ClCompile Include="..\showsymb.cc">
       <Filter>cc</Filter>
     </ClCompile>
@@ -1834,6 +1837,9 @@
       <Filter>h</Filter>
     </ClInclude>
     <ClInclude Include="..\SDLMain.h">
+      <Filter>h</Filter>
+    </ClInclude>
+    <ClInclude Include="..\season.h">
       <Filter>h</Filter>
     </ClInclude>
     <ClInclude Include="..\seen-context-type.h">

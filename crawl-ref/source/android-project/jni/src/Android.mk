@@ -218,6 +218,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
     $(CRAWL_PATH)/ray.cc \
     $(CRAWL_PATH)/rot.cc \
     $(CRAWL_PATH)/religion.cc \
+	$(CRAWL_PATH)/season.cc \
     $(CRAWL_PATH)/shopping.cc \
     $(CRAWL_PATH)/shout.cc \
     $(CRAWL_PATH)/show.cc \
