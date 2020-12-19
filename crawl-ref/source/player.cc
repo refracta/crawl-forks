@@ -8460,7 +8460,7 @@ void player::check_awaken(int disturbance)
 
 int player::beam_resists(bolt &beam, int hurted, bool doEffects, string source, bool mt)
 {
-    return check_your_resists(hurted, beam.flavour, source, &beam, doEffects, mount);
+    return check_your_resists(hurted, beam.flavour, source, &beam, doEffects, mt);
 }
 
 // Used for falling into traps and other bad effects, but is a slightly
