@@ -308,6 +308,9 @@ fulminant_prism1 MONS_FULMINANT_PRISM
 fulminant_prism2
 fulminant_prism3
 fulminant_prism4
+fulminant_present0 MONS_FULMINANT_PRESENT
+fulminant_present1
+fulminant_present2
 %rim 1
 ball_lightning MONS_BALL_LIGHTNING /*'*'*/
 ball_chaos MONS_ENTROPIC_SPHERE /*'*'*/
