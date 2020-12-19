@@ -5202,14 +5202,15 @@ monster* dgn_place_monster(mons_spec &mspec, coord_def where,
 
     if (!mspec.place.is_valid())
         mspec.place = level_id::current();
+
+    mspec.place = adjust_pop_place(mspec.place);
+
     bool chose_ood = false;
     const int starting_depth = mspec.place.depth;
 
     if (type == RANDOM_SUPER_OOD || type == RANDOM_MODERATE_OOD)
     {
-        if (brdepth[mspec.place.branch] <= 1)
-            ; // no OODs here
-        else if (type == RANDOM_SUPER_OOD)
+        if (type == RANDOM_SUPER_OOD)
             mspec.place.depth += 4 + mspec.place.depth;
         else if (type == RANDOM_MODERATE_OOD)
             mspec.place.depth += 5;
@@ -5242,11 +5243,11 @@ monster* dgn_place_monster(mons_spec &mspec, coord_def where,
     if (type == RANDOM_MONSTER)
     {
         if (mons_class_is_zombified(mspec.monbase))
-            type = pick_local_zombifiable_monster(mspec.place, mspec.monbase, coord_def());
+            type = pick_local_zombifiable_monster(mspec.place, mspec.monbase, coord_def(), false, true);
         else
         {
             level_id place = mspec.place;
-            type = pick_random_monster(mspec.place, mspec.monbase, &place);
+            type = pick_random_monster(mspec.place, mspec.monbase, &place, true, true);
             if (place.depth > starting_depth + 5)
                 chose_ood = true;
         }

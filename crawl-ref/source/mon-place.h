@@ -63,7 +63,8 @@ monster* place_monster(mgen_data mg, bool force_pos = false, bool dont_place = f
 monster_type pick_local_zombifiable_monster(level_id place,
                                             monster_type cs = MONS_NO_MONSTER,
                                             const coord_def& pos = coord_def(),
-                                            bool for_corpse = false);
+                                            bool for_corpse = false,
+                                            bool adjusted = false);
 
 monster_type pick_local_corpsey_monster(level_id place);
 
@@ -75,10 +76,13 @@ bool downgrade_zombie_to_skeleton(monster* mon);
 
 class level_id;
 
+level_id adjust_pop_place(level_id place);
+
 monster_type pick_random_monster(level_id place,
                                  monster_type kind = RANDOM_MONSTER,
                                  level_id *final_place = nullptr,
-                                 bool allow_ood = true);
+                                 bool allow_ood = true,
+                                 bool adjusted = false);
 
 conduct_type player_will_anger_monster(monster_type type);
 conduct_type player_will_anger_monster(const monster &mon);

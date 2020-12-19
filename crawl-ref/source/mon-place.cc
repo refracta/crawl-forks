@@ -208,7 +208,6 @@ static void _apply_ood(level_id &place)
     // OODs do not apply to any portal vaults, any 1-level branches, Zot and
     // hells. What with newnewabyss?
     if (!is_connected_branch(place)
-        || place.branch == BRANCH_SEWER
         || place.branch == BRANCH_ZOT
         || is_hell_subbranch(place.branch)
         || brdepth[place.branch] <= 1)
@@ -352,7 +351,7 @@ static bool _is_banded_monster(monster_type mt)
 // For effects such as alternating hell floors between old Cocytus, etc.
 // sets this adjusts which floor to pull monsters from based on an input
 // floor.
-static void _adjust_pop_place(level_id &place)
+level_id adjust_pop_place(level_id place)
 {
     switch (place.branch)
     {
@@ -389,6 +388,7 @@ static void _adjust_pop_place(level_id &place)
     }
     default: break;
     }
+    return place;
 }
 
 // Caller must use !invalid_monster_type to check if the return value
@@ -396,7 +396,8 @@ static void _adjust_pop_place(level_id &place)
 monster_type pick_random_monster(level_id place,
                                  monster_type kind,
                                  level_id *final_place,
-                                 bool allow_ood)
+                                 bool allow_ood,
+                                 bool adjusted)
 {
     if (crawl_state.game_is_arena())
     {
@@ -405,7 +406,8 @@ monster_type pick_random_monster(level_id place,
             return type;
     }
 
-    _adjust_pop_place(place);
+    if (!adjusted)
+        place = adjust_pop_place(place);
 
     if (allow_ood)
         _apply_ood(place);
@@ -1644,9 +1646,11 @@ monster_type pick_local_corpsey_monster(level_id place)
 monster_type pick_local_zombifiable_monster(level_id place,
                                             monster_type cs,
                                             const coord_def& pos,
-                                            bool for_corpse)
+                                            bool for_corpse,
+                                            bool adjusted)
 {
-    _adjust_pop_place(place);
+    if (!adjusted)
+        place = adjust_pop_place(place);
 
     const bool really_in_d = place.branch == BRANCH_DUNGEON;
 
