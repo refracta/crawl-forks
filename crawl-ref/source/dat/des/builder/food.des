@@ -75,7 +75,7 @@ ITEM:   ration q:2
 SUBST: =e = x
 : end
 SUBST: = = +
-MONS:   spriggan col:white name:baker n_suf ; robe . dagger
+MONS:   spriggan col:white name:baker n_suf ; robe . cleaver
 MAP
 xxxxxx
 xdd=ex
@@ -178,6 +178,7 @@ KMONS:  A = merfolk spells:throw_net.100.natural ; spear
 KMONS:  G = rainbow trout
 KFEAT:  Gg = W
 ITEM:   ration q:2 tile:food_fish_ration
+KITEM:  e = cleaver
 :       dgn.delayed_decay(_G, 'g', 'rainbow trout corpse')
 MAP
 xxxxxx
@@ -243,7 +244,8 @@ KMONS:    E = big kobold ; nothing
 KMONS:    F = plant
 KITEM:    C = ration
 KITEM:    E = falchion ego:molten ident:type / \
-              hatchet ego:molten ident:type
+              hatchet ego:molten ident:type / \
+			  cleaver ego:molten ident:type
 KITEM:    H = ration q:2
 KITEM:    I = halberd
 KFEAT:    EF = shallow_water
@@ -275,7 +277,7 @@ KMONS:   E = merfolk
 KMONS:   F = human
 KMONS:   G = necrophage
 KMONS:   H = crimson imp
-KITEM:   1 = mundane hatchet w:1
+KITEM:   1 = mundane cleaver w:1
 KITEM:   Ya = ration
 KITEM:   b = ration / nothing w:12
 KFEAT:   1Yab = shallow_water
@@ -357,7 +359,7 @@ DEPTH:  D:4-7
 WEIGHT: 15
 TAGS:   uniq_second_food extra chance_second_food no_monster_gen no_trap_gen \
         patrolling
-MONS:   human ; animal skin . hatchet
+MONS:   human ; robe . cleaver
 {{
   local hog_weight = 14 - you.absdepth()
   if hog_weight <= 0 then
