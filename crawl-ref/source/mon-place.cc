@@ -3157,7 +3157,6 @@ monster_type random_demon_by_tier(int tier)
                              MONS_RUST_DEVIL,
                              MONS_ORANGE_DEMON,
                              MONS_RED_DEVIL,
-                             MONS_CHAOS_SPAWN,
                              MONS_HELLWING);
     case 3:
         return random_choose(MONS_SUN_DEMON,

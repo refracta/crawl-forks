@@ -1574,7 +1574,7 @@ static void _monster_die_cloud(const monster* mons, bool corpse, bool silent,
                                bool summoned)
 {
     // Chaos spawn always leave behind a cloud of chaos.
-    if (mons->type == MONS_CHAOS_SPAWN)
+    if (mons->type == MONS_CHAOS_ELEMENTAL)
     {
         summoned = true;
         corpse   = false;
@@ -3278,7 +3278,7 @@ string summoned_poof_msg(const monster* mons, bool plural)
     if (valid_mon)
     {
         if (mons->god == GOD_XOM && !no_chaos && one_chance_in(10)
-            || mons->type == MONS_CHAOS_SPAWN)
+            || mons->type == MONS_CHAOS_ELEMENTAL)
         {
             msg = "degenerate%s into a cloud of primal chaos";
         }

@@ -581,7 +581,7 @@ enum monster_type                      // menv[].type
     MONS_ORANGE_DEMON,
     MONS_SMOKE_DEMON,
     MONS_YNOXINUL,
-    MONS_CHAOS_SPAWN,
+    MONS_CHAOS_ELEMENTAL,
     MONS_HELLION,
     MONS_LOROCYPROCA,
     MONS_TORMENTOR,

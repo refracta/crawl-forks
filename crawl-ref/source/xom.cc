@@ -868,8 +868,8 @@ static monster_type _xom_random_demon(int sever)
 
     monster_type demon = MONS_PROGRAM_BUG;
 
-    if (dct == RANDOM_DEMON_COMMON && one_chance_in(10))
-        demon = MONS_CHAOS_SPAWN;
+    if (dct == RANDOM_DEMON_COMMON && one_chance_in(4))
+        demon = MONS_CHAOS_ELEMENTAL;
     else
         demon = summon_any_demon(dct);
 

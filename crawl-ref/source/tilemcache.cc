@@ -751,15 +751,15 @@ bool mcache_monster::get_weapon_offset(tileidx_t mon_tile,
         *ofs_x = -1;
         *ofs_y = 1;
         break;
-    case TILEP_MONS_CHAOS_SPAWN:
+    case TILEP_MONS_CHAOS_ELEMENTAL:
         *ofs_x = 0;
         *ofs_y = -5;
         break;
-    case TILEP_MONS_CHAOS_SPAWN_2:
+    case TILEP_MONS_CHAOS_ELEMENTAL_2:
         *ofs_x = 2;
         *ofs_y = -3;
         break;
-    case TILEP_MONS_CHAOS_SPAWN_3:
+    case TILEP_MONS_CHAOS_ELEMENTAL_3:
         *ofs_x = -2;
         *ofs_y = -1;
         break;
@@ -1131,17 +1131,17 @@ bool mcache_monster::get_shield_offset(tileidx_t mon_tile,
         *ofs_y = 4;
         break;
 
-    case TILEP_MONS_CHAOS_SPAWN:
+    case TILEP_MONS_CHAOS_ELEMENTAL:
         *ofs_x = 0;
         *ofs_y = -5;
         break;
 
-    case TILEP_MONS_CHAOS_SPAWN_2:
+    case TILEP_MONS_CHAOS_ELEMENTAL_2:
         *ofs_x = 0;
         *ofs_y = -2;
         break;
 
-    case TILEP_MONS_CHAOS_SPAWN_3:
+    case TILEP_MONS_CHAOS_ELEMENTAL_3:
         *ofs_x = 2;
         *ofs_y = -1;
         break;

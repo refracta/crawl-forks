@@ -2313,7 +2313,7 @@ string monster::hand_name(bool plural, bool *can_plural) const
     string str;
     char        ch = mons_base_char(type);
 
-    const bool rand = (type == MONS_CHAOS_SPAWN);
+    const bool rand = (type == MONS_CHAOS_ELEMENTAL);
 
     switch (get_mon_shape(*this))
     {
@@ -2439,7 +2439,7 @@ string monster::foot_name(bool plural, bool *can_plural) const
     string str;
     char        ch = mons_base_char(type);
 
-    const bool rand = (type == MONS_CHAOS_SPAWN);
+    const bool rand = (type == MONS_CHAOS_ELEMENTAL);
 
     switch (get_mon_shape(*this))
     {
@@ -5426,7 +5426,7 @@ bool monster::can_mutate() const
         return false;
 
     // too weird
-    if (type == MONS_CHAOS_SPAWN || type == MONS_PLUTONIUM_CRAB)
+    if (type == MONS_PLUTONIUM_CRAB)
         return false;
 
     // Abominations re-randomize their tile when mutated. They do not gain the
@@ -5447,7 +5447,7 @@ bool monster::can_safely_mutate(bool /*temp*/) const
 bool monster::can_polymorph() const
 {
     // can't mutate but can be poly'd
-    if (type == MONS_CHAOS_SPAWN)
+    if (type == MONS_CHAOS_ELEMENTAL)
         return true;
 
     // Abominations re-randomize their tile when mutated, so can_mutate returns

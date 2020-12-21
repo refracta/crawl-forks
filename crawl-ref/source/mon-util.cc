@@ -388,6 +388,9 @@ resists_t get_mons_resists(const monster& m)
     if (mons_is_ghost_demon(mon.type))
         resists |= mon.ghost->resists;
 
+    if (mon.props.exists(CHAOS_RESISTS_KEY))
+        resists |= mon.props[CHAOS_RESISTS_KEY].get_int();
+
     if (mons_genus(mon.type) == MONS_DRACONIAN
             && mon.type != MONS_DRACONIAN
         || mon.type == MONS_TIAMAT
@@ -1509,7 +1512,7 @@ static bool _shout_fits_monster(monster_type mc, int shout)
 
     // Chaos spawns can do anything but demon taunts, since they're
     // not coherent enough to actually say words.
-    if (mc == MONS_CHAOS_SPAWN)
+    if (mc == MONS_CHAOS_ELEMENTAL)
         return shout != S_DEMON_TAUNT;
 
     // For Pandemonium lords, almost everything is fair game. It's only
@@ -5438,7 +5441,7 @@ mon_body_shape get_mon_shape(const monster& mon)
  */
 mon_body_shape get_mon_shape(const monster_type mc)
 {
-    if (mc == MONS_CHAOS_SPAWN)
+    if (mc == MONS_CHAOS_ELEMENTAL)
     {
         return static_cast<mon_body_shape>(random_range(MON_SHAPE_HUMANOID,
             MON_SHAPE_MISC));

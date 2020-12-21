@@ -1026,6 +1026,27 @@ static inline void _mons_cast_abil(monster* mons, bolt &pbolt,
     mons_cast(mons, pbolt, spell_cast, MON_SPELL_NATURAL);
 }
 
+static int _normal_chaos_resist()
+{
+    return random_choose_weighted( 4, -1,
+                                  10,  0,
+                                   2,  1,
+                                   2,  2,
+                                   1,  3);
+}
+
+static void _set_chaos_resists(monster * mons)
+{
+    resists_t resists;
+
+    resists  = mrd(MR_RES_ELEC, random_choose_weighted(1, -1, 3, 0, 1, 1));
+    resists |= mrd(MR_RES_ACID, _normal_chaos_resist());
+    resists |= mrd(MR_RES_COLD, _normal_chaos_resist());
+    resists |= mrd(MR_RES_FIRE, _normal_chaos_resist());
+
+    mons->props[CHAOS_RESISTS_KEY] = (int)resists;
+}
+
 bool mon_special_ability(monster* mons)
 {
     bool used = false;
@@ -1038,6 +1059,7 @@ bool mon_special_ability(monster* mons)
     if ((!mons->near_foe() || mons->asleep())
          && mons->type != MONS_SLIME_CREATURE
          && mons->type != MONS_LOST_SOUL
+         && mons->type != MONS_CHAOS_ELEMENTAL 
          && !_crawlie_is_mergeable(mons))
     {
         return false;
@@ -1050,6 +1072,11 @@ bool mon_special_ability(monster* mons)
         // A (very) ugly thing may mutate if it's next to other ones (or
         // next to you if you're contaminated).
         used = ugly_thing_mutate(*mons, false);
+        break;
+
+    case MONS_CHAOS_ELEMENTAL:
+        _set_chaos_resists(mons);
+        return false; // This one never uses energy so it's a bit special.
         break;
 
     case MONS_SLIME_CREATURE:

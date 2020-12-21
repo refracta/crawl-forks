@@ -759,10 +759,10 @@ Rumoured to have been created by a mad wizard that took 'chaos theory' too serio
 chaos butterflies are infused with pure chaos, they can use fine movements of their wings 
 to cast terrifying chaos spells. 
 %%%%
-chaos spawn
+chaos elemental
 
-A being of pure chaos, its form is constantly shifting, growing and then losing
-eyes, mouths, claws and tentacles. It corrupts everything it touches.
+A spirit drawn from the plane of elemental chaos. Its form is constantly shifting, growing 
+and then losing eyes, mouths, claws and tentacles. It corrupts everything it touches.
 %%%%
 cherub
 

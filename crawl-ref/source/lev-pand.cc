@@ -52,7 +52,6 @@ void init_pandemonium()
                                                     5, MONS_DEMONIC_CRAWLER,
                                                     5, MONS_SUN_DEMON,
                                                     2, MONS_NEQOXEC,
-                                                    5, MONS_CHAOS_SPAWN,
                                                     1, MONS_SHADOW_DEMON,
                                                     1, MONS_LOROCYPROCA,
                                                     1, MONS_HELLION,

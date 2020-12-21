@@ -5365,7 +5365,7 @@ static monster_type _chaos_pillar()
     return random_choose_weighted(
         4, MONS_JELLY,
         4, MONS_PULSATING_LUMP,
-        3, MONS_CHAOS_SPAWN,
+        3, MONS_CHAOS_ELEMENTAL,
         2, MONS_CRAWLING_CORPSE,
         5, MONS_DEMONIC_PLANT,
         1, MONS_GOLDEN_EYE,

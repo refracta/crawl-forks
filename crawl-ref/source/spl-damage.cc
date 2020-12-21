@@ -4474,7 +4474,7 @@ static void _hailstorm_cell(coord_def where, int pow, actor *agent, bool chaos)
         beam.draw(where);
         return;
     }
-    if (chaos && mons && (mons->type == MONS_CHAOS_SPAWN || mons->has_ench(ENCH_CHAOTIC_INFUSION)
+    if (chaos && mons && (mons->type == MONS_CHAOS_ELEMENTAL || mons->has_ench(ENCH_CHAOTIC_INFUSION)
         || mons->is_shapeshifter()))
     {
         string msg;

@@ -4606,6 +4606,12 @@ static string _monster_stat_description(const monster_info& mi)
                << _get_threat_desc(mi.threat) << ".\n";
     }
 
+    if (mi.type == MONS_CHAOS_ELEMENTAL)
+    {
+        result << "Its resistance to electricity, acid and extremes "
+               << "of temperature ever shift with its form. \n";
+    }
+
     if (!resist_descriptions.empty())
     {
         result << uppercase_first(pronoun) << " "
