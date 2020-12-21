@@ -4886,6 +4886,8 @@ spret qazlal_elemental_force(bool fail)
         { CLOUD_BLUE_SMOKE,     MONS_AIR_ELEMENTAL },
         { CLOUD_PURPLE_SMOKE,   MONS_AIR_ELEMENTAL },
         { CLOUD_STORM,          MONS_AIR_ELEMENTAL },
+        { CLOUD_CHAOS,          MONS_CHAOS_ELEMENTAL },
+        { CLOUD_MUTAGENIC,      MONS_CHAOS_ELEMENTAL },
     };
 
     vector<coord_def> targets;
