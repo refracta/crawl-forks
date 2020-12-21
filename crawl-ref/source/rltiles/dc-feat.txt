@@ -154,6 +154,12 @@ vgate_open_down_crypt DNGN_VGATE_OPEN_DOWN_CRYPT
 ## closed, open.
 fleshy_orifice_closed DNGN_FLESHY_ORIFICE
 fleshy_orifice_open
+closed_christmas_door DNGN_DOOR_CHRISTMAS
+open_christmas_door DNGN_DOOR_CHRISTMAS_OPEN
+runed_christmas_door DNGN_DOOR_CHRISTMAS_RUNED
+closed_christmas_door_crypt DNGN_DOOR_CHRISTMAS_CRYPT
+open_christmas_door_crypt DNGN_DOOR_CHRISTMAS_CRYPT_OPEN
+sealed_christmas_door DNGN_SEALED_CHRISTMAS_DOOR
 
 # Place new door tiles before this point, otherwise they can't be used as
 # door overrides.

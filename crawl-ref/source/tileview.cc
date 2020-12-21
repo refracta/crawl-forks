@@ -20,6 +20,7 @@
 #include "pcg.h"
 #include "player.h"
 #include "religion.h"
+#include "season.h"
 #include "state.h"
 #include "terrain.h"
 #include "tile-flags.h"
@@ -1309,9 +1310,19 @@ void apply_variations(const tile_flavour &flv, tileidx_t *bg,
         else if (orig == TILE_DNGN_METAL_WALL)
             orig = TILE_WALL_CRYPT_METAL;
         else if (orig == TILE_DNGN_OPEN_DOOR)
-            orig = TILE_DNGN_OPEN_DOOR_CRYPT;
+        {
+            if (is_christmas())
+                orig = TILE_DNGN_DOOR_CHRISTMAS_CRYPT_OPEN;
+            else
+                orig = TILE_DNGN_OPEN_DOOR_CRYPT;
+        }
         else if (orig == TILE_DNGN_CLOSED_DOOR)
-            orig = TILE_DNGN_CLOSED_DOOR_CRYPT;
+        {
+            if (is_christmas())
+                orig = TILE_DNGN_DOOR_CHRISTMAS_CRYPT;
+            else
+                orig = TILE_DNGN_CLOSED_DOOR_CRYPT;
+        }
     }
     else if (player_in_branch(BRANCH_TOMB))
     {
