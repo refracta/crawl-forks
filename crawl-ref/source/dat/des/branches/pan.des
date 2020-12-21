@@ -46,7 +46,7 @@ function pan_lord_setup(_G, name)
 
     local monsters = {
         Mnoleg = "large abomination w:200 / " ..
-                 "neqoxec w:200 / chaos spawn w:200 / " ..
+                 "neqoxec w:200 / chaos elemental w:200 / " ..
                  "cacodemon w:300 / tormentor / " ..
                  "tentacled monstrosity w:5 / " ..
                  "floating eye / golden eye band / eye of devastation / " ..

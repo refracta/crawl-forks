@@ -2333,7 +2333,7 @@ NAME:   cheibrodos_body_horror
 TAGS:   no_item_gen no_monster_gen
 DEPTH:  D:6-
 ORIENT: north
-MONS:   small abomination, demonic crawler, ugly thing, chaos spawn, neqoxec
+MONS:   small abomination, demonic crawler, ugly thing, chaos elemental, neqoxec
 MONS:   large abomination / very ugly thing
 KMONS:  _ = tentacled monstrosity
 KITEM:  _ = |

@@ -49,7 +49,7 @@ ENDMAP
 
 NAME:    minmay_room_of_horrors
 TAGS:    nolayout_encompass luniq_hellpanabyss_threat_entry
-MONS:    small abomination, large abomination, unseen horror / chaos spawn
+MONS:    small abomination, large abomination, unseen horror / chaos elemental
 SHUFFLE: 123
 : abyss_entry(_G, '_')
 MAP
@@ -318,7 +318,7 @@ MONS:   worker ant w:40 / vampire mosquito w:20 / hornet
 KMONS:  8 = demonic crawler
 KMONS:  9 = emperor scorpion / death scarab
 KMONS:  D = place:D:1 perm_ench:shapeshifter w:30 / \
-            small abomination w:15 / chaos spawn
+            small abomination w:15 / chaos elemental
 KMONS:  E = ugly thing
 KMONS:  F = very ugly thing / glowing shapeshifter w:7
 SHUFFLE: 123 / 456 / 789 / DEF
@@ -593,7 +593,7 @@ MONS:    shapeshifter / ugly thing / large abomination w:2, wretched star
 MONS:    large abomination / ghoul / death ooze w:2, ancient zyme
 MONS:    large slime creature w:12 / very large slime creature w:8 / rakshasa w:2
 KMONS:   8 = starcursed mass
-KMONS:   9 = floating eye / chaos spawn / anaconda perm_ench:shapeshifter w:2
+KMONS:   9 = floating eye / chaos elemental / anaconda perm_ench:shapeshifter w:2
 KMONS:   0 = tentacled starspawn
 KMONS:   A = patrolling shadow demon
 KMONS:   B = boggart
@@ -650,7 +650,7 @@ NAME:    hangedman_steaming_rock
 TAGS:    transparent
 MONS:    eye of devastation w:9 / nothing w:1
 KMONS:   2 = ynoxinul / smoke demon / thrashing horror / unseen horror / \
-             ugly thing w:5/ rakshasa w:5 / chaos spawn w:5
+             ugly thing w:5/ rakshasa w:5 / chaos elemental w:5
 KMONS:   3 = smoke demon / green death / catoblepas w:8 / ophan w:7 / \
              fire crab w:5
 KMONS:   4 = apocalypse crab / death drake w:5
@@ -1313,7 +1313,7 @@ ENDMAP
 
 NAME:   due_evilmike_abyss_rune_seething_liches
 TAGS:   abyss_rune unrand no_monster_gen
-MONS:   fire bat, chaos spawn, fire dragon / ice dragon, ogre mage
+MONS:   fire bat, chaos elemental, fire dragon / ice dragon, ogre mage
 KMONS:  OL = lich / ancient lich w:1
 KITEM:  O = abyssal rune of Zot
 KFEAT:  A = stone_arch
@@ -2020,7 +2020,7 @@ ENDMAP
 
 NAME:  evilmike_abyss_exit_chaos
 TAGS:  abyss_exit
-MONS:  chaos spawn
+MONS:  chaos elemental
 SUBST: 1 = 11., n : nc, c = cvb
 : init_abyss_exit(_G, "O")
 MAP

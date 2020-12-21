@@ -718,14 +718,14 @@ KMONS:      | = electric golem
 :                               "gargoyle / crystal guardian / iron golem")
 :           elseif mrnd == 1 then
 KMONS:      0% = smoke demon / ynoxinul / neqoxec w:6 / ice devil /\
-                 chaos spawn / soul eater / sun demon
+                 soul eater / sun demon
 KMONS:      * = lorocyproca / reaper / shadow demon / tormentor / hellion /\
                 blizzard demon / green death / balrug / cacodemon
 KMONS:      | = hell sentinel / brimstone fiend / tzitzimitl /\
                 ice fiend / executioner
 :           set_random_mon_list(
 :               "smoke demon / ynoxinul / neqoxec / " ..
-:               "chaos spawn / soul eater / sun demon / " ..
+:               "soul eater / sun demon / " ..
 :               "lorocyproca / reaper / shadow demon / tormentor / hellion")
 :           else
 KMONS:      0% = place:Depths:1 zombie / guardian mummy w:4
@@ -1331,7 +1331,7 @@ KMONS:   3 = rakshasa spells:throw_dispersal.60.natural add_spells w:5 ; \
              spear ego:vorpal w:6 . robe
 KMONS:   04 = large abomination w:15 / small abomination w:15 / unseen horror w:5 / \
               thrashing horror w:30 / skeleton w:30 / freezing wraith w:5 /  \
-              hellwing / chaos spawn w:5 / orange demon / ice devil /  \
+              hellwing / chaos elemental w:5 / orange demon / ice devil /  \
               hell hound / red devil w:5 / lesser demon w:25 / mana viper w:5 / \
               worldbinder w:30 / fire elemental w:5 / air elemental w:5
 KMONS:   95 = ynoxinul / smoke demon / sixfirhy / sun demon w:5 / efreet w:5 / \
@@ -1414,7 +1414,7 @@ end
 
 set_random_mon_list([[rakshasa w:15 / deep elf mage w:15 / wizard w:15 / spatial vortex w:15 /
                     boggart / blink frog w:5 / shadow wraith w:5 / unseen horror /
-                    raiju / ynoxinul / neqoxec / chaos spawn / glowing orange brain /
+                    raiju / ynoxinul / neqoxec / chaos elemental / glowing orange brain /
                     large abomination w:15 / small abomination w:15 / skeleton w:20 /
                     hellwing w:5 / smoke demon w:5 / hell hound w:5 / ugly thing w:5 /
                     golden eye w:5 / executioner w:3 / shadow demon w:4 / hellion w:3 /
