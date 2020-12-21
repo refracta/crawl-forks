@@ -196,10 +196,12 @@ void ghost_demon::init_pandemonium_lord()
     see_invis = true;
 
     resists = 0;
-    resists |= mrd(MR_RES_FIRE, _panlord_random_resist_level());
-    resists |= mrd(MR_RES_COLD, _panlord_random_resist_level());
-    resists |= mrd(MR_RES_ELEC, _panlord_random_elec_resist_level());
-    // Demons, like ghosts, automatically get poison res. and life prot.
+    resists |= mrd(MR_RES_FIRE,   _panlord_random_resist_level());
+    resists |= mrd(MR_RES_COLD,   _panlord_random_resist_level());
+    resists |= mrd(MR_RES_ACID,   _panlord_random_resist_level());
+    resists |= mrd(MR_RES_NEG,    _panlord_random_resist_level());
+    resists |= mrd(MR_RES_POISON, _panlord_random_resist_level());
+    resists |= mrd(MR_RES_ELEC,   _panlord_random_elec_resist_level());
 
     // HTH damage:
     damage = 20 + roll_dice(2, 20);
