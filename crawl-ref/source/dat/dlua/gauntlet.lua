@@ -351,7 +351,7 @@ tier1_gauntlet_arenas = {
   },
   {
     first  = {mons = "neqoxec", min = 1, max = 1},
-    second = {mons = "chaos spawn", min = 1, max = 3},
+    second = {mons = "chaos elemental", min = 1, max = 3},
     plant  = "demonic",
   },
   {
