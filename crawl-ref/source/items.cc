@@ -3593,6 +3593,7 @@ colour_t item_def::armour_colour() const
         case ARM_CENTAUR_BARDING:
             return GREEN;
         case ARM_ROBE:
+        case ARM_CAP:
             return RED;
         case ARM_HAT:
         case ARM_HELMET:

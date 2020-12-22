@@ -2456,6 +2456,9 @@ static tileidx_t _tileidx_armour_base(const item_def &item)
     case ARM_SKULL:
         return TILE_THELM_DRAGON_SKULL;
 
+    case ARM_CAP:
+        return TILE_THELM_CAP;
+
     case ARM_HELMET:
         return TILE_THELM_HELM;
 

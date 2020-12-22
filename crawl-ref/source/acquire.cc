@@ -38,6 +38,7 @@
 #include "randbook.h"
 #include "random.h"
 #include "religion.h"
+#include "season.h"
 #include "shopping.h"
 #include "skills.h"
 #include "spl-book.h"
@@ -187,7 +188,20 @@ static armour_type _acquirement_armour_for_slot(equipment_type slot_type,
             }
         case EQ_HELMET:
             if (you_can_wear(EQ_HELMET) == MB_TRUE)
-                return random_choose(ARM_HELMET, ARM_HAT);
+            {
+                if (is_christmas())
+                {
+                    return random_choose_weighted(4, ARM_HELMET, 
+                                                  1, ARM_HAT,
+                                                  3, ARM_CAP);
+                }
+                return random_choose_weighted(ARM_HELMET, ARM_HAT);
+            }
+            else if (is_christmas())
+            {
+                random_choose_weighted(1, ARM_HAT,
+                                       3, ARM_CAP);
+            }
             return ARM_HAT;
         case EQ_BODY_ARMOUR:
             return _acquirement_body_armour(divine);

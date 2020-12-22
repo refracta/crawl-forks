@@ -480,13 +480,17 @@ centaur_barding_red
 
 %sdir item/armour/headgear
 #####ARM_HELMET
-elven_leather_helm THELM_CAP
+elven_leather_helm THELM_ELVEN_CAP
 cap_jester THELM_CAP_JESTER
 
 %rim 0
 hat1 THELM_HAT
 hat2
 hat3
+
+cap1 THELM_CAP
+cap2
+cap3
 
 dragon_skull THELM_DRAGON_SKULL
 

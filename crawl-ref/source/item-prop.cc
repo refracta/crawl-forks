@@ -105,10 +105,6 @@ static const armour_def Armour_prop[] =
     { ARM_CRYSTAL_PLATE_ARMOUR, "crystal plate",         14, -230,   800,
         EQ_BODY_ARMOUR, SIZE_SMALL, SIZE_MEDIUM, false, ARMF_NO_FLAGS, 500 },
 
-#if TAG_MAJOR_VERSION == 34
-    { ARM_TROLL_HIDE, "removed troll hide",              0,    0,      0,
-       EQ_BODY_ARMOUR, SIZE_LITTLE, SIZE_GIANT, false, ARMF_REGENERATION, 0 },
-#endif
     { ARM_TROLL_LEATHER_ARMOUR, "troll leather",  4,  -40,    150,
        EQ_BODY_ARMOUR, SIZE_LITTLE, SIZE_GIANT, false, ARMF_REGENERATION, 25 },
 
@@ -139,6 +135,9 @@ static const armour_def Armour_prop[] =
         EQ_HELMET,      SIZE_MEDIUM, SIZE_GIANT, false, ARMF_RES_NEG, 0 },
 
     { ARM_HAT,                  "hat",                    0,   0,   40,
+        EQ_HELMET,      SIZE_TINY, SIZE_GIANT, true },
+        
+    { ARM_CAP,                  "stocking cap",           0,   0,   40,
         EQ_HELMET,      SIZE_TINY, SIZE_GIANT, true },
 
     // Note that barding size is compared against torso so it currently

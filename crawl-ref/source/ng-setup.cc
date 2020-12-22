@@ -24,6 +24,7 @@
 #include "options.h"
 #include "prompt.h"
 #include "religion.h"
+#include "season.h"
 #include "shopping.h"
 #include "skills.h"
 #include "spl-book.h"
@@ -136,6 +137,9 @@ item_def* newgame_make_item(object_class_type base,
         else
             item.sub_type = ARM_ROBE;
     }
+
+    if (is_christmas() && item.is_type(OBJ_ARMOURS, ARM_HAT))
+        item.sub_type = ARM_CAP;
 
     // Make sure we didn't get a stack of shields or such nonsense.
     ASSERT(item.quantity == 1 || is_stackable_item(item));

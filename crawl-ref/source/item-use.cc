@@ -2970,7 +2970,7 @@ static void _brand_armour(item_def &arm)
     colour_t flash_colour = BLACK;
 
     bool plural = (arm.sub_type == ARM_BOOTS || arm.sub_type == ARM_GLOVES || arm.sub_type == ARM_CLAW ||
-        (armour_is_hide(arm) && arm.sub_type != ARM_TROLL_HIDE && arm.sub_type != ARM_DEEP_TROLL_LEATHER_ARMOUR 
+        (armour_is_hide(arm) && arm.sub_type != ARM_DEEP_TROLL_LEATHER_ARMOUR 
                              && arm.sub_type != ARM_IRON_TROLL_LEATHER_ARMOUR && arm.sub_type != ARM_SALAMANDER_HIDE_ARMOUR));
 
     switch (get_armour_ego_type(arm))

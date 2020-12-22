@@ -1155,6 +1155,10 @@ The scales of a great umbral dragon. It is heavier than most dragon scale
 armours, but despite this, blends in so well with the shadows as to provide a
 substantial benefit to the wearer's stealth.
 %%%%
+stocking cap
+
+A festive holiday hat, lovingly woven from wool.
+%%%%
 storm dragon scales
 
 The scales of a lightning-breathing dragon. It is heavier than most dragon

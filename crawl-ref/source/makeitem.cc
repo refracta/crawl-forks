@@ -21,6 +21,7 @@
 #include "items.h"
 #include "libutil.h" // map_find
 #include "randbook.h"
+#include "season.h"
 #include "spl-book.h"
 #include "state.h"
 #include "stepdown.h"
@@ -185,6 +186,9 @@ static bool _try_make_item_unrand(item_def& item, int force_type, int agent)
 {
     if (player_in_branch(BRANCH_PANDEMONIUM) && agent == NO_AGENT)
         return false;
+
+    if (force_type == ARM_CAP)
+        force_type = ARM_HAT;
 
     int idx = find_okay_unrandart(item.base_type, force_type,
                                   player_in_branch(BRANCH_ABYSS)
@@ -1047,6 +1051,10 @@ special_armour_type generate_armour_type_ego(armour_type type)
                              SPARM_MAGIC_RESISTANCE,
                              SPARM_SOFT);
 
+    case ARM_CAP:
+        if (one_chance_in(4))
+            return SPARM_COLD_RESISTANCE;
+        // fall-through.
     case ARM_HAT:
         return random_choose_weighted(5, SPARM_NORMAL,
                                       3, SPARM_MAGIC_RESISTANCE,
@@ -1244,7 +1252,7 @@ bool is_armour_brand_ok(int type, int brand, bool strict)
         return true; // in portal vaults, these can happen on every slot
 
     case SPARM_MAGIC_RESISTANCE:
-        if (type == ARM_HAT)
+        if (type == ARM_HAT || type == ARM_CAP)
             return true;
         // deliberate fall-through
     case SPARM_POISON_RESISTANCE:
@@ -1310,6 +1318,7 @@ static armour_type _get_random_armour_type(int item_level)
     // Dummy value for initilization, always changed by the conditional
     // (and not changing it would trigger an ASSERT)
     armour_type armtype = NUM_ARMOURS;
+    bool christmas = is_christmas();
 
     // Secondary armours.
     if (one_chance_in(5))
@@ -1323,8 +1332,9 @@ static armour_type _get_random_armour_type(int item_level)
                                          9, ARM_CLOAK,
                                          3, ARM_SCARF,
                                          // Head slot
-                                         10, ARM_HELMET,
-                                          2, ARM_HAT);
+                                         christmas ? 8 : 10, ARM_HELMET,
+                                         christmas ? 3 :  0, ARM_CAP,
+                                         christmas ? 1 :  2, ARM_HAT);
     }
     else if (x_chance_in_y(11 + item_level, 10000))
     {
@@ -1469,7 +1479,7 @@ static void _generate_armour_item(item_def& item, bool allow_uniques,
     // Scarves always get an ego.
     else if (item.sub_type == ARM_SCARF)
         item.brand = _generate_armour_ego(item);
-    else if ((forced_ego || item.sub_type == ARM_HAT
+    else if ((forced_ego || item.sub_type == ARM_HAT || item.sub_type == ARM_CAP
                     || x_chance_in_y(51 + item_level, 250))
                 && !item.is_mundane() || force_good)
     {

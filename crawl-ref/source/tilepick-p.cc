@@ -942,6 +942,15 @@ tileidx_t tilep_equ_helm(const item_def &item)
     {
         case ARM_SKULL:
             return TILEP_HELM_DRAGON_SKULL;
+        case ARM_CAP:
+        {
+            tileidx_t tile = TILEP_HELM_CAP;
+            if (is_artefact(item))
+                return tile + 2;
+            if (get_armour_ego_type(item) != SPARM_NORMAL)
+                return tile + 1;
+            return tile;
+        }
         case ARM_HAT:
             return _modrng(item.rnd, TILEP_HELM_HAT_FIRST_NORM,
                            TILEP_HELM_HAT_LAST_NORM);
