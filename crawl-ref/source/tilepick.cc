@@ -1602,6 +1602,8 @@ tileidx_t tileidx_monster_base(int type, int mon_id, bool in_water, int colour,
         return _mon_random(base_tile, mon_id);
     case TVARY_WATER:
         return base_tile + (in_water ? 1 : 0);
+    case TVARY_XMAS:
+        return base_tile + (is_christmas() ? 1 : 0);
     case TVARY_SPECIES:
         if (you.species == SP_FELID)
             return base_tile + 1;

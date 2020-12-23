@@ -149,6 +149,7 @@ enum mon_type_tile_variation
     TVARY_RANDOM,   ///< choose a random tile in set with every redraw
     TVARY_WATER,    ///< if in water, incr tile enum by 1 (merfolk &c)
     TVARY_SPECIES,  ///< tile varies based on player race (used for Ancestors)
+    TVARY_XMAS,     ///< Special tile for Christmas.
 };
 
 /// Tiles display information for a monster type.
