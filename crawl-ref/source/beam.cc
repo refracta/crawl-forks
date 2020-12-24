@@ -3405,6 +3405,9 @@ void bolt::affect_place_clouds()
         place_cloud(CLOUD_STEAM, p, 2 + random2(5), agent(), 11);
     }
 
+    if (is_fiery() && is_snowcovered(p) && x_chance_in_y(damage.roll(), 100))
+        env.pgrid(p) &= ~FPROP_SNOW;
+
     if (feat_is_watery(feat) && feat != DNGN_SLIMY_WATER && feat != DNGN_DEEP_SLIMY_WATER
         && (flavour == BEAM_COLD || flavour == BEAM_FREEZE)
         && damage.num * damage.size > 35)
@@ -3486,6 +3489,9 @@ void bolt::affect_place_explosion_clouds()
         place_cloud(CLOUD_STEAM, p, 2 + random2(5), agent());
         return;
     }
+
+    if (is_fiery() && is_snowcovered(p) && x_chance_in_y(damage.roll(), 100))
+        env.pgrid(p) &= ~FPROP_SNOW;
 
     if (feat_is_door(grd(p)) && is_fiery())
     {
