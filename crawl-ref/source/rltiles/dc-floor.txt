@@ -210,7 +210,6 @@ lair7
 lair7b
 
 deep_water_ice0 DEEP_ICE
-deep_water_ice1
 
 ice_cracked ICE_CRACKED
 
@@ -1072,7 +1071,6 @@ etched4
 etched5
 
 deep_water_ice0 DEEP_WATER_ICE
-deep_water_ice1
 
 %weight 10
 slimeice SLIMY_WATER_ICE
