@@ -9,7 +9,7 @@ enum feature_property_type
     FPROP_SANCTUARY_1   = (1 << 0),
     FPROP_SANCTUARY_2   = (1 << 2),
     FPROP_BLOODY        = (1 << 3),
-    FPROP_UNUSED_2      = (1 << 4),  // Used to be 'vault'.
+    FPROP_SNOW          = (1 << 4),
     FPROP_HIGHLIGHT     = (1 << 5),  // Highlight on the X map for debugging.
     // NOTE: Bloody floor and sanctuary are exclusive.
     FPROP_UNUSED        = (1 << 6),  // used to be force_exclude
@@ -35,6 +35,7 @@ DEF_BITFIELD(terrain_property_t, feature_property_type);
 
 bool is_sanctuary(const coord_def& p);
 bool is_bloodcovered(const coord_def& p);
+bool is_snowcovered(const coord_def& p);
 bool is_tide_immune(const coord_def &p);
 bool is_moldy(const coord_def & p);
 bool glowing_mold(const coord_def & p);

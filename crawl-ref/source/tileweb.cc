@@ -1393,6 +1393,9 @@ void TilesFramework::_send_cell(const coord_def &gc,
         if (next_pc.is_moldy != current_pc.is_moldy)
             json_write_bool("moldy", next_pc.is_moldy);
 
+        if (next_pc.is_snowy != current_pc.is_snowy)
+            json_write_bool("snowy", next_pc.is_snowy);
+
         if (next_pc.glowing_mold != current_pc.glowing_mold)
             json_write_bool("glowing_mold", next_pc.glowing_mold);
 

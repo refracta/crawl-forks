@@ -1493,6 +1493,10 @@ void tile_apply_properties(const coord_def &gc, packed_cell &cell)
             cell.blood_rotation = blood_rotation(gc);
             cell.old_blood = bool(env.pgrid(gc) & FPROP_OLD_BLOOD);
         }
+
+        // Similar restrictions to blood; but can coexist with it.
+        if (mc.flags & MAP_SNOWY)
+            cell.is_snowy = true;
     }
 
     const dungeon_feature_type feat = mc.feat();

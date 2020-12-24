@@ -32,6 +32,7 @@ void packed_cell::clear()
 
     is_highlighted_summoner   = false;
     is_bloody        = false;
+    is_snowy         = false;
     is_silenced      = false;
     halo             = HALO_NONE;
     is_moldy         = false;
@@ -67,6 +68,7 @@ bool packed_cell::operator ==(const packed_cell &other) const
     if (is_liquefied != other.is_liquefied) return false;
     if (mangrove_water != other.mangrove_water) return false; 
     if (mushroom_slime != other.mushroom_slime) return false;
+    if (is_snowy != other.is_snowy) return false;
     if (awakened_forest != other.awakened_forest) return false;
     if (orb_glow != other.orb_glow) return false;
     if (blood_rotation != other.blood_rotation) return false;
@@ -645,6 +647,14 @@ static bool _is_seen_lava(const coord_def& gc, crawl_view_buffer &vbuf)
     return feat == DNGN_LAVA;
 }
 
+static bool _is_snow(const coord_def& gc, crawl_view_buffer &vbuf)
+{
+    if (gc.x < 0 || gc.x >= vbuf.size().x || gc.y < 0 || gc.y >= vbuf.size().y)
+        return false;
+
+    return vbuf(gc).tile.is_snowy;
+}
+
 void pack_cell_overlays(const coord_def &gc, crawl_view_buffer &vbuf)
 {
     auto& cell = vbuf(gc).tile;
@@ -700,6 +710,13 @@ void pack_cell_overlays(const coord_def &gc, crawl_view_buffer &vbuf)
         else
             _add_directional_overlays(gc, vbuf, TILE_LAVA_OVERLAY3,
                 _is_seen_lava);
+    }
+    if (!cell.is_snowy && 
+        (feat_has_solid_floor(cell.map_knowledge.feat()) 
+            || feat_is_solid(cell.map_knowledge.feat()) && !feat_is_wall(cell.map_knowledge.feat())))
+    {
+        _add_directional_overlays(gc, vbuf, TILE_SNOW_OVERLAY,
+            _is_snow);
     }
     if (cell.map_knowledge.feat() != DNGN_SLIMY_WALL)
     {

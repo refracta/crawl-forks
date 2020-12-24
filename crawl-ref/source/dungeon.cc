@@ -59,6 +59,7 @@
 #include "random.h"
 #include "religion.h"
 #include "rot.h"
+#include "season.h"
 #include "show.h"
 #include "spl-transloc.h"
 #include "stairs.h"
@@ -1532,6 +1533,24 @@ static bool _sewer_check(coord_def coord)
          || grd(coord) == DNGN_PERMAROCK_WALL || grd(coord) == DNGN_ENDLESS_SLUDGE);
 }
 
+static void _snow()
+{
+    for (rectangle_iterator ri(coord_def(0, 0), coord_def(GXM - 1, GYM - 1)); ri; ++ri)
+    {
+        if (feat_has_dry_floor(grd(*ri)) || feat_is_solid(grd(*ri)) && !feat_is_wall(grd(*ri)))
+        {
+            bool clumping = false;
+            for (adjacent_iterator ai(*ri); ai; ++ai)
+            {
+                if (is_snowcovered(*ai))
+                    clumping = true;
+            }
+            if (one_chance_in(30) || clumping && !one_chance_in(3))
+                env.pgrid(*ri) |= FPROP_SNOW;
+        }
+    }
+}
+
 static void _sewer_water()
 {
     if (!(you.where_are_you == BRANCH_DUNGEON && you.depth == 2))
@@ -2819,6 +2838,11 @@ static void _build_dungeon_level()
         _prepare_water();
         _slimify_water();
         _sewer_water();
+    }
+
+    if (is_christmas())
+    {
+        _snow();
     }
 }
 

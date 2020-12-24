@@ -79,6 +79,8 @@ static unsigned short _cell_feat_show_colour(const map_cell& cell,
     }
     else if (cell.flags & MAP_BLOODY && !norecolour)
         colour = RED;
+    else if (cell.flags & MAP_SNOWY && !norecolour)
+        colour = WHITE;
     else if (cell.flags & MAP_MOLDY && !norecolour)
         colour = (cell.flags & MAP_GLOWING_MOLDY) ? LIGHTRED : LIGHTGREEN;
     else if (cell.flags & MAP_CORRODING && !norecolour

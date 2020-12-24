@@ -262,6 +262,15 @@ slime_overlay_NE
 slime_overlay_SE
 slime_overlay_SW
 
+snowN SNOW_OVERLAY
+snowE
+snowS
+snowW
+snowNW
+snowNE
+snowSE
+snowSW
+
 lava_overlay_N LAVA_OVERLAY
 lava_overlay_E
 lava_overlay_S
@@ -1079,6 +1088,10 @@ slimeicecracked1
 slimeicecracked2
 slimeicecracked3
 
+%weight 10
+snow SNOW
+%weight 1
+snow1
 
 %weight 10
 mosaic0 FLOOR_MOSAIC

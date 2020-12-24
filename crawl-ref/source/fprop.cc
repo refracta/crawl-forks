@@ -27,6 +27,11 @@ bool is_bloodcovered(const coord_def& p)
     return testbits(env.pgrid(p), FPROP_BLOODY);
 }
 
+bool is_snowcovered(const coord_def& p)
+{
+    return testbits(env.pgrid(p), FPROP_SNOW);
+}
+
 bool is_tide_immune(const coord_def &p)
 {
     return bool(env.pgrid(p) & FPROP_NO_TIDE);
@@ -65,6 +70,8 @@ feature_property_type str_to_fprop(const string &str)
         return FPROP_NO_TIDE;
     if (str == "no_jiyva")
         return FPROP_NO_JIYVA;
+    if (str == "snowy")
+        return FPROP_SNOW;
 
     return FPROP_NONE;
 }
