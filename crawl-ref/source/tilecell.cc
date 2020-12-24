@@ -711,9 +711,7 @@ void pack_cell_overlays(const coord_def &gc, crawl_view_buffer &vbuf)
             _add_directional_overlays(gc, vbuf, TILE_LAVA_OVERLAY3,
                 _is_seen_lava);
     }
-    if (!cell.is_snowy && 
-        (feat_has_solid_floor(cell.map_knowledge.feat()) 
-            || feat_is_solid(cell.map_knowledge.feat()) && !feat_is_wall(cell.map_knowledge.feat())))
+    if (!cell.is_snowy && !feat_is_wall(cell.map_knowledge.feat()))
     {
         _add_directional_overlays(gc, vbuf, TILE_SNOW_OVERLAY,
             _is_snow);
