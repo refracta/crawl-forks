@@ -1383,6 +1383,18 @@ void apply_variations(const tile_flavour &flv, tileidx_t *bg,
             orig = TILE_STONE_WALL_VAULT;
     }
 
+    if (is_christmas())
+    {
+        if (orig == TILE_DNGN_CLOSED_DOOR)
+            orig = TILE_DNGN_DOOR_CHRISTMAS;
+        if (orig == TILE_DNGN_OPEN_DOOR)
+            orig = TILE_DNGN_DOOR_CHRISTMAS_OPEN;
+        if (orig == TILE_DNGN_RUNED_DOOR)
+            orig = TILE_DNGN_DOOR_CHRISTMAS_RUNED;
+        if (orig == TILE_DNGN_SEALED_DOOR)
+            orig = TILE_DNGN_SEALED_CHRISTMAS_DOOR;
+    }
+
     if (orig == TILE_FLOOR_NORMAL)
         *bg = flv.floor;
     else if (orig == TILE_WALL_NORMAL)

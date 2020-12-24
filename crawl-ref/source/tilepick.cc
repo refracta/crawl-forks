@@ -161,14 +161,10 @@ tileidx_t tileidx_feature_base(dungeon_feature_type feat)
     case DNGN_SLIMY_WALL:
         return TILE_WALL_SLIME;
     case DNGN_RUNED_DOOR:
-        if (is_christmas())
-            return TILE_DNGN_DOOR_CHRISTMAS_RUNED;
         return TILE_DNGN_RUNED_DOOR;
     case DNGN_RUNED_CLEAR_DOOR:
         return TILE_DNGN_RUNED_CLEAR_DOOR;
     case DNGN_SEALED_DOOR:
-        if (is_christmas())
-            return TILE_DNGN_SEALED_CHRISTMAS_DOOR;
         return TILE_DNGN_SEALED_DOOR;
     case DNGN_SEALED_CLEAR_DOOR:
         return TILE_DNGN_SEALED_CLEAR_DOOR;
@@ -185,8 +181,6 @@ tileidx_t tileidx_feature_base(dungeon_feature_type feat)
     case DNGN_STONE_WALL:
         return TILE_DNGN_STONE_WALL;
     case DNGN_CLOSED_DOOR:
-        if (is_christmas())
-            return TILE_DNGN_DOOR_CHRISTMAS;
         return TILE_DNGN_CLOSED_DOOR;
     case DNGN_CLOSED_CLEAR_DOOR:
         return TILE_DNGN_CLOSED_CLEAR_DOOR;
@@ -243,8 +237,6 @@ tileidx_t tileidx_feature_base(dungeon_feature_type feat)
             return TILE_DNGN_RETURN_VESTIBULE;
         return TILE_DNGN_ENTER_HELL;
     case DNGN_OPEN_DOOR:
-        if (is_christmas())
-            return TILE_DNGN_DOOR_CHRISTMAS_OPEN;
         return TILE_DNGN_OPEN_DOOR;
     case DNGN_OPEN_CLEAR_DOOR:
         return TILE_DNGN_OPEN_CLEAR_DOOR;
