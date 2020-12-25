@@ -217,9 +217,6 @@ void DungeonCellBuffer::draw()
 void DungeonCellBuffer::add_blood_overlay(int x, int y, const packed_cell &cell,
                                           bool is_wall)
 {
-    if (cell.is_snowy)
-        m_buf_floor.add(TILE_SNOW + cell.is_snowy - 1, x, y);
-
     if (cell.is_liquefied && !is_wall)
     {
         int offset = cell.flv.special % tile_dngn_count(TILE_LIQUEFACTION);
@@ -262,6 +259,9 @@ void DungeonCellBuffer::pack_background(int x, int y, const packed_cell &cell)
         add_blood_overlay(x, y, cell);
 
     add_dngn_tile(bg_idx, x, y, cell.mangrove_water, cell.mushroom_slime);
+
+    if (cell.is_snowy)
+        m_buf_floor.add(TILE_SNOW + cell.is_snowy - 1, x, y);
 
     if (bg_idx > TILE_DNGN_UNSEEN)
     {

@@ -57,6 +57,13 @@ tree10_red
 tree1_dead DNGN_TREE_DEAD
 tree2_dead
 
+fur_tree DNGN_FUR_TREE
+fur_tree_snow DNGN_FUR_TREE_SNOW
+fur_tree_snow_ice DNGN_FUR_TREE_SNOW_ICE
+fur_tree_christmas DNGN_FUR_TREE_CHRISTMAS
+fur_tree_christmas_snow DNGN_FUR_TREE_CHRISTMAS_SNOW
+fur_tree_christmas_snow_ice DNGN_FUR_TREE_CHRISTMAS_SNOW_ICE
+
 %weight 10
 mangrove1 DNGN_MANGROVE
 %weight 8

@@ -722,6 +722,24 @@ tileidx_t tileidx_feature(const coord_def &gc)
         }
         return tileidx_feature_base(feat);
     }
+    case DNGN_TREE:
+    {
+        if (is_christmas())
+        {
+            tileidx_t tile = TILE_DNGN_FUR_TREE;
+
+            if (is_snowcovered(gc))
+            {
+                if (!((gc.x + gc.y) % 3))
+                    tile++;
+                tile++;
+            }
+            if (!((gc.x + gc.y) % 10))
+                tile += 3;
+
+            return tile;
+        }
+    }
 
     default:
         return tileidx_feature_base(feat);

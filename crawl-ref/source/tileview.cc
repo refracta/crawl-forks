@@ -1491,6 +1491,15 @@ void tile_apply_properties(const coord_def &gc, packed_cell &cell)
         print_blood = false;
     }
 
+    // Snow shouldn't be repressed by same things as blood. I was wrong.
+    if (mc.flags & MAP_SNOWY)
+    {
+        if (one_chance_in(10))
+            cell.is_snowy = 2;
+        else
+            cell.is_snowy = 1;
+    }
+
     // Mold has the same restrictions as blood but takes precedence.
     if (print_blood)
     {
@@ -1504,15 +1513,6 @@ void tile_apply_properties(const coord_def &gc, packed_cell &cell)
             cell.is_bloody = true;
             cell.blood_rotation = blood_rotation(gc);
             cell.old_blood = bool(env.pgrid(gc) & FPROP_OLD_BLOOD);
-        }
-
-        // Similar restrictions to blood; but can coexist with it.
-        if (mc.flags & MAP_SNOWY)
-        {
-            if (one_chance_in(10))
-                cell.is_snowy = 2;
-            else
-                cell.is_snowy = 1;
         }
     }
 

@@ -1537,7 +1537,7 @@ static void _snow()
 {
     for (rectangle_iterator ri(coord_def(0, 0), coord_def(GXM - 1, GYM - 1)); ri; ++ri)
     {
-        if (feat_has_dry_floor(grd(*ri)) || feat_is_solid(grd(*ri)) && !feat_is_wall(grd(*ri)))
+        if (feat_has_dry_floor(grd(*ri)) || (feat_is_solid(grd(*ri)) && !feat_is_wall(grd(*ri))))
         {
             bool clumping = false;
             for (adjacent_iterator ai(*ri); ai; ++ai)
