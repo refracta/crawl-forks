@@ -32,7 +32,7 @@ void packed_cell::clear()
 
     is_highlighted_summoner   = false;
     is_bloody        = false;
-    is_snowy         = false;
+    is_snowy         = 0;
     is_silenced      = false;
     halo             = HALO_NONE;
     is_moldy         = false;

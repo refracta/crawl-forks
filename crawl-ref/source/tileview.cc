@@ -1508,7 +1508,12 @@ void tile_apply_properties(const coord_def &gc, packed_cell &cell)
 
         // Similar restrictions to blood; but can coexist with it.
         if (mc.flags & MAP_SNOWY)
-            cell.is_snowy = true;
+        {
+            if (one_chance_in(10))
+                cell.is_snowy = 2;
+            else
+                cell.is_snowy = 1;
+        }
     }
 
     const dungeon_feature_type feat = mc.feat();

@@ -28,7 +28,7 @@ struct packed_cell
 
     bool is_highlighted_summoner;
     bool is_bloody;
-    bool is_snowy;
+    char is_snowy;
     bool is_silenced;
     char halo;
     bool is_moldy;
@@ -52,7 +52,7 @@ struct packed_cell
     bool operator !=(const packed_cell &other) const { return !(*this == other); }
 
     packed_cell() : num_dngn_overlay(0), fg(0), bg(0), cloud(0),
-                    is_highlighted_summoner(false), is_bloody(false), is_snowy(false),
+                    is_highlighted_summoner(false), is_bloody(false), is_snowy(0),
                     is_silenced(false), halo(HALO_NONE), is_moldy(false),
                     glowing_mold(false), is_sanctuary(false), is_liquefied(false),
                     mangrove_water(false), mushroom_slime(false), awakened_forest(false), 

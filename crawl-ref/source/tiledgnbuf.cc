@@ -217,13 +217,8 @@ void DungeonCellBuffer::draw()
 void DungeonCellBuffer::add_blood_overlay(int x, int y, const packed_cell &cell,
                                           bool is_wall)
 {
-    if (cell.is_snowy && !is_wall)
-    {
-        if (one_chance_in(10))
-            m_buf_floor.add(TILE_SNOW + 1, x, y);
-        else
-            m_buf_floor.add(TILE_SNOW, x, y);
-    }
+    if (cell.is_snowy)
+        m_buf_floor.add(TILE_SNOW + cell.is_snowy - 1, x, y);
 
     if (cell.is_liquefied && !is_wall)
     {

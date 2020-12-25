@@ -28,8 +28,8 @@
 #include "rltiles/tiledef-player.h"
 
 static unsigned short _cell_feat_show_colour(const map_cell& cell,
-                                             const coord_def& loc,
-                                             bool coloured)
+    const coord_def& loc,
+    bool coloured)
 {
     dungeon_feature_type feat = cell.feat();
     unsigned short colour = BLACK;
@@ -37,8 +37,8 @@ static unsigned short _cell_feat_show_colour(const map_cell& cell,
 
     // These do not obey vault recolouring.
     const bool no_vault_recolour = feat_has_dry_floor(feat)
-                                   && feat != DNGN_FLOOR
-                                   && !feat_is_open_door(feat);
+        && feat != DNGN_FLOOR
+        && !feat_is_open_door(feat);
 
     // These aren't shown mossy/bloody/slimy in console.
     const bool norecolour = feat_is_door(feat) || no_vault_recolour;
@@ -63,7 +63,7 @@ static unsigned short _cell_feat_show_colour(const map_cell& cell,
         }
     }
     else if (!feat_is_solid(feat)
-             && (cell.flags & (MAP_SANCTUARY_1 | MAP_SANCTUARY_2)))
+        && (cell.flags & (MAP_SANCTUARY_1 | MAP_SANCTUARY_2)))
     {
         if (cell.flags & MAP_SANCTUARY_1)
             colour = YELLOW;
@@ -80,7 +80,12 @@ static unsigned short _cell_feat_show_colour(const map_cell& cell,
     else if (cell.flags & MAP_BLOODY && !norecolour)
         colour = RED;
     else if (cell.flags & MAP_SNOWY && !norecolour)
-        colour = WHITE;
+    {
+        if (one_chance_in(10))
+            colour = LIGHTCYAN;
+        else
+            colour = WHITE;
+    }
     else if (cell.flags & MAP_MOLDY && !norecolour)
         colour = (cell.flags & MAP_GLOWING_MOLDY) ? LIGHTRED : LIGHTGREEN;
     else if (cell.flags & MAP_CORRODING && !norecolour

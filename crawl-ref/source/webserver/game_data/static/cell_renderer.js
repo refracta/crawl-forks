@@ -522,6 +522,8 @@ function ($, view_data, main, tileinfo_player, icons, dngn, enums,
         {
             var offset;
 
+            if (cell.is_snowy && !is_wall)
+                this.draw_dngn(dngn.SNOW + cell.is_snowy - 1, x, y);
             if (cell.liquefied && !is_wall)
             {
                 offset = cell.flv.s % dngn.tile_count(dngn.LIQUEFACTION);
