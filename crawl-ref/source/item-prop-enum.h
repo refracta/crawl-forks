@@ -650,9 +650,7 @@ enum weapon_type
     WPN_GLAIVE,
     WPN_BARDICHE,
 
-#if TAG_MAJOR_VERSION == 34
-    WPN_BLOWGUN,
-#endif
+    WPN_KRIS,
 
 #if TAG_MAJOR_VERSION > 34
     WPN_HAND_CROSSBOW,

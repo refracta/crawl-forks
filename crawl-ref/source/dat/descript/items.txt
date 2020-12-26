@@ -644,6 +644,22 @@ Two wooden staves of equal length attached together with a length of metal
 chain. Provides some protection (shield hand) as well as working as an offensive
 flail.
 %%%%
+ogreish kris
+
+An ornate ceremonial dagger of ogreish design. The curved blade pattern and 
+etchings upon it are achieved through multiple quenches in blood. Choice 
+weapon of ogre priests and mages.
+{{
+    if you.race() ~= "Ogre"
+        and you.race() ~= "Troll"
+        and you.race() ~= "Lignifite"
+    then
+        return "Unfortunately, it is too massive for you to effectively use."
+    else
+        return ""
+    end
+}}
+%%%%
 orb of zot
 
 An invaluable artefact. Once you have escaped to the surface with it, your

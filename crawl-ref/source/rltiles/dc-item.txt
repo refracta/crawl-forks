@@ -74,6 +74,9 @@ rapier3
 tonto1 WPN_TONTO
 tonto2
 tonto3
+kris1 WPN_KRIS
+kris2
+kris3
 
 ##Long Blades
 falchion1 WPN_FALCHION

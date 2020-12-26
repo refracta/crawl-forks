@@ -560,7 +560,10 @@ static const weapon_def Weapon_prop[] =
         DAMV_PIERCING, 8, 10, 40, SBL_BRANDS },
     { WPN_CLEAVER,          "cleaver",              10, -2, 14,
         SK_SHORT_BLADES, SIZE_LITTLE, SIZE_LITTLE, MI_NONE,
-        DAMV_SLICING, 4, 10, 40, SBL_BRANDS },
+        DAMV_SLICING,  4, 10, 40, SBL_BRANDS },
+    { WPN_KRIS,             "ogreish kris",         14, -3, 12,
+        SK_SHORT_BLADES, SIZE_LARGE, NUM_SIZE_LEVELS, MI_NONE,
+        DAMV_PIERCING, 1, 10, 60, SBL_BRANDS },
 #if TAG_MAJOR_VERSION == 34
     { WPN_CUTLASS,          "cutlass",              8,  4, 12,
         SK_SHORT_BLADES, SIZE_LITTLE, SIZE_LITTLE, MI_NONE,
@@ -612,9 +615,6 @@ static const weapon_def Weapon_prop[] =
     { WPN_BLESSED_TRIPLE_SWORD,      "old triple sword", 17, -4, 19,
         SK_LONG_BLADES,  SIZE_MEDIUM, NUM_SIZE_LEVELS,  MI_NONE,
         DAMV_SLICING, 0, 0, 0, {} },
-    { WPN_BLOWGUN,           "old blowgun",               0,  2, 10,
-        SK_SHORT_BLADES, SIZE_LITTLE, SIZE_LITTLE, MI_NONE,
-        DAMV_NON_MELEE, 0, 0, 0, {}, },
 #endif
 
     // Axes
@@ -866,7 +866,6 @@ void init_properties()
 const set<pair<object_class_type, int> > removed_items =
 {
 #if TAG_MAJOR_VERSION == 34
-    { OBJ_WEAPONS,   WPN_BLOWGUN },
     { OBJ_JEWELLERY, AMU_CONTROLLED_FLIGHT },
     { OBJ_JEWELLERY, RING_REGENERATION },
     { OBJ_JEWELLERY, RING_SUSTAIN_ATTRIBUTES },

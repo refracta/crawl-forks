@@ -193,6 +193,9 @@ tileidx_t tilep_equ_hand1(const item_def &item)
     case WPN_TONTO:
         tile = TILEP_HAND1_DAGGER;
         break;
+    case WPN_KRIS:
+        tile = TILEP_HAND1_KRIS;
+        break;
     case WPN_DOUBLE_SWORD:
         tile = TILEP_HAND1_DOUBLE_SWORD;
         break;
@@ -282,9 +285,6 @@ tileidx_t tilep_equ_hand1(const item_def &item)
         break;
     case WPN_TRIPLE_CROSSBOW:
         tile = TILEP_HAND1_TRIPLE_CROSSBOW;
-        break;
-    case WPN_BLOWGUN:
-        tile = TILEP_HAND1_BLOWGUN;
         break;
     case WPN_LONGBOW:
         tile = TILEP_HAND1_BOW3;
@@ -459,6 +459,9 @@ tileidx_t tilep_equ_hand2(const item_def &item)
     case WPN_TONTO:
         tile = TILEP_HAND2_DAGGER;
         break;
+    case WPN_KRIS:
+        tile = TILEP_HAND2_KRIS;
+        break;
     case WPN_DOUBLE_SWORD:
         tile = TILEP_HAND2_DOUBLE_SWORD;
         break;
@@ -548,9 +551,6 @@ tileidx_t tilep_equ_hand2(const item_def &item)
         break;
     case WPN_TRIPLE_CROSSBOW:
         tile = TILEP_HAND2_TRIPLE_CROSSBOW;
-        break;
-    case WPN_BLOWGUN:
-        tile = TILEP_HAND2_BLOWGUN;
         break;
     case WPN_LONGBOW:
         tile = TILEP_HAND2_BOW3;
@@ -734,6 +734,9 @@ tileidx_t tilep_equ_weapon(const item_def &item)
     case WPN_TONTO:
         tile = TILEP_HAND1_DAGGER;
         break;
+    case WPN_KRIS:
+        tile = TILEP_HAND1_KRIS;
+        break;
     case WPN_DOUBLE_SWORD:
         tile = TILEP_HAND1_DOUBLE_SWORD;
         break;
@@ -823,9 +826,6 @@ tileidx_t tilep_equ_weapon(const item_def &item)
         break;
     case WPN_TRIPLE_CROSSBOW:
         tile = TILEP_HAND1_TRIPLE_CROSSBOW;
-        break;
-    case WPN_BLOWGUN:
-        tile = TILEP_HAND1_BLOWGUN;
         break;
     case WPN_LONGBOW:
         tile = TILEP_HAND1_BOW3;

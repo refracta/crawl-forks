@@ -4753,7 +4753,7 @@ void unmarshallItem(reader &th, item_def &item)
 
     if (th.getMinorVersion() < TAG_MINOR_REMOVE_AMMO)
     {
-        if (item.base_type == OBJ_WEAPONS && item.sub_type == WPN_BLOWGUN)
+        if (item.base_type == OBJ_WEAPONS && item.sub_type == WPN_TONTO)
             item.base_type = OBJ_MISSILES;
 
         if (item.base_type == OBJ_MISSILES && !item_is_stationary_net(item))

@@ -1321,10 +1321,7 @@ int attack::player_apply_misc_modifiers(int damage)
  */
 int attack::get_weapon_plus()
 {
-#if TAG_MAJOR_VERSION == 34
-    if (weapon->sub_type == WPN_BLOWGUN
-        || weapon->base_type == OBJ_RODS)
-#endif
+    if (weapon->base_type == OBJ_RODS)
         return 0;
     return weapon->plus;
 }
