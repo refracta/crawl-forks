@@ -476,7 +476,7 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
         { WPN_DEMON_TRIDENT,    14 }, };
     static const weapon_list SP_DEFENDER_WEAPONS =
     {   { WPN_LAJATANG,         1 },
-        { WPN_QUICK_BLADE,      1 },
+        { WPN_TONTO,            1 },
         { WPN_RAPIER,           1 },
         { WPN_DEMON_WHIP,       1 },
         { WPN_FLAIL,            1 } };
@@ -623,7 +623,7 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
             { { { WPN_RAPIER,           12 },
                 { WPN_CLEAVER,          8 },
                 { WPN_SHORT_SWORD,      5 },
-                { WPN_QUICK_BLADE,      1 },
+                { WPN_TONTO,            1 },
         } } },
         { MONS_DEEP_ELF_ARCHER,
             { { { WPN_SHORT_SWORD,      1 },

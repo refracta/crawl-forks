@@ -144,7 +144,7 @@ static weapon_type _determine_weapon_subtype(int item_level)
                              WPN_DOUBLE_SWORD,
                              WPN_EVENINGSTAR,
                              WPN_EXECUTIONERS_AXE,
-                             WPN_QUICK_BLADE,
+                             WPN_TONTO,
                              WPN_TRIPLE_SWORD);
     }
     else if (x_chance_in_y(item_level, 20))
@@ -390,7 +390,7 @@ bool is_weapon_brand_ok(int type, int brand, bool /*strict*/)
     if (brand <= SPWPN_NORMAL)
         return true;
 
-    if (type == WPN_QUICK_BLADE && brand == SPWPN_SPEED)
+    if (type == WPN_TONTO && brand == SPWPN_SPEED)
         return false;
 
     switch ((brand_type)brand)

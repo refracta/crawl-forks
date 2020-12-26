@@ -629,7 +629,7 @@ enum weapon_type
     WPN_GREAT_MACE,
 
     WPN_DAGGER,
-    WPN_QUICK_BLADE,
+    WPN_TONTO,
     WPN_SHORT_SWORD,
     WPN_RAPIER,
 

@@ -298,8 +298,6 @@ bool is_hasty_item(const item_def& item, bool calc_unid)
 
     if (item.base_type == OBJ_WEAPONS)
     {
-        if (item.sub_type == WPN_QUICK_BLADE)
-            return true;
         if (calc_unid || item_brand_known(item))
             return get_weapon_brand(item) == SPWPN_SPEED;
     }
@@ -510,10 +508,7 @@ bool god_likes_item_type(const item_def &item, god_type which_god)
             break;
 
         case GOD_CHEIBRIADOS:
-            // Slow god: no quick blades, no berserking.
-            if (item.is_type(OBJ_WEAPONS, WPN_QUICK_BLADE))
-                return false;
-
+            // Slow god: no berserking.
             if (item.is_type(OBJ_JEWELLERY, AMU_RAGE))
                 return false;
             break;

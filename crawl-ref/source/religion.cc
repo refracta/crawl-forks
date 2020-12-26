@@ -1940,7 +1940,7 @@ static weapon_type _hepliaklqana_weapon_type(monster_type mc, int HD)
     switch (mc)
     {
     case MONS_ANCESTOR_HEXER:
-        return HD < 16 ? WPN_DAGGER : WPN_QUICK_BLADE;
+        return HD < 16 ? WPN_DAGGER : WPN_TONTO;
     case MONS_ANCESTOR_KNIGHT:
         if (you.species == SP_MERFOLK)
             return HD < 10 ? WPN_SPEAR : WPN_DEMON_TRIDENT;
@@ -1953,7 +1953,7 @@ static weapon_type _hepliaklqana_weapon_type(monster_type mc, int HD)
         else if (you.species == SP_SPRIGGAN || you.species == SP_DEEP_ELF)
             return HD < 9  ? WPN_SHORT_SWORD :
                    HD < 14 ? WPN_RAPIER :
-                             WPN_QUICK_BLADE;
+                             WPN_TONTO;
         else
             return HD < 10 ? WPN_FLAIL : WPN_BROAD_AXE;
     case MONS_ANCESTOR_BATTLEMAGE:

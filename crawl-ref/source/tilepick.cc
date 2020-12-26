@@ -2258,7 +2258,7 @@ static tileidx_t _tileidx_weapon_base(const item_def &item)
     case WPN_DAGGER:                return TILE_WPN_DAGGER;
     case WPN_CLEAVER:               return TILE_WPN_CLEAVER;
     case WPN_SHORT_SWORD:           return TILE_WPN_SHORT_SWORD;
-    case WPN_QUICK_BLADE:           return TILE_WPN_QUICK_BLADE;
+    case WPN_TONTO:                 return TILE_WPN_TONTO;
     case WPN_RAPIER:                return TILE_WPN_RAPIER;
     case WPN_FALCHION:              return TILE_WPN_FALCHION;
     case WPN_LONG_SWORD:            return TILE_WPN_LONG_SWORD;

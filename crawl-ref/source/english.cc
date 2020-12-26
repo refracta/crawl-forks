@@ -122,7 +122,8 @@ string pluralise(const string &name, const char * const qualifiers[],
              || ends_with(name, "tengu")    || ends_with(name, "sheep")
              || ends_with(name, "swine")    || ends_with(name, "efreet")
              || ends_with(name, "jiangshi") || ends_with(name, "raiju")
-             || ends_with(name, "meliai")   || ends_with(name, "trout"))
+             || ends_with(name, "meliai")   || ends_with(name, "trout")
+             || ends_with(name, "tonto"))
     {
         return name;
     }
@@ -132,10 +133,11 @@ string pluralise(const string &name, const char * const qualifiers[],
         // To handle cockroaches, sphinxes, and bushes.
         return name + "es";
     }
-    else if (ends_with(name, "simulacrum") || ends_with(name, "eidolon"))
+    else if (ends_with(name, "simulacrum") || ends_with(name, "eidolon") || ends_with(name, "scutum"))
     {
         // simulacrum -> simulacra (correct Latin pluralisation)
         // also eidolon -> eidola (correct Greek pluralisation)
+        // also scutum -> scuta (correct Latin pluralisation)
         return name.substr(0, name.length() - 2) + "a";
     }
     else if (ends_with(name, "djinni"))

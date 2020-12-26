@@ -792,11 +792,6 @@ with as much protection as the scales of some heavier dragons, it is somewhat
 lighter and less encumbering. It is excellent at repelling hostile enchantments
 – and also cannot be enchanted beyond its current form as a result.
 %%%%
-quick blade
-
-A carefully wrought dagger which is preternaturally well-balanced, making it
-much easier for even inexperienced handlers to attack with it quickly.
-%%%%
 rapier
 
 A slender, sharply pointed sword, with an uncommonly elegant design.
@@ -1183,6 +1178,11 @@ free, if they live long enough.
 tomahawk
 
 A small axe, designed for throwing.
+%%%%
+tonto
+
+A rare, exotic short sword which is preternaturally well-balanced, making it
+much easier for even inexperienced handlers to attack with it quickly.
 %%%%
 trident
 
