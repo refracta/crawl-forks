@@ -2051,18 +2051,18 @@ int attack::player_stab_weapon_bonus(int damage)
 
     if (player_good_stab())
     {
-        // We might be unarmed if we're using the boots of the Assassin.
-        const bool extra_good = using_weapon() && (weapon->is_type(OBJ_WEAPONS, WPN_DAGGER) || weapon->is_type(OBJ_SHIELDS, SHD_SAI));
-        int bonus = you.dex() * (stab_skill + 100) / (extra_good ? 500 : 1000);
+        damage += you.dex();
 
-        bonus   = stepdown_value(bonus, 10, 10, 30, 30);
-        damage += bonus;
         damage *= 10 + div_rand_round(stab_skill, 100 * stab_bonus);
         damage /= 10;
+
+        // We might be unarmed if we're using the boots of the Assassin.
+        if (using_weapon() && (weapon->is_type(OBJ_WEAPONS, WPN_CUTLASS)))
+            damage *= 2;
     }
 
-    damage *= 12 + div_rand_round(stab_skill, 100 * stab_bonus);
-    damage /= 12;
+    damage *= 10 + div_rand_round(stab_skill, 100 * stab_bonus);
+    damage /= 10;
 
     return damage;
 }
