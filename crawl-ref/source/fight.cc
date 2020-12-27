@@ -947,7 +947,7 @@ void get_cleave_targets(const actor &attacker, const coord_def& def,
 
     const item_def* weap = attacker.weapon(which_attack);
 
-    if (weap && weap->base_type == OBJ_WEAPONS && weap->sub_type == WPN_SCYTHE)
+    if (weap && weap->is_type(OBJ_WEAPONS, WPN_SCYTHE))
     {
         for (rectangle_iterator ri(attacker.pos(), 2); ri; ++ri)
         {
@@ -958,7 +958,7 @@ void get_cleave_targets(const actor &attacker, const coord_def& def,
         }
     }
 
-    else if (weap && item_attack_skill(*weap) == SK_AXES_HAMMERS
+    else if (weap && (item_attack_skill(*weap) == SK_AXES_HAMMERS || weap->is_type(OBJ_WEAPONS, WPN_CLEAVER))
             || attacker.is_player()
                && (you.form == transformation::hydra && you.heads() > 1
                    || you.duration[DUR_CLEAVE]))
