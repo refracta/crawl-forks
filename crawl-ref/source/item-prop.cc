@@ -562,7 +562,7 @@ static const weapon_def Weapon_prop[] =
         SK_SHORT_BLADES, SIZE_LITTLE, SIZE_LITTLE, MI_NONE,
         DAMV_SLICING,  4, 10, 40, SBL_BRANDS },
     { WPN_KRIS,             "ogreish kris",         14, -3, 12,
-        SK_SHORT_BLADES, SIZE_LARGE, NUM_SIZE_LEVELS, MI_NONE,
+        SK_SHORT_BLADES, SIZE_LARGE, SIZE_LARGE, MI_NONE,
         DAMV_PIERCING, 1, 10, 60, SBL_BRANDS },
 #if TAG_MAJOR_VERSION == 34
     { WPN_CUTLASS,          "cutlass",              8,  4, 12,
