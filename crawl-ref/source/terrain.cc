@@ -1267,7 +1267,7 @@ void dungeon_terrain_changed(const coord_def &pos,
             if (failure)
             {
                 int dam = roll_dice(4, 8);
-                dam = act->apply_ac(dam);
+                dam = act->apply_ac(dam, 32);
                 if (act->is_player())
                 {
                     ouch(dam, KILLED_BY_TRAP);

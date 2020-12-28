@@ -546,7 +546,8 @@ bool melee_attack::handle_phase_hit()
             // infusion_power is set when the infusion spell is cast
             const int pow = you.props["infusion_power"].get_int();
             const int dmg = 2 + div_rand_round(pow, 12);
-            const int hurt = defender->apply_ac(dmg);
+            const int max = 2 + div_round_up(pow, 12);
+            const int hurt = defender->apply_ac(dmg, max);
 
             dprf(DIAG_COMBAT, "Infusion: dmg = %d hurt = %d", dmg, hurt);
 
@@ -1745,7 +1746,7 @@ bool melee_attack::player_aux_apply(unarmed_attack_type atk)
     if (atk == UNAT_CONSTRICT || atk == UNAT_STAFF)
         aux_damage = 0;
     else
-        aux_damage = apply_defender_ac(aux_damage);
+        aux_damage = apply_defender_ac(aux_damage, aux_damage);
 
     aux_damage = inflict_damage(aux_damage, BEAM_MISSILE);
     damage_done = aux_damage;
@@ -2647,8 +2648,14 @@ void melee_attack::attacker_sustain_passive_damage()
         attacker->hurt(defender, acid_strength, BEAM_ACID, KILLED_BY_ACID, "", "", false);
 }
 
-int melee_attack::staff_damage(skill_type skill)
+int melee_attack::staff_damage(skill_type skill, bool max)
 {
+    if (max)
+    {
+        return div_round_up(attacker->skill(skill, 100)
+            + attacker->skill(SK_EVOCATIONS, 50), 80);
+    }
+
     if (x_chance_in_y(attacker->skill(SK_EVOCATIONS, 200)
                     + attacker->skill(skill, 100), 3000))
     {
@@ -2784,11 +2791,13 @@ bool melee_attack::apply_staff_damage()
         break;
 
     case STAFF_EARTH:
+    {
         special_damage = staff_damage(SK_EARTH_MAGIC);
+        const int maxdmg = staff_damage(SK_EARTH_MAGIC, true);
         if (mount_defend)
-            special_damage = apply_mount_ac(special_damage);
+            special_damage = apply_mount_ac(special_damage, maxdmg);
         else
-            special_damage = apply_defender_ac(special_damage);
+            special_damage = apply_defender_ac(special_damage, maxdmg);
 
         if (special_damage > 0)
         {
@@ -2820,7 +2829,7 @@ bool melee_attack::apply_staff_damage()
                     (flay_dur)* BASELINE_DELAY));
             }
         }
-
+    }
         break;
 
     case STAFF_FIRE:
@@ -3925,7 +3934,6 @@ void melee_attack::mons_apply_attack_flavour()
         if (attacker->type == MONS_FIRE_VORTEX)
             attacker->as_monster()->suicide(-10);
 
-        special_damage = defender->apply_ac(base_damage, 0, ac_type::half);
         special_damage = resist_adjust_damage(defender,
                                               BEAM_FIRE,
                                               special_damage, mount_defend);
@@ -4099,8 +4107,9 @@ void melee_attack::do_spines()
 
         if (mut && attacker->alive() && coinflip())
         {
-            int dmg = random_range(mut, you.experience_level + mut);
-            int hurt = attacker->apply_ac(dmg);
+            const int maxdmg = you.experience_level + mut;
+            const int dmg = random_range(mut, maxdmg);
+            const int hurt = attacker->apply_ac(dmg, you.experience_level + mut);
 
             dprf(DIAG_COMBAT, "Spiny: dmg = %d hurt = %d", dmg, hurt);
 
@@ -4126,8 +4135,9 @@ void melee_attack::do_spines()
 
         if (attacker->alive())
         {
-            int dmg = random2(defender->get_hit_dice());
-            int hurt = attacker->apply_ac(dmg, 0, ac_type::half, 0, true, mount_attack);
+            const int maxdmg = defender->get_hit_dice();
+            const int dmg = random2(maxdmg);
+            const int hurt = attacker->apply_ac(dmg, maxdmg, ac_type::half, 0, true, mount_attack);
             dprf(DIAG_COMBAT, "Spiny: dmg = %d hurt = %d", dmg, hurt);
 
             if (hurt <= 0)
@@ -4204,7 +4214,7 @@ void melee_attack::do_minotaur_retaliation()
         // monsters have no STR or DEX
         if (x_chance_in_y(2, 5))
         {
-            int hurt = attacker->apply_ac(random2(21));
+            int hurt = attacker->apply_ac(random2(21), 21);
             if (you.see_cell(defender->pos()))
             {
                 const string defname = defender->name(DESC_THE);
@@ -4248,7 +4258,7 @@ void melee_attack::do_minotaur_retaliation()
         dmg = player_apply_misc_modifiers(dmg);
         dmg = player_apply_slaying_bonuses(dmg, true);
         dmg = player_apply_final_multipliers(dmg);
-        int hurt = attacker->apply_ac(dmg);
+        int hurt = attacker->apply_ac(dmg, dmg);
 
         mpr("You furiously retaliate!");
         dprf(DIAG_COMBAT, "Retaliation: dmg = %d hurt = %d", dmg, hurt);

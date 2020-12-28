@@ -1411,13 +1411,13 @@ int attack::calc_base_unarmed_damage()
 int attack::calc_damage()
 {
     int damage = 0;
+    int potential_damage = 0;
     if (attacker->is_monster())
     {
-        int damage_max = 0;
         if (using_weapon() || wpn_skill == SK_FIGHTING)
         {
-            damage_max = weapon_damage();
-            damage += random2avg(damage_max + 1, 3); // if we're averaging player damage let's do enemies too.
+            potential_damage = weapon_damage();
+            damage += random2avg(potential_damage + 1, 3); // if we're averaging player damage let's do enemies too.
 
             int wpn_damage_plus = 0;
             if (weapon) // can be 0 for throwing projectiles
@@ -1440,63 +1440,63 @@ int attack::calc_damage()
             damage -= 1 + random2(3);
         }
 
-        damage_max += attk_damage;
+        potential_damage += attk_damage;
         damage     += 1 + random2(attk_damage);
 
         damage = apply_damage_modifiers(damage);
-        return apply_defender_ac(damage, damage_max);
+        return apply_defender_ac(damage, potential_damage);
     }
     else if (mount_attack)
     {
-        int potential_damage;
-
         potential_damage = calc_base_unarmed_damage();
-        damage = random2avg(potential_damage + 1, 3);
 
         // weapon skill-like bonus using spellpower/invocations
         switch (you.mount)
         {
         case mount_type::drake:
-            damage *= 2500 + random2(you.skill(SK_INVOCATIONS, 100) + 1);
+            potential_damage *= 2500 + random2(you.skill(SK_INVOCATIONS, 100) + 1);
             break;
         case mount_type::spider:
-            damage *= 2500 + random2(13 * calc_spell_power(SPELL_SUMMON_SPIDER_MOUNT, true) + 1);
+            potential_damage *= 2500 + random2(13 * calc_spell_power(SPELL_SUMMON_SPIDER_MOUNT, true) + 1);
             break;
         case mount_type::hydra:
-            damage *= 2500 + random2(13 * calc_spell_power(SPELL_SUMMON_HYDRA_MOUNT, true) + 1);
+            potential_damage *= 2500 + random2(13 * calc_spell_power(SPELL_SUMMON_HYDRA_MOUNT, true) + 1);
             break;
         default:
             break;
         }
-        damage /= 2500;
+        potential_damage /= 2500;
 
         if (you.submerged() && !you.can_swim())
-            damage = div_rand_round(2 * damage, 3); // Spider can't swim either.
+            potential_damage = div_rand_round(2 * damage, 3); // Spider can't swim either.
 
         if (you.duration[DUR_MOUNT_CORROSION])
-            damage -= random2(4 * you.props["mount_corrosion_amount"].get_int());
+            potential_damage -= random2(4 * you.props["mount_corrosion_amount"].get_int());
 
         if (you.duration[DUR_MOUNT_DRAINING])
-            damage = div_rand_round(4 * damage, 5);
+            potential_damage = div_rand_round(4 * damage, 5);
 
         if (you.duration[DUR_MOUNT_WRETCHED])
-            damage = div_rand_round(4 * damage, 5);
+            potential_damage = div_rand_round(4 * damage, 5);
+
+        damage = random2avg(potential_damage + 1, 3);
     }
     else
     {
-        int potential_damage;
-
         potential_damage = using_weapon() ? weapon_damage() : calc_base_unarmed_damage();
 
         potential_damage = player_stat_modify_damage(potential_damage);
+        potential_damage = player_apply_weapon_skill(potential_damage);
+        potential_damage = player_apply_fighting_skill(potential_damage, false);
+        potential_damage = player_apply_misc_modifiers(potential_damage);
+        potential_damage = player_apply_slaying_bonuses(potential_damage, false);
 
         damage = random2avg(potential_damage + 1, 3); // wow variation die pls
 
-        damage = player_apply_weapon_skill(damage);
-        damage = player_apply_fighting_skill(damage, false);
-        damage = player_apply_misc_modifiers(damage);
-        damage = player_apply_slaying_bonuses(damage, false);
-        damage = player_stab(damage);
+        int stab = player_stab(damage);
+        potential_damage += stab;
+        damage += stab;
+
         // A failed stab may have awakened monsters, but that could have
         // caused the defender to cease to exist (spectral weapons with
         // missing summoners; or pacified monsters on a stair). FIXME:
@@ -1505,10 +1505,11 @@ int attack::calc_damage()
         // in the attack; or to avoid removing monsters in handle_behaviour.
         if (!defender->alive())
             return 0;
+
         damage = player_apply_final_multipliers(damage);
     }
 
-    damage = apply_defender_ac(damage);
+    damage = apply_defender_ac(damage, potential_damage);
 
     damage = max(0, damage);
     set_attack_verb(damage);

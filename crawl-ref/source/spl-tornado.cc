@@ -394,12 +394,13 @@ void tornado_damage(actor *caster, int dur, bool is_vortex)
                             cfac = div_rand_round(rpow, 4);
                             cflav = chaos_damage_type(caster->is_player());
                         }
+                        const int maxdmg = div_round_up(9 * (rpow + cfac), 15);
                         int dmg = victim->apply_ac(
                                     div_rand_round(roll_dice(9, rpow + cfac), 15),
-                                    0, ac_type::proportional);
+                                    maxdmg, ac_type::proportional);
                         int mntdmg = domnt ? victim->apply_ac(
                                     div_rand_round(roll_dice(9, rpow + cfac), 15),
-                                    0, ac_type::proportional, 0, true, true) : 0;
+                                    maxdmg, ac_type::proportional, 0, true, true) : 0;
                         if (chaos)
                         {
                             bolt beam;

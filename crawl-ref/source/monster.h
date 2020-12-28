@@ -469,7 +469,7 @@ public:
 
     int base_armour_class() const;
     int armour_class(bool calc_unid = true) const override;
-    int gdr_perc() const override { return 0; }
+    int gdr_perc() const override;
     int base_evasion() const;
     int evasion(ev_ignore_type evit = ev_ignore::none,
                 const actor* /*attacker*/ = nullptr) const override;

@@ -1128,7 +1128,8 @@ void cloud_strike(actor * caster, actor * foe, int damage)
     case CLOUD_XOM_TRAIL:
     case CLOUD_SALT:
     case CLOUD_FLUFFY:
-        damage = foe->apply_ac(damage);
+    case CLOUD_GOLD_DUST:
+        damage = foe->apply_ac(damage, damage);
         if (damage > 0)
         {
             foe->hurt(caster, damage, BEAM_COLD, KILLED_BY_BEAM,
@@ -1144,11 +1145,10 @@ void cloud_strike(actor * caster, actor * foe, int damage)
             }
         }
         break;
-    case CLOUD_MUTAGENIC:
+    case CLOUD_MUTAGENIC: // BCADDO: Change the mutagenic cloudstrike effect.
     case CLOUD_PETRIFY:
     case CLOUD_TORNADO:
-    case CLOUD_GOLD_DUST:
-        damage = foe->apply_ac(damage * 2);
+        damage = foe->apply_ac(damage * 2, damage * 2);
         if (damage > 0)
         {
             foe->hurt(caster, damage, BEAM_COLD, KILLED_BY_BEAM,
@@ -1341,7 +1341,7 @@ spret cast_airstrike(int pow, const dist &beam, bool fail)
         dam = div_rand_round(5 * dam, 4);
     if (_is_menacing(&you, SPELL_AIRSTRIKE))
         dam = div_rand_round(3 * dam, 2);
-    int hurted = mons->apply_ac(mons->beam_resists(pbeam, dam, false));
+    int hurted = mons->apply_ac(mons->beam_resists(pbeam, dam, false), 10 + div_round_up(pow, 7));
     dprf("preac: %d, postac: %d", dam, hurted);
 
     mprf("The air %stwists around and %sstrikes %s%s%s",
@@ -1455,7 +1455,7 @@ static int _shatter_monsters(coord_def where, int pow, actor *agent, bool chaos)
     dam_dice.num = _shatter_mon_dice(mon);
     if (_is_menacing(agent, SPELL_SHATTER) && dam_dice.num != 0)
         dam_dice.num++;
-    int damage = max(0, dam_dice.roll() - random2(mon->armour_class()));
+    int damage = mon->apply_ac(dam_dice.roll(), dam_dice.max(), ac_type::half);
 
     if (agent->is_player())
         _player_hurt_monster(*mon, damage, BEAM_MMISSILE);
@@ -1796,13 +1796,11 @@ static int _shatter_player(int pow, actor *wielder, bool devastator = false)
         mount_dice.num++;
     }
 
-    int damage = max(0, dam_dice.roll() - random2(you.armour_class()));
+    int damage = you.apply_ac(dam_dice.roll(), dam_dice.max(), ac_type::half);
     int mntdmg = 0;
     
     if (you.mounted())
-        mntdmg = max(0, mount_dice.roll() - random2(mount_ac()));
-
-    // BCADNOTE: Shatter uses AC, but not GDR, should I leave it this way?
+        mntdmg = apply_mount_ac(mount_dice.roll(), mount_dice.max(), ac_type::half);
 
     if (damage > 0)
     {

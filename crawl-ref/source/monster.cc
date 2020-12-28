@@ -3260,12 +3260,6 @@ int monster::base_armour_class() const
         return _zombie_ac_modifier(type) + base_ac;
     }
 
-    // abominations are weird.
-    if (type == MONS_ABOMINATION_LARGE)
-        return min(20, 7 + get_hit_dice() / 2);
-    if (type == MONS_ABOMINATION_SMALL)
-        return min(10, 3 + get_hit_dice() * 2 / 3);
-
     // Hepliaklqana ancestors scale with xl.
     // Also special cases for non-armoured races.
     if (mons_is_hepliaklqana_ancestor(type))
@@ -3356,6 +3350,13 @@ int monster::armour_class(bool calc_unid) const
         ac = div_round_up(2 * ac, 3);
 
     return max(ac, 0);
+}
+
+int monster::gdr_perc() const
+{
+    int gdr = base_armour_class();
+
+    return max(min(gdr, 50), 0);
 }
 
 /**

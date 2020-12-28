@@ -286,6 +286,11 @@ int dice_def::roll() const
     return roll_dice(num, size);
 }
 
+int dice_def::max() const
+{
+    return num * size;
+}
+
 dice_def calc_dice(int num_dice, int max_damage)
 {
     dice_def ret(num_dice, 0);

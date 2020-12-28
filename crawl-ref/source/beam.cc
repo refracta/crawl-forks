@@ -5009,7 +5009,6 @@ int bolt::apply_AC(const actor *victim, int hurted, int max_dmg, bool mount)
     default: ;
     }
 
-    // beams don't obey GDR -> max_damage is 0
     return victim->apply_ac(hurted, max_dmg, ac_rule, 0, !is_tracer, mount);
 }
 

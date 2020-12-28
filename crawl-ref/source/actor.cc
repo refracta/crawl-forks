@@ -357,7 +357,7 @@ int actor::apply_ac(int damage, int max_damage, ac_type ac_rule,
         ac = mount_ac();
     ac = max(ac - stab_bypass, 0);
 
-    int gdr = mount ? 10 : gdr_perc();
+    int gdr = mount ? mount_gdr() : gdr_perc();
     int saved = 0;
     switch (ac_rule)
     {
@@ -1060,13 +1060,13 @@ void actor::collide(coord_def newpos, const actor *agent, int pow)
         const string othername = other->name(DESC_A, true);
         if (other->alive() && !fedhas_prot_other)
         {
-            other->hurt(agent, other->apply_ac(damage.roll()),
+            other->hurt(agent, other->apply_ac(damage.roll(), damage.max()),
                         BEAM_MISSILE, KILLED_BY_COLLISION,
                         othername, thisname);
         }
         if (alive() && !fedhas_prot)
         {
-            hurt(agent, apply_ac(damage.roll()), BEAM_MISSILE,
+            hurt(agent, apply_ac(damage.roll(), damage.max()), BEAM_MISSILE,
                  KILLED_BY_COLLISION, thisname, othername);
         }
         return;
@@ -1099,7 +1099,7 @@ void actor::collide(coord_def newpos, const actor *agent, int pow)
 
     if (!fedhas_prot)
     {
-        hurt(agent, apply_ac(damage.roll()), BEAM_MISSILE,
+        hurt(agent, apply_ac(damage.roll(), damage.max()), BEAM_MISSILE,
              KILLED_BY_COLLISION, "",
              feature_description_at(newpos, false, DESC_A, false));
     }

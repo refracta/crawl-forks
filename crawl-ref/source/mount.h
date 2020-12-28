@@ -16,7 +16,7 @@ void damage_mount(int amount);
 void dismount();
 void cure_mount_debuffs();
 bool mount_hit();
-int apply_mount_ac(int amount, ac_type type = ac_type::normal);
+int apply_mount_ac(int amount, int max_dmg = 0, ac_type type = ac_type::normal);
 monster_type mount_mons();
 bool drain_mount(int strength);
 bool miasma_mount();
@@ -26,6 +26,7 @@ int mount_statuses();
 int mount_hd();
 bool mount_submerged();
 int mount_ac();
+int mount_gdr();
 int mount_regen();
 int mount_poison_survival();
 

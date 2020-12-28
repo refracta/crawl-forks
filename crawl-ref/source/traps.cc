@@ -595,9 +595,9 @@ void trap_def::trigger(actor& triggerer)
                     int damage;
 
                     if (mount)
-                        damage = apply_mount_ac(48 + random2avg(29, 2));
+                        damage = apply_mount_ac(48 + random2avg(29, 2), 77);
                     else
-                        damage = you.apply_ac(48 + random2avg(29, 2));
+                        damage = you.apply_ac(48 + random2avg(29, 2), 77);
 
                     mprf("A huge blade swings out and slices into you%s%s", mount ? "r mount" : "", attack_strength_punctuation(damage).c_str());
 
@@ -647,7 +647,7 @@ void trap_def::trigger(actor& triggerer)
                         mpr(msg);
                     }
 
-                    int damage_taken = m->apply_ac(10 + random2avg(29, 2));
+                    int damage_taken = m->apply_ac(10 + random2avg(29, 2), 39);
 
                     if (!m->is_summoned())
                         bleed_onto_floor(m->pos(), m->type, damage_taken, true);
@@ -1268,14 +1268,14 @@ void trap_def::shoot_ammo(actor& act, bool was_known)
         bool poison = type == TRAP_NEEDLE
                        && (x_chance_in_y(50 - (3*act.armour_class()) / 2, 100));
 
-        int damage_taken = act.apply_ac(shot_damage(act));
+        int damage_taken = act.apply_ac(shot_damage(act), max_damage(act));
 
         if (act.is_player())
         {
             bool mount = you.mounted();
 
             if (mount)
-                damage_taken = apply_mount_ac(shot_damage(act));
+                damage_taken = apply_mount_ac(shot_damage(act), max_damage(act));
 
             mprf("%s shoots out and hits you%s%s", shot.name(DESC_A).c_str(), mount ? "r mount" : "", attack_strength_punctuation(damage_taken).c_str());
 

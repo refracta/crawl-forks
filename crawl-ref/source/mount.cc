@@ -195,9 +195,9 @@ bool mount_hit()
     return !x_chance_in_y(you.body_size(PSIZE_BODY), you.body_size(PSIZE_BODY) + 5);
 }
 
-int apply_mount_ac(int damage, ac_type type)
+int apply_mount_ac(int damage, int max_dmg, ac_type type)
 {
-    return you.apply_ac(damage, 0, type, 0, true, true);
+    return you.apply_ac(damage, max_dmg, type, 0, true, true);
 }
 
 bool poison_mount(int amount, bool force)
@@ -427,6 +427,13 @@ bool mount_submerged()
         return false;
 
     return (grd(you.pos()) == DNGN_DEEP_WATER || grd(you.pos()) == DNGN_DEEP_SLIMY_WATER);
+}
+
+int mount_gdr()
+{
+    int gdr = mount_ac();
+
+    return max(min(gdr, 50), 0);
 }
 
 int mount_ac()

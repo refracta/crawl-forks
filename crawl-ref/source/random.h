@@ -216,6 +216,7 @@ struct dice_def
     constexpr dice_def() : num(0), size(0) {}
     constexpr dice_def(int n, int s) : num(n), size(s) {}
     int roll() const;
+    int max() const;
 };
 
 constexpr dice_def CONVENIENT_NONZERO_DAMAGE{42, 1};

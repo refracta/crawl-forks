@@ -5866,7 +5866,7 @@ static void _cast_resonance_strike(monster &caster, mon_spell_slot, bolt&)
     // + 1 die for every 2 adjacent constructs (so at 4 constructs, 5dhd)
     dice_def dice = resonance_strike_base_damage(caster);
     dice.num += div_rand_round(constructs, 2);
-    const int dam = target->apply_ac(dice.roll());
+    const int dam = target->apply_ac(dice.roll(), dice.num * dice.size);
     const string constructs_desc
         = _describe_nearby_constructs(caster, target->pos());
 
@@ -8148,7 +8148,8 @@ static void _throw_ally_to(const monster &thrower, monster &throwee,
     const string killed_by = make_stringf("Hit by %s thrown by %s",
                                           throwee.name(DESC_A, true).c_str(),
                                           thrower.name(DESC_PLAIN, true).c_str());
-    const int dam = foe->apply_ac(random2(thrower.get_hit_dice() * 2));
+    const int maxdmg = thrower.get_hit_dice() * 2;
+    const int dam = foe->apply_ac(random2(maxdmg), maxdmg);
     foe->hurt(&thrower, dam, BEAM_NONE, KILLED_BY_BEAM, "", killed_by, true);
 
     // wake sleepy goblins
