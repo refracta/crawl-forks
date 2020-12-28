@@ -640,6 +640,7 @@ dagger DAGGER
 dagger2 
 cleaver0 CLEAVER
 kris KRIS
+katar KATAR
 dagger_slant DAGGER_SLANT
 dagger_slant2 
 short_sword SHORT_SWORD
@@ -1003,6 +1004,7 @@ dagger DAGGER
 dagger2 
 cleaver0 CLEAVER
 kris KRIS
+katar KATAR
 dagger_slant DAGGER_SLANT
 dagger_slant2 
 short_sword SHORT_SWORD

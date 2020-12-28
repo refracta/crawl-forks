@@ -557,6 +557,11 @@ A lightweight spear, designed for throwing.
     end
 }}
 %%%%
+katar
+
+An exotic triangular dagger. It's heavy and unwieldy to use compared to most other 
+daggers and short swords; but it deals extremely powerful stabs to the skilled user.
+%%%%
 lajatang
 
 A very rare and extremely effective weapon, featuring a pole with half-moon

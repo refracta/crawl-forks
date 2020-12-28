@@ -703,9 +703,9 @@ enum weapon_type
     WPN_FUSTIBALUS,
     WPN_HAND_CROSSBOW,
     WPN_TRIPLE_CROSSBOW,
-
-    WPN_CUTLASS,
 #endif
+
+    WPN_KATAR,
 
     // These are only used as part of a hacky way of getting semi-customizable start stats
     WPN_AVERAGE,

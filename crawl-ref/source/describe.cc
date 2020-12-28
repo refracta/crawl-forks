@@ -1864,9 +1864,8 @@ static string _describe_weapon(const item_def &item, bool verbose)
             break;
         case SK_SHORT_BLADES:
             {
-                string adj = (item.sub_type == WPN_DAGGER || item.sub_type == SHD_SAI) 
-                                                           ? "extremely"
-                                                           : "particularly";
+                string adj = item.is_type(OBJ_WEAPONS, WPN_KATAR) ? "extremely"
+                                                                  : "particularly";
                 description += "\n\nIt is " + adj + " good for stabbing"
                                " unaware enemies.";
             }

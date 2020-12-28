@@ -196,6 +196,9 @@ tileidx_t tilep_equ_hand1(const item_def &item)
     case WPN_KRIS:
         tile = TILEP_HAND1_KRIS;
         break;
+    case WPN_KATAR:
+        tile = TILEP_HAND1_KATAR;
+        break;
     case WPN_DOUBLE_SWORD:
         tile = TILEP_HAND1_DOUBLE_SWORD;
         break;
@@ -461,6 +464,9 @@ tileidx_t tilep_equ_hand2(const item_def &item)
         break;
     case WPN_KRIS:
         tile = TILEP_HAND2_KRIS;
+        break;
+    case WPN_KATAR:
+        tile = TILEP_HAND2_KATAR;
         break;
     case WPN_DOUBLE_SWORD:
         tile = TILEP_HAND2_DOUBLE_SWORD;
@@ -736,6 +742,9 @@ tileidx_t tilep_equ_weapon(const item_def &item)
         break;
     case WPN_KRIS:
         tile = TILEP_HAND1_KRIS;
+        break;
+    case WPN_KATAR:
+        tile = TILEP_HAND1_KATAR;
         break;
     case WPN_DOUBLE_SWORD:
         tile = TILEP_HAND1_DOUBLE_SWORD;

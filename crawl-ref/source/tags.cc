@@ -5150,12 +5150,6 @@ void unmarshallItem(reader &th, item_def &item)
         }
     }
 
-    if (th.getMinorVersion() < TAG_MINOR_CUT_CUTLASSES)
-    {
-        if (item.is_type(OBJ_WEAPONS, WPN_CUTLASS))
-            item.sub_type = WPN_RAPIER;
-    }
-
     if (th.getMinorVersion() < TAG_MINOR_INIT_RND)
     {
         // 0 is now reserved to indicate that rnd is uninitialized
