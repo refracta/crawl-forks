@@ -260,9 +260,6 @@ void DungeonCellBuffer::pack_background(int x, int y, const packed_cell &cell)
 
     add_dngn_tile(bg_idx, x, y, cell.mangrove_water, cell.mushroom_slime);
 
-    if (cell.is_snowy)
-        m_buf_floor.add(TILE_SNOW + cell.is_snowy - 1, x, y);
-
     if (bg_idx > TILE_DNGN_UNSEEN)
     {
         // Draw blood on top of wall tiles.
@@ -392,6 +389,9 @@ void DungeonCellBuffer::pack_background(int x, int y, const packed_cell &cell)
         }
 
     }
+
+    if (cell.is_snowy)
+        m_buf_floor.add(TILE_SNOW + cell.is_snowy - 1, x, y);
 
     // allow rays even on completely unseen squares (e.g. passwall)
     if (bg & TILE_FLAG_RAY)
