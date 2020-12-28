@@ -390,14 +390,17 @@ function ($, comm, enums, map_knowledge, messages, options) {
             $("#stats_real_hp_max").text("(" + player.real_hp_max + ")");
         else
             $("#stats_real_hp_max").text("");
-      
+
         $("#stats_dd_real_mp_max").text("");
 
         percentage_color("hp");
         percentage_color("mp");
         update_bar("hp");
         if (player.mounted)
+        {
+            percentage_color("mount_hp");
             update_bar("mount_hp");
+        }
         update_bar("mp");
 
         update_defense("ac");
@@ -532,6 +535,7 @@ function ($, comm, enums, map_knowledge, messages, options) {
             });
             delete player["old_hp"];
             delete player["old_mp"];
+            delete player["old_mount_hp"];
             for (var i = 0; i < enums.equip.NUM_EQUIP; ++i)
                 player.equip[i] = -1;
             last_time = null;
