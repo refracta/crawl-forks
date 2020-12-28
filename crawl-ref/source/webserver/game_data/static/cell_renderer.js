@@ -597,9 +597,6 @@ function ($, view_data, main, tileinfo_player, icons, dngn, enums,
                 }
             }
 
-            if (cell.is_snowy)
-                this.draw_dngn(dngn.SNOW + cell.is_snowy - 1, x, y);
-
             // Draw blood beneath feature tiles.
             if (bg_idx > dngn.WALL_MAX)
                 this.draw_blood_overlay(x, y, cell);
@@ -721,6 +718,9 @@ function ($, view_data, main, tileinfo_player, icons, dngn, enums,
                         this.draw_dngn(dngn.TRAVEL_EXCLUSION_BG, x, y);
                 }
             }
+
+            if (cell.is_snowy)
+                this.draw_dngn(dngn.SNOW + cell.is_snowy - 1, x, y);
 
             this.draw_ray(x, y, cell);
         },
