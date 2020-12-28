@@ -137,8 +137,7 @@
        "manual of poison magic", "ring of protection from magic",
        "staff of poison" }
 
-      elseif s == "Q" then i = { "quarterstaff", "quicksilver dragon scales",
-       "quick blade" }
+      elseif s == "Q" then i = { "quarterstaff", "quicksilver dragon scales"}
 
       elseif s == "R" then i = { "amulet of rage", "amulet of reflection",
        "amulet of regeneration", "amulet of reduced vision", "rapier",
@@ -162,7 +161,7 @@
        "book of transfigurations", "ring of teleportation",
        "scroll of teleportation", "triple sword", "triple crossbow",
        "troll leather", "manual of translocations",
-	   "manual of transmutations", "trident" , "staff of transmutation"}
+	   "manual of transmutations", "trident" , "staff of transmutation", "tonto"}
 
       elseif s == "U" then i = { "book of unlife", "manual of unarmed combat" }
 

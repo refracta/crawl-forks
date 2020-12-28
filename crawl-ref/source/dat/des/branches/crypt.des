@@ -72,13 +72,13 @@ function crypt_loot_plus(e)
   local amulet = "amulet of regeneration randart good_item"
   -- One drop-off of these,
   e.kitem("d = double sword w:5 " .. drain .." / triple sword w:5 " .. drain ..
-          " / quick blade " .. drain .. " / executioner's axe " .. drain ..
+          " / tonto " .. drain .. " / executioner's axe " .. drain ..
           " / eveningstar " .. drain .. " / bardiche " .. drain ..
           " / lajatang " .. drain)
   e.kitem("e = great sword " .. pain .." / battleaxe " .. pain ..
           " / great mace " .. pain .. " / glaive " .. pain ..
           " / quarterstaff " .. pain)
-  e.kitem("f = great sword " .. vamp .." / quick blade " .. vamp ..
+  e.kitem("f = great sword " .. vamp .." / tonto " .. vamp ..
           " / battleaxe " .. vamp .. " / great mace " .. vamp ..
           " / glaive " .. vamp)
   e.kitem("g = " .. ring .. ", " .. ring .. " / " .. amulet .. " w:2, " ..
@@ -1327,7 +1327,7 @@ KITEM: | = plate armour good_item ego:cold_resistance \
            / great mace good_item ego:freezing \
            / eveningstar good_item ego:freezing \
            / bardiche good_item ego:freezing \
-           / quick blade good_item  ego:freezing w:5
+           / tonto good_item  ego:freezing w:5
 MARKER: V = lua:fog_machine { cloud_type = "freezing vapour", pow_min = 0, \
                               pow_max = 10, delay = 20, size = 3, \
                               walk_dist = 0, excl_rad = 0 }
@@ -1676,7 +1676,7 @@ KFEAT:  p = .
 KMONS:  p = withered plant
 ####### hidden skeleton; sometimes good pain weapon, or draining short sword
 KMONS:  ! = skeletal warrior ; w:2 dagger ego:pain | short sword ego:acid |\
-                               w:2 rapier ego:pain | w:1 quick blade ego:pain
+                               w:2 rapier ego:pain | w:1 tonto ego:pain
 KFEAT:  o = granite_statue
 SUBST:  B = b %
 KITEM:  b = any book

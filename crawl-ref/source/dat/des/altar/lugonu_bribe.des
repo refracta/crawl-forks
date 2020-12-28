@@ -29,8 +29,7 @@ function callback.tgw_lugonu_bribe_lugonu_item (data, triggerable,
          Ashenzari="scroll of magic mapping ident:type q:3-6",
          Beogh="scroll of fear ident:type q:3-6 /\
               scroll of immolation ident:type q:3-6",
-         Cheibriados="potion of haste ident:type q:2-4 /\
-              good_item quick blade",
+         Cheibriados="potion of haste ident:type q:2-4",
          Dithmenos="lamp of fire w:5 / rod of ignition w:5 /\
               good_item " .. weapon .. " ego:flaming ident:type",
          Elyvilon="lantern of shadows / book of Necromancy w:5 /\

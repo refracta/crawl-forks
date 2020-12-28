@@ -422,7 +422,7 @@ KITEM:    b = any weapon level:27 ident:all /\
           great mace plus:1 not_cursed ident:all /\
           demon whip plus:1 not_cursed ident:all w:5 /\
           giant spiked club plus:1 not_cursed ident:all /\
-          quick blade plus:3 not_cursed ident:all /\
+          tonto plus:3 not_cursed ident:all /\
           great sword plus:1 not_cursed ident:all /\
           double sword plus:1 not_cursed ident:all /\
           demon blade plus:1 not_cursed ident:all w:3 /\

@@ -411,7 +411,7 @@ TAGS: no_monster_gen no_trap_gen transparent
 SHUFFLE: _s
 KFEAT: s = general shop type:Hallowed suffix:Reliquary count:7 ; \
    potion of heal wounds | potion of curing | \
-   eudemon blade ego:silver | trishula ego:silver | \
+   blessed blade ego:silver | trishula ego:silver | \
    any weapon good_item ego:holy_wrath | any weapon good_item ego:silver |\
    scroll of holy word | pearl dragon scales w:1 |\
    amulet of faith w:2 | ring of positive energy w:5 |\
@@ -663,7 +663,7 @@ DEPTH:   D:2-5
 KFEAT:   S = general shop type:Lightly-Used suffix:Armoury ; \
              damaged ego:none demon whip | \
              damaged ego:none eveningstar | \
-             damaged ego:none quick blade | \
+             damaged ego:none tonto | \
              damaged ego:none demon blade | \
              damaged ego:none double sword | \
              damaged ego:none triple sword | \

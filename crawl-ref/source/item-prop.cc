@@ -582,7 +582,7 @@ static const weapon_def Weapon_prop[] =
     { WPN_DEMON_BLADE,           "demon blade",           12, -1, 13,
         SK_LONG_BLADES,  SIZE_LITTLE, SIZE_LITTLE, MI_NONE,
         DAMV_SLICING, 0, 2, 150, DEMON_BRANDS },
-    { WPN_EUDEMON_BLADE,         "eudemon blade",         13, -2, 12,
+    { WPN_EUDEMON_BLADE,         "blessed blade",         13, -2, 12,
         SK_LONG_BLADES,  SIZE_LITTLE, SIZE_LITTLE, MI_NONE,
         DAMV_SLICING, 0, 0, 200, HOLY_BRANDS },
     { WPN_DOUBLE_SWORD,          "double sword",          14, -1, 15,

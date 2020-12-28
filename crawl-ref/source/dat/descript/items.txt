@@ -95,6 +95,11 @@ blowgun
 A long, light tube, open at both ends, through which various types of needles
 are propelled by puffs of breath at enemies. It makes very little noise.
 %%%%
+blessed blade
+
+A demonic sword forged anew with a blessing from The Shining One. It can no 
+longer be used by the forces of evil and is favoured by The Shining One's Armies.
+%%%%
 bone dragon skull
 
 The skull of a massive creature. Makes an effective helmet for average and larger
@@ -404,12 +409,6 @@ eggplant
 
 A rotten eggplant which you can throw at the Crawl developers. It's a bug if
 you ever see this message.
-%%%%
-eudemon blade
-
-A sacred blade from the forges of Heaven, inhabited by a good spirit. It is a
-favoured weapon of the Shining One's servants, and cannot be wielded by the
-forces of evil.
 %%%%
 eveningstar
 

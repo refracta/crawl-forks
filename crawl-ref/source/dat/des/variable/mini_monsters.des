@@ -3221,7 +3221,7 @@ ENDMAP
 NAME:    pf_eden
 TAGS:    no_monster_gen
 DEPTH:   D:7-
-MONS:    patrolling cherub, patrolling dancing weapon ; eudemon blade ego:holy_wrath
+MONS:    patrolling cherub, patrolling dancing weapon ; blessed blade ego:holy_wrath
 KMONS:   p = plant
 ITEM:    ration tile:food_apple
 NSUBST:  1 = 2:1 / *:.
