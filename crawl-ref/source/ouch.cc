@@ -239,7 +239,7 @@ int check_your_resists(int hurted, beam_type flavour, string source,
             // See also melee-attack.cc:_print_resist_messages() which cannot be
             // used with this beam type (as it does not provide a valid beam).
             ASSERT(beam);
-            int pois = div_rand_round(beam->damage.num * beam->damage.size, 3);
+            int pois = div_rand_round(beam->damage.max(), 3);
             pois = 3 + random_range(pois * 2 / 3, pois * 4 / 3);
             if (mount)
                 poison_mount(pois);
@@ -259,7 +259,7 @@ int check_your_resists(int hurted, beam_type flavour, string source,
             // See also melee-attack.cc:_print_resist_messages() which cannot be
             // used with this beam type (as it does not provide a valid beam).
             ASSERT(beam);
-            int pois = div_rand_round(beam->damage.num * beam->damage.size, 3);
+            int pois = div_rand_round(beam->damage.max(), 3);
             pois = 3 + random_range(pois * 2 / 3, pois * 4 / 3);
 
             if (you.res_poison(mount))

@@ -5866,7 +5866,7 @@ static void _cast_resonance_strike(monster &caster, mon_spell_slot, bolt&)
     // + 1 die for every 2 adjacent constructs (so at 4 constructs, 5dhd)
     dice_def dice = resonance_strike_base_damage(caster);
     dice.num += div_rand_round(constructs, 2);
-    const int dam = target->apply_ac(dice.roll(), dice.num * dice.size);
+    const int dam = target->apply_ac(dice.roll(), dice.max());
     const string constructs_desc
         = _describe_nearby_constructs(caster, target->pos());
 
@@ -6307,7 +6307,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
 
         dice_def calc = waterstrike_damage(*mons);
         int damage_taken = calc.roll();
-        int maximum_damage = calc.num * calc.size;
+        int maximum_damage = calc.max();
         damage_taken = foe->beam_resists(pbolt, damage_taken, false, "", mount_defend);
         maximum_damage = foe->beam_resists(pbolt, maximum_damage, false, "", mount_defend);
         damage_taken = foe->apply_ac(damage_taken, maximum_damage, ac_type::normal, 0, true, mount_defend);

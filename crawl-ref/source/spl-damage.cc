@@ -512,7 +512,7 @@ static int _los_spell_damage_player(actor* agent, bolt &beam,
 {
     int hurted = actual ? beam.damage.roll()
                         // Monsters use the average for foe calculations.
-                        : (1 + beam.damage.num * beam.damage.size) / 2;
+                        : (1 + beam.damage.max()) / 2;
     hurted = check_your_resists(hurted, beam.flavour, beam.name, 0,
             // Drain life doesn't apply drain effects.
             actual && beam.origin_spell != SPELL_DRAIN_LIFE);
@@ -566,7 +566,7 @@ static int _los_spell_damage_monster(actor* agent, monster &target,
 
     int hurted = actual ? beam.damage.roll()
                         // Monsters use the average for foe calculations.
-                        : (1 + beam.damage.num * beam.damage.size) / 2;
+                        : (1 + beam.damage.max()) / 2;
     hurted = mons_adjust_flavoured(&target, beam, hurted,
                  // Drain life doesn't apply drain effects.
                  actual && beam.origin_spell != SPELL_DRAIN_LIFE);
@@ -745,7 +745,7 @@ static spret _cast_los_attack_spell(spell_type spell, int pow,
         }
     }
 
-    const int avg_damage = (1 + beam.damage.num * beam.damage.size) / 2;
+    const int avg_damage = (1 + beam.damage.max()) / 2;
     int total_damage = 0;
     // XXX: This ordering is kind of broken; it's to preserve the message
     // order from the original behaviour in the case of refrigerate.

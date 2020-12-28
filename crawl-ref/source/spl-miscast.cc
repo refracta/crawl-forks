@@ -496,7 +496,7 @@ bool MiscastEffect::_explosion()
     if (special_source.source == miscast_source::deck)
         beam.thrower = KILL_YOU;
 
-    int max_dam = beam.damage.num * beam.damage.size;
+    int max_dam = beam.damage.max();
     max_dam = check_your_resists(max_dam, beam.flavour, cause);
     if (avoid_lethal(max_dam))
         return false;

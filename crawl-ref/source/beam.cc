@@ -3248,11 +3248,11 @@ bool bolt::is_fiery() const
 /// Can this bolt burn trees it hits?
 bool bolt::can_burn_trees() const
 {
-    bool flavour_match = (flavour == BEAM_FIRE);
-    flavour_match |= (flavour == BEAM_ELECTRICITY);
-    flavour_match |= (flavour == BEAM_LAVA);
+    bool flavour_match  = (flavour == BEAM_FIRE);
+         flavour_match |= (flavour == BEAM_ELECTRICITY);
+         flavour_match |= (flavour == BEAM_LAVA);
 
-    bool enough_dam = (damage.size * damage.num) > 30;
+    const bool enough_dam = damage.max() > 30;
 
     return flavour_match && enough_dam;
 }
@@ -3410,9 +3410,9 @@ void bolt::affect_place_clouds()
 
     if (feat_is_watery(feat) && feat != DNGN_SLIMY_WATER && feat != DNGN_DEEP_SLIMY_WATER
         && (flavour == BEAM_COLD || flavour == BEAM_FREEZE)
-        && damage.num * damage.size > 35)
+        && damage.max() > 35)
     {
-        place_cloud(CLOUD_COLD, p, damage.num * damage.size / 30 + 1, agent());
+        place_cloud(CLOUD_COLD, p, damage.max() / 30 + 1, agent());
     }
 
     if (flavour == BEAM_MIASMA)
@@ -4658,7 +4658,7 @@ void bolt::affect_player()
     // monsters)
     int yu_pre_ac_dam = 0;
     int mt_pre_ac_dam = 0;
-    int max_dam = damage.num * damage.size;
+    int max_dam = damage.max();
 
     // Roll the damage.
     if (hits_you && !(origin_spell == SPELL_FLASH_FREEZE && you.duration[DUR_FROZEN]))
@@ -5104,7 +5104,7 @@ bool bolt::determine_damage(monster* mon, int& preac, int& postac, int& final)
     //
     const int preac_max_damage =
         (freeze_immune) ? 0
-                        : damage.num * damage.size;
+                        : damage.max();
 
     // preac: damage before AC modifier
     // postac: damage after AC modifier
