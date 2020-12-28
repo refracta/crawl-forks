@@ -4133,11 +4133,11 @@ static void _place_aquatic_monsters()
     // Abyss's nature discourages random movement-inhibited monsters.
     // Default liquid creatures are harmless in Pan or Zot, and
     // threatening ones are distracting from their sets.
-    // Random liquid monster placement is too vicious before D:4.
+    // Random liquid monster placement is too vicious on D:1 and D:3.
     //
     if (player_in_branch(BRANCH_ABYSS)
         || player_in_branch(BRANCH_PANDEMONIUM)
-        || player_in_branch(BRANCH_DUNGEON) && you.depth != 2 && you.depth < 4)
+        || player_in_branch(BRANCH_DUNGEON) && (you.depth == 1 || you.depth == 3))
     {
         return;
     }
@@ -4168,8 +4168,11 @@ static void _place_aquatic_monsters()
 
     _place_aquatic_in(water, fish_population(place, false), level,
                       true);
-    _place_aquatic_in(lava, fish_population(place, true), level,
-                      false);
+    if (place != BRANCH_SEWER)
+    {
+        _place_aquatic_in(lava, fish_population(place, true), level,
+                          false);
+    }
 }
 
 static vector<monster_type> _zombifiables()
