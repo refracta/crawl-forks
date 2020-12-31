@@ -719,9 +719,6 @@ function ($, view_data, main, tileinfo_player, icons, dngn, enums,
                 }
             }
 
-            if (cell.is_snowy)
-                this.draw_dngn(dngn.SNOW + cell.is_snowy - 1, x, y);
-
             this.draw_ray(x, y, cell);
         },
 
@@ -773,6 +770,9 @@ function ($, view_data, main, tileinfo_player, icons, dngn, enums,
                 }
                 else
                 {
+                    if (cell.is_snowy)
+                        this.draw_dngn(dngn.SNOW + cell.is_snowy - 1, x, y);
+
                     if (base_idx)
                         this.draw_main(base_idx, x, y);
 
