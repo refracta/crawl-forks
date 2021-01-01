@@ -1072,6 +1072,7 @@ static void _get_status_lights(vector<status_light>& out)
     {
         STATUS_ORB,
         STATUS_STR_ZERO, STATUS_INT_ZERO, STATUS_DEX_ZERO,
+        STATUS_TENTACLE,
         STATUS_HUNGER,
         DUR_PARALYSIS,
         DUR_CONF,

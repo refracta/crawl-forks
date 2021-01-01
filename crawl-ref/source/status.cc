@@ -154,6 +154,7 @@ static bool _fill_inf_from_ddef(duration_type dur, status_info& inf)
 static void _describe_airborne(status_info& inf);
 static void _describe_glow(status_info& inf);
 static void _describe_hunger(status_info& inf);
+static void _describe_tentacles(status_info& inf);
 static void _describe_regen(status_info& inf);
 static void _describe_rotting(status_info& inf);
 static void _describe_sickness(status_info& inf);
@@ -384,6 +385,10 @@ bool fill_status_info(int status, status_info& inf)
 
     case STATUS_HUNGER:
         _describe_hunger(inf);
+        break;
+
+    case STATUS_TENTACLE:
+        _describe_tentacles(inf);
         break;
 
     case STATUS_REGENERATION:
@@ -858,6 +863,33 @@ bool fill_status_info(int status, status_info& inf)
             break;
     }
     return true;
+}
+
+static void _describe_tentacles(status_info& inf)
+{
+    if (!you.has_tentacles())
+        return;
+
+    int tent = you.usable_tentacles();
+
+    switch (tent)
+    {
+    default:
+        inf.light_colour = GREEN;
+        break;
+    case 3:
+    case 2:
+        inf.light_colour = YELLOW;
+        break;
+    case 1:
+        inf.light_colour = LIGHTRED;
+        break;
+    case 0:
+        inf.light_colour = RED;
+        break;
+    }
+
+    inf.light_text = make_stringf("%d limb%s", tent, tent > 1 ? "s" : "");
 }
 
 static void _describe_hunger(status_info& inf)
