@@ -770,11 +770,6 @@ public:
     }
 };
 
-const int MIN_REMOVED = 2;
-const int MAX_REMOVED = 4;
-const int MIN_ADDED = 1;
-const int MAX_ADDED = 3;
-
 class PotionMutation : public PotionEffect
 {
 private:
@@ -796,24 +791,39 @@ public:
 
     bool effect(bool = true, int = 40, bool = true) const override
     {
-        if (have_passive(passive_t::cleanse_mut_potions))
-            simple_god_message(" cleanses your potion of mutation!");
-        else
-            mpr("You feel extremely strange.");
         bool mutated = false;
-        int remove_mutations = random_range(MIN_REMOVED, MAX_REMOVED);
-        int add_mutations = random_range(MIN_ADDED, MAX_ADDED);
-
-        // Remove mutations.
-        for (int i = 0; i < remove_mutations; i++)
-            mutated |= delete_mutation(RANDOM_MUTATION, "potion of mutation", false);
         if (have_passive(passive_t::cleanse_mut_potions))
+        {
+            simple_god_message(" cleanses your potion of mutation!");
+
+            int remove_mutations = 1;
+            remove_mutations += x_chance_in_y(you.skill(SK_INVOCATIONS), 45);
+            remove_mutations += x_chance_in_y(you.skill(SK_INVOCATIONS), 60);
+
+            // Remove mutations.
+            for (int i = 0; i < remove_mutations; i++)
+                mutated |= delete_mutation(RANDOM_MUTATION, "potion of mutation", false);
+
             return mutated;
-        // Add mutations.
-        for (int i = 0; i < add_mutations; i++)
-            mutated |= mutate(RANDOM_MUTATION, "potion of mutation", false);
-        // Always one good mutation.
-        mutated |= mutate(RANDOM_GOOD_MUTATION, "potion of mutation", false);
+        }
+        else
+        {
+            mpr("You feel extremely strange.");
+
+            mutation_type type = random_choose_weighted(2, RANDOM_BAD_MUTATION,
+                                                        3, RANDOM_GOOD_MUTATION,
+                                                        5, RANDOM_MUTATION);
+
+            mutated |= mutate(type, "potion of mutation", false);
+
+            if (one_chance_in(3))
+            {
+                type = random_choose_weighted(2, RANDOM_BAD_MUTATION,
+                                              4, RANDOM_GOOD_MUTATION,
+                                              5, RANDOM_MUTATION);
+                mutated |= mutate(type, "potion of mutation", false);
+            }
+        }
 
         learned_something_new(HINT_YOU_MUTATED);
         return mutated;
