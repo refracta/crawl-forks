@@ -1743,17 +1743,24 @@ static void _generate_scroll_item(item_def& item, int force_type,
 /// Choose a random spellbook type for the given level.
 static book_type _choose_book_type(int item_level)
 {
-    const book_type book = static_cast<book_type>(random2(NUM_FIXED_BOOKS));
-    if (item_type_removed(OBJ_BOOKS, book))
-        return _choose_book_type(item_level); // choose something else
+    vector<pair<book_type, int>> weights;
 
-    // If this book is really rare for this depth, continue trying.
-    const int rarity = book_rarity(book);
-    ASSERT(rarity != 100); // 'removed item' - ugh...
+    for (int i = 0; i < NUM_FIXED_BOOKS; i++)
+    {
+        const book_type book = static_cast<book_type>(i);
+        if (item_type_removed(OBJ_BOOKS, book))
+            continue;
 
-    if (!one_chance_in(100) && x_chance_in_y(rarity-1, item_level+1))
-        return _choose_book_type(item_level); // choose something else
+        const int rarity = book_rarity(book);
+        ASSERT(rarity != 100);
 
+        const int weight = 100 - book_rarity(book) + item_level;
+
+        const pair<book_type, int> weight_pair = { book, weight };
+        weights.push_back(weight_pair);
+    }
+
+    const book_type book = *random_choose_weighted(weights);
     return book;
 }
 

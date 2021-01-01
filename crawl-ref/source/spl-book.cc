@@ -172,35 +172,32 @@ int book_rarity(book_type which_book)
 
     case BOOK_CHANGES:
     case BOOK_MALEDICT:
-        return 2;
+        return 5;
 
     case BOOK_CONJURATIONS:
     case BOOK_NECROMANCY:
     case BOOK_CALLINGS:
-        return 3;
+        return 12;
 
     case BOOK_FLAMES:
     case BOOK_FROST:
     case BOOK_AIR:
     case BOOK_GEOMANCY:
-        return 4;
+        return 15;
 
     case BOOK_YOUNG_POISONERS:
     case BOOK_BATTLE:
     case BOOK_DEBILITATION:
-        return 5;
+        return 25;
 
     case BOOK_CLOUDS:
     case BOOK_POWER:
-        return 6;
-
-    case BOOK_ENCHANTMENTS:
     case BOOK_PARTY_TRICKS:
-        return 7;
+        return 28;
 
     case BOOK_TRANSFIGURATIONS:
     case BOOK_BEASTS:
-        return 8;
+        return 30;
 
     case BOOK_FIRE:
     case BOOK_ICE:
@@ -208,28 +205,31 @@ int book_rarity(book_type which_book)
     case BOOK_EARTH:
     case BOOK_UNLIFE:
     case BOOK_SPATIAL_TRANSLOCATIONS:
-        return 10;
+        return 35;
 
-    case BOOK_TEMPESTS:
     case BOOK_DEATH:
     case BOOK_SUMMONINGS:
-        return 11;
+        return 40;
 
+    case BOOK_ENCHANTMENTS:
     case BOOK_BURGLARY:
     case BOOK_ALCHEMY:
     case BOOK_DREAMS:
     case BOOK_FEN:
-        return 12;
+        return 50;
 
+    case BOOK_TEMPESTS:
     case BOOK_WARP:
     case BOOK_DRAGON:
-        return 15;
+    case BOOK_MANUAL:
+        return 70;
 
     case BOOK_ANNIHILATIONS:
     case BOOK_GRAND_GRIMOIRE:
+        return 92;
+
     case BOOK_NECRONOMICON:  // Kikubaaqudgha special
-    case BOOK_MANUAL:
-        return 20;
+        return 98;
 
     default:
         return 1;

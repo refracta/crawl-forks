@@ -781,7 +781,7 @@ unsigned int item_value(item_def item, bool ident)
             else
                 rarity = book_rarity(book);
 
-            valued += (int)(rarity * 50.0);
+            valued += (int)(rarity * 10.0);
         }
         break;
     }
