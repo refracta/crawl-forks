@@ -440,7 +440,7 @@ public:
     bool is_directly_constricted() const;
     bool is_constricting() const;
     int num_constricting() const;
-    virtual bool has_usable_tentacle() const = 0;
+    virtual int usable_tentacles(bool allow_tran = true) const = 0;
     virtual int constriction_damage(bool direct) const = 0;
     virtual bool constriction_does_damage(bool direct) const = 0;
     virtual bool clear_far_engulf() = 0;

@@ -559,7 +559,7 @@ LUAFN(moninf_get_can_be_constricted)
         || (you.species != SP_NAGA
             || you.experience_level <= 12
             || you.is_constricting())
-         && (you.species != SP_OCTOPODE || !you.has_usable_tentacle()))
+         && (you.species != SP_OCTOPODE || !you.usable_tentacles()))
     {
         lua_pushboolean(ls, false);
     }

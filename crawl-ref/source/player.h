@@ -643,7 +643,7 @@ public:
     int       has_pseudopods(bool allow_tran = true) const;
     int       has_usable_pseudopods(bool allow_tran = true) const;
     int       has_tentacles(bool allow_tran = true) const;
-    int       has_usable_tentacles(bool allow_tran = true) const;
+    int       usable_tentacles(bool allow_tran = true) const override;
     int       branch_SH(bool allow_tran = true) const;
 
     // Information about player mutations. Implemented in mutation.cc
@@ -916,8 +916,6 @@ public:
                       const char *msg = nullptr);
 
     bool attempt_escape(int attempts = 1);
-    int usable_tentacles() const;
-    bool has_usable_tentacle() const override;
 
     bool form_uses_xl() const;
 

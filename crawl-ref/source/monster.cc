@@ -6731,13 +6731,14 @@ bool monster::attempt_escape(int attempts)
  * Currently only used by octopode monsters.
  * @return  True if it can constrict an additional monster, false otherwise.
  */
-bool monster::has_usable_tentacle() const
+int monster::usable_tentacles(bool /*allow_tran*/) const
 {
     if (mons_genus(type) != MONS_OCTOPODE)
-        return false;
+        return 0;
 
+    // BCADDO: check Monster weapons and shields here, please.
     // ignoring monster octopodes with weapons, for now
-    return num_constricting() < 8;
+    return max(0, 8 - num_constricting());
 }
 
 // Move the monster to the nearest valid space.

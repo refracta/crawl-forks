@@ -686,7 +686,7 @@ string describe_mutations(bool drop_title)
             !form_likes_water());
 
         const string num_tentacles =
-            number_in_words(you.has_usable_tentacles(false));
+            number_in_words(you.usable_tentacles(false));
         result += _annotate_form_based(
             make_stringf("You can wear up to %s rings at the same time.",
                 num_tentacles.c_str()),

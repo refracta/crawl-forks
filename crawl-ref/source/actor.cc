@@ -748,7 +748,7 @@ bool actor::can_constrict(const actor* defender, bool direct) const
 
     if (direct)
     {
-        return (!is_constricting() || has_usable_tentacle())
+        return (!is_constricting() || usable_tentacles())
                && !defender->is_constricted()
                && can_see(*defender)
                && !confused()

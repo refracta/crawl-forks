@@ -589,7 +589,7 @@ public:
     {
         if (you.has_usable_claws(true))
             return "Stone claws";
-        if (you.has_usable_tentacles(true))
+        if (you.usable_tentacles(true))
             return "Stone tentacles";
 
         const bool singular = you.get_mutation_level(MUT_MISSING_HAND);

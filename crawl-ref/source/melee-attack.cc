@@ -1438,7 +1438,7 @@ public:
         if (you.has_usable_claws())
             return "claw";
 
-        if (you.has_usable_tentacles())
+        if (you.has_tentacles())
             return "tentacle-slap";
 
         return name;
@@ -4454,12 +4454,12 @@ bool melee_attack::_extra_aux_attack(unarmed_attack_type atk)
     {
     case UNAT_CONSTRICT:
         return you.get_mutation_level(MUT_CONSTRICTING_TAIL)
-                || you.species == SP_OCTOPODE && you.has_usable_tentacle();
+                || you.species == SP_OCTOPODE && x_chance_in_y(you.usable_tentacles(), 4);
 
     case UNAT_KICK:
         return you.has_usable_hooves()
                || you.has_usable_talons()
-               || you.get_mutation_level(MUT_TENTACLE_SPIKE);
+               || you.get_mutation_level(MUT_TENTACLE_SPIKE) && x_chance_in_y(you.usable_tentacles(), 4);
 
     case UNAT_PECK:
         return you.get_mutation_level(MUT_BEAK) && !one_chance_in(3);
@@ -4474,16 +4474,16 @@ bool melee_attack::_extra_aux_attack(unarmed_attack_type atk)
         return you.has_usable_pseudopods() && !one_chance_in(3);
 
     case UNAT_TENTACLES:
-        return you.has_usable_tentacles();
+        return x_chance_in_y(you.usable_tentacles(), 6);
 
     case UNAT_TENTACLES2:
-        return you.has_usable_tentacles() && (you.strength() + you.dex() >= random2(50)) && !(one_chance_in(3));
+        return (you.usable_tentacles() > 3) && x_chance_in_y(you.usable_tentacles(), 12);
 
     case UNAT_TENTACLES3:
-        return you.has_usable_tentacles() && (you.strength() + you.dex() >= random2(65)) && !(one_chance_in(3));
+        return (you.usable_tentacles() > 2) && x_chance_in_y(you.usable_tentacles(), 18);
         
     case UNAT_TENTACLES4:
-        return you.has_usable_tentacles() && (you.strength() + you.dex() >= random2(80));
+        return (you.usable_tentacles() > 1) && x_chance_in_y(you.usable_tentacles(), 24);
 
     case UNAT_STAFF:
         return you.staff() && you.staff()->sub_type == STAFF_TRANSMUTATION && staff_damage(SK_TRANSMUTATIONS);

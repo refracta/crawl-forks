@@ -195,7 +195,7 @@ int player::damage_type(int attack_number)
         return DVORP_SLICING;
     else if (has_usable_claws())
         return DVORP_CLAWING;
-    else if (has_usable_tentacles())
+    else if (has_tentacles())
         return DVORP_TENTACLE;
 
     return DVORP_CRUSHING;
@@ -434,7 +434,7 @@ item_def *player::weapon(int which_attack) const
 // Give hands required to wield weapon.
 hands_reqd_type player::hands_reqd(const item_def &item, bool base) const
 {
-    if (species == SP_FORMICID)
+    if (species == SP_FORMICID || species == SP_OCTOPODE)
         return HANDS_ONE;
     else
         return actor::hands_reqd(item, base);
@@ -501,7 +501,7 @@ bool player::could_wield(const item_def &item, bool ignore_brand,
     {
         if (!quiet)
         {
-            if (you.body_size(PSIZE_TORSO,true) < SIZE_MEDIUM)
+            if (you.body_size(PSIZE_TORSO,true) <= SIZE_MEDIUM)
                 mpr("That's too large for you to wield.");
             else
                 mpr("That's too small for you to wield.");
@@ -605,7 +605,7 @@ static string _hand_name_singular()
     if (you.has_usable_claws())
         return "claw";
 
-    if (you.has_usable_tentacles())
+    if (you.has_tentacles())
         return "tentacle";
 
     return "hand";
@@ -649,7 +649,7 @@ static string _foot_name_singular(bool *can_plural)
     if (you.has_usable_talons())
         return "talon";
 
-    if (you.has_usable_tentacles())
+    if (you.has_tentacles())
     {
         *can_plural = false;
         return "tentacles";
@@ -748,7 +748,7 @@ string player::unarmed_attack_name() const
         else
             default_name = "Claws";
     }
-    else if (has_usable_tentacles(true))
+    else if (has_tentacles(true))
         default_name = "Tentacles";
 
     return get_form()->get_uc_attack_name(default_name);

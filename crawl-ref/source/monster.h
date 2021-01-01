@@ -554,7 +554,7 @@ public:
     void calc_speed();
     bool attempt_escape(int attempts = 1);
     void struggle_against_net();
-    bool has_usable_tentacle() const override;
+    int usable_tentacles(bool /*allow_tran*/ = true) const override;
 
     bool check_clarity() const;
 

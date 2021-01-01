@@ -2329,6 +2329,13 @@ int player_movement_speed()
     if (you.duration[DUR_GRASPING_ROOTS])
         mv += 3;
 
+    if (you.species == SP_OCTOPODE && you.usable_tentacles() < 2)
+    {
+        mv += 4;
+        if (!you.usable_tentacles())
+            mv += 4;
+    }
+
     if (you.duration[DUR_SWIFTNESS] > 0 && !you.in_liquid())
     {
         if (you.attribute[ATTR_SWIFTNESS] > 0)
@@ -2482,6 +2489,17 @@ static int _player_adjusted_evasion_penalty(const int scale)
            you.adjusted_body_armour_penalty(scale);
 }
 
+static int _octopode_evasion_penalty()
+{
+    if (!you.has_tentacles())
+        return 10;
+
+    if (you.usable_tentacles() >= 4)
+        return 10;
+
+    return 10 - (4 - you.usable_tentacles()) * 2;
+}
+
 // Player EV bonuses for various effects and transformations. This
 // does not include tengu/merfolk EV bonuses for flight/swimming.
 static int _player_evasion_bonuses()
@@ -2538,6 +2556,12 @@ static int _player_scale_evasion(int prescaled_ev, const int scale)
     {
         const int ev_bonus = max(1 * scale, prescaled_ev / 5);
         return prescaled_ev + ev_bonus;
+    }
+
+    if (you.has_tentacles())
+    {
+        prescaled_ev *= _octopode_evasion_penalty();
+        prescaled_ev /= 10;
     }
 
     // Ghost Mutation (Silent Spectre) gives a 20% EV boost.
@@ -8017,35 +8041,30 @@ bool player::has_usable_offhand() const
     return !wp || hands_reqd(*wp) != HANDS_TWO;
 }
 
-bool player::has_usable_tentacle() const
+int player::usable_tentacles(bool allow_tran) const
 {
-    return usable_tentacles();
-}
-
-int player::usable_tentacles() const
-{
-    int numtentacle = has_usable_tentacles();
+    int numtentacle = has_tentacles(allow_tran);
 
     if (numtentacle == 0)
-        return false;
+        return 0;
 
     int free_tentacles = numtentacle - num_constricting();
 
     const item_def* wp0 = slot_item(EQ_WEAPON0);
     if (wp0)
     {
-        hands_reqd_type hands_req = hands_reqd(*wp0);
-        free_tentacles -= 2 * hands_req + 2;
+        hands_reqd_type hands_req = basic_hands_reqd(*wp0, body_size());
+        free_tentacles -= hands_req + 2;
     }
 
     const item_def* wp1 = slot_item(EQ_WEAPON1);
     if (wp1)
     {
-        hands_reqd_type hands_req = hands_reqd(*wp1);
-        free_tentacles -= 2 * hands_req + 2;
+        hands_reqd_type hands_req = basic_hands_reqd(*wp1, body_size());
+        free_tentacles -= hands_req + 2;
     }
 
-    return free_tentacles;
+    return max(0, free_tentacles);
 }
 
 int player::has_pseudopods(bool allow_tran) const
@@ -8073,11 +8092,6 @@ int player::has_tentacles(bool allow_tran) const
         return 8;
 
     return 0;
-}
-
-int player::has_usable_tentacles(bool allow_tran) const
-{
-    return has_tentacles(allow_tran);
 }
 
 int player::branch_SH (bool allow_tran) const
@@ -8761,8 +8775,8 @@ static string _constriction_description()
     const int num_free_tentacles = you.usable_tentacles();
     if (num_free_tentacles)
     {
-        cinfo += make_stringf("You have %d tentacle%s available for constriction.",
-                              num_free_tentacles,
+        cinfo += make_stringf("You have %s tentacle%s available for constriction.",
+                              number_in_words(num_free_tentacles).c_str(),
                               num_free_tentacles > 1 ? "s" : "");
     }
 
