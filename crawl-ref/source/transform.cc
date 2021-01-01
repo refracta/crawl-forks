@@ -2112,8 +2112,8 @@ void merfolk_start_swimming(bool stepped)
     else
         mpr("Your legs become a tail as you dive into the water.");
 
-    if (you.invisible())
-        mpr("...but don't expect to remain undetected.");
+    if (you.invisible() && !you.submerged())
+        mpr("You need to submerge to be undetected.");
 
     you.fishtail = true;
     remove_one_equip(EQ_BOOTS);
