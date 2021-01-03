@@ -142,6 +142,7 @@ draconian_teal_m
 draconian_statue_f DRACONIAN_STATUE
 draconian_statue_m DRACONIAN_LAST
 
+slime JIYVITE
 centaur_brown_f CENTAUR
 centaur_brown_m
 demigod_f DEMIGOD
