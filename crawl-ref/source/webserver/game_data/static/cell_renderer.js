@@ -671,10 +671,7 @@ function ($, view_data, main, tileinfo_player, icons, dngn, enums,
                         this.draw_dngn(dngn.KRAKEN_OVERLAY_SW, x, y);
                     else if (bg.ELDRITCH_SW)
                         this.draw_dngn(dngn.ELDRITCH_OVERLAY_SW, x, y);
-                }
 
-                if (!bg.UNSEEN)
-                {
                     if (cell.sanctuary)
                         this.draw_dngn(dngn.SANCTUARY, x, y);
                     // TAG_MAJOR_VERSION == 34
@@ -718,6 +715,9 @@ function ($, view_data, main, tileinfo_player, icons, dngn, enums,
                         this.draw_dngn(dngn.TRAVEL_EXCLUSION_BG, x, y);
                 }
             }
+
+            if (cell.is_snowy)
+                this.draw_dngn(dngn.SNOW + cell.is_snowy - 1, x, y);
 
             this.draw_ray(x, y, cell);
         },
@@ -770,9 +770,6 @@ function ($, view_data, main, tileinfo_player, icons, dngn, enums,
                 }
                 else
                 {
-                    if (cell.is_snowy)
-                        this.draw_dngn(dngn.SNOW + cell.is_snowy - 1, x, y);
-
                     if (base_idx)
                         this.draw_main(base_idx, x, y);
 
