@@ -3,6 +3,8 @@
 --
 -- Code for ziggurats.
 --
+-- BCADDO: Consider changing some of these monster sets.
+--
 ------------------------------------------------------------------------------
 
 function zig()
@@ -399,7 +401,7 @@ mset(spec_fn(function ()
   local d = math.max(2, math.floor((32 - you.depth()) / 5))
   local e = math.min(8, math.floor((you.depth()) / 5) + 4)
   local f = math.max(1, you.depth() + you.zigs_completed() - 5)
-  return "chaos spawn w:" .. d .. " / ugly thing w:" .. d .. " / " ..
+  return "chaos elemental w:" .. d .. " / ugly thing w:" .. d .. " / " ..
          "very ugly thing w:4 / apocalypse crab w:4 / " ..
          "shapeshifter hd:16 w:" .. e .. " / glowing shapeshifter w:" .. e .. " / " ..
          "killer klown w:8 / " ..
