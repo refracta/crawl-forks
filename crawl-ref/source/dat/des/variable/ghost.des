@@ -136,17 +136,17 @@ NSUBST: D = 2=0 / 4=0. / 9 / 9. / 2=8. / .
 SUBST:  fgh = |*
 NSUBST: D = 0 / 2=0. / 2=9 / 2=9. / 8 / 2=8. / .
 : end
-SUBST:  p : x., q : x., x : xc
+SUBST:  p : x., r : x., x : xc
 : ghost_setup(_G)
 MAP
 ...........
 .qqqqqqqqq.
 .qD..D..Dq.
-.q..qpqg.q.
-.=.Dpqpe.q.
+.q..rprg.q.
+.=.Dprpe.q.
 @=...O.dDq.
-.=.Dpqpf.q.
-.q..qpqh.q.
+.=.Dprpf.q.
+.q..rprh.q.
 .qD..D..Dq.
 .qqqqqqqqq.
 ...........
