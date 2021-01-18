@@ -1116,7 +1116,9 @@ static void _adjust_brand(item_def &item, bool divine, int agent)
 {
     if (item.base_type != OBJ_WEAPONS && item.base_type != OBJ_ARMOURS
         && item.base_type != OBJ_STAVES)
-        return; // don't reroll missile brands, I guess
+    {
+        return;
+    }
 
     if (is_artefact(item))
     {
@@ -1149,6 +1151,9 @@ static void _adjust_brand(item_def &item, bool divine, int agent)
             reroll_brand(item, ITEM_LEVEL);
         }
     }
+
+    if (item.is_type(OBJ_ARMOURS, ARM_SCARF) && get_armour_ego_type(item) == SPARM_NORMAL)
+        reroll_brand(item, ITEM_LEVEL);
 
     if (item.base_type == OBJ_STAVES)
     {
@@ -1290,10 +1295,17 @@ int acquirement_create_item(object_class_type class_wanted,
             want_arts = false;
 
         int lvl = ITEM_LEVEL;
-        int x = 1 + random2(9);
-
-        if ((agent == GOD_TROG || agent == GOD_OKAWARU) && x_chance_in_y(max(15 - you.num_total_gifts[you.religion], 1), x + you.num_total_gifts[you.religion]))
-            lvl = ISPEC_DAMAGED;
+        
+        if (agent == GOD_TROG || agent == GOD_OKAWARU)
+        {
+            int gift = you.num_total_gifts[you.religion] + 1;
+            if (x_chance_in_y(4, 7 + gift))
+                lvl = ISPEC_DAMAGED;
+            else if (x_chance_in_y(sqrt(gift), 100))
+                lvl = ISPEC_SUPERB;
+            else if (x_chance_in_y(sqrt(gift), 30))
+                lvl = ISPEC_STAR;
+        }
 
         thing_created = items(want_arts, class_wanted, type_wanted,
                               lvl, 0, agent);
@@ -1435,7 +1447,7 @@ int acquirement_create_item(object_class_type class_wanted,
         if (lvl = ISPEC_DAMAGED)
         {
             acq_item.plus -= random2(3);
-            if (!one_chance_in(3) && !is_artefact(acq_item))
+            if (!one_chance_in(3) && !is_artefact(acq_item) && !acq_item.is_type(OBJ_ARMOURS, ARM_SCARF))
                 acq_item.brand = 0;
         }
 
