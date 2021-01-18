@@ -179,7 +179,7 @@ KFEAT:  N = antiques shop name:Pakellas type:Evokable suffix:Objects use_all cou
             lamp of fire | phial of floods | fan of gales | crystal ball of energy |\
             box of beasts q:1 | box of beasts q:2 | sack of spiders q:1 | sack of spiders q:2 |\
             phantom mirror q:1 | phantom mirror q:2
-KFEAT:  9 = weapon shop type:Blade suffix:Boutique count:16 use_all greed:40 ; \
+KFEAT:  9 = weapon shop type:Blade suffix:Boutique count:18 use_all greed:40 ; \
 			mundane not_cursed dagger | mundane not_cursed short sword |\
             mundane not_cursed rapier |\
             mundane not_cursed falchion | mundane not_cursed long sword |\
@@ -189,7 +189,8 @@ KFEAT:  9 = weapon shop type:Blade suffix:Boutique count:16 use_all greed:40 ; \
             mundane not_cursed battleaxe|\
             mundane not_cursed spear | mundane not_cursed trident |\
             mundane not_cursed halberd |\
-            mundane not_cursed scythe | mundane not_cursed glaive
+            mundane not_cursed scythe | mundane not_cursed glaive |\
+            mundane not_cursed cleaver | mundane not_cursed ogreish kris
 KFEAT:  A = weapon shop type:Mashing suffix:MeleeMart count:10 use_all greed:40 ; \
             mundane not_cursed whip | mundane not_cursed mace |\
             mundane not_cursed flail |\
@@ -197,12 +198,12 @@ KFEAT:  A = weapon shop type:Mashing suffix:MeleeMart count:10 use_all greed:40 
 			mundane not_cursed dire flail | mundane not_cursed great mace |\
             mundane not_cursed giant club | mundane not_cursed giant spiked club |\
             mundane not_cursed quarterstaff | mundane not_cursed hammer
-KFEAT:  B = weapon shop type:Demonics suffix:and_Exotics count:9 use_all greed:40 ; \
+KFEAT:  B = weapon shop type:Demonics suffix:and_Exotics count:10 use_all greed:40 ; \
 			mundane not_cursed tonto | mundane not_cursed demon whip |\
             mundane not_cursed eveningstar | mundane not_cursed demon blade |\
             mundane not_cursed lajatang | mundane not_cursed demon trident |\
             mundane not_cursed triple sword | mundane not_cursed executioner's axe|\
-            mundane not_cursed bardiche
+            mundane not_cursed bardiche | mundane not_cursed katar
 KFEAT:  C = food shop type:Multiplicative suffix:MREs count:15 use_all greed:5 ; \
             ration q:1 | ration q:2 | ration q:4 | ration q:8 | ration q:16 |\
             ration q:32 | ration q:64 | ration q:128 | ration q:264 |\
@@ -221,13 +222,14 @@ KFEAT:  E = weapon shop type:Staff suffix:Store count:8 use_all greed:10 ; \
 			mundane not_cursed staff of air | mundane not_cursed staff of earth |\
 			mundane not_cursed staff of death | mundane not_cursed staff of poison |\ 
 			mundane not_cursed staff of life | mundane not_cursed staff of transmutation
-KFEAT:  F = book shop type:Basic_Mysticism suffix:books_etc greed:15 count:16 use_all ; \
+KFEAT:  F = book shop type:Basic_Mysticism suffix:books_etc greed:15 count:17 use_all ; \
             book of minor magic | book of flames |\
             book of frost | young poisoner's handbook | book of air |\
             book of misfortune | book of geomancy | book of power |\
             book of cantrips | book of party tricks | book of changes |\
             book of clouds | book of necromancy | book of callings |\
-            book of maledictions | book of debilitation
+            book of maledictions | book of debilitation |\
+			book of battle
 KFEAT:  G = book shop type:Further suffix:Studies_in_the_Mystic_Arts count:18 greed:10 use_all ; \
             book of summonings | book of fire |\
             book of ice | book of spatial translocations |\
