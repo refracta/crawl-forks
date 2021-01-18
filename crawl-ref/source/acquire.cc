@@ -1444,11 +1444,18 @@ int acquirement_create_item(object_class_type class_wanted,
                 acq_item.plus = max(static_cast<int>(acq_item.plus), 0);
         }
 
-        if (lvl = ISPEC_DAMAGED)
+        if (lvl == ISPEC_DAMAGED)
         {
-            acq_item.plus -= random2(3);
+            if (!acq_item.is_type(OBJ_ARMOURS, ARM_SCARF))
+                acq_item.plus -= random2(3);
             if (!one_chance_in(3) && !is_artefact(acq_item) && !acq_item.is_type(OBJ_ARMOURS, ARM_SCARF))
                 acq_item.brand = 0;
+        }
+        else if (divine && lvl != ISPEC_DAMAGED)
+        {
+            acq_item.plus += random2(3);
+            if (lvl == ISPEC_SUPERB)
+                acq_item.plus += random2(3);
         }
 
         // Last check: don't acquire items your god hates.
