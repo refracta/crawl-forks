@@ -370,7 +370,7 @@ void direction_chooser::print_top_prompt() const
             dam -= ((loc_ran - 5) * 25);
             dam = max(dam, 75); // Bu special case
         }
-        else if (loc_ran < 4)
+        else if (loc_ran < 5)
             dam -= ((5-loc_ran) * 25);
         dam = max(25, dam); // just to show it still does damage on self target.
         mprf(MSGCH_PROMPT, "%s, Range: %d (%d%%)", top_prompt.c_str(), loc_ran, dam);
