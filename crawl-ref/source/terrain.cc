@@ -1863,8 +1863,11 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
 
         else if (act->is_monster() && !(mons_primary_habitat(*mon) == HT_SLIME) && !(mon->res_acid() > 2))
         {
-            mprf("The acidic ooze burns %s%s%s%s", act->name(DESC_THE).c_str(), original > hurted ? " terribly" : "",
-                attack_strength_punctuation(actual).c_str(), original < hurted ? " It resists." : "");
+            if (you.can_see(*act) && hurted > 0)
+            {
+                mprf("The acidic ooze burns %s%s%s%s", act->name(DESC_THE).c_str(), original > hurted ? " terribly" : "",
+                    attack_strength_punctuation(actual).c_str(), original < hurted ? " It resists." : "");
+            }
             act->hurt(actor_by_mid(source), actual, BEAM_ACID, KILLED_BY_ACID, "", aux_source.c_str(), true, true);
         }
 
