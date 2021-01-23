@@ -883,8 +883,15 @@ void slime_wall_damage(actor* act, int delay)
     if (act->is_player())
     {
         you.splash_with_acid(nullptr, strength, false,
-                            (walls > 1) ? "The walls burn you!"
-                                        : "The wall burns you!");
+                            (walls > 1) ? "The walls burn you"
+                                        : "The wall burns you");
+        if (you.mounted())
+        {
+            string mt_msg = (walls > 1) ? "The walls burn your"
+                                        : "The wall burns your";
+            mt_msg = make_stringf("%s %s", mt_msg.c_str(), you.mount_name(true).c_str());
+            you.splash_with_acid(nullptr, strength, false, mt_msg.c_str(), true);
+        }
     }
     else
     {
@@ -894,8 +901,9 @@ void slime_wall_damage(actor* act, int delay)
                                              roll_dice(2, strength));
         if (dam > 0 && you.can_see(*mon))
         {
-            mprf((walls > 1) ? "The walls burn %s!" : "The wall burns %s!",
-                  mon->name(DESC_THE).c_str());
+            mprf((walls > 1) ? "The walls burn %s%s" : "The wall burns %s%s",
+                  mon->name(DESC_THE).c_str(),
+                  attack_strength_punctuation(dam).c_str());
         }
         mon->hurt(nullptr, dam, BEAM_ACID);
     }
