@@ -2275,6 +2275,13 @@ int player_movement_speed()
         if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, true) && you.drac_colour == DR_PLATINUM)
             mv--;
 
+        if (you.species == SP_OCTOPODE && you.usable_tentacles() < 2 && form_keeps_mutations())
+        {
+            mv += 4;
+            if (!you.usable_tentacles())
+                mv += 4;
+        }
+
         // armour
         if (you.run()) // BCADDO: for SC: this will need to be able to stack.
             mv -= 1;
@@ -2321,13 +2328,6 @@ int player_movement_speed()
 
     if (you.duration[DUR_GRASPING_ROOTS])
         mv += 3;
-
-    if (you.species == SP_OCTOPODE && you.usable_tentacles() < 2)
-    {
-        mv += 4;
-        if (!you.usable_tentacles())
-            mv += 4;
-    }
 
     if (you.duration[DUR_SWIFTNESS] > 0 && !you.in_liquid())
     {
