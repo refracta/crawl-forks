@@ -685,7 +685,7 @@ void pack_cell_overlays(const coord_def &gc, crawl_view_buffer &vbuf)
 
     bool use_default = !use_shoals;
 
-    if (cell.map_knowledge.feat() == DNGN_DEEP_WATER && cell.map_knowledge.feat_colour() != CYAN)
+    if (cell.map_knowledge.feat() == DNGN_DEEP_WATER && cell.map_knowledge.feat_colour() != CYAN && you.where_are_you != BRANCH_SHOALS)
         use_default = true;
     
     if (use_default)
