@@ -96,6 +96,7 @@ crocodile CORPSE_CROCODILE
 alligator CORPSE_ALLIGATOR
 snapping_turtle CORPSE_SNAPPING_TURTLE
 alligator_snapping_turtle CORPSE_ALLIGATOR_SNAPPING_TURTLE
+%back blood_blue blood_blue1 blood_blue2 blood_blue3 blood_blue4
 fire_crab CORPSE_FIRE_CRAB
 ghost_crab CORPSE_GHOST_CRAB
 plutonium_crab CORPSE_PLUTONIUM_CRAB
