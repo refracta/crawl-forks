@@ -2445,7 +2445,7 @@ static int _player_evasion_size_factor(bool base = false)
     int size = (int)you.body_size(PSIZE_BODY, base);
     if (you.mounted())
         size += 2;
-    size = max(6, size);
+    size = min(6, size);
     return 2 * (SIZE_MEDIUM - size);
 }
 
