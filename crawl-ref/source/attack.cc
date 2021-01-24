@@ -1321,6 +1321,8 @@ int attack::player_apply_misc_modifiers(int damage)
  */
 int attack::get_weapon_plus()
 {
+    if (weapon->is_type(OBJ_WEAPONS, WPN_TRIPLE_CROSSBOW))
+        return div_rand_round(weapon->plus, 3);
     if (weapon->base_type == OBJ_RODS)
         return 0;
     return weapon->plus;
@@ -1334,7 +1336,11 @@ int attack::player_apply_slaying_bonuses(int damage, bool aux)
     if (!aux && using_weapon())
         damage_plus = get_weapon_plus();
     if (you.duration[DUR_CORROSION])
+    {
+        if (weapon->is_type(OBJ_WEAPONS, WPN_TRIPLE_CROSSBOW))
+            return div_rand_round(weapon->plus, 3);
         damage_plus -= 4 * you.props["corrosion_amount"].get_int();
+    }
     damage_plus += slaying_bonus(weapon && is_range_weapon(*weapon)
                                             && using_weapon(),
                                                using_weapon());

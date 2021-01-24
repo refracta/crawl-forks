@@ -1296,11 +1296,16 @@ static void _append_weapon_stats(string &description, const item_def &item)
 
     if (item.base_type == OBJ_WEAPONS || item.base_type == OBJ_STAVES)
     {
+        string damsubstring;
+        if (item.sub_type == WPN_TRIPLE_CROSSBOW)
+            damsubstring = make_stringf("%d (%d x 3 bolts per shot)\n  ", base_dam * 3, base_dam);
+        else
+            damsubstring = make_stringf("%d", base_dam + ammo_dam);
         description += make_stringf(
-            "\nBase accuracy: %+d  Base damage: %d  Base attack delay: %.1f"
+            "\nBase accuracy: %+d  Base damage: %s  Base attack delay: %.1f"
             "\nThis weapon's minimum attack delay (%.1f) is reached at skill level %d.",
             property(item, PWPN_HIT),
-            base_dam + ammo_dam,
+            damsubstring.c_str(),
             (float)property(item, PWPN_SPEED) / 10,
             (float)weapon_min_delay(item, item_brand_known(item)) / 10,
             mindelay_skill / 10);
