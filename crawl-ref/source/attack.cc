@@ -1337,7 +1337,7 @@ int attack::player_apply_slaying_bonuses(int damage, bool aux)
         damage_plus = get_weapon_plus();
     if (you.duration[DUR_CORROSION])
     {
-        if (weapon->is_type(OBJ_WEAPONS, WPN_TRIPLE_CROSSBOW))
+        if (weapon && weapon->is_type(OBJ_WEAPONS, WPN_TRIPLE_CROSSBOW))
             return div_rand_round(weapon->plus, 3);
         damage_plus -= 4 * you.props["corrosion_amount"].get_int();
     }
