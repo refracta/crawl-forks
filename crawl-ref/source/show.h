@@ -29,6 +29,7 @@ enum show_item_type
     SHOW_ITEM_GOLD,
     SHOW_ITEM_AMULET,
     SHOW_ITEM_SHIELDS,
+    SHOW_ITEM_MANUALS,
     NUM_SHOW_ITEMS
 };
 

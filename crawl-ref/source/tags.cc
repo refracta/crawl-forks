@@ -1489,6 +1489,7 @@ static void tag_construct_you(writer &th)
         marshallByte(th, you.train_alt[j]);
         marshallInt(th, you.training[j]);
         marshallInt(th, you.skill_points[j]);
+        marshallInt(th, you.manual_points[j]);
         marshallInt(th, you.ct_skill_points[j]);
         marshallByte(th, you.skill_order[j]);   // skills ordering
         marshallInt(th, you.training_targets[j]);
@@ -2761,6 +2762,16 @@ static void tag_read_you(reader &th)
 #endif
         you.training[j] = unmarshallInt(th);
         you.skill_points[j]    = unmarshallInt(th);
+# if TAG_MAJOR_VERSION == 34
+        if (th.getMinorVersion() >= TAG_MINOR_GOLDIFY_MANUALS)
+        {
+#endif
+            you.manual_points[j] = unmarshallInt(th);
+#if TAG_MAJOR_VERSION == 34
+        }
+        else
+            you.manual_points[j] = 0;
+#endif
         you.ct_skill_points[j] = unmarshallInt(th);
         you.skill_order[j]     = unmarshallByte(th);
 #if TAG_MAJOR_VERSION == 34

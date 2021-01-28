@@ -678,14 +678,6 @@ static int _acquirement_wand_subtype(bool /*divine*/, int & /*quantity*/,
     return *wand;
 }
 
-static int _acquirement_book_subtype(bool /*divine*/, int & /*quantity*/,
-                                     int /*agent*/)
-{
-    return BOOK_MINOR_MAGIC;
-    //this gets overwritten later, but needs to be a sane value
-    //or asserts will get set off
-}
-
 typedef int (*acquirement_subtype_finder)(bool divine, int &quantity, int agent);
 static const acquirement_subtype_finder _subtype_finders[] =
 {
@@ -697,7 +689,7 @@ static const acquirement_subtype_finder _subtype_finders[] =
     0, // no scrolls
     _acquirement_jewellery_subtype,
     0, // no potions
-    _acquirement_book_subtype,
+    0, // spellbooks. overwritten later.
     _acquirement_staff_subtype,
     0, // no, you can't acquire the orb
     _acquirement_misc_subtype,
@@ -708,6 +700,7 @@ static const acquirement_subtype_finder _subtype_finders[] =
 #endif
     0, // no runes either
     _acquirement_shield_subtype,
+    0, // manuals. overwritten later.
 };
 
 static int _find_acquirement_subtype(object_class_type &class_wanted,

@@ -897,6 +897,7 @@ const set<pair<object_class_type, int> > removed_items =
     { OBJ_BOOKS,     BOOK_ENVENOMATIONS },
     { OBJ_BOOKS,     BOOK_AKASHIC_RECORD },
     { OBJ_BOOKS,     BOOK_CONJURATIONS },
+    { OBJ_BOOKS,     BOOK_MANUAL },
     { OBJ_RODS,      ROD_VENOM },
     { OBJ_RODS,      ROD_WARDING },
     { OBJ_RODS,      ROD_DESTRUCTION },
@@ -1283,6 +1284,7 @@ static iflags_t _full_ident_mask(const item_def& item)
         }
         // Intentional fall-through.
 #endif
+    case OBJ_MANUALS:
     case OBJ_SCROLLS:
     case OBJ_POTIONS:
     case OBJ_WANDS:

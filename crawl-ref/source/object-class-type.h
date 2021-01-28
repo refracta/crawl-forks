@@ -21,6 +21,7 @@ enum object_class_type : uint8_t           // mitm[].base_type
 #endif
     OBJ_RUNES,
     OBJ_SHIELDS,
+    OBJ_MANUALS,
     NUM_OBJECT_CLASSES,
     OBJ_UNASSIGNED = 100,
     OBJ_RANDOM,      // used for blanket random sub_type .. see dungeon::items()

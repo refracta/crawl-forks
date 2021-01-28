@@ -1249,26 +1249,27 @@ const char *base_type_string(object_class_type type)
 {
     switch (type)
     {
-    case OBJ_WEAPONS: return "weapon";
-    case OBJ_SHIELDS: return "shield";
-    case OBJ_MISSILES: return "missile";
-    case OBJ_ARMOURS: return "armour";
-    case OBJ_WANDS: return "wand";
-    case OBJ_FOOD: return "food";
-    case OBJ_SCROLLS: return "scroll";
-    case OBJ_JEWELLERY: return "jewellery";
-    case OBJ_POTIONS: return "potion";
-    case OBJ_BOOKS: return "book";
-    case OBJ_STAVES: return "magical staff";
+    case OBJ_WEAPONS:       return "weapon";
+    case OBJ_SHIELDS:       return "shield";
+    case OBJ_MISSILES:      return "missile";
+    case OBJ_ARMOURS:       return "armour";
+    case OBJ_WANDS:         return "wand";
+    case OBJ_FOOD:          return "food";
+    case OBJ_SCROLLS:       return "scroll";
+    case OBJ_JEWELLERY:     return "jewellery";
+    case OBJ_POTIONS:       return "potion";
+    case OBJ_BOOKS:         return "spell book";
+    case OBJ_MANUALS:       return "manual";
+    case OBJ_STAVES:        return "magical staff";
 #if TAG_MAJOR_VERSION == 34
-    case OBJ_RODS: return "removed rod";
+    case OBJ_RODS:          return "removed rod";
 #endif
-    case OBJ_ORBS: return "orb";
-    case OBJ_MISCELLANY: return "miscellaneous";
-    case OBJ_CORPSES: return "corpse";
-    case OBJ_GOLD: return "gold";
-    case OBJ_RUNES: return "rune";
-    default: return "";
+    case OBJ_ORBS:          return "orb";
+    case OBJ_MISCELLANY:    return "miscellaneous";
+    case OBJ_CORPSES:       return "corpse";
+    case OBJ_GOLD:          return "gold";
+    case OBJ_RUNES:         return "rune";
+    default:                return "";
     }
 }
 
@@ -1289,16 +1290,26 @@ string sub_type_string(const item_def &item, bool known)
     case OBJ_SCROLLS: return scroll_type_name(sub_type);
     case OBJ_JEWELLERY: return jewellery_type_name(sub_type);
     case OBJ_POTIONS: return potion_type_name(sub_type);
+    case OBJ_MANUALS:
+    {
+        if (sub_type != MAN_ARTEFACT)
+        {
+            string bookname = sub_type == MAN_SMALL  ? "pamphlet" 
+                            : sub_type == MAN_NORMAL ? "manual" 
+                                                     : "encyclopedia";
+            if (!known)
+                return bookname;
+            return make_stringf("%s of %s", bookname.c_str(), skill_name(static_cast<skill_type>(item.plus)));
+        }
+
+        return "Unfinished Artefact Manual (Tell Bcadren)";
+        break;
+    }
+
     case OBJ_BOOKS:
     {
         if (sub_type == BOOK_MANUAL)
-        {
-            if (!known)
-                return "manual";
-            string bookname = "manual of ";
-            bookname += skill_name(static_cast<skill_type>(item.plus));
-            return bookname;
-        }
+            return "old manual";
         else if (sub_type == BOOK_NECRONOMICON)
             return "Necronomicon";
         else if (sub_type == BOOK_GRAND_GRIMOIRE)
@@ -2166,21 +2177,22 @@ string item_def::name_aux(description_level_type desc, bool terse, bool ident,
         break;
     }
 
+    case OBJ_MANUALS: // fallthrough
     case OBJ_BOOKS:
         if (is_random_artefact(*this) && !dbname && !basename)
         {
             buff << get_artefact_name(*this);
             if (!know_type)
-                buff << "book";
+                buff << (base_type == OBJ_MANUALS ? "manual" : "book");
             break;
         }
         if (basename)
-            buff << (item_typ == BOOK_MANUAL ? "manual" : "book");
+            buff << (base_type == OBJ_MANUALS ? "manual" : "book");
         else if (!know_type)
         {
             buff << book_secondary_string(rnd)
                  << book_primary_string(rnd) << " "
-                 << (item_typ == BOOK_MANUAL ? "manual" : "book");
+                 << (base_type == OBJ_MANUALS ? "manual" : "book");
         }
         else
             buff << sub_type_string(*this, !dbname);
@@ -3951,25 +3963,27 @@ bool is_useless_item(const item_def &item, bool temp)
             return you.get_mutation_level(MUT_NO_ARTIFICE) && !is_deck(item);
         }
 
-    case OBJ_BOOKS:
-        if (!item_type_known(item))
-            return false;
-        if (item_type_known(item) && item.sub_type != BOOK_MANUAL)
-        {
-            // Spellbooks are useless if all spells are either in the library
-            // already or are uncastable.
-            bool useless = true;
-            for (spell_type st : spells_in_book(item))
-                if (!you.spell_library[st] && you_can_memorise(st))
-                    useless = false;
-            return useless;
-        }
-        // If we're here, it's a manual.
+    case OBJ_MANUALS:
         if (you.skills[item.plus] >= 27)
             return true;
         if (is_useless_skill((skill_type)item.plus))
             return true;
         return false;
+
+    case OBJ_BOOKS:
+    {
+        if (!item_type_known(item))
+            return false;
+        if (item.sub_type == BOOK_MANUAL)
+            return true;
+        // Spellbooks are useless if all spells are either in the library
+        // already or are uncastable.
+        bool useless = true;
+        for (spell_type st : spells_in_book(item))
+            if (!you.spell_library[st] && you_can_memorise(st))
+                useless = false;
+        return useless;
+    }
 
     default:
         return false;

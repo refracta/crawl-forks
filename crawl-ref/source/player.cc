@@ -6031,6 +6031,7 @@ void player::init_skills()
     training.init(0);
     can_currently_train.reset();
     skill_points.init(0);
+    manual_points.init(0);
     ct_skill_points.init(0);
     skill_order.init(MAX_SKILL_ORDER);
     training_targets.init(0);
@@ -6111,7 +6112,9 @@ bool player::airborne() const
     // Might otherwise be airborne, but currently stuck to the ground
     if (you.duration[DUR_GRASPING_ROOTS] || get_form()->forbids_flight()
         || you.petrified())
+    {
         return false;
+    }
 
     if (you.mounted())
     {

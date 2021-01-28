@@ -255,6 +255,9 @@ void get_class_hotkeys(const int type, vector<char> &glyphs)
     case OBJ_BOOKS:
         glyphs.push_back(':');
         break;
+    case OBJ_MANUALS:
+        glyphs.push_back('#');
+        break;
     case OBJ_SCROLLS:
         glyphs.push_back('?');
         break;
@@ -821,10 +824,11 @@ FixedVector<int, NUM_OBJECT_CLASSES> inv_order(
     OBJ_WANDS,
     OBJ_SCROLLS,
     OBJ_POTIONS,
-    OBJ_BOOKS,
     OBJ_MISCELLANY,
     OBJ_FOOD,
-    // These four can't actually be in your inventory.
+    // These six can't actually be in your inventory.
+    OBJ_BOOKS,
+    OBJ_MANUALS,
     OBJ_CORPSES,
     OBJ_RUNES,
     OBJ_ORBS,
@@ -1004,7 +1008,8 @@ const char *item_class_name(int type, bool terse)
         case OBJ_SCROLLS:    return "Scrolls";
         case OBJ_JEWELLERY:  return "Jewellery";
         case OBJ_POTIONS:    return "Potions";
-        case OBJ_BOOKS:      return "Books";
+        case OBJ_BOOKS:      return "Spell Books";
+        case OBJ_MANUALS:    return "Skill Manuals";
         case OBJ_STAVES:     return "Magical Staves";
 #if TAG_MAJOR_VERSION == 34
         case OBJ_RODS:       return "Rods";

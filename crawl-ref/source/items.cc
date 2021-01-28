@@ -2948,6 +2948,8 @@ static int _autopickup_subtype(const item_def &item)
     case OBJ_POTIONS:
     case OBJ_STAVES:
         return item_type_known(item) ? item.sub_type : max_type;
+    case OBJ_MANUALS:
+        return item.sub_type;
     case OBJ_BOOKS:
         if (item.sub_type == BOOK_MANUAL || item_type_known(item))
             return item.sub_type;
@@ -3390,6 +3392,7 @@ int get_max_subtype(object_class_type base_type)
 #endif
         NUM_RUNE_TYPES,
         NUM_SHIELDS,
+        NUM_MANUALS,
     };
     COMPILE_CHECK(ARRAYSZ(max_subtype) == NUM_OBJECT_CLASSES);
 
@@ -4062,6 +4065,8 @@ colour_t item_def::get_colour() const
             return LIGHTGREY;
         case OBJ_BOOKS:
             return book_colour();
+        case OBJ_MANUALS:
+            return WHITE;
 #if TAG_MAJOR_VERSION == 34
         case OBJ_RODS:
             return YELLOW;
@@ -4097,6 +4102,7 @@ bool item_type_has_unidentified(object_class_type base_type)
         || base_type == OBJ_BOOKS
         || base_type == OBJ_STAVES
         || base_type == OBJ_MISCELLANY
+        || base_type == OBJ_MANUALS
 #if TAG_MAJOR_VERSION == 34
         || base_type == OBJ_RODS
 #endif
@@ -4829,6 +4835,12 @@ item_info get_item_info(const item_def& item)
             ii.sub_type = NUM_BOOKS;
         ii.subtype_rnd = item.subtype_rnd;
         if (item.sub_type == BOOK_MANUAL && item_type_known(item))
+            ii.skill = item.skill; // manual skill
+        break;
+    case OBJ_MANUALS:
+        ii.sub_type = item.sub_type;
+        ii.subtype_rnd = item.subtype_rnd;
+        if (item_type_known(item))
             ii.skill = item.skill; // manual skill
         break;
 #if TAG_MAJOR_VERSION == 34

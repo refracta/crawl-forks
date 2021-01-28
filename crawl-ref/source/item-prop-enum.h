@@ -120,6 +120,15 @@ enum shield_type
     NUM_SHIELDS
 };
 
+enum manual_type
+{
+    MAN_SMALL,
+    MAN_NORMAL,
+    MAN_LARGE,
+    MAN_ARTEFACT = 10,
+    NUM_MANUALS
+};
+
 enum armour_property_type
 {
     PARM_AC,
