@@ -4210,7 +4210,7 @@ static void tag_read_you_items(reader &th)
         reset_training();
 
     // Move any books from inventory into the player's library.
-    if (th.getMinorVersion() < TAG_MINOR_GOLDIFY_BOOKS)
+    if (th.getMinorVersion() < TAG_MINOR_GOLDIFY_MANUALS)
         add_held_books_to_library();
 #endif
 }
@@ -5279,6 +5279,27 @@ void unmarshallItem(reader &th, item_def &item)
         auto subtype_ptr = map_find(hide_to_armour, item.sub_type);
         ASSERT(subtype_ptr);
         item.sub_type = *subtype_ptr;
+    }
+
+    if (item.is_type(OBJ_BOOKS, BOOK_MANUAL))
+    {
+        item.base_type = OBJ_MANUALS;
+        item.sub_type  = MAN_NORMAL;
+    }
+
+    // turn old shields (armour) into the corresponding shield.
+    static const map<int, shield_type> old_to_new_shield = {
+        { ARM_BUCKLER,         SHD_BUCKLER },
+        { ARM_SHIELD,          SHD_SHIELD },
+        { ARM_LARGE_SHIELD,    SHD_LARGE_SHIELD },
+    };
+
+    if (item.base_type == OBJ_ARMOURS && old_to_new_shield.count(item.sub_type))
+    {
+        auto subtype_ptr = map_find(old_to_new_shield, item.sub_type);
+        ASSERT(subtype_ptr);
+        item.base_type = OBJ_SHIELDS;
+        item.sub_type  = *subtype_ptr;
     }
 
     if (th.getMinorVersion() < TAG_MINOR_HIDE_TO_SCALE && armour_is_hide(item))

@@ -68,6 +68,7 @@
 #include "rot.h"
 #include "shopping.h"
 #include "showsymb.h"
+#include "skills.h"
 #include "slot-select-mode.h"
 #include "sound.h"
 #include "spl-book.h"
@@ -1838,36 +1839,46 @@ bool move_item_to_inv(int obj, int quant_got, bool quiet)
 
 static void _get_book(const item_def& it, bool quiet, bool allow_auto_hide)
 {
-    vector<spell_type> spells;
     if (!quiet)
         mprf("You pick up %s and begin reading...", it.name(DESC_A).c_str());
-    for (spell_type st : spells_in_book(it))
+
+    if (it.base_type == OBJ_MANUALS || it.is_type(OBJ_BOOKS, BOOK_MANUAL))
     {
-        if (!you.spell_library[st])
-        {
-            you.spell_library.set(st, true);
-            bool memorise = you_can_memorise(st);
-            if (memorise)
-                spells.push_back(st);
-            if (!memorise || (Options.auto_hide_spells && allow_auto_hide))
-                you.hidden_spells.set(st, true);
-        }
+        you.manual_points[it.plus] += it.skill_points;
+        if (!quiet)
+            mprf("You will train %s more easily, for a time.", skill_name(it.skill));
     }
-    if (!quiet)
+    else
     {
-        if (!spells.empty())
+        vector<spell_type> spells;
+        for (spell_type st : spells_in_book(it))
         {
-            vector<string> spellnames(spells.size());
-            transform(spells.begin(), spells.end(), spellnames.begin(), spell_title);
-            mprf("You add the spell%s %s to your library.",
-                 spellnames.size() > 1 ? "s" : "",
-                 comma_separated_line(spellnames.begin(),
-                                      spellnames.end()).c_str());
+            if (!you.spell_library[st])
+            {
+                you.spell_library.set(st, true);
+                bool memorise = you_can_memorise(st);
+                if (memorise)
+                    spells.push_back(st);
+                if (!memorise || (Options.auto_hide_spells && allow_auto_hide))
+                    you.hidden_spells.set(st, true);
+            }
         }
-        else
-            mpr("Unfortunately, it added no spells to the library.");
+        if (!quiet)
+        {
+            if (!spells.empty())
+            {
+                vector<string> spellnames(spells.size());
+                transform(spells.begin(), spells.end(), spellnames.begin(), spell_title);
+                mprf("You add the spell%s %s to your library.",
+                    spellnames.size() > 1 ? "s" : "",
+                    comma_separated_line(spellnames.begin(),
+                        spellnames.end()).c_str());
+            }
+            else
+                mpr("Unfortunately, it added no spells to the library.");
+        }
+        shopping_list.spells_added_to_library(spells, quiet);
     }
-    shopping_list.spells_added_to_library(spells, quiet);
 }
 
 // Adds all books in the player's inventory to library.
@@ -1877,7 +1888,7 @@ void add_held_books_to_library()
 {
     for (item_def& it : you.inv)
     {
-        if (it.base_type == OBJ_BOOKS && it.sub_type != BOOK_MANUAL)
+        if (it.base_type == OBJ_BOOKS || it.base_type == OBJ_MANUALS)
         {
             _get_book(it, true, false);
             destroy_item(it);
