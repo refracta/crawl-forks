@@ -3532,13 +3532,9 @@ static string _no_items_reason(object_selector type, bool check_floor = false)
  */
 string cannot_read_item_reason(const item_def &item)
 {
-    // can read books, except for manuals...
+    // can read books
     if (item.base_type == OBJ_BOOKS)
-    {
-        if (item.sub_type == BOOK_MANUAL)
-            return "You can't read that!";
         return "";
-    }
 
     // and scrolls - but nothing else.
     if (item.base_type != OBJ_SCROLLS)

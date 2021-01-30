@@ -786,6 +786,18 @@ unsigned int item_value(item_def item, bool ident)
         break;
     }
 
+    case OBJ_MANUALS:
+    {
+        switch (item.sub_type)
+        {
+        case MAN_SMALL:    valued = 150; break;
+        case MAN_NORMAL:   valued = 800; break;
+        default:
+        case MAN_LARGE:    valued = 1500; break;
+        }
+        break;
+    }
+
     case OBJ_STAVES:
         if (item_type_known(item))
         {
@@ -1855,7 +1867,7 @@ bool ShoppingList::cull_identical_items(const item_def& item, int cost)
         return 0;
 
     // Manuals are consumable, and interesting enough to keep on list.
-    if (item.is_type(OBJ_BOOKS, BOOK_MANUAL))
+    if (item.base_type == OBJ_MANUALS)
         return 0;
 
     // Item is already on shopping-list.
@@ -1905,7 +1917,7 @@ bool ShoppingList::cull_identical_items(const item_def& item, int cost)
 
         // Don't prompt to remove known manuals when the new one is unknown
         // or for a different skill.
-        if (item.is_type(OBJ_BOOKS, BOOK_MANUAL)
+        if (item.base_type == OBJ_MANUALS
             && item_type_known(list_item)
             && (!item_type_known(item) || item.plus != list_item.plus))
         {

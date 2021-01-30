@@ -3317,22 +3317,19 @@ string hints_describe_item(const item_def &item)
             Hints.hints_events[HINT_SEEN_POTION] = false;
             break;
 
+        case OBJ_MANUALS:
+            ostr << "A manual can greatly help you in training a skill. "
+                "As long as you are carrying it, the skill in "
+                "question will be trained more efficiently and will "
+                "level up faster.";
+            cmd.push_back(CMD_READ);
+            break;
+
         case OBJ_BOOKS:
-            if (item.sub_type == BOOK_MANUAL)
-            {
-                ostr << "A manual can greatly help you in training a skill. "
-                        "As long as you are carrying it, the skill in "
-                        "question will be trained more efficiently and will "
-                        "level up faster.";
-                cmd.push_back(CMD_READ);
-            }
-            else // It's a spellbook!
-            {
-                ostr << "\nIt's a book, you can pick it up to add its "
-                        "spells to your spell library. (View your spell "
-                        " library with <w>%</w>";
-                cmd.push_back(CMD_MEMORISE_SPELL);
-            }
+            ostr << "\nIt's a book, you can pick it up to add its "
+                    "spells to your spell library. (View your spell "
+                    " library with <w>%</w>";
+            cmd.push_back(CMD_MEMORISE_SPELL);
             ostr << "\n";
             Hints.hints_events[HINT_SEEN_SPBOOK] = false;
             break;

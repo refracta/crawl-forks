@@ -2362,7 +2362,7 @@ bool item_type_known(const item_def& item)
     if (is_artefact(item))
         return false;
 
-    if (item.base_type == OBJ_MISSILES)
+    if (item.base_type == OBJ_MISSILES || item.base_type == OBJ_MANUALS)
         return true;
 
     if (item.base_type == OBJ_MISCELLANY && !is_deck(item))
@@ -2372,9 +2372,6 @@ bool item_type_known(const item_def& item)
     if (item.is_type(OBJ_BOOKS, BOOK_BUGGY_DESTRUCTION))
         return true;
 #endif
-
-    if (item.is_type(OBJ_BOOKS, BOOK_MANUAL))
-        return false;
 
     if (!item_type_has_ids(item.base_type))
         return false;
@@ -2594,8 +2591,6 @@ public:
         }
         else if (item->base_type == OBJ_MISCELLANY)
             name = pluralise(item->name(DESC_DBNAME));
-        else if (item->is_type(OBJ_BOOKS, BOOK_MANUAL))
-            name = "manuals";
         else if (item->base_type == OBJ_GOLD)
         {
             name = lowercase_string(item_class_name(item->base_type));
@@ -4095,7 +4090,7 @@ string item_prefix(const item_def &item, bool temp)
         break;
 
     case OBJ_BOOKS:
-        if (item.sub_type != BOOK_MANUAL && item.sub_type != NUM_BOOKS)
+        if (item.sub_type != NUM_BOOKS)
             prefixes.push_back("spellbook");
         break;
 
@@ -4161,7 +4156,7 @@ void init_item_name_cache()
             }
 
             int npluses = 0;
-            if (base_type == OBJ_BOOKS && sub_type == BOOK_MANUAL)
+            if (base_type == OBJ_MANUALS)
                 npluses = NUM_SKILLS;
 
             item_def item;

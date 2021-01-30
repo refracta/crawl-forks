@@ -5700,6 +5700,14 @@ void item_list::parse_random_by_class(string c, item_spec &spec)
         return;
     }
 
+    // Random manual?
+    if (c == "manual")
+    {
+        spec.base_type = OBJ_MANUALS;
+        spec.sub_type = one_chance_in(3) ? MAN_LARGE : MAN_NORMAL;
+        return;
+    }
+
     for (int type = OBJ_WEAPONS; type < NUM_OBJECT_CLASSES; ++type)
     {
         if (c == item_class_name(type, true))
@@ -5709,15 +5717,12 @@ void item_list::parse_random_by_class(string c, item_spec &spec)
         }
     }
 
-    // Random manual?
-    if (c == "manual")
+    if (c == "book")
     {
         spec.base_type = OBJ_BOOKS;
-        spec.sub_type  = BOOK_MANUAL;
-        spec.plus      = -1;
         return;
     }
-    else if (c == "fixed theme book")
+    if (c == "fixed theme book")
     {
         spec.base_type = OBJ_BOOKS;
         spec.sub_type  = BOOK_RANDART_THEME;

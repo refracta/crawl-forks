@@ -201,10 +201,11 @@ static item_base_type _item_base_type(const item_def &item)
     case OBJ_MISCELLANY:
         type = ITEM_MISCELLANY;
         break;
+    case OBJ_MANUALS:
+        type = ITEM_MANUALS;
+        break;
     case OBJ_BOOKS:
-        if (item.sub_type == BOOK_MANUAL)
-            type = ITEM_MANUALS;
-        else if (is_artefact(item))
+        if (is_artefact(item))
             type = ITEM_ARTEBOOKS;
         else
             type = ITEM_BOOKS;
@@ -329,9 +330,6 @@ static int _item_orig_sub_type(const item_type &item)
         break;
     case ITEM_ARTEBOOKS:
         type = item.sub_type + BOOK_RANDART_LEVEL;
-        break;
-    case ITEM_MANUALS:
-        type = BOOK_MANUAL;
         break;
     default:
         type = item.sub_type;

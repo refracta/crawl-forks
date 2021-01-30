@@ -2393,8 +2393,8 @@ bool item_is_spellbook(const item_def &item)
     return item.base_type == OBJ_BOOKS
 #if TAG_MAJOR_VERSION == 34
            && item.sub_type != BOOK_BUGGY_DESTRUCTION
-#endif
            && item.sub_type != BOOK_MANUAL;
+#endif
 }
 
 //

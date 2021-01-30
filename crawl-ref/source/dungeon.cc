@@ -6335,7 +6335,7 @@ object_class_type item_in_shop(shop_type shop_type)
         return random_choose(OBJ_WANDS, OBJ_MISCELLANY);
 
     case SHOP_BOOK:
-        return OBJ_BOOKS;
+        return one_chance_in(12) ? OBJ_MANUALS : OBJ_BOOKS;
 
     case SHOP_FOOD:
         return OBJ_FOOD;

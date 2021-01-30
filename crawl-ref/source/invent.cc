@@ -1099,8 +1099,7 @@ bool item_is_selected(const item_def &i, int selector)
         return item_is_wieldable(i);
 
     case OBJ_SCROLLS:
-        return itype == OBJ_SCROLLS
-               || (itype == OBJ_BOOKS && i.sub_type != BOOK_MANUAL);
+        return itype == OBJ_SCROLLS || itype == OBJ_BOOKS;
 
     case OSEL_EVOKABLE:
         return item_is_evokable(i, true, true);

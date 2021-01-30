@@ -221,7 +221,6 @@ int book_rarity(book_type which_book)
     case BOOK_TEMPESTS:
     case BOOK_WARP:
     case BOOK_DRAGON:
-    case BOOK_MANUAL:
         return 70;
 
     case BOOK_ANNIHILATIONS:
