@@ -410,6 +410,11 @@ eggplant
 A rotten eggplant which you can throw at the Crawl developers. It's a bug if
 you ever see this message.
 %%%%
+encyclopedia
+
+A valuable collection of tomes with exhaustive knowledge on a specialized topic. 
+Allows training a specific skill faster for a long time after reading.
+%%%%
 eveningstar
 
 The opposite of a morningstar.
@@ -615,12 +620,13 @@ A short club with a metal head.
 %%%%
 mangonel
 
-A massive sling for hurling boulders. Humans have a machine to make these work; Ogres, well, they can just use an arm.
+A massive sling for hurling boulders. Humans have a machine to make these work; 
+Ogres, well, they can just use an arm.
 %%%%
 manual
 
-A valuable book which allows one to practise a certain skill more efficiently
-when carried.
+A valuable book which allows one to practise a certain skill more efficiently 
+once read.
 %%%%
 morningstar
 
@@ -685,6 +691,11 @@ pair of gloves
 
 A pair of gloves. They are worn on the hands, and cover all but the largest
 claws.
+%%%%
+pamphlet
+
+A thin booklet with a little bit of information about a specialized subject. 
+Allows training a specific skill faster for a short while.
 %%%%
 pearl dragon scales
 

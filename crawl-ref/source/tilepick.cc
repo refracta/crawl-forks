@@ -2930,6 +2930,8 @@ tileidx_t tileidx_item(const item_def &item)
             return TILE_BOOK_MANUAL + rnd % tile_main_count(TILE_BOOK_MANUAL);
         case MAN_LARGE:
             return TILE_ENCYCLOPEDIA;
+        default:
+            return TILE_BOOK_MANUAL;
         }
 
     case OBJ_BOOKS:

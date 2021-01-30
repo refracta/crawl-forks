@@ -1042,6 +1042,7 @@ void game_options::reset_options()
     autopickups.set(OBJ_SCROLLS);
     autopickups.set(OBJ_POTIONS);
     autopickups.set(OBJ_BOOKS);
+    autopickups.set(OBJ_MANUALS);
     autopickups.set(OBJ_JEWELLERY);
     autopickups.set(OBJ_WANDS);
     autopickups.set(OBJ_FOOD);

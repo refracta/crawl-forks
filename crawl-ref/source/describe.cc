@@ -2629,6 +2629,7 @@ string get_item_description(const item_def &item, bool verbose,
         }
 #endif
 
+    case OBJ_MANUALS:
     case OBJ_SCROLLS:
     case OBJ_ORBS:
     case OBJ_GOLD:

@@ -964,6 +964,10 @@ static bool _id_floor_item(item_def &item)
         set_ident_flags(item, ISFLAG_IDENT_MASK);
         return true;
     }
+    else if (item.base_type == OBJ_MANUALS)
+    {
+
+    }
     else if (item.base_type == OBJ_WANDS)
     {
         if (!get_ident_type(item))
@@ -2968,7 +2972,7 @@ static int _autopickup_subtype(const item_def &item)
     case OBJ_STAVES:
         return item_type_known(item) ? item.sub_type : max_type;
     case OBJ_MANUALS:
-        return item.sub_type;
+        return max_type;
     case OBJ_BOOKS:
         if (item.sub_type == BOOK_MANUAL || item_type_known(item))
             return item.sub_type;

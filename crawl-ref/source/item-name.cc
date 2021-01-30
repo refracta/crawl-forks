@@ -2813,7 +2813,7 @@ void check_item_knowledge(bool unknown_items)
         // Misc.
         static const pair<object_class_type, int> misc_list[] =
         {
-            { OBJ_BOOKS, BOOK_MANUAL },
+            { OBJ_MANUALS, NUM_MANUALS },
             { OBJ_GOLD, 1 },
             { OBJ_BOOKS, NUM_BOOKS },
             { OBJ_RUNES, NUM_RUNE_TYPES },

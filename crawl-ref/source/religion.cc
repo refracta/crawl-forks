@@ -1515,7 +1515,11 @@ static bool _gift_sif_kiku_gift(bool forced)
         // because the player already has seen all spells.
         if (you_worship(GOD_SIF_MUNA))
         {
-            int item_index = acquirement_create_item(OBJ_BOOKS, you.religion,
+            object_class_type book = OBJ_BOOKS;
+
+            if (one_chance_in(3))
+                book = OBJ_MANUALS;
+            int item_index = acquirement_create_item(book, you.religion,
                                                      true, you.pos());
             success = (item_index != NON_ITEM);
         }
