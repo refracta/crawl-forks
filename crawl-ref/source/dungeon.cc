@@ -4884,7 +4884,7 @@ static bool _apply_item_props(item_def &item, const item_spec &spec,
     if (spec.item_special)
         item.special = spec.item_special;
 
-    if (spec.plus >= 0 && item.is_type(OBJ_BOOKS, BOOK_MANUAL))
+    if (spec.plus >= 0 && item.sub_type == OBJ_MANUALS)
     {
         item.plus = spec.plus;
         item_colour(item);

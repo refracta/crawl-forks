@@ -1270,17 +1270,20 @@ static int _train(skill_type exsk, int &max_exp, bool simu)
         return 0;
 
     // Bonus from manual
-    int slot;
-    int bonus_left = skill_inc;
-    while (bonus_left > 0 && (slot = manual_slot_for_skill(exsk)) != -1)
+    if (you.manual_points[exsk] > 0)
     {
-        item_def& manual(you.inv[slot]);
-        const int bonus = min<int>(bonus_left, manual.skill_points);
-        skill_inc += bonus;
-        bonus_left -= bonus;
-        manual.skill_points -= bonus;
-        if (!manual.skill_points && !simu && !crawl_state.simulating_xp_gain)
-            finish_manual(slot);
+        const int bonus = min<int>(skill_inc, you.manual_points[exsk]);
+        skill_inc               += bonus;
+        you.manual_points[exsk] -= bonus;
+
+        if (!you.manual_points[exsk] && !simu && !crawl_state.simulating_xp_gain)
+        {
+            mprf("You finish your manual of %s.", skill_name(exsk));
+
+            // Might no longer be able to train manual skill.
+            you.stop_train.insert(exsk);
+            update_can_currently_train(); 
+        }
     }
 
     const skill_type old_best_skill = best_skill(SK_FIRST_SKILL, SK_LAST_SKILL);
@@ -2328,7 +2331,7 @@ void skill_state::save()
     auto_training       = you.auto_training;
     exp_available       = you.exp_available;
     total_experience    = you.total_experience;
-    get_all_manual_charges(manual_charges);
+    manual_points       = you.manual_points;
     for (int i = 0; i < NUM_SKILLS; i++)
     {
         real_skills[i] = you.skill((skill_type)i, 10, true);
@@ -2351,7 +2354,7 @@ void skill_state::restore_levels()
     you.skill_order                 = skill_order;
     you.exp_available               = exp_available;
     you.total_experience            = total_experience;
-    set_all_manual_charges(manual_charges);
+    you.manual_points               = manual_points;
 }
 
 void skill_state::restore_training()

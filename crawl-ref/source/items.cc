@@ -1852,6 +1852,9 @@ static void _get_book(const item_def& it, bool quiet, bool allow_auto_hide)
               : it.sub_type == MAN_SMALL ? "short " 
                                          : "", it.skill_points);
         }
+
+        you.can_currently_train.set(it.skill);
+        update_can_currently_train();
     }
     else
     {
