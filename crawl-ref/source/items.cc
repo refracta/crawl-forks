@@ -1846,7 +1846,12 @@ static void _get_book(const item_def& it, bool quiet, bool allow_auto_hide)
     {
         you.manual_points[it.plus] += it.skill_points;
         if (!quiet)
-            mprf("You will train %s more easily, for a time.", skill_name(it.skill));
+        {
+            mprf("You will train %s more easily, for a %stime (%d bonus skill points).", skill_name(it.skill), 
+                it.sub_type == MAN_LARGE ? "long " 
+              : it.sub_type == MAN_SMALL ? "short " 
+                                         : "", it.skill_points);
+        }
     }
     else
     {
@@ -2195,7 +2200,7 @@ static bool _merge_items_into_inv(item_def &it, int quant_got,
         get_gold(it, quant_got, quiet);
         return true;
     }
-    if (it.base_type == OBJ_BOOKS && it.sub_type != BOOK_MANUAL)
+    if (it.base_type == OBJ_BOOKS || it.base_type == OBJ_MANUALS)
     {
         _get_book(it, quiet, true);
         return true;

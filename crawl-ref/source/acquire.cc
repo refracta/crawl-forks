@@ -678,6 +678,25 @@ static int _acquirement_wand_subtype(bool /*divine*/, int & /*quantity*/,
     return *wand;
 }
 
+static int _acquirement_book_subtype(bool /*divine*/, int & /*quantity*/,
+                                     int /*agent*/)
+{
+    return BOOK_MINOR_MAGIC;
+    //this gets overwritten later, but needs to be a sane value
+    //or asserts will get set off
+}
+
+static int _acquirement_manual_subtype(bool divine, int & /*quantity*/,
+                                       int /*agent*/)
+{
+    if (divine)
+        return MAN_SMALL;
+
+    return random_choose_weighted(4, MAN_SMALL, 
+                                  3, MAN_NORMAL, 
+                                  1, MAN_LARGE);
+}
+
 typedef int (*acquirement_subtype_finder)(bool divine, int &quantity, int agent);
 static const acquirement_subtype_finder _subtype_finders[] =
 {
@@ -689,7 +708,7 @@ static const acquirement_subtype_finder _subtype_finders[] =
     0, // no scrolls
     _acquirement_jewellery_subtype,
     0, // no potions
-    0, // spellbooks. overwritten later.
+    _acquirement_book_subtype, // spellbooks. overwritten later.
     _acquirement_staff_subtype,
     0, // no, you can't acquire the orb
     _acquirement_misc_subtype,
@@ -700,7 +719,7 @@ static const acquirement_subtype_finder _subtype_finders[] =
 #endif
     0, // no runes either
     _acquirement_shield_subtype,
-    0, // manuals. overwritten later.
+    _acquirement_manual_subtype,
 };
 
 static int _find_acquirement_subtype(object_class_type &class_wanted,
@@ -827,43 +846,6 @@ static bool _skill_useless_with_god(int skill)
 }
 
 /**
- * Randomly decide whether the player should get a manual from a given instance
- * of book acquirement.
- *
- * @param agent     The source of the acquirement (e.g. a god)
- * @return          Whether the player should get a manual from this book
- *                  acquirement.
- */
-static bool _should_acquire_manual(int agent)
-{
-    // Manuals are too useful for Xom, and useless when gifted from Sif Muna.
-    if (agent == GOD_XOM || agent == GOD_SIF_MUNA)
-        return false;
-
-    int magic_weights = 0;
-    int other_weights = 0;
-
-    for (skill_type sk = SK_FIRST_SKILL; sk < NUM_SKILLS; ++sk)
-    {
-        const int weight = _skill_rdiv(sk);
-
-        if (_is_magic_skill(sk))
-            magic_weights += weight;
-        else
-            other_weights += weight;
-    }
-
-    if (you_worship(GOD_TROG))
-        magic_weights = 0;
-
-    // If someone has 25% or more magic skills, never give manuals.
-    // Otherwise, count magic skills double to bias against manuals
-    // for magic users.
-    return magic_weights * 3 < other_weights
-           && x_chance_in_y(other_weights, 2*magic_weights + other_weights);
-}
-
-/**
  * Turn a given book into an acquirement-quality manual.
  *
  * @param book[out]     The book to be turned into a manual.
@@ -896,11 +878,17 @@ static bool _acquire_manual(item_def &book)
     if (total_weights == 0)
         return false;
 
-    book.sub_type = BOOK_MANUAL;
     book.skill = static_cast<skill_type>(
                     choose_random_weighted(weights, end(weights)));
+
     // Set number of bonus skill points.
-    book.skill_points = random_range(2000, 3000);
+    book.skill_points = random_range(2500, 3000);
+
+    if (book.sub_type == MAN_SMALL)
+        book.skill_points /= 8;
+    else if (book.sub_type == MAN_LARGE)
+        book.skill_points *= 3;
+
     // Identify.
     set_ident_type(book, true);
     set_ident_flags(book, ISFLAG_IDENT_MASK);
@@ -912,8 +900,6 @@ static bool _do_book_acquirement(item_def &book, int agent)
     // items() shouldn't make book a randart for acquirement items.
     ASSERT(!is_random_artefact(book));
 
-    if (_should_acquire_manual(agent))
-        return _acquire_manual(book);
     const int choice = random_choose_weighted(
                                     30, BOOK_RANDART_THEME,
        agent == GOD_SIF_MUNA ? 10 : 40, NUM_BOOKS, // normal books
@@ -981,7 +967,6 @@ static bool _do_book_acquirement(item_def &book, int agent)
         if (useless)
         {
             destroy_item(book);
-            book.base_type = OBJ_BOOKS;
             book.quantity = 1;
             return _acquire_manual(book);
         }
@@ -1218,15 +1203,6 @@ static string _why_reject(const item_def &item, int agent)
         return "Destroying pain weapon after Necro sac!";
     }
 
-    // Sif Muna shouldn't gift special books.
-    // (The spells therein are still fair game for randart books.)
-    if (agent == GOD_SIF_MUNA
-        && is_rare_book(static_cast<book_type>(item.sub_type)))
-    {
-        ASSERT(item.base_type == OBJ_BOOKS);
-        return "Destroying sif-gifted rarebook!";
-    }
-
 #if TAG_MAJOR_VERSION == 34
     // The crystal ball case should be handled elsewhere, but just in
     // case, it's also handled here.
@@ -1436,6 +1412,8 @@ int acquirement_create_item(object_class_type class_wanted,
             if (divine && agent != GOD_XOM)
                 acq_item.plus = max(static_cast<int>(acq_item.plus), 0);
         }
+        else if (acq_item.base_type == OBJ_MANUALS)
+            _acquire_manual(acq_item);
 
         if (lvl == ISPEC_DAMAGED)
         {
@@ -1719,6 +1697,9 @@ static void _make_acquirement_items()
 
     rand_acq_classes.emplace_back(OBJ_JEWELLERY);
     rand_acq_classes.emplace_back(OBJ_BOOKS);
+    
+    if (coinflip()) // Just to make them a bit rarer than the rest.
+        rand_acq_classes.emplace_back(OBJ_MANUALS);
 
     if (!you.get_mutation_level(MUT_NO_ARTIFICE))
         rand_acq_classes.emplace_back(OBJ_MISCELLANY);

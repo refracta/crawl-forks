@@ -1765,10 +1765,10 @@ static book_type _choose_book_type(int item_level)
 }
 
 /// Choose a random skill for a manual to be generated for.
-static skill_type _choose_manual_skill()
+static skill_type _choose_manual_skill(bool force_magic)
 {
     // spell skill (or invo/evo)
-    if (one_chance_in(3))
+    if (one_chance_in(3) || force_magic)
     {
         skill_type skill = SK_CONJURATIONS;
         while (skill == SK_CONJURATIONS)
@@ -1788,26 +1788,42 @@ static skill_type _choose_manual_skill()
 #endif
 }
 
+static void _generate_manual_item(item_def& item, bool allow_uniques,
+                                  int force_type, int agent)
+{
+    if (force_type)
+        item.sub_type = force_type;
+
+    else
+    {
+        // BCADDO: Artefact chance later.
+        item.sub_type = random_choose_weighted(8, MAN_SMALL, 
+                                               3, MAN_NORMAL, 
+                                               1, MAN_LARGE);
+    }
+     
+    item.skill = _choose_manual_skill(agent == GOD_SIF_MUNA);
+    
+    // Set number of bonus skill points.
+    item.skill_points = random_range(2500, 3000);
+    if (item.sub_type == MAN_SMALL)
+        item.skill_points /= 8;
+    else if (item.sub_type == MAN_LARGE)
+        item.skill_points *= 3;
+
+    // Preidentify.
+    set_ident_type(item, true);
+    set_ident_flags(item, ISFLAG_IDENT_MASK);
+    return;
+}
+
 static void _generate_book_item(item_def& item, bool allow_uniques,
                                 int force_type, int item_level)
 {
     if (force_type != OBJ_RANDOM)
         item.sub_type = force_type;
-    else if (item_level > 6 && x_chance_in_y(21 + item_level, 4000))
-        item.sub_type = BOOK_MANUAL; // skill manual - rare!
     else
         item.sub_type = _choose_book_type(item_level);
-
-    if (item.sub_type == BOOK_MANUAL)
-    {
-        item.skill = _choose_manual_skill();
-        // Set number of bonus skill points.
-        item.skill_points = random_range(2000, 3000);
-        // Preidentify.
-        set_ident_type(item, true);
-        set_ident_flags(item, ISFLAG_IDENT_MASK);
-        return; // rare enough without being replaced with randarts
-    }
 
     // Only randomly generate randart books for OBJ_RANDOM, since randart
     // spellbooks aren't merely of-the-same-type-but-better, but
@@ -2174,8 +2190,9 @@ int items(bool allow_uniques,
         ASSERT(force_type == OBJ_RANDOM);
         // Total weight: 1760
         item.base_type = random_choose_weighted(
+                                     1, OBJ_MANUALS,
                                     10, OBJ_STAVES,
-                                    30, OBJ_BOOKS,
+                                    29, OBJ_BOOKS,
                                     45, OBJ_JEWELLERY,
                                     45, OBJ_SHIELDS,
                                     70, OBJ_WANDS,
@@ -2187,7 +2204,7 @@ int items(bool allow_uniques,
                                    450, OBJ_GOLD);
 
         // misc items placement wholly dependent upon current depth {dlb}:
-        if (item_level > 7 && x_chance_in_y(21 + item_level, 5000))
+        if (x_chance_in_y(21 + item_level, 5000))
             item.base_type = OBJ_MISCELLANY;
 
         if (item_level < 7
@@ -2264,8 +2281,11 @@ int items(bool allow_uniques,
         break;
 
     case OBJ_JEWELLERY:
-        _generate_jewellery_item(item, allow_uniques, force_type, item_level,
-                                 agent);
+        _generate_jewellery_item(item, allow_uniques, force_type, item_level, agent);
+        break;
+
+    case OBJ_MANUALS:
+        _generate_manual_item(item, allow_uniques, force_type, agent);
         break;
 
     case OBJ_BOOKS:
