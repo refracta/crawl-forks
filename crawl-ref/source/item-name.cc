@@ -1299,7 +1299,7 @@ string sub_type_string(const item_def &item, bool known)
                                                      : "encyclopedia";
             if (!known)
                 return bookname;
-            return make_stringf("%s of %s", bookname.c_str(), skill_name(static_cast<skill_type>(item.plus)));
+            return make_stringf("%s of %s", bookname.c_str(), skill_name(item.skill));
         }
 
         return "Unfinished Artefact Manual (Tell Bcadren)";

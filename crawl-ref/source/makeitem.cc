@@ -1791,7 +1791,7 @@ static skill_type _choose_manual_skill(bool force_magic)
 static void _generate_manual_item(item_def& item, bool allow_uniques,
                                   int force_type, int agent)
 {
-    if ((force_type >= MAN_SMALL) && (force_type <= NUM_MANUALS))
+    if (force_type != OBJ_RANDOM)
         item.sub_type = force_type;
 
     else
