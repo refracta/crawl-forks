@@ -2887,7 +2887,7 @@ tileidx_t tileidx_item(const item_def &item)
             if (is_artefact(item))
             {
                 const int offset = item.rnd
-                                   % tile_main_count(TILE_RING_RANDART_OFFSET);
+                    % tile_main_count(TILE_RING_RANDART_OFFSET);
                 return TILE_RING_RANDART_OFFSET + offset;
             }
 
@@ -2895,7 +2895,7 @@ tileidx_t tileidx_item(const item_def &item)
             {
                 return TILE_RING_ID_FIRST + type - RING_FIRST_RING
 #if TAG_MAJOR_VERSION == 34
-                       + 1 // we have a save-compat ring tile before FIRST_RING
+                    + 1 // we have a save-compat ring tile before FIRST_RING
 #endif
                     ;
             }
@@ -2907,7 +2907,7 @@ tileidx_t tileidx_item(const item_def &item)
         if (is_artefact(item))
         {
             const int offset = item.rnd
-                               % tile_main_count(TILE_AMU_RANDART_OFFSET);
+                % tile_main_count(TILE_AMU_RANDART_OFFSET);
             return TILE_AMU_RANDART_OFFSET + offset;
         }
 
@@ -2920,6 +2920,17 @@ tileidx_t tileidx_item(const item_def &item)
             return TILE_POT_ID_FIRST + type;
         else
             return TILE_POTION_OFFSET + item.subtype_rnd % NDSC_POT_PRI;
+
+    case OBJ_MANUALS:
+        switch (item.sub_type)
+        {
+        case MAN_SMALL:
+            return TILE_PAMPHLET;
+        case MAN_NORMAL:
+            return TILE_BOOK_MANUAL + rnd % tile_main_count(TILE_BOOK_MANUAL);
+        case MAN_LARGE:
+            return TILE_ENCYCLOPEDIA;
+        }
 
     case OBJ_BOOKS:
         if (is_random_artefact(item))

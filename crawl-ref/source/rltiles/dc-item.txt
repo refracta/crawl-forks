@@ -1008,6 +1008,8 @@ cloth
 ############manuals
 manual1 BOOK_MANUAL
 manual2
+encyclopedia ENCYCLOPEDIA
+pamphlet PAMPHLET
 # randarts
 %sdir item/book/artefact
 wrinkled BOOK_RANDART_OFFSET
