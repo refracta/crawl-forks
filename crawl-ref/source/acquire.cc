@@ -692,8 +692,7 @@ static int _acquirement_manual_subtype(bool divine, int & /*quantity*/,
     if (divine)
         return MAN_SMALL;
 
-    return random_choose_weighted(4, MAN_SMALL, 
-                                  3, MAN_NORMAL, 
+    return random_choose_weighted(3, MAN_NORMAL, 
                                   1, MAN_LARGE);
 }
 
