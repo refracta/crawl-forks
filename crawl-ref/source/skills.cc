@@ -1281,8 +1281,11 @@ static int _train(skill_type exsk, int &max_exp, bool simu)
             mprf("You finish your manual of %s.", skill_name(exsk));
 
             // Might no longer be able to train manual skill.
-            you.stop_train.insert(exsk);
-            update_can_currently_train(); 
+            if (training_restricted(exsk))
+            {
+                you.stop_train.insert(exsk);
+                update_can_currently_train();
+            }
         }
     }
 
