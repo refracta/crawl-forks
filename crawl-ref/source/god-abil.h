@@ -213,4 +213,4 @@ spret wu_jian_wall_jump_ability();
 bool bahamut_tiamat_make_choice(ability_type abil);
 spret bahamut_empowered_breath();
 spret tiamat_choice_breath(bool fail);
-spret bahamut_tiamat_transform(bool bahamut, bool fail);
+spret bahamut_tiamat_transform(bool bahamut);

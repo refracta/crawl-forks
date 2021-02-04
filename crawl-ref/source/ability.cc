@@ -3661,7 +3661,8 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         return spret::fail;
 
     case ABIL_TIAMAT_TRANSFORM:
-        return (bahamut_tiamat_transform(false, fail));
+        fail_check();
+        return (bahamut_tiamat_transform(false));
 
     case ABIL_BAHAMUT_DRAGONSLAYING:
         fail_check();

@@ -7464,7 +7464,7 @@ bool bahamut_tiamat_make_choice(ability_type abil)
         mprf(MSGCH_GOD, "You may now call upon Tiamat to summon a horde of drakes into battle.");
         break;
     case ABIL_BAHAMUT_TRANSFORM:
-        if (bahamut_tiamat_transform(true, false) == spret::success)
+        if (bahamut_tiamat_transform(true) == spret::success)
             you.props[BAHAMUT_TIAMAT_CHOICE3_KEY] = true;
         break;
     case ABIL_CHOOSE_TIAMAT_TRANSFORM:
@@ -7639,7 +7639,7 @@ static string _name_from_colour(draconian_colour col)
     return "Buggy";
 }
 
-spret bahamut_tiamat_transform(bool bahamut, bool fail)
+spret bahamut_tiamat_transform(bool bahamut)
 {
     string colour_names[3] = { "buggy", "buggy", "buggy" };
     draconian_colour colours[3] = { DR_BROWN, DR_BROWN, DR_BROWN };
@@ -7769,8 +7769,6 @@ spret bahamut_tiamat_transform(bool bahamut, bool fail)
         if (!yesno("Are you sure? Your choice is permanent.", false, 0))
             return spret::abort;
     }
-
-    fail_check();
 
     change_drac_colour(colours[keyin]);
 
