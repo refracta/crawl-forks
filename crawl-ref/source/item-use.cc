@@ -2334,7 +2334,35 @@ static bool _puton_item(int item_slot, bool prompt_slot,
 
     if (you.species == SP_FAIRY)
     {
-        if (you.slot_item(EQ_FAIRY_JEWEL))
+        if (player_equip_unrand(UNRAND_FINGER_AMULET))
+        {
+            if (!is_amulet)
+            {
+                if (!you.slot_item(EQ_RING_AMULET))
+                {
+                    if (!_safe_to_remove_or_wear(item, false))
+                        return false;
+                }
+                else if (!remove_ring(you.equip[EQ_RING_AMULET], true))
+                    return false;
+            }
+            else
+            {
+                if (!remove_ring(you.equip[EQ_RING_AMULET], true))
+                    return false;
+
+                if (!remove_ring(you.equip[EQ_FAIRY_JEWEL], true))
+                    return false;
+
+                if (!_safe_to_remove_or_wear(item, false))
+                    return false;
+
+                start_delay<JewelleryOnDelay>(1, item);
+
+                return true;
+            }
+        }
+        else if (you.slot_item(EQ_FAIRY_JEWEL))
         {
             if (!remove_ring(you.equip[EQ_FAIRY_JEWEL], true))
                 return false;
@@ -2390,7 +2418,12 @@ static bool _puton_item(int item_slot, bool prompt_slot,
     equipment_type hand_used = EQ_NONE;
 
     if (you.species == SP_FAIRY)
-        hand_used = EQ_FAIRY_JEWEL;
+    {
+        if (!is_amulet && player_equip_unrand(UNRAND_FINGER_AMULET))
+            hand_used = EQ_RING_AMULET;
+        else
+            hand_used = EQ_FAIRY_JEWEL;
+    }
     else if (is_amulet)
         hand_used = EQ_AMULET;
     else if (prompt_slot)
@@ -2563,14 +2596,13 @@ bool remove_ring(int slot, bool announce)
         mpr("You can't take that off while it's melded.");
         return false;
     }
-    else if (hand_used == EQ_AMULET
+    else if (hand_used == EQ_AMULET || hand_used == EQ_FAIRY_JEWEL
         && you.equip[EQ_RING_AMULET] != -1)
     {
         // This can be removed in the future if more ring amulets are added.
         ASSERT(player_equip_unrand(UNRAND_FINGER_AMULET));
 
-        mpr("The amulet cannot be taken off without first removing the ring!");
-        return false;
+        remove_ring(you.equip[EQ_RING_AMULET], true);
     }
 
     if (!check_warning_inscriptions(you.inv[you.equip[hand_used]],

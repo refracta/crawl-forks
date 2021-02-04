@@ -1156,6 +1156,16 @@ bool player_equip_unrand(int unrand_index)
                 return true;
             }
         }
+    case EQ_AMULET: // fallthrough
+        if (you.species == SP_FAIRY)
+        {
+            if ((item = you.slot_item(EQ_FAIRY_JEWEL))
+                && is_unrandom_artefact(*item)
+                && item->unrand_idx == unrand_index)
+            {
+                return true;
+            }
+        }
         break;
 
     case EQ_NONE:
