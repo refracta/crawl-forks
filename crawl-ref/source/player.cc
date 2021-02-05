@@ -1166,6 +1166,15 @@ bool player_equip_unrand(int unrand_index)
                 return true;
             }
         }
+        else
+        {
+            if ((item = you.slot_item(EQ_AMULET))
+                && is_unrandom_artefact(*item)
+                && item->unrand_idx == unrand_index)
+            {
+                return true;
+            }
+        }
         break;
 
     case EQ_NONE:
