@@ -949,23 +949,6 @@ void fire_monster_death_event(monster* mons,
                       mons->mid, killer));
     }
 
-    bool terrain_changed = false;
-
-    for (map_marker *mark : env.markers.get_all(MAT_TERRAIN_CHANGE))
-    {
-        map_terrain_change_marker *marker =
-                dynamic_cast<map_terrain_change_marker*>(mark);
-
-        if (marker->mon_num != 0 && monster_by_mid(marker->mon_num) == mons)
-        {
-            terrain_changed = true;
-            marker->duration = 0;
-        }
-    }
-
-    if (terrain_changed)
-        timeout_terrain_changes(0, true);
-
     if (killer == KILL_BANISHED)
     {
         if (type == MONS_ROYAL_JELLY && !mons->is_summoned() && !polymorph)
@@ -3095,6 +3078,23 @@ void end_flayed_effect(monster* ghost)
 // Clean up after a dead monster.
 void monster_cleanup(monster* mons)
 {
+    bool terrain_changed = false;
+
+    for (map_marker *mark : env.markers.get_all(MAT_TERRAIN_CHANGE))
+    {
+        map_terrain_change_marker *marker =
+            dynamic_cast<map_terrain_change_marker*>(mark);
+
+        if (marker->mon_num != 0 && monster_by_mid(marker->mon_num) == mons)
+        {
+            terrain_changed = true;
+            marker->duration = 0;
+        }
+    }
+
+    if (terrain_changed)
+        timeout_terrain_changes(0, true);
+
     crawl_state.mon_gone(mons);
 
     if (mons->has_ench(ENCH_AWAKEN_FOREST))
