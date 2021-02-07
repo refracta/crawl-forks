@@ -7802,7 +7802,7 @@ string bolt::get_source_name() const
 */
 bool bolt::can_knockback(const actor &act, int dam) const
 {
-    if (act.is_stationary())
+    if (act.is_stationary() || act.wearing_ego(EQ_BOOTS, SPARM_STURDY))
         return false;
 
     return flavour == BEAM_WATER && origin_spell == SPELL_PRIMAL_WAVE
