@@ -3432,29 +3432,35 @@ spret cast_spectral_weapon(actor *agent, int pow, god_type god, bool fail)
     const int dur = min(2 + random2(1 + div_rand_round(pow, 25)), 4);
     item_def* wpn = agent->weapon();
 
-    // If the wielded weapon should not be cloned, abort
-    if (!weapon_can_be_spectral(wpn))
+    if (agent->is_player())
     {
-        if (agent->is_player())
+
+        if (you.weapon(0) && weapon_can_be_spectral(you.weapon(0)))
+            wpn = you.weapon(0);
+        else if (you.weapon(1) && weapon_can_be_spectral(you.weapon(1)))
+            wpn = you.weapon(1);
+        else if (you.weapon(0))
+            wpn = you.weapon(0);
+        else if (you.weapon(1))
+            wpn = you.weapon(1);
+
+        if (!wpn)
         {
-            if (you.weapon(1) && weapon_can_be_spectral(you.weapon(1)))
-                wpn = you.weapon(1);
-            else if (wpn)
-            {
-                mprf("%s vibrate%s crazily for a second.",
-                     wpn->name(DESC_YOUR).c_str(),
-                     wpn->quantity > 1 ? "" : "s");
-                return spret::abort;
-            }
-            else
-            {
-                mpr(you.hands_act("twitch", "."));
-                return spret::abort;
-            }
-        }
-        else
+            mpr(you.hands_act("twitch", "."));
             return spret::abort;
+        }
+        else if (!weapon_can_be_spectral(wpn))
+        {
+            mprf("%s vibrate%s crazily for a second.",
+                wpn->name(DESC_YOUR).c_str(),
+                wpn->quantity > 1 ? "" : "s");
+            return spret::abort;
+        }
     }
+
+    // If the wielded weapon should not be cloned, abort
+    if (!wpn || !weapon_can_be_spectral(wpn))
+        return spret::abort;
 
     fail_check();
 
