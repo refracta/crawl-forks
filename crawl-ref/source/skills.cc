@@ -1282,10 +1282,7 @@ static int _train(skill_type exsk, int &max_exp, bool simu)
 
             // Might no longer be able to train manual skill.
             if (training_restricted(exsk))
-            {
                 you.stop_train.insert(exsk);
-                update_can_currently_train();
-            }
         }
     }
 
