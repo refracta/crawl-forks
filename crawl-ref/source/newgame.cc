@@ -1967,6 +1967,11 @@ static vector<weapon_choice> _get_weapons(const newgame_def& ng)
         weapon_type startwep[3] = { WPN_HUNTING_SLING,
                                     WPN_SHORTBOW, WPN_HAND_CROSSBOW };
 
+        if (!is_wieldable_weapon(WPN_HUNTING_SLING, species_size(species))
+        {
+            startwep[3] = { WPN_FUSTIBALUS, WPN_LONGBOW, WPN_ARBALEST };
+        }
+
         for (int i = 0; i < 3; i++)
         {
             weapon_choice wp;

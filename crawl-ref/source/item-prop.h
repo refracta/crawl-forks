@@ -129,6 +129,7 @@ int shield_rarity(int s_type) IMMUTABLE;
 
 bool is_hybrid(int s_type) IMMUTABLE;
 
+bool is_wieldable_weapon(weapon_type wpn, size_type size);
 bool  is_weapon_wieldable(const item_def &item, size_type size) PURE;
 
 hands_reqd_type basic_hands_reqd(const item_def &item, size_type size) PURE;

@@ -534,7 +534,7 @@ static const weapon_def Weapon_prop[] =
 
     // Short Blades
     { WPN_DAGGER,            "dagger",              4,  6, 10,
-        SK_SHORT_BLADES, SIZE_LITTLE, SIZE_LITTLE, SIZE_LARGE, MI_NONE,
+        SK_SHORT_BLADES, SIZE_LITTLE, SIZE_LITTLE, SIZE_MEDIUM, MI_NONE,
         DAMV_PIERCING, 10, 10, 20, {
             { SPWPN_VENOM,          23 },
             { SPWPN_NORMAL,         20 },
@@ -2238,6 +2238,13 @@ bool item_skills(const item_def &item, set<skill_type> &skills)
     return !skills.empty();
 }
 
+bool is_wieldable_weapon(weapon_type wpn, size_type size)
+{
+    if (Weapon_prop[Weapon_index[wpn]].min_2h_size <= size)
+        return Weapon_prop[Weapon_index[wpn]].max_size >= size;
+    return false;
+}
+
 /**
  * Checks if the provided weapon is wieldable by a creature of the given size.
  *
@@ -2259,14 +2266,11 @@ bool is_weapon_wieldable(const item_def &item, size_type size)
         return true;
     }
 
-    const int subtype = OBJ_STAVES == item.base_type ? int{WPN_STAFF}
-                                                     : item.sub_type;
+    const weapon_type subtype = OBJ_STAVES == item.base_type ? WPN_STAFF
+                                                             : (weapon_type)item.sub_type;
 
-    if ((item.base_type == OBJ_WEAPONS || item.base_type == OBJ_STAVES)
-        && (Weapon_prop[Weapon_index[subtype]].min_2h_size <= size))
-    {
-        return Weapon_prop[Weapon_index[subtype]].max_size >= size;
-    }
+    if (item.base_type == OBJ_WEAPONS || item.base_type == OBJ_STAVES)
+        return is_wieldable_weapon(subtype, size);
 
     return false; // Shouldn't get here, but just in case.
 }

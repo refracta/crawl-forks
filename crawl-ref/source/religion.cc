@@ -1944,6 +1944,8 @@ static weapon_type _hepliaklqana_weapon_type(monster_type mc, int HD)
     switch (mc)
     {
     case MONS_ANCESTOR_HEXER:
+        if (!is_wieldable_weapon(WPN_DAGGER, you.body_size(PSIZE_TORSO, true)))
+            return WPN_KRIS;
         return HD < 16 ? WPN_DAGGER : WPN_TONTO;
     case MONS_ANCESTOR_KNIGHT:
         if (you.species == SP_MERFOLK)
