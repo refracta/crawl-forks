@@ -3641,7 +3641,7 @@ bool is_useless_item(const item_def &item, bool temp)
             return true;
 
         // Either you can use it now or you'll be able to use it later.
-        if (you.species == SP_LIGNIFITE && you.experience_level < 19)
+        if (you.species == SP_LIGNIFITE && you.experience_level < 20)
             return false;
 
         if (!you.could_wield(item, true, !temp)

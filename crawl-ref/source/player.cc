@@ -3545,7 +3545,7 @@ void level_change(bool skip_attribute_increase)
                 break;
 
             case SP_LIGNIFITE:
-                if (!((you.experience_level - 1) % 6))
+                if (!(you.experience_level % 5))
                 {
                     mprf(MSGCH_INTRINSIC_GAIN, "You grow larger and bulkier, but also slower.");
                 }

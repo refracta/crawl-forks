@@ -214,14 +214,16 @@ size_type species_size(species_type species, size_part_type psize)
 
     if (species == SP_LIGNIFITE)
     {
-        if (you.experience_level < 7)
+        if (you.experience_level < 5)
             return SIZE_LITTLE;
-        else if (you.experience_level < 13)
+        else if (you.experience_level < 10)
             return SIZE_SMALL;
-        else if (you.experience_level < 19)
+        else if (you.experience_level < 15)
             return SIZE_MEDIUM;
-        else if (you.experience_level < 25)
+        else if (you.experience_level < 20)
             return SIZE_LARGE;
+        else if (you.experience_level < 25)
+            return SIZE_BIG;
         else
             return SIZE_GIANT;
     }
@@ -530,11 +532,13 @@ void give_level_mutations(species_type species, int xp_level)
     // Also doing this way instead of perma_mutate() to use custom messaging.
     if (you.species == SP_LIGNIFITE)
     {
-        if (xp_level == 7)
+        if (xp_level == 5)
+            you.mutation[MUT_FAST] = you.innate_mutation[MUT_FAST] = 2;
+        if (xp_level == 10)
             you.mutation[MUT_FAST] = you.innate_mutation[MUT_FAST] = 1;
-        if (xp_level == 13)
+        if (xp_level == 15)
             you.mutation[MUT_FAST] = you.innate_mutation[MUT_FAST] = 0;
-        if (xp_level == 19)
+        if (xp_level == 20)
             you.mutation[MUT_SLOW] = you.innate_mutation[MUT_SLOW] = 1;
         if (xp_level == 25)
             you.mutation[MUT_SLOW] = you.innate_mutation[MUT_SLOW] = 2;
@@ -558,7 +562,7 @@ int species_hp_modifier(species_type species)
     if (you.char_class == JOB_DEMIGOD)
         return get_species_def(species).hp_mod + 1;
     if (you.species == SP_LIGNIFITE)
-        return (-2 + div_round_up(you.experience_level - 1, 6));
+        return (-2 + div_round_up(you.experience_level, 5));
     return get_species_def(species).hp_mod;
 }
 

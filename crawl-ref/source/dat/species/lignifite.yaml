@@ -49,7 +49,7 @@ mutations:
     MUT_TORMENT_RESISTANCE: 1
     MUT_SLOW_METABOLISM: 1
     MUT_DEFORMED: 1
-    MUT_FAST: 1
+    MUT_FAST: 3
     MUT_UNBREATHING: 1
 fake_mutations:
   - long: Your woody flesh burns easily. (rF-)
