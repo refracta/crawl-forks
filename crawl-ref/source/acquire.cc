@@ -632,7 +632,9 @@ static int _acquirement_misc_subtype(bool /*divine*/, int & /*quantity*/,
         {MISC_FAN_OF_GALES,
             (you.seen_misc[MISC_FAN_OF_GALES] ?       0 : 17)},
         {MISC_LANTERN_OF_SHADOWS,
-            (you.seen_misc[MISC_LANTERN_OF_SHADOWS] ? 0 :  7)}
+            (you.seen_misc[MISC_LANTERN_OF_SHADOWS]
+            || you.species == SP_FELID
+            || you.species == SP_FAIRY        ?       0 :  7)}
     };
 
     const int * const choice = random_choose_weighted(choices);

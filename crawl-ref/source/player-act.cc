@@ -480,7 +480,7 @@ bool player::can_wield(const item_def& item, bool ignore_curse,
 bool player::could_wield(const item_def &item, bool ignore_brand,
                          bool ignore_transform, bool quiet) const
 {
-    if (species == SP_FELID)
+    if (species == SP_FELID || species == SP_FAIRY)
     {
         if (!quiet)
             mpr("You can't use weapons.");
