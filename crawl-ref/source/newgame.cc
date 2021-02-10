@@ -1967,9 +1967,11 @@ static vector<weapon_choice> _get_weapons(const newgame_def& ng)
         weapon_type startwep[3] = { WPN_HUNTING_SLING,
                                     WPN_SHORTBOW, WPN_HAND_CROSSBOW };
 
-        if (!is_wieldable_weapon(WPN_HUNTING_SLING, species_size(species))
+        if (!is_wieldable_weapon(WPN_HUNTING_SLING, species_size(ng.species)))
         {
-            startwep[3] = { WPN_FUSTIBALUS, WPN_LONGBOW, WPN_ARBALEST };
+            startwep[0] = WPN_FUSTIBALUS; 
+            startwep[1] = WPN_LONGBOW;
+            startwep[2] = WPN_ARBALEST;
         }
 
         for (int i = 0; i < 3; i++)

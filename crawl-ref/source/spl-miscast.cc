@@ -1633,8 +1633,17 @@ void MiscastEffect::_necromancy(int severity)
                 you_msg = "You feel homesick.";
             break;
         case 2:
-            you_msg = "Pain shoots through your body.";
-            mon_msg_seen = "@The_monster@ twitches violently.";
+            if (target->res_torment())
+            {
+                you_msg = "You feel weird for a moment.";
+                mon_msg_seen = "@The_monster@ has a weird expression for a "
+                    "moment.";
+            }
+            else
+            {
+                you_msg = "Pain shoots through your body.";
+                mon_msg_seen = "@The_monster@ twitches violently.";
+            }
             break;
         case 3:
             if (you.species == SP_OCTOPODE)

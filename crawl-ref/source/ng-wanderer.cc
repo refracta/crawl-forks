@@ -639,7 +639,7 @@ static void _wanderer_cover_equip_holes()
 
         for (const item_def& i : you.inv)
         {
-            if (i.is_type(OBJ_WEAPONS, WPN_DAGGER))
+            if (i.base_type == OBJ_WEAPONS && item_attack_skill(i) == SK_SHORT_BLADES)
             {
                 has_dagger = true;
                 break;

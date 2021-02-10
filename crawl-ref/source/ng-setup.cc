@@ -138,6 +138,28 @@ item_def* newgame_make_item(object_class_type base,
             item.sub_type = ARM_ROBE;
     }
 
+    if (item.base_type == OBJ_WEAPONS
+        && !is_wieldable_weapon((weapon_type)sub_type, species_size(you.species)))
+    {
+        switch (item_attack_skill(item))
+        {
+        case SK_SHORT_BLADES:
+            item.sub_type = WPN_SHORT_SWORD; // Daggers to short swords;
+            break;
+        case SK_BOWS:
+            item.sub_type = WPN_LONGBOW;
+            break;
+        case SK_CROSSBOWS:
+            item.sub_type = WPN_ARBALEST;
+            break;
+        case SK_SLINGS:
+            item.sub_type = WPN_FUSTIBALUS;
+            break;
+        default:
+            break; // Hopefully a player will report spawning with a useless item as Wanderer.
+        }
+    }
+
     if (is_christmas() && item.is_type(OBJ_ARMOURS, ARM_HAT))
         item.sub_type = ARM_CAP;
 

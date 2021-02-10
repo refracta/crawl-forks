@@ -1786,6 +1786,8 @@ static string _item_ego_name(object_class_type base_type, int brand)
 {
     switch (base_type)
     {
+    case OBJ_SHIELDS:
+        return "reflection"; // HACK!!
     case OBJ_WEAPONS:
     {
         // 'remembers... draining' reads better than 'drain', but 'flame'
@@ -1794,11 +1796,8 @@ static string _item_ego_name(object_class_type base_type, int brand)
                            || brand == SPWPN_ANTIMAGIC;
         return brand_type_name((brand_type) brand, terse);
     }
-    case OBJ_ARMOURS:
-        // XXX: hack
-        return "reflection";
     default:
-        die("unsupported object type");
+        return "BUGGINESS";
     }
 }
 
