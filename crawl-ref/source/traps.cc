@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <cmath>
 
+#include "act-iter.h"
 #include "areas.h"
 #include "attack.h"
 #include "bloodspatter.h"
@@ -25,6 +26,7 @@
 #include "item-prop.h"
 #include "items.h"
 #include "libutil.h"
+#include "losglobal.h"
 #include "mapmark.h"
 #include "mon-enum.h"
 #include "mon-tentacle.h"
@@ -514,20 +516,46 @@ void trap_def::trigger(actor& triggerer)
             break;
         }
         case TRAP_DISPERSAL:
+        {
             dprf("Triggered dispersal.");
             if (you_trigger)
                 mprf("You enter %s!", name(DESC_A).c_str());
             else if (in_sight)
                 mprf("%s enters %s!", triggerer.name(DESC_THE).c_str(),
-                        name(DESC_A).c_str());
-            apply_visible_monsters([] (monster& mons) {
-                    return !mons.no_tele() && monster_blink(&mons);
-                }, pos);
-            if (!you_trigger && you.see_cell_no_trans(pos))
-                you.blink();
+                    name(DESC_A).c_str());
+            for (monster_iterator mi; mi; ++mi)
+            {
+                if (mi->no_tele())
+                    continue;
+                mi->blink(pos);
+            }
+            if (!you_trigger)
+                you.blink(pos);
             // Don't chain disperse
-            triggerer.blink();
+            triggerer.blink(pos);
+            int chance = 1;
+            bool found_xom = false;
+            for (rectangle_iterator ri(pos, LOS_RADIUS); ri; ++ri)
+            {
+                if (!cell_see_cell(pos, *ri, LOS_NO_TRANS))
+                    continue;
+                if (feat_is_lava(grd(*ri)))
+                    chance += 2;
+                else if (grd(*ri) == DNGN_DEEP_WATER || grd(*ri) == DNGN_DEEP_SLIMY_WATER)
+                    chance += 1;
+                else if (grd(*ri) == DNGN_ALTAR_XOM)
+                    found_xom = true;
+            }
+            if (chance == 10 && found_xom)
+                chance = 0;
+            if (x_chance_in_y(chance, 20))
+            {
+                if (you.see_cell(pos))
+                    mpr("The translocations magic binding the trap unravels.");
+                destroy();
+            }
             break;
+        }
         case TRAP_TELEPORT:
         case TRAP_TELEPORT_PERMANENT:
             if (you_trigger)

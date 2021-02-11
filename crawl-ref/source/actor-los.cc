@@ -25,7 +25,6 @@ bool monster::see_cell(const coord_def &p) const
         return false; // actor is off the map
 
     return cell_see_cell(pos(), p, LOS_MONSTER);
-
 }
 
 bool player::see_cell(const coord_def &p) const

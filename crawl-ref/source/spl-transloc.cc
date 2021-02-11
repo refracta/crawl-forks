@@ -116,7 +116,7 @@ void disjunction_spell()
  * @param override_stasis       Whether to blink even if the player is under
  *                              stasis (& thus normally unable to).
  */
-void uncontrolled_blink(bool override_stasis)
+void uncontrolled_blink(bool override_stasis, coord_def disp_center)
 {
     if (you.no_tele(true, true, true) && !override_stasis)
     {
@@ -124,15 +124,32 @@ void uncontrolled_blink(bool override_stasis)
         return;
     }
 
+    int tries = 150;
     coord_def target;
     // First try to find a random square not adjacent to the player,
     // then one adjacent if that fails.
-    if (!random_near_space(&you, you.pos(), target)
-             && !random_near_space(&you, you.pos(), target, true))
+
+    for (; tries > 0; tries--)
     {
-        mpr("You feel jittery for a moment.");
-        return;
+        if (!random_near_space(&you, you.pos(), target, false, false, false)
+            && !random_near_space(&you, you.pos(), target, true, false, false))
+        {
+            mpr("You feel jittery for a moment.");
+            break;
+        }
+
+        if (disp_center != coord_def(0, 0))
+        {
+            if (cell_see_cell(disp_center, target, LOS_NO_TRANS))
+                break;
+        }
+        else
+            break;
     }
+
+    if (tries = 0)
+        return; // No message because a dispersal trap we had no idea 
+        // existed may have tried to pull us towards it.
 
     if (!you.attempt_escape(2)) // prints its own messages
         return;
@@ -1106,7 +1123,7 @@ static int _disperse_monster(monster& mon, int pow)
         return false;
 
     if (mon.check_res_magic(pow) > 0)
-        monster_blink(&mon);
+        monster_blink(&mon, false);
     else
         monster_teleport(&mon, true);
 

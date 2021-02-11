@@ -7616,9 +7616,9 @@ void player::expose_to_element(beam_type element, int _strength,
     ::expose_player_to_element(element, _strength, slow_cold_blood);
 }
 
-void player::blink()
+void player::blink(coord_def disp_center)
 {
-    cast_blink(false, true);
+    uncontrolled_blink(false, disp_center);
 }
 
 void player::teleport(bool now, bool wizard_tele)

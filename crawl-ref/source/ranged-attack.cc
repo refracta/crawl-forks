@@ -888,9 +888,9 @@ bool ranged_attack::apply_missile_brand()
                 coord_def pos, pos2;
                 const bool no_sanct = defender->kill_alignment() == KC_OTHER;
                 if (random_near_space(defender, defender->pos(), pos, false,
-                                      no_sanct)
+                                      no_sanct, false)
                     && random_near_space(defender, defender->pos(), pos2, false,
-                                         no_sanct))
+                                         no_sanct, false))
                 {
                     const coord_def from = attacker->pos();
                     if (grid_distance(pos2, from) > grid_distance(pos, from))

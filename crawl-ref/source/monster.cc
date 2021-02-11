@@ -4414,9 +4414,9 @@ bool monster::shift(coord_def p)
     return count > 0;
 }
 
-void monster::blink()
+void monster::blink(coord_def disp_center)
 {
-    monster_blink(this);
+    monster_blink(this, false, false, disp_center);
 }
 
 void monster::teleport(bool now, bool)

@@ -115,7 +115,7 @@ bool monster::blink_to(const coord_def& dest, bool quiet, bool jump)
 }
 
 // If the returned value is mon.pos(), then nothing was found.
-static coord_def _random_monster_nearby_habitable_space(const monster& mon)
+static coord_def _random_monster_nearby_space(const monster& mon, const bool safe, coord_def disp_center)
 {
     const bool respect_sanctuary = mon.wont_attack();
 
@@ -144,7 +144,10 @@ static coord_def _random_monster_nearby_habitable_space(const monster& mon)
         if (!in_bounds(target))
             continue;
 
-        if (!monster_habitable_grid(&mon, grd(target)))
+        if (safe && !monster_habitable_grid(&mon, grd(target)))
+            continue;
+
+        if (!mon.can_pass_through(target))
             continue;
 
         if (respect_sanctuary && is_sanctuary(target))
@@ -154,6 +157,9 @@ static coord_def _random_monster_nearby_habitable_space(const monster& mon)
             continue;
 
         if (!cell_see_cell(mon.pos(), target, LOS_NO_TRANS))
+            continue;
+
+        if (disp_center != coord_def(0, 0) && !cell_see_cell(disp_center, target, LOS_NO_TRANS))
             continue;
 
         // Survived everything, break out (with a good value of target.)
@@ -166,9 +172,9 @@ static coord_def _random_monster_nearby_habitable_space(const monster& mon)
     return target;
 }
 
-bool monster_blink(monster* mons, bool quiet)
+bool monster_blink(monster* mons, bool safe, bool quiet, coord_def disp_center)
 {
-    coord_def near = _random_monster_nearby_habitable_space(*mons);
+    coord_def near = _random_monster_nearby_space(*mons, safe, disp_center);
     return mons->blink_to(near, quiet);
 }
 
@@ -431,6 +437,8 @@ bool valid_blink_destination(const actor* moved, const coord_def& target,
     if (actor_at(target))
         return false;
     if (forbid_unhabitable && !moved->is_habitable(target))
+        return false;
+    if (!moved->can_pass_through(target))
         return false;
     if (forbid_sanctuary && is_sanctuary(target))
         return false;

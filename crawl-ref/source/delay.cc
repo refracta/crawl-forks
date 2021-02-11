@@ -874,7 +874,7 @@ void PasswallDelay::finish()
     if (monster* m = monster_at(dest))
     {
         // One square, a few squares, anywhere...
-        if (!m->shift() && !monster_blink(m, true))
+        if (!m->shift() && !monster_blink(m, true, true))
             monster_teleport(m, true, true);
         // Might still fail.
         if (monster_at(dest))
