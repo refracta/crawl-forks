@@ -1044,6 +1044,33 @@ int dgn_count_disconnected_zones(bool choose_stairless,
                                        fill);
 }
 
+static void _veto_deadly_dispersal(int depth)
+{
+    if (depth > 15)
+        return;
+
+    for (rectangle_iterator ri(1); ri; ++ri)
+    {
+        if (grd(*ri) == DNGN_TRAP_DISPERSAL)
+        {
+            for (rectangle_iterator si(*ri, LOS_RADIUS); si; ++si)
+            {
+                if (feat_is_lava(grd(*si)))
+                {
+                    _set_grd(*ri, DNGN_FOUNTAIN_BLOOD);
+                    break;
+                }
+                else if ((depth < 4) 
+                    && (grd(*si) == DNGN_DEEP_WATER || grd(*si) == DNGN_DEEP_SLIMY_WATER))
+                {
+                    _set_grd(*ri, DNGN_FOUNTAIN_BLUE);
+                    break;
+                }
+            }
+        }
+    }
+}
+
 static void _fixup_hell_stairs()
 {
     if (!player_in_hell())
@@ -2811,6 +2838,8 @@ static void _build_dungeon_level()
         _fixup_walls();
 
         _fixup_hell_stairs();
+
+        _veto_deadly_dispersal(env.absdepth0);
     }
     else
     {
