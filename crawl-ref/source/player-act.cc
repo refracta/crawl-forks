@@ -141,12 +141,12 @@ bool player::floundering() const
 bool player::extra_balanced() const
 {
     const dungeon_feature_type grid = grd(pos());
-    return species == SP_GREY_DRACONIAN
-              || form == transformation::tree
+    return form == transformation::tree
               || you.attribute [ATTR_ROOTED]
               || grid == DNGN_SHALLOW_WATER
                   && (species == SP_NAGA // tails, not feet
-                      || body_size(PSIZE_BODY) >= SIZE_LARGE)
+                      || body_size(PSIZE_BODY) >= SIZE_LARGE
+                      || you.wearing_ego(EQ_BOOTS, SPARM_STURDY))
                   && form_keeps_mutations();
 }
 
@@ -380,6 +380,11 @@ random_var player::attack_delay(const item_def *projectile, bool rescale) const
 
     if (you.duration[DUR_CLUMSY])
         attk_delay = attk_delay * 2;
+        
+    if (you.drowning())
+        attk_delay = div_rand_round(attk_delay * 7, 4);
+    else if (floundering() || liquefied_ground() && you.duration[DUR_LIQUEFYING] == 0 || you.in_lava())
+        attk_delay = div_rand_round(attk_delay * 11, 8);
 
     if (you.duration[DUR_FINESSE])
     {
@@ -752,34 +757,6 @@ string player::unarmed_attack_name() const
         default_name = "Tentacles";
 
     return get_form()->get_uc_attack_name(default_name);
-}
-
-bool player::fumbles_attack()
-{
-    bool did_fumble = false;
-
-    if (you.wearing_ego(EQ_BOOTS, SPARM_STURDY))
-        return false;
-
-    // Fumbling in shallow water.
-    if (floundering() || liquefied_ground() && you.duration[DUR_LIQUEFYING] == 0 || you.in_lava())
-    {
-        if (x_chance_in_y(3, 8))
-        {
-            mpr("Your unstable footing causes you to fumble your attack.");
-            did_fumble = true;
-        }
-        if (floundering())
-            learned_something_new(HINT_FUMBLING_SHALLOW_WATER);
-    }
-
-    if (you.drowning())
-    {
-        mpr("You can't attack effectively from deep water.");
-        did_fumble = true;
-    }
-
-    return did_fumble;
 }
 
 void player::attacking(actor *other, bool ranged)

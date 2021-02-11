@@ -393,6 +393,9 @@ int raw_spell_fail(spell_type spell)
 
     chance2 += you.duration[DUR_VERTIGO] ? 7 : 0;
 
+    if (you.drowning())
+        chance2 *= 1.2;
+
     // Apply the effects of Vehumet and items of wizardry.
     chance2 = _apply_spellcasting_success_boosts(spell, chance2);
 
@@ -812,13 +815,6 @@ bool can_cast_spells(bool quiet)
     {
         if (!quiet)
             mpr("You cannot cast spells while unable to breathe!");
-        return false;
-    }
-
-    if (you.drowning())
-    {
-        if (!quiet)
-            mpr("You cannot cast spells while struggling to keep your head above water!");
         return false;
     }
 

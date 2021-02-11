@@ -2416,10 +2416,9 @@ static void _swing_at_target(coord_def move)
             if (stop_attack_prompt(hitfunc, "attack"))
                 return;
 
-            if (!you.fumbles_attack())
-                attack_cleave_targets(you, cleave_targets);
+            attack_cleave_targets(you, cleave_targets);
         }
-        else if (!you.fumbles_attack())
+        else
             mpr("You swing at nothing.");
         make_hungry(3, true);
         // Take the usual attack delay.

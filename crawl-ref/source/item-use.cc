@@ -3582,10 +3582,6 @@ string cannot_read_item_reason(const item_def &item)
     if (you.duration[DUR_WATER_HOLD] && !you.res_water_drowning())
         return "You cannot read scrolls while unable to breathe!";
 
-    // drowning
-    if ((env.grid(you.position) == DNGN_DEEP_WATER || env.grid(you.position) == DNGN_DEEP_SLIMY_WATER) && !you.airborne() && !you.res_water_drowning())
-        return "You cannot read scrolls while unable to breathe!";
-
     // ru
     if (you.duration[DUR_NO_SCROLLS])
         return "You cannot read scrolls in your current state!";
@@ -3755,6 +3751,15 @@ void read(item_def* scroll)
         return;
     }
 
+    if (you.drowning()
+        && !i_feel_safe(false, false, true)
+        && !yesno("Really read while struggling to swim and enemies are nearby?",
+            false, 'n'))
+    {
+        canned_msg(MSG_OK);
+        return;
+    }
+
     // Ok - now we FINALLY get to read a scroll !!! {dlb}
     you.turn_is_over = true;
 
@@ -3769,6 +3774,11 @@ void read(item_def* scroll)
         }
         else
             start_delay<BlurryScrollDelay>(1, *scroll);
+    }
+    else if (you.drowning())
+    {
+        mpr("It's difficult to keep the scroll above water long enough to read it...");
+        start_delay<BlurryScrollDelay>(1, *scroll);
     }
     else
         read_scroll(*scroll);

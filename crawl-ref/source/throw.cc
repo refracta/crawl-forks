@@ -221,13 +221,6 @@ bool fire_warn_if_impossible(bool silent)
         return true;
     }
 
-    if (you.drowning())
-    {
-        if (!silent)
-            mpr("You can't fire or throw effectively while struggling to swim!");
-        return true;
-    }
-
     // If you can't wield it, you can't throw it.
     if (!form_can_wield())
     {

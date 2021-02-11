@@ -701,7 +701,7 @@ public:
     string arm_name(bool plural, bool *can_plural = nullptr) const override;
     string unarmed_attack_name() const;
 
-    bool fumbles_attack() override;
+    bool fumbles_attack() override { return false; };
     bool drowning();
     bool fights_well_unarmed(int heavy_armour_penalty) override;
 
