@@ -293,8 +293,8 @@ void chaotic_debuff(actor* act, int dur, actor * attacker)
     case CD_CONFUSE:
         if (act->is_player())
         {
-            mprf(MSGCH_WARN, "Magic seeps into your mind confuses you.");
-            you.increase_duration(DUR_CONF, dur);
+            mprf(MSGCH_WARN, "Bemusing magic seeps into your mind...");
+            confuse_player(dur);
         }
         else
         {
