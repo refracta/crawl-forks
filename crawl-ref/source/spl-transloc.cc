@@ -124,6 +124,8 @@ void uncontrolled_blink(bool override_stasis, coord_def disp_center)
         return;
     }
 
+    bool needs_msg = ((disp_center != coord_def(0, 0)) && !you.see_cell(disp_center));
+
     int tries = 150;
     coord_def target;
     // First try to find a random square not adjacent to the player,
@@ -151,10 +153,16 @@ void uncontrolled_blink(bool override_stasis, coord_def disp_center)
         return; // No message because a dispersal trap we had no idea 
         // existed may have tried to pull us towards it.
 
+    if (you.is_constricted() && needs_msg)
+        mpr("You feel yourself being warped!");
+
     if (!you.attempt_escape(2)) // prints its own messages
         return;
 
-    canned_msg(MSG_YOU_BLINK);
+    if (needs_msg)
+        mpr("Yoink! You're pulled towards a dispersal trap!");
+    else
+        canned_msg(MSG_YOU_BLINK);
     const coord_def origin = you.pos();
     move_player_to_grid(target, false);
     _place_tloc_cloud(origin);
