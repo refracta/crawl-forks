@@ -45,6 +45,7 @@
 #include "items.h"
 #include "lev-pand.h"
 #include "libutil.h"
+#include "losglobal.h"
 #include "mapmark.h"
 #include "maps.h"
 #include "message.h"
@@ -1055,6 +1056,10 @@ static void _veto_deadly_dispersal(int depth)
         {
             for (rectangle_iterator si(*ri, LOS_RADIUS); si; ++si)
             {
+                if (!in_bounds(*si))
+                    continue;
+                if (!cell_see_cell(*ri, *si, LOS_NO_TRANS))
+                    continue;
                 if (feat_is_lava(grd(*si)))
                 {
                     _set_grd(*ri, DNGN_FOUNTAIN_BLOOD);
