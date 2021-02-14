@@ -136,13 +136,14 @@ void uncontrolled_blink(bool override_stasis, coord_def disp_center)
         if (!random_near_space(&you, you.pos(), target, false, false, false)
             && !random_near_space(&you, you.pos(), target, true, false, false))
         {
-            mpr("You feel jittery for a moment.");
+            if (disp_center == coord_def(0, 0))
+                mpr("You feel jittery for a moment.");
             break;
         }
 
         if (disp_center != coord_def(0, 0))
         {
-            if (cell_see_cell(disp_center, target, LOS_NO_TRANS))
+            if ((grid_distance(target, disp_center) <= you.current_vision) && cell_see_cell(target, disp_center, LOS_NO_TRANS))
                 break;
         }
         else
