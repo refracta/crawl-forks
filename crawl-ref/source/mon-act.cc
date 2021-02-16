@@ -2740,9 +2740,11 @@ void handle_monsters(bool with_noise)
     {
         if (tries++ > 32767)
         {
-            die("infinite handle_monsters() loop, mons[0 of %d] is %s",
+            die("infinite handle_monsters() loop, mons[0 of %d] is %s at (%d, %d)",
                 (int)monster_queue.size(),
-                monster_queue.top().first->name(DESC_PLAIN, true).c_str());
+                monster_queue.top().first->name(DESC_PLAIN, true).c_str(),
+                (int)monster_queue.top().first->pos().x,
+                (int)monster_queue.top().first->pos().y);
         }
 
         monster *mon = monster_queue.top().first;
