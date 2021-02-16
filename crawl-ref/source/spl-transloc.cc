@@ -132,7 +132,10 @@ void uncontrolled_blink(bool override_stasis, coord_def disp_center)
 
     for (rectangle_iterator ri(you.pos(), you.current_vision); ri; ++ri)
     {
-        if (!you.see_cell(*ri))
+        if (!you.see_cell_no_trans(*ri))
+            continue;
+
+        if (!you.can_pass_through(*ri))
             continue;
 
         if (!disp_center.origin())
