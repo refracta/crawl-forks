@@ -138,6 +138,9 @@ void uncontrolled_blink(bool override_stasis, coord_def disp_center)
         if (!you.can_pass_through(*ri))
             continue;
 
+        if (actor_at(*ri))
+            continue;
+
         if (!disp_center.origin())
         {
             if ((grid_distance(*ri, disp_center) > you.current_vision) || !(cell_see_cell(*ri, disp_center, LOS_NO_TRANS)))
