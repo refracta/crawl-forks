@@ -124,35 +124,40 @@ void uncontrolled_blink(bool override_stasis, coord_def disp_center)
         return;
     }
 
-    bool needs_msg = ((disp_center != coord_def(0, 0)) && !you.see_cell(disp_center));
+    bool needs_msg = (!disp_center.origin() && !you.see_cell(disp_center));
 
-    int tries = 150;
+    bool adjacent = true;
+    int positions = 0;
     coord_def target;
-    // First try to find a random square not adjacent to the player,
-    // then one adjacent if that fails.
 
-    for (; tries > 0; tries--)
+    for (rectangle_iterator ri(you.pos(), you.current_vision); ri; ++ri)
     {
-        if (!random_near_space(&you, you.pos(), target, false, false, false)
-            && !random_near_space(&you, you.pos(), target, true, false, false))
+        if (!you.see_cell(*ri))
+            continue;
+
+        if (!disp_center.origin())
         {
-            if (disp_center == coord_def(0, 0))
-                mpr("You feel jittery for a moment.");
-            break;
+            if ((grid_distance(*ri, disp_center) > you.current_vision) || !(cell_see_cell(*ri, disp_center, LOS_NO_TRANS)))
+                continue;
         }
 
-        if (disp_center != coord_def(0, 0))
+        if (!adjacent && (grid_distance(you.pos(), *ri) < 2))
+            continue;
+
+        if (one_chance_in(++positions))
         {
-            if ((grid_distance(target, disp_center) <= you.current_vision) && cell_see_cell(target, disp_center, LOS_NO_TRANS))
-                break;
+            target = *ri;
+            if (grid_distance(you.pos(), *ri) > 1)
+                adjacent = false;
         }
-        else
-            break;
     }
 
-    if (tries = 0)
-        return; // No message because a dispersal trap we had no idea 
-        // existed may have tried to pull us towards it.
+    if (target.origin())
+    {
+        if (disp_center.origin())
+            mpr("You feel jittery for a moment.");
+        return;
+    }
 
     if (you.is_constricted() && needs_msg)
         mpr("You feel yourself being warped!");
