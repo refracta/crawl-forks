@@ -1879,8 +1879,8 @@ void handle_monster_move(monster* mons)
             else if (!monster_habitable_grid(mons, grd(*ai)))
                 invalid_move++;
         }
-        if (invalid_move == possible_move)
-            mons->lose_energy(EUT_MOVE);
+        if (invalid_move >= possible_move)
+            mons->speed_increment = 0;
     }
 
     if (!mons->has_action_energy())
