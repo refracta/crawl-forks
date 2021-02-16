@@ -175,7 +175,7 @@ WEIGHT: 15
 TAGS:   uniq_second_food extra chance_second_food no_monster_gen no_pool_fixup \
         patrolling
 KMONS:  A = merfolk spells:throw_net.100.natural ; spear
-KMONS:  G = rainbow trout
+KMONS:  G = rainbow trout att:passive
 KFEAT:  Gg = W
 ITEM:   ration q:2 tile:food_fish_ration
 KITEM:  e = cleaver

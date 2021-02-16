@@ -3898,6 +3898,8 @@ mons_list::mons_spec_slot mons_list::parse_mons_spec(string spec)
             mspec.attitude = ATT_STRICT_NEUTRAL;
         else if (att == "neutral")
             mspec.attitude = ATT_NEUTRAL;
+        else if (att == "passive")
+            mspec.attitude = ATT_PASSIVE;
 
         // Useful for summoned monsters.
         if (strip_tag(mon_str, "seen"))

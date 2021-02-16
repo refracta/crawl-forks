@@ -549,7 +549,7 @@ KMONS:  1 = cinder newt
 KMONS:  2 = sewer rat band / big kobold band
 KMONS:  3 = crocodile / slime creature
 KMONS:  4 = Purgy, crocodile
-KMONS:  W = withered plant / slimehead w:2 / nothing w:100
+KMONS:  W = withered plant / slimehead att:passive w:2 / nothing w:100
 KFEAT:  1234W = shallow_water
 SUBST:  c : cv
 SUBST:  C : ccvvvxxwW
