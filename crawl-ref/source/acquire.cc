@@ -968,6 +968,8 @@ static bool _do_book_acquirement(item_def &book, int agent)
         {
             destroy_item(book);
             book.quantity = 1;
+            book.base_type = OBJ_MANUALS;
+            book.sub_type  = MAN_NORMAL;
             return _acquire_manual(book);
         }
     }
