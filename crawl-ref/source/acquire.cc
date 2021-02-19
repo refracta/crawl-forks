@@ -919,8 +919,7 @@ static bool _do_book_acquirement(item_def &book, int agent)
         {
             const auto bkt = static_cast<book_type>(bk);
 
-            if (is_rare_book(bkt) && agent == GOD_SIF_MUNA
-                || item_type_removed(OBJ_BOOKS, bk))
+            if (item_type_removed(OBJ_BOOKS, bk))
             {
                 continue;
             }

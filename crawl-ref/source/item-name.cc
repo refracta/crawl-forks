@@ -3969,8 +3969,6 @@ bool is_useless_item(const item_def &item, bool temp)
     {
         if (!item_type_known(item))
             return false;
-        if (item.sub_type == BOOK_MANUAL)
-            return true;
         // Spellbooks are useless if all spells are either in the library
         // already or are uncastable.
         bool useless = true;
