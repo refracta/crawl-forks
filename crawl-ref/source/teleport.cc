@@ -146,6 +146,9 @@ static coord_def _random_monster_nearby_space(const monster& mon, const bool saf
 
         if (safe && !monster_habitable_grid(&mon, grd(target)))
             continue;
+        
+        if (!disp_center.origin() && (grd(target) == DNGN_TRAP_DISPERSAL || grd(target) == DNGN_TRAP_TELEPORT))
+            continue;
 
         if (!mon.can_pass_through(target))
             continue;
