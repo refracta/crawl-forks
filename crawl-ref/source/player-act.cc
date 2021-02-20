@@ -289,16 +289,25 @@ random_var player::attack_delay(const item_def *projectile, bool rescale) const
     if (weap1 && weap1->is_type(OBJ_MISCELLANY, MISC_LANTERN_OF_SHADOWS))
         lantern_penalty = true;
 
+    const bool single_uc = (!weap0 || !weap1);
+
     if (weap0 && !is_weapon(*weap0))
         weap0 = nullptr;
 
     if (weap1 && !is_weapon(*weap1))
         weap1 = nullptr;
 
-    // UC; now always 5.
+    const int g = you.equip[EQ_GLOVES];
+    const item_def *glove = g != -1 ? &you.inv[g] : nullptr;
+    const bool UCspeed = (glove && glove->is_type(OBJ_ARMOURS, ARM_CLAW) && (get_weapon_brand(*glove) == SPWPN_SPEED));
+
+    // UC; 5 unless speed claws, then 3.
     if (!projectile && !weap0 && !weap1)
     {
-        attk_delay = random_var(5);
+        if (UCspeed)
+            attk_delay = random_var(3);
+        else
+            attk_delay = random_var(5);
     }
 
     // Dual Wielding Version
@@ -328,9 +337,9 @@ random_var player::attack_delay(const item_def *projectile, bool rescale) const
         }
 
         if (weap0->base_type == OBJ_WEAPONS && get_weapon_brand(*weap0) == SPWPN_SPEED)
-            attk_delay = div_rand_round(attk_delay * 8, 10);
+            attk_delay = div_rand_round(attk_delay * 4, 5);
         if (weap1->base_type == OBJ_WEAPONS && get_weapon_brand(*weap1) == SPWPN_SPEED)
-            attk_delay = div_rand_round(attk_delay * 8, 10);
+            attk_delay = div_rand_round(attk_delay * 4, 5);
     }
 
     // The old version; only changed to accommodate shield/weapon hybrids.
@@ -370,6 +379,9 @@ random_var player::attack_delay(const item_def *projectile, bool rescale) const
             if (get_weapon_brand(*weap) == SPWPN_SPEED)
                 attk_delay = div_rand_round(attk_delay * 2, 3);
         }
+
+        if (single_uc && UCspeed)
+            attk_delay = div_rand_round(attk_delay * 4, 5);
     }
 
     // At the moment it never gets this low anyway.
