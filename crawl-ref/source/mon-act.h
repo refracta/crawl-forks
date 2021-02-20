@@ -30,7 +30,7 @@ bool handle_throw(monster* mons, bolt &beem,
                   spell_type call_spell = SPELL_NO_SPELL, bool check_only = false);
 
 void handle_monsters(bool with_noise = false);
-void handle_monster_move(monster* mon);
+void handle_monster_move(monster* mon, int tries = 0);
 
 void queue_monster_for_action(monster* mons);
 

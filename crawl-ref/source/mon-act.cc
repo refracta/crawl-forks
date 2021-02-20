@@ -1845,7 +1845,7 @@ static void _pre_monster_move(monster& mons)
     }
 }
 
-void handle_monster_move(monster* mons)
+void handle_monster_move(monster* mons, int tries)
 {
     ASSERT(mons); // XXX: change to monster &mons
     const monsterentry* entry = get_monster_data(mons->type);
@@ -1867,11 +1867,9 @@ void handle_monster_move(monster* mons)
     // Adding a surrounded check for passives so they don't infinite loop when they can't move.
     if (mons->attitude == ATT_PASSIVE)
     {
-        int invalid_move = 0;
-        int possible_move = 0;
+        int invalid_move = 1;
         for (adjacent_iterator ai(mons->pos()); ai; ++ai)
         {
-            possible_move++;
             if (!in_bounds(*ai))
                 invalid_move++;
             else if (actor_at(*ai))
@@ -1879,8 +1877,11 @@ void handle_monster_move(monster* mons)
             else if (!monster_habitable_grid(mons, grd(*ai)))
                 invalid_move++;
         }
-        if (invalid_move >= possible_move)
-            mons->speed_increment = 0;
+        if ((invalid_move == 8) || (tries > 10000) || one_chance_in(3))
+        {
+            mons->speed_increment -= non_move_energy;
+            return;
+        }
     }
 
     if (!mons->has_action_energy())
@@ -2740,11 +2741,13 @@ void handle_monsters(bool with_noise)
     {
         if (tries++ > 32767)
         {
-            die("infinite handle_monsters() loop, mons[0 of %d] is %s at (%d, %d)",
+            mprf("Killing monster to stop infinite handle_monsters() loop, mons[0 of %d] was %s at (%d, %d). Tell Bcadren.",
                 (int)monster_queue.size(),
                 monster_queue.top().first->name(DESC_PLAIN, true).c_str(),
                 (int)monster_queue.top().first->pos().x,
                 (int)monster_queue.top().first->pos().y);
+
+            monster_die(*monster_queue.top().first, nullptr, true, false, false);
         }
 
         monster *mon = monster_queue.top().first;
@@ -2762,7 +2765,7 @@ void handle_monsters(bool with_noise)
         // the queue just after this.
         if (oldspeed == mon->speed_increment)
         {
-            handle_monster_move(mon);
+            handle_monster_move(mon, tries);
             _post_monster_move(mon);
             fire_final_effects();
         }
