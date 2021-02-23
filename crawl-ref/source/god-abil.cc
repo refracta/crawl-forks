@@ -1892,6 +1892,9 @@ void yred_respawn_enslaved_soul()
 {
     coord_def respawn_point;
 
+    if (you.enslaved_soul == MONS_NO_MONSTER)
+        return;
+
     // Nowhere to respawn to; try again shortly.
     if (!find_habitable_spot_near(you.pos(), MONS_SPECTRAL_THING, 4, false, respawn_point))
     {
@@ -1958,6 +1961,9 @@ void yred_make_enslaved_soul(monster* mon, bool force_hostile)
 
     add_daction(DACT_OLD_ENSLAVED_SOULS_POOF);
     remove_enslaved_soul_companion();
+
+    you.enslaved_soul = MONS_NO_MONSTER;
+    you.soul_hd_boost = 0;
 
     const string whose = you.can_see(*mon) ? apostrophise(mon->name(DESC_THE))
                                            : mon->pronoun(PRONOUN_POSSESSIVE);
