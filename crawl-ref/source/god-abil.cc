@@ -1962,8 +1962,15 @@ void yred_make_enslaved_soul(monster* mon, bool force_hostile)
     add_daction(DACT_OLD_ENSLAVED_SOULS_POOF);
     remove_enslaved_soul_companion();
 
-    you.enslaved_soul = MONS_NO_MONSTER;
-    you.soul_hd_boost = 0;
+    if (!force_hostile && you.duration[DUR_ANCESTOR_DELAY])
+    {
+        monster_info temp = monster_info(MONS_SPECTRAL_THING, you.enslaved_soul);
+        mprf("%s is freed!", temp.proper_name(DESC_YOUR).c_str());
+
+        you.enslaved_soul = MONS_NO_MONSTER;
+        you.soul_hd_boost = 0;
+        you.duration[DUR_ANCESTOR_DELAY] = 1;
+    }
 
     const string whose = you.can_see(*mon) ? apostrophise(mon->name(DESC_THE))
                                            : mon->pronoun(PRONOUN_POSSESSIVE);
