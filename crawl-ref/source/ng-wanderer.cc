@@ -346,7 +346,7 @@ static bool exact_level_spell_filter(spschool discipline_1,
 static void _give_wanderer_minor_book(skill_type skill)
 {
     // Doing a rejection loop for this because I am lazy.
-    while (skill == SK_SPELLCASTING)
+    while (skill == SK_SPELLCASTING || is_removed_skill(skill))
     {
         int value = SK_LAST_MAGIC - SK_FIRST_MAGIC_SCHOOL + 1;
         skill = skill_type(SK_FIRST_MAGIC_SCHOOL + random2(value));
