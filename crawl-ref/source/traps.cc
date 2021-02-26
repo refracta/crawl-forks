@@ -535,26 +535,8 @@ void trap_def::trigger(actor& triggerer)
             triggerer.blink(pos);
             if (you.see_cell(pos))
             {
-                int chance = 1;
-                bool found_xom = false;
-                for (rectangle_iterator ri(pos, LOS_RADIUS); ri; ++ri)
-                {
-                    if (!cell_see_cell(pos, *ri, LOS_NO_TRANS))
-                        continue;
-                    if (feat_is_lava(grd(*ri)))
-                        chance += 2;
-                    else if (grd(*ri) == DNGN_DEEP_WATER || grd(*ri) == DNGN_DEEP_SLIMY_WATER)
-                        chance += 1;
-                    else if (grd(*ri) == DNGN_ALTAR_XOM)
-                        found_xom = true;
-                }
-                if (chance == 10 && found_xom)
-                    chance = 0;
-                if (x_chance_in_y(chance, 20))
-                {
-                    destroy();
-                    place_cloud(CLOUD_TLOC_ENERGY, pos, roll_dice(3, 8), nullptr, 2);
-                }
+                destroy();
+                place_cloud(CLOUD_TLOC_ENERGY, pos, roll_dice(3, 8), nullptr, 2);
             }
             break;
         }
