@@ -175,7 +175,6 @@ protected:
                                bool clean = false);
 
     /* Output */
-    string debug_damage_number();
     string evasion_margin_adverb();
 
     virtual void set_attack_verb(int damage) = 0;

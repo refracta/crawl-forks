@@ -1112,18 +1112,6 @@ int attack::inflict_damage(int dam, beam_type flavour, bool clean)
     return dam;
 }
 
-/* If debug, return formatted damage done
- *
- */
-string attack::debug_damage_number()
-{
-#ifdef DEBUG_DIAGNOSTICS
-    return make_stringf(" for %d", damage_done);
-#else
-    return "";
-#endif
-}
-
 /* Returns standard attack punctuation
  *
  * Used in player / monster (both primary and aux) attacks

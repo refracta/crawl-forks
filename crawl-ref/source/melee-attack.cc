@@ -1862,10 +1862,9 @@ void melee_attack::player_announce_aux_hit()
     }
     else
     {
-        mprf("You %s %s%s%s",
+        mprf("You %s %s%s",
             aux_verb.c_str(),
             defender->name(DESC_THE).c_str(),
-            debug_damage_number().c_str(),
             attack_strength_punctuation(damage_done).c_str());
     }
 }
