@@ -1604,9 +1604,7 @@ int player_res_fire(bool calc_unid, bool temp, bool items)
         rf += get_form()->res_fire();
     }
 
-    _clamp(rf, -3, temp && you.duration[DUR_FIRE_VULN] ? 2 : 3);
-
-    return rf;
+    return _clamp(rf, -3, temp && you.duration[DUR_FIRE_VULN] ? 2 : 3);
 }
 
 int player_res_steam(bool calc_unid, bool temp, bool items)
@@ -1626,9 +1624,7 @@ int player_res_steam(bool calc_unid, bool temp, bool items)
     if (you.submerged())
         res = 2;
 
-    _clamp(res, -3, 2);
-
-    return res;
+    return _clamp(res, -3, 2);
 }
 
 static int _rc_globals()
@@ -1712,9 +1708,7 @@ int player_res_cold(bool calc_unid, bool temp, bool items)
             rc++;
     }
 
-    _clamp(rc, -3, temp && you.duration[DUR_COLD_VULN] ? 2 : 3);
-
-    return rc;
+    return _clamp(rc, -3, temp && you.duration[DUR_COLD_VULN] ? 2 : 3);
 }
 
 bool player::res_corr(bool calc_unid, bool items, bool mt) const
