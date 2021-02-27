@@ -987,9 +987,72 @@ bool ranged_attack::player_good_stab()
     return false;
 }
 
-void ranged_attack::set_attack_verb(int/* damage*/)
+static bool _is_bolt_like(missile_type miss)
 {
-    attack_verb = is_penetrating_attack(*attacker, weapon, *projectile) ? "pierces through" : "hits";
+    switch (miss)
+    {
+    case MI_ARROW:
+    case MI_BOLT:
+    case MI_DOUBLE_BOLT:
+    case MI_TRIPLE_BOLT:
+    case MI_JAVELIN:
+        return true;
+    default:
+        return false;
+    }
+}
+
+void ranged_attack::set_attack_verb(int damage)
+{
+    missile_type miss = (missile_type)projectile->sub_type;
+    if (is_penetrating_attack(*attacker, weapon, *projectile))
+    {
+        if (_is_bolt_like(miss))
+        {
+            attack_verb = (damage < 5)  ? "stabs through"
+                        : (damage < 20) ? "pierces through"
+                                        : "bores through";
+        }
+        else if (miss == MI_TOMAHAWK)
+        {
+            attack_verb = (damage < 5)  ? "tumbles over"
+                        : (damage < 20) ? "slices through"
+                                        : "divide";
+        }
+        else
+        {
+            attack_verb = (damage < 5)  ? "tumbles over"
+                        : (damage < 20) ? "rolls over"
+                                        : "bowls through";
+        }
+    }
+    else
+    {
+        if (_is_bolt_like(miss))
+        {
+            attack_verb = (damage < 5)  ? "pokes"
+                        : (damage < 20) ? "punctures"
+                                        : "impales";
+        }
+        else if (miss == MI_DART || miss == MI_NEEDLE)
+            attack_verb = "jabs";
+        else if (miss == MI_THROWING_NET)
+            attack_verb = "ensnares";
+        else if (miss == MI_TOMAHAWK)
+        {
+            attack_verb = (damage < 5)  ? "chops"
+                        : (damage < 20) ? "pummels"
+                        : (damage < 50) ? "slices"
+                                        : "mangles";
+        }
+        else
+        {
+            attack_verb = (damage < 5)  ? "hits"
+                        : (damage < 20) ? "strikes"
+                        : (damage < 50) ? "crushes"
+                                        : "pulverizes";
+        }
+    }
 }
 
 void ranged_attack::announce_hit()
