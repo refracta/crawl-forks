@@ -1395,14 +1395,13 @@ void set_item_ego_type(item_def &item, int ego_type)
         rap[ARTP_BRAND] = (short)ego_type;
 
         // We need to reroll it's name and looks in case the base type changed.
-        if (item.props.exists(ARTEFACT_APPEAR_KEY))
-            item.props.erase(ARTEFACT_APPEAR_KEY);
+        if (!is_unrandom_artefact(item))
+        {
+            item.props[ARTEFACT_APPEAR_KEY].get_string() = make_artefact_name(item, true);
+            item.props[ARTEFACT_APPEAR_KEY].get_string() = make_artefact_name(item, false);
+        }
 
-        if (item.props.exists(ARTEFACT_NAME_KEY))
-            item.props.erase(ARTEFACT_NAME_KEY);
-
-        const bool t = true;
-        item.props[CHANGED_BRAND_KEY] = t;
+        item.props[CHANGED_BRAND_KEY].get_bool() = true;
     }
     else
         item.brand = ego_type;
