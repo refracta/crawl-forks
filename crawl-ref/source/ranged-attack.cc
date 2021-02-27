@@ -437,6 +437,7 @@ bool ranged_attack::handle_phase_hit()
         for (; attack_count > 0; --attack_count)
         {
             damage_done = calc_damage();
+            set_attack_verb(damage_done);
 
             if (damage_done > 0)
             {
