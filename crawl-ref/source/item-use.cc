@@ -3295,7 +3295,7 @@ bool enchant_item(item_def &item, bool quiet, bool player)
 
     colour_t flash_colour = BLACK;
 
-    if ((item.base_type == OBJ_ARMOURS || (item.base_type == OBJ_SHIELDS && !is_hybrid(item.sub_type))))
+    if (((item.base_type == OBJ_ARMOURS && item.sub_type != ARM_CLAW) || (item.base_type == OBJ_SHIELDS && !is_hybrid(item.sub_type))))
     {
         if (!quiet)
         {
@@ -3312,16 +3312,18 @@ bool enchant_item(item_def &item, bool quiet, bool player)
             you.redraw_armour_class = true;
     }
 
-    if (item.base_type == OBJ_WEAPONS || (item.base_type == OBJ_SHIELDS && is_hybrid(item.sub_type)) && !quiet)
+    if (item.base_type == OBJ_WEAPONS || (item.base_type == OBJ_SHIELDS && is_hybrid(item.sub_type) || item.is_type(OBJ_ARMOURS, ARM_CLAW)))
     {
         flash_colour = RED;
-        mprf("%s glows red for a moment.", iname.c_str());
+        if (!quiet)
+            mprf("%s glows red for a moment.", iname.c_str());
     }
 
-    if (item.base_type == OBJ_STAVES && !quiet)
+    if (item.base_type == OBJ_STAVES)
     {
         flash_colour = LIGHTMAGENTA;
-        mprf("%s glows fuchsia for a moment.", iname.c_str());
+        if (!quiet)
+            mprf("%s glows fuchsia for a moment.", iname.c_str());
     }
 
     if (item.base_type == OBJ_WANDS)
@@ -3336,8 +3338,8 @@ bool enchant_item(item_def &item, bool quiet, bool player)
     
     if (player)
         you.wield_change = true;
-    else
-        flash_view_delay(UA_MONSTER, flash_colour, 300);
+    
+    flash_view_delay(player ? UA_PLAYER : UA_MONSTER, flash_colour, 300);
 
     item.plus++;
 
