@@ -415,7 +415,7 @@ KFEAT: s = general shop type:Hallowed suffix:Reliquary count:7 ; \
    any weapon good_item ego:holy_wrath | any weapon good_item ego:silver |\
    scroll of holy word | pearl dragon scales w:1 |\
    amulet of faith w:2 | ring of positive energy w:5 |\
-   any armour ego:positive_energy w:5
+   potion of cure mutation | any armour ego:positive_energy w:5
 KFEAT: _ = altar_the_shining_one / altar_zin / altar_elyvilon
 KPROP: 1 = no_tele_into
 KMASK: 1 = opaque
@@ -606,6 +606,7 @@ DEPTH: D:4-, Depths, Zot
 COLOUR: m = magenta
 TILE: m = dngn_transparent_wall_magenta
 KFEAT: S = general shop type:Changing suffix:Room count:7 ; \
+   potion of cure mutation q:1 w:5 | potion of beneficial mutation q:1 w:5 | \
    potion of mutation | potion of lignification | book of changes w:5 | \
    wand of polymorph | book of transfigurations w:5 | book of alchemy w:5 \
    | randbook disc:transmutation w:5 | plutonium_sword w:1

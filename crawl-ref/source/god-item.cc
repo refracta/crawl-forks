@@ -243,8 +243,8 @@ bool is_chaotic_item(const item_def& item, bool calc_unid)
         retval = (item.sub_type == WAND_POLYMORPH || item.sub_type == WAND_RANDOM_EFFECTS);
         break;
     case OBJ_POTIONS:
-        retval = (item.sub_type == POT_MUTATION
-                            && !have_passive(passive_t::cleanse_mut_potions))
+        retval = item.sub_type == POT_MUTATION
+                 || item.sub_type == POT_BENEFICIAL_MUTATION
                  || item.sub_type == POT_LIGNIFY;
         break;
     case OBJ_BOOKS:
