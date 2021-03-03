@@ -1665,10 +1665,11 @@ static void _generate_potion_item(item_def& item, int force_type,
                                            105, POT_HEAL_WOUNDS,
                                             73, POT_LIGNIFY,
                                             73, POT_HASTE,
+                                            66, POT_MUTATION,
                                             66, POT_MIGHT,
                                             66, POT_AGILITY,
                                             66, POT_BRILLIANCE,
-                                            53, POT_MUTATION,
+                                            53, POT_DEGENERATION,
                                             35, POT_INVISIBILITY,
                                             35, POT_RESISTANCE,
                                             35, POT_MAGIC,
@@ -2528,18 +2529,10 @@ void makeitem_tests()
         item.brand = coinflip() ? SPWPN_NORMAL
                                 : random2(NUM_REAL_SPECIAL_WEAPONS);
 #if TAG_MAJOR_VERSION == 34
-<<<<<<< HEAD
-        if (item.brand == SPWPN_ORC_SLAYING
-            || item.brand == SPWPN_REACHING
-            || item.brand == SPWPN_RETURNING
-            || item.brand == SPWPN_CONFUSE
-            || item.brand == SPWPN_DRAGON_SLAYING)
-=======
         if (item.special == SPWPN_ORC_SLAYING
             || item.special == SPWPN_REACHING
             || item.special == SPWPN_RETURNING
             || item.special == SPWPN_CONFUSE)
->>>>>>> parent of 9b7421e1bc... Remove the dragon slaying brand
         {
             item.brand = SPWPN_FORBID_BRAND;
         }
