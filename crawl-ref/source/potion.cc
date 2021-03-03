@@ -846,15 +846,6 @@ public:
 
     bool quaff(bool was_known) const override
     {
-        string msg = "Really drink that potion of mutation";
-        msg += you.rmut_from_item() ? " while resistant to mutation?" : "? This may result in penance.";
-        if (was_known && (you_worship(GOD_ZIN) || you.rmut_from_item())
-            && !yesno(msg.c_str(), false, 'n'))
-        {
-            canned_msg(MSG_OK);
-            return false;
-        }
-
         effect();
         // Zin conduct is violated even if you get lucky and don't mutate
         did_god_conduct(DID_DELIBERATE_MUTATING, 10, was_known);

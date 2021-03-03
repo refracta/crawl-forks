@@ -1443,7 +1443,6 @@ static bool _resist_mutation(mutation_permanence_class mutclass,
     if (you_res && !one_chance_in(mut_resist_chance))
         return true;
 
-
     // To be nice, beneficial mutations go through removable sources of rMut.
     if (you.rmut_from_item() && !beneficial
         && !one_chance_in(mut_resist_chance))
