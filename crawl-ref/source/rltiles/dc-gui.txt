@@ -240,10 +240,10 @@ No JOB_NOBLE
 felids/cat3 SP_RECOMMENDED_FELID
 base/fairy SP_RECOMMENDED_FAIRY
 %start
-%compose base/centaur_brown_m
+%compose base/human_f
+%compose bottom/centaur_brown
 %compose body/animal_skin
 %compose hair/short_black
-%compose boots/hooves
 %finish SP_RECOMMENDED_CENTAUR
 %start
 %compose base/deep_elf_f
@@ -285,7 +285,8 @@ base/fairy SP_RECOMMENDED_FAIRY
 %compose body/animal_skin
 %finish SP_RECOMMENDED_KOBOLD
 %start
-%compose base/merfolk_water_f
+%compose base/merfolk_f
+%compose bottom/merfolk_f
 %compose body/animal_skin
 %compose hair/green
 %finish SP_RECOMMENDED_MERFOLK
@@ -295,7 +296,8 @@ base/fairy SP_RECOMMENDED_FAIRY
 %compose head/horns2
 %finish SP_RECOMMENDED_MINOTAUR
 %start
-%compose base/naga_f
+%compose base/human_f
+%compose bottom/naga_f
 %compose body/animal_skin
 %compose hair/part2_red
 %finish SP_RECOMMENDED_NAGA
@@ -315,7 +317,7 @@ base/octopode1 SP_RECOMMENDED_OCTOPODE
 %compose beard/medium_green
 %finish SP_RECOMMENDED_SPRIGGAN
 %start
-%compose base/tengu_winged_f
+%compose base/tengu_f
 %compose body/animal_skin
 %compose hair/short_black
 %finish SP_RECOMMENDED_TENGU
