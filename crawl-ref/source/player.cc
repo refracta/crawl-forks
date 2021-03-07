@@ -673,8 +673,10 @@ bool player_in_connected_branch()
 bool player_likes_water(bool permanently)
 {
     return !permanently && you.can_water_walk()
-           || (species_likes_water(you.species) || !permanently)
-               && form_likes_water();
+           || species_likes_water(you.species) && !you.mounted() && !player_is_shapechanged()
+           || (!permanently || species_likes_water(you.species)) 
+                && you.mounted() && you.mount == mount_type::hydra
+           || !permanently && form_likes_water();
 }
 
 /**
@@ -6181,7 +6183,7 @@ bool player::can_swim(bool permanently) const
         return (!permanently || species_can_swim(species)) && mount == mount_type::hydra;
     // Transforming could be fatal if it would cause unequipment of
     // stat-boosting boots or heavy armour.
-    return (species_can_swim(species)
+    return (species_can_swim(species) && !player_is_shapechanged()
             || body_size(PSIZE_BODY) >= SIZE_GIANT
             || (!permanently && form_can_swim()));
 }
