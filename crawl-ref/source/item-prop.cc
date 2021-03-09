@@ -551,7 +551,7 @@ static const weapon_def Weapon_prop[] =
             { SPWPN_DISTORTION,      1 },
             { SPWPN_ANTIMAGIC,       1 },
         }},
-    { WPN_TONTO,             "tonto",               5,  6,  7,
+    { WPN_TANTO,             "tanto",               5,  6,  7,
         SK_SHORT_BLADES, SIZE_LITTLE, SIZE_LITTLE, SIZE_LARGE, MI_NONE,
         DAMV_PIERCING, 0, 2, 150, {} },
     { WPN_SHORT_SWORD,       "short sword",         6,  4, 11,

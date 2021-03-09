@@ -1074,7 +1074,7 @@ KFEAT:  N = weapon shop type:Staff suffix:Store count:7 use_all greed:30 ; \
             staff of fire | staff of air | staff of earth | staff of cold |\
             staff of poison | staff of death | staff of life
 KFEAT:  Q = weapon shop type:Weapon suffix:Rack count:14 use_all greed:30 ; \
-            mundane not_cursed tonto | mundane not_cursed demon blade |\
+            mundane not_cursed tanto | mundane not_cursed demon blade |\
             mundane not_cursed triple sword | mundane not_cursed broad axe |\
             mundane not_cursed executioner's axe | mundane not_cursed demon whip |\
             mundane not_cursed great mace | mundane not_cursed giant spiked club |\

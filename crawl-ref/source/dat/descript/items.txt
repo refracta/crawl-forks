@@ -1217,7 +1217,7 @@ tomahawk
 
 A small axe, designed for throwing.
 %%%%
-tonto
+tanto
 
 A rare, exotic short sword which is preternaturally well-balanced, making it
 much easier for even inexperienced handlers to attack with it quickly.

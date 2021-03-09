@@ -781,7 +781,7 @@ KITEM:  O = hat cursed ident:all / cloak cursed ident:all / \
         hunting sling cursed ident:all
 KITEM:  P = robe cursed plus:-8 randart ident:all
 # An "Oka weapon gift" using the more useful types on 'd'
-ITEM:   tonto good_item w:5 / rapier good_item / scimitar good_item / \
+ITEM:   tanto good_item w:5 / rapier good_item / scimitar good_item / \
         double sword good_item w:5 / demon blade good_item w:5 / \
         triple sword good_item w:5 /  morningstar good_item / \
         eveningstar good_item w:5 / demon whip good_item w:5 / \

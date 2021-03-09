@@ -2098,8 +2098,8 @@ MARKER: P  = lua:fog_machine { cloud_type="blue smoke", walk_dist=1, \
              size=9, pow_max=20, delay=10, buildup_amnt=14, buildup_time=7, \
              spread_rate=3, start_clouds=1, colour="blue" }
 KFEAT:  _ = altar_lugonu
-KMONS:  1 = big kobold w:80 ; short sword | rapier | tonto w:3 /\
-            big kobold w:10 ; tonto ego:distortion w:6 | \
+KMONS:  1 = big kobold w:80 ; short sword | rapier | tanto w:3 /\
+            big kobold w:10 ; tanto ego:distortion w:6 | \
                               rapier ego:distortion | short sword ego:distortion
 : init_abyss_exit(_G, "P")
 MAP

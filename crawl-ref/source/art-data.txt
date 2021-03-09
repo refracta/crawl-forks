@@ -247,7 +247,7 @@ MAGIC:   2
 BOOL:    skip_ego
 
 NAME:    Vampire's Tooth
-OBJ:     OBJ_WEAPONS/WPN_TONTO
+OBJ:     OBJ_WEAPONS/WPN_TANTO
 # it's a quick blade made from a tooth -> no TYPE
 FB_BRAND: SPWPN_VAMPIRISM
 PLUS:    +12
@@ -1196,7 +1196,7 @@ STEALTH: -1
 NAME:     arc blade
 INSCRIP:  discharge,
 OBJ:      OBJ_WEAPONS/WPN_RAPIER
-FALLBACK: OBJ_WEAPONS/WPN_TONTO
+FALLBACK: OBJ_WEAPONS/WPN_TANTO
 FB_BRAND: SPWPN_ELECTROCUTION
 PLUS:     +8
 COLOUR:   ETC_ELECTRICITY
@@ -1267,7 +1267,7 @@ BOOL:    skip_ego
 # TAG_MAJOR_VERSION == 34
 ENUM:    GYRE
 NAME:    pair of quick blades "Gyre" and "Gimble"
-OBJ:     OBJ_WEAPONS/WPN_TONTO
+OBJ:     OBJ_WEAPONS/WPN_TANTO
 TYPE:    pair of quick blades
 COLOUR:  ETC_ENCHANT
 TILE:    urand_gyre

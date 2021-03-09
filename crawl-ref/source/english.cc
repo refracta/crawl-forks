@@ -123,7 +123,7 @@ string pluralise(const string &name, const char * const qualifiers[],
              || ends_with(name, "swine")    || ends_with(name, "efreet")
              || ends_with(name, "jiangshi") || ends_with(name, "raiju")
              || ends_with(name, "meliai")   || ends_with(name, "trout")
-             || ends_with(name, "tonto"))
+             || ends_with(name, "tanto"))
     {
         return name;
     }

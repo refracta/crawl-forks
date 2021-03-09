@@ -71,9 +71,9 @@ short_sword3
 rapier1 WPN_RAPIER
 rapier2
 rapier3
-tonto1 WPN_TONTO
-tonto2
-tonto3
+tanto1 WPN_TANTO
+tanto2
+tanto3
 kris1 WPN_KRIS
 kris2
 kris3

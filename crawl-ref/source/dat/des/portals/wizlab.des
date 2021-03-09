@@ -1502,7 +1502,7 @@ MONS:       spriggan air mage / blizzard demon
 wizname = crawl.make_name()
 kmons ("    5 = patrolling Cloud Mage dbname:Cloud_Mage name:"
               .. string.gsub(wizname, " ", "_")
-              .. " ; robe_of_clouds . tonto ego:electrocution \
+              .. " ; robe_of_clouds . tanto ego:electrocution \
                      | dagger ego:electrocution | staff of air")
 }}
 KMONS:      D = twister
@@ -1521,7 +1521,7 @@ ITEM:       scarf ego:cloud_immunity / book of clouds / fan of gales \
 # Main loot, including some thematic items that are good even if you don't care
 # about flight.
 ITEM:       any w:20 / star_item / superb_item / any book w:5
-ITEM:       pair of boots ego:running / good_item tonto \
+ITEM:       pair of boots ego:running / good_item tanto \
             / good_item ring of evasion
 ITEM:       randbook disc:air
 KFEAT:      #6 = deep_water

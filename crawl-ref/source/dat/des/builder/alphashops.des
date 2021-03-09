@@ -162,7 +162,7 @@
        "book of transfigurations", "ring of teleportation",
        "scroll of teleportation", "triple sword", "triple crossbow",
        "troll leather", "manual of translocations",
-	   "manual of transmutations", "trident" , "staff of transmutation", "tonto"}
+	   "manual of transmutations", "trident" , "staff of transmutation", "tanto"}
 
       elseif s == "U" then i = { "book of unlife", "manual of unarmed combat" }
 

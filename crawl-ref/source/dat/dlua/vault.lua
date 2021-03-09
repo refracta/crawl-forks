@@ -109,7 +109,7 @@ function halls_of_blades_weapon(e)
   local long_blade_type = crawl.one_chance_in(2) and "double sword"
                                                   or "triple sword"
   local short_blade_type = crawl.one_chance_in(3) and "katar"
-                                                  or "tonto"
+                                                  or "tanto"
   local types = {short_blade_type, long_blade_type,
                  "executioner's axe", "eveningstar", "bardiche",
                  "lajatang"}

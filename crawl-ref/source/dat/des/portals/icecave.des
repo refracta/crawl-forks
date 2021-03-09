@@ -767,12 +767,12 @@ SUBST:   ` = .
 : ice_cave_item_attributes(_G)
 : item("battleaxe " .. freezeweap .. " / executioner's axe " .. freezeweap ..
 :   " / glaive " .. freezeweap .. " / bardiche " .. freezeweap ..
-:   " / tonto " .. freezeweap .. " / great sword " .. freezeweap ..
+:   " / tanto " .. freezeweap .. " / great sword " .. freezeweap ..
 :   " / triple sword " .. freezeweap .. " / giant spiked club " .. freezeweap ..
 :   " / demon trident " .. freezeweap)
 : item("battleaxe " .. goodfreezeweap .. " / executioner's axe " .. goodfreezeweap ..
 :   " / glaive " .. goodfreezeweap .. " / halberd " .. goodfreezeweap ..
-:   " / great sword " .. goodfreezeweap .. " / tonto " .. goodfreezeweap ..
+:   " / great sword " .. goodfreezeweap .. " / tanto " .. goodfreezeweap ..
 :   " / triple sword " .. goodfreezeweap .. " / demon trident " .. goodfreezeweap ..
 :   " / giant spiked club " .. goodfreezeweap)
 ITEM: demon whip good_item / demon blade good_item / demon trident good_item

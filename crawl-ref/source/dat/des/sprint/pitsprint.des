@@ -418,7 +418,7 @@ function armoury_setup(e)
           great mace plus:3 not_cursed ident:all /\
           demon whip plus:3 not_cursed ident:all w:5 /\
           giant spiked club plus:3 not_cursed ident:all /\
-          tonto plus:5 not_cursed ident:all /\
+          tanto plus:5 not_cursed ident:all /\
           great sword plus:3 not_cursed ident:all /\
           double sword plus:3 not_cursed ident:all /\
           demon blade plus:3 not_cursed ident:all w:3 /\

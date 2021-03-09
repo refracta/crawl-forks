@@ -504,8 +504,8 @@ static int _acquirement_weapon_subtype(bool divine, int & /*quantity*/, int agen
         {
             if (acqweight < 500)
                 acqweight = 500;
-            // Tontos get unproportionately hit by damage weighting.
-            if (i == WPN_TONTO)
+            // tanto get unproportionately hit by damage weighting.
+            if (i == WPN_TANTO)
                 acqweight = acqweight * 25 / 9;
             int damage = property(item_considered, PWPN_DAMAGE);
             if (!two_handed)

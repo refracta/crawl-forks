@@ -1945,7 +1945,7 @@ static weapon_type _hepliaklqana_weapon_type(monster_type mc, int HD)
     case MONS_ANCESTOR_HEXER:
         if (!is_wieldable_weapon(WPN_DAGGER, you.body_size(PSIZE_TORSO, true)))
             return WPN_KRIS;
-        return HD < 16 ? WPN_DAGGER : WPN_TONTO;
+        return HD < 16 ? WPN_DAGGER : WPN_TANTO;
     case MONS_ANCESTOR_KNIGHT:
         if (you.species == SP_MERFOLK)
             return HD < 10 ? WPN_SPEAR : WPN_DEMON_TRIDENT;
@@ -1958,7 +1958,7 @@ static weapon_type _hepliaklqana_weapon_type(monster_type mc, int HD)
         else if (you.species == SP_SPRIGGAN || you.species == SP_DEEP_ELF)
             return HD < 9  ? WPN_SHORT_SWORD :
                    HD < 14 ? WPN_RAPIER :
-                             WPN_TONTO;
+                             WPN_TANTO;
         else
             return HD < 10 ? WPN_FLAIL : WPN_BROAD_AXE;
     case MONS_ANCESTOR_BATTLEMAGE:

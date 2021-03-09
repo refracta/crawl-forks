@@ -3985,10 +3985,10 @@ MONS: mana viper, orc knight ; battleaxe | great mace | broad axe \
           | w:3 broad axe ego:antimagic . plate armour \
           | plate armour ego:magic_resistance
 MONS: stone giant / iron troll / w:5 ettin
-MONS: spriggan berserker ; rapier | tonto | demon whip \
-          | w:3 rapier ego:antimagic | w:3 tonto ego:antimagic \
+MONS: spriggan berserker ; rapier | tanto | demon whip \
+          | w:3 rapier ego:antimagic | w:3 tanto ego:antimagic \
           | w:3 demon whip ego:antimagic
-MONS: spriggan defender ; tonto ego:antimagic \
+MONS: spriggan defender ; tanto ego:antimagic \
           | demon whip ego:antimagic, quicksilver dragon
 KMONS: T = yaktaur captain
 KMONS: Y = orc knight ; battleaxe | great mace | broad axe \

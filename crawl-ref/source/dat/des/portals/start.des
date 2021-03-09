@@ -199,7 +199,7 @@ KFEAT:  A = weapon shop type:Mashing suffix:MeleeMart count:10 use_all greed:40 
             mundane not_cursed giant club | mundane not_cursed giant spiked club |\
             mundane not_cursed quarterstaff | mundane not_cursed hammer
 KFEAT:  B = weapon shop type:Demonics suffix:and_Exotics count:10 use_all greed:40 ; \
-			mundane not_cursed tonto | mundane not_cursed demon whip |\
+			mundane not_cursed tanto | mundane not_cursed demon whip |\
             mundane not_cursed eveningstar | mundane not_cursed demon blade |\
             mundane not_cursed lajatang | mundane not_cursed demon trident |\
             mundane not_cursed triple sword | mundane not_cursed executioner's axe|\
