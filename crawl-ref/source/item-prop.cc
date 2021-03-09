@@ -987,7 +987,7 @@ bool item_is_cursable(const item_def &item, bool ignore_holy_wrath)
         && item.base_type == OBJ_WEAPONS
         && (get_weapon_brand(item) == SPWPN_HOLY_WRATH
             || you.duration[DUR_EXCRUCIATING_WOUNDS]
-            && item_is_equipped(item)
+            && (item.link == you.props[PAINED_WEAPON_KEY].get_short())
             && you.props[ORIGINAL_BRAND_KEY].get_int() == SPWPN_HOLY_WRATH))
     {
         return false;
@@ -1059,7 +1059,7 @@ void do_curse_item(item_def &item, bool quiet)
     if ((item.base_type == OBJ_WEAPONS || item.base_type == OBJ_SHIELDS && is_hybrid(item.sub_type))
         && (get_weapon_brand(item) == SPWPN_HOLY_WRATH
             || you.duration[DUR_EXCRUCIATING_WOUNDS]
-               && item_is_equipped(item)
+               && item.link == you.props[PAINED_WEAPON_KEY].get_short()
                && you.props[ORIGINAL_BRAND_KEY].get_int() == SPWPN_HOLY_WRATH))
     {
         if (!quiet)

@@ -1335,8 +1335,8 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
 
     case SPELL_EXCRUCIATING_WOUNDS:
         if (temp
-            && (!you.weapon()
-                || !is_brandable_weapon(*you.weapon(), true)))
+            && (!you.weapon(0) || !is_brandable_weapon(*you.weapon(0), false))
+            && (!you.weapon(1) || !is_brandable_weapon(*you.weapon(1), false)))
         {
             return "you aren't wielding a brandable weapon.";
         }

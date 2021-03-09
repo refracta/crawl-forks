@@ -1718,7 +1718,8 @@ static string _weapon_brand_desc(const item_def &item)
         break;
     }
 
-    if (you.duration[DUR_EXCRUCIATING_WOUNDS] && &item == you.weapon(0))
+    if (you.duration[DUR_EXCRUCIATING_WOUNDS] && 
+        (item.link == you.props[PAINED_WEAPON_KEY].get_short()))
     {
         description += "\nIt is temporarily rebranded; it is actually a";
         if ((int)you.props[ORIGINAL_BRAND_KEY] == SPWPN_NORMAL)
@@ -1895,20 +1896,6 @@ static string _describe_weapon(const item_def &item, bool verbose)
             "those struck by it, causing extra injury to most foes "
             "and up to half again as much damage against particularly "
             "susceptible opponents.";
-    }
-
-    if (you.duration[DUR_EXCRUCIATING_WOUNDS] && &item == you.weapon())
-    {
-        description += "\nIt is temporarily rebranded; it is actually a";
-        if ((int) you.props[ORIGINAL_BRAND_KEY] == SPWPN_NORMAL)
-            description += "n unbranded weapon.";
-        else
-        {
-            description += " weapon of "
-                        + ego_type_string(item, false,
-                           (brand_type) you.props[ORIGINAL_BRAND_KEY].get_int())
-                        + ".";
-        }
     }
 
     if (is_artefact(item))

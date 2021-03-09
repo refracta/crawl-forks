@@ -1127,6 +1127,9 @@ bool item_is_selected(const item_def &i, int selector)
     case OSEL_BLESSABLE_ITEM:
         return is_blessable_item(i);
 
+    case OSEL_BRANDABLE_WEAPON:
+        return is_brandable_weapon(i, false) && item_is_equipped(i);
+
     case OSEL_BLESSABLE_WEAPON:
         return is_brandable_weapon(i, you_worship(GOD_SHINING_ONE) || you_worship(GOD_BAHAMUT_TIAMAT), true);
 

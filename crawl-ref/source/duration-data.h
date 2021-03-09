@@ -6,11 +6,12 @@
 #include "god-passive.h"
 #include "spl-other.h"
 
+#define PAIN_WEAPON_KEY "pained_weapon"
+
 static void _end_weapon_brand()
 {
     you.duration[DUR_EXCRUCIATING_WOUNDS] = 1;
-    ASSERT(you.weapon());
-    end_weapon_brand(*you.weapon(), true);
+    end_weapon_brand(true);
 }
 
 static void _end_invis()

@@ -180,11 +180,8 @@ bool bless_weapon(god_type god, brand_type brand, colour_t colour)
         return false;
     }
 
-    if (you.duration[DUR_EXCRUCIATING_WOUNDS]) // just in case
-    {
-        ASSERT(you.weapon());
-        end_weapon_brand(*you.weapon());
-    }
+    if (you.duration[DUR_EXCRUCIATING_WOUNDS] && (wpn.link == you.props[PAINED_WEAPON_KEY].get_short())) // just in case
+        end_weapon_brand();
 
     string old_name = wpn.name(DESC_A);
     set_equip_desc(wpn, ISFLAG_GLOWING);

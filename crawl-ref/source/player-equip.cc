@@ -807,11 +807,8 @@ static void _unequip_weapon_effect(item_def& real_item, bool showMsgs,
                 break;
             }
 
-            if (you.duration[DUR_EXCRUCIATING_WOUNDS])
-            {
-                ASSERT(real_item.defined());
-                end_weapon_brand(real_item, true);
-            }
+            if (you.duration[DUR_EXCRUCIATING_WOUNDS] && item.link == you.props[PAINED_WEAPON_KEY].get_short())
+                end_weapon_brand(true);
         }
     }
 

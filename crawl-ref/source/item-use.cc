@@ -2869,8 +2869,11 @@ static void _rebrand_shield(item_def &shd)
 
 static void _rebrand_weapon(item_def& wpn)
 {
-    if (&wpn == you.weapon() && you.duration[DUR_EXCRUCIATING_WOUNDS])
-        end_weapon_brand(wpn);
+    if (you.duration[DUR_EXCRUCIATING_WOUNDS]
+        && (wpn.link == you.props[PAINED_WEAPON_KEY].get_short()))
+    {
+        end_weapon_brand();
+    }
     const brand_type old_brand = get_weapon_brand(wpn);
     brand_type new_brand = old_brand;
 

@@ -888,8 +888,8 @@ static void _animate_weapon(int pow, actor* target, int weap_slot)
     if (target_is_player)
     {
         // Clear temp branding so we don't change the brand permanently.
-        if (you.duration[DUR_EXCRUCIATING_WOUNDS])
-            end_weapon_brand(*wpn);
+        if (you.duration[DUR_EXCRUCIATING_WOUNDS] && wpn->link == you.props[PAINED_WEAPON_KEY].get_short())
+            end_weapon_brand();
 
         // Mark weapon as "thrown", so we'll autopickup it later.
         wpn->flags |= ISFLAG_THROWN;
