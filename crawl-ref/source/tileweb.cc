@@ -1197,8 +1197,8 @@ void TilesFramework::send_doll(const dolls_data &doll, bool submerged, bool ghos
     }
 
     // Special case bardings from being cut off.
-    const bool is_naga = is_player_tile(doll.parts[TILEP_PART_BASE],
-                                        TILEP_BASE_NAGA);
+    const bool is_naga = is_player_tile(doll.parts[TILEP_PART_BOTTOM],
+                                        TILEP_BOTTOM_NAGA);
 
     if (doll.parts[TILEP_PART_BOOTS] >= TILEP_BOOTS_NAGA_BARDING
         && doll.parts[TILEP_PART_BOOTS] <= TILEP_BOOTS_NAGA_BARDING_RED
@@ -1207,8 +1207,8 @@ void TilesFramework::send_doll(const dolls_data &doll, bool submerged, bool ghos
         flags[TILEP_PART_BOOTS] = is_naga ? TILEP_FLAG_NORMAL : TILEP_FLAG_HIDE;
     }
 
-    const bool is_cent = is_player_tile(doll.parts[TILEP_PART_BASE],
-                                        TILEP_BASE_CENTAUR);
+    const bool is_cent = is_player_tile(doll.parts[TILEP_PART_BOTTOM],
+                                        TILEP_BOTTOM_CENTAUR);
 
     if (doll.parts[TILEP_PART_BOOTS] >= TILEP_BOOTS_CENTAUR_BARDING
         && doll.parts[TILEP_PART_BOOTS] <= TILEP_BOOTS_CENTAUR_BARDING_RED

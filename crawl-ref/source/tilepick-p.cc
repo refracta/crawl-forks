@@ -1157,35 +1157,9 @@ bool is_player_tile(tileidx_t tile, tileidx_t base_tile)
            && tile < base_tile + tile_player_count(base_tile);
 }
 
-static int _draconian_colour(int race, int level)
+static int _draconian_colour(int colour)
 {
-    if (level < 0) // hack:monster
-    {
-        switch (race)
-        {
-        case MONS_DRACONIAN:                    return 0;
-        case MONS_BLACK_DRACONIAN:              return 1;
-        case MONS_PINK_DRACONIAN:               return 2;
-        case MONS_LIME_DRACONIAN:               return 3;
-        case MONS_GREEN_DRACONIAN:              return 4;
-        case MONS_PURPLE_DRACONIAN:             return 5;
-        case MONS_RED_DRACONIAN:                return 6;
-        case MONS_WHITE_DRACONIAN:              return 7;
-        case MONS_SILVER_DRACONIAN:             return 8;
-        case MONS_BLUE_DRACONIAN:               return 9;
-        case MONS_CYAN_DRACONIAN:               return 10;
-        case MONS_OLIVE_DRACONIAN:              return 11;
-        case MONS_BONE_DRACONIAN:               return 12;
-        case MONS_TEAL_DRACONIAN:               return 13;
-        case MONS_GOLDEN_DRACONIAN:             return 14;
-        case MONS_PEARL_DRACONIAN:              return 15;
-        case MONS_SCINTILLATING_DRACONIAN:      return 16;
-        case MONS_BLOOD_DRACONIAN:              return 17;
-        case MONS_PLATINUM_DRACONIAN:           return 18;
-        case MONS_MAGENTA_DRACONIAN:            return 19;
-        }
-    }
-    switch (you.drac_colour)
+    switch (colour)
     {
     case DR_BROWN: 
         if (you.char_class == JOB_MUMMY)    return 21; 
@@ -1213,11 +1187,9 @@ static int _draconian_colour(int race, int level)
     return 0;
 }
 
-tileidx_t tilep_species_to_base_tile(int sp, int level)
+tileidx_t tilep_species_to_base_tile(int sp, int drac_colour)
 {
-
-    if (sp != SP_CENTAUR && sp != SP_OCTOPODE
-        && sp != SP_NAGA && sp != SP_FELID
+    if (sp != SP_OCTOPODE && sp != SP_FELID
         && sp != SP_FAIRY)
     {
         if (you.char_class == JOB_MUMMY)
@@ -1245,18 +1217,18 @@ tileidx_t tilep_species_to_base_tile(int sp, int level)
     case SP_MUMMY:
         return TILEP_BASE_MUMMY;
     case SP_NAGA:
-        return TILEP_BASE_NAGA;
+        return TILEP_BASE_HUMAN;
     case SP_OGRE:
         return TILEP_BASE_OGRE;
     case SP_TROLL:
         return TILEP_BASE_TROLL;
     case SP_DRACONIAN:
     {
-        const int colour_offset = _draconian_colour(sp, level);
+        const int colour_offset = _draconian_colour(drac_colour);
         return TILEP_BASE_DRACONIAN + colour_offset * 2;
     }
     case SP_CENTAUR:
-        return TILEP_BASE_CENTAUR;
+        return TILEP_BASE_HUMAN;
     case SP_DEMIGOD:
         return TILEP_BASE_DEMIGOD;
     case SP_SPRIGGAN:
@@ -1301,10 +1273,11 @@ tileidx_t tilep_species_to_base_tile(int sp, int level)
         return TILEP_BASE_HUMAN;
     }
 }
-void tilep_draconian_init(int sp, int level, tileidx_t *base,
+
+void tilep_draconian_init(int colour, tileidx_t *base,
                           tileidx_t *head, tileidx_t *wing)
 {
-    const int colour_offset = _draconian_colour(sp, level);
+    const int colour_offset = _draconian_colour(colour);
     *base = TILEP_BASE_DRACONIAN + colour_offset * 2;
     if (you.char_class == JOB_MUMMY && you.drac_colour == DR_BROWN)
         *base = TILEP_BASE_MUMMY;
@@ -1316,11 +1289,11 @@ void tilep_draconian_init(int sp, int level, tileidx_t *base,
 
 // Set default parts of each race: body + optional beard, hair, etc.
 // This function needs to be entirely deterministic.
-void tilep_race_default(int sp, int level, dolls_data *doll)
+void tilep_race_default(int sp, int colour, dolls_data *doll)
 {
     tileidx_t *parts = doll->parts;
 
-    tileidx_t result = tilep_species_to_base_tile(sp, level);
+    tileidx_t result = tilep_species_to_base_tile(sp, colour);
     if (parts[TILEP_PART_BASE] != TILEP_SHOW_EQUIP)
         result = parts[TILEP_PART_BASE];
 
@@ -1346,13 +1319,12 @@ void tilep_race_default(int sp, int level, dolls_data *doll)
             break;
         case SP_DRACONIAN:
         {
-            tilep_draconian_init(sp, level, &result, &head, &wing);
+            tilep_draconian_init(colour, &result, &head, &wing);
             hair   = 0;
             break;
         }
         case SP_MERFOLK:
-            result = you.fishtail ? TILEP_BASE_MERFOLK_WATER
-                                  : TILEP_BASE_MERFOLK;
+            result = TILEP_BASE_MERFOLK;
             hair = TILEP_HAIR_GREEN;
             break;
         case SP_NAGA:
@@ -1630,17 +1602,12 @@ void tilep_calc_flags(const dolls_data &doll, int flag[])
     if (doll.parts[TILEP_PART_HELM] >= TILEP_HELM_HELM_OFS)
         flag[TILEP_PART_DRCHEAD] = TILEP_FLAG_HIDE;
 
-    if (is_player_tile(doll.parts[TILEP_PART_BASE], TILEP_BASE_NAGA))
-    {
+    // BCADDO: Remove TILEP_FLAG_CUT_NAGA.
+    if (is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_NAGA))
         flag[TILEP_PART_BOOTS] = flag[TILEP_PART_LEG] = TILEP_FLAG_HIDE;
-        flag[TILEP_PART_BODY]  = TILEP_FLAG_CUT_NAGA;
-    }
-    else if (is_player_tile(doll.parts[TILEP_PART_BASE], TILEP_BASE_CENTAUR))
-    {
+    else if (is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_CENTAUR))
         flag[TILEP_PART_BOOTS] = flag[TILEP_PART_LEG] = TILEP_FLAG_HIDE;
-        flag[TILEP_PART_BODY]  = TILEP_FLAG_CUT_CENTAUR;
-    }
-    else if (is_player_tile(doll.parts[TILEP_PART_BASE], TILEP_BASE_MERFOLK_WATER))
+    else if (is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_MERFOLK_WATER))
     {
         flag[TILEP_PART_BOOTS]  = TILEP_FLAG_HIDE;
         flag[TILEP_PART_LEG]    = TILEP_FLAG_HIDE;
@@ -1783,7 +1750,7 @@ const int parts_saved[TILEP_PART_MAX + 1] =
 /*
  * scan input line from dolls.txt
  */
-void tilep_scan_parts(char *fbuf, dolls_data &doll, int species, int level)
+void tilep_scan_parts(char *fbuf, dolls_data &doll, int species, int colour)
 {
     char  ibuf[8];
 
@@ -1808,7 +1775,7 @@ void tilep_scan_parts(char *fbuf, dolls_data &doll, int species, int level)
             doll.parts[p] = TILEP_SHOW_EQUIP;
         else if (p == TILEP_PART_BASE)
         {
-            const tileidx_t base_tile = tilep_species_to_base_tile(species, level);
+            const tileidx_t base_tile = tilep_species_to_base_tile(species, colour);
             if (idx >= tile_player_count(base_tile))
                 doll.parts[p] = base_tile;
             else
@@ -1842,10 +1809,7 @@ void tilep_print_parts(char *fbuf, const dolls_data &doll)
         if (idx != TILEP_SHOW_EQUIP)
         {
             if (p == TILEP_PART_BASE)
-            {
-                idx -= tilep_species_to_base_tile(you.species,
-                                                  you.experience_level);
-            }
+                idx -= tilep_species_to_base_tile(you.species, you.drac_colour);
             else if (idx != 0)
             {
                 idx = doll.parts[p] - tile_player_part_start[p] + 1;

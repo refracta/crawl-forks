@@ -12,10 +12,10 @@ misc/cursor CURSOR
 ###BASE
 %parts_ctg BASE
 %sdir player/base
-human_f HUMAN
-human_m
-human2_f
+human2_f HUMAN
 human2_m
+human_f
+human_m
 human3_f
 human3_m
 elf_m ELF
@@ -162,10 +162,10 @@ cat10
 ##bottom halves MUST be in same order as the bases
 %sdir player/bottom
 %parts_ctg BOTTOM
-human_f HUMAN
-human_m
-human2_f
+human2_f HUMAN
 human2_m
+human_f
+human_m
 human3_f
 human3_m
 elf_m ELF

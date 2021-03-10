@@ -171,7 +171,7 @@ bool load_doll_data(const char *fn, dolls_data *dolls, int max,
                 if (*cur == count++)
                 {
                     tilep_scan_parts(fbuf, dolls[0], you.species,
-                                     you.experience_level);
+                                     you.drac_colour);
                     break;
                 }
             }
@@ -184,7 +184,7 @@ bool load_doll_data(const char *fn, dolls_data *dolls, int max,
                     continue;
 
                 tilep_scan_parts(fbuf, dolls[count++], you.species,
-                                 you.experience_level);
+                                 you.drac_colour);
             }
         }
 
@@ -208,13 +208,13 @@ void init_player_doll()
     if (mode == TILEP_MODE_LOADING)
     {
         player_doll = dolls[cur];
-        tilep_race_default(you.species, you.experience_level, &player_doll);
+        tilep_race_default(you.species, you.drac_colour, &player_doll);
         return;
     }
 
     for (int i = 0; i < TILEP_PART_MAX; i++)
         player_doll.parts[i] = TILEP_SHOW_EQUIP;
-    tilep_race_default(you.species, you.experience_level, &player_doll);
+    tilep_race_default(you.species, you.drac_colour, &player_doll);
 
     if (mode == TILEP_MODE_EQUIP)
         return;
@@ -351,9 +351,8 @@ void fill_doll_equipment(dolls_data &result)
     }
 
     // Base tile.
-    // BCADDO: Edit this to make draconian colours show properly.
     if (result.parts[TILEP_PART_BASE] == TILEP_SHOW_EQUIP)
-        tilep_race_default(you.species, you.experience_level, &result);
+        tilep_race_default(you.species, you.drac_colour, &result);
 
     // Main hand.
     if (result.parts[TILEP_PART_HAND1] == TILEP_SHOW_EQUIP)
@@ -497,8 +496,7 @@ void fill_doll_equipment(dolls_data &result)
         tileidx_t base = 0;
         tileidx_t head = 0;
         tileidx_t wing = 0;
-        tilep_draconian_init(you.species, you.experience_level,
-            &base, &head, &wing);
+        tilep_draconian_init(you.drac_colour, &base, &head, &wing);
 
         if (result.parts[TILEP_PART_DRCHEAD] == TILEP_SHOW_EQUIP)
             result.parts[TILEP_PART_DRCHEAD] = head;
@@ -617,17 +615,18 @@ void pack_doll_buf(SubmergedTileBuffer& buf, const dolls_data &doll,
         TILEP_PART_CLOAK,       //  4
         TILEP_PART_MOUNT_BACK,  //  5
         TILEP_PART_BASE,        //  6
-        TILEP_PART_BOOTS,       //  7
-        TILEP_PART_LEG,         //  8
-        TILEP_PART_BODY,        //  9
-        TILEP_PART_ARM,         // 10
-        TILEP_PART_HAIR,        // 11
-        TILEP_PART_BEARD,       // 12
-        TILEP_PART_DRCHEAD,     // 13
-        TILEP_PART_HELM,        // 14
-        TILEP_PART_HAND1,       // 15
-        TILEP_PART_HAND2,       // 16
-        TILEP_PART_MOUNT_FRONT, // 17
+        TILEP_PART_BOTTOM,      //  7
+        TILEP_PART_BOOTS,       //  8
+        TILEP_PART_LEG,         //  9
+        TILEP_PART_BODY,        // 10
+        TILEP_PART_ARM,         // 11
+        TILEP_PART_HAIR,        // 12
+        TILEP_PART_BEARD,       // 13
+        TILEP_PART_DRCHEAD,     // 14
+        TILEP_PART_HELM,        // 15
+        TILEP_PART_HAND1,       // 16
+        TILEP_PART_HAND2,       // 17
+        TILEP_PART_MOUNT_FRONT, // 18
     };
 
     int flags[TILEP_PART_MAX];
@@ -653,8 +652,8 @@ void pack_doll_buf(SubmergedTileBuffer& buf, const dolls_data &doll,
     }
 
     // Special case bardings from being cut off.
-    const bool is_naga = is_player_tile(doll.parts[TILEP_PART_BASE],
-                                        TILEP_BASE_NAGA);
+    const bool is_naga = is_player_tile(doll.parts[TILEP_PART_BOTTOM],
+                                        TILEP_BOTTOM_NAGA);
 
     if (doll.parts[TILEP_PART_BOOTS] >= TILEP_BOOTS_NAGA_BARDING
         && doll.parts[TILEP_PART_BOOTS] <= TILEP_BOOTS_NAGA_BARDING_RED
@@ -663,8 +662,8 @@ void pack_doll_buf(SubmergedTileBuffer& buf, const dolls_data &doll,
         flags[TILEP_PART_BOOTS] = is_naga ? TILEP_FLAG_NORMAL : TILEP_FLAG_HIDE;
     }
 
-    const bool is_cent = is_player_tile(doll.parts[TILEP_PART_BASE],
-                                        TILEP_BASE_CENTAUR);
+    const bool is_cent = is_player_tile(doll.parts[TILEP_PART_BOTTOM],
+                                        TILEP_BOTTOM_CENTAUR);
 
     if (doll.parts[TILEP_PART_BOOTS] >= TILEP_BOOTS_CENTAUR_BARDING
         && doll.parts[TILEP_PART_BOOTS] <= TILEP_BOOTS_CENTAUR_BARDING_RED
