@@ -500,9 +500,17 @@ void fill_doll_equipment(dolls_data &result)
 
         if (result.parts[TILEP_PART_DRCHEAD] == TILEP_SHOW_EQUIP)
             result.parts[TILEP_PART_DRCHEAD] = head;
-        if (result.parts[TILEP_PART_DRCWING] == TILEP_SHOW_EQUIP)
+        if (result.parts[TILEP_PART_DRCWING] == TILEP_SHOW_EQUIP && you.attribute[ATTR_PERM_FLIGHT])
             result.parts[TILEP_PART_DRCWING] = wing;
     }
+    else if (you.attribute[ATTR_PERM_FLIGHT])
+    {
+        if (is_player_tile(result.parts[TILEP_PART_BASE], TILEP_BASE_TENGU))
+            result.parts[TILEP_PART_DRCWING] = TILEP_DRCWING_TENGU;
+        else if (is_player_tile(result.parts[TILEP_PART_BASE], TILEP_BASE_GARGOYLE))
+            result.parts[TILEP_PART_DRCWING] = TILEP_DRCWING_GARGOYLE;
+    }
+
     // Shadow.
     if (result.parts[TILEP_PART_SHADOW] == TILEP_SHOW_EQUIP)
         result.parts[TILEP_PART_SHADOW] = TILEP_SHADOW_SHADOW;
