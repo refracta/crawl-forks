@@ -1602,11 +1602,16 @@ void tilep_calc_flags(const dolls_data &doll, int flag[])
     if (doll.parts[TILEP_PART_HELM] >= TILEP_HELM_HELM_OFS)
         flag[TILEP_PART_DRCHEAD] = TILEP_FLAG_HIDE;
 
-    // BCADDO: Remove TILEP_FLAG_CUT_NAGA.
     if (is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_NAGA))
-        flag[TILEP_PART_BOOTS] = flag[TILEP_PART_LEG] = TILEP_FLAG_HIDE;
+    {
+        flag[TILEP_PART_BASE]  = flag[TILEP_PART_BODY] = TILEP_FLAG_CUT_NAGA;
+        flag[TILEP_PART_BOOTS] = flag[TILEP_PART_LEG]  = TILEP_FLAG_HIDE;
+    }
     else if (is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_CENTAUR))
+    {
+        flag[TILEP_PART_BASE] = flag[TILEP_PART_BODY] = TILEP_FLAG_CUT_CENTAUR;
         flag[TILEP_PART_BOOTS] = flag[TILEP_PART_LEG] = TILEP_FLAG_HIDE;
+    }
     else if (is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_MERFOLK_WATER))
     {
         flag[TILEP_PART_BOOTS]  = TILEP_FLAG_HIDE;

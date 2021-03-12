@@ -128,7 +128,8 @@ M filtered_vector_select(vector<pair<M, int>> weights, function<bool(M)> filter)
  */
 static equipment_type _acquirement_armour_slot(bool divine)
 {
-    if (you.species == SP_NAGA || you.species == SP_CENTAUR)
+    if (you.species == SP_NAGA || you.species == SP_CENTAUR
+        || you.char_class == JOB_CENTAUR)
     {
         const armour_type bard =
             (you.species == SP_NAGA) ? ARM_NAGA_BARDING
@@ -177,15 +178,11 @@ static armour_type _acquirement_armour_for_slot(equipment_type slot_type,
                 return ARM_CLAW;
             return ARM_GLOVES;
         case EQ_BOOTS:
-            switch (you.species)
-            {
-                case SP_NAGA:
-                    return ARM_NAGA_BARDING;
-                case SP_CENTAUR:
-                    return ARM_CENTAUR_BARDING;
-                default:
-                    return ARM_BOOTS;
-            }
+            if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
+                return ARM_CENTAUR_BARDING;
+            else if (you.species == SP_NAGA)
+                return ARM_NAGA_BARDING;
+            return ARM_BOOTS;
         case EQ_HELMET:
             if (you_can_wear(EQ_HELMET) == MB_TRUE)
             {
@@ -365,7 +362,7 @@ static armour_type _useless_armour_type()
                 return random_choose(ARM_CENTAUR_BARDING, ARM_NAGA_BARDING);
             if (you.species == SP_NAGA)
                 return ARM_CENTAUR_BARDING;
-            if (you.species == SP_CENTAUR)
+            if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
                 return ARM_NAGA_BARDING;
             return ARM_BOOTS;
         case EQ_GLOVES:

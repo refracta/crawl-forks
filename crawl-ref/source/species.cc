@@ -488,7 +488,7 @@ void give_basic_mutations(species_type species)
         if (lum.xp_level == 1)
             you.mutation[lum.mut] = you.innate_mutation[lum.mut] = lum.mut_level;
 
-    if (you.char_class == JOB_DEMIGOD && you.get_mutation_level(MUT_HIGH_MAGIC) < 3)
+    if (you.char_class == JOB_DEMIGOD && you.get_mutation_level(MUT_HIGH_MAGIC) < mutation_max_levels(MUT_HIGH_MAGIC))
         you.mutation[MUT_HIGH_MAGIC] = you.innate_mutation[MUT_HIGH_MAGIC] = (you.get_mutation_level(MUT_HIGH_MAGIC) + 1);
     
     if (you.char_class == JOB_MUMMY)
@@ -496,6 +496,18 @@ void give_basic_mutations(species_type species)
         mummify();
         you.mutation[MUT_NECRO_ENHANCER] = you.innate_mutation[MUT_NECRO_ENHANCER] = 1;
         you.mutation[MUT_HEAT_VULNERABILITY] = you.innate_mutation[MUT_HEAT_VULNERABILITY] = 1;
+    }
+
+    if (you.char_class == JOB_CENTAUR)
+    {
+        you.mutation[MUT_FAST] = you.innate_mutation[MUT_FAST] = 2;
+        you.mutation[MUT_HOOVES] = you.innate_mutation[MUT_HOOVES] = 3;
+        
+        if (you_can_wear(EQ_BODY_ARMOUR))
+        {
+            const int deformed = min(you.innate_mutation[MUT_DEFORMED] + 1, mutation_max_levels(MUT_DEFORMED));
+            you.mutation[MUT_DEFORMED] = you.innate_mutation[MUT_DEFORMED] = deformed;
+        }
     }
 }
 

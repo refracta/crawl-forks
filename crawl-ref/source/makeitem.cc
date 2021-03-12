@@ -986,10 +986,7 @@ static bool _try_make_armour_artefact(item_def& item, int force_type,
 
         // 10% of boots become barding.
         if (item.sub_type == ARM_BOOTS && one_chance_in(10) && (you.chapter != CHAPTER_NONDUNGEON_START))
-        {
-            item.sub_type = random_choose(ARM_NAGA_BARDING,
-                                          ARM_CENTAUR_BARDING);
-        }
+            item.sub_type = random_choose(ARM_NAGA_BARDING, ARM_CENTAUR_BARDING);
 
         // Determine enchantment and cursedness.
         if (one_chance_in(5))

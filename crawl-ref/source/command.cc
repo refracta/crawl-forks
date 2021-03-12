@@ -274,8 +274,9 @@ void list_armour()
                  (i == EQ_BODY_ARMOUR) ? "Armour " :
                  (i == EQ_BOOTS) ?
                  ((you.species == SP_CENTAUR
-                   || you.species == SP_NAGA) ? "Barding"
-                                              : "Boots  ")
+                   || you.species == SP_NAGA
+                   || you.char_class == JOB_CENTAUR) ? "Barding"
+                                                     : "Boots  ")
                                  : "unknown")
              << " : ";
 

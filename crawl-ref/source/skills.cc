@@ -2027,10 +2027,25 @@ int species_apt(skill_type skill, species_type species)
     {
         if (skill == SK_NECROMANCY || skill == SK_SPELLCASTING)
             mod = 2;
-        else if (skill == SK_FIGHTING)
-            mod = 0;
-        else
+        else if (skill != SK_FIGHTING)
             mod = -2;
+    }
+
+    if (you.char_class == JOB_CENTAUR)
+    {
+        mod = -1;
+        if (skill == SK_BOWS || skill == SK_CROSSBOWS || skill == SK_SLINGS)
+            mod = 3;
+        else if (skill == SK_ARMOUR || skill == SK_DODGING
+            || skill == SK_SHIELDS || skill == SK_SPELLCASTING)
+        {
+            mod = -3;
+        }
+        else if (skill == SK_STEALTH)
+            mod = -5;
+
+        if (skill == SK_ARMOUR && _spec_skills[species][skill] == UNUSABLE_SKILL)
+            return -4;
     }
 
     if (you.char_class == JOB_DEMIGOD && skill == SK_INVOCATIONS)

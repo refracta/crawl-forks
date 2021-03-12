@@ -18,63 +18,56 @@
 
 static bool _banned_combination(job_type job, species_type species)
 {
-    switch (species)
+    switch (job)
     {
-    case SP_FAIRY:
-        if (job == JOB_FIGHTER
-            || job == JOB_MONK
-            || job == JOB_ENCHANTER
-            || job == JOB_BERSERKER
-            || job == JOB_SKALD
-            || job == JOB_TRANSMUTER
-            || job == JOB_DEMONSPAWN)
-        {
-            return true;
-        }
-        // Fallthrough.
-    case SP_FELID:
-        if (job == JOB_GLADIATOR
-            || job == JOB_HUNTER
-            || job == JOB_ARCANE_MARKSMAN)
+    case JOB_BERSERKER:
+        if (species_undead_type(species) != US_ALIVE
+            || species == SP_FORMICID
+            || species == SP_FAIRY)
         {
             return true;
         }
         break;
-    case SP_DEMIGOD:
-        if (job == JOB_BERSERKER
-            || job == JOB_CHAOS_KNIGHT
-            || job == JOB_ABYSSAL_KNIGHT
-            || job == JOB_MONK
-            || job == JOB_PRIEST
-            || job == JOB_DEMIGOD)
+    case JOB_CENTAUR:
+        if (species == SP_HUMAN
+            || species == SP_CENTAUR
+            || species == SP_NAGA)
+        {
+            return true;
+        }
+        // Fallthrough
+    case JOB_GLADIATOR:
+    case JOB_HUNTER:
+    case JOB_ARCANE_MARKSMAN:
+        if (species == SP_FELID)
+            return true;
+        // Fallthrough
+    case JOB_FIGHTER:
+    case JOB_MONK:
+    case JOB_ENCHANTER:
+    case JOB_SKALD:
+        if (species == SP_FAIRY)
+            return true;
+        break;
+    case JOB_MUMMY:
+        if (species == SP_LIGNIFITE)
+            return true;
+        // fallthrough
+    case JOB_DEMONSPAWN:
+        if (species_undead_type(species) == US_GHOST)
+            return true;
+        // fallthrough
+    case JOB_TRANSMUTER:
+        if (species_undead_type(species) == US_UNDEAD
+            || species_undead_type(species) == US_HUNGRY_DEAD
+            || species == SP_FAIRY)
         {
             return true;
         }
         break;
-    case SP_LIGNIFITE:
-        if (job == JOB_MUMMY)
-            return true;
-        break;
-    case SP_GHOUL:
-    case SP_SILENT_SPECTRE:
-        if (job == JOB_MUMMY || job == JOB_DEMONSPAWN)
-            return true;
-    case SP_FORMICID:
-        if (job == JOB_BERSERKER)
-            return true;
     default:
         break;
     }
-
-    if (job == JOB_TRANSMUTER
-        && (species_undead_type(species) == US_UNDEAD
-           || species_undead_type(species) == US_HUNGRY_DEAD))
-    {
-        return true;
-    }
-
-    if (job == JOB_BERSERKER && species_undead_type(species) != US_ALIVE)
-        return true;
 
     return false;
 }

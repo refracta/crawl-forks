@@ -2155,7 +2155,7 @@ static void _get_hand_type(string &hand, bool &can_plural)
 
     if (you.form == transformation::bat
         || you.species != SP_MUMMY && you.species != SP_OCTOPODE
-           &&you.char_class != JOB_MUMMY
+           && you.char_class != JOB_MUMMY
            && !form_changed_physiology())
     {
         hand_vec.emplace_back("ear");

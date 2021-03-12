@@ -1228,36 +1228,24 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
     const int sub_type = item.sub_type;
     const equipment_type slot = get_armour_slot(item);
 
-    if (you.species == SP_OCTOPODE && slot != EQ_HELMET)
-    {
-        if (verbose)
-            mpr("You can't wear that!");
-        return false;
-    }
-
     if (species_is_draconian(you.species) && slot == EQ_BODY_ARMOUR)
     {
         if (verbose)
-        {
-            mprf("Your wings%s won't fit in that.", you.has_mutation(MUT_BIG_WINGS)
-                 ? "" : ", even vestigial as they are,");
-        }
+            mpr("Your wings%s won't fit in that.");
         return false;
     }
 
     if (you.species == SP_LIGNIFITE && slot == EQ_BODY_ARMOUR && fit_armour_size(item, SIZE_LARGE) != 0)
     {
         if (verbose)
-        {
             mprf("Your branches won't fit in that!");
-        }
         return false;
     }
 
     if (sub_type == ARM_NAGA_BARDING || sub_type == ARM_CENTAUR_BARDING)
     {
         if (you.species == SP_NAGA && sub_type == ARM_NAGA_BARDING
-            || you.species == SP_CENTAUR && sub_type == ARM_CENTAUR_BARDING)
+            || (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR) && sub_type == ARM_CENTAUR_BARDING)
         {
             if (ignore_temporary || !player_is_shapechanged())
                 return true;
@@ -1265,6 +1253,13 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
                 mpr("You can wear that only in your normal form.");
         }
         else if (verbose)
+            mpr("You can't wear that!");
+        return false;
+    }
+
+    if (you.species == SP_OCTOPODE && slot != EQ_HELMET)
+    {
+        if (verbose)
             mpr("You can't wear that!");
         return false;
     }
