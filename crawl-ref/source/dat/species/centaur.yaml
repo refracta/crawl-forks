@@ -40,13 +40,13 @@ aptitudes:
   invocations: 0
   evocations: -1
 size: large
-str: 10
-int: 7
+str: 12
+int: 8
 dex: 4
 levelup_stat_frequency: 4
 levelup_stats:
   - str
-  - dex
+  - int
 mutations:
   1:
     MUT_TOUGH_SKIN: 3

@@ -566,12 +566,15 @@ void give_level_mutations(species_type species, int xp_level)
 
 int species_exp_modifier(species_type species)
 {
-    return get_species_def(species).xp_mod;
+    int mod = get_species_def(species).xp_mod;
+    if (you.char_class == JOB_CENTAUR || you.char_class == JOB_DEMIGOD)
+        mod--;
+    return mod;
 }
 
 int species_hp_modifier(species_type species)
 {
-    if (you.char_class == JOB_DEMIGOD)
+    if (you.char_class == JOB_DEMIGOD || you.char_class == JOB_CENTAUR)
         return get_species_def(species).hp_mod + 1;
     if (you.species == SP_LIGNIFITE)
         return (-2 + div_round_up(you.experience_level, 5));
