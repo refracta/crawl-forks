@@ -235,7 +235,7 @@ size_type species_size(species_type species, size_part_type psize)
         if (size == SIZE_GIANT)
             return size;
 
-        return size + 1;
+        return (size_type)(size + 1);
     }
 
     if (psize == PSIZE_TORSO
