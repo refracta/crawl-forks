@@ -1191,6 +1191,26 @@ static int _draconian_colour(int colour)
 // Overrides with a special bottom half when appropriate (Merfolk in Water, Centaurs, etc.)
 tileidx_t tilep_top_to_bottom_tile(tileidx_t top)
 {
+    if (you.fishtail)
+        return TILEP_BOTTOM_MERFOLK_WATER;
+
+    if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
+    {
+        if (you.undead_state() == US_GHOST)
+            return TILEP_BOTTOM_CENTAUR_SPECTRAL;
+        else if (you.species == SP_DRACONIAN && you.drac_colour == DR_BONE)
+            return TILEP_BOTTOM_CENTAUR_BONE;
+        else if (you.undead_state() != US_ALIVE)
+            return TILEP_BOTTOM_CENTAUR_UNDEAD;
+        return TILEP_BOTTOM_CENTAUR;
+    }
+
+    if (you.species == SP_NAGA)
+        return TILEP_BOTTOM_NAGA;
+
+    if (top >= TILEP_BASE_BOTTOMLESS)
+        return 0;
+
     const int offset = tile_player_part_start[TILEP_PART_BOTTOM] - tile_player_part_start[TILEP_PART_BASE];
     return top + offset;
 }
@@ -1261,6 +1281,8 @@ tileidx_t tilep_species_to_base_tile(int sp, int drac_colour)
     case SP_LIGNIFITE:
         return TILEP_BASE_LIGNIFITE;
     case SP_OCTOPODE:
+        if (you.char_class == JOB_CENTAUR)
+            return TILEP_BASE_OCTOPODE_CENTAUR;
         return TILEP_BASE_OCTOPODE;
     case SP_FORMICID:
         return TILEP_BASE_FORMICID;

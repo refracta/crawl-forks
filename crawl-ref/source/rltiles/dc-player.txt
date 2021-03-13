@@ -12,6 +12,7 @@ misc/cursor CURSOR
 ###BASE
 %parts_ctg BASE
 %sdir player/base
+%rim 0
 human2_f HUMAN
 human2_m
 human_f
@@ -50,10 +51,8 @@ ogre_m OGRE
 ogre_f
 troll_f TROLL
 troll_m
-%rim 0
 djinni_f DJINNI
 djinni_m
-%rim 1
 lignifite LIGNIFITE
 formicid FORMICID
 vine_stalker_f VINE_STALKER
@@ -137,16 +136,14 @@ gargoyle_m GARGOYLE
 gargoyle_f
 
 # Bottomless (bases without bottom halves are last)
-octopode1 OCTOPODE
+octopode1 OCTOPODE BOTTOMLESS
 octopode2
 octopode3
 octopode4
 octopode5
-%rim 0
+octopode_centaur OCTOPODE_CENTAUR
 fairy FAIRY
-%rim 1
 %sdir player/felids
-%rim 0
 cat1 FELID
 cat2
 cat3
@@ -200,10 +197,8 @@ ogre_m OGRE
 ogre_f
 troll_f TROLL
 troll_m
-%rim 0
 djinni_f DJINNI
 djinni_m
-%rim 1
 lignifite LIGNIFITE
 formicid FORMICID
 vine_stalker_f VINE_STALKER
@@ -288,6 +283,10 @@ gargoyle_f
 
 # bottom only (bottoms without bases are last)
 centaur_brown CENTAUR
+centaur_spectral CENTAUR_SPECTRAL
+centaur_statue CENTAUR_STATUE
+centaur_bone CENTAUR_BONE
+centaur_undead CENTAUR_UNDEAD
 naga_blue_f NAGA
 naga_blue_m
 naga_red_f
@@ -299,24 +298,22 @@ naga_lightgreen_m
 naga_darkgreen_f
 naga_darkgreen_m
 merfolk_water MERFOLK_WATER
+statue STATUE
+lich LICH
 %end_ctg
 
 ###SHADOW
 %sdir player/base
 %parts_ctg SHADOW
-%rim 0
 shadow SHADOW
 %end_ctg
 
 %parts_ctg HALO
-%rim 0
 %sdir player/halo
 halo_player TSO
-%rim 1
 %end_ctg
 
 %parts_ctg ENCH
-%rim 0
 %sdir player/ench
 sticky_flame STICKY_FLAME
 %rim 1
@@ -376,7 +373,6 @@ spider SPIDER
 ## Mutations
 hooves HOOVES
 ## Bardings
-%rim 1
 %sdir player/barding
 naga_barding_blue NAGA_BARDING
 naga_barding_metal NAGA_BARDING_METAL

@@ -230,6 +230,9 @@ size_type species_size(species_type species, size_part_type psize)
 
     const size_type size = get_species_def(species).size;
 
+    if (psize == PSIZE_BODY && you.char_class == JOB_CENTAUR)
+        return min(SIZE_GIANT, size + 1);
+
     if (psize == PSIZE_TORSO
         && bool(get_species_def(species).flags & SPF_SMALL_TORSO))
     {

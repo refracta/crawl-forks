@@ -31,7 +31,8 @@ static bool _banned_combination(job_type job, species_type species)
     case JOB_CENTAUR:
         if (species == SP_HUMAN
             || species == SP_CENTAUR
-            || species == SP_NAGA)
+            || species == SP_NAGA
+            || species == SP_LIGNIFITE)
         {
             return true;
         }

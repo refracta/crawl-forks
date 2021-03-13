@@ -294,29 +294,43 @@ void fill_doll_equipment(dolls_data &result)
         tileidx_t ch;
         switch (you.species)
         {
-        case SP_CENTAUR: ch = TILEP_TRAN_STATUE_CENTAUR;  break;
-        case SP_NAGA:    ch = TILEP_TRAN_STATUE_NAGA;     break;
-        case SP_FELID:   ch = TILEP_TRAN_STATUE_FELID;    break;
-        case SP_OCTOPODE:ch = TILEP_TRAN_STATUE_OCTOPODE; break;
-        default:         ch = TILEP_TRAN_STATUE_HUMANOID; break;
+        case SP_DRACONIAN: ch = TILEP_BASE_DRACONIAN_STATUE; break;
+        case SP_FELID:     ch = TILEP_TRAN_STATUE_FELID;     break;
+        case SP_OCTOPODE:  ch = TILEP_TRAN_STATUE_OCTOPODE;  break;
+        default:           ch = TILEP_TRAN_STATUE_HUMANOID;  break;
         }
         result.parts[TILEP_PART_BASE] = ch;
         if (you.species == SP_DRACONIAN)
+        {
             result.parts[TILEP_PART_DRCHEAD] = TILEP_DRCHEAD_STATUE;
+            result.parts[TILEP_PART_BOTTOM]  = TILEP_BOTTOM_DRACONIAN_STATUE;
+            if (you.attribute[ATTR_PERM_FLIGHT])
+                result.parts[TILEP_PART_DRCWING] = TILEP_DRCWING_STATUE;
+        }
         else
             result.parts[TILEP_PART_DRCHEAD] = 0;
+
+        if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
+            result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_CENTAUR_STATUE;
+        else if (result.parts[TILEP_PART_BASE] == TILEP_TRAN_STATUE_HUMANOID)
+            result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_STATUE;
+
         result.parts[TILEP_PART_HAIR] = 0;
         result.parts[TILEP_PART_LEG] = 0;
         break;
     case transformation::lich:
         switch (you.species)
         {
-        case SP_CENTAUR: ch = TILEP_TRAN_LICH_CENTAUR;  break;
-        case SP_NAGA:    ch = TILEP_TRAN_LICH_NAGA;     break;
         case SP_FELID:   ch = TILEP_TRAN_LICH_FELID;    break;
         case SP_OCTOPODE:ch = TILEP_TRAN_LICH_OCTOPODE; break;
         default:         ch = TILEP_TRAN_LICH_HUMANOID; break;
         }
+
+        if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
+            result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_CENTAUR_BONE;
+        else if (result.parts[TILEP_PART_BASE] == TILEP_TRAN_STATUE_HUMANOID)
+            result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_LICH;
+
         result.parts[TILEP_PART_BASE] = ch;
         result.parts[TILEP_PART_DRCHEAD] = 0;
         result.parts[TILEP_PART_HAIR] = 0;
