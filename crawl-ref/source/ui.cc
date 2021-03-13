@@ -2330,8 +2330,8 @@ void PlayerDoll::_pack_doll()
         TILEP_PART_DRCWING,     //  3
         TILEP_PART_CLOAK,       //  4
         TILEP_PART_MOUNT_BACK,  //  5
-        TILEP_PART_BASE,        //  6
-        TILEP_PART_BOTTOM,      //  7
+        TILEP_PART_BOTTOM,      //  6
+        TILEP_PART_BASE,        //  7
         TILEP_PART_BOOTS,       //  8
         TILEP_PART_LEG,         //  9
         TILEP_PART_BODY,        // 10
@@ -2351,8 +2351,8 @@ void PlayerDoll::_pack_doll()
     // For skirts, boots go under the leg armour. For pants, they go over.
     if (m_save_doll.parts[TILEP_PART_LEG] < TILEP_LEG_SKIRT_OFS)
     {
-        p_order[8] = TILEP_PART_BOOTS;
-        p_order[7] = TILEP_PART_LEG;
+        p_order[9] = TILEP_PART_BOOTS;
+        p_order[8] = TILEP_PART_LEG;
     }
 
     // Special case bardings from being cut off.

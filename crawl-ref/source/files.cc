@@ -717,7 +717,6 @@ static void _fill_player_doll(player_save_info &p, package *save)
     {
         equip_doll.parts[TILEP_PART_BASE] 
             += (equip_doll.parts[TILEP_PART_DRCHEAD] - tile_player_part_start[TILEP_PART_DRCHEAD]) * 2;
-
     }
 
     if (!success) // Use default doll instead.

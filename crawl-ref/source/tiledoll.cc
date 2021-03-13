@@ -354,6 +354,10 @@ void fill_doll_equipment(dolls_data &result)
     if (result.parts[TILEP_PART_BASE] == TILEP_SHOW_EQUIP)
         tilep_race_default(you.species, you.drac_colour, &result);
 
+    // Bottom half.
+    if (result.parts[TILEP_PART_BOTTOM] == TILEP_SHOW_EQUIP)
+        result.parts[TILEP_PART_BOTTOM] = tilep_top_to_bottom_tile(result.parts[TILEP_PART_BASE]);
+
     // Main hand.
     if (result.parts[TILEP_PART_HAND1] == TILEP_SHOW_EQUIP)
     {
@@ -503,7 +507,7 @@ void fill_doll_equipment(dolls_data &result)
         if (result.parts[TILEP_PART_DRCWING] == TILEP_SHOW_EQUIP && you.attribute[ATTR_PERM_FLIGHT])
             result.parts[TILEP_PART_DRCWING] = wing;
     }
-    else if (you.attribute[ATTR_PERM_FLIGHT])
+    else if (you.attribute[ATTR_PERM_FLIGHT]  && result.parts[TILEP_PART_DRCWING] == TILEP_SHOW_EQUIP)
     {
         if (is_player_tile(result.parts[TILEP_PART_BASE], TILEP_BASE_TENGU))
             result.parts[TILEP_PART_DRCWING] = TILEP_DRCWING_TENGU;
@@ -622,8 +626,8 @@ void pack_doll_buf(SubmergedTileBuffer& buf, const dolls_data &doll,
         TILEP_PART_DRCWING,     //  3
         TILEP_PART_CLOAK,       //  4
         TILEP_PART_MOUNT_BACK,  //  5
-        TILEP_PART_BASE,        //  6
-        TILEP_PART_BOTTOM,      //  7
+        TILEP_PART_BOTTOM,      //  6
+        TILEP_PART_BASE,        //  7
         TILEP_PART_BOOTS,       //  8
         TILEP_PART_LEG,         //  9
         TILEP_PART_BODY,        // 10
@@ -643,20 +647,21 @@ void pack_doll_buf(SubmergedTileBuffer& buf, const dolls_data &doll,
     // For skirts, boots go under the leg armour. For pants, they go over.
     if (doll.parts[TILEP_PART_LEG] < TILEP_LEG_SKIRT_OFS)
     {
-        p_order[8] = TILEP_PART_BOOTS;
-        p_order[7] = TILEP_PART_LEG;
+        p_order[9] = TILEP_PART_BOOTS;
+        p_order[8] = TILEP_PART_LEG;
     }
 
     // Draw scarves above other clothing.
     if (doll.parts[TILEP_PART_CLOAK] >= TILEP_CLOAK_SCARF_FIRST_NORM)
     {
-        p_order[4] = p_order[5];
-        p_order[5] = p_order[6];
-        p_order[6] = p_order[7];
-        p_order[7] = p_order[8];
-        p_order[8] = p_order[9];
-        p_order[9] = p_order[10];
-        p_order[10] = TILEP_PART_CLOAK;
+        p_order[4]  = p_order[5];
+        p_order[5]  = p_order[6];
+        p_order[6]  = p_order[7];
+        p_order[7]  = p_order[8];
+        p_order[8]  = p_order[9];
+        p_order[9]  = p_order[10];
+        p_order[10] = p_order[11];
+        p_order[11] = TILEP_PART_CLOAK;
     }
 
     // Special case bardings from being cut off.

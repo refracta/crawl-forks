@@ -247,6 +247,7 @@ void DollEditRegion::render()
     const char *cat_name[TILEP_PART_MAX] =
     {
         "Base",
+        "Bottom",
         "Shadow",
         "Halo",
         "Ench",
@@ -260,10 +261,10 @@ void DollEditRegion::render()
         "Hair",
         "Beard",
         "Helm",
+        "MountF",
+        "MountB",
         "DrcWing",
         "DrcHead",
-        "MountF",
-        "MountB"
     };
 
     // Add current doll information:

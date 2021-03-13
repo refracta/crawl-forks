@@ -572,6 +572,8 @@ int species_exp_modifier(species_type species)
     return mod;
 }
 
+// This is only called to populate the aptitude information text and to access
+// your current character's stats, so the use of you is fine.
 int species_hp_modifier(species_type species)
 {
     if (you.char_class == JOB_DEMIGOD || you.char_class == JOB_CENTAUR)

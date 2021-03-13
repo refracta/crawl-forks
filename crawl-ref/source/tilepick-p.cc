@@ -1187,6 +1187,14 @@ static int _draconian_colour(int colour)
     return 0;
 }
 
+// Uses the top half of the player tile to pick the bottom half.
+// Overrides with a special bottom half when appropriate (Merfolk in Water, Centaurs, etc.)
+tileidx_t tilep_top_to_bottom_tile(tileidx_t top)
+{
+    const int offset = tile_player_part_start[TILEP_PART_BOTTOM] - tile_player_part_start[TILEP_PART_BASE];
+    return top + offset;
+}
+
 tileidx_t tilep_species_to_base_tile(int sp, int drac_colour)
 {
     if (sp != SP_OCTOPODE && sp != SP_FELID
@@ -1203,9 +1211,6 @@ tileidx_t tilep_species_to_base_tile(int sp, int drac_colour)
     {
     case SP_HUMAN:
         return TILEP_BASE_HUMAN;
-#if TAG_MAJOR_VERSION == 34
-    case SP_SLUDGE_ELF:
-#endif
     case SP_DEEP_ELF:
         return TILEP_BASE_DEEP_ELF;
     case SP_HALFLING:
@@ -1306,11 +1311,6 @@ void tilep_race_default(int sp, int colour, dolls_data *doll)
 
     switch (sp)
     {
-#if TAG_MAJOR_VERSION == 34
-        case SP_SLUDGE_ELF:
-            hair = TILEP_HAIR_ELF_YELLOW;
-            break;
-#endif
         case SP_DEEP_ELF:
             hair = TILEP_HAIR_ELF_WHITE;
             break;
@@ -1604,12 +1604,12 @@ void tilep_calc_flags(const dolls_data &doll, int flag[])
 
     if (is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_NAGA))
     {
-        flag[TILEP_PART_BASE]  = flag[TILEP_PART_BODY] = TILEP_FLAG_CUT_NAGA;
+        flag[TILEP_PART_BODY] = TILEP_FLAG_CUT_NAGA;
         flag[TILEP_PART_BOOTS] = flag[TILEP_PART_LEG]  = TILEP_FLAG_HIDE;
     }
     else if (is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_CENTAUR))
     {
-        flag[TILEP_PART_BASE] = flag[TILEP_PART_BODY] = TILEP_FLAG_CUT_CENTAUR;
+        flag[TILEP_PART_BODY] = TILEP_FLAG_CUT_CENTAUR;
         flag[TILEP_PART_BOOTS] = flag[TILEP_PART_LEG] = TILEP_FLAG_HIDE;
     }
     else if (is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_MERFOLK_WATER))
@@ -1749,6 +1749,7 @@ const int parts_saved[TILEP_PART_MAX + 1] =
     TILEP_PART_DRCHEAD,
     TILEP_PART_MOUNT_FRONT,
     TILEP_PART_MOUNT_BACK,
+    TILEP_PART_BOTTOM,
     -1
 };
 
