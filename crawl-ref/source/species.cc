@@ -230,6 +230,14 @@ size_type species_size(species_type species, size_part_type psize)
 
     const size_type size = get_species_def(species).size;
 
+    if (psize == PSIZE_BODY && you.char_class == JOB_CENTAUR)
+    {
+        if (size == SIZE_GIANT)
+            return size;
+
+        return (size_type)(size + 1);
+    }
+
     if (psize == PSIZE_TORSO
         && bool(get_species_def(species).flags & SPF_SMALL_TORSO))
     {
@@ -488,7 +496,7 @@ void give_basic_mutations(species_type species)
         if (lum.xp_level == 1)
             you.mutation[lum.mut] = you.innate_mutation[lum.mut] = lum.mut_level;
 
-    if (you.char_class == JOB_DEMIGOD && you.get_mutation_level(MUT_HIGH_MAGIC) < 3)
+    if (you.char_class == JOB_DEMIGOD && you.get_mutation_level(MUT_HIGH_MAGIC) < mutation_max_levels(MUT_HIGH_MAGIC))
         you.mutation[MUT_HIGH_MAGIC] = you.innate_mutation[MUT_HIGH_MAGIC] = (you.get_mutation_level(MUT_HIGH_MAGIC) + 1);
     
     if (you.char_class == JOB_MUMMY)
@@ -496,6 +504,18 @@ void give_basic_mutations(species_type species)
         mummify();
         you.mutation[MUT_NECRO_ENHANCER] = you.innate_mutation[MUT_NECRO_ENHANCER] = 1;
         you.mutation[MUT_HEAT_VULNERABILITY] = you.innate_mutation[MUT_HEAT_VULNERABILITY] = 1;
+    }
+
+    if (you.char_class == JOB_CENTAUR)
+    {
+        you.mutation[MUT_FAST] = you.innate_mutation[MUT_FAST] = 2;
+        you.mutation[MUT_HOOVES] = you.innate_mutation[MUT_HOOVES] = 3;
+        
+        if (you_can_wear(EQ_BODY_ARMOUR))
+        {
+            const int deformed = min(you.innate_mutation[MUT_DEFORMED] + 1, mutation_max_levels(MUT_DEFORMED));
+            you.mutation[MUT_DEFORMED] = you.innate_mutation[MUT_DEFORMED] = deformed;
+        }
     }
 }
 
@@ -554,12 +574,17 @@ void give_level_mutations(species_type species, int xp_level)
 
 int species_exp_modifier(species_type species)
 {
-    return get_species_def(species).xp_mod;
+    int mod = get_species_def(species).xp_mod;
+    if (you.char_class == JOB_CENTAUR || you.char_class == JOB_DEMIGOD)
+        mod--;
+    return mod;
 }
 
+// This is only called to populate the aptitude information text and to access
+// your current character's stats, so the use of you is fine.
 int species_hp_modifier(species_type species)
 {
-    if (you.char_class == JOB_DEMIGOD)
+    if (you.char_class == JOB_DEMIGOD || you.char_class == JOB_CENTAUR)
         return get_species_def(species).hp_mod + 1;
     if (you.species == SP_LIGNIFITE)
         return (-2 + div_round_up(you.experience_level, 5));

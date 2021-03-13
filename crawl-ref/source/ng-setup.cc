@@ -209,22 +209,6 @@ item_def* newgame_make_item(object_class_type base,
     return &item;
 }
 
-static void _give_ranged_weapon(weapon_type weapon, int plus)
-{
-    ASSERT(weapon != NUM_WEAPONS);
-
-    switch (weapon)
-    {
-    case WPN_SHORTBOW:
-    case WPN_HAND_CROSSBOW:
-    case WPN_HUNTING_SLING:
-        newgame_make_item(OBJ_WEAPONS, weapon, 1, plus);
-        break;
-    default:
-        break;
-    }
-}
-
 void give_items_skills(const newgame_def& ng)
 {
     create_wanderer();
@@ -291,7 +275,7 @@ void give_items_skills(const newgame_def& ng)
     else if (you.char_class == JOB_CHAOS_KNIGHT)
         newgame_make_item(OBJ_WEAPONS, ng.weapon, 1, 0, SPWPN_CHAOS);
     else if (job_gets_ranged_weapons(you.char_class))
-        _give_ranged_weapon(ng.weapon, you.char_class == JOB_HUNTER ? 1 : 0);
+        newgame_make_item(OBJ_WEAPONS, ng.weapon, 1, you.char_class == JOB_HUNTER ? 1 : 0);
     else if (job_custom_stats(you.char_class))
     {
         if (ng.weapon == WPN_STRONG)

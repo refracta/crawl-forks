@@ -697,20 +697,26 @@ static void _fill_player_doll(player_save_info &p, package *save)
     for (unsigned int j = 0; j < TILEP_PART_MAX; ++j)
         equip_doll.parts[j] = TILEP_SHOW_EQUIP;
 
-    equip_doll.parts[TILEP_PART_BASE]
-        = tilep_species_to_base_tile(p.species, p.experience_level);
-
     bool success = false;
+
+    equip_doll.parts[TILEP_PART_BASE]
+        = tilep_species_to_base_tile(p.species, 0);
 
     chunk_reader fdoll(save, "tdl");
     {
         char fbuf[LINEMAX];
         if (_readln(fdoll,fbuf))
         {
-            tilep_scan_parts(fbuf, equip_doll, p.species, p.experience_level);
-            tilep_race_default(p.species, p.experience_level, &equip_doll);
+            tilep_scan_parts(fbuf, equip_doll, p.species, 0);
+            tilep_race_default(p.species, 0, &equip_doll);
             success = true;
         }
+    }
+
+    if (equip_doll.parts[TILEP_PART_DRCHEAD] != 0)
+    {
+        equip_doll.parts[TILEP_PART_BASE] 
+            += (equip_doll.parts[TILEP_PART_DRCHEAD] - tile_player_part_start[TILEP_PART_DRCHEAD]) * 2;
     }
 
     if (!success) // Use default doll instead.

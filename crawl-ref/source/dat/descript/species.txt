@@ -7,7 +7,7 @@ learners and can hop long distances, but are otherwise slow and easily seen.
 Centaur
 
 Swift, strong and bulky, Centaurs are particularly skilled with ranged
-weaponry.
+weaponry; but are terrible at being stealthy and defending themselves.
 %%%%
 Deep Dwarf
 

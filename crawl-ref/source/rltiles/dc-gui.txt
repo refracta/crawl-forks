@@ -203,6 +203,7 @@ Ds JOB_RECOMMENDED_DEMONSPAWN
 Mu JOB_RECOMMENDED_MUMMY
 Dg JOB_RECOMMENDED_DEMIGOD
 No JOB_RECOMMENDED_NOBLE
+Ce JOB_RECOMMENDED_CENTAUR
 %syn LAST_RECOMMENDED_JOB
 
 %texture disabled-fg
@@ -233,6 +234,7 @@ Ds JOB_DEMONSPAWN
 Mu JOB_MUMMY
 Dg JOB_DEMIGOD
 No JOB_NOBLE
+Ce JOB_CENTAUR
 %syn LAST_JOB
 
 %sdir player
@@ -240,106 +242,127 @@ No JOB_NOBLE
 felids/cat3 SP_RECOMMENDED_FELID
 base/fairy SP_RECOMMENDED_FAIRY
 %start
-%compose base/centaur_brown_m
+%compose bottom/centaur_brown
+%compose base/human_f
 %compose body/animal_skin
 %compose hair/short_black
-%compose boots/hooves
 %finish SP_RECOMMENDED_CENTAUR
 %start
+%compose bottom/deep_elf_f
 %compose base/deep_elf_f
 %compose body/animal_skin
 %compose hair/elf_white
 %finish SP_RECOMMENDED_DEEP_ELF
 %start
+%compose bottom/draconian_f
 %compose base/draconian_f
 %compose body/animal_skin
 %compose drchead/drchead_brown
 %finish SP_RECOMMENDED_BASE_DRACONIAN
 %start
+%compose bottom/formicid
 %compose base/formicid
 %compose body/animal_skin
 %finish SP_RECOMMENDED_FORMICID
 %start
+%compose bottom/frog_m
 %compose base/frog_m
 %compose body/animal_skin
 %finish SP_RECOMMENDED_BARACHI
 %start
+%compose bottom/gargoyle_m
 %compose base/gargoyle_m
 %compose body/animal_skin
 %finish SP_RECOMMENDED_GARGOYLE
 %start
+%compose bottom/ghoul_m
 %compose base/ghoul_m
 %compose body/animal_skin
 %finish SP_RECOMMENDED_GHOUL
 %start
+%compose bottom/gnoll_m
 %compose base/gnoll_m
 %compose body/animal_skin
 %finish SP_RECOMMENDED_GNOLL
 %start
+%compose bottom/human_f
 %compose base/human_f
 %compose body/animal_skin
 %compose hair/short_black
 %finish SP_RECOMMENDED_HUMAN
 %start
+%compose bottom/kobold_m
 %compose base/kobold_m
 %compose body/animal_skin
 %finish SP_RECOMMENDED_KOBOLD
 %start
-%compose base/merfolk_water_f
+%compose bottom/merfolk_f
+%compose base/merfolk_f
 %compose body/animal_skin
 %compose hair/green
 %finish SP_RECOMMENDED_MERFOLK
 %start
+%compose bottom/minotaur_m
 %compose base/minotaur_m
 %compose body/animal_skin
 %compose head/horns2
 %finish SP_RECOMMENDED_MINOTAUR
 %start
-%compose base/naga_f
+%compose bottom/naga_f
+%compose base/human_f
 %compose body/animal_skin
 %compose hair/part2_red
 %finish SP_RECOMMENDED_NAGA
 base/octopode1 SP_RECOMMENDED_OCTOPODE
 %start
+%compose bottom/ogre_m
 %compose base/ogre_m
 %compose body/animal_skin
 %compose hair/short_black
 %finish SP_RECOMMENDED_OGRE
 %start
+%compose bottom/orc_f
 %compose base/orc_f
 %compose body/animal_skin
 %finish SP_RECOMMENDED_HILL_ORC
 %start
+%compose bottom/spriggan_m
 %compose base/spriggan_m
 %compose body/animal_skin
 %compose beard/medium_green
 %finish SP_RECOMMENDED_SPRIGGAN
 %start
-%compose base/tengu_winged_f
+%compose bottom/tengu_f
+%compose base/tengu_f
 %compose body/animal_skin
 %compose hair/short_black
 %finish SP_RECOMMENDED_TENGU
 %start
+%compose bottom/troll_f
 %compose base/troll_f
 %compose body/animal_skin
 %compose hair/troll
 %compose gloves/claws
 %finish SP_RECOMMENDED_TROLL
 %start
+%compose bottom/vine_stalker_f
 %compose base/vine_stalker_f
 %compose body/animal_skin
 %finish SP_RECOMMENDED_VINE_STALKER
 %start
-%compose ../player/base/lignifite.png
-%compose ../player/body/animal_skin.png
+%compose bottom/lignifite
+%compose base/lignifite
+%compose body/animal_skin
 %finish SP_RECOMMENDED_LIGNIFITE
 %start
-%compose ../player/base/silent_spectre_f.png
-%compose ../player/body/animal_skin.png
+%compose bottom/silent_spectre_f
+%compose base/silent_spectre_f
+%compose body/animal_skin
 %finish SP_RECOMMENDED_SILENT_SPECTRE
 %start
-%compose ../player/base/goblin.png
-%compose ../player/body/animal_skin.png
+%compose bottom/goblin.png
+%compose base/goblin.png
+%compose body/animal_skin.png
 %finish SP_RECOMMENDED_GOBLIN
 %syn LAST_RECOMMENDED_SPECIES
 

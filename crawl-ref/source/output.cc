@@ -1888,7 +1888,8 @@ const char *equip_slot_to_name(int equip)
         return "Weapon";
 
     if (equip == EQ_BOOTS
-        && (you.species == SP_CENTAUR || you.species == SP_NAGA))
+        && (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR ||
+            you.species == SP_NAGA))
     {
         return "Barding";
     }

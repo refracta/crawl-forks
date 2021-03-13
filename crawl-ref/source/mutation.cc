@@ -654,15 +654,18 @@ string describe_mutations(bool drop_title)
 
     if (you.racial_ac(false) > 0)
     {
-        const string scale_clause = string(scale_type())
-            + " scales are hard";
+        const string race_string = you.species == SP_DRACONIAN ? string(scale_type()) + " scales" :
+                                   you.species == SP_NAGA      ? "serpentine skin"                :
+                                   you.species == SP_GARGOYLE  ? "stone body"                     :
+                                   you.species == SP_LIGNIFITE ? "bark" : "";                
+
+        const string job_string = you.char_class == JOB_CENTAUR ? "horsehide" : "";
+        const bool plural = race_string.length() && job_string.length();
 
         result += _annotate_form_based(
-            make_stringf("Your %s. (AC +%d)",
-                you.species == SP_NAGA ? "serpentine skin is tough" :
-                you.species == SP_GARGOYLE ? "stone body is resilient" :
-                you.species == SP_LIGNIFITE ? "bark is resilient" :
-                scale_clause.c_str(),
+            make_stringf("Your %s%s%s %s resilient. (AC +%d)", race_string.c_str(), 
+                plural ? " and " : "", 
+                job_string.c_str(), plural || you.species == SP_DRACONIAN ? "are" : "is",
                 you.racial_ac(false) / 100),
             player_is_shapechanged()
             && !(species_is_draconian(you.species)

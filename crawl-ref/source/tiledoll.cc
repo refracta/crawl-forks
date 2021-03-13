@@ -171,7 +171,7 @@ bool load_doll_data(const char *fn, dolls_data *dolls, int max,
                 if (*cur == count++)
                 {
                     tilep_scan_parts(fbuf, dolls[0], you.species,
-                                     you.experience_level);
+                                     you.drac_colour);
                     break;
                 }
             }
@@ -184,7 +184,7 @@ bool load_doll_data(const char *fn, dolls_data *dolls, int max,
                     continue;
 
                 tilep_scan_parts(fbuf, dolls[count++], you.species,
-                                 you.experience_level);
+                                 you.drac_colour);
             }
         }
 
@@ -208,13 +208,13 @@ void init_player_doll()
     if (mode == TILEP_MODE_LOADING)
     {
         player_doll = dolls[cur];
-        tilep_race_default(you.species, you.experience_level, &player_doll);
+        tilep_race_default(you.species, you.drac_colour, &player_doll);
         return;
     }
 
     for (int i = 0; i < TILEP_PART_MAX; i++)
         player_doll.parts[i] = TILEP_SHOW_EQUIP;
-    tilep_race_default(you.species, you.experience_level, &player_doll);
+    tilep_race_default(you.species, you.drac_colour, &player_doll);
 
     if (mode == TILEP_MODE_EQUIP)
         return;
@@ -294,29 +294,43 @@ void fill_doll_equipment(dolls_data &result)
         tileidx_t ch;
         switch (you.species)
         {
-        case SP_CENTAUR: ch = TILEP_TRAN_STATUE_CENTAUR;  break;
-        case SP_NAGA:    ch = TILEP_TRAN_STATUE_NAGA;     break;
-        case SP_FELID:   ch = TILEP_TRAN_STATUE_FELID;    break;
-        case SP_OCTOPODE:ch = TILEP_TRAN_STATUE_OCTOPODE; break;
-        default:         ch = TILEP_TRAN_STATUE_HUMANOID; break;
+        case SP_DRACONIAN: ch = TILEP_BASE_DRACONIAN_STATUE; break;
+        case SP_FELID:     ch = TILEP_TRAN_STATUE_FELID;     break;
+        case SP_OCTOPODE:  ch = TILEP_TRAN_STATUE_OCTOPODE;  break;
+        default:           ch = TILEP_TRAN_STATUE_HUMANOID;  break;
         }
         result.parts[TILEP_PART_BASE] = ch;
         if (you.species == SP_DRACONIAN)
+        {
             result.parts[TILEP_PART_DRCHEAD] = TILEP_DRCHEAD_STATUE;
+            result.parts[TILEP_PART_BOTTOM]  = TILEP_BOTTOM_DRACONIAN_STATUE;
+            if (you.attribute[ATTR_PERM_FLIGHT])
+                result.parts[TILEP_PART_DRCWING] = TILEP_DRCWING_STATUE;
+        }
         else
             result.parts[TILEP_PART_DRCHEAD] = 0;
+
+        if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
+            result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_CENTAUR_STATUE;
+        else if (result.parts[TILEP_PART_BASE] == TILEP_TRAN_STATUE_HUMANOID)
+            result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_STATUE;
+
         result.parts[TILEP_PART_HAIR] = 0;
         result.parts[TILEP_PART_LEG] = 0;
         break;
     case transformation::lich:
         switch (you.species)
         {
-        case SP_CENTAUR: ch = TILEP_TRAN_LICH_CENTAUR;  break;
-        case SP_NAGA:    ch = TILEP_TRAN_LICH_NAGA;     break;
         case SP_FELID:   ch = TILEP_TRAN_LICH_FELID;    break;
         case SP_OCTOPODE:ch = TILEP_TRAN_LICH_OCTOPODE; break;
         default:         ch = TILEP_TRAN_LICH_HUMANOID; break;
         }
+
+        if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
+            result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_CENTAUR_BONE;
+        else if (result.parts[TILEP_PART_BASE] == TILEP_TRAN_STATUE_HUMANOID)
+            result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_LICH;
+
         result.parts[TILEP_PART_BASE] = ch;
         result.parts[TILEP_PART_DRCHEAD] = 0;
         result.parts[TILEP_PART_HAIR] = 0;
@@ -351,9 +365,12 @@ void fill_doll_equipment(dolls_data &result)
     }
 
     // Base tile.
-    // BCADDO: Edit this to make draconian colours show properly.
     if (result.parts[TILEP_PART_BASE] == TILEP_SHOW_EQUIP)
-        tilep_race_default(you.species, you.experience_level, &result);
+        tilep_race_default(you.species, you.drac_colour, &result);
+
+    // Bottom half.
+    if (result.parts[TILEP_PART_BOTTOM] == TILEP_SHOW_EQUIP)
+        result.parts[TILEP_PART_BOTTOM] = tilep_top_to_bottom_tile(result.parts[TILEP_PART_BASE]);
 
     // Main hand.
     if (result.parts[TILEP_PART_HAND1] == TILEP_SHOW_EQUIP)
@@ -497,14 +514,21 @@ void fill_doll_equipment(dolls_data &result)
         tileidx_t base = 0;
         tileidx_t head = 0;
         tileidx_t wing = 0;
-        tilep_draconian_init(you.species, you.experience_level,
-            &base, &head, &wing);
+        tilep_draconian_init(you.drac_colour, &base, &head, &wing);
 
         if (result.parts[TILEP_PART_DRCHEAD] == TILEP_SHOW_EQUIP)
             result.parts[TILEP_PART_DRCHEAD] = head;
-        if (result.parts[TILEP_PART_DRCWING] == TILEP_SHOW_EQUIP)
+        if (result.parts[TILEP_PART_DRCWING] == TILEP_SHOW_EQUIP && you.attribute[ATTR_PERM_FLIGHT])
             result.parts[TILEP_PART_DRCWING] = wing;
     }
+    else if (you.attribute[ATTR_PERM_FLIGHT]  && result.parts[TILEP_PART_DRCWING] == TILEP_SHOW_EQUIP)
+    {
+        if (is_player_tile(result.parts[TILEP_PART_BASE], TILEP_BASE_TENGU))
+            result.parts[TILEP_PART_DRCWING] = TILEP_DRCWING_TENGU;
+        else if (is_player_tile(result.parts[TILEP_PART_BASE], TILEP_BASE_GARGOYLE))
+            result.parts[TILEP_PART_DRCWING] = TILEP_DRCWING_GARGOYLE;
+    }
+
     // Shadow.
     if (result.parts[TILEP_PART_SHADOW] == TILEP_SHOW_EQUIP)
         result.parts[TILEP_PART_SHADOW] = TILEP_SHADOW_SHADOW;
@@ -616,18 +640,19 @@ void pack_doll_buf(SubmergedTileBuffer& buf, const dolls_data &doll,
         TILEP_PART_DRCWING,     //  3
         TILEP_PART_CLOAK,       //  4
         TILEP_PART_MOUNT_BACK,  //  5
-        TILEP_PART_BASE,        //  6
-        TILEP_PART_BOOTS,       //  7
-        TILEP_PART_LEG,         //  8
-        TILEP_PART_BODY,        //  9
-        TILEP_PART_ARM,         // 10
-        TILEP_PART_HAIR,        // 11
-        TILEP_PART_BEARD,       // 12
-        TILEP_PART_DRCHEAD,     // 13
-        TILEP_PART_HELM,        // 14
-        TILEP_PART_HAND1,       // 15
-        TILEP_PART_HAND2,       // 16
-        TILEP_PART_MOUNT_FRONT, // 17
+        TILEP_PART_BOTTOM,      //  6
+        TILEP_PART_BASE,        //  7
+        TILEP_PART_BOOTS,       //  8
+        TILEP_PART_LEG,         //  9
+        TILEP_PART_BODY,        // 10
+        TILEP_PART_ARM,         // 11
+        TILEP_PART_HAIR,        // 12
+        TILEP_PART_BEARD,       // 13
+        TILEP_PART_DRCHEAD,     // 14
+        TILEP_PART_HELM,        // 15
+        TILEP_PART_HAND1,       // 16
+        TILEP_PART_HAND2,       // 17
+        TILEP_PART_MOUNT_FRONT, // 18
     };
 
     int flags[TILEP_PART_MAX];
@@ -636,25 +661,26 @@ void pack_doll_buf(SubmergedTileBuffer& buf, const dolls_data &doll,
     // For skirts, boots go under the leg armour. For pants, they go over.
     if (doll.parts[TILEP_PART_LEG] < TILEP_LEG_SKIRT_OFS)
     {
-        p_order[8] = TILEP_PART_BOOTS;
-        p_order[7] = TILEP_PART_LEG;
+        p_order[9] = TILEP_PART_BOOTS;
+        p_order[8] = TILEP_PART_LEG;
     }
 
     // Draw scarves above other clothing.
     if (doll.parts[TILEP_PART_CLOAK] >= TILEP_CLOAK_SCARF_FIRST_NORM)
     {
-        p_order[4] = p_order[5];
-        p_order[5] = p_order[6];
-        p_order[6] = p_order[7];
-        p_order[7] = p_order[8];
-        p_order[8] = p_order[9];
-        p_order[9] = p_order[10];
-        p_order[10] = TILEP_PART_CLOAK;
+        p_order[4]  = p_order[5];
+        p_order[5]  = p_order[6];
+        p_order[6]  = p_order[7];
+        p_order[7]  = p_order[8];
+        p_order[8]  = p_order[9];
+        p_order[9]  = p_order[10];
+        p_order[10] = p_order[11];
+        p_order[11] = TILEP_PART_CLOAK;
     }
 
     // Special case bardings from being cut off.
-    const bool is_naga = is_player_tile(doll.parts[TILEP_PART_BASE],
-                                        TILEP_BASE_NAGA);
+    const bool is_naga = is_player_tile(doll.parts[TILEP_PART_BOTTOM],
+                                        TILEP_BOTTOM_NAGA);
 
     if (doll.parts[TILEP_PART_BOOTS] >= TILEP_BOOTS_NAGA_BARDING
         && doll.parts[TILEP_PART_BOOTS] <= TILEP_BOOTS_NAGA_BARDING_RED
@@ -663,8 +689,8 @@ void pack_doll_buf(SubmergedTileBuffer& buf, const dolls_data &doll,
         flags[TILEP_PART_BOOTS] = is_naga ? TILEP_FLAG_NORMAL : TILEP_FLAG_HIDE;
     }
 
-    const bool is_cent = is_player_tile(doll.parts[TILEP_PART_BASE],
-                                        TILEP_BASE_CENTAUR);
+    const bool is_cent = is_player_tile(doll.parts[TILEP_PART_BOTTOM],
+                                        TILEP_BOTTOM_CENTAUR);
 
     if (doll.parts[TILEP_PART_BOOTS] >= TILEP_BOOTS_CENTAUR_BARDING
         && doll.parts[TILEP_PART_BOOTS] <= TILEP_BOOTS_CENTAUR_BARDING_RED

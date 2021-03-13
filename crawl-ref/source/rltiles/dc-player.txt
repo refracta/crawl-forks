@@ -12,10 +12,11 @@ misc/cursor CURSOR
 ###BASE
 %parts_ctg BASE
 %sdir player/base
-human_f HUMAN
-human_m
-human2_f
+%rim 0
+human2_f HUMAN
 human2_m
+human_f
+human_m
 human3_f
 human3_m
 elf_m ELF
@@ -42,51 +43,16 @@ halfling_m HALFLING
 halfling_f
 orc_f ORC
 orc_m
-%rim 0
-lorc_m0 LAVA_ORC
-lorc_f0
-lorc_m1 LAVA_ORC_HEAT
-lorc_m2
-lorc_m3
-lorc_m4
-lorc_m5
-lorc_m6
-lorc_f1
-lorc_f2
-lorc_f3
-lorc_f4
-lorc_f5
-lorc_f6
-%rim 1
 kobold_m KOBOLD
 kobold_f
-kobold2_m
-kobold2_f
 mummy_m MUMMY
 mummy_f
-naga_f NAGA
-naga_m
-naga_darkgreen_f
-naga_darkgreen_m
-naga_lightgreen_f
-naga_lightgreen_m
-naga_blue_f
-naga_blue_m
-naga_red_f
-naga_red_m
 ogre_m OGRE
 ogre_f
 troll_f TROLL
 troll_m
-octopode1 OCTOPODE
-octopode2
-octopode3
-octopode4
-octopode5
-%rim 0
 djinni_f DJINNI
 djinni_m
-%rim 1
 lignifite LIGNIFITE
 formicid FORMICID
 vine_stalker_f VINE_STALKER
@@ -94,9 +60,6 @@ vine_stalker_m
 silent_spectre_f SILENT_SPECTRE
 silent_spectre_m
 goblin GOBLIN
-%rim 0
-fairy FAIRY
-%rim 1
 
 # draconians
 draconian_f DRACONIAN DRACONIAN_FIRST
@@ -143,8 +106,6 @@ draconian_statue_f DRACONIAN_STATUE
 draconian_statue_m DRACONIAN_LAST
 
 slime JIYVITE
-centaur_brown_f CENTAUR
-centaur_brown_m
 demigod_f DEMIGOD
 demigod_m
 spriggan_m SPRIGGAN
@@ -161,28 +122,28 @@ demonspawn_black_m
 ghoul_m GHOUL
 ghoul2_m
 ghoul2_f
-tengu_wingless_f TENGU
-tengu_wingless_m
-tengu_winged_f
-tengu_winged_m
-tengu_wingless_brown_f
-tengu_wingless_brown_m
+tengu_f TENGU
+tengu_m
+tengu_brown_f
+tengu_brown_m
 merfolk_f MERFOLK
 merfolk_m
-merfolk_water_f MERFOLK_WATER
-merfolk_water_m
 vampire_f VAMPIRE
 vampire_m
 deep_dwarf_m DEEP_DWARF
 deep_dwarf_f
 gargoyle_m GARGOYLE
 gargoyle_f
-gargoyle_red_m
-gargoyle_red_f
-gargoyle_brown_m
-gargoyle_brown_f
+
+# Bottomless (bases without bottom halves are last)
+octopode1 OCTOPODE BOTTOMLESS
+octopode2
+octopode3
+octopode4
+octopode5
+octopode_centaur OCTOPODE_CENTAUR
+fairy FAIRY
 %sdir player/felids
-%rim 0
 cat1 FELID
 cat2
 cat3
@@ -193,24 +154,166 @@ cat7
 cat8
 cat9
 cat10
-%sdir player/base
+%end_ctg
+
+##bottom halves MUST be in same order as the bases
+%sdir player/bottom
+%parts_ctg BOTTOM
+human2_f HUMAN
+human2_m
+human_f
+human_m
+human3_f
+human3_m
+elf_m ELF
+elf_f
+deep_elf_f DEEP_ELF
+deep_elf_m
+dwarf_f DWARF
+dwarf_m
+frog_m BARACHI
+frog_f
+frog2_f
+frog2_m
+gnoll_m GNOLL
+gnoll_f
+gnoll2_m
+gnoll2_f
+gnoll3_m
+gnoll3_f
+gnoll4_m
+gnoll4_f
+gnome_f
+gnome_m
+halfling_m HALFLING
+halfling_f
+orc_f ORC
+orc_m
+kobold_m KOBOLD
+kobold_f
+mummy_m MUMMY
+mummy_f
+ogre_m OGRE
+ogre_f
+troll_f TROLL
+troll_m
+djinni_f DJINNI
+djinni_m
+lignifite LIGNIFITE
+formicid FORMICID
+vine_stalker_f VINE_STALKER
+vine_stalker_m
+silent_spectre_f SILENT_SPECTRE
+silent_spectre_m
+goblin GOBLIN
+
+# draconians 
+draconian_f DRACONIAN 
+draconian_m
+draconian_black_f DRACONIAN_BLACK
+draconian_black_m
+draconian_lime_f DRACONIAN_LIME
+draconian_lime_m
+draconian_green_f DRACONIAN_GREEN
+draconian_green_m
+draconian_cyan_f DRACONIAN_CYAN
+draconian_cyan_m
+draconian_purple_f DRACONIAN_PURPLE
+draconian_purple_m
+draconian_red_f DRACONIAN_RED
+draconian_red_m
+draconian_white_f DRACONIAN_WHITE
+draconian_white_m 
+draconian_blood_f DRACONIAN_BLOOD
+draconian_blood_m
+draconian_blue_f DRACONIAN_BLUE
+draconian_blue_m
+draconian_bone_f DRACONIAN_BONE
+draconian_bone_m
+draconian_gold_f DRACONIAN_GOLD
+draconian_gold_m
+draconian_magenta_f DRACONIAN_MAGENTA
+draconian_magenta_m
+draconian_olive_f DRACONIAN_OLIVE
+draconian_olive_m
+draconian_pearl_f DRACONIAN_PEARL
+draconian_pearl_m
+draconian_pink_f DRACONIAN_PINK
+draconian_pink_m
+draconian_platinum_f DRACONIAN_PLATINUM
+draconian_platinum_m
+draconian_scintillating_f DRACONIAN_SCINTILLATING
+draconian_scintillating_m
+draconian_silver_f DRACONIAN_SILVER
+draconian_silver_m
+draconian_teal_f DRACONIAN_TEAL
+draconian_teal_m
+draconian_statue_f DRACONIAN_STATUE
+draconian_statue_m 
+
+slime JIYVITE
+demigod_f DEMIGOD
+demigod_m
+spriggan_m SPRIGGAN
+spriggan_f
+minotaur_m MINOTAUR
+minotaur_f
+minotaur_brown1_m
+minotaur_brown2_m
+demonspawn_pink DEMONSPAWN
+demonspawn_red_f
+demonspawn_red_m
+demonspawn_black_f
+demonspawn_black_m
+ghoul_m GHOUL
+ghoul2_m
+ghoul2_f
+tengu_f TENGU
+tengu_m
+tengu_brown_f
+tengu_brown_m
+merfolk_f MERFOLK
+merfolk_m
+vampire_f VAMPIRE
+vampire_m
+deep_dwarf_m DEEP_DWARF
+deep_dwarf_f
+gargoyle_m GARGOYLE
+gargoyle_f
+
+# bottom only (bottoms without bases are last)
+centaur_brown CENTAUR
+centaur_spectral CENTAUR_SPECTRAL
+centaur_statue CENTAUR_STATUE
+centaur_bone CENTAUR_BONE
+centaur_undead CENTAUR_UNDEAD
+naga_blue_f NAGA
+naga_blue_m
+naga_red_f
+naga_red_m
+naga_f
+naga_m
+naga_lightgreen_f
+naga_lightgreen_m
+naga_darkgreen_f
+naga_darkgreen_m
+merfolk_water MERFOLK_WATER
+statue STATUE
+lich LICH
 %end_ctg
 
 ###SHADOW
+%sdir player/base
 %parts_ctg SHADOW
-%rim 0
 shadow SHADOW
 %end_ctg
 
 %parts_ctg HALO
-%rim 0
 %sdir player/halo
 halo_player TSO
-%rim 1
 %end_ctg
 
 %parts_ctg ENCH
-%rim 0
 %sdir player/ench
 sticky_flame STICKY_FLAME
 %rim 1
@@ -270,7 +373,6 @@ spider SPIDER
 ## Mutations
 hooves HOOVES
 ## Bardings
-%rim 1
 %sdir player/barding
 naga_barding_blue NAGA_BARDING
 naga_barding_metal NAGA_BARDING_METAL
@@ -1586,7 +1688,6 @@ spider_mount_back SPIDER
 hydra_mount_back  HYDRA
 %end_ctg
 
-
 # draconian wings and heads, need same order as draconians
 %parts_ctg DRCWING
 %sdir player/drcwing
@@ -1611,6 +1712,11 @@ drcwing_scintillating SCINTILLATING
 drcwing_silver SILVER
 drcwing_teal TEAL
 drcwing_statue STATUE
+# ones not actually used by Draconians come after draconian ones (using same layer for ease of use purposes)
+drcwing_gargoyle GARGOYLE
+%rim 1
+drcwing_tengu TENGU
+%rim 0
 %end_ctg
 
 %parts_ctg DRCHEAD

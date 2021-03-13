@@ -852,7 +852,7 @@ maybe_bool you_can_wear(equipment_type eq, bool temp)
         dummy.sub_type = ARM_BOOTS;
         if (you.species == SP_NAGA)
             alternate.sub_type = ARM_NAGA_BARDING;
-        if (you.species == SP_CENTAUR)
+        if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
             alternate.sub_type = ARM_CENTAUR_BARDING;
         break;
 
@@ -6707,23 +6707,27 @@ int player::racial_ac(bool temp) const
         if (you.drac_colour == DR_PEARL || you.drac_colour == DR_SILVER)
             AC = div_round_up(AC * 3, 2);
         if (you.drac_colour == DR_SCINTILLATING)
-            AC += 3;
+            AC += 300;
         return AC;
     }
 
     if (!(player_is_shapechanged() && temp))
     {
+        int jAC = 0;
+        if (char_class == JOB_CENTAUR)
+            jAC = 300;
         if (species == SP_NAGA)
-            return 100 * experience_level / 3;              // max 9
+            return jAC + 100 * experience_level / 3;              // max 9
         else if (species == SP_GARGOYLE)
         {
-            return 200 + 100 * experience_level * 2 / 5     // max 20
+            return jAC + 200 + 100 * experience_level * 2 / 5     // max 20
                        + 100 * max(0, experience_level - 7) * 2 / 5;
         }
         else if (species == SP_LIGNIFITE)
         {
-            return max(0, (experience_level - 12) * 100);
+            return jAC + max(0, (experience_level - 12) * 100);
         }
+        return jAC;
     }
 
     return 0;
@@ -6965,7 +6969,7 @@ int player::gdr_perc() const
     gdr += (racial_ac(true)/100);
 
     // If the race has NO body armour; boost their body base a bit.
-    if (you.species == SP_DRACONIAN || you.species == SP_FELID || you.species == SP_OCTOPODE)
+    if (!you_can_wear(EQ_BODY_ARMOUR))
         gdr *= 1.5;
 
     return min(gdr, 50); // Cap at 50; just in case of shenanigans. (GrDs in CPA, etc.)

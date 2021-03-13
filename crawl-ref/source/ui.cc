@@ -2330,18 +2330,19 @@ void PlayerDoll::_pack_doll()
         TILEP_PART_DRCWING,     //  3
         TILEP_PART_CLOAK,       //  4
         TILEP_PART_MOUNT_BACK,  //  5
-        TILEP_PART_BASE,        //  6
-        TILEP_PART_BOOTS,       //  7
-        TILEP_PART_LEG,         //  8
-        TILEP_PART_BODY,        //  9
-        TILEP_PART_ARM,         // 10
-        TILEP_PART_HAIR,        // 11
-        TILEP_PART_BEARD,       // 12
-        TILEP_PART_DRCHEAD,     // 13
-        TILEP_PART_HELM,        // 14
-        TILEP_PART_HAND1,       // 15
-        TILEP_PART_HAND2,       // 16
-        TILEP_PART_MOUNT_FRONT, // 17
+        TILEP_PART_BOTTOM,      //  6
+        TILEP_PART_BASE,        //  7
+        TILEP_PART_BOOTS,       //  8
+        TILEP_PART_LEG,         //  9
+        TILEP_PART_BODY,        // 10
+        TILEP_PART_ARM,         // 11
+        TILEP_PART_HAIR,        // 12
+        TILEP_PART_BEARD,       // 13
+        TILEP_PART_DRCHEAD,     // 14
+        TILEP_PART_HELM,        // 15
+        TILEP_PART_HAND1,       // 16
+        TILEP_PART_HAND2,       // 17
+        TILEP_PART_MOUNT_FRONT, // 18
     };
 
     int flags[TILEP_PART_MAX];
@@ -2350,21 +2351,19 @@ void PlayerDoll::_pack_doll()
     // For skirts, boots go under the leg armour. For pants, they go over.
     if (m_save_doll.parts[TILEP_PART_LEG] < TILEP_LEG_SKIRT_OFS)
     {
-        p_order[8] = TILEP_PART_BOOTS;
-        p_order[7] = TILEP_PART_LEG;
+        p_order[9] = TILEP_PART_BOOTS;
+        p_order[8] = TILEP_PART_LEG;
     }
 
     // Special case bardings from being cut off.
-    bool is_naga = (m_save_doll.parts[TILEP_PART_BASE] == TILEP_BASE_NAGA
-                    || m_save_doll.parts[TILEP_PART_BASE] == TILEP_BASE_NAGA + 1);
+    bool is_naga = is_player_tile(m_save_doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_NAGA);
     if (m_save_doll.parts[TILEP_PART_BOOTS] >= TILEP_BOOTS_NAGA_BARDING
         && m_save_doll.parts[TILEP_PART_BOOTS] <= TILEP_BOOTS_NAGA_BARDING_RED)
     {
         flags[TILEP_PART_BOOTS] = is_naga ? TILEP_FLAG_NORMAL : TILEP_FLAG_HIDE;
     }
 
-    bool is_cent = (m_save_doll.parts[TILEP_PART_BASE] == TILEP_BASE_CENTAUR
-                    || m_save_doll.parts[TILEP_PART_BASE] == TILEP_BASE_CENTAUR + 1);
+    bool is_cent = is_player_tile(m_save_doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_CENTAUR);
     if (m_save_doll.parts[TILEP_PART_BOOTS] >= TILEP_BOOTS_CENTAUR_BARDING
         && m_save_doll.parts[TILEP_PART_BOOTS] <= TILEP_BOOTS_CENTAUR_BARDING_RED)
     {
