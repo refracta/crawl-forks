@@ -94,6 +94,10 @@ int ranged_attack::calc_to_hit(bool random, bool player_aux)
         }
     }
 
+    const int lrange = grid_distance(attacker->pos(), defender->pos());
+    hit *= 10 - lrange;
+    hit /= 10;
+
     const int defl = defender->missile_deflection();
     if (defl)
     {
@@ -248,7 +252,7 @@ bool ranged_attack::handle_phase_end()
         destroy_item(i);
     }
 
-    if (projectile->base_type == OBJ_MISSILES && 
+    if (projectile->base_type == OBJ_MISSILES && did_hit &&
         projectile->sub_type == MI_SLING_BULLET && !reflected && one_chance_in(3) &&
         (defender->is_player() || !(mons_is_firewood(*defender->as_monster()) && !invalid_monster(defender->as_monster()))))
     {
@@ -436,28 +440,29 @@ bool ranged_attack::handle_phase_hit()
     {
         for (; attack_count > 0; --attack_count)
         {
-            damage_done = calc_damage();
-            set_attack_verb(damage_done);
+            const int bdam = calc_damage();
 
-            if (damage_done > 0)
+            if (bdam > 0)
             {
                 // Sweetspotting!
-                int lrange = grid_distance(attacker->pos(), defender->pos());
-                int multiplier = 125;
+                const int lrange = grid_distance(attacker->pos(), defender->pos());
+                int multiplier = 5;
                 if (lrange > 5)
                 {
-                    multiplier -= ((lrange - 5) * 25);
-                    multiplier = max(multiplier, 75); // Bu special case
+                    multiplier -= (lrange - 5);
+                    multiplier = max(multiplier, 3); // Bu special case
                 }
                 else if (lrange < 5)
-                    multiplier -= ((5 - lrange) * 25);
-                multiplier = max(multiplier, 25);
-                damage_done = div_rand_round(damage_done * multiplier, 100);
+                    multiplier -= (5 - lrange);
+                multiplier = max(multiplier, 1);
+                damage_done = div_rand_round(bdam * multiplier, 4);
+                set_attack_verb(damage_done);
                 if (!handle_phase_damaged())
                     return false;
             }
             else if (needs_message)
             {
+                set_attack_verb(0);
                 mprf("%s %s %s but does no damage.",
                     projectile->name(DESC_THE).c_str(),
                     attack_verb.c_str(),
