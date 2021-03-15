@@ -297,6 +297,8 @@ naga_lightgreen_f
 naga_lightgreen_m
 naga_darkgreen_f
 naga_darkgreen_m
+naga_lich NAGA_LICH
+naga_statue NAGA_STATUE
 merfolk_water MERFOLK_WATER
 statue STATUE
 lich LICH
