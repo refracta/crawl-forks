@@ -1197,6 +1197,9 @@ static string _skill_target_desc(skill_type skill, int scaled_target,
     string description = "";
     scaled_target = min(scaled_target, 270);
 
+    if (scaled_target < 10)
+        return "";
+
     const bool max_training = (training == 100);
     const bool hypothetical = !crawl_state.need_save ||
                                     (training != you.training[skill]);
