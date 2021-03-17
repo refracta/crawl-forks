@@ -152,6 +152,10 @@ string species_name(species_type speci, species_name_type spname_type, bool play
  */
 string species_walking_verb(species_type sp)
 {
+    if (you.char_class == JOB_NAGA)
+        return "Slid";
+    if (you.char_class == JOB_CENTAUR)
+        return "Gallop";
     auto verb = get_species_def(sp).walking_verb;
     return verb ? verb : "Walk";
 }
@@ -230,7 +234,7 @@ size_type species_size(species_type species, size_part_type psize)
 
     const size_type size = get_species_def(species).size;
 
-    if (psize == PSIZE_BODY && you.char_class == JOB_CENTAUR)
+    if (psize == PSIZE_BODY && (you.char_class == JOB_CENTAUR || you.char_class == JOB_NAGA))
     {
         if (size == SIZE_GIANT)
             return size;
@@ -313,8 +317,11 @@ const vector<string>& fake_mutations(species_type species, bool terse)
  */
 string species_prayer_action(species_type species)
 {
-  auto action = get_species_def(species).altar_action;
-  return action ? action : "kneel at";
+    if (you.char_class == JOB_NAGA)
+        return "coil in front of";
+
+    auto action = get_species_def(species).altar_action;
+    return action ? action : "kneel at";
 }
 
 const char* scale_type()
@@ -510,12 +517,22 @@ void give_basic_mutations(species_type species)
     {
         you.mutation[MUT_FAST] = you.innate_mutation[MUT_FAST] = 2;
         you.mutation[MUT_HOOVES] = you.innate_mutation[MUT_HOOVES] = 3;
-        
-        if (you_can_wear(EQ_BODY_ARMOUR))
-        {
-            const int deformed = min(you.innate_mutation[MUT_DEFORMED] + 1, mutation_max_levels(MUT_DEFORMED));
-            you.mutation[MUT_DEFORMED] = you.innate_mutation[MUT_DEFORMED] = deformed;
-        }
+    }
+
+    if (you.char_class == JOB_NAGA)
+    {
+        you.mutation[MUT_ACUTE_VISION] = you.innate_mutation[MUT_ACUTE_VISION] = 1;
+        you.mutation[MUT_SLOW] = you.innate_mutation[MUT_SLOW] = 2;
+        you.mutation[MUT_SPIT_POISON] = you.innate_mutation[MUT_SPIT_POISON] = 1;
+        you.mutation[MUT_POISON_RESISTANCE] = you.innate_mutation[MUT_POISON_RESISTANCE] = 1;
+        you.mutation[MUT_SLOW_METABOLISM] = you.innate_mutation[MUT_SLOW_METABOLISM] = 1;
+        you.mutation[MUT_CONSTRICTING_TAIL] = you.innate_mutation[MUT_CONSTRICTING_TAIL] = 1;
+    }
+
+    if ((you.char_class == JOB_CENTAUR || you.char_class == JOB_NAGA) && you_can_wear(EQ_BODY_ARMOUR))
+    {
+        const int deformed = min(you.innate_mutation[MUT_DEFORMED] + 1, mutation_max_levels(MUT_DEFORMED));
+        you.mutation[MUT_DEFORMED] = you.innate_mutation[MUT_DEFORMED] = deformed;
     }
 }
 
@@ -586,6 +603,8 @@ int species_hp_modifier(species_type species)
 {
     if (you.char_class == JOB_DEMIGOD || you.char_class == JOB_CENTAUR)
         return get_species_def(species).hp_mod + 1;
+    if (you.char_class == JOB_NAGA)
+        return get_species_def(species).hp_mod + 2;
     if (you.species == SP_LIGNIFITE)
         return (-2 + div_round_up(you.experience_level, 5));
     return get_species_def(species).hp_mod;

@@ -1617,14 +1617,14 @@ tileidx_t tileidx_monster_base(int type, int mon_id, bool in_water, int colour,
     case TVARY_SPECIES:
         if (you.species == SP_FELID)
             return base_tile + 1;
-        if (you.species == SP_CENTAUR)
+        if (you.species == SP_OCTOPODE)
+            return base_tile + 5;
+        if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
             return base_tile + 2;
-        if (you.species == SP_NAGA)
+        if (you.species == SP_NAGA || you.char_class == JOB_NAGA)
             return base_tile + 3;
         if (you.species == SP_FAIRY)
             return base_tile + 4;
-        if (you.species == SP_OCTOPODE)
-            return base_tile + 5;
         else 
             return base_tile;
     default:
@@ -4164,6 +4164,8 @@ static tileidx_t _tileidx_player_job_base(const job_type job)
             return TILEG_JOB_MONK;
         case JOB_CENTAUR:
             return TILEG_JOB_CENTAUR;
+        case JOB_NAGA:
+            return TILEG_JOB_ASSASSIN;
         default:
             return TILEG_ERROR;
     }

@@ -2927,43 +2927,9 @@ static void tag_read_you(reader &th)
     {
         you.mutation[j]         = unmarshallUByte(th);
         you.innate_mutation[j]  = unmarshallUByte(th);
-#if TAG_MAJOR_VERSION == 34
-        if (th.getMinorVersion() >= TAG_MINOR_TEMP_MUTATIONS
-            && th.getMinorVersion() != TAG_MINOR_0_11)
-        {
-#endif
         you.temp_mutation[j]    = unmarshallUByte(th);
-#if TAG_MAJOR_VERSION == 34
-        }
-        if (th.getMinorVersion() < TAG_MINOR_RU_SACRIFICES)
-            you.sacrifices[j]   = 0;
-        else
-        {
-#endif
-        you.sacrifices[j]       = unmarshallUByte(th);
-#if TAG_MAJOR_VERSION == 34
-        }
-
-        if (you.innate_mutation[j] + you.temp_mutation[j] > you.mutation[j])
-        {
-            if (th.getMinorVersion() >= TAG_MINOR_SPIT_POISON_AGAIN
-                && th.getMinorVersion() < TAG_MINOR_SPIT_POISON_AGAIN_AGAIN
-                && j == MUT_SPIT_POISON)
-            {
-                // this special case needs to be handled diferently or
-                // the level will be set too high; innate is what's corrupted.
-                you.mutation[j] = you.innate_mutation[j] = 1;
-                you.temp_mutation[j] = 0;
-            }
-            else
-            {
-                mprf(MSGCH_ERROR, "Mutation #%d out of sync, fixing up.", j);
-                you.mutation[j] = you.innate_mutation[j] + you.temp_mutation[j];
-            }
-        }
-#endif
+        you.sacrifices[j] = unmarshallUByte(th);
     }
-
 
     // mutation fixups happen below here.
     // *REMINDER*: if you fix up an innate mutation, remember to adjust both
@@ -3021,8 +2987,6 @@ static void tag_read_you(reader &th)
     you.mutation[MUT_FAST] = you.innate_mutation[MUT_FAST];
     you.mutation[MUT_SLOW] = you.innate_mutation[MUT_SLOW];
     you.mutation[MUT_BREATHE_FLAMES] = 0;
-    if (you.species != SP_NAGA)
-        you.mutation[MUT_SPIT_POISON] = 0;
 
     if (th.getMinorVersion() < TAG_MINOR_MOUNT_ENERGY)
     { 
@@ -3164,21 +3128,6 @@ static void tag_read_you(reader &th)
     if (you.species == SP_FELID && you.innate_mutation[MUT_PAWS] < 1)
         you.mutation[MUT_PAWS] = you.innate_mutation[MUT_PAWS] = 1;
 
-    if (th.getMinorVersion() < TAG_MINOR_SPIT_POISON
-        && you.species == SP_NAGA)
-    {
-        if (you.innate_mutation[MUT_SPIT_POISON] < 2)
-        {
-            you.mutation[MUT_SPIT_POISON] =
-            you.innate_mutation[MUT_SPIT_POISON] = 2;
-        }
-        if (you.mutation[MUT_BREATHE_POISON])
-        {
-            you.mutation[MUT_BREATHE_POISON] = 0;
-            you.mutation[MUT_SPIT_POISON] = 3;
-        }
-    }
-
     // Give nagas constrict, tengu flight, and mummies restoration/enhancers.
     if (th.getMinorVersion() < TAG_MINOR_REAL_MUTS
         && (you.species == SP_NAGA
@@ -3199,15 +3148,6 @@ static void tag_read_you(reader &th)
     {
         if (you.mutation[MUT_MP_WANDS] > 1)
             you.mutation[MUT_MP_WANDS] = 1;
-    }
-
-    if (th.getMinorVersion() < TAG_MINOR_NAGA_METABOLISM)
-    {
-        if (you.species == SP_NAGA)
-        {
-            you.mutation[MUT_SLOW_METABOLISM] =
-                you.innate_mutation[MUT_SLOW_METABOLISM] = 1;
-        }
     }
 
     if (th.getMinorVersion() < TAG_MINOR_DETERIORATION)

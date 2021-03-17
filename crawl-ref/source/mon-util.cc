@@ -2085,7 +2085,7 @@ static mon_attack_def _hepliaklqana_ancestor_attack(const monster &mon,
     }   
     else if (attk_number == 1)
     {
-        if (you.species == SP_NAGA || you.species == SP_OCTOPODE)
+        if (you.species == SP_OCTOPODE)
             return { AT_CONSTRICT, AF_CRUSH, dam / 2 };
         else if (you.species == SP_VINE_STALKER)
             return { AT_BITE, AF_ANTIMAGIC, dam / 3 };
@@ -2097,6 +2097,10 @@ static mon_attack_def _hepliaklqana_ancestor_attack(const monster &mon,
             return { AT_PECK, AF_PLAIN, dam / 2 };
         else if (you.species == SP_FELID)
             return { AT_BITE, AF_PLAIN, dam };
+        else if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
+            return { AT_KICK, AF_PLAIN, dam / 2 };
+        else if (you.species == SP_NAGA || you.char_class == JOB_NAGA)
+            return { AT_CONSTRICT, AF_CRUSH, dam / 2 };
         else
             return {};
     }
@@ -5461,25 +5465,32 @@ mon_body_shape get_mon_shape(const monster_type mc)
             {
             case SP_FELID:
                 return static_cast<mon_body_shape>(MON_SHAPE_QUADRUPED);
-                break;
             case SP_MERFOLK:
             case SP_NAGA:
                 return static_cast<mon_body_shape>(MON_SHAPE_NAGA);
-                break;
             case SP_OCTOPODE:
                 return static_cast<mon_body_shape>(MON_SHAPE_MISC);
                 break;
             case SP_TENGU:
             case SP_GARGOYLE:
                 return static_cast<mon_body_shape>(MON_SHAPE_HUMANOID_WINGED);
-                break;
             case SP_CENTAUR:
                 return static_cast<mon_body_shape>(MON_SHAPE_CENTAUR);
             case SP_FAIRY:
                 return static_cast<mon_body_shape>(MON_SHAPE_INSECT_WINGED);
             default:
-                return static_cast<mon_body_shape>(MON_SHAPE_HUMANOID);
-                break;
+            {
+                switch (you.char_class)
+                {
+                case JOB_NAGA:
+                case JOB_MERFOLK:
+                    return static_cast<mon_body_shape>(MON_SHAPE_NAGA);
+                case JOB_CENTAUR:
+                    return static_cast<mon_body_shape>(MON_SHAPE_CENTAUR);
+                default:
+                    return static_cast<mon_body_shape>(MON_SHAPE_HUMANOID);
+                }
+            }
             }
         }
     }
@@ -6567,16 +6578,6 @@ void set_ancestor_spells(monster &ancestor, bool notify)
                 SPELL_SHOCK);
             _add_ancestor_spell(ancestor.spells, SPELL_AIRSTRIKE);
         }
-        else if (you.species == SP_NAGA || you.species == SP_OCTOPODE)
-        {
-            _add_ancestor_spell(ancestor.spells, HD >= 12 ?
-                SPELL_POISON_ARROW :
-                SPELL_VENOM_BOLT);
-            _add_ancestor_spell(ancestor.spells, HD >= 16 ?
-                SPELL_LEHUDIBS_CRYSTAL_SPEAR :
-                SPELL_STONE_ARROW);
-            _add_ancestor_spell(ancestor.spells, SPELL_OLGREBS_TOXIC_RADIANCE);
-        }
         else if (you.species == SP_HILL_ORC)
         {
             _add_ancestor_spell(ancestor.spells, HD >= 12 ?
@@ -6598,6 +6599,17 @@ void set_ancestor_spells(monster &ancestor, bool notify)
                 SPELL_BOLT_OF_COLD :
                 SPELL_THROW_FROST);
             _add_ancestor_spell(ancestor.spells, SPELL_DISPEL_UNDEAD);
+        }
+        else if (you.species == SP_NAGA || you.species == SP_OCTOPODE 
+              || you.char_class == JOB_NAGA)
+        {
+            _add_ancestor_spell(ancestor.spells, HD >= 12 ?
+                SPELL_POISON_ARROW :
+                SPELL_VENOM_BOLT);
+            _add_ancestor_spell(ancestor.spells, HD >= 16 ?
+                SPELL_LEHUDIBS_CRYSTAL_SPEAR :
+                SPELL_STONE_ARROW);
+            _add_ancestor_spell(ancestor.spells, SPELL_OLGREBS_TOXIC_RADIANCE);
         }
         else
         {
@@ -6628,7 +6640,7 @@ void set_ancestor_spells(monster &ancestor, bool notify)
 
     // Add Racial abilities to make your ancestor more like your species.
 
-    if (you.species == SP_NAGA)
+    if (you.species == SP_NAGA || you.char_class == JOB_NAGA)
         ancestor.spells.emplace_back(SPELL_SPIT_POISON, 25, MON_SPELL_NATURAL | MON_SPELL_BREATH);
 
     if (you.species == SP_DRACONIAN)

@@ -2031,6 +2031,21 @@ int species_apt(skill_type skill, species_type species)
             mod = -2;
     }
 
+    if (you.char_class == JOB_NAGA)
+    {
+        if (skill == SK_SLINGS || skill == SK_BOWS || skill == SK_CROSSBOWS)
+            mod = -1;
+        if (skill == SK_STEALTH)
+            mod = 4;
+        if (skill == SK_ARMOUR || skill == SK_DODGING || skill == SK_SHIELDS)
+            mod = -2;
+        if (skill == SK_POISON_MAGIC)
+            mod = 3;
+
+        if (skill == SK_ARMOUR && _spec_skills[species][skill] == UNUSABLE_SKILL)
+            return -3;
+    }
+
     if (you.char_class == JOB_CENTAUR)
     {
         mod = -1;

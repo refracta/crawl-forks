@@ -111,8 +111,10 @@ learn other skills very slowly. They are unable to consume any food or potions.
 %%%%
 Naga
 
-Nagas are hybrids; human from the chest up, with a scaly, muscular torso
-trailing off like that of a snake. They move slowly but are naturally resilient.
+Nagas are hybrids; a base race (most commonly human) from the chest up, with a scaly, 
+muscular torso trailing off like that of a snake. They move slowly but are naturally 
+bulky. They are poor with defensive skills, great at being sneaky and using venomous 
+magic, the rest of their aptitudes are fairly average.
 %%%%
 Octopode
 

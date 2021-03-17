@@ -307,11 +307,21 @@ static const map<job_type, job_def> job_data =
       { SK_WEAPON, 4 }, },
 } },
 
+{ JOB_NAGA, {
+    "Na", "Naga",
+    5, 4, 3,
+    { SP_OCTOPODE, SP_KOBOLD, SP_DEEP_ELF, SP_GNOLL, SP_VINE_STALKER },
+    { "leather armour" , "Young Poisoner's Handbook"},
+    WCHOICE_PLAIN,
+    { { SK_DODGING, 1 }, { SK_STEALTH, 4 }, { SK_SPELLCASTING, 1}, 
+      { SK_POISON_MAGIC, 2}, { SK_WEAPON, 2 }, },
+} },
+
 { JOB_DEMONSPAWN,{
     "Ds", "Demonspawn",
     6, 4, 4,
     { SP_HILL_ORC, SP_TROLL, SP_FELID, SP_LIGNIFITE, SP_DRACONIAN },
-    { "leather armour"  , "book of Minor Magic" },
+    { "leather armour" , "book of Minor Magic" },
     WCHOICE_GOOD,
     { { SK_DODGING, 3 } ,{ SK_STEALTH, 2 } ,{ SK_WEAPON,2 } ,{ SK_FIGHTING, 1 } ,{ SK_INVOCATIONS,3 } ,{ SK_SPELLCASTING, 1 }, { SK_FIRE_MAGIC, 2} },
 } },

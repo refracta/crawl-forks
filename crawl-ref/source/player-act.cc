@@ -146,7 +146,8 @@ bool player::extra_balanced() const
               || grid == DNGN_SHALLOW_WATER
                   && (species == SP_NAGA // tails, not feet
                       || body_size(PSIZE_BODY) >= SIZE_LARGE
-                      || you.wearing_ego(EQ_BOOTS, SPARM_STURDY))
+                      || you.wearing_ego(EQ_BOOTS, SPARM_STURDY)
+                      || char_class == JOB_NAGA)
                   && form_keeps_mutations();
 }
 
@@ -672,7 +673,7 @@ static string _foot_name_singular(bool *can_plural)
         return "tentacles";
     }
 
-    if (you.species == SP_NAGA)
+    if (you.species == SP_NAGA || you.char_class == JOB_NAGA)
     {
         *can_plural = false;
         return "underbelly";
@@ -723,15 +724,17 @@ string player::arm_name(bool plural, bool *can_plural) const
     string str = "arm";
 
     if (species_is_draconian(you.species) || species == SP_NAGA)
-        adj = "scaled";
+        adj = "scaly";
     else if (species == SP_TENGU)
         adj = "feathered";
     else if (you.undead_state() == US_GHOST)
         adj = "spectral";
-    else if (you.char_class == JOB_MUMMY)
+    else if (char_class == JOB_MUMMY)
         adj = "bandage-wrapped";
     else if (species == SP_OCTOPODE)
         str = "tentacle";
+    else if (char_class == JOB_NAGA)
+        adj = "scaly";
 
     if (form == transformation::lich)
         adj = "bony";

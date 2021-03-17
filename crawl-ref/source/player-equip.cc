@@ -834,7 +834,8 @@ static void _unequip_weapon_effect(item_def& real_item, bool showMsgs,
                 continue;
             if (!whom->is_directly_constricted())
                 continue;
-            if (whom->body_size() > you.body_size() || (you.species != SP_OCTOPODE && you.species != SP_NAGA))
+            if (whom->body_size() > you.body_size() 
+                || (you.species != SP_OCTOPODE && you.species != SP_NAGA && you.char_class != JOB_NAGA))
             {
                 you.stop_constricting(entry.first, true, true);
                 mprf("The constricting tendrils return into %s as you unwield.", item.name(DESC_YOUR).c_str());

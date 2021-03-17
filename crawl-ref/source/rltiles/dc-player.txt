@@ -142,6 +142,7 @@ octopode3
 octopode4
 octopode5
 octopode_centaur OCTOPODE_CENTAUR
+octopode_naga OCTOPODE_NAGA
 fairy FAIRY
 %sdir player/felids
 cat1 FELID
@@ -299,6 +300,8 @@ naga_darkgreen_f
 naga_darkgreen_m
 naga_lich NAGA_LICH
 naga_statue NAGA_STATUE
+naga_undead NAGA_UNDEAD
+naga_spectral NAGA_SPECTRAL
 merfolk_water MERFOLK_WATER
 statue STATUE
 lich LICH

@@ -312,6 +312,8 @@ void fill_doll_equipment(dolls_data &result)
 
         if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
             result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_CENTAUR_STATUE;
+        else if (you.species == SP_NAGA || you.char_class == JOB_NAGA)
+            result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_NAGA_STATUE;
         else if (result.parts[TILEP_PART_BASE] == TILEP_TRAN_STATUE_HUMANOID)
             result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_STATUE;
 
@@ -328,6 +330,8 @@ void fill_doll_equipment(dolls_data &result)
 
         if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
             result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_CENTAUR_BONE;
+        else if (you.species == SP_NAGA || you.char_class == JOB_NAGA)
+            result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_NAGA_LICH;
         else if (result.parts[TILEP_PART_BASE] == TILEP_TRAN_STATUE_HUMANOID)
             result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_LICH;
 
@@ -679,8 +683,11 @@ void pack_doll_buf(SubmergedTileBuffer& buf, const dolls_data &doll,
     }
 
     // Special case bardings from being cut off.
-    const bool is_naga = is_player_tile(doll.parts[TILEP_PART_BOTTOM],
-                                        TILEP_BOTTOM_NAGA);
+    const bool is_naga = (is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_NAGA)
+                       || is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_NAGA_LICH)
+                       || is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_NAGA_STATUE)
+                       || is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_NAGA_UNDEAD)
+                       || is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_NAGA_SPECTRAL));
 
     if (doll.parts[TILEP_PART_BOOTS] >= TILEP_BOOTS_NAGA_BARDING
         && doll.parts[TILEP_PART_BOOTS] <= TILEP_BOOTS_NAGA_BARDING_RED
@@ -689,8 +696,11 @@ void pack_doll_buf(SubmergedTileBuffer& buf, const dolls_data &doll,
         flags[TILEP_PART_BOOTS] = is_naga ? TILEP_FLAG_NORMAL : TILEP_FLAG_HIDE;
     }
 
-    const bool is_cent = is_player_tile(doll.parts[TILEP_PART_BOTTOM],
-                                        TILEP_BOTTOM_CENTAUR);
+    const bool is_cent = (is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_CENTAUR)
+                       || is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_CENTAUR_BONE)
+                       || is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_CENTAUR_STATUE)
+                       || is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_CENTAUR_UNDEAD)
+                       || is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_CENTAUR_SPECTRAL));
 
     if (doll.parts[TILEP_PART_BOOTS] >= TILEP_BOOTS_CENTAUR_BARDING
         && doll.parts[TILEP_PART_BOOTS] <= TILEP_BOOTS_CENTAUR_BARDING_RED

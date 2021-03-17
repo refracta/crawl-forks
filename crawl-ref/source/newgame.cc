@@ -1101,11 +1101,11 @@ static job_group jobs_order[] =
     {
         "Hybrid",
         coord_def(3, 0), 21,
-        { JOB_CENTAUR, JOB_DEMIGOD , JOB_DEMONSPAWN, JOB_MUMMY }
+        { JOB_CENTAUR, JOB_NAGA, JOB_DEMIGOD, JOB_DEMONSPAWN, JOB_MUMMY }
     },
     {
         "Custom",
-        coord_def(3, 5), 20,
+        coord_def(3, 8), 20,
         { JOB_PRIEST , JOB_NOBLE }
     },
 };

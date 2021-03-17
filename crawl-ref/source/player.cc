@@ -850,7 +850,7 @@ maybe_bool you_can_wear(equipment_type eq, bool temp)
 
     case EQ_BOOTS: // And bardings
         dummy.sub_type = ARM_BOOTS;
-        if (you.species == SP_NAGA)
+        if (you.species == SP_NAGA || you.char_class == JOB_NAGA)
             alternate.sub_type = ARM_NAGA_BARDING;
         if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
             alternate.sub_type = ARM_CENTAUR_BARDING;
@@ -901,6 +901,7 @@ bool player_has_feet(bool temp, bool include_mutations)
         || you.species == SP_OCTOPODE
         || you.species == SP_LIGNIFITE
         || you.species == SP_FAIRY
+        || you.char_class == JOB_NAGA
         || you.fishtail && temp)
     {
         return false;
@@ -2290,7 +2291,8 @@ int player_movement_speed()
         if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, true) && you.drac_colour == DR_PLATINUM)
             mv--;
 
-        if (you.species == SP_OCTOPODE && you.usable_tentacles() < 2 && form_keeps_mutations())
+        if (you.species == SP_OCTOPODE && you.usable_tentacles() < 2 && form_keeps_mutations() 
+            && you.char_class != JOB_CENTAUR && you.char_class != JOB_NAGA)
         {
             mv += 4;
             if (!you.usable_tentacles())
@@ -3532,14 +3534,6 @@ void level_change(bool skip_attribute_increase)
                 }
                 break;
 
-            case SP_NAGA:
-                if (!(you.experience_level % 3))
-                {
-                    mprf(MSGCH_INTRINSIC_GAIN, "Your skin feels tougher.");
-                    you.redraw_armour_class = true;
-                }
-                break;
-
             case SP_LIGNIFITE:
                 if (!(you.experience_level % 5))
                 {
@@ -3646,6 +3640,12 @@ void level_change(bool skip_attribute_increase)
 
             default:
                 break;
+            }
+            
+            if ((you.species == SP_NAGA || you.char_class == JOB_NAGA) && !(you.experience_level % 3))
+            {
+                mprf(MSGCH_INTRINSIC_GAIN, "Your skin feels tougher.");
+                you.redraw_armour_class = true;
             }
 
             // BCADDO: Can I just deprecate references to SP_DEMONSPAWN as a species? Logically I'd have to change any old games 
@@ -6696,41 +6696,43 @@ int player::base_ac_from(const item_def &armour, int scale) const
  */
 int player::racial_ac(bool temp) const
 {
+    int jAC = 0;
+    int sAC = 0;
+
     // drac scales suppressed in all serious forms, except dragon
-    if (species_is_draconian(species)
-        && (!player_is_shapechanged() || form == transformation::dragon
-            || !temp))
+    if (species_is_draconian(species) && (form == transformation::dragon
+        || !player_is_shapechanged() || !temp))
     {
-        int AC = 500 + 100 * (experience_level / 3);  // max 14
+        sAC = 500 + 100 * (experience_level / 3);  // max 14
         if (you.drac_colour == DR_BONE)
-            AC *= 2;
+            sAC *= 2;
         if (you.drac_colour == DR_PEARL || you.drac_colour == DR_SILVER)
-            AC = div_round_up(AC * 3, 2);
+            sAC = div_round_up(sAC * 3, 2);
         if (you.drac_colour == DR_SCINTILLATING)
-            AC += 300;
-        return AC;
+            sAC += 300;
     }
 
     if (!(player_is_shapechanged() && temp))
     {
-        int jAC = 0;
         if (char_class == JOB_CENTAUR)
             jAC = 300;
+        else if (char_class == JOB_NAGA)
+            jAC = 100 * experience_level / 3;
+
         if (species == SP_NAGA)
-            return jAC + 100 * experience_level / 3;              // max 9
+            sAC = 100 * experience_level / 3;              // max 9
         else if (species == SP_GARGOYLE)
         {
-            return jAC + 200 + 100 * experience_level * 2 / 5     // max 20
-                       + 100 * max(0, experience_level - 7) * 2 / 5;
+            sAC = 200 + 100 * experience_level * 2 / 5     // max 20
+                      + 100 * max(0, experience_level - 7) * 2 / 5;
         }
         else if (species == SP_LIGNIFITE)
         {
-            return jAC + max(0, (experience_level - 12) * 100);
+            sAC = max(0, (experience_level - 12) * 100);
         }
-        return jAC;
     }
 
-    return 0;
+    return jAC + sAC;
 }
 
 item_def * player::staff() const
@@ -8072,7 +8074,12 @@ int player::usable_tentacles(bool allow_tran) const
     if (numtentacle == 0)
         return 0;
 
-    int free_tentacles = numtentacle - num_constricting();
+    int constrict = num_constricting();
+
+    if (you.mutation[MUT_CONSTRICTING_TAIL])
+        constrict = max(0, constrict - 1);
+
+    int free_tentacles = numtentacle - constrict;
 
     const item_def* wp0 = slot_item(EQ_WEAPON0);
     if (wp0)

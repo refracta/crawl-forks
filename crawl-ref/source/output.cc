@@ -1889,7 +1889,7 @@ const char *equip_slot_to_name(int equip)
 
     if (equip == EQ_BOOTS
         && (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR ||
-            you.species == SP_NAGA))
+            you.species == SP_NAGA    || you.char_class == JOB_NAGA))
     {
         return "Barding";
     }
@@ -2048,7 +2048,8 @@ static void _print_overview_screen_equip(column_composer& cols,
             str = string("  - Blade Hand") + (plural ? "s" : "");
         }
         else if (eqslot == EQ_BOOTS
-                 && (you.species == SP_NAGA || you.species == SP_CENTAUR))
+                 && (you.species == SP_NAGA || you.species == SP_CENTAUR
+                     || you.char_class == JOB_NAGA || you.char_class == JOB_CENTAUR))
         {
             str = "<darkgrey>(no " + slot_name_lwr + ")</darkgrey>";
         }

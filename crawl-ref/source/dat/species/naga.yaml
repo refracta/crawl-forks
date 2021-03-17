@@ -34,8 +34,6 @@ mutations:
     MUT_POISON_RESISTANCE: 1
     MUT_SLOW_METABOLISM: 1
     MUT_CONSTRICTING_TAIL: 1
-fake_mutations:
-  - long: You cannot wear boots.
 recommended_jobs:
   - JOB_BERSERKER
   - JOB_TRANSMUTER

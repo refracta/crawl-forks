@@ -129,11 +129,12 @@ M filtered_vector_select(vector<pair<M, int>> weights, function<bool(M)> filter)
 static equipment_type _acquirement_armour_slot(bool divine)
 {
     if (you.species == SP_NAGA || you.species == SP_CENTAUR
-        || you.char_class == JOB_CENTAUR)
+        || you.char_class == JOB_CENTAUR
+        || you.char_class == JOB_NAGA)
     {
-        const armour_type bard =
-            (you.species == SP_NAGA) ? ARM_NAGA_BARDING
-                                     : ARM_CENTAUR_BARDING;
+        const armour_type bard = (you.species == SP_NAGA
+            || you.char_class == JOB_NAGA) ? ARM_NAGA_BARDING
+                                           : ARM_CENTAUR_BARDING;
         if (one_chance_in(you.seen_armour[bard] ? 4 : 2))
             return EQ_BOOTS;
     }
@@ -180,7 +181,7 @@ static armour_type _acquirement_armour_for_slot(equipment_type slot_type,
         case EQ_BOOTS:
             if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
                 return ARM_CENTAUR_BARDING;
-            else if (you.species == SP_NAGA)
+            else if (you.species == SP_NAGA || you.char_class == JOB_NAGA)
                 return ARM_NAGA_BARDING;
             return ARM_BOOTS;
         case EQ_HELMET:
@@ -360,7 +361,7 @@ static armour_type _useless_armour_type()
             // barding, everyone else gets boots.
             if (you_can_wear(EQ_BOOTS) == MB_TRUE)
                 return random_choose(ARM_CENTAUR_BARDING, ARM_NAGA_BARDING);
-            if (you.species == SP_NAGA)
+            if (you.species == SP_NAGA || you.char_class == JOB_NAGA)
                 return ARM_CENTAUR_BARDING;
             if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
                 return ARM_NAGA_BARDING;

@@ -1205,8 +1205,18 @@ tileidx_t tilep_top_to_bottom_tile(tileidx_t top)
         return TILEP_BOTTOM_CENTAUR;
     }
 
-    if (you.species == SP_NAGA)
+    else if (you.species == SP_NAGA || you.char_class == JOB_NAGA)
+    {
+        if (you.undead_state() == US_GHOST)
+            return TILEP_BOTTOM_CENTAUR_SPECTRAL;
+        else if (you.species == SP_DRACONIAN && you.drac_colour == DR_BONE)
+            return TILEP_BOTTOM_NAGA_LICH;
+        else if (you.undead_state() != US_ALIVE)
+            return TILEP_BOTTOM_CENTAUR_UNDEAD;
+        else if (you.species == SP_OCTOPODE)
+            return TILEP_BOTTOM_NAGA + 2;
         return TILEP_BOTTOM_NAGA;
+    }
 
     if (top >= TILEP_BASE_BOTTOMLESS)
         return 0;
@@ -1283,6 +1293,8 @@ tileidx_t tilep_species_to_base_tile(int sp, int drac_colour)
     case SP_OCTOPODE:
         if (you.char_class == JOB_CENTAUR)
             return TILEP_BASE_OCTOPODE_CENTAUR;
+        if (you.char_class == JOB_NAGA)
+            return TILEP_BASE_OCTOPODE_NAGA;
         return TILEP_BASE_OCTOPODE;
     case SP_FORMICID:
         return TILEP_BASE_FORMICID;
@@ -1682,7 +1694,9 @@ void tilep_calc_flags(const dolls_data &doll, int flag[])
         flag[TILEP_PART_DRCWING] = TILEP_FLAG_HIDE;
         flag[TILEP_PART_DRCHEAD] = TILEP_FLAG_HIDE;
     }
-    else if (is_player_tile(doll.parts[TILEP_PART_BASE], TILEP_BASE_OCTOPODE))
+    else if (is_player_tile(doll.parts[TILEP_PART_BASE], TILEP_BASE_OCTOPODE)
+          || is_player_tile(doll.parts[TILEP_PART_BASE], TILEP_BASE_OCTOPODE_NAGA)
+          || is_player_tile(doll.parts[TILEP_PART_BASE], TILEP_BASE_OCTOPODE_CENTAUR))
     {
         flag[TILEP_PART_CLOAK] = TILEP_FLAG_HIDE;
         flag[TILEP_PART_BOOTS] = TILEP_FLAG_HIDE;

@@ -652,14 +652,15 @@ string describe_mutations(bool drop_title)
             result += str + "\n";
     }
 
-    if (you.racial_ac(false) > 0)
+    if (you.racial_ac(false) >= 100)
     {
         const string race_string = you.species == SP_DRACONIAN ? string(scale_type()) + " scales" :
                                    you.species == SP_NAGA      ? "serpentine skin"                :
                                    you.species == SP_GARGOYLE  ? "stone body"                     :
                                    you.species == SP_LIGNIFITE ? "bark" : "";                
 
-        const string job_string = you.char_class == JOB_CENTAUR ? "horsehide" : "";
+        const string job_string = you.char_class == JOB_CENTAUR ? "horsehide" : 
+                                  you.char_class == JOB_NAGA    ? "serpentine skin" : "";
         const bool plural = race_string.length() && job_string.length();
 
         result += _annotate_form_based(
@@ -688,10 +689,13 @@ string describe_mutations(bool drop_title)
         result += _annotate_form_based("You are amphibious.",
             !form_likes_water());
 
-        const string num_tentacles =
-            number_in_words(you.usable_tentacles(false) + you.num_constricting());
-        const string total_tentacles =
-            number_in_words(you.has_tentacles(false));
+        int tents = you.usable_tentacles(false) + you.num_constricting();
+
+        if (you.mutation[MUT_CONSTRICTING_TAIL] && you.num_constricting())
+            tents--;
+
+        const string num_tentacles = number_in_words(tents);
+        const string total_tentacles = number_in_words(you.has_tentacles(false));
         result += _annotate_form_based(
             make_stringf("You can wear up to %s rings at the same time.",
                 total_tentacles.c_str()),
@@ -1247,7 +1251,7 @@ static int _body_covered()
     // Note: this won't take into account forms, so is only usable for checking in general.
     int covered = 0;
 
-    if (you.species == SP_NAGA)
+    if (you.species == SP_NAGA || you.char_class == JOB_NAGA)
         covered++;
 
     if (species_is_draconian(you.species))
@@ -1292,7 +1296,7 @@ bool physiology_mutation_conflict(mutation_type mutat, bool ds_roll)
 
     // Only Nagas and Draconians can get this one.
     if (you.species != SP_NAGA && !species_is_draconian(you.species)
-        && mutat == MUT_STINGER)
+        && you.char_class != JOB_NAGA && mutat == MUT_STINGER)
     {
         return true;
     }
@@ -1313,7 +1317,7 @@ bool physiology_mutation_conflict(mutation_type mutat, bool ds_roll)
     }
 
     // Only nagas can get upgraded poison spit.
-    if (you.species != SP_NAGA && mutat == MUT_SPIT_POISON)
+    if ((you.species != SP_NAGA || you.char_class == JOB_NAGA) && mutat == MUT_SPIT_POISON)
         return true;
 
     // Only Draconians (and gargoyles) can get wings.
