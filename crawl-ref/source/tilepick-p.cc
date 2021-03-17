@@ -1702,8 +1702,11 @@ void tilep_calc_flags(const dolls_data &doll, int flag[])
         flag[TILEP_PART_BOOTS] = TILEP_FLAG_HIDE;
         flag[TILEP_PART_LEG]   = TILEP_FLAG_HIDE;
         flag[TILEP_PART_BODY]  = TILEP_FLAG_HIDE;
-        if (doll.parts[TILEP_PART_ARM] != TILEP_ARM_OCTOPODE_SPIKE)
+        if (doll.parts[TILEP_PART_ARM] != TILEP_ARM_OCTOPODE_SPIKE
+            || is_player_tile(doll.parts[TILEP_PART_BASE], TILEP_BASE_OCTOPODE_CENTAUR))
+        {
             flag[TILEP_PART_ARM] = TILEP_FLAG_HIDE;
+        }
         flag[TILEP_PART_HAIR]  = TILEP_FLAG_HIDE;
         flag[TILEP_PART_BEARD] = TILEP_FLAG_HIDE;
         flag[TILEP_PART_SHADOW]= TILEP_FLAG_HIDE;
