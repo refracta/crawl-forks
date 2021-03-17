@@ -509,8 +509,7 @@ void moveto_location_effects(dungeon_feature_type old_feat,
 {
     const dungeon_feature_type new_grid = env.grid(you.pos());
 
-    if (you.species == SP_MERFOLK)
-        merfolk_check_swimming(stepped);
+    merfolk_check_swimming(stepped);
 
     if (you.ground_level())
     {
@@ -6185,7 +6184,8 @@ bool player::can_swim(bool permanently) const
     // stat-boosting boots or heavy armour.
     return (species_can_swim(species) && !player_is_shapechanged()
             || body_size(PSIZE_BODY) >= SIZE_GIANT
-            || (!permanently && form_can_swim()));
+            || (!permanently && form_can_swim())
+            || you.fishtail);
 }
 
 /// Can the player do a passing imitation of a notorious Palestinian?
@@ -7980,8 +7980,7 @@ bool player::has_usable_claws(bool allow_tran) const
 
 int player::has_talons(bool allow_tran) const
 {
-    // XXX: Do merfolk in water belong under allow_tran?
-    if (fishtail)
+    if (!allow_tran && fishtail)
         return 0;
 
     return get_mutation_level(MUT_TALONS, allow_tran);
@@ -7994,8 +7993,7 @@ bool player::has_usable_talons(bool allow_tran) const
 
 int player::has_hooves(bool allow_tran) const
 {
-    // XXX: Do merfolk in water belong under allow_tran?
-    if (fishtail)
+    if (!allow_tran && fishtail)
         return 0;
 
     return get_mutation_level(MUT_HOOVES, allow_tran);
@@ -8033,14 +8031,15 @@ int player::has_tail(bool allow_tran) const
         if (form == transformation::dragon)
             return 1;
 
+        if (fishtail)
+            return 1;
+
         // Most transformations suppress a tail.
         if (!form_keeps_mutations())
             return 0;
     }
 
-    // XXX: Do merfolk in water belong under allow_tran?
     if (species_is_draconian(species)
-        || fishtail
         || get_mutation_level(MUT_STINGER, allow_tran))
     {
         return 1;

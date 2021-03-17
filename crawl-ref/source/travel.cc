@@ -218,7 +218,7 @@ static inline int _feature_traverse_cost(dungeon_feature_type feature)
         // they are merfolk, since those will prefer to avoid melding their
         // boots during travel.
         || feature == DNGN_SHALLOW_WATER
-           && (!player_likes_water(true) || you.species == SP_MERFOLK))
+           && (!player_likes_water(true) || you.species == SP_MERFOLK || you.char_class == JOB_MERFOLK))
     {
         return 2;
     }

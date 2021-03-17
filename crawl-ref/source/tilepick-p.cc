@@ -1192,9 +1192,17 @@ static int _draconian_colour(int colour)
 tileidx_t tilep_top_to_bottom_tile(tileidx_t top)
 {
     if (you.fishtail)
+    {
+        if (you.undead_state() == US_GHOST)
+            return TILEP_BOTTOM_MERFOLK_WATER_SPECTRAL;
+        else if (you.species == SP_DRACONIAN && you.drac_colour == DR_BONE)
+            return TILEP_BOTTOM_MERFOLK_WATER_BONE;
+        else if (you.undead_state() != US_ALIVE)
+            return TILEP_BOTTOM_MERFOLK_WATER_UNDEAD;
         return TILEP_BOTTOM_MERFOLK_WATER;
+    }
 
-    if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
+    else if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
     {
         if (you.undead_state() == US_GHOST)
             return TILEP_BOTTOM_CENTAUR_SPECTRAL;
@@ -1208,11 +1216,11 @@ tileidx_t tilep_top_to_bottom_tile(tileidx_t top)
     else if (you.species == SP_NAGA || you.char_class == JOB_NAGA)
     {
         if (you.undead_state() == US_GHOST)
-            return TILEP_BOTTOM_CENTAUR_SPECTRAL;
+            return TILEP_BOTTOM_NAGA_SPECTRAL;
         else if (you.species == SP_DRACONIAN && you.drac_colour == DR_BONE)
             return TILEP_BOTTOM_NAGA_LICH;
         else if (you.undead_state() != US_ALIVE)
-            return TILEP_BOTTOM_CENTAUR_UNDEAD;
+            return TILEP_BOTTOM_NAGA_UNDEAD;
         else if (you.species == SP_OCTOPODE)
             return TILEP_BOTTOM_NAGA + 2;
         return TILEP_BOTTOM_NAGA;

@@ -2637,11 +2637,6 @@ string mutation_overview()
     {
         if (species_is_draconian(you.species))
             mutations.push_back(_dragon_abil(str));
-        else if (you.species == SP_MERFOLK)
-        {
-            mutations.push_back(
-                _annotate_form_based(str, form_changed_physiology()));
-        }
         else if (you.species == SP_MINOTAUR)
         {
             mutations.push_back(

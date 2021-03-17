@@ -184,6 +184,9 @@ bool species_is_undead(species_type species)
 
 bool species_can_swim(species_type species)
 {
+    if (you.char_class == JOB_MERFOLK)
+        return true;
+
     return get_species_def(species).habitat == HT_WATER;
 }
 
@@ -528,6 +531,9 @@ void give_basic_mutations(species_type species)
         you.mutation[MUT_SLOW_METABOLISM] = you.innate_mutation[MUT_SLOW_METABOLISM] = 1;
         you.mutation[MUT_CONSTRICTING_TAIL] = you.innate_mutation[MUT_CONSTRICTING_TAIL] = 1;
     }
+
+    if (you.char_class == JOB_MERFOLK)
+        you.mutation[MUT_MERFOLK_TAIL] = you.innate_mutation[MUT_MERFOLK_TAIL] = 1;
 
     if ((you.char_class == JOB_CENTAUR || you.char_class == JOB_NAGA) && you_can_wear(EQ_BODY_ARMOUR))
     {

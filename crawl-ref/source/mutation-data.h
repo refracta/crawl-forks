@@ -287,6 +287,14 @@ static const mutation_def mut_data[] =
 },
 #endif
 
+{ MUT_MERFOLK_TAIL, 0, 1, mutflag::good, true,
+  "merfolk tail",
+
+  { "On contact with water, your feet merge into a fishtail, which allows you to swim quickly, evasively and stealthily.", "", "" },
+  { "", "", "" },
+  { "", "", "" },
+},
+
 { MUT_TELEPORT, 3, 3, mutflag::bad, false,
   "teleportitis",
 
@@ -634,22 +642,6 @@ static const mutation_def mut_data[] =
 
   {"", "", ""},
 },
-
-#if TAG_MAJOR_VERSION == 34
-{ MUT_MUMMY_RESTORATION, 0, 1, mutflag::good, false,
-  "restore body",
-
-  {"You can restore your body by infusing magical energy.",
-   "",
-   ""},
-
-  {"You can now infuse your body with magic to restore decomposition.",
-   "",
-   ""},
-
-  {"", "", ""},
-},
-#endif
 
 { MUT_NECRO_ENHANCER, 0, 2, mutflag::good, false,
   "in touch with death",

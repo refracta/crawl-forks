@@ -2137,6 +2137,13 @@ skill_type staff_magic_skill(const item_def &item)
     }
 }
 
+// Currently only used for a single ng-restr call
+skill_type wpn_skill(weapon_type wpn)
+{
+    
+    return Weapon_prop[Weapon_index[wpn]].skill;
+}
+
 /**
  * Returns the skill used by the given item to attack.
  *

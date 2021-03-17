@@ -158,6 +158,18 @@ static const map<job_type, job_def> job_data =
       { SK_WEAPON, 3}, },
 } },
 
+
+{ JOB_MERFOLK, {
+    "Mf", "Merfolk",
+    6, -1, 7,
+    { SP_HILL_ORC, SP_MINOTAUR, SP_GARGOYLE, SP_SILENT_SPECTRE, 
+      SP_DRACONIAN },
+    { "leather armour", "helmet", "wand of ensnaring charges:9" },
+    WCHOICE_GOOD,
+    { { SK_FIGHTING, 2 }, { SK_EVOCATIONS, 2 }, { SK_DODGING, 3 },
+      { SK_WEAPON, 3}, },
+} },
+
 { JOB_HUNTER, {
     "Hu", "Hunter",
     4, 3, 5,

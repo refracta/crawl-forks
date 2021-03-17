@@ -314,6 +314,8 @@ void fill_doll_equipment(dolls_data &result)
             result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_CENTAUR_STATUE;
         else if (you.species == SP_NAGA || you.char_class == JOB_NAGA)
             result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_NAGA_STATUE;
+        else if (you.fishtail)
+            result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_MERFOLK_WATER_STATUE;
         else if (result.parts[TILEP_PART_BASE] == TILEP_TRAN_STATUE_HUMANOID)
             result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_STATUE;
 
@@ -327,12 +329,14 @@ void fill_doll_equipment(dolls_data &result)
         case SP_OCTOPODE:ch = TILEP_TRAN_LICH_OCTOPODE; break;
         default:         ch = TILEP_TRAN_LICH_HUMANOID; break;
         }
-
+        
         if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
             result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_CENTAUR_BONE;
         else if (you.species == SP_NAGA || you.char_class == JOB_NAGA)
             result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_NAGA_LICH;
-        else if (result.parts[TILEP_PART_BASE] == TILEP_TRAN_STATUE_HUMANOID)
+        else if (you.fishtail)
+            result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_MERFOLK_WATER_BONE;
+        else if (ch == TILEP_TRAN_LICH_HUMANOID)
             result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_LICH;
 
         result.parts[TILEP_PART_BASE] = ch;

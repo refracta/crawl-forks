@@ -2023,6 +2023,7 @@ int species_apt(skill_type skill, species_type species)
 
     int mod = 0;
 
+    // BCADDO: This is getting to the point it should be data-ified O_O;
     if (you.char_class == JOB_MUMMY)
     {
         if (skill == SK_NECROMANCY || skill == SK_SPELLCASTING)
@@ -2031,15 +2032,31 @@ int species_apt(skill_type skill, species_type species)
             mod = -2;
     }
 
+    if (you.char_class == JOB_MERFOLK)
+    {
+        mod = 1;
+        if (skill == SK_POLEARMS || skill == SK_ICE_MAGIC || skill == SK_TRANSMUTATIONS
+            || skill == SK_STEALTH || skill == SK_DODGING)
+        {
+            mod = 3;
+        }
+        else if (skill == SK_BOWS || skill == SK_CROSSBOWS || skill == SK_ARMOUR
+            || skill == SK_FIRE_MAGIC || skill == SK_AIR_MAGIC || skill == SK_EARTH_MAGIC
+            || skill == SK_MACES_STAVES || skill == SK_WHIPS_FLAILS)
+        {
+            mod = -2;
+        }
+    }
+
     if (you.char_class == JOB_NAGA)
     {
         if (skill == SK_SLINGS || skill == SK_BOWS || skill == SK_CROSSBOWS)
             mod = -1;
-        if (skill == SK_STEALTH)
+        else if (skill == SK_STEALTH)
             mod = 4;
-        if (skill == SK_ARMOUR || skill == SK_DODGING || skill == SK_SHIELDS)
+        else if (skill == SK_ARMOUR || skill == SK_DODGING || skill == SK_SHIELDS)
             mod = -2;
-        if (skill == SK_POISON_MAGIC)
+        else if (skill == SK_POISON_MAGIC)
             mod = 3;
 
         if (skill == SK_ARMOUR && _spec_skills[species][skill] == UNUSABLE_SKILL)

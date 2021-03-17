@@ -2089,14 +2089,17 @@ static mon_attack_def _hepliaklqana_ancestor_attack(const monster &mon,
             return { AT_CONSTRICT, AF_CRUSH, dam / 2 };
         else if (you.species == SP_VINE_STALKER)
             return { AT_BITE, AF_ANTIMAGIC, dam / 3 };
-        else if (you.species == SP_MERFOLK || species_is_draconian(you.species))
-            return { AT_TAIL_SLAP, AF_PLAIN, dam / 2 };
         else if (you.species == SP_MINOTAUR)
             return { AT_GORE, AF_PLAIN, dam / 2 };
         else if (you.species == SP_TENGU)
             return { AT_PECK, AF_PLAIN, dam / 2 };
         else if (you.species == SP_FELID)
             return { AT_BITE, AF_PLAIN, dam };
+        else if (you.species == SP_MERFOLK || species_is_draconian(you.species)
+              || you.char_class == JOB_MERFOLK)
+        {
+            return { AT_TAIL_SLAP, AF_PLAIN, dam / 2 };
+        }
         else if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
             return { AT_KICK, AF_PLAIN, dam / 2 };
         else if (you.species == SP_NAGA || you.char_class == JOB_NAGA)
@@ -6549,7 +6552,7 @@ void set_ancestor_spells(monster &ancestor, bool notify)
         break;
     case MONS_ANCESTOR_BATTLEMAGE:
         // Few fun special cases for a couple races, nothing OP.
-        if (you.species == SP_MERFOLK)
+        if (you.species == SP_MERFOLK || you.char_class == JOB_MERFOLK)
         {
             _add_ancestor_spell(ancestor.spells, SPELL_PRIMAL_WAVE);
             _add_ancestor_spell(ancestor.spells, HD >= 14 ?

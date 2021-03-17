@@ -644,9 +644,7 @@ string describe_mutations(bool drop_title)
     // we handle only Naga/Draconian AC and Yellow Draconian rAcid.
     for (const string& str : fake_mutations(you.species, false))
     {
-        if (you.species == SP_MERFOLK)
-            result += _annotate_form_based(str, form_changed_physiology());
-        else if (you.species == SP_MINOTAUR)
+        if (you.species == SP_MINOTAUR)
             result += _annotate_form_based(str, !form_keeps_mutations());
         else
             result += str + "\n";
@@ -1334,8 +1332,8 @@ bool physiology_mutation_conflict(mutation_type mutat, bool ds_roll)
 
     // Merfolk have no feet in the natural form, and we never allow mutations
     // that show up only in a certain transformation.
-    if (you.species == SP_MERFOLK
-        && (mutat == MUT_TALONS || mutat == MUT_HOOVES))
+    if ((you.species == SP_MERFOLK || you.char_class == JOB_MERFOLK)
+        && !ds_roll && (mutat == MUT_TALONS || mutat == MUT_HOOVES))
     {
         return true;
     }

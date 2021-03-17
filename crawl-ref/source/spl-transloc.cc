@@ -624,7 +624,7 @@ static void _handle_teleport_update(bool large_change, const coord_def old_pos)
     }
 
 #ifdef USE_TILE
-    if (you.species == SP_MERFOLK)
+    if (you.species == SP_MERFOLK || you.char_class == JOB_MERFOLK)
     {
         const dungeon_feature_type new_grid = grd(you.pos());
         const dungeon_feature_type old_grid = grd(old_pos);

@@ -10,6 +10,7 @@
 
 #include "ng-restr.h"
 
+#include "item-prop.h"
 #include "jobs.h"
 #include "newgame.h"
 #include "newgame-def.h"
@@ -28,6 +29,10 @@ static bool _banned_combination(job_type job, species_type species)
             return true;
         }
         break;
+    case JOB_MERFOLK:
+        if (species == SP_OCTOPODE)
+            return true;
+        // Fallthrough
     case JOB_CENTAUR:
     case JOB_NAGA:
         if (species == SP_HUMAN
@@ -125,11 +130,14 @@ char_choice_restriction weapon_restriction(weapon_type wpn,
     if (ng.species == SP_NAGA && ng.job == JOB_FIGHTER && wpn == WPN_RAPIER)
         return CC_RESTRICTED;
 
-    if (wpn == WPN_QUARTERSTAFF && ng.job != JOB_GLADIATOR)
-        return CC_BANNED;
-
     if (species_recommends_weapon(ng.species, wpn))
         return CC_UNRESTRICTED;
+
+    if (wpn != WPN_UNARMED && wpn != WPN_UNKNOWN &&
+        (ng.job == JOB_MERFOLK) && (wpn_skill(wpn) == SK_SHORT_BLADES))
+    {
+        return CC_UNRESTRICTED;
+    }
 
     return CC_RESTRICTED;
 }

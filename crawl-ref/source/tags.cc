@@ -2988,6 +2988,10 @@ static void tag_read_you(reader &th)
     you.mutation[MUT_SLOW] = you.innate_mutation[MUT_SLOW];
     you.mutation[MUT_BREATHE_FLAMES] = 0;
 
+    // BCADDO: Add a minor tag here next minor bump.
+    if (you.species == SP_MERFOLK)
+        you.mutation[MUT_MERFOLK_TAIL] = you.innate_mutation[MUT_MERFOLK_TAIL] = 1;
+
     if (th.getMinorVersion() < TAG_MINOR_MOUNT_ENERGY)
     { 
         if (you.char_class != JOB_MUMMY && you.species != SP_LIGNIFITE)
@@ -3160,36 +3164,6 @@ static void tag_read_you(reader &th)
     {
         if (you.mutation[MUT_BLINK] > 1)
             you.mutation[MUT_BLINK] = 1;
-    }
-
-    if (th.getMinorVersion() < TAG_MINOR_MUMMY_RESTORATION)
-    {
-        if (you.mutation[MUT_MUMMY_RESTORATION])
-        {
-            you.mutation[MUT_MUMMY_RESTORATION] = 0;
-            you.innate_mutation[MUT_MUMMY_RESTORATION] = 0;
-        }
-        if (you.mutation[MUT_SUSTAIN_ATTRIBUTES])
-        {
-            you.mutation[MUT_SUSTAIN_ATTRIBUTES] = 0;
-            you.innate_mutation[MUT_SUSTAIN_ATTRIBUTES] = 0;
-        }
-    }
-    else
-    {
-        // need another fixup due to save compat issues; the first version
-        // above forgot to deal with innate mutations. The mutation might
-        // have been readded in the generic fixup code.
-        if (you.innate_mutation[MUT_MUMMY_RESTORATION])
-        {
-            you.mutation[MUT_MUMMY_RESTORATION] = 0;
-            you.innate_mutation[MUT_MUMMY_RESTORATION] = 0;
-        }
-        if (you.innate_mutation[MUT_SUSTAIN_ATTRIBUTES])
-        {
-            you.mutation[MUT_SUSTAIN_ATTRIBUTES] = 0;
-            you.innate_mutation[MUT_SUSTAIN_ATTRIBUTES] = 0;
-        }
     }
 
     if (th.getMinorVersion() < TAG_MINOR_SPIT_POISON_AGAIN)

@@ -1927,8 +1927,7 @@ bool transform(int pow, transformation which_trans, bool involuntary,
         move_player_to_grid(you.pos(), false);
 
     // Update merfolk swimming for the form change.
-    if (you.species == SP_MERFOLK)
-        merfolk_check_swimming(false);
+    merfolk_check_swimming(false);
 
     if (you.hp <= 0)
     {
@@ -2026,8 +2025,7 @@ void untransform(bool skip_move)
             move_player_to_grid(you.pos(), false);
 
         // Update merfolk swimming for the form change.
-        if (you.species == SP_MERFOLK)
-            merfolk_check_swimming(false);
+        merfolk_check_swimming(false);
     }
 
 #ifdef USE_TILE
@@ -2092,10 +2090,12 @@ void untransform(bool skip_move)
  */
 void merfolk_check_swimming(bool stepped)
 {
+    if (!you.has_mutation(MUT_MERFOLK_TAIL, you.form != transformation::lich && you.form != transformation::statue))
+        return;
+
     const dungeon_feature_type grid = env.grid(you.pos());
     if (you.ground_level()
-        && feat_is_water(grid)
-        && !form_changed_physiology(you.form))
+        && feat_is_water(grid))
     {
         merfolk_start_swimming(stepped);
     }

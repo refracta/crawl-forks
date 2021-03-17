@@ -751,7 +751,7 @@ void dec_penance(int val)
 // TODO: find out what this is duplicating & deduplicate it
 static bool _need_water_walking()
 {
-    return you.ground_level() && you.species != SP_MERFOLK
+    return you.ground_level() && you.species != SP_MERFOLK && you.char_class != JOB_MERFOLK
            && (grd(you.pos()) == DNGN_DEEP_WATER || grd(you.pos()) == DNGN_DEEP_SLIMY_WATER);
 }
 
@@ -1947,7 +1947,7 @@ static weapon_type _hepliaklqana_weapon_type(monster_type mc, int HD)
             return WPN_KRIS;
         return HD < 16 ? WPN_DAGGER : WPN_TANTO;
     case MONS_ANCESTOR_KNIGHT:
-        if (you.species == SP_MERFOLK)
+        if (you.species == SP_MERFOLK || you.char_class == JOB_MERFOLK)
             return HD < 10 ? WPN_SPEAR : WPN_DEMON_TRIDENT;
         else if (you.species == SP_HILL_ORC)
             return HD < 10 ? WPN_HAND_AXE : WPN_BROAD_AXE;
@@ -1962,7 +1962,7 @@ static weapon_type _hepliaklqana_weapon_type(monster_type mc, int HD)
         else
             return HD < 10 ? WPN_FLAIL : WPN_BROAD_AXE;
     case MONS_ANCESTOR_BATTLEMAGE:
-        if (you.species == SP_MERFOLK)
+        if (you.species == SP_MERFOLK || you.char_class == JOB_MERFOLK)
             return HD < 15 ? WPN_HALBERD : WPN_BARDICHE;
         else if (you.species == SP_HILL_ORC)
             return HD < 17 ? WPN_BATTLEAXE : WPN_EXECUTIONERS_AXE;

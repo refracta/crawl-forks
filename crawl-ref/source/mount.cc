@@ -128,8 +128,7 @@ spret gain_mount(mount_type mount, int pow, bool fail)
         if (were_flying)
             land_player();
 
-        if (you.species == SP_MERFOLK)
-            merfolk_check_swimming();
+        merfolk_check_swimming();
 
         you.redraw_hit_points = true;
         redraw_screen();
@@ -155,8 +154,7 @@ void dismount()
     you.mount = mount_type::none;
     you.mount_hp = you.mount_hp_max = you.mount_hp_regen = 0;
     redraw_screen();
-    if (you.species == SP_MERFOLK)
-        merfolk_check_swimming();
+    merfolk_check_swimming();
 }
 
 // Ends all mount debuffs when a mount is dismissed or resummoned.

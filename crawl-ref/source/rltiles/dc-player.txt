@@ -303,6 +303,10 @@ naga_statue NAGA_STATUE
 naga_undead NAGA_UNDEAD
 naga_spectral NAGA_SPECTRAL
 merfolk_water MERFOLK_WATER
+merfolk_water_spectral MERFOLK_WATER_SPECTRAL
+merfolk_water_undead MERFOLK_WATER_UNDEAD
+merfolk_water_bone MERFOLK_WATER_BONE
+merfolk_water_statue MERFOLK_WATER_STATUE
 statue STATUE
 lich LICH
 %end_ctg

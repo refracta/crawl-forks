@@ -155,6 +155,7 @@ int single_damage_type(const item_def &item) PURE;
 bool is_blessable_item(const item_def &item);
 bool is_brandable_weapon(const item_def &wpn, bool allow_ranged, bool divine = false);
 
+skill_type wpn_skill(weapon_type wpn) PURE;
 skill_type item_attack_skill(const item_def &item) PURE;
 skill_type item_attack_skill(object_class_type wclass, int wtype) IMMUTABLE;
 skill_type staff_magic_skill(const item_def &item) PURE;

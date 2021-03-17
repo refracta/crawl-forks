@@ -4166,6 +4166,8 @@ static tileidx_t _tileidx_player_job_base(const job_type job)
             return TILEG_JOB_CENTAUR;
         case JOB_NAGA:
             return TILEG_JOB_ASSASSIN;
+        case JOB_MERFOLK:
+            return TILEG_JOB_MERFOLK;
         default:
             return TILEG_ERROR;
     }
