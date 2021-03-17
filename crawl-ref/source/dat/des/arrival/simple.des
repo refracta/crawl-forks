@@ -1622,14 +1622,18 @@ ENDMAP
 NAME:   scummos_arrival_simple_fountains
 TAGS:   arrival no_monster_gen transparent
 ORIENT: float
+NSUBST: y = 3:@ / *:x
+SUBST:  T:TUY
 MAP
-.......
-.T...T.
-..mmm..
-..m{+..
-..mmm..
-.T...T.
-.......
+yyyyyxxxx
+y.......x
+y.T...T.x
+y..qqq..x
+y..q{=..x
+y..qqq..x
+y.T...T.x
+y.......x
+yyyyyxxxx
 ENDMAP
 
 NAME:   scummos_arrival_simple_crosswalls
