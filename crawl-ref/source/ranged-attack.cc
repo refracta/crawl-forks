@@ -229,12 +229,15 @@ void ranged_attack::set_path(bolt path)
 
 bool ranged_attack::handle_phase_end()
 {
+    const int remaining_range = you.current_vision - grid_distance(attacker->pos(), defender->pos());
+
     if (projectile->base_type == OBJ_MISSILES &&
        (projectile->sub_type == MI_TRIPLE_BOLT || projectile->sub_type == MI_DOUBLE_BOLT) &&
-        !the_path.aimed_at_spot && !invalid_monster(defender->as_monster()))
+        !the_path.aimed_at_spot && !invalid_monster(defender->as_monster()) 
+        && (remaining_range >= 1))
     {
         bolt continuation = the_path;
-        continuation.range = you.current_vision - range_used;
+        continuation.range = remaining_range;
         const int x0 = the_path.source.x;
         const int x1 = the_path.target.x;
         const int y0 = the_path.source.y;
@@ -256,12 +259,11 @@ bool ranged_attack::handle_phase_end()
         destroy_item(i);
     }
 
-    if (projectile->base_type == OBJ_MISSILES && did_hit &&
-        projectile->sub_type == MI_SLING_BULLET && !reflected && one_chance_in(3) &&
+    if (projectile->is_type(OBJ_MISSILES, MI_SLING_BULLET) && !reflected && (remaining_range >= 1) && did_hit && one_chance_in(3) &&
         (defender->is_player() || !(mons_is_firewood(*defender->as_monster()) && !invalid_monster(defender->as_monster()))))
     {
         bolt continuation = the_path;
-        continuation.range = you.current_vision - range_used;
+        continuation.range = 3;
         continuation.source = defender->pos();
         int i = items(false, OBJ_MISSILES, MI_SLING_BULLET, 1);
         item_def item = mitm[i];
@@ -422,6 +424,8 @@ bool ranged_attack::handle_phase_dodged()
 
 bool ranged_attack::handle_phase_hit()
 {
+    did_hit = true;
+
     if (projectile->is_type(OBJ_MISSILES, MI_NEEDLE))
     {
         damage_done = blowgun_duration_roll(get_ammo_brand(*projectile));
