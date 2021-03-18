@@ -94,7 +94,11 @@ int ranged_attack::calc_to_hit(bool random, bool player_aux)
         }
     }
 
-    const int lrange = min(7, grid_distance(attacker->pos(), defender->pos()));
+    const int lrange = grid_distance(attacker->pos(), defender->pos());
+
+    if (lrange > 9)
+        return 0;
+
     hit *= (10 - lrange);
     hit /= 10;
 
