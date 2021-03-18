@@ -94,8 +94,8 @@ int ranged_attack::calc_to_hit(bool random, bool player_aux)
         }
     }
 
-    const int lrange = grid_distance(attacker->pos(), defender->pos());
-    hit *= 10 - lrange;
+    const int lrange = min(7, grid_distance(attacker->pos(), defender->pos()));
+    hit *= (10 - lrange);
     hit /= 10;
 
     const int defl = defender->missile_deflection();
@@ -129,12 +129,12 @@ int ranged_attack::calc_to_hit(bool random, bool player_aux)
     if (blockers == 1)
         hit *= 0.7;
     else if (blockers < 7)
-    {
-        blockers--;
-        hit *= (1 - 0.3 - 0.1 * blockers);
-    }
+        hit *= (1 - 0.2 - (0.1 * blockers));
     else if (blockers != 0)
         hit *= 0.2;
+
+    if (hit <= 0)
+        return 0;
 
     return rand_round(hit);
 }
