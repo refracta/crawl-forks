@@ -173,12 +173,6 @@ static void _give_wand(monster* mon, int level, bool summoned)
     if (summoned)
         return;
 
-    // Special case since these are effectively corpses. They are allowed to 
-    // keep the wand the previous monster had when it died; but making a new
-    // wand for them is nonsense.
-    if (mon->type == MONS_PILLAR_OF_SALT || mon->type == MONS_BLOCK_OF_ICE)
-        return;
-
     bool give_wand = mons_class_flag(mon->type, M_ALWAYS_WAND);
 
     if (!give_wand)

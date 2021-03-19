@@ -1596,11 +1596,11 @@ void monster::apply_enchantment(const mon_enchant &me)
                     mprf("%s collapses into a bloody pulp.", name(DESC_THE, false).c_str());
                     bleed_onto_floor(pos(), MONS_OGRE, 99, true);
                 }
+                // Not the best check but having Cloud immune AND slowly dying is only Chaos-Magic related right now.
+                else if (flags |= MF_CLOUD_IMMUNE) 
+                    mprf("%s is ripped apart by its own instability.", name(DESC_PLAIN, false).c_str());
                 else
-                {
-                    mprf("A nearby %s withers and dies.",
-                         name(DESC_PLAIN, false).c_str());
-                }
+                    mprf("A nearby %s withers and dies.", name(DESC_PLAIN, false).c_str());
             }
 
             monster_die(*this, KILL_MISC, NON_MONSTER, true);

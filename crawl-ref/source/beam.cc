@@ -5406,7 +5406,7 @@ static void _glaciate_freeze(monster* mon, killer_type englaciator,
     // If the monster leaves a corpse when it dies, destroy the corpse.
     item_def* corpse = monster_die(*mon, englaciator, kindex);
     if (corpse)
-        destroy_item(corpse->index());
+        destroy_item(corpse->index(), true);
 
     if (monster *pillar = create_monster(
                         mgen_data(chaos ? _chaos_pillar() : MONS_BLOCK_OF_ICE,
@@ -5419,7 +5419,13 @@ static void _glaciate_freeze(monster* mon, killer_type englaciator,
         // Enemies with more HD leave longer-lasting blocks of ice.
         int time_left = (random2(8) + hd) * BASELINE_DELAY;
         mon_enchant temp_en(ENCH_SLOWLY_DYING, 1, 0, time_left);
-        pillar->update_ench(temp_en);
+        if (pillar->has_ench(ENCH_SLOWLY_DYING))
+            pillar->update_ench(temp_en);
+        else
+        {
+            temp_en.duration *= 3;
+            pillar->add_ench(temp_en);
+        }
         if (chaos)
         {
             if (!pillar->is_stationary())
@@ -5428,6 +5434,7 @@ static void _glaciate_freeze(monster* mon, killer_type englaciator,
                 pillar->add_ench(mon_enchant(ENCH_CONFUSION, 1, 0, INFINITE_DURATION));
             }
             pillar->flags |= MF_CLOUD_IMMUNE;
+            pillar->flags |= MF_EXPLODE_KILL;
         }
     }
 }

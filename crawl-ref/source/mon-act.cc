@@ -4042,9 +4042,11 @@ static bool _monster_move(monster* mons)
         if (!feat_is_permarock(feat) && feat_is_solid(feat))
         {
             const coord_def target(mons->pos() + mmov);
-            create_monster(
+            monster * new_mon = create_monster(
                     mgen_data(MONS_SPATIAL_VORTEX, SAME_ATTITUDE(mons), target)
                     .set_summoned(mons, 2, MON_SUMM_ANIMATE, GOD_LUGONU));
+            if (mons->has_ench(ENCH_SLOWLY_DYING) && new_mon)
+                new_mon->add_ench(mons->get_ench(ENCH_SLOWLY_DYING));
             destroy_wall(target);
         }
     }
