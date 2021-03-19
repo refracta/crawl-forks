@@ -376,7 +376,7 @@ int check_your_resists(int hurted, beam_type flavour, string source,
 
 static bool _maybe_unravel (int strength)
 {
-    int sk_boost = div_rand_round(you.skill(SK_CHARMS),3);
+    int sk_boost = div_rand_round(you.skill(SK_CHARMS), 3);
     if (x_chance_in_y(strength, 3 + sk_boost))
         return true;
     return false;
@@ -483,6 +483,11 @@ void lose_staff_shield(beam_type flavour, int strength)
         case STAFF_DEATH:
         default:
             break;
+        }
+        if (flavour == BEAM_UNRAVELLING && _maybe_unravel(strength))
+        {
+            mprf(MSGCH_WARN, "Your staff's shield comes unraveled.");
+            remove = true;
         }
         if (remove)
         {

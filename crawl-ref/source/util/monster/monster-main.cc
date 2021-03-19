@@ -1043,6 +1043,9 @@ int main(int argc, char* argv[])
                 case AF_DRAIN_SPEED:
                     monsterattacks += colour(LIGHTMAGENTA, "(drain speed)");
                     break;
+                case AF_DISPEL:
+                    monsterattacks += colour(LIGHTBLUE, "(dispel)");
+                    break;
                 case AF_VULN:
                     monsterattacks += colour(LIGHTBLUE, "(vuln)");
                     break;
@@ -1066,7 +1069,6 @@ int main(int argc, char* argv[])
                 case AF_PLAIN:
                     break;
 #if TAG_MAJOR_VERSION == 34
-                case AF_PLAGUE:
                 case AF_POISON_MEDIUM:
                 case AF_POISON_NASTY:
                 case AF_POISON_STR:

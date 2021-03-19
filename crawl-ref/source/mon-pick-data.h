@@ -379,7 +379,6 @@ static const pop_entry pop_slime[] =
   {  1,  5,  200, FLAT, MONS_GOLDEN_EYE },
   {  1,  8,  300, SEMI, MONS_EYE_OF_DEVASTATION },
   {  1,  8,  390, SEMI, MONS_GREAT_ORB_OF_EYES },
-  {  1,  8,  270, SEMI, MONS_ECTOPLASMIC_ORB },
   {  1,  5,  340, RISE, MONS_GIBBERING_MOUND },
   {  1,  5,  200, RISE, MONS_DEATH_OOZE },
   {  1,  5,  200, RISE, MONS_VERDANT_MOULD },

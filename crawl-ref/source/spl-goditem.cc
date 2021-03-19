@@ -420,15 +420,12 @@ void debuff_player()
     player_debuff_effects buffs;
     _dispellable_player_buffs(buffs);
 
+    lose_staff_shield(BEAM_UNRAVELLING, 3);
+
     for (auto attr : buffs.attributes)
     {
         you.attribute[attr] = 0;
-#if TAG_MAJOR_VERSION == 34
-        if (attr == ATTR_DELAYED_FIREBALL)
-            mprf(MSGCH_DURATION, "Your charged fireball dissipates.");
-        else
-#endif
-            need_msg = true;
+        need_msg = true;
     }
 
     for (auto duration : buffs.durations)
@@ -515,6 +512,8 @@ bool monster_is_debuffable(const monster &mon)
  */
 void debuff_monster(monster &mon)
 {
+    mon_lose_staff_shield(mon, BEAM_UNRAVELLING, 3);
+
     vector<enchant_type> buffs;
     _dispellable_monster_buffs(mon, buffs);
     if (buffs.empty())

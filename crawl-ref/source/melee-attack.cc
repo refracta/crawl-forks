@@ -764,6 +764,13 @@ bool melee_attack::handle_phase_blocked()
         attacker->hurt(defender, dam);
     }
 
+    int str = 1;
+    
+    if (attacker->is_player())
+        str = random2(you.experience_level / 4);
+    else
+        str = random2(attacker->get_hit_dice() / 4);
+
     bool vamp_tendril = false;
     attack_flavour flavour = attk_flavour;
 
@@ -775,25 +782,25 @@ bool melee_attack::handle_phase_blocked()
     case AF_POISON_PETRIFY:
     case AF_POISON_STR:
     case AF_MIASMATA:
-        _handle_staff_shield(BEAM_POISON, 1, defender->is_player(), defender->as_monster());
+        _handle_staff_shield(BEAM_POISON, str, defender->is_player(), defender->as_monster());
         break;
 
     case AF_ROT:
-        _handle_staff_shield(BEAM_MIASMA, 1, defender->is_player(), defender->as_monster());
+        _handle_staff_shield(BEAM_MIASMA, str, defender->is_player(), defender->as_monster());
         break;
 
     case AF_FIRE:
     case AF_STICKY_FLAME:
     case AF_PURE_FIRE:
-        _handle_staff_shield(BEAM_FIRE, 1, defender->is_player(), defender->as_monster());
+        _handle_staff_shield(BEAM_FIRE, str, defender->is_player(), defender->as_monster());
         break;
 
     case AF_COLD:
-        _handle_staff_shield(BEAM_COLD, 1, defender->is_player(), defender->as_monster());
+        _handle_staff_shield(BEAM_COLD, str, defender->is_player(), defender->as_monster());
         break;
 
     case AF_ELEC:
-        _handle_staff_shield(BEAM_ELECTRICITY, 1, defender->is_player(), defender->as_monster());
+        _handle_staff_shield(BEAM_ELECTRICITY, str, defender->is_player(), defender->as_monster());
         break;
 
     case AF_SCARAB:
@@ -803,23 +810,27 @@ bool melee_attack::handle_phase_blocked()
 
     case AF_ACID:
     case AF_CORRODE:
-        _handle_staff_shield(BEAM_ACID, 1, defender->is_player(), defender->as_monster());
+        _handle_staff_shield(BEAM_ACID, str, defender->is_player(), defender->as_monster());
         break;
 
     case AF_PURE_CHAOS:
     case AF_CHAOTIC:
         switch (random2(3))
         {
-        case 0: _handle_staff_shield(BEAM_FIRE, 1, defender->is_player(), defender->as_monster()); break;
-        case 1: _handle_staff_shield(BEAM_COLD, 1, defender->is_player(), defender->as_monster()); break;
-        case 2: _handle_staff_shield(BEAM_ELECTRICITY, 1, defender->is_player(), defender->as_monster()); break;
-        case 3: _handle_staff_shield(BEAM_POISON, 1, defender->is_player(), defender->as_monster()); break;
+        case 0: _handle_staff_shield(BEAM_FIRE, str, defender->is_player(), defender->as_monster()); break;
+        case 1: _handle_staff_shield(BEAM_COLD, str, defender->is_player(), defender->as_monster()); break;
+        case 2: _handle_staff_shield(BEAM_ELECTRICITY, str, defender->is_player(), defender->as_monster()); break;
+        case 3: _handle_staff_shield(BEAM_POISON, str, defender->is_player(), defender->as_monster()); break;
         }
         break;
 
     case AF_ENGULF:
     case AF_DROWN:
-        _handle_staff_shield(BEAM_WATER, 1, defender->is_player(), defender->as_monster());
+        _handle_staff_shield(BEAM_WATER, str, defender->is_player(), defender->as_monster());
+        break;
+
+    case AF_DISPEL:
+        _handle_staff_shield(BEAM_UNRAVELLING, str, defender->is_player(), defender->as_monster());
         break;
 
     case AF_DRAIN_STR:
@@ -3953,6 +3964,48 @@ void melee_attack::mons_apply_attack_flavour()
     case AF_DRAIN_SPEED:
         if (x_chance_in_y(3, 5))
             drain_defender_speed();
+        break;
+
+    case AF_DISPEL:
+        if (x_chance_in_y(3, 5))
+        {
+            int healz = roll_dice(3, attacker->get_hit_dice());
+            if (defender->is_player())
+            {
+                if (player_is_debuffable())
+                {
+                    heal_monster(*attacker->as_monster(), healz);
+                    special_damage = healz;
+
+                    if (needs_message)
+                    {
+                        mprf("%s drains away your magical effects%s",
+                            atk_name(DESC_THE).c_str(),
+                            attack_strength_punctuation(healz).c_str());
+                    }
+
+                    debuff_player();
+                }
+            }
+            else
+            {
+                if (monster_is_debuffable(*defender->as_monster()))
+                {
+                    heal_monster(*attacker->as_monster(), healz);
+                    special_damage = healz;
+
+                    if (needs_message)
+                    {
+                        mprf("%s drains away the magic affecting %s%s",
+                            atk_name(DESC_THE).c_str(),
+                            defender_name(true).c_str(),
+                            attack_strength_punctuation(healz).c_str());
+                    }
+
+                    debuff_monster(*defender->as_monster());
+                }
+            }
+        }
         break;
 
     case AF_VULN:

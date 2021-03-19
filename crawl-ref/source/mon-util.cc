@@ -952,6 +952,11 @@ void mon_lose_staff_shield(monster & mon, beam_type flavour, int strength)
     default:
         break;
     }
+    if (flavour == BEAM_UNRAVELLING && x_chance_in_y(strength, hd))
+    {
+        mprf("%s magical shield is dispelled.", mon.name(DESC_ITS).c_str());
+        remove = true;
+    }
     if (remove)
         mon.add_ench(mon_enchant(ENCH_STFSHIELD_COOLDOWN, 1, 0, 20 + random2(20)));
 }

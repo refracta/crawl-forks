@@ -93,21 +93,28 @@ bool attack::handle_phase_blocked()
 
     if (weapon)
     {
+        int str = 1;
+
         if (weapon->base_type == OBJ_STAVES)
         {
+            if (attacker->is_player())
+                str = random2(you.skill(SK_EVOCATIONS));
+            else
+                str = random2(attacker->get_hit_dice());
+
             switch (weapon->sub_type)
             {
             case STAFF_FIRE:
-                _handle_staff_shield(BEAM_FIRE, 1, defender->is_player(), defender->as_monster());
+                _handle_staff_shield(BEAM_FIRE, str, defender->is_player(), defender->as_monster());
                 break;
             case STAFF_COLD:
-                _handle_staff_shield(BEAM_COLD, 1, defender->is_player(), defender->as_monster());
+                _handle_staff_shield(BEAM_COLD, str, defender->is_player(), defender->as_monster());
                 break;
             case STAFF_AIR:
-                _handle_staff_shield(BEAM_ELECTRICITY, 1, defender->is_player(), defender->as_monster());
+                _handle_staff_shield(BEAM_ELECTRICITY, str, defender->is_player(), defender->as_monster());
                 break;
             case STAFF_POISON:
-                _handle_staff_shield(BEAM_POISON, 1, defender->is_player(), defender->as_monster());
+                _handle_staff_shield(BEAM_POISON, str, defender->is_player(), defender->as_monster());
                 break;
             default:
                 break;
@@ -115,28 +122,30 @@ bool attack::handle_phase_blocked()
         }
         else
         {
+            str = calc_damage() / 5;
+
             switch (get_weapon_brand(*weapon))
             {
             case SPWPN_ACID:
-                _handle_staff_shield(BEAM_ACID, 1, defender->is_player(), defender->as_monster());
+                _handle_staff_shield(BEAM_ACID, str, defender->is_player(), defender->as_monster());
                 break;
             case SPWPN_CHAOS:
                 switch (random2(3))
                 {
-                case 0: _handle_staff_shield(BEAM_FIRE, 1, defender->is_player(), defender->as_monster()); break;
-                case 1: _handle_staff_shield(BEAM_COLD, 1, defender->is_player(), defender->as_monster()); break;
-                case 2: _handle_staff_shield(BEAM_ELECTRICITY, 1, defender->is_player(), defender->as_monster()); break;
-                case 3: _handle_staff_shield(BEAM_POISON, 1, defender->is_player(), defender->as_monster()); break;
+                case 0: _handle_staff_shield(BEAM_FIRE, str, defender->is_player(), defender->as_monster()); break;
+                case 1: _handle_staff_shield(BEAM_COLD, str, defender->is_player(), defender->as_monster()); break;
+                case 2: _handle_staff_shield(BEAM_ELECTRICITY, str, defender->is_player(), defender->as_monster()); break;
+                case 3: _handle_staff_shield(BEAM_POISON, str, defender->is_player(), defender->as_monster()); break;
                 }
                 break;
             case SPWPN_ELECTROCUTION:
-                _handle_staff_shield(BEAM_ELECTRICITY, 1, defender->is_player(), defender->as_monster());
+                _handle_staff_shield(BEAM_ELECTRICITY, str, defender->is_player(), defender->as_monster());
                 break;
             case SPWPN_FREEZING:
-                _handle_staff_shield(BEAM_COLD, 1, defender->is_player(), defender->as_monster());
+                _handle_staff_shield(BEAM_COLD, str, defender->is_player(), defender->as_monster());
                 break;
             case SPWPN_MOLTEN:
-                _handle_staff_shield(BEAM_FIRE, 1, defender->is_player(), defender->as_monster());
+                _handle_staff_shield(BEAM_FIRE, str, defender->is_player(), defender->as_monster());
                 break;
             default:
                 break;
