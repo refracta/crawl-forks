@@ -5222,8 +5222,11 @@ bool napalm_player(int amount, string source, string source_aux)
 {
     ASSERT(!crawl_state.game_is_arena());
 
-    if (player_res_sticky_flame() || amount <= 0 || you.duration[DUR_WATER_HOLD] || feat_is_watery(grd(you.pos())))
+    if (player_res_sticky_flame() || amount <= 0 || you.duration[DUR_WATER_HOLD]
+        || you.duration[DUR_AIR_HOLD] || feat_is_watery(grd(you.pos())))
+    {
         return false;
+    }
 
     const int old_value = you.duration[DUR_LIQUID_FLAMES];
     you.increase_duration(DUR_LIQUID_FLAMES, amount, 100);
@@ -5697,48 +5700,63 @@ bool land_player(bool quiet)
     return true;
 }
 
-static void _end_water_hold()
-{
-    you.duration[DUR_WATER_HOLD] = 0;
-    you.props.erase("water_holder");
-}
-
 bool player::clear_far_engulf()
 {
-    if (!you.duration[DUR_WATER_HOLD])
+    if (!you.duration[DUR_WATER_HOLD] && !you.duration[DUR_AIR_HOLD])
         return false;
 
-    monster * const mons = monster_by_mid(you.props["water_holder"].get_int());
+    const bool water = you.duration[DUR_WATER_HOLD];
+    const string key = water ? "water_holder" : "air_holder";
+    monster * const mons = monster_by_mid(you.props[key].get_int());
     if (!mons || !mons->alive() || !adjacent(mons->pos(), you.pos()))
     {
-        if (you.res_water_drowning())
+        if (water && you.res_water_drowning())
             mpr("The water engulfing you falls away.");
+        else if (you.is_unbreathing())
+            mpr("The cloud enveloping you dissipates.");
         else
             mpr("You gasp with relief as air once again reaches your lungs.");
 
-        _end_water_hold();
+        if (water)
+        {
+            you.duration[DUR_WATER_HOLD] = 0;
+            you.props.erase("water_holder");
+        }
+        else
+        {
+            you.duration[DUR_AIR_HOLD] = 0;
+            you.props.erase("air_holder");
+        }
+
         return true;
     }
     return false;
 }
 
-void handle_player_drowning(int delay)
+void handle_player_drowning(int delay, bool water)
 {
     if (you.clear_far_engulf())
         return;
-    if (you.res_water_drowning())
-    {
-        // Reset so damage doesn't ramp up while able to breathe
+
+    // Reset so damage doesn't ramp up while able to breathe
+    if (you.res_water_drowning() && water)
         you.duration[DUR_WATER_HOLD] = 10;
-    }
+    else if (you.is_unbreathing())
+        you.duration[DUR_AIR_HOLD] = 10;
     else
     {
-        you.duration[DUR_WATER_HOLD] += delay;
+        you.duration[water ? DUR_WATER_HOLD : DUR_AIR_HOLD] += delay;
         int dam =
             div_rand_round((28 + stepdown((float)you.duration[DUR_WATER_HOLD], 28.0))
                             * delay,
                             BASELINE_DELAY * 10);
-        ouch(dam, KILLED_BY_WATER, you.props["water_holder"].get_int());
+        ouch(dam, water ? KILLED_BY_WATER : KILLED_BY_AIR, 
+            water ? you.props["water_holder"].get_int() : you.props["air_holder"].get_int());
+        if (!water && one_chance_in(3))
+        {
+            mprf(MSGCH_WARN, "You accidentally inhale some ghastly fumes!");
+            drain_player();
+        }
         mprf(MSGCH_WARN, "Your lungs strain for air!");
     }
 }

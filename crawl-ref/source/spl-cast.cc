@@ -818,6 +818,13 @@ bool can_cast_spells(bool quiet)
         return false;
     }
 
+    if (you.duration[DUR_AIR_HOLD] && !you.is_unbreathing())
+    {
+        if (!quiet)
+            mpr("You cannot cast spells while unable to breathe!");
+        return false;
+    }
+
     if (you.duration[DUR_BRAINLESS])
     {
         if (!quiet)

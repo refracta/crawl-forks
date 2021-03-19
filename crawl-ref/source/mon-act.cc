@@ -177,6 +177,12 @@ static void _escape_water_hold(monster& mons)
         simple_monster_message(mons, " slips free of the water.");
         mons.del_ench(ENCH_WATER_HOLD);
     }
+
+    if (mons.has_ench(ENCH_AIR_HOLD))
+    {
+        simple_monster_message(mons, " escapes the ghastly cloud.");
+        mons.del_ench(ENCH_AIR_HOLD);
+    }
 }
 
 static void _handle_manticore_barbs(monster& mons)

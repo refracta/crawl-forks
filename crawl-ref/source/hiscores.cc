@@ -1439,14 +1439,6 @@ void scorefile_entry::init_death_cause(int dam, mid_t dsrc,
         indirectkiller = killerpath = "";
     }
 
-    if (death_type == KILLED_BY_WEAKNESS
-        || death_type == KILLED_BY_STUPIDITY
-        || death_type == KILLED_BY_CLUMSINESS)
-    {
-        if (auxkilldata.empty())
-            auxkilldata = "unknown source";
-    }
-
     if (death_type == KILLED_BY_POISON)
     {
         death_source_name = you.props["poisoner"].get_string();
@@ -2289,17 +2281,15 @@ string scorefile_entry::death_description(death_desc_verbosity verbosity) const
         }
         break;
 
-    case KILLED_BY_STUPIDITY:
-        if (terse)
-            desc += "stupidity";
-        else if (race >= 0 && // not a removed race
-                 species_is_unbreathing(static_cast<species_type>(race))
-                 || job == JOB_MUMMY)
-        {
-            desc += "Forgot to exist";
-        }
+    case KILLED_BY_AIR:
+        if (death_source_name.empty())
+            desc += "asphyxiation";
         else
-            desc += "Forgot to breathe";
+        {
+            desc += terse ? "suffocated by " : "Suffocated by ";
+            desc += death_source_name;
+            needs_damage = true;
+        }
         break;
 
     case KILLED_BY_WEAKNESS:
@@ -2645,30 +2635,6 @@ string scorefile_entry::death_description(death_desc_verbosity verbosity) const
         desc += terse? "program bug" : "Nibbled to death by software bugs";
         break;
     }                           // end switch
-
-    switch (death_type)
-    {
-    case KILLED_BY_STUPIDITY:
-    case KILLED_BY_WEAKNESS:
-    case KILLED_BY_CLUMSINESS:
-        if (terse || oneline)
-        {
-            desc += " (";
-            desc += auxkilldata;
-            desc += ")";
-        }
-        else
-        {
-            desc += "\n";
-            desc += "             ";
-            desc += "... caused by ";
-            desc += auxkilldata;
-        }
-        break;
-
-    default:
-        break;
-    }
 
     if (oneline && desc.length() > 2)
         desc[1] = tolower_safe(desc[1]);

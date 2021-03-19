@@ -754,6 +754,9 @@ static void _decrement_durations()
     if (you.duration[DUR_WATER_HOLD])
         handle_player_drowning(delay);
 
+    if (you.duration[DUR_AIR_HOLD])
+        handle_player_drowning(delay, false);
+
     if (you.duration[DUR_FLAYED])
     {
         bool near_ghost = false;

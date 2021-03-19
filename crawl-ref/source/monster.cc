@@ -692,7 +692,9 @@ bool monster::is_silenced() const
     return silenced(pos())
             || has_ench(ENCH_MUTE)
             || has_ench(ENCH_WATER_HOLD)
-               && !res_water_drowning();
+               && !res_water_drowning()
+            || has_ench(ENCH_AIR_HOLD)
+               && !is_unbreathing();
 }
 
 bool monster::search_slots(function<bool (const mon_spell_slot &)> func) const

@@ -159,6 +159,11 @@ static monster_info_flags ench_to_mb(const monster& mons, enchant_type ench)
             return MB_WATER_HOLD;
         else
             return MB_WATER_HOLD_DROWN;
+    case ENCH_AIR_HOLD:
+        if (mons.is_unbreathing())
+            return MB_AIR_HOLD;
+        else
+            return MB_AIR_HOLD_DROWN;
     case ENCH_DRAINED:
         {
             const bool heavily_drained = mons.get_ench(ench).degree
@@ -1448,6 +1453,13 @@ vector<string> monster_info::attributes() const
     if (is(MB_WATER_HOLD_DROWN))
     {
         v.emplace_back("engulfed in water");
+        v.emplace_back("unable to breathe");
+    }
+    if (is(MB_WATER_HOLD))
+        v.emplace_back("enveloped in gas");
+    if (is(MB_WATER_HOLD_DROWN))
+    {
+        v.emplace_back("enveloped in gas");
         v.emplace_back("unable to breathe");
     }
     if (is(MB_FLAYED))

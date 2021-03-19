@@ -3913,15 +3913,16 @@ void melee_attack::mons_apply_attack_flavour()
     case AF_ENGULF:
         if (x_chance_in_y(2, 3) && attacker->can_constrict(defender, true))
         {
-            if (defender->is_player() && !you.duration[DUR_WATER_HOLD])
+            const bool water = attacker->type == MONS_WATER_ELEMENTAL;
+            if (defender->is_player() && !you.duration[water ? DUR_WATER_HOLD : DUR_AIR_HOLD])
             {
-                you.duration[DUR_WATER_HOLD] = 10;
-                you.props["water_holder"].get_int() = attacker->as_monster()->mid;
+                you.duration[water ? DUR_WATER_HOLD : DUR_AIR_HOLD] = 10;
+                you.props[water ? "water_holder" : "air_holder"].get_int() = attacker->as_monster()->mid;
             }
             else if (defender->is_monster()
-                     && !defender->as_monster()->has_ench(ENCH_WATER_HOLD))
+                     && !defender->as_monster()->has_ench(water ? ENCH_WATER_HOLD : ENCH_AIR_HOLD))
             {
-                defender->as_monster()->add_ench(mon_enchant(ENCH_WATER_HOLD, 1,
+                defender->as_monster()->add_ench(mon_enchant(water ? ENCH_WATER_HOLD : ENCH_AIR_HOLD, 1,
                                                              attacker, 1));
             }
             else
@@ -3933,7 +3934,7 @@ void melee_attack::mons_apply_attack_flavour()
                      atk_name(DESC_THE).c_str(),
                      attacker->conj_verb("engulf").c_str(),
                      defender_name(true).c_str(),
-                     attacker->type == MONS_WATER_ELEMENTAL ? "water" : "ectoplasm");
+                     water ? "water" : "ectoplasm");
             }
         }
 

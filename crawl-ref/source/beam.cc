@@ -2399,8 +2399,11 @@ bool napalm_monster(monster* mons, const actor *who, int levels, bool verbose)
     if (!mons->alive())
         return false;
 
-    if (mons->res_sticky_flame() || levels <= 0 || mons->has_ench(ENCH_WATER_HOLD))
+    if (mons->res_sticky_flame() || levels <= 0 || mons->has_ench(ENCH_WATER_HOLD)
+        || mons->has_ench(ENCH_AIR_HOLD))
+    {
         return false;
+    }
 
     const mon_enchant old_flame = mons->get_ench(ENCH_STICKY_FLAME);
     mons->add_ench(mon_enchant(ENCH_STICKY_FLAME, levels, who));

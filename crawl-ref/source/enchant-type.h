@@ -106,9 +106,7 @@ enum enchant_type
     ENCH_WATER_HOLD,     // Silence and asphyxiation damage
     ENCH_FLAYED,
     ENCH_HAUNTING,
-#if TAG_MAJOR_VERSION == 34
-    ENCH_RETCHING,
-#endif
+    ENCH_AIR_HOLD,
     ENCH_WEAK,
     ENCH_DIMENSION_ANCHOR,
     ENCH_AWAKEN_VINES,   // Is presently animating snaplasher vines

@@ -751,6 +751,13 @@ void move_player_action(coord_def move)
             you.clear_far_engulf();
         }
 
+        if (you.duration[DUR_AIR_HOLD])
+        {
+            mpr("You slip free of the deadly gas.");
+            you.props.erase("air_holder");
+            you.clear_far_engulf();
+        }
+
         if (you.digging)
         {
             mprf("You dig through %s.", feature_description_at(targ, false,

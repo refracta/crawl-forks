@@ -631,6 +631,23 @@ bool fill_status_info(int status, status_info& inf)
         }
         break;
 
+    case DUR_AIR_HOLD:
+        inf.light_text = "Envelop";
+        if (you.is_unbreathing())
+        {
+            inf.short_text = "enveloped";
+            inf.long_text = "You are enveloped in some kind of gas.";
+            inf.light_colour = DARKGREY;
+        }
+        else
+        {
+            inf.short_text = "enveloped (cannot breathe)";
+            inf.long_text = "You are enveloped in toxic gas and unable to "
+                "breathe.";
+            inf.light_colour = RED;
+        }
+        break;
+
     case STATUS_DRAINED:
         if (you.attribute[ATTR_XP_DRAIN] > 450)
         {

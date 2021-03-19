@@ -3585,6 +3585,10 @@ string cannot_read_item_reason(const item_def &item)
     if (you.duration[DUR_WATER_HOLD] && !you.res_water_drowning())
         return "You cannot read scrolls while unable to breathe!";
 
+    // ectoplasm
+    if (you.duration[DUR_AIR_HOLD] && !you.is_unbreathing())
+        return "You cannot read scrolls while unable to breathe!";
+
     // ru
     if (you.duration[DUR_NO_SCROLLS])
         return "You cannot read scrolls in your current state!";

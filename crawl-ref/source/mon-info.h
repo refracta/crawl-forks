@@ -182,6 +182,8 @@ enum monster_info_flags
     MB_ENTROPIC_BURST,
     MB_CHAOTIC_INFUSION,
     MB_CHAOSNADO,
+    MB_AIR_HOLD,
+    MB_AIR_HOLD_DROWN,
     NUM_MB_FLAGS
 };
 

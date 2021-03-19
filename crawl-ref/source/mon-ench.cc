@@ -1100,7 +1100,7 @@ bool monster::decay_enchantment(enchant_type en, bool decay_degree)
     return false;
 }
 
-bool monster::clear_far_engulf(void)
+bool monster::clear_far_engulf()
 {
     if (you.duration[DUR_WATER_HOLD]
         && (mid_t) you.props["water_holder"].get_int() == mid)
@@ -1108,13 +1108,35 @@ bool monster::clear_far_engulf(void)
         you.clear_far_engulf();
     }
 
-    const mon_enchant& me = get_ench(ENCH_WATER_HOLD);
-    if (me.ench == ENCH_NONE)
-        return false;
-    const bool nonadj = !me.agent() || !adjacent(me.agent()->pos(), pos());
-    if (nonadj)
-        del_ench(ENCH_WATER_HOLD);
-    return nonadj;
+    if (you.duration[DUR_AIR_HOLD]
+        && (mid_t)you.props["air_holder"].get_int() == mid)
+    {
+        you.clear_far_engulf();
+    }
+
+    bool retval = false;
+
+    if (has_ench(ENCH_WATER_HOLD))
+    {
+        const mon_enchant& me = get_ench(ENCH_WATER_HOLD);
+        const bool nonadj = !me.agent() || !adjacent(me.agent()->pos(), pos());
+        if (nonadj)
+            del_ench(ENCH_WATER_HOLD);
+
+        retval |= nonadj;
+    }
+
+    if (has_ench(ENCH_AIR_HOLD))
+    {
+        const mon_enchant& me = get_ench(ENCH_AIR_HOLD);
+        const bool nonadj = !me.agent() || !adjacent(me.agent()->pos(), pos());
+        if (nonadj)
+            del_ench(ENCH_AIR_HOLD);
+
+        retval |= nonadj;
+    }
+
+    return retval;
 }
 
 static void _entangle_actor(monster *mons, actor* act)
@@ -1890,6 +1912,24 @@ void monster::apply_enchantment(const mon_enchant &me)
                 if (res_water_drowning() < 0)
                     dam = dam * 3 / 2;
                 hurt(me.agent(), dam);
+            }
+        }
+        break;
+
+    case ENCH_AIR_HOLD:
+        if (!clear_far_engulf())
+        {
+            if (!is_unbreathing())
+            {
+                lose_ench_duration(me, -speed_to_duration(speed));
+                int dur = speed_to_duration(speed); // sequence point for randomness
+                int dam = div_rand_round((50 + stepdown((float)me.duration, 30.0))
+                    * dur,
+                    BASELINE_DELAY * 10);
+                hurt(me.agent(), dam);
+
+                if (one_chance_in(3))
+                    drain_exp(this);
             }
         }
         break;
