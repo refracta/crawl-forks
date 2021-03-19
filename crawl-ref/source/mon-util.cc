@@ -3513,6 +3513,10 @@ void define_monster(monster& mons)
         mons.num_heads = random_range(4, 8);
         break;
 
+    case MONS_GIBBERING_MOUND:
+        mons.num_heads = random_range(7, 18);
+        break;
+
     case MONS_LERNAEAN_HYDRA:
         // The Lernaean hydra starts off with 27 heads.
         mons.num_heads = 27;

@@ -3522,6 +3522,9 @@ void melee_attack::mons_apply_attack_flavour()
     if ((attacker->as_monster()->has_ench(ENCH_CHAOTIC_INFUSION) && attack_number == 0) || flavour == AF_CHAOTIC || flavour == AF_PURE_CHAOS)
         flavour = random_chaos_attack_flavour();
 
+    if (flavour == AF_RANDOM)
+        flavour = random_choose(AF_ACID, AF_COLD, AF_PAIN, AF_ELEC, AF_FIRE, AF_POISON);
+
     const int base_damage = flavour_damage(flavour, attacker->get_hit_dice());
 
     // Note that if damage_done == 0 then this code won't be reached

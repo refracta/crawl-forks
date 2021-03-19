@@ -4124,6 +4124,7 @@ static string _flavour_base_desc(attack_flavour flavour)
         { AF_STICKY_FLAME,      "apply sticky flame" },
         { AF_CHAOTIC,           "cause unpredictable effects" },
         { AF_PURE_CHAOS,        "cause unpredictable effects" },
+        { AF_RANDOM,            "deal extra damage, poison or corrode" },
         { AF_STEAL,             "steal items" },
         { AF_CRUSH,             "begin ongoing constriction" },
         { AF_REACH,             "" },

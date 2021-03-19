@@ -1060,8 +1060,15 @@ int main(int argc, char* argv[])
                     break;
                 case AF_BARBS:
                     monsterattacks += color(LIGHTRED, "(barbs)");
+                    break;
                 case AF_WEAKNESS:
                     monsterattacks += colour(LIGHTRED, "(weakness)");
+                    break;
+                case AF_RANDOM:
+                    monsterattacks += colour(LIGHTRED, "(random)");
+                    break;
+                case AF_MIASMATA:
+                    monsterattacks += colour(MAGENTA, "(miasma)");
                     break;
 				case AF_CONTAM:
 					monsterattacks += colour(YELLOW, "(contam)");
@@ -1070,13 +1077,11 @@ int main(int argc, char* argv[])
                     break;
 #if TAG_MAJOR_VERSION == 34
                 case AF_POISON_MEDIUM:
-                case AF_POISON_NASTY:
                 case AF_POISON_STR:
                 case AF_POISON_DEX:
                 case AF_POISON_INT:
                 case AF_POISON_STAT:
                 case AF_FIREBRAND:
-                case AF_MIASMATA:
                     monsterattacks += colour(LIGHTRED, "(?\?\?)");
                     break;
 #endif
