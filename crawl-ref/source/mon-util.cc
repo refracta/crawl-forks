@@ -3514,7 +3514,7 @@ void define_monster(monster& mons)
         break;
 
     case MONS_GIBBERING_MOUND:
-        mons.num_heads = random_range(7, 18);
+        mons.num_heads = random_range(7, 12);
         break;
 
     case MONS_LERNAEAN_HYDRA:
