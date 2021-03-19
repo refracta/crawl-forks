@@ -1599,6 +1599,10 @@ bool attack::attack_shield_blocked(bool verbose)
     if (defender->incapacitated())
         return false;
 
+    // Rare; but causes monster to block without a way of blocking for strange message. Attack will miss in next step anyways.
+    if (to_hit <= 0) 
+        return false;
+
     const int con_block = random2(attacker->shield_bypass_ability(to_hit)
                                   + defender->shield_block_penalty());
     int pro_block = defender->shield_bonus();
@@ -1621,8 +1625,7 @@ bool attack::attack_shield_blocked(bool verbose)
             mprf("%s %s %s attack.",
                  defender_name(false).c_str(),
                  defender->conj_verb("block").c_str(),
-                 attacker == defender ? "its own"
-                                      : atk_name(DESC_ITS).c_str());
+                 atk_name(DESC_ITS).c_str());
         }
 
         defender->shield_block_succeeded(attacker);

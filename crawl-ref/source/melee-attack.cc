@@ -815,6 +815,7 @@ bool melee_attack::handle_phase_blocked()
 
     case AF_PURE_CHAOS:
     case AF_CHAOTIC:
+    case AF_RANDOM:
         switch (random2(3))
         {
         case 0: _handle_staff_shield(BEAM_FIRE, str, defender->is_player(), defender->as_monster()); break;
