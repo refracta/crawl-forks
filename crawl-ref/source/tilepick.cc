@@ -1847,6 +1847,7 @@ static tileidx_t _tileidx_monster_no_props(const monster_info& mon)
         case MONS_YAKTAUR_CAPTAIN:
             return base + (_bow_offset(mon) ? 1 : 0);
 
+        case MONS_RED_DEVIL:
         case MONS_CEREBOV:
             return base + (mon.inv[MSLOT_WEAPON] ? 0 : 1);
 
