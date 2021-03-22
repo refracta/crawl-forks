@@ -178,6 +178,7 @@ static CrawlHashTable*       _current_temple_hash = nullptr; // XXX: hack!
 static void _dgn_set_floor_colours();
 static bool _fixup_interlevel_connectivity();
 static void _slime_connectivity_fixup();
+static void _connectivity_fixup();
 
 static void _dgn_postprocess_level();
 static void _calc_density();
@@ -2755,6 +2756,34 @@ static void _place_feature_mimics()
     }
 }
 
+static void _emergency_tunnel(FixedArray<bool, GXM, GYM > & connectivity_map, coord_def origin, coord_def target)
+{
+    while (connectivity_map(target) == false || !in_bounds(target))
+    {
+        target.x = X_BOUND_1 + random2(X_BOUND_2 - X_BOUND_1);
+        target.y = Y_BOUND_1 + random2(Y_BOUND_2 - Y_BOUND_1);
+    }
+
+    coord_def next_place = origin;
+    for (adjacent_iterator ai(origin); ai; ++ai)
+    {
+        if (connectivity_map(*ai) == true)
+            return;
+
+        if (!in_bounds(*ai))
+            continue;
+
+        int y = 1;
+        if ((grid_distance(*ai, target) < grid_distance(next_place, target)) && one_chance_in(y++))
+            next_place = *ai;
+    }
+
+    if (cell_is_solid(next_place))
+        destroy_wall(next_place);
+
+    _emergency_tunnel(connectivity_map, next_place, target);
+}
+
 // Apply modifications (ruination, plant clumps) that should happen
 // regardless of game mode.
 static void _post_vault_build()
@@ -2862,9 +2891,6 @@ static void _build_dungeon_level()
     if (!dgn_make_transporters_from_markers())
         throw dgn_veto_exception("Transporter placement failed.");
 
-    fixup_misplaced_items();
-    link_items();
-
     if (!player_in_branch(BRANCH_COCYTUS)
         && !player_in_branch(BRANCH_SWAMP)
         && !player_in_branch(BRANCH_SHOALS))
@@ -2875,9 +2901,12 @@ static void _build_dungeon_level()
     }
 
     if (is_christmas())
-    {
         _snow();
-    }
+
+    fixup_misplaced_items();
+    link_items();
+
+    _connectivity_fixup();
 }
 
 static void _dgn_set_floor_colours()
@@ -3513,6 +3542,108 @@ static void _slime_connectivity_fixup()
         }
 
     }
+}
+
+static bool _flood_fill_map(FixedArray<bool, GXM, GYM> & connectivity_map)
+{
+    bool loop = false;
+    for (int x = 0; x <= GXM; x++)
+    {
+        if (!in_bounds_x(x))
+            continue;
+        for (int y = 0; y <= GYM; y++)
+        {
+            if (!in_bounds_y(y))
+                continue;
+            coord_def c = coord_def(x, y);
+
+            if (cell_is_solid(c) && !feat_is_closed_door(grd(c)))
+                continue;
+            if (connectivity_map(c) == true)
+                continue;
+            
+            for (adjacent_iterator ai(c); ai; ++ai)
+            {
+                if (connectivity_map(*ai))
+                {
+                    connectivity_map(c) = true;
+                    loop = true;
+                }
+            }
+
+        }
+    }
+
+    return loop;
+}
+
+static void _fixup_loop(FixedArray<bool, GXM, GYM> & connectivity_map)
+{
+    bool loop = true;
+    while (loop)
+        loop = _flood_fill_map(connectivity_map);
+
+    vector<coord_def> tunnel_coords;
+
+    // Assume areas that can't find a staircase need a tunnel out.
+    for (rectangle_iterator ri(0); ri; ++ri)
+    {
+        if (!in_bounds(*ri))
+            continue;
+        if (feat_is_solid(grd(*ri)))
+            continue;
+        if (connectivity_map(*ri) == true)
+            continue;
+        if (testbits(env.pgrid(*ri), FPROP_NO_TELE_INTO))
+            continue; // Most of these aren't supposed to connect.
+
+        tunnel_coords.push_back(*ri);
+    }
+
+    if (!tunnel_coords.empty())
+    {
+        _emergency_tunnel(connectivity_map, tunnel_coords[random2(tunnel_coords.size())], coord_def(0, 0));
+        _fixup_loop(connectivity_map);
+    }
+}
+
+static void _connectivity_fixup()
+{
+    const level_id &lid(level_id::current());
+
+    // Not attempting in portal vaults or abyss.
+    // As one floor branches, Temple and Vestibule don't line up with this
+    // Furthermore Tomb has no normal stairs (and is vault fixed so can't screw up anyways)
+    if (!is_connected_branch(lid) && lid.branch != BRANCH_PANDEMONIUM
+        || lid.branch == BRANCH_TEMPLE || lid.branch == BRANCH_VESTIBULE
+        || lid.branch == BRANCH_TOMB)
+    {
+        return;
+    }
+
+    bool pan = (lid.branch == BRANCH_PANDEMONIUM);
+    bool end = (brdepth[lid.branch] == lid.depth);
+
+    // Generate a connectivity map
+    FixedArray<bool, GXM, GYM> connectivity_map;
+
+    connectivity_map.init(false);
+
+    // Establish which areas can reach at least one staircase.
+    for (rectangle_iterator ri(0); ri; ++ri)
+    {
+        if (feat_is_stone_stair_down(grd(*ri))
+            || end && (feat_is_stone_stair_up(grd(*ri)) || grd(*ri) == DNGN_ENTER_HELL)
+            || pan && grd(*ri) == DNGN_TRANSIT_PANDEMONIUM
+            || grd(*ri) == DNGN_TRANSPORTER) // Assumes all transporters will lead to somewhere that can go to the others.
+            // Actually if the Transporter_Landing failed to place an error would have tripped earlier and the landing is
+            // included in the check that must be next to one of these, so the only error condition where this would fail
+            // is transporter/landing both trapped in the same place (severely mangled vault).
+        {
+            connectivity_map(*ri) = true;
+        }
+    }
+    _fixup_loop(connectivity_map);
 }
 
 static void _place_sewer_vault()
