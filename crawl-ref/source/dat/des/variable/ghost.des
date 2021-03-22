@@ -1574,7 +1574,7 @@ KITEM:  ' = ration
 KMONS:  O = player ghost
 MONS:   killer bee, queen bee, hornet, meliai
 # Chance to make a partial wall in each of the full cells. Add 0-4 rations.
-NSUBST: p = x- / -, q = x- / -, r = x- / -, s = x- / -, - = 4='- / -
+NSUBST: p = x- / -, t = x- / -, r = x- / -, s = x- / -, - = 4='- / -
 : ghost_good_loot(_G)
 : if you.in_branch("D") then
 :   if you.depth() < 4 then
@@ -1615,9 +1615,9 @@ MAP
   .......P.......
  ..qqqqqqqqqqqqq..
 ..qqxxxfdRegxxxqq..
-.qqx-q-xhOix-p-xqq.
+.qqx-t-xhOix-p-xqq.
 .qx--x--xxx--x--xq.
-.qqx-q-x---x-p-xqq.
+.qqx-t-x---x-p-xqq.
 @.qqxxx--x--xxxqq.@
 .qqx-r-x---x-s-xqq.
 .qx--x--xxx--x--xq.
