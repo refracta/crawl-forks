@@ -2404,6 +2404,23 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
 
         fail_check();
 
+        if (empowered && abil.ability == ABIL_BREATHE_HOLY_FLAMES)
+        {
+            targeter_radius hitfunc(&you, LOS_NO_TRANS);
+
+            if (stop_attack_prompt(hitfunc, "let out a sacred roar",
+                [](const actor* monpopo)
+            {
+                return monpopo->undead_or_demonic();
+            },
+                nullptr, nullptr))
+            {
+                return spret::abort;
+            }
+
+            holy_word(power * 5, HOLY_WORD_BREATH, you.pos(), false, &you);
+        }
+
         switch (abil.ability)
         {
         case ABIL_BREATHE_TRIPLE:
@@ -2484,23 +2501,6 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
 
         if (zapping(zap, power, beam, true, m.c_str()) == spret::abort)
             return spret::abort;
-
-        if (empowered && zap == ZAP_BREATHE_HOLY_FLAMES)
-        {
-            targeter_radius hitfunc(&you, LOS_NO_TRANS);
-
-            if (stop_attack_prompt(hitfunc, "let out a sacred roar",
-                [](const actor* monpopo)
-            {
-                return monpopo->undead_or_demonic();
-            },
-                nullptr, nullptr))
-            {
-                return spret::abort;
-            }
-
-            holy_word(power * 5, HOLY_WORD_BREATH, you.pos(), false, &you);
-        }
 
         if (empowered && zap == ZAP_BREATHE_CHAOS)
             create_vortices(&you);
