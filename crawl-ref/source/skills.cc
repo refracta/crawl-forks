@@ -1854,8 +1854,7 @@ bool is_useless_skill(skill_type skill)
         || (skill == SK_ARMOUR && you.get_mutation_level(MUT_NO_ARMOUR)
             && !you.duration[DUR_COLLAPSE])
         || (skill == SK_EVOCATIONS && you.get_mutation_level(MUT_NO_ARTIFICE))
-        || (skill == SK_STEALTH && you.get_mutation_level(MUT_NO_STEALTH))
-    )
+        || (skill == SK_STEALTH && you.get_mutation_level(MUT_NO_STEALTH)))
     {
         return true;
     }
@@ -2103,9 +2102,9 @@ int species_apt(skill_type skill, species_type species)
             mod += 3;
     }
 
-    return max(UNUSABLE_SKILL, _spec_skills[species][skill]
-                               - you.get_mutation_level(MUT_UNSKILLED)
-                               + mod);
+    if (_spec_skills[species][skill] == UNUSABLE_SKILL)
+        return UNUSABLE_SKILL;
+    return _spec_skills[species][skill] - you.get_mutation_level(MUT_UNSKILLED) + mod;
 }
 
 float species_apt_factor(skill_type sk, species_type sp)
