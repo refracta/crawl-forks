@@ -3496,7 +3496,7 @@ int monster::evasion(ev_ignore_type evit, const actor* /*act*/) const
         return 0;
 
     if (caught() || is_constricted())
-        ev /= (body_size(PSIZE_BODY) + 2);
+        ev /= 3;
     else if (confused() || has_ench(ENCH_GRASPING_ROOTS))
         ev /= 2;
 
