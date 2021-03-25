@@ -7,7 +7,7 @@ difficulty: Simple
 difficulty_priority: 80
 aptitudes:
   xp: 0
-  hp: 0
+  hp: -1
   mp_mod: 0
   mr: 3
   fighting: 1

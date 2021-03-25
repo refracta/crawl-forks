@@ -607,6 +607,8 @@ int species_exp_modifier(species_type species)
 // your current character's stats, so the use of you is fine.
 int species_hp_modifier(species_type species)
 {
+    if (you.char_class == JOB_MERFOLK)
+        return get_species_def(species).hp_mod - 1;
     if (you.char_class == JOB_DEMIGOD || you.char_class == JOB_CENTAUR)
         return get_species_def(species).hp_mod + 1;
     if (you.char_class == JOB_NAGA)
