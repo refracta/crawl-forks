@@ -255,7 +255,7 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
         if (!you.weapon(0) || is_melee_weapon(*you.weapon(0)))
         {
             attacked = true;
-            if (!you.weapon(1) || is_melee_weapon(*you.weapon(1)))
+            if ((!you.weapon(1) || is_melee_weapon(*you.weapon(1))) && !you.get_mutation_level(MUT_MISSING_HAND))
             {
                 if (you.weapon(0) && you.hands_reqd(*you.weapon(0)) == HANDS_TWO)
                     local_time = _handle_player_attack(defender, simu, 0, xtra_atk ? 0 : 2, did_hit, wu, wu_num);

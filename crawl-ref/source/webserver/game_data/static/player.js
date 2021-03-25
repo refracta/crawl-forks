@@ -168,11 +168,17 @@ function ($, comm, enums, map_knowledge, messages, options) {
         return elem;
     }
 
-    function wielded_weapon(index)
+    function wielded_weapon(index, right)
     {
         var elem;
         var wielded = player.equip[index];
-        if (wielded == -1)
+        if (right && player.hand_lost)
+        {
+            elem = $("<span>");
+            elem.text("Slot unavailable");
+            elem.addClass("fg8");
+        }
+        else if (wielded == -1)
         {
             elem = $("<span>");
             elem.text(player.unarmed_attack);

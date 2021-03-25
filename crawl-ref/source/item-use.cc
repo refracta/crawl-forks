@@ -332,7 +332,7 @@ bool can_wield(const item_def *weapon, bool say_reason,
     {
         SAY(mpr("It's melded into your body!"));
         return false;
-    }
+    } 
 
     if (!ignore_temporary_disability && !form_can_wield(you.form))
     {
@@ -342,7 +342,7 @@ bool can_wield(const item_def *weapon, bool say_reason,
 
     if (!ignore_temporary_disability
         && you.weapon(0)
-        && (you.hands_reqd(*you.weapon(0)) == HANDS_TWO)
+        && ((you.hands_reqd(*you.weapon(0)) == HANDS_TWO) || you.get_mutation_level(MUT_MISSING_HAND))
         && you.weapon(0)->soul_bound())
     {
         SAY(mprf("You can't unwield your %s%s!",
@@ -448,7 +448,7 @@ static vector<equipment_type> _current_weapon_types()
 {
     vector<equipment_type> ret;
     ret.push_back(EQ_WEAPON0);
-    if (you.get_mutation_level(MUT_MISSING_HAND) == 0)
+    if (!you.get_mutation_level(MUT_MISSING_HAND))
         ret.push_back(EQ_WEAPON1);
     return ret;
 }
@@ -601,6 +601,11 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
         }
         else
         {
+            if (you.get_mutation_level(MUT_MISSING_HAND))
+            {
+                mpr("You have no other limb to swap to...");
+                return false;
+            }
             if ((you.weapon(0) && you.inv[you.equip[EQ_WEAPON0]].soul_bound()) 
                 || (you.weapon(1) && you.inv[you.equip[EQ_WEAPON1]].soul_bound()))
             {
@@ -672,11 +677,12 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
         {
             if (you.weapon(1))
             {
-
                 if (you.weapon(1)->soul_bound())
                     wpn = you.weapon(0);
                 else if (you.weapon(0)->soul_bound())
                     wpn = you.weapon(1);
+                else if (you.get_mutation_level(MUT_MISSING_HAND))
+                    wpn = you.weapon(0);
                 else if (auto_wield)
                 {
                     if (is_range_weapon(*you.weapon(0)) || (you.weapon(0)->base_type == OBJ_SHIELDS && !is_hybrid(you.weapon(0)->sub_type)))
@@ -916,6 +922,16 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
         equip_item(EQ_WEAPON0, item_slot, show_weff_messages);
     }
 
+    else if (you.get_mutation_level(MUT_MISSING_HAND) && you.weapon(0))
+    {
+        if (!_handle_warning(*you.weapon(0)))
+            return false;
+        if (unwield_item(true, show_weff_messages))
+            equip_item(EQ_WEAPON0, item_slot, show_weff_messages);
+        else
+            return false;
+    }
+
     else if (!you.weapon(1))
     {
         if (you.hands_reqd(*(you.weapon(0))) == HANDS_TWO)
@@ -933,7 +949,6 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
 
     else if (you.weapon(0)->soul_bound())
     {
-
         if (!_handle_warning(*you.weapon(1)))
             return false;
         if (unwield_item(false, show_weff_messages))
@@ -1731,7 +1746,7 @@ static vector<equipment_type> _current_ring_types()
     }
     else
     {
-        if (you.get_mutation_level(MUT_MISSING_HAND) == 0)
+        if (!you.get_mutation_level(MUT_MISSING_HAND))
             ret.push_back(EQ_LEFT_RING);
         ret.push_back(EQ_RIGHT_RING);
     }

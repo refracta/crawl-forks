@@ -938,7 +938,9 @@ static int _wpn_name_colour(int hand)
 static void _print_stats_wp(int hand, int y)
 {
     string text;
-    if (you.weapon(hand))
+    if (hand == 1 && you.get_mutation_level(MUT_MISSING_HAND))
+        text = "(unavailable)";
+    else if (you.weapon(hand))
     {
         item_def wpn = *you.weapon(hand); // copy
 
@@ -1998,6 +2000,9 @@ static void _print_overview_screen_equip(column_composer& cols,
         {
             continue;
         }
+
+        if (you.get_mutation_level(MUT_MISSING_HAND) && eqslot == EQ_WEAPON1)
+            continue;
 
         if (eqslot == EQ_RING_AMULET && !you_can_wear(eqslot))
             continue;

@@ -1914,7 +1914,7 @@ void canned_msg(canned_message_type which_message)
                 mpr("Your claws are already primed for unarmed combat.");
             else if (you.has_tentacles(true))
                 mpr("Your tentacles are already primed for unarmed combat.");
-            else if (you.get_mutation_level(MUT_MISSING_HAND) > 0)
+            else if (you.get_mutation_level(MUT_MISSING_HAND))
                 mpr("Your fist is already primed for unarmed combat.");
             else
                 mpr("Your fists are already primed for unarmed combat.");
@@ -1924,7 +1924,7 @@ void canned_msg(canned_message_type which_message)
                 mpr("You prep your claws for unarmed combat!");
             else if (you.has_tentacles(true))
                 mpr("You prep your tentacles for unarmed combat!");
-            else if (you.get_mutation_level(MUT_MISSING_HAND) > 0 || you.weapon(0) || you.weapon(1))
+            else if (you.get_mutation_level(MUT_MISSING_HAND) || you.weapon(0) || you.weapon(1))
                 mpr("You prep your fist for unarmed combat!");
             else
                 mpr("You prep your fists for unarmed combat!");

@@ -3909,6 +3909,14 @@ static void tag_read_you_items(reader &th)
             continue;
         }
 
+        // Unwield anything in weapon1 slot if you have a missing hand.
+        if (item && you.get_mutation_level(MUT_MISSING_HAND) && i == EQ_WEAPON1)
+        {
+            you.equip[i] = -1;
+            you.melded.set(i, false);
+            continue;
+        }
+
         // If wearing anything in the no-longer existant shield slot; unwear.
         if (item && i == EQ_OLD_SHIELD)
         {

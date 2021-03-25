@@ -30,6 +30,7 @@
 #include "libutil.h"
 #include "map-knowledge.h"
 #include "menu.h"
+#include "mutation.h"
 #include "outer-menu.h"
 #include "message.h"
 #include "mon-util.h"
@@ -1069,6 +1070,8 @@ void TilesFramework::_send_player(bool force_full)
     }
     _update_int(force_full, c.quiver_available, !fire_warn_if_impossible(true),
                 "quiver_available");
+    _update_int(force_full, c.hand_lost, you.get_mutation_level(MUT_MISSING_HAND),
+                "hand_lost");
 
     json_close_object(true);
 
