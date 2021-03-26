@@ -915,6 +915,20 @@ static void _wielding_wear_effects(bool unwield, bool unmeld)
             }
         }
 
+        if (you.char_class == JOB_DEMONSPAWN)
+        {
+            if (you.wearing_ego(EQ_WEAPON0, SPWPN_SILVER) && unwield)
+            {
+                mprf("You remove your protective gloves you can no longer wield your %s.", wpn0.c_str());
+                unwield_item();
+            }
+            if (you.wearing_ego(EQ_WEAPON1, SPWPN_SILVER) && unwield)
+            {
+                mprf("You remove your protective gloves you can no longer wield your %s.", wpn1.c_str());
+                unwield_item(false);
+            }
+        }
+
         if (vampiric_vuln)
         {
             if (you.wearing_ego(EQ_WEAPON0, SPWPN_VAMPIRISM))

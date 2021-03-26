@@ -383,7 +383,7 @@ bool can_wield(const item_def *weapon, bool say_reason,
         return false;
     }
 
-    if (!you.could_wield(*weapon, true, true, !say_reason))
+    if (!you.could_wield(*weapon, false, false, !say_reason))
         return false;
 
     if (weapon->base_type != OBJ_WEAPONS && weapon->base_type != OBJ_STAVES
@@ -393,20 +393,7 @@ bool can_wield(const item_def *weapon, bool say_reason,
         return false;
     }
 
-    bool id_brand = false;
-
-    if (you.undead_or_demonic() && is_holy_item(*weapon)
-        && (item_type_known(*weapon) || !only_known))
-    {
-        if (say_reason)
-        {
-            mpr("This weapon is holy and will not allow you to wield it.");
-            id_brand = true;
-        }
-        else
-            return false;
-    }
-    else if (!ignore_temporary_disability
+    if (!ignore_temporary_disability
              && you.hunger_state < HS_FULL
              && (get_weapon_brand(*weapon) == SPWPN_VAMPIRISM || is_unrandom_artefact(*weapon, UNRAND_MAJIN))
              && you.undead_state() == US_ALIVE
@@ -415,25 +402,7 @@ bool can_wield(const item_def *weapon, bool say_reason,
              && !you.wearing_ego(EQ_GLOVES, SPARM_WIELDING))
     {
         if (say_reason)
-        {
             mpr("This weapon is vampiric, and you must be Full or above to equip it.");
-            id_brand = true;
-        }
-        else
-            return false;
-    }
-    if (id_brand)
-    {
-        auto wwpn = const_cast<item_def*>(weapon);
-        if (!is_artefact(*weapon) && !is_blessed(*weapon)
-            && !item_type_known(*weapon))
-        {
-            set_ident_flags(*wwpn, ISFLAG_KNOW_TYPE);
-            if (in_inventory(*weapon))
-                mprf_nocap("%s", weapon->name(DESC_INVENTORY_EQUIP).c_str());
-        }
-        else if (is_artefact(*weapon) && !item_type_known(*weapon))
-            artefact_learn_prop(*wwpn, ARTP_BRAND);
         return false;
     }
 

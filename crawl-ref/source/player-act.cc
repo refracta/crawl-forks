@@ -519,24 +519,11 @@ bool player::could_wield(const item_def &item, bool ignore_brand,
     {
         if (!quiet)
         {
-            if (you.body_size(PSIZE_TORSO,true) <= SIZE_MEDIUM)
+            if (you.body_size(PSIZE_TORSO, true) <= SIZE_MEDIUM)
                 mpr("That's too large for you to wield.");
             else
                 mpr("That's too small for you to wield.");
         }
-        return false;
-    }
-
-    if (get_mutation_level(MUT_MISSING_HAND)
-        && you.hands_reqd(item) == HANDS_TWO)
-    {
-        return false;
-    }
-
-    if (you.char_class == JOB_DEMONSPAWN && item.base_type == OBJ_WEAPONS && get_weapon_brand(item) == SPWPN_SILVER)
-    {
-        if (!quiet)
-            mpr("The silver starts to burn your flesh as you try to hold it.");
         return false;
     }
 
@@ -547,6 +534,17 @@ bool player::could_wield(const item_def &item, bool ignore_brand,
             mpr("This weapon is holy and will not allow you to wield it.");
         return false;
     }
+
+    if (!ignore_brand && (you.char_class == JOB_DEMONSPAWN) && is_weapon(item)
+        && (get_weapon_brand(item) == SPWPN_SILVER) && !you.wearing_ego(EQ_GLOVES, SPARM_WIELDING))
+    {
+        if (!quiet)
+            mpr("The silver starts to burn your flesh as you try to hold it.");
+        return false;
+    }
+
+    if (get_mutation_level(MUT_MISSING_HAND) && you.hands_reqd(item) == HANDS_TWO)
+        return false;
 
     return true;
 }
