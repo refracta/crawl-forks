@@ -1157,6 +1157,36 @@ bool is_player_tile(tileidx_t tile, tileidx_t base_tile)
            && tile < base_tile + tile_player_count(base_tile);
 }
 
+bool is_naga(tileidx_t tile)
+{
+    return (is_player_tile(tile, TILEP_BOTTOM_NAGA)
+         || is_player_tile(tile, TILEP_BOTTOM_NAGA_LICH)
+         || is_player_tile(tile, TILEP_BOTTOM_NAGA_STATUE)
+         || is_player_tile(tile, TILEP_BOTTOM_NAGA_UNDEAD)
+         || is_player_tile(tile, TILEP_BOTTOM_NAGA_SPECTRAL));
+}
+
+bool is_cent(tileidx_t tile)
+{
+    return (is_player_tile(tile, TILEP_BOTTOM_CENTAUR)
+         || is_player_tile(tile, TILEP_BOTTOM_CENTAUR_BONE)
+         || is_player_tile(tile, TILEP_BOTTOM_CENTAUR_STATUE)
+         || is_player_tile(tile, TILEP_BOTTOM_CENTAUR_UNDEAD)
+         || is_player_tile(tile, TILEP_BOTTOM_CENTAUR_SPECTRAL)
+         || is_player_tile(tile, TILEP_BOTTOM_HIPPOGRIFF)
+         || is_player_tile(tile, TILEP_BOTTOM_HIPPOGRIFF_LICH)
+         || is_player_tile(tile, TILEP_BOTTOM_HIPPOGRIFF_STATUE));
+}
+
+bool is_merfolk_tail(tileidx_t tile)
+{
+    return (is_player_tile(tile, TILEP_BOTTOM_MERFOLK_WATER)
+         || is_player_tile(tile, TILEP_BOTTOM_MERFOLK_WATER_STATUE)
+         || is_player_tile(tile, TILEP_BOTTOM_MERFOLK_WATER_BONE)
+         || is_player_tile(tile, TILEP_BOTTOM_MERFOLK_WATER_SPECTRAL)
+         || is_player_tile(tile, TILEP_BOTTOM_MERFOLK_WATER_UNDEAD));
+}
+
 static int _draconian_colour(int colour)
 {
     switch (colour)
@@ -1208,6 +1238,8 @@ tileidx_t tilep_top_to_bottom_tile(tileidx_t top)
             return TILEP_BOTTOM_CENTAUR_SPECTRAL;
         else if (you.species == SP_DRACONIAN && you.drac_colour == DR_BONE)
             return TILEP_BOTTOM_CENTAUR_BONE;
+        else if (you.get_mutation_level(MUT_TALONS))
+            return TILEP_BOTTOM_HIPPOGRIFF;
         else if (you.undead_state() != US_ALIVE)
             return TILEP_BOTTOM_CENTAUR_UNDEAD;
         return TILEP_BOTTOM_CENTAUR;
@@ -1644,23 +1676,24 @@ void tilep_calc_flags(const dolls_data &doll, int flag[])
     if (doll.parts[TILEP_PART_HELM] >= TILEP_HELM_HELM_OFS)
         flag[TILEP_PART_DRCHEAD] = TILEP_FLAG_HIDE;
 
-    if (is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_NAGA))
+    if (is_naga(doll.parts[TILEP_PART_BOTTOM]))
     {
         flag[TILEP_PART_BODY] = TILEP_FLAG_CUT_NAGA;
         flag[TILEP_PART_BOOTS] = flag[TILEP_PART_LEG]  = TILEP_FLAG_HIDE;
     }
-    else if (is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_CENTAUR))
+    else if (is_cent(doll.parts[TILEP_PART_BOTTOM]))
     {
         flag[TILEP_PART_BODY] = TILEP_FLAG_CUT_CENTAUR;
         flag[TILEP_PART_BOOTS] = flag[TILEP_PART_LEG] = TILEP_FLAG_HIDE;
     }
-    else if (is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_MERFOLK_WATER))
+    else if (is_merfolk_tail(doll.parts[TILEP_PART_BOTTOM]))
     {
         flag[TILEP_PART_BOOTS]  = TILEP_FLAG_HIDE;
         flag[TILEP_PART_LEG]    = TILEP_FLAG_HIDE;
         flag[TILEP_PART_SHADOW] = TILEP_FLAG_HIDE;
     }
-    else if (doll.parts[TILEP_PART_BASE] >= TILEP_BASE_DRACONIAN_FIRST
+
+    if (doll.parts[TILEP_PART_BASE] >= TILEP_BASE_DRACONIAN_FIRST
              && doll.parts[TILEP_PART_BASE] <= TILEP_BASE_DRACONIAN_LAST)
     {
         flag[TILEP_PART_HAIR] = TILEP_FLAG_HIDE;

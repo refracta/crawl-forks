@@ -171,8 +171,9 @@ equipment_type beastly_slot(int mut)
         return EQ_GLOVES;
     case MUT_HOOVES:
     case MUT_TALONS:
-    case MUT_TENTACLE_SPIKE:
         return EQ_BOOTS;
+    case MUT_TENTACLE_SPIKE:
+        return EQ_BODY_ARMOUR;
     default:
         return EQ_NONE;
     }
@@ -751,6 +752,9 @@ string describe_mutations(bool drop_title)
         mutation_type mut_type = static_cast<mutation_type>(i);
         if (you.has_innate_mutation(mut_type))
         {
+            if (you.char_class == JOB_CENTAUR && mut_type == MUT_TALONS)
+                continue;
+
             result += mutation_desc(mut_type, -1, true,
                 ((you.sacrifices[i] != 0) ? true : false));
             result += "\n";

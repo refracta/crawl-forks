@@ -1363,25 +1363,26 @@ public:
             return damage + 1 + you.get_mutation_level(MUT_TALONS);
         }
 
-        // Max spike damage: 8.
-        // ... yes, apparently tentacle spikes are "kicks".
-        return damage + you.get_mutation_level(MUT_TENTACLE_SPIKE);
+        return 3; // Shouldn't get here but in case
     }
 
     string get_verb() const override
     {
         if (you.has_usable_talons())
             return "claw";
-        if (you.get_mutation_level(MUT_TENTACLE_SPIKE))
-            return "pierce";
         return name;
     }
+};
 
-    string get_name() const override
+class AuxTentacleSpike: public AuxAttackType
+{
+public:
+    AuxTentacleSpike()
+    : AuxAttackType(5, "pierce") { };
+
+    int get_damage() const override
     {
-        if (you.get_mutation_level(MUT_TENTACLE_SPIKE))
-            return "tentacle spike";
-        return name;
+        return damage + you.get_mutation_level(MUT_TENTACLE_SPIKE);
     }
 };
 
@@ -1536,20 +1537,21 @@ public:
     int get_damage() const { return damage + div_rand_round(you.experience_level, 3); }
 };
 
-static const AuxConstrict   AUX_CONSTRICT = AuxConstrict();
-static const AuxStaff       AUX_STAFF = AuxStaff();
-static const AuxStaffSlap   AUX_STAFFSLAP = AuxStaffSlap();
-static const AuxKick        AUX_KICK = AuxKick();
-static const AuxPeck        AUX_PECK = AuxPeck();
-static const AuxHeadbutt    AUX_HEADBUTT = AuxHeadbutt();
-static const AuxTailslap    AUX_TAILSLAP = AuxTailslap();
-static const AuxPunch       AUX_PUNCH = AuxPunch();
-static const AuxBite        AUX_BITE = AuxBite();
-static const AuxPseudopods  AUX_PSEUDOPODS = AuxPseudopods();
-static const AuxTentacles   AUX_TENTACLES = AuxTentacles();
-static const AuxTentacles2  AUX_TENTACLES2 = AuxTentacles2();
-static const AuxTentacles3  AUX_TENTACLES3 = AuxTentacles3();
-static const AuxTentacles4  AUX_TENTACLES4 = AuxTentacles4();
+static const AuxConstrict       AUX_CONSTRICT = AuxConstrict();
+static const AuxStaff           AUX_STAFF = AuxStaff();
+static const AuxStaffSlap       AUX_STAFFSLAP = AuxStaffSlap();
+static const AuxKick            AUX_KICK = AuxKick();
+static const AuxTentacleSpike   AUX_TENTACLE_SPIKE = AuxTentacleSpike();
+static const AuxPeck            AUX_PECK = AuxPeck();
+static const AuxHeadbutt        AUX_HEADBUTT = AuxHeadbutt();
+static const AuxTailslap        AUX_TAILSLAP = AuxTailslap();
+static const AuxPunch           AUX_PUNCH = AuxPunch();
+static const AuxBite            AUX_BITE = AuxBite();
+static const AuxPseudopods      AUX_PSEUDOPODS = AuxPseudopods();
+static const AuxTentacles       AUX_TENTACLES = AuxTentacles();
+static const AuxTentacles2      AUX_TENTACLES2 = AuxTentacles2();
+static const AuxTentacles3      AUX_TENTACLES3 = AuxTentacles3();
+static const AuxTentacles4      AUX_TENTACLES4 = AuxTentacles4();
 
 static const AuxAttackType* const aux_attack_types[] =
 {
@@ -1557,6 +1559,7 @@ static const AuxAttackType* const aux_attack_types[] =
     &AUX_STAFF,
     &AUX_STAFFSLAP,
     &AUX_KICK,
+    &AUX_TENTACLE_SPIKE,
     &AUX_HEADBUTT,
     &AUX_PECK,
     &AUX_TAILSLAP,
@@ -4514,9 +4517,10 @@ bool melee_attack::_extra_aux_attack(unarmed_attack_type atk)
                 || you.species == SP_OCTOPODE && x_chance_in_y(you.usable_tentacles(), 4);
 
     case UNAT_KICK:
-        return you.has_usable_hooves()
-               || you.has_usable_talons()
-               || you.get_mutation_level(MUT_TENTACLE_SPIKE) && x_chance_in_y(you.usable_tentacles(), 4);
+        return you.has_usable_hooves() || you.has_usable_talons();
+
+    case UNAT_TENTACLE_SPIKE:
+        return you.get_mutation_level(MUT_TENTACLE_SPIKE) && x_chance_in_y(you.usable_tentacles(), 4);
 
     case UNAT_PECK:
         return you.get_mutation_level(MUT_BEAK) && !one_chance_in(3);

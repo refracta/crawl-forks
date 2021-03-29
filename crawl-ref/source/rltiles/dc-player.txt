@@ -288,6 +288,9 @@ centaur_spectral CENTAUR_SPECTRAL
 centaur_statue CENTAUR_STATUE
 centaur_bone CENTAUR_BONE
 centaur_undead CENTAUR_UNDEAD
+hippogriff HIPPOGRIFF
+hippogriff_lich HIPPOGRIFF_LICH
+hippogriff_statue HIPPOGRIFF_STATUE
 naga_blue_f NAGA
 naga_blue_m
 naga_red_f

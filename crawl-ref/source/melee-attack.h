@@ -13,6 +13,7 @@ enum unarmed_attack_type
     UNAT_STAFF,
     UNAT_STAFF_SLAP,
     UNAT_KICK,
+    UNAT_TENTACLE_SPIKE,
     UNAT_HEADBUTT,
     UNAT_PECK,
     UNAT_TAILSLAP,

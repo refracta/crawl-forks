@@ -10,6 +10,7 @@
 #include "jobs.h"
 #include "makeitem.h"
 #include "mon-info.h"
+#include "mutation.h"
 #include "newgame.h"
 #include "ng-setup.h"
 #include "options.h"
@@ -311,7 +312,11 @@ void fill_doll_equipment(dolls_data &result)
             result.parts[TILEP_PART_DRCHEAD] = 0;
 
         if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
+        {
+            if (you.get_mutation_level(MUT_TALONS))
+                result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_HIPPOGRIFF_STATUE;
             result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_CENTAUR_STATUE;
+        }
         else if (you.species == SP_NAGA || you.char_class == JOB_NAGA)
             result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_NAGA_STATUE;
         else if (you.fishtail)
@@ -331,7 +336,11 @@ void fill_doll_equipment(dolls_data &result)
         }
         
         if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
+        {
+            if (you.get_mutation_level(MUT_TALONS))
+                result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_HIPPOGRIFF_LICH;
             result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_CENTAUR_BONE;
+        }
         else if (you.species == SP_NAGA || you.char_class == JOB_NAGA)
             result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_NAGA_LICH;
         else if (you.fishtail)
@@ -687,30 +696,22 @@ void pack_doll_buf(SubmergedTileBuffer& buf, const dolls_data &doll,
     }
 
     // Special case bardings from being cut off.
-    const bool is_naga = (is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_NAGA)
-                       || is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_NAGA_LICH)
-                       || is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_NAGA_STATUE)
-                       || is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_NAGA_UNDEAD)
-                       || is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_NAGA_SPECTRAL));
+    const bool naga = is_naga(doll.parts[TILEP_PART_BOTTOM]);
 
     if (doll.parts[TILEP_PART_BOOTS] >= TILEP_BOOTS_NAGA_BARDING
         && doll.parts[TILEP_PART_BOOTS] <= TILEP_BOOTS_NAGA_BARDING_RED
         || doll.parts[TILEP_PART_BOOTS] == TILEP_BOOTS_LIGHTNING_SCALES)
     {
-        flags[TILEP_PART_BOOTS] = is_naga ? TILEP_FLAG_NORMAL : TILEP_FLAG_HIDE;
+        flags[TILEP_PART_BOOTS] = naga ? TILEP_FLAG_NORMAL : TILEP_FLAG_HIDE;
     }
 
-    const bool is_cent = (is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_CENTAUR)
-                       || is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_CENTAUR_BONE)
-                       || is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_CENTAUR_STATUE)
-                       || is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_CENTAUR_UNDEAD)
-                       || is_player_tile(doll.parts[TILEP_PART_BOTTOM], TILEP_BOTTOM_CENTAUR_SPECTRAL));
+    const bool cent = is_cent(doll.parts[TILEP_PART_BOTTOM]);
 
     if (doll.parts[TILEP_PART_BOOTS] >= TILEP_BOOTS_CENTAUR_BARDING
         && doll.parts[TILEP_PART_BOOTS] <= TILEP_BOOTS_CENTAUR_BARDING_RED
         || doll.parts[TILEP_PART_BOOTS] == TILEP_BOOTS_BLACK_KNIGHT)
     {
-        flags[TILEP_PART_BOOTS] = is_cent ? TILEP_FLAG_NORMAL : TILEP_FLAG_HIDE;
+        flags[TILEP_PART_BOOTS] = cent ? TILEP_FLAG_NORMAL : TILEP_FLAG_HIDE;
     }
 
     // Set up mcache data based on equipment. We don't need this lookup if both

@@ -1865,7 +1865,6 @@ bool transform(int pow, transformation which_trans, bool involuntary,
         {
             int app = you.attribute[ATTR_APPENDAGE];
             ASSERT(app != NUM_MUTATIONS);
-            ASSERT(beastly_slot(app) != EQ_NONE);
             you.mutation[app] = _beastly_appendage_level(app);
         }
         break;

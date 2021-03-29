@@ -24,6 +24,9 @@ tileidx_t tilep_equ_boots(const item_def &item);
 
 tileidx_t tileidx_player();
 bool is_player_tile(tileidx_t tile, tileidx_t base_tile);
+bool is_cent(tileidx_t tile);
+bool is_naga(tileidx_t tile);
+bool is_merfolk_tail(tileidx_t tile);
 
 tileidx_t tilep_top_to_bottom_tile(tileidx_t top);
 tileidx_t tilep_species_to_base_tile(int sp, int colour);
