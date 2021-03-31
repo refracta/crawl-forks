@@ -3972,9 +3972,11 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
         _add_talent(talents, ABIL_FLY, check_confused);
     }
 
-    if (you.species == SP_LIGNIFITE && you.experience_level > 12 
+    if (you.species == SP_LIGNIFITE && you.experience_level > 12
         && !you.attribute[ATTR_ROOTED] && form_keeps_mutations())
+    {
         _add_talent(talents, ABIL_PLANT_ROOTS, check_confused);
+    }
 
     if (you.attribute[ATTR_ROOTED])
         _add_talent(talents, ABIL_DEROOT, check_confused);

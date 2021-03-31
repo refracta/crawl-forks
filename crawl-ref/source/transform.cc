@@ -1603,9 +1603,12 @@ bool transform(int pow, transformation which_trans, bool involuntary,
     if (!involuntary && crawl_state.is_god_acting())
         involuntary = true;
 
-    if (you.attribute[ATTR_ROOTED])
+    if (you.attribute[ATTR_ROOTED] && !form_keeps_mutations(which_trans))
     {
-        msg = "You can't change form while your roots are underground!";
+        if (involuntary)
+            msg = "Your roots protect you from unwilling transformation!";
+        else
+            msg = "You can't change to a form without roots, while they are underground!";
         success = false;
     }
     if (you.transform_uncancellable)
