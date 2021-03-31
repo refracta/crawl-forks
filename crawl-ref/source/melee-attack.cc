@@ -494,6 +494,23 @@ void melee_attack::apply_black_mark_effects()
     }
 }
 
+void melee_attack::do_ooze_engulf()
+{
+    if (attacker->is_player()
+        && x_chance_in_y(you.get_mutation_level(MUT_SKIN_BREATHING) - 1, 3)
+        && defender->alive()
+        && !defender->as_monster()->has_ench(ENCH_WATER_HOLD)
+        && attacker->can_constrict(defender, true, true))
+    {
+        defender->as_monster()->add_ench(mon_enchant(ENCH_WATER_HOLD, 1,
+                                                     attacker, 1));
+        mprf("You engulf %s in ooze!", defender->name(DESC_THE).c_str());
+        // Smothers sticky flame.
+        defender->expose_to_element(BEAM_WATER, 0);
+        defender->expose_to_element(BEAM_ACID, 0);
+    }
+}
+
 /* An attack has been determined to have hit something
  *
  * Handles to-hit effects for both attackers and defenders,
@@ -644,7 +661,10 @@ bool melee_attack::handle_phase_hit()
         return false;
 
     if (damage_done > 0)
+    {
         apply_black_mark_effects();
+        do_ooze_engulf();
+    }
 
     if (attacker->is_player() && !cancel_remaining)
     {
