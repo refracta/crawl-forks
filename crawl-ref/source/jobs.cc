@@ -2,8 +2,11 @@
 
 #include "jobs.h"
 
+#include "art-enum.h"
+#include "artefact.h" // For Jester
 #include "errors.h"
 #include "item-prop.h"
+#include "items.h"
 #include "libutil.h"
 #include "mapdef.h"
 #include "mon-util.h"
@@ -12,6 +15,7 @@
 #include "player.h"
 #include "skills.h"
 #include "stringutil.h"
+#include "tilepick.h"
 #include "xom.h"
 
 #include "job-data.h"
@@ -120,6 +124,35 @@ bool job_custom_stats(job_type job)
 
 void give_job_equipment(job_type job)
 {
+    if (job == JOB_JESTER)
+    {
+        item_def &item(you.inv[11]);    
+        item.base_type = OBJ_WEAPONS;
+        item.sub_type  = WPN_HUNTING_SLING;
+        item.quantity  = 1;
+        make_item_unrandart(item, UNRAND_KLOWN);
+        origin_set_startequip(item);
+        you.equip[EQ_WEAPON0] = 11;
+
+        item_def &hat(you.inv[10]);
+        hat.base_type = OBJ_ARMOURS;
+        hat.sub_type  = ARM_HAT;
+        hat.quantity  = 1;
+        make_item_unrandart(hat, UNRAND_JESTER_CAP);
+        origin_set_startequip(hat);
+        you.equip[EQ_HELMET] = 10;
+
+        item_def * robe = newgame_make_item(OBJ_ARMOURS, ARM_ROBE);
+
+        if (robe)
+        {
+            robe->props["worn_tile_name"] = "robe_jester";
+            bind_item_tile(*robe);
+        }
+
+        return;
+    }
+
     item_list items;
     for (const string& it : _job_def(job).equipment)
         items.add_item(it);
@@ -132,7 +165,7 @@ void give_job_equipment(job_type job)
         if (spec.props.exists("plus"))
             plus = spec.props["plus"];
         newgame_make_item(spec.base_type, spec.sub_type, max(spec.qty, 1),
-                          plus, spec.ego);
+                                            plus, spec.ego);
     }
 }
 

@@ -1277,6 +1277,25 @@ BRAND:   SPWPN_VORPAL
 DEX:     -3
 BOOL:    nogen
 
+ENUM:    JESTER_CAP
+NAME:	 Jester's Cap
+OBJ:     OBJ_ARMOURS/ARM_HAT
+COLOUR:  ETC_CHAOS
+TILE:    urand_jester
+TILE_EQ: clown2
+PLUS:    5
+INSCRIP: Xom, Noisy
+
+ENUM:    KLOWN
+NAME:    Klown Katapult
+OBJ:     OBJ_WEAPONS/WPN_HUNTING_SLING
+COLOUR:  ETC_CHAOS
+TILE:    urand_klown
+TILE_EQ: klown
+PLUS:    7
+BRAND:   SPWPN_MOLTEN
+INSCRIP: Pie
+
 ENUM:    ETHERIC_CAGE
 NAME:    Maxwell's etheric cage
 OBJ:     OBJ_ARMOURS/ARM_HELMET

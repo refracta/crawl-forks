@@ -624,6 +624,9 @@ static void _take_starting_note()
     }
 #endif
 
+    if (you.char_class == JOB_JESTER)
+        simple_god_message(" thought your last joke was hilarious!", GOD_XOM);
+
     if (you.char_class == JOB_WANDERER)
         note_equipment();
 

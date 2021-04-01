@@ -791,6 +791,7 @@ static const missile_def Missile_prop[] =
     { MI_JAVELIN,       "javelin",      10, true  },
     { MI_THROWING_NET,  "throwing net",  0, true  },
     { MI_TOMAHAWK,      "tomahawk",      6, true  },
+    { MI_PIE,           "kream pie",     0, true  },
 };
 
 struct food_def
@@ -2283,6 +2284,9 @@ missile_type fires_ammo_type(const item_def &item)
 {
     if (item.base_type != OBJ_WEAPONS)
         return MI_NONE;
+
+    if (is_unrandom_artefact(item, UNRAND_KLOWN))
+        return MI_PIE;
 
     return Weapon_prop[Weapon_index[item.sub_type]].ammo;
 }

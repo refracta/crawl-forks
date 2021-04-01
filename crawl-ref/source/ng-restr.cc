@@ -72,6 +72,9 @@ static bool _banned_combination(job_type job, species_type species)
             return true;
         }
         break;
+    case JOB_JESTER:
+        if (species == SP_FAIRY || species == SP_FELID)
+            return true;
     default:
         break;
     }

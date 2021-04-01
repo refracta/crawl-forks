@@ -481,13 +481,30 @@ bool ranged_attack::handle_phase_hit()
 
             if (using_weapon() || launch_type == launch_retval::THROWN)
             {
+                // Crude Hard code; but running low on time.
+                if (projectile->is_type(OBJ_MISSILES, MI_PIE) && defender->is_monster())
+                
+                {
+                    monster* mon = defender->as_monster();
+                    const int bonus = attacker->is_monster() ? attacker->get_hit_dice() / 2
+                                                             : you.skill(item_attack_skill(*weapon)) / 2;
+
+                    if (x_chance_in_y(19 - mon->get_hit_dice() * 2 + bonus, 20))
+                    {
+                        simple_monster_message(*mon, " gets pie all over their eyes and can't see.");
+                        mon->add_ench(mon_enchant(ENCH_BLIND, 1, attacker,
+                            random_range(4, 8) * BASELINE_DELAY));
+                    }
+                }
+
+                if (apply_missile_brand())
+                    return false;
+
                 if (using_weapon()
                     && apply_damage_brand(projectile->name(DESC_THE).c_str()))
                 {
                     return false;
                 }
-                if (apply_missile_brand())
-                    return false;
             }
         }
     }
@@ -607,23 +624,7 @@ bool ranged_attack::apply_damage_brand(const char *what)
     if (!weapon || !is_range_weapon(*weapon))
         return false;
 
-    const brand_type brand = get_weapon_brand(*weapon);
-
-    // No stacking elemental brands.
-    if (projectile->base_type == OBJ_MISSILES
-        && get_ammo_brand(*projectile) != SPMSL_NORMAL
-        && get_ammo_brand(*projectile) != SPMSL_PENETRATION
-        && (brand == SPWPN_MOLTEN
-            || brand == SPWPN_FREEZING
-            || brand == SPWPN_HOLY_WRATH
-            || brand == SPWPN_ELECTROCUTION
-            || brand == SPWPN_VENOM
-            || brand == SPWPN_CHAOS))
-    {
-        return false;
-    }
-
-    damage_brand = brand;
+    damage_brand = get_weapon_brand(*weapon);
     return attack::apply_damage_brand(what);
 }
 
@@ -961,6 +962,8 @@ bool ranged_attack::apply_missile_brand()
         }
         else
             defender->go_berserk(false);
+        break;
+    case SPMSL_BLINDING:
         break;
     }
 

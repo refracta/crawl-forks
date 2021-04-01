@@ -1486,6 +1486,30 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
     return true;
 }
 
+static bool _jester_check(const item_def &item, const bool remove)
+{
+    if (is_unrandom_artefact(item, UNRAND_JESTER_CAP))
+    {
+        string prompt = "";
+
+        if (remove)
+            prompt = "Removing the Jester's Cap will anger Xom! Continue?";
+
+        else
+        {
+            prompt = make_stringf("Wearing the Jester's Cap will subject you "
+                "to the capriciousness of Xom. Continue?");
+        }
+
+        if (!yesno(prompt.c_str(), true, 'n'))
+        {
+            canned_msg(MSG_OK);
+            return false;
+        }
+    }
+    return true;
+}
+
 static bool _can_takeoff_armour(int item);
 
 // Like can_wear_armour, but also takes into account currently worn equipment.
@@ -1500,6 +1524,9 @@ static bool _can_equip_armour(const item_def &item)
         mpr("You can't wear that.");
         return false;
     }
+
+    if (!_jester_check(item, false))
+        return false;
 
     const equipment_type slot = get_armour_slot(item);
     const int equipped = you.equip[slot];
@@ -1607,7 +1634,7 @@ bool wear_armour(int item)
 
 static bool _can_takeoff_armour(int item)
 {
-    item_def& invitem = you.inv[item];
+    const item_def& invitem = you.inv[item];
     if (invitem.base_type != OBJ_ARMOURS)
     {
         mpr("You aren't wearing that!");
@@ -1619,6 +1646,9 @@ static bool _can_takeoff_armour(int item)
         canned_msg(MSG_TOO_BERSERK);
         return false;
     }
+
+    if (!_jester_check(invitem, true))
+        return false;
 
     const equipment_type slot = get_armour_slot(invitem);
     if (item == you.equip[slot] && you.melded[slot])
@@ -1640,6 +1670,7 @@ static bool _can_takeoff_armour(int item)
         mprf("%s is stuck to your body!", invitem.name(DESC_YOUR).c_str());
         return false;
     }
+
     return true;
 }
 
@@ -1884,6 +1915,7 @@ static bool _safe_to_remove_or_wear(const item_def &item, bool remove, bool quie
         prop_int *= -1;
         prop_dex *= -1;
     }
+
     stat_type red_stat = NUM_STATS;
     if (prop_str >= you.strength() && you.strength() > 0)
         red_stat = STAT_STR;
@@ -1899,7 +1931,9 @@ static bool _safe_to_remove_or_wear(const item_def &item, bool remove, bool quie
     {
         if (you.wearing_ego(EQ_WEAPON0, SPWPN_DISTORTION) || you.wearing_ego(EQ_WEAPON1, SPWPN_DISTORTION)
             && !have_passive(passive_t::safe_distortion))
+        {
             disto = true;
+        }
         if ((you.wearing_ego(EQ_WEAPON0, SPWPN_VAMPIRISM) || you.wearing_ego(EQ_WEAPON1, SPWPN_VAMPIRISM)
             || (you.weapon(0) && is_unrandom_artefact(*you.weapon(0), UNRAND_MAJIN))
             || (you.weapon(1) && is_unrandom_artefact(*you.weapon(1), UNRAND_MAJIN)))
@@ -1984,6 +2018,7 @@ static bool _safe_to_remove_or_wear(const item_def &item, bool remove, bool quie
             return false;
         }
     }
+
     return true;
 }
 

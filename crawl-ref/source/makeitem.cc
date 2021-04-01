@@ -762,6 +762,9 @@ static special_missile_type _determine_missile_brand(const item_def& item,
     default:
         rc = SPMSL_NORMAL;
         break;
+    case MI_PIE:
+        rc = SPMSL_BLINDING;
+        break;
     case MI_NEEDLE:
         // Curare is special cased, all the others aren't.
         if (got_curare_roll(item_level))
@@ -874,11 +877,8 @@ bool is_missile_brand_ok(int type, int brand, bool strict)
     case SPMSL_FRENZY:
         return type == MI_NEEDLE;
 
-#if TAG_MAJOR_VERSION == 34
     case SPMSL_BLINDING:
-        // possible on ex-pies
-        return type == MI_TOMAHAWK && !strict;
-#endif
+        return type == MI_PIE;
 
     default:
         if (type == MI_NEEDLE)

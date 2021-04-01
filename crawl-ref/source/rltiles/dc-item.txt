@@ -345,6 +345,16 @@ effect/tribolt5 MI_TRIBOLT5
 effect/tribolt6 MI_TRIBOLT6
 effect/tribolt7 MI_TRIBOLT7
 
+#flying pies
+effect/pie0 MI_PIE0
+effect/pie1 MI_PIE1
+effect/pie2 MI_PIE2
+effect/pie3 MI_PIE3
+effect/pie4 MI_PIE4
+effect/pie5 MI_PIE5
+effect/pie6 MI_PIE6
+effect/pie7 MI_PIE7
+
 %rim 0
 tomahawk1 MI_TOMAHAWK
 tomahawk2
@@ -487,7 +497,6 @@ centaur_barding_red
 %sdir item/armour/headgear
 #####ARM_HELMET
 elven_leather_helm THELM_ELVEN_CAP
-cap_jester THELM_CAP_JESTER
 
 %rim 0
 hat1 THELM_HAT

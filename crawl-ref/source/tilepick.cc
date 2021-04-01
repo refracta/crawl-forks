@@ -3030,6 +3030,9 @@ tileidx_t tileidx_item_throw(const item_def &item, int dx, int dy)
             case MI_DOUBLE_BOLT:
                 ch = TILE_MI_DOUBOLT0;
                 break;
+            case MI_PIE:
+                ch = TILE_MI_PIE0;
+                break;
             case MI_NEEDLE:
                 ch = TILE_MI_NEEDLE0;
                 break;
@@ -4138,6 +4141,7 @@ static tileidx_t _tileidx_player_job_base(const job_type job)
         case JOB_VENOM_MAGE:
             return TILEG_JOB_VENOM_MAGE;
         case JOB_CHAOS_KNIGHT:
+        case JOB_JESTER:
             return TILEG_JOB_CHAOS_KNIGHT;
         case JOB_TRANSMUTER:
             return TILEG_JOB_TRANSMUTER;

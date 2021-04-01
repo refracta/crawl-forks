@@ -605,7 +605,7 @@ bool throw_it(bolt &pbolt, int throw_2, dist *target)
         if (you.weapon(0) && is_range_weapon(*you.weapon(0)))
             typ = fires_ammo_type(*you.weapon(0));
         else typ = random_stone();
-        t = items(false, OBJ_MISSILES, typ, 1);
+        t = items(false, OBJ_MISSILES, typ, 1, typ == MI_PIE ? SPMSL_BLINDING : SPMSL_NORMAL);
         thrown = &mitm[t];
         thrown->quantity = 1;
         thrown->brand = SPMSL_NORMAL;

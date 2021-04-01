@@ -5357,7 +5357,7 @@ static bool _dazzle_monster(monster* mons, actor* act)
     if (!mons_can_be_dazzled(mons->type))
         return false;
 
-    if (x_chance_in_y(95 - mons->get_hit_dice() * 5 , 100))
+    if (x_chance_in_y(19 - mons->get_hit_dice(), 20))
     {
         simple_monster_message(*mons, " gets blinded by venom in their eyes.");
         mons->add_ench(mon_enchant(ENCH_BLIND, 1, act,

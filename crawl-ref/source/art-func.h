@@ -31,6 +31,7 @@
 #include "god-conduct.h"    // did_god_conduct
 #include "god-passive.h"    // passive_t::want_curses
 #include "mgen-data.h"     // For Sceptre of Asmodeus evoke
+#include "message.h"       // Simple god message
 #include "mon-death.h"     // For demon axe's SAME_ATTITUDE
 #include "mon-place.h"     // For Sceptre of Asmodeus evoke
 #include "nearby-danger.h" // For Zhor
@@ -43,6 +44,7 @@
 #include "spl-monench.h"   // For Zhor's aura
 #include "spl-summoning.h" // For Zonguldrok animating dead
 #include "terrain.h"       // For storm bow
+#include "xom.h"           // For Jester's Cap
 #include "view.h"          // For arc blade's discharge effect
 
 // prop recording whether the singing sword has said hello yet
@@ -1335,4 +1337,43 @@ static void _BATTLE_world_reacts(item_def */*item*/)
         your_spells(SPELL_BATTLESPHERE, 0, false);
         did_god_conduct(DID_SPELL_CASTING, 1);
     }
+}
+
+/////////////////////////////////////////////////////
+
+static void _JESTER_CAP_world_reacts(item_def */*item*/)
+{
+    if (one_chance_in(30))
+        xom_acts(random2(100), MB_MAYBE, get_tension(GOD_XOM));
+    else if (one_chance_in(10) && !silenced(you.pos()) && get_tension())
+    {
+        string msg = one_chance_in(5) ? "You giggle uncontrollably." :
+                     one_chance_in(3) ? "You hear the sound of happy children." :
+                     one_chance_in(3) ? "Xom snickers." :
+                     one_chance_in(3) ? "Your cap tells a corny joke." :
+                     one_chance_in(3) ? "You hear the sounds of a playground fading."
+                                      : "The bells on your hat jingle noisily.";
+        noisy(20, you.pos(), msg.c_str(), MID_PLAYER);
+    }
+}
+
+static void _JESTER_CAP_equip(item_def */*item*/, bool */*show_msgs*/, bool unmeld)
+{
+    if (!unmeld)
+    {
+        if (you.penance[GOD_XOM])
+        {
+            simple_god_message(" welcomes you back with thunderous applause!", GOD_XOM);
+            fake_noisy(30, you.pos());
+            you.penance[GOD_XOM] = 0;
+        }
+        else
+            xom_take_action(XOM_BAD_NOISE, 30);
+    }
+}
+
+static void _JESTER_CAP_unequip(item_def */*item*/, bool */*show_msgs*/)
+{
+    god_speaks(GOD_XOM, "Xom doesn't appreciate his hat being removed!");
+    you.penance[GOD_XOM] = 50;
 }

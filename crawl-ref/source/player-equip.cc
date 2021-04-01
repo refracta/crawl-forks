@@ -536,6 +536,8 @@ static void _equip_weapon_effect(item_def& item, bool showMsgs, bool unmeld, equ
                         mprf("As you load %s, your boulder melts into a mass of molten lava!", item_name.c_str());
                     else if (fires_ammo_type(item) == MI_ARROW)
                         mprf("As you load %s, the head of your arrow melts into a liquid metal spear!", item_name.c_str());
+                    else if (fires_ammo_type(item) == MI_PIE)
+                        mprf("As you load %s, the kream in your pie becomes boiling hot!", item_name.c_str());
                     else
                         mprf("The surface of %s melts into red hot liquid metal!", item_name.c_str());
                     break;

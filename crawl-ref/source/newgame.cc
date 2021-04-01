@@ -1099,6 +1099,11 @@ static job_group jobs_order[] =
           JOB_AIR_ELEMENTALIST, JOB_EARTH_ELEMENTALIST, JOB_VENOM_MAGE }
     },
     {
+        "Fool",
+        coord_def(2, 10), 22,
+        { JOB_JESTER }
+    },
+    {
         "Hybrid",
         coord_def(3, 0), 21,
         { JOB_CENTAUR, JOB_NAGA, JOB_MERFOLK, JOB_DEMIGOD, JOB_DEMONSPAWN, JOB_MUMMY }
