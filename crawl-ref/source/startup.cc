@@ -276,15 +276,18 @@ static void _post_init(bool newc)
         you.entering_level = false;
         you.transit_stair = DNGN_UNSEEN;
         you.depth = 1;
-        // Abyssal Knights start out in the Abyss.
-        if (you.char_class == JOB_ABYSSAL_KNIGHT)
-            you.where_are_you = BRANCH_ABYSS;
-        else if (you.char_class == JOB_PRIEST)
-            you.where_are_you = BRANCH_START_TEMPLE;
-        else if (you.char_class == JOB_NOBLE)
-            you.where_are_you = BRANCH_START_MARKET;
-        else
-            you.where_are_you = root_branch;
+        you.where_are_you = root_branch;
+
+        if (!crawl_state.game_is_sprint())
+        {
+            // Abyssal Knights start out in the Abyss.
+            if (you.char_class == JOB_ABYSSAL_KNIGHT)
+                you.where_are_you = BRANCH_ABYSS;
+            else if (you.char_class == JOB_PRIEST)
+                you.where_are_you = BRANCH_START_TEMPLE;
+            else if (you.char_class == JOB_NOBLE)
+                you.where_are_you = BRANCH_START_MARKET;
+        }
     }
 
     // XXX: Any invalid level_id should do.
@@ -296,7 +299,7 @@ static void _post_init(bool newc)
                newc               ? LOAD_START_GAME : LOAD_RESTART_GAME,
                old_level);
 
-    if (newc && you.char_class == JOB_ABYSSAL_KNIGHT)
+    if (newc && you.where_are_you == BRANCH_ABYSS)
         generate_abyss();
 
 #ifdef DEBUG_DIAGNOSTICS
