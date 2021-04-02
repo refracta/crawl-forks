@@ -2906,7 +2906,8 @@ static void _build_dungeon_level()
     fixup_misplaced_items();
     link_items();
 
-    _connectivity_fixup();
+    if (crawl_state.game_standard_levelgen())
+        _connectivity_fixup();
 }
 
 static void _dgn_set_floor_colours()
