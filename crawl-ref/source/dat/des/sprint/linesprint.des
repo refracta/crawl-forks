@@ -98,9 +98,9 @@ KMONS:     c = Louise / Nikola / Frederick / Boris / Margery band /\
                Sojobo band / Xtahua / Jory / Mennas / Mara
 NSUBST:    c = 2:c. / 2:cb. / 2:cb.. / 2:cbb.. / * = .:69 c:2
 MAP
-xxxxAAAAAAAAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBCCCCCCCCCCDDDDDDDDDDDDDDxxxx
-x{..AAAAAAAAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBCCCCCCCCCCDDDDDDDDDDDDDD&..x
-xxxxAAAAAAAAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBCCCCCCCCCCDDDDDDDDDDDDDDxx.x
+xxxAAAAAAAAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBBCCCCCCCCCCDDDDDDDDDDDDDDxxxx
+x{.AAAAAAAAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBBCCCCCCCCCCDDDDDDDDDDDDDD&..x
+xxxAAAAAAAAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBBCCCCCCCCCCDDDDDDDDDDDDDDxx.x
 x..........a.........a..........a.........a.............a............x
 x.xxxxxxEEEEEEEEEEEEEEFFFFFFFFFFFFFFFFFFFFGGGGGGGGGGGGGHHHHHHHHHxxxxxx
 x.......EEEEEEEEEEEEEEFFFFFFFFFFFFFFFFFFFFGGGGGGGGGGGGGHHHHHHHHH&....x
@@ -179,6 +179,7 @@ NAME:     line_temple
 TAGS:     line_temple
 # No Ashenzari.
 KFEAT:    b = altar_beogh
+KFEAT:    B = altar_bahamut_and_tiamat
 KFEAT:    c = altar_cheibriados
 KFEAT:    d = altar_dithmenos
 KFEAT:    e = altar_elyvilon
@@ -207,9 +208,9 @@ KFEAT:    1 = altar_the_shining_one
 :           door_description_suffix=" to the Temple",
 :           })
 MAP
-xxxxxxxxxxxxxxxxxxxxxxxxx
-~bcdefghjklmnoqrstuvwXyz1
-xxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxx
+~bBcdefghjklmnoqrstuvwXyz1
+xxxxxxxxxxxxxxxxxxxxxxxxxx
 ENDMAP
 
 

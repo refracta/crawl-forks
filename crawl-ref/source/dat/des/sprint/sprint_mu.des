@@ -241,6 +241,7 @@ KFEAT: U = altar_uskayaw
 KFEAT: o = altar_wu_jian
 KMONS: o = patrolling human ; potion of might ident:all
 KITEM: o = any armour
+KFEAT: t = altar_bahamut_and_tiamat
 KMONS: t = patrolling human ; potion of berserk rage ident:all
 KITEM: t = any weapon
 KFEAT: D = altar_dithmenos

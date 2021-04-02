@@ -700,6 +700,7 @@ TAGS:  no_item_gen no_trap_gen no_pool_fixup no_rotate no_hmirror no_vmirror
 : setup_room(_G, 1)
 KFEAT:  a = altar_ashenzari
 KFEAT:  b = altar_beogh
+KFEAT:  Q = altar_bahamut_and_tiamat
 KFEAT:  c = altar_cheibriados
 KFEAT:  d = altar_dithmenos
 KFEAT:  e = altar_elyvilon
@@ -815,7 +816,7 @@ COLOUR:   & = magenta
 
 MAP
 ^g^h^j&A&k^l^m^
-f.........RT..n
+f^........RT.^n
 ^.............^
 e..HG.........o
 ^..IF.........^
@@ -824,8 +825,8 @@ d..JE.....S...q
 c......L..O...r
 ^...C..K..N...^
 b...B.{.......s
-^.............^
-a.............t
+^...........Q.^
+a^...........^t
 ^1^z^y^x^w^v^u^
 ENDMAP
 
