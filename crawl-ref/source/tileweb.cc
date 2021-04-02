@@ -1070,7 +1070,7 @@ void TilesFramework::_send_player(bool force_full)
     }
     _update_int(force_full, c.quiver_available, !fire_warn_if_impossible(true),
                 "quiver_available");
-    _update_int(force_full, c.hand_lost, you.get_mutation_level(MUT_MISSING_HAND),
+    _update_int(force_full, c.hand_lost, (bool)you.get_mutation_level(MUT_MISSING_HAND),
                 "hand_lost");
 
     json_close_object(true);
