@@ -2259,6 +2259,9 @@ bool is_weapon_wieldable(const item_def &item, size_type size)
     if (item.is_type(OBJ_MISCELLANY, MISC_LANTERN_OF_SHADOWS))
         return true;
 
+    if (is_unrandom_artefact(item, UNRAND_KLOWN))
+        return true;
+
     if (item.base_type == OBJ_SHIELDS)
     {
         if (Shield_prop[Shield_index[item.sub_type]].min_1h_size > size)

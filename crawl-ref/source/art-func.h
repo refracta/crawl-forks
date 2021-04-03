@@ -1374,6 +1374,10 @@ static void _JESTER_CAP_equip(item_def */*item*/, bool */*show_msgs*/, bool unme
 
 static void _JESTER_CAP_unequip(item_def */*item*/, bool */*show_msgs*/)
 {
-    god_speaks(GOD_XOM, "Xom doesn't appreciate his hat being removed!");
-    you.penance[GOD_XOM] = 50;
+    if (!you_worship(GOD_XOM))
+    {
+        god_speaks(GOD_XOM, "Xom doesn't appreciate his hat being removed!");
+        leave_xom();
+        you.penance[GOD_XOM] = 50;
+    }
 }

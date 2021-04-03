@@ -19,6 +19,7 @@
 #include "acquire.h"
 #include "act-iter.h"
 #include "areas.h"
+#include "art-enum.h"
 #include "attitude-change.h"
 #include "branch.h"
 #include "chardump.h"
@@ -2841,11 +2842,37 @@ int initial_wrath_penance_for(god_type god)
     }
 }
 
+void leave_xom()
+{
+    if (you.undead_state() == US_GHOST && (you.how_mutated() > 0))
+    {
+        mprf("The chaos fades from your form.");
+        delete_all_mutations("Fading Chaos");
+    }
+    if (you.props.exists(XOM_NAME_KEY))
+    {
+        mpr("You change your name back from whatever silly name Xom gave you.");
+        you.props.erase(XOM_NAME_KEY);
+        you.redraw_title = true;
+    }
+    if (you.char_class == JOB_CHAOS_KNIGHT)
+    {
+        you.char_class = JOB_XOM;
+        xom_insult_name();
+        string new_title = get_job_name(JOB_XOM);
+        mprf(MSGCH_GOD, GOD_XOM, "Xom says: You abandoned me! You don't deserve to be called Chaos Knight; you %s.", new_title.c_str());
+        mprf(MSGCH_GOD, GOD_XOM, "Xom strips away your Chaos Knight title; from now on you are known as %s.", new_title.c_str());
+    }
+}
+
 void excommunication(bool voluntary, god_type new_god)
 {
     const god_type old_god = you.religion;
     ASSERT(old_god != new_god);
     ASSERT(old_god != GOD_NO_GOD);
+
+    if (old_god == GOD_XOM && player_equip_unrand(UNRAND_JESTER_CAP))
+        return;
 
     const bool had_halo       = have_passive(passive_t::halo);
     const bool had_umbra      = have_passive(passive_t::umbra);
@@ -3027,25 +3054,7 @@ void excommunication(bool voluntary, god_type new_god)
         break;
 
     case GOD_XOM:
-        if (you.undead_state() == US_GHOST && (you.how_mutated() > 0))
-        {
-            mprf("The chaos fades from your form.");
-            delete_all_mutations("Fading Chaos");
-        }
-        if (you.props.exists(XOM_NAME_KEY))
-        {
-            mpr("You change your name back from whatever silly name Xom gave you.");
-            you.props.erase(XOM_NAME_KEY);
-            you.redraw_title = true;
-        }
-        if (you.char_class == JOB_CHAOS_KNIGHT)
-        {
-            you.char_class = JOB_XOM;
-            xom_insult_name();
-            string new_title = get_job_name(JOB_XOM);
-            mprf(MSGCH_GOD, old_god, "Xom says: You abandoned me! You don't deserve to be called Chaos Knight; you %s.", new_title.c_str());
-            mprf(MSGCH_GOD, old_god, "Xom strips away your Chaos Knight title; from now on you are known as %s.", new_title.c_str());
-        }
+        leave_xom();
         break;
 
     case GOD_FEDHAS:

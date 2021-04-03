@@ -570,7 +570,6 @@ A large, iron-shod maul specialised for dealing massively powerful blows. Such
 power comes at a price: the maul's head is so heavy it takes a great length of
 time to lift it up for another swing.
 %%%%
-# TAG_MAJOR_VERSION == 34
 hat of the High Council
 
 A relic of some ancient wizarding war. Centuries later, it still crackles with
@@ -637,7 +636,6 @@ contamination almost as effectively. Anyone reckless enough to place it on
 their head would find their magic regeneration dramatically increased, at the
 cost of multiplying any magical contamination received.
 %%%%
-# TAG_MAJOR_VERSION == 34
 crown of Eternal Torment
 
 A gold crown set with jet-black gems. It permanently afflicts its wearer with
@@ -701,4 +699,16 @@ time before unlocking its secrets. The staff increases the power of its
 wielder's Earth and Charms magic and, when its wielder is in danger, the staff
 will conjure a battlesphere to provide support. The strength of the battlesphere
 depends on the wielder's skill with Charms and Earth.
+%%%%
+Klown Katapult
+
+A psychedelically coloured toy slingshot enhanced with the power of Klowns. 
+It generates infinite kream pies to fire, which may blind those that they hit.
+%%%%
+Jester's Cap
+
+A colourful hat adorned with noisy bells that seem to constantly call forth 
+the distant sounds of children and playgrounds. It once belonged to a favourite 
+toy of Xom, whose attention is drawn to whoever wears it. This 'special attention' 
+is even more chaotic than normal Xom worship!
 %%%%

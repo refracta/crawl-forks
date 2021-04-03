@@ -481,29 +481,31 @@ bool ranged_attack::handle_phase_hit()
 
             if (using_weapon() || launch_type == launch_retval::THROWN)
             {
-                // Crude Hard code; but running low on time.
-                if (projectile->is_type(OBJ_MISSILES, MI_PIE) && defender->is_monster())
-                
+                if (using_weapon()
+                    && apply_damage_brand(projectile->name(DESC_THE).c_str()))
                 {
-                    monster* mon = defender->as_monster();
-                    const int bonus = attacker->is_monster() ? attacker->get_hit_dice() / 2
-                                                             : you.skill(item_attack_skill(*weapon)) / 2;
-
-                    if (x_chance_in_y(19 - mon->get_hit_dice() * 2 + bonus, 20))
-                    {
-                        simple_monster_message(*mon, " gets pie all over their eyes and can't see.");
-                        mon->add_ench(mon_enchant(ENCH_BLIND, 1, attacker,
-                            random_range(4, 8) * BASELINE_DELAY));
-                    }
+                    return false;
                 }
 
                 if (apply_missile_brand())
                     return false;
 
-                if (using_weapon()
-                    && apply_damage_brand(projectile->name(DESC_THE).c_str()))
+                // Crude Hard code; but running low on time.
+                if (projectile->is_type(OBJ_MISSILES, MI_PIE) && defender->is_monster())
+
                 {
-                    return false;
+                    monster* mon = defender->as_monster();
+                    const int bonus = attacker->is_monster() ? attacker->get_hit_dice() / 2
+                        : you.skill(item_attack_skill(*weapon)) / 2;
+
+                    if (x_chance_in_y(19 - mon->get_hit_dice() * 2 + bonus, 20))
+                    {
+                        mprf("%s gets pie all over %s eyes and can't see.", mon->name(DESC_THE).c_str(), 
+                            mon->pronoun(PRONOUN_POSSESSIVE).c_str());
+
+                        mon->add_ench(mon_enchant(ENCH_BLIND, 1, attacker,
+                            random_range(4, 8) * BASELINE_DELAY));
+                    }
                 }
             }
         }

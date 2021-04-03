@@ -1288,6 +1288,7 @@ INSCRIP: Xom, Noisy
 
 ENUM:    KLOWN
 NAME:    Klown Katapult
+TYPE:    Katapult     
 OBJ:     OBJ_WEAPONS/WPN_HUNTING_SLING
 COLOUR:  ETC_CHAOS
 TILE:    urand_klown
