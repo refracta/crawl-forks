@@ -605,7 +605,7 @@ bool throw_it(bolt &pbolt, int throw_2, dist *target)
         if (you.weapon(0) && is_range_weapon(*you.weapon(0)))
             typ = fires_ammo_type(*you.weapon(0));
         else typ = random_stone();
-        t = items(false, OBJ_MISSILES, typ, 1, typ == MI_PIE ? SPMSL_BLINDING : SPMSL_NORMAL);
+        t = items(false, OBJ_MISSILES, typ, 1, SPMSL_NORMAL);
         thrown = &mitm[t];
         thrown->quantity = 1;
         thrown->brand = SPMSL_NORMAL;
@@ -732,11 +732,7 @@ bool throw_it(bolt &pbolt, int throw_2, dist *target)
     {
     case launch_retval::LAUNCHED:
     {
-        item_def *launcher;
-        if (you.weapon(0) && is_range_weapon(*you.weapon(0)))
-            launcher = you.weapon(0);
-        else
-            launcher = you.weapon(1);
+        item_def *launcher = you.weapon(0);
         ASSERT(launcher);
         practise_launching(*launcher);
         bow_brand = get_weapon_brand(*launcher);

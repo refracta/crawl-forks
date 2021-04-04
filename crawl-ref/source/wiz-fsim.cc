@@ -362,7 +362,6 @@ static void _do_one_fsim_round(monster &mon, fight_data &fd, bool defend)
 
     const int weapon = you.equip[EQ_WEAPON0];
     const item_def *iweap = weapon != -1 ? &you.inv[weapon] : nullptr;
-    const int missile = you.m_quiver.get_fire_item();
 
     mon.shield_blocks = 0;
     you.shield_blocks = 0;
@@ -372,11 +371,18 @@ static void _do_one_fsim_round(monster &mon, fight_data &fd, bool defend)
     {
         // first, ranged weapons. note: this includes
         // being empty-handed but having a missile quivered
-        if ((iweap && iweap->base_type == OBJ_WEAPONS &&
+        if (iweap && iweap->base_type == OBJ_WEAPONS &&
                     is_range_weapon(*iweap))
-            || (!iweap && missile != -1))
         {
-            ranged_attack attk(&you, &mon, &you.inv[missile], false);
+            int t = get_mitm_slot();
+            item_def * thrown = &mitm[t];
+            thrown->base_type = OBJ_MISSILES;
+            thrown->sub_type  = fires_ammo_type(*iweap);
+            thrown->quantity  = 1;
+            thrown->brand     = SPMSL_NORMAL;
+
+            ranged_attack attk(&you, &mon, thrown, false);
+            you.time_taken = you.attack_delay(thrown).roll();
             attk.simu = true;
             attk.attack();
             if (attk.ev_margin >= 0)
@@ -384,7 +390,7 @@ static void _do_one_fsim_round(monster &mon, fight_data &fd, bool defend)
                 did_hit = true;
                 fd.player.hits++;
             }
-            you.time_taken = you.attack_delay(&you.inv[missile]).roll();
+            destroy_item(t, true);
         }
         else // otherwise, melee combat
         {
