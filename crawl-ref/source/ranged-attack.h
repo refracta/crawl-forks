@@ -9,6 +9,7 @@ class ranged_attack : public attack
 public:
     int range_used;
     bool reflected;
+    int force_range = 0;
 
 // Public Methods
 public:

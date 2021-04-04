@@ -94,7 +94,7 @@ int ranged_attack::calc_to_hit(bool random, bool player_aux)
         }
     }
 
-    const int lrange = grid_distance(attacker->pos(), defender->pos());
+    const int lrange = force_range ? force_range : grid_distance(attacker->pos(), defender->pos());
 
     if (lrange > 9)
         return 0;
@@ -455,7 +455,7 @@ bool ranged_attack::handle_phase_hit()
             if (bdam > 0)
             {
                 // Sweetspotting!
-                const int lrange = grid_distance(attacker->pos(), defender->pos());
+                const int lrange = force_range ? force_range : grid_distance(attacker->pos(), defender->pos());
                 int multiplier = 5;
                 if (lrange > 5)
                 {

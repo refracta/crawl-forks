@@ -256,7 +256,7 @@ static bool _fsim_kit_equip(const string &kit, string &error)
 }
 
 // fight simulator internals
-static monster* _init_fsim()
+static monster* _init_fsim(int & force_distance)
 {
     monster * mon = nullptr;
     monster_type mtype = get_monster_by_name(Options.fsim_mons, true);
@@ -307,6 +307,8 @@ static monster* _init_fsim()
         }
     }
 
+    force_distance = grid_distance(you.pos(), mon->pos());
+
     // move the monster next to the player
     // this probably works best in the arena, or at least somewhere
     // where there's no water or anything weird to interfere
@@ -341,8 +343,7 @@ static void _uninit_fsim(monster *mon)
     reset_training();
 }
 
-
-static void _do_one_fsim_round(monster &mon, fight_data &fd, bool defend)
+static void _do_one_fsim_round(monster &mon, fight_data &fd, bool defend, int force_distance)
 {
     you.stop_constricting_all(true, true);
     mon.stop_constricting_all(true, true);
@@ -384,6 +385,7 @@ static void _do_one_fsim_round(monster &mon, fight_data &fd, bool defend)
             ranged_attack attk(&you, &mon, thrown, false);
             you.time_taken = you.attack_delay(thrown).roll();
             attk.simu = true;
+            attk.force_range = force_distance;
             attk.attack();
             if (attk.ev_margin >= 0)
             {
@@ -431,7 +433,7 @@ static void _do_one_fsim_round(monster &mon, fight_data &fd, bool defend)
     you.move_to_pos(you_start_pos);
 }
 
-static fight_data _get_fight_data(monster &mon, int iter_limit, bool defend)
+static fight_data _get_fight_data(monster &mon, int iter_limit, bool defend, int force_distance)
 {
     const monster orig = mon;
     fight_data fdata;
@@ -452,7 +454,7 @@ static fight_data _get_fight_data(monster &mon, int iter_limit, bool defend)
         no_messages mx;
 
         for (int i = 0; i < iter_limit; i++)
-            _do_one_fsim_round(mon, fdata, defend);
+            _do_one_fsim_round(mon, fdata, defend, force_distance);
     }
 
     fdata.player.calc_output_stats();
@@ -480,11 +482,12 @@ void fight_damage_stats::calc_output_stats()
 
 fight_data wizard_quick_fsim_raw(bool defend)
 {
-    monster *mon = _init_fsim();
+    int force_distance = 0;
+    monster *mon = _init_fsim(force_distance);
     ASSERT(mon);
 
     const int iter_limit = Options.fsim_rounds;
-    fight_data fdata = _get_fight_data(*mon, iter_limit, defend);
+    fight_data fdata = _get_fight_data(*mon, iter_limit, defend, force_distance);
 
     _uninit_fsim(mon);
     return fdata;
@@ -496,16 +499,17 @@ void wizard_quick_fsim()
     // we could declare this in the fight calls, but i'm worried that
     // the actual monsters that are made will be slightly different,
     // so it's safer to do it here.
-    monster *mon = _init_fsim();
+    int force_distance = 0;
+    monster *mon = _init_fsim(force_distance);
     if (!mon)
         return;
 
     const int iter_limit = Options.fsim_rounds;
-    fight_data fdata = _get_fight_data(*mon, iter_limit, false);
+    fight_data fdata = _get_fight_data(*mon, iter_limit, false, force_distance);
     mprf("%8s%s", "", fdata.header(false).c_str());
     mpr(fdata.summary("Attack: ", false));
 
-    fdata = _get_fight_data(*mon, iter_limit, true);
+    fdata = _get_fight_data(*mon, iter_limit, true, force_distance);
     mpr(fdata.summary("Defend: ", false));
 
     _uninit_fsim(mon);
@@ -560,7 +564,7 @@ static string _init_scale(skill_map &scale, bool &xl_mode)
     return ret;
 }
 
-static void _fsim_simple_scale(FILE * o, monster* mon, bool defense)
+static void _fsim_simple_scale(FILE * o, monster* mon, bool defense, int force_distance)
 {
     skill_map scale;
     bool xl_mode = false;
@@ -599,7 +603,7 @@ static void _fsim_simple_scale(FILE * o, monster* mon, bool defense)
                 set_skill_level(entry.first, i / entry.second);
         }
 
-        fight_data fdata = _get_fight_data(*mon, iter_limit, defense);
+        fight_data fdata = _get_fight_data(*mon, iter_limit, defense, force_distance);
         results.emplace_back(i, fdata);
         fight_damage_stats &fstats = defense ? fdata.monster : fdata.player;
         const string line = fstats.summary(make_stringf("%2d | ", i), false);
@@ -638,7 +642,7 @@ static void _fsim_simple_scale(FILE * o, monster* mon, bool defense)
     }
 }
 
-static void _fsim_double_scale(FILE * o, monster* mon, bool defense)
+static void _fsim_double_scale(FILE * o, monster* mon, bool defense, int force_distance)
 {
     skill_type skx, sky;
     if (defense)
@@ -668,7 +672,7 @@ static void _fsim_double_scale(FILE * o, monster* mon, bool defense)
             clear_messages();
             set_skill_level(skx, x);
             set_skill_level(sky, y);
-            fight_data fdata = _get_fight_data(*mon, iter_limit, defense);
+            fight_data fdata = _get_fight_data(*mon, iter_limit, defense, force_distance);
             fight_damage_stats &fstats = defense ? fdata.monster : fdata.player;
             mprf("%s %d, %s %d: %d", skill_name(skx), x, skill_name(sky), y,
                  int(fstats.av_eff_dam));
@@ -689,7 +693,8 @@ static void _fsim_double_scale(FILE * o, monster* mon, bool defense)
 
 void wizard_fight_sim(bool double_scale)
 {
-    monster * mon = _init_fsim();
+    int force_distance = 0;
+    monster * mon = _init_fsim(force_distance);
     if (!mon)
         return;
 
@@ -751,11 +756,11 @@ void wizard_fight_sim(bool double_scale)
     crawl_state.disables.set(DIS_DEATH);
     crawl_state.disables.set(DIS_DELAY);
 
-    void (*fsim_proc)(FILE * o, monster* mon, bool defense) = nullptr;
+    void (*fsim_proc)(FILE * o, monster* mon, bool defense, int force_distance) = nullptr;
     fsim_proc = double_scale ? _fsim_double_scale : _fsim_simple_scale;
 
     if (Options.fsim_kit.empty())
-        fsim_proc(o, mon, defense);
+        fsim_proc(o, mon, defense, force_distance);
     else
         for (const string &kit : Options.fsim_kit)
         {
@@ -763,7 +768,7 @@ void wizard_fight_sim(bool double_scale)
             if (_fsim_kit_equip(kit, error))
             {
                 _write_weapon(o);
-                fsim_proc(o, mon, defense);
+                fsim_proc(o, mon, defense, force_distance);
                 fprintf(o, "\n");
             }
             else
