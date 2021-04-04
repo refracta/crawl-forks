@@ -874,7 +874,7 @@ void TilesFramework::do_layout()
      * XXX: don't layout unless we're in a game / arena
      * this is to prevent layout code from accessing `you` while it's invalid.
      */
-    if (!species_type_valid(you.species))
+    if (!species_type_valid(you.species) && !crawl_state.game_is_arena())
         return;
 
     // View size in pixels is ((dx, dy) * crawl_view.viewsz)
