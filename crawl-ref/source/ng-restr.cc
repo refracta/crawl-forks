@@ -14,6 +14,7 @@
 #include "jobs.h"
 #include "newgame.h"
 #include "newgame-def.h"
+#include "season.h"
 #include "size-type.h"
 #include "species.h"
 
@@ -73,6 +74,8 @@ static bool _banned_combination(job_type job, species_type species)
         }
         break;
     case JOB_JESTER:
+        if (!is_april_fools())
+            return true;
         if (species == SP_FAIRY || species == SP_FELID || species == SP_DRACONIAN)
             return true;
     default:

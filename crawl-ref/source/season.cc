@@ -79,3 +79,34 @@ bool is_christmas()
 
     return false;
 }
+
+/**
+* @return  Whether to use the April Fools in game effects.
+*/
+bool is_april_fools()
+{
+    holiday_state holi = Options.holiday;
+
+    if (holi == holiday_state::aprilfools)
+        return true;
+
+    const time_t curr_time = time(nullptr);
+    const struct tm *date = TIME_FN(&curr_time);
+    // tm_mon is zero-based in case you are wondering
+    if (date->tm_mon == 4)
+    {
+        switch (holi)
+        {
+        default:
+            return false;
+        case holiday_state::month:
+            return true;
+        case holiday_state::day:
+            return date->tm_mday == 1;
+        case holiday_state::week:
+            return date->tm_mday <= 7;
+        }
+    }
+
+    return false;
+}

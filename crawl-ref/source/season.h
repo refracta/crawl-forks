@@ -7,5 +7,6 @@
 
 #include <chrono>
 
+bool is_april_fools();
 bool is_halloween();
 bool is_christmas();

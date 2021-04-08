@@ -2727,6 +2727,8 @@ void game_options::read_option_line(const string &str, bool runscript)
             holiday = holiday_state::halloween;
         else if (field == "day")
             holiday = holiday_state::day;
+        else if (field == "april fool's" || field == "april fool")
+            holiday = holiday_state::aprilfools;
     }
     else if (key == "lua_file" && runscript)
     {

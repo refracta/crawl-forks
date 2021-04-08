@@ -103,7 +103,8 @@ enum class holiday_state
     week,
     month,
     halloween,
-    christmas
+    christmas,
+    aprilfools
 };
 
 enum use_animation_type
