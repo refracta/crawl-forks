@@ -561,6 +561,13 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
 
     if (prompt_failed(item_slot))
         return false;
+    else if (item_slot == you.equip[EQ_CYTOPLASM])
+    {
+        if (!yesno("You need to eject it from your cytoplasm first. Continue?", true, 'n'))
+            return false;
+        if (!eject_item())
+            return false;
+    }
     else if (item_slot == you.equip[EQ_WEAPON0]
         || item_slot == you.equip[EQ_WEAPON1])
     {
@@ -2500,6 +2507,29 @@ static bool _puton_item(int item_slot, bool prompt_slot,
     return true;
 }
 
+// Ejection delay is half of Subsumption delay; rounded up.
+static int _subsumption_delay(const item_def & item)
+{
+    switch (item.base_type)
+    {
+    case OBJ_ARMOURS:
+        return armour_equip_delay(item) * 1.5;
+    case OBJ_JEWELLERY:
+        return 2;
+    case OBJ_MISCELLANY: // Only the Lantern of Shadows
+        return 3;
+    case OBJ_STAVES:
+    case OBJ_WEAPONS:
+    case OBJ_SHIELDS:
+        return                   !can_wield(&item) ? 7 :
+               (you.hands_reqd(item) == HANDS_TWO) ? 5
+                                                   : 3;
+    default: // Nothing should get here.
+        mpr("Unhandled Subsumption Delay (Please report!). Defaulting to 3 turns.");
+        return 3;
+    }
+}
+
 bool subsume_item(int slot)
 {
     if (!you.get_mutation_level(MUT_CYTOPLASMIC_SUSPENSION))
@@ -2532,7 +2562,7 @@ bool subsume_item(int slot)
     if (prompt_failed(equipn))
         return false;
 
-    const item_def item = you.inv[equipn];
+    item_def &item = you.inv[equipn];
 
     if (item_is_equipped(item))
     {
@@ -2547,9 +2577,10 @@ bool subsume_item(int slot)
     }
 
     if (you.equip[EQ_CYTOPLASM] != -1)
-        unequip_item(EQ_CYTOPLASM);
+        eject_item();
 
-    equip_item(EQ_CYTOPLASM, equipn);
+    int delay = _subsumption_delay(item);
+    start_delay<SubsumptionDelay>(delay, item);
 
     return true;
 }
@@ -2574,7 +2605,10 @@ bool eject_item()
         return false;
     }
 
-    unequip_item(EQ_CYTOPLASM);
+    item_def &item = *you.slot_item(EQ_CYTOPLASM);
+    int delay = (_subsumption_delay(item) / 2);
+
+    start_delay<EjectionDelay>(delay, item);
 
     return true;
 }
