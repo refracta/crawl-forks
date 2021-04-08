@@ -1566,7 +1566,7 @@ static bool _sewer_check(coord_def coord)
          || grd(coord) == DNGN_PERMAROCK_WALL || grd(coord) == DNGN_ENDLESS_SLUDGE);
 }
 
-static void _snow()
+/*static void _snow()
 {
     for (rectangle_iterator ri(coord_def(0, 0), coord_def(GXM - 1, GYM - 1)); ri; ++ri)
     {
@@ -1582,7 +1582,7 @@ static void _snow()
                 env.pgrid(*ri) |= FPROP_SNOW;
         }
     }
-}
+}*/
 
 static void _sewer_water()
 {
@@ -2900,8 +2900,8 @@ static void _build_dungeon_level()
         _sewer_water();
     }
 
-    if (is_christmas())
-        _snow();
+//    if (is_christmas())
+//        _snow();
 
     fixup_misplaced_items();
     link_items();
