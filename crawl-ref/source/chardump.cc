@@ -1242,16 +1242,17 @@ static const char* _aux_attack_names[1 + UNAT_LAST_ATTACK] =
     "Staff Constrict",
     "Staff Tentacle Slap",
     "Kick",
+    "Tentacle Spike",
     "Headbutt",
     "Peck",
     "Tailslap",
     "Punch",
     "Bite",
     "Pseudopods",
-    "T. Squeeze",
-    "T. Slap",
-    "T. Smack",
-    "T. Thwack",
+    "Tentacle Squeeze",
+    "Tentacle Slap",
+    "Tentacle Smack",
+    "Tentacle Thwack",
 };
 
 static string _describe_action_subtype(caction_type type, int compound_subtype)
