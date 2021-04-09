@@ -646,7 +646,7 @@ const char *mi_spell_title(spell_type spell, const monster_info * mi)
     }
 
     if (chaos)
-        return chaosTitle.c_str();
+        return _seekspell(spell)->chaosTitle;
     return _seekspell(spell)->title;
 }
 
