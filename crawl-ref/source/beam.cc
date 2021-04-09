@@ -2933,6 +2933,9 @@ int bolt::get_cloud_size(bool min, bool max) const
 
 void bolt::affect_endpoint()
 {
+    if (!in_bounds(pos()))
+        return;
+
     if (special_explosion)
     {
         special_explosion->target = pos();
