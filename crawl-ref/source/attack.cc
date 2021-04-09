@@ -190,6 +190,9 @@ bool attack::handle_phase_damaged()
             return false;
     }
 
+    if (mount_defend)
+        return you.mounted();
+
     // It's okay if a monster took lethal damage, but we should stop
     // the combat if it was already reset (e.g. a spectral weapon that
     // took damage and then noticed that its caster is gone).
