@@ -130,6 +130,10 @@ bool player::submerged(bool mt) const
 {
     if (mt)
         return mount_submerged();
+
+    if (you.can_water_walk() && player_likes_water())
+        return false;
+
     return actor::submerged();
 }
 
