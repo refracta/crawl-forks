@@ -983,6 +983,9 @@ bool ranged_attack::apply_missile_brand()
     if (special_damage > 0)
         inflict_damage(special_damage, special_damage_flavour);
 
+    if (mount_defend)
+        return you.mounted();
+
     return !defender->alive();
 }
 
