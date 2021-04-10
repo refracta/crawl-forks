@@ -1625,7 +1625,8 @@ bool wear_armour(int item)
            || slot == EQ_HELMET
            || slot == EQ_GLOVES
            || slot == EQ_BOOTS
-           || slot == EQ_BODY_ARMOUR)
+           || slot == EQ_BODY_ARMOUR
+           || slot == EQ_BARDING)
         && you.equip[slot] != -1)
     {
         if (!takeoff_armour(you.equip[slot]))
@@ -1717,6 +1718,7 @@ bool takeoff_armour(int item)
     case EQ_HELMET:
     case EQ_GLOVES:
     case EQ_BOOTS:
+    case EQ_BARDING:
         if (item != you.equip[slot])
         {
             mpr("You aren't wearing that!");
