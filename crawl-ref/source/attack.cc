@@ -99,7 +99,7 @@ bool attack::handle_phase_blocked()
         {
             if (attacker->is_player())
                 str = random2(you.skill(SK_EVOCATIONS));
-            else
+            else if (attacker->alive())
                 str = random2(attacker->get_hit_dice());
 
             switch (weapon->sub_type)
@@ -122,7 +122,8 @@ bool attack::handle_phase_blocked()
         }
         else
         {
-            str = calc_damage() / 5;
+            if (attacker->alive())
+                str = calc_damage() / 5;
 
             switch (get_weapon_brand(*weapon))
             {
