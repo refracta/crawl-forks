@@ -107,7 +107,10 @@ bool character_is_allowed(species_type species, job_type job)
 
 char_choice_restriction job_allowed(species_type speci, job_type job)
 {
-    if (!is_starting_species(speci) || !is_starting_job(job))
+    if (!is_april_fools() && job == JOB_JESTER)
+        return CC_BANNED;
+
+    if ((!is_starting_species(speci) && speci != SP_UNKNOWN) || !is_starting_job(job))
         return CC_BANNED;
 
     if (_banned_combination(job, speci))

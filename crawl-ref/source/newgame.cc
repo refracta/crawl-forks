@@ -1078,7 +1078,7 @@ static job_group jobs_order[] =
     {
         "Adventurer",
         coord_def(0, 6), 20,
-        { JOB_ARTIFICER, JOB_WANDERER, JOB_JESTER }
+        { JOB_ARTIFICER, JOB_WANDERER }
     },
     {
         "Zealot",
@@ -1097,6 +1097,11 @@ static job_group jobs_order[] =
         { JOB_WIZARD, JOB_SUMMONER, JOB_NECROMANCER,
           JOB_FIRE_ELEMENTALIST, JOB_ICE_ELEMENTALIST,
           JOB_AIR_ELEMENTALIST, JOB_EARTH_ELEMENTALIST, JOB_VENOM_MAGE }
+    },
+    {
+        "Fool",
+        coord_def(2, 10), 22,
+        { JOB_JESTER }
     },
     {
         "Hybrid",
@@ -1122,8 +1127,7 @@ static void _construct_backgrounds_menu(const newgame_def& ng,
     // Add entries for any job groups with at least one playable background.
     for (job_group& group : jobs_order)
     {
-        if (ng.species == SP_UNKNOWN
-            || any_of(begin(group.jobs), end(group.jobs), [&ng](job_type job)
+        if (any_of(begin(group.jobs), end(group.jobs), [&ng](job_type job)
                       { return job_allowed(ng.species, job) != CC_BANNED; }))
         {
             group.attach(ng, defaults, ng_menu, letter);
