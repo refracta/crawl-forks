@@ -1556,6 +1556,7 @@ static const AuxStaff           AUX_STAFF = AuxStaff();
 static const AuxStaffSlap       AUX_STAFFSLAP = AuxStaffSlap();
 static const AuxKick            AUX_KICK = AuxKick();
 static const AuxPeck            AUX_PECK = AuxPeck();
+static const AuxTentacleSpike   AUX_TENTACLE_SPIKE = AuxTentacleSpike();
 static const AuxHeadbutt        AUX_HEADBUTT = AuxHeadbutt();
 static const AuxTailslap        AUX_TAILSLAP = AuxTailslap();
 static const AuxPunch           AUX_PUNCH = AuxPunch();
