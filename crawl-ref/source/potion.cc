@@ -112,8 +112,6 @@ public:
             int amount = 5 + random2(7);
             if (is_potion && !you.can_potion_heal() && player_rotted())
             {
-                // Treat the effectiveness of rot removal as if the player
-                // had two levels of MUT_NO_POTION_HEAL
                 unrot_hp(div_rand_round(amount,3));
                 unrotted = true;
             }
