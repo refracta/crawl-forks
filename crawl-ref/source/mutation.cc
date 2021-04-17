@@ -2876,13 +2876,13 @@ static const facet_def _demon_facets[] =
     // Body Slot facets
     { 0, { MUT_CLAWS, MUT_CLAWS, MUT_CLAWS },
       { -33, -33, -33 } },
-    { 0, { MUT_NON_MUTATION, MUT_HORNS, MUT_NON_MUTATION },
+    { 0, { MUT_NON_MUTATION, MUT_NON_MUTATION, MUT_HORNS },
       { -33, -33, -33 } },
-    { 0, { MUT_NON_MUTATION, MUT_ANTENNAE, MUT_NON_MUTATION },
+    { 0, { MUT_NON_MUTATION, MUT_NON_MUTATION, MUT_ANTENNAE },
       { -33, -33, -33 } },
-    { 0, { MUT_NON_MUTATION, MUT_HOOVES, MUT_NON_MUTATION },
+    { 0, { MUT_NON_MUTATION, MUT_NON_MUTATION, MUT_HOOVES },
       { -33, -33, -33 } },
-    { 0, { MUT_NON_MUTATION, MUT_TALONS, MUT_NON_MUTATION },
+    { 0, { MUT_NON_MUTATION, MUT_NON_MUTATION, MUT_TALONS },
       { -33, -33, -33 } },
     // Scale mutations
     { 1, { MUT_DISTORTION_FIELD, MUT_DISTORTION_FIELD, MUT_DISTORTION_FIELD },
@@ -3013,7 +3013,8 @@ try_again:
             {
                 mutation_type m = next_facet->muts[i];
 
-                ret.emplace_back(m, next_facet->when[i], absfacet);
+                if (m != MUT_NON_MUTATION)
+                    ret.emplace_back(m, next_facet->when[i], absfacet);
 
                 if (m == MUT_COLD_RESISTANCE)
                     ice_elemental++;
@@ -3102,7 +3103,7 @@ _schedule_ds_mutations(vector<mutation_type> muts)
             player::demon_trait dt;
 
             dt.level_gained = slots_left.front();
-            dt.mutation     = muts_left.front();
+            dt.mutation = muts_left.front();
 
             dprf("Demonspawn will gain %s at level %d",
                     _get_mutation_def(dt.mutation).short_desc, dt.level_gained);
