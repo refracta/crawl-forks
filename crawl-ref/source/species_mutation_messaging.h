@@ -61,9 +61,9 @@ static const species_mutation_message spmu_data[] =
 { SP_LIGNIFITE, MUT_CLAWS,
   "barbs",
 
-  {"You have sharp barbs on your forebranches. (+2 Unarmed)",
-   "You have very sharp barbs on your forebranches. (+4 Unarmed)",
-   "You have spiked branches. (+6 Unarmed)" },
+  {"You have sharp barbs on your forebranches. (+3 Unarmed)",
+   "You have very sharp barbs on your forebranches. (+6 Unarmed)",
+   "You have spiked branches. (+9 Unarmed)" },
 
   {"Barbs sprout from your front branches.",
    "Your barbs become longer and sharper.", 
@@ -77,9 +77,9 @@ static const species_mutation_message spmu_data[] =
 { SP_OCTOPODE, MUT_CLAWS,
   "toothy tentacles",
 
-  {"Your front tentacles are covered in pointy teeth. (+2 Unarmed)",
-   "Your tentacles are covered in sharp spiky teeth. (+4 Unarmed)",
-   "You have razor-sharp teeth on your tentacles. (+6 Unarmed)"},
+  {"Your front tentacles are covered in pointy teeth. (+3 Unarmed)",
+   "Your tentacles are covered in sharp spiky teeth. (+6 Unarmed)",
+   "You have razor-sharp teeth on your tentacles. (+9 Unarmed)"},
 
   {"Squid-like teeth form on your front tentacles.",
    "Your teeth become harder and sharper.",

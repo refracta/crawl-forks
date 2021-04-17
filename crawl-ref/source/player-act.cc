@@ -769,6 +769,10 @@ string player::unarmed_attack_name() const
     {
         if (species == SP_FELID)
             default_name = "Teeth and claws";
+        else if (species == SP_LIGNIFITE)
+            default_name = "Thorns";
+        else if (species == SP_OCTOPODE)
+            default_name = "Teeth";
         else
             default_name = "Claws";
     }
