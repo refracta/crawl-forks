@@ -689,20 +689,12 @@ static const mutation_def mut_data[] =
   {"", "", ""},
 },
 
-{ MUT_PASSIVE_MAPPING, 3, 3, mutflag::good, false,
+{ MUT_PASSIVE_MAPPING, 3, 1, mutflag::good, false,
   "sense surroundings",
 
-  {"You passively map a small area around you.",
-   "You passively map the area around you.",
-   "You passively map a large area around you."},
-
-  {"You feel a strange attunement to the structure of the dungeons.",
-   "Your attunement to dungeon structure grows.",
-   "Your attunement to dungeon structure grows further."},
-
-  {"You feel slightly disoriented.",
-   "You feel slightly disoriented.",
-   "You feel slightly disoriented."},
+  {"You passively map the area around you.", "", ""},
+  {"You feel a strange attunement to the structure of the dungeons.", "", ""},
+  {"You feel disoriented.", "", ""},
 },
 
 { MUT_ICEMAIL, 0, 1, mutflag::good, false,
@@ -712,24 +704,6 @@ static const mutation_def mut_data[] =
   {"An icy envelope takes form around you.", "", ""},
   {"", "", ""},
 },
-
-#if TAG_MAJOR_VERSION == 34
-{ MUT_CONSERVE_SCROLLS, 0, 1, mutflag::good, false,
-  "conserve scrolls",
-
-  {"You are very good at protecting items from fire.", "", ""},
-  {"You feel less concerned about heat.", "", ""},
-  {"", "", ""},
-},
-
-{ MUT_CONSERVE_POTIONS, 0, 1, mutflag::good, false,
-  "conserve potions",
-
-  {"You are very good at protecting items from cold.", "", ""},
-  {"You feel less concerned about cold.", "", ""},
-  {"", "", ""},
-},
-#endif
 
 { MUT_PASSIVE_FREEZE, 0, 1, mutflag::good, false,
   "passive freeze",
@@ -1257,20 +1231,17 @@ static const mutation_def mut_data[] =
   {"", "", ""},
 },
 
-{ MUT_CAMOUFLAGE, 1, 3, mutflag::good, true,
+{ MUT_CAMOUFLAGE, 1, 2, mutflag::good, true,
   "camouflage",
 
-  {"Your skin changes colour to match your surroundings (Stealth+).",
-   "Your skin blends seamlessly with your surroundings (Stealth++).",
-   "Your skin perfectly mimics your surroundings (Stealth+++)."},
+  {"Your skin changes colour to match your surroundings (Stealth++).",
+   "Your skin perfectly mimics your surroundings (Stealth++++)).", ""},
 
   {"Your skin functions as natural camouflage.",
-   "Your natural camouflage becomes more effective.",
-   "Your natural camouflage becomes more effective."},
+   "Your natural camouflage becomes more effective.", ""},
 
   {"Your skin no longer functions as natural camouflage.",
-   "Your natural camouflage becomes less effective.",
-   "Your natural camouflage becomes less effective."},
+   "Your natural camouflage becomes less effective.", ""},
 },
 
 { MUT_IGNITE_BLOOD, 0, 1, mutflag::good, false,

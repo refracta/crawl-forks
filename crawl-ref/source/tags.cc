@@ -3060,6 +3060,7 @@ static void tag_read_you(reader &th)
         _cap_mutation_at(MUT_ANTENNAE, 1);
         _cap_mutation_at(MUT_HOOVES, 1);
         _cap_mutation_at(MUT_TALONS, 1);
+        _cap_mutation_at(MUT_PASSIVE_MAPPING, 1);
         you.mutation[MUT_TOUGH_SKIN] = you.innate_mutation[MUT_TOUGH_SKIN] = 0;
         you.mutation[MUT_SHAGGY_FUR] = you.innate_mutation[MUT_SHAGGY_FUR] = 0;
         you.mutation[MUT_STRONG] = 0;
