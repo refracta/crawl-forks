@@ -1351,24 +1351,18 @@ public:
 
     int get_damage() const override
     {
-        if (you.has_usable_hooves())
-        {
-            // Max hoof damage: 10.
-            return damage + you.get_mutation_level(MUT_HOOVES) * 5 / 3;
-        }
+        if (you.has_hooves())
+            return 10;
 
-        if (you.has_usable_talons())
-        {
-            // Max talon damage: 9.
-            return damage + 1 + you.get_mutation_level(MUT_TALONS);
-        }
+        if (you.has_talons())
+            return 9;
 
         return 3; // Shouldn't get here but in case
     }
 
     string get_verb() const override
     {
-        if (you.has_usable_talons())
+        if (you.has_talons())
             return "claw";
         return name;
     }
@@ -1378,24 +1372,14 @@ class AuxTentacleSpike: public AuxAttackType
 {
 public:
     AuxTentacleSpike()
-    : AuxAttackType(5, "pierce") { };
-
-    int get_damage() const override
-    {
-        return damage + you.get_mutation_level(MUT_TENTACLE_SPIKE);
-    }
+    : AuxAttackType(8, "pierce") { };
 };
 
 class AuxHeadbutt: public AuxAttackType
 {
 public:
     AuxHeadbutt()
-    : AuxAttackType(5, "headbutt") { };
-
-    int get_damage() const override
-    {
-        return damage + you.get_mutation_level(MUT_HORNS) * 3;
-    }
+    : AuxAttackType(12, "headbutt") { };
 };
 
 class AuxPeck: public AuxAttackType
@@ -1467,7 +1451,7 @@ public:
 
     int get_damage() const override
     {
-        const int fang_damage = you.has_usable_fangs() * 2;
+        const int fang_damage = you.has_fangs() * 6;
         if (you.get_mutation_level(MUT_ANTIMAGIC_BITE))
             return fang_damage + div_rand_round(you.get_hit_dice(), 3);
 
@@ -4362,13 +4346,11 @@ void melee_attack::do_minotaur_retaliation()
         // You are in a non-minotaur form.
         return;
     }
-    // This will usually be 2, but could be 3 if the player mutated more.
-    const int mut = you.get_mutation_level(MUT_HORNS);
 
     if (5 * you.strength() + 7 * you.dex() > random2(600))
     {
         // Use the same damage formula as a regular headbutt.
-        int dmg = 5 + mut * 3;
+        int dmg = 12;
         dmg = player_stat_modify_damage(dmg);
         dmg = random2(dmg);
         dmg = player_apply_fighting_skill(dmg, true);
@@ -4574,7 +4556,7 @@ bool melee_attack::_extra_aux_attack(unarmed_attack_type atk)
                 || you.species == SP_OCTOPODE && x_chance_in_y(you.usable_tentacles(), 4);
 
     case UNAT_KICK:
-        return you.has_usable_hooves() || you.has_usable_talons();
+        return you.has_hooves() || you.has_talons();
 
     case UNAT_TENTACLE_SPIKE:
         return you.get_mutation_level(MUT_TENTACLE_SPIKE) && x_chance_in_y(you.usable_tentacles(), 4);
@@ -4615,7 +4597,7 @@ bool melee_attack::_extra_aux_attack(unarmed_attack_type atk)
 
     case UNAT_BITE:
         return you.get_mutation_level(MUT_ANTIMAGIC_BITE)
-               || (you.has_usable_fangs()
+               || (you.has_fangs()
                    || you.get_mutation_level(MUT_ACIDIC_BITE))
                    && x_chance_in_y(2, 5);
 

@@ -530,7 +530,7 @@ void give_basic_mutations(species_type species)
     if (you.char_class == JOB_CENTAUR)
     {
         you.mutation[MUT_FAST] = you.innate_mutation[MUT_FAST] = 2;
-        you.mutation[MUT_HOOVES] = you.innate_mutation[MUT_HOOVES] = 3;
+        you.mutation[MUT_HOOVES] = you.innate_mutation[MUT_HOOVES] = 1;
     }
 
     if (you.char_class == JOB_NAGA)

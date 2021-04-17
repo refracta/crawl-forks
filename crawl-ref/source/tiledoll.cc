@@ -469,18 +469,7 @@ void fill_doll_equipment(dolls_data &result)
             else if (species_is_draconian(you.species))
                 result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS_DRAC;
             else
-                switch (you.get_mutation_level(MUT_HORNS))
-                {
-                case 1:
-                    result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS1;
-                    break;
-                case 2:
-                    result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS2;
-                    break;
-                case 3:
-                    result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS3;
-                    break;
-                }
+                result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS3;
         }
         else
             result.parts[TILEP_PART_HELM] = 0;
@@ -497,7 +486,7 @@ void fill_doll_equipment(dolls_data &result)
             item = you.melded[EQ_BARDING] ? -1 : you.equip[EQ_BARDING];
         if (item != -1)
             result.parts[TILEP_PART_BOOTS] = tilep_equ_boots(you.inv[item]);
-        else if (you.get_mutation_level(MUT_HOOVES) >= 3)
+        else if (you.get_mutation_level(MUT_HOOVES))
             result.parts[TILEP_PART_BOOTS] = TILEP_BOOTS_HOOVES;
         else
             result.parts[TILEP_PART_BOOTS] = 0;

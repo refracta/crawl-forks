@@ -46,7 +46,7 @@ mutations:
   1:
     MUT_CARNIVOROUS: 1
     MUT_FAST: 1
-    MUT_FANGS: 3
+    MUT_FANGS: 1
     MUT_ACUTE_VISION: 1
     MUT_PAWS: 1
     MUT_SLOW_METABOLISM: 1

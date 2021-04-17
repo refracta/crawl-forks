@@ -1476,15 +1476,6 @@ static int _transform_duration(transformation which_trans, int pow)
     return get_form(which_trans)->get_duration(pow);
 }
 
-static int _beastly_appendage_level(int appendage)
-{
-    switch (appendage)
-    {
-    case MUT_HORNS: return 2;
-    default:        return 3;
-    }
-}
-
 /**
  * Print an appropriate message when the number of heads the player has
  * changes during a refresh of hydra form.
@@ -1875,7 +1866,7 @@ bool transform(int pow, transformation which_trans, bool involuntary,
         {
             int app = you.attribute[ATTR_APPENDAGE];
             ASSERT(app != NUM_MUTATIONS);
-            you.mutation[app] = _beastly_appendage_level(app);
+            you.mutation[app] = 1;
         }
         break;
 
@@ -1984,7 +1975,7 @@ void untransform(bool skip_move)
         ASSERT(beastly_slot(app) != EQ_NONE);
         const int levels = you.get_base_mutation_level(app);
         // Preserve extra mutation levels acquired after transforming.
-        const int beast_levels = _beastly_appendage_level(app);
+        const int beast_levels = 1;
         const int extra = max(0, levels - you.get_innate_mutation_level(app)
                                         - beast_levels);
         you.mutation[app] = you.get_innate_mutation_level(app) + extra;

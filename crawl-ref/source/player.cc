@@ -914,8 +914,8 @@ bool player_has_feet(bool temp, bool include_mutations)
     }
 
     if (include_mutations &&
-        (you.get_mutation_level(MUT_HOOVES, temp) == 3
-         || you.get_mutation_level(MUT_TALONS, temp) == 3))
+        (you.get_mutation_level(MUT_HOOVES, temp)
+         || you.get_mutation_level(MUT_TALONS, temp)))
     {
         return false;
     }
@@ -4066,8 +4066,8 @@ int player_stealth()
                 stealth /= 4;
             }
 
-            if (you.has_usable_hooves())
-                stealth -= 5 + 5 * you.get_mutation_level(MUT_HOOVES);
+            if (you.has_hooves())
+                stealth -= 20;
             else if (you.species == SP_FELID
                      && (you.form == transformation::none
                          || you.form == transformation::appendage))
@@ -8283,11 +8283,6 @@ int player::has_talons(bool allow_tran) const
     return get_mutation_level(MUT_TALONS, allow_tran);
 }
 
-bool player::has_usable_talons(bool allow_tran) const
-{
-    return !slot_item(EQ_BOOTS) && has_talons(allow_tran);
-}
-
 int player::has_hooves(bool allow_tran) const
 {
     if (!allow_tran && fishtail)
@@ -8296,26 +8291,16 @@ int player::has_hooves(bool allow_tran) const
     return get_mutation_level(MUT_HOOVES, allow_tran);
 }
 
-bool player::has_usable_hooves(bool allow_tran) const
-{
-    return has_hooves(allow_tran) && !slot_item(EQ_BOOTS);
-}
-
 int player::has_fangs(bool allow_tran) const
 {
     if (allow_tran)
     {
         // these transformations bring fangs with them
         if (form == transformation::dragon)
-            return 3;
+            return 1;
     }
 
     return get_mutation_level(MUT_FANGS, allow_tran);
-}
-
-int player::has_usable_fangs(bool allow_tran) const
-{
-    return has_fangs(allow_tran);
 }
 
 int player::has_tail(bool allow_tran) const
@@ -8491,9 +8476,7 @@ int player::innate_vision() const
         x++;
 
     if (have_passive(passive_t::sinv))
-        return 1;
-
-    x = min(1, x);
+        x++;
 
     if (get_mutation_level(MUT_GOLDEN_EYEBALLS) == 3)
         x++;
@@ -9150,7 +9133,7 @@ static string _constriction_description()
 **/
 int player_monster_detect_radius()
 {
-    int radius = you.get_mutation_level(MUT_ANTENNAE) * 2;
+    int radius = you.get_mutation_level(MUT_ANTENNAE) * 8;
 
     if (player_equip_unrand(UNRAND_BOOTS_ASSASSIN))
         radius = max(radius, 4);

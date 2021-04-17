@@ -1291,8 +1291,7 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
             return false;
         }
 
-        if (you.get_mutation_level(MUT_HORNS, !ignore_temporary) >= 3
-            || you.get_mutation_level(MUT_ANTENNAE, !ignore_temporary) >= 3)
+        if (you.get_mutation_level(MUT_ANTENNAE, !ignore_temporary))
         {
             if (verbose)
                 mpr("The hauberk won't fit your head.");
@@ -1387,7 +1386,7 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
 
     if (sub_type == ARM_BOOTS)
     {
-        if (you.get_mutation_level(MUT_HOOVES, false) == 3)
+        if (you.get_mutation_level(MUT_HOOVES, false))
         {
             if (verbose)
                 mpr("You can't wear boots with hooves!");
@@ -1425,18 +1424,11 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
 
     if (slot == EQ_HELMET)
     {
-        // Horns 3 & Antennae 3 mutations disallow all headgear
-        if (you.get_mutation_level(MUT_HORNS, false) == 3)
-        {
-            if (verbose)
-                mpr("You can't wear any headgear with your large horns!");
-            return false;
-        }
-
+        // Antennae disallow all headgear
         if (you.get_mutation_level(MUT_ANTENNAE, false) == 3)
         {
             if (verbose)
-                mpr("You can't wear any headgear with your large antennae!");
+                mpr("You can't wear any headgear with your antennae!");
             return false;
         }
 
@@ -1454,13 +1446,6 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
             {
                 if (verbose)
                     mpr("You can't wear that with your beak!");
-                return false;
-            }
-
-            if (you.get_mutation_level(MUT_ANTENNAE, false))
-            {
-                if (verbose)
-                    mpr("You can't wear that with your antennae!");
                 return false;
             }
 

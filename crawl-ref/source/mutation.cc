@@ -169,7 +169,7 @@ equipment_type beastly_slot(int mut)
     case MUT_TALONS:
         return EQ_BOOTS;
     case MUT_TENTACLE_SPIKE:
-        return EQ_BODY_ARMOUR;
+        return EQ_CLOAK;
     default:
         return EQ_NONE;
     }
@@ -2066,9 +2066,8 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
 
         case MUT_HOOVES:
         case MUT_TALONS:
-            // Hooves and talons force boots off at 3.
-            if (cur_base_level >= 3 && !you.melded[EQ_BOOTS])
-                remove_one_equip(EQ_BOOTS, false, true);
+            // Hooves and talons force boots off.
+            remove_one_equip(EQ_BOOTS, false, true);
             // Recheck Ashenzari bondage in case our available slots changed.
             ash_check_bondage();
             break;
@@ -2081,14 +2080,14 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
             ash_check_bondage();
             break;
 
-        case MUT_HORNS:
         case MUT_ANTENNAE:
-            // Horns & Antennae 3 removes all headgear. Same algorithm as with
+            // Antennae remove all headgear. Same algorithm as with
             // glove removal.
 
-            if (cur_base_level >= 3 && !you.melded[EQ_HELMET])
+            if (!you.melded[EQ_HELMET])
                 remove_one_equip(EQ_HELMET, false, true);
             // Intentional fall-through
+        case MUT_HORNS:
         case MUT_BEAK:
             // Horns, beaks, and antennae force hard helmets off.
             if (you.equip[EQ_HELMET] != -1
@@ -2882,13 +2881,13 @@ static const facet_def _demon_facets[] =
     // Body Slot facets
     { 0, { MUT_CLAWS, MUT_CLAWS, MUT_CLAWS },
       { -33, -33, -33 } },
-    { 0, { MUT_HORNS, MUT_HORNS, MUT_HORNS },
+    { 0, { MUT_NON_MUTATION, MUT_HORNS, MUT_NON_MUTATION },
       { -33, -33, -33 } },
-    { 0, { MUT_ANTENNAE, MUT_ANTENNAE, MUT_ANTENNAE },
+    { 0, { MUT_NON_MUTATION, MUT_ANTENNAE, MUT_NON_MUTATION },
       { -33, -33, -33 } },
-    { 0, { MUT_HOOVES, MUT_HOOVES, MUT_HOOVES },
+    { 0, { MUT_NON_MUTATION, MUT_HOOVES, MUT_NON_MUTATION },
       { -33, -33, -33 } },
-    { 0, { MUT_TALONS, MUT_TALONS, MUT_TALONS },
+    { 0, { MUT_NON_MUTATION, MUT_TALONS, MUT_NON_MUTATION },
       { -33, -33, -33 } },
     // Scale mutations
     { 1, { MUT_DISTORTION_FIELD, MUT_DISTORTION_FIELD, MUT_DISTORTION_FIELD },

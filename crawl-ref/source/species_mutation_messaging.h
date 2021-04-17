@@ -26,7 +26,7 @@ static const species_mutation_message spmu_data[] =
 { SP_TENGU, MUT_HOOVES,
   "hippogriff form",
 
-  {"", "", "You have a hippogriff-like bottom half; talons in the front, hooves in the back."},
+  {"You have a hippogriff-like bottom half; talons in the front, hooves in the back.", "", ""},
   {"", "", ""},
   {"", "", ""},
 },
