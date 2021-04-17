@@ -1406,41 +1406,12 @@ public:
     }
 };
 
+// BCADDO: Remove this unused Aux type.
 class AuxPunch: public AuxAttackType
 {
 public:
     AuxPunch()
-    : AuxAttackType(5, "punch") { };
-
-    // BCADNOTE: Is this ever used anymore?
-
-    int get_damage() const override
-    {
-        const int base_dam = damage + you.skill_rdiv(SK_UNARMED_COMBAT, 1, 2);
-
-        if (you.form == transformation::blade_hands)
-            return base_dam + 6;
-
-        if (you.has_usable_claws())
-            return base_dam + roll_dice(you.has_claws(), 3);
-
-        return base_dam;
-    }
-
-    string get_name() const override
-    {
-        if (you.form == transformation::blade_hands)
-            return "slash";
-
-        if (you.has_usable_claws())
-            return "claw";
-
-        if (you.has_tentacles())
-            return "tentacle-slap";
-
-        return name;
-    }
-
+    : AuxAttackType(5, "bug") { };
 };
 
 class AuxBite: public AuxAttackType
@@ -2568,15 +2539,10 @@ bool melee_attack::attack_chops_heads(int dam, int dam_type)
 
     // Only cutting implements.
     if (dam_type != DVORP_SLICING && dam_type != DVORP_CHOPPING
-        && dam_type != DVORP_CLAWING && dam_type != DVORP_DP
-        && dam_type != DVORP_TP)
+        && dam_type != DVORP_DP && dam_type != DVORP_TP)
     {
         return false;
     }
-
-    // Small claws are not big enough.
-    if (dam_type == DVORP_CLAWING && attacker->has_claws() < 3)
-        return false;
 
     // You need to have done at least some damage.
     if (dam <= 0 || dam < 4 && coinflip())
@@ -4599,7 +4565,7 @@ bool melee_attack::_extra_aux_attack(unarmed_attack_type atk)
                    && x_chance_in_y(2, 5);
 
     case UNAT_PUNCH:
-        return player_gets_aux_punch();
+        return false;
 
     default:
         return false;

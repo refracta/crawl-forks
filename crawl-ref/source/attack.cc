@@ -265,7 +265,7 @@ int attack::calc_to_hit(bool random, bool player_aux)
         else
         {
             // Claws give a slight bonus to accuracy when active
-            mhit *= (you.get_mutation_level(MUT_CLAWS) > 0
+            mhit *= (you.get_mutation_level(MUT_CLAWS)
                      && wpn_skill == SK_UNARMED_COMBAT) ? 1.1 : 1;
 
             mhit *= (2700 + you.skill(wpn_skill, 100));
@@ -1413,7 +1413,7 @@ int attack::calc_base_unarmed_damage()
 
     // Claw damage only applies for bare hands.
     if (you.has_usable_claws())
-        damage += you.has_claws();
+        damage += div_rand_round(you.has_claws() * 3, 2);
 
     if (you.form_uses_xl())
         damage += div_rand_round(you.experience_level, 3);

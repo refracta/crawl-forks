@@ -2075,8 +2075,8 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
             break;
 
         case MUT_CLAWS:
-            // Claws force gloves off at 3.
-            if (cur_base_level >= 3 && !you.melded[EQ_GLOVES])
+            // Claws force gloves off at 2.
+            if (cur_base_level >= 2 && !you.melded[EQ_GLOVES])
                 remove_one_equip(EQ_GLOVES, false, true);
             // Recheck Ashenzari bondage in case our available slots changed.
             ash_check_bondage();
