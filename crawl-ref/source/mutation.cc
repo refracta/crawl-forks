@@ -2920,7 +2920,7 @@ string mutation_desc(mutation_type mut, int level, bool colour,
 static const facet_def _demon_facets[] =
 {
     // Body Slot facets
-    { 0, { MUT_CLAWS, MUT_CLAWS, MUT_CLAWS },
+    { 0, { MUT_NON_MUTATION, MUT_CLAWS, MUT_CLAWS },
       { -33, -33, -33 } },
     { 0, { MUT_NON_MUTATION, MUT_NON_MUTATION, MUT_HORNS },
       { -33, -33, -33 } },
