@@ -4032,7 +4032,7 @@ int player_stealth()
     stealth += STEALTH_PIP * you.get_mutation_level(MUT_NIGHTSTALKER);
     stealth += (STEALTH_PIP / 2)
                 * you.get_mutation_level(MUT_THIN_SKELETAL_STRUCTURE);
-    stealth += STEALTH_PIP * you.get_mutation_level(MUT_CAMOUFLAGE);
+    stealth += STEALTH_PIP * you.get_mutation_level(MUT_CAMOUFLAGE) * 2;
     stealth += STEALTH_PIP * you.get_mutation_level(MUT_TRANSLUCENT_SKIN);
 
     // draconian scales:

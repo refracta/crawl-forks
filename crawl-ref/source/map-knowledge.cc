@@ -103,11 +103,9 @@ static void _automap_from(int x, int y, int mutated)
 
 static int _map_quality()
 {
-    int passive = you.get_mutation_level(MUT_PASSIVE_MAPPING);
-    // the explanation of this 51 vs max_piety of 200 is left as
-    // an exercise to the reader
+    int passive = you.get_mutation_level(MUT_PASSIVE_MAPPING) * 2;
     if (have_passive(passive_t::auto_map))
-        passive = max(passive, you.piety / 51);
+        passive = max(passive, (you.piety - 1) / 50);
     return passive;
 }
 
