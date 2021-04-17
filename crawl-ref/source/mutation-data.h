@@ -979,214 +979,108 @@ static const mutation_def mut_data[] =
 },
 
 // Scale mutations
-{ MUT_DISTORTION_FIELD, 2, 3, mutflag::good, false,
+{ MUT_DISTORTION_FIELD, 2, 1, mutflag::good, false,
   "repulsion field",
 
-  {"You are surrounded by a mild repulsion field. (EV +2)",
-   "You are surrounded by a moderate repulsion field. (EV +3)",
-   "You are surrounded by a strong repulsion field. (EV +4, RMsl)"},
-
-  {"You begin to radiate repulsive energy.",
-   "Your repulsive radiation grows stronger.",
-   "Your repulsive radiation grows stronger."},
-
-  {"You feel less repulsive.",
-   "You feel less repulsive.",
-   "You feel less repulsive."},
+  {"You are surrounded by a repulsion field. (RMsl, EV +", "", ""},
+  {"You begin to radiate repulsive energy.", "", ""},
+  {"You feel less repulsive.", "", ""},
 },
 
-{ MUT_ICY_BLUE_SCALES, 2, 3, mutflag::good, true,
+{ MUT_ICY_BLUE_SCALES, 2, 1, mutflag::good, true,
   "icy blue scales",
 
-  {"You are partially covered in icy blue scales. (AC +2)",
-   "You are mostly covered in icy blue scales. (AC +3)",
-   "You are completely covered in icy blue scales. (AC +4, rC+)"},
-
-  {"Icy blue scales grow over part of your body.",
-   "Icy blue scales spread over more of your body.",
-   "Icy blue scales cover your body completely."},
-
-  {"Your icy blue scales disappear.",
-   "Your icy blue scales recede somewhat.",
-   "Your icy blue scales recede somewhat."},
+  {"You are covered in icy blue scales. (rC+, AC +", "", ""},
+  {"Icy blue scales spread over your body.", "", ""},
+  {"Your icy blue scales disappear.", "", ""},
 },
 
-{ MUT_IRIDESCENT_SCALES, 2, 3, mutflag::good, true,
+{ MUT_IRIDESCENT_SCALES, 2, 1, mutflag::good, true,
   "iridescent scales",
 
-  {"You are partially covered in iridescent scales. (AC +2)",
-   "You are mostly covered in iridescent scales. (AC +4)",
-   "You are completely covered in iridescent scales. (AC +6)"},
-
-  {"Iridescent scales grow over part of your body.",
-   "Iridescent scales spread over more of your body.",
-   "Iridescent scales cover your body completely."},
-
-  {"Your iridescent scales disappear.",
-   "Your iridescent scales recede somewhat.",
-   "Your iridescent scales recede somewhat."},
+  {"You are covered in iridescent scales. (AC ", "", ""},
+  {"Iridescent scales spread over your body.", "", ""},
+  {"Your iridescent scales disappear.", "", ""},
 },
 
-{ MUT_LARGE_BONE_PLATES, 2, 3, mutflag::good, true,
+{ MUT_LARGE_BONE_PLATES, 2, 1, mutflag::good, true,
   "large bone plates",
 
-  {"You are partially covered in large bone plates. (SH +4)",
-   "You are mostly covered in large bone plates. (SH +6)",
-   "You are completely covered in large bone plates. (SH +8)"},
-
-  {"Large bone plates grow over parts of your arms.",
-   "Large bone plates spread over more of your arms.",
-   "Large bone plates cover your arms completely."},
-
-  {"Your large bone plates disappear.",
-   "Your large bone plates recede somewhat.",
-   "Your large bone plates recede somewhat."},
+  {"Your arms are covered in large bone plates. (SH +", "", ""},
+  {"Large bone plates spread over your arms.", "", ""},
+  {"Your large bone plates disappear.", "", ""},
 },
 
-{ MUT_MOLTEN_SCALES, 2, 3, mutflag::good, true,
+{ MUT_MOLTEN_SCALES, 2, 1, mutflag::good, true,
   "molten scales",
 
-  {"You are partially covered in molten scales. (AC +2)",
-   "You are mostly covered in molten scales. (AC +3)",
-   "You are completely covered in molten scales. (AC +4, rF+)"},
-
-  {"Molten scales grow over part of your body.",
-   "Molten scales spread over more of your body.",
-   "Molten scales cover your body completely."},
-
-  {"Your molten scales disappear.",
-   "Your molten scales recede somewhat.",
-   "Your molten scales recede somewhat."},
+  {"You are covered in molten scales. (rF+, AC +", "", ""},
+  {"Molten scales spread over your body.", "", ""},
+  {"Your molten scales disappear.", "", ""},
 },
 
-#if TAG_MAJOR_VERSION == 34
-{ MUT_ROUGH_BLACK_SCALES, 0, 3, mutflag::good, true,
+{ MUT_ROUGH_BLACK_SCALES, 2, 1, mutflag::good, true,
   "rough black scales",
 
-  {"You are partially covered in rough black scales. (AC +2, Dex -1)",
-   "You are mostly covered in rough black scales. (AC +5, Dex -2)",
-   "You are completely covered in rough black scales. (AC +8, Dex -3)"},
-
-  {"Rough black scales grow over part of your body.",
-   "Rough black scales spread over more of your body.",
-   "Rough black scales cover your body completely."},
-
-  {"Your rough black scales disappear.",
-   "Your rough black scales recede somewhat.",
-   "Your rough black scales recede somewhat."},
+  {"You are covered in rough black scales. (rN+, AC +"},
+  {"Rough black scales spread over your body.", "", ""},
+  {"Your rough black scales disappear.", "", ""},
 },
-#endif
 
-{ MUT_RUGGED_BROWN_SCALES, 2, 3, mutflag::good, true,
+{ MUT_RUGGED_BROWN_SCALES, 2, 1, mutflag::good, true,
   "rugged brown scales",
 
-  {"You are partially covered in rugged brown scales. (AC +1, +3% HP)",
-   "You are mostly covered in rugged brown scales. (AC +2, +5% HP)",
-   "You are completely covered in rugged brown scales. (AC +3, +7% HP)"},
-
-  {"Rugged brown scales grow over part of your body.",
-   "Rugged brown scales spread over more of your body.",
-   "Rugged brown scales cover your body completely."},
-
-  {"Your rugged brown scales disappear.",
-   "Your rugged brown scales recede somewhat.",
-   "Your rugged brown scales recede somewhat."},
+  {"You are covered in rugged brown scales. (+7% HP, AC +", "", ""},
+  {"Rugged brown scales spread over your body.", "", ""},
+  {"Your rugged brown scales disappear.", "", ""},
 },
 
-{ MUT_SLIMY_GREEN_SCALES, 2, 3, mutflag::good, true,
+{ MUT_SLIMY_GREEN_SCALES, 2, 1, mutflag::good, true,
   "slimy green scales",
 
-  {"You are partially covered in slimy green scales. (AC +2)",
-   "You are mostly covered in slimy green scales. (AC +3)",
-   "You are completely covered in slimy green scales. (AC +4, rPois)"},
-
-  {"Slimy green scales grow over part of your body.",
-   "Slimy green scales spread over more of your body.",
-   "Slimy green scales cover your body completely."},
-
-  {"Your slimy green scales disappear.",
-   "Your slimy green scales recede somewhat.",
-   "Your slimy green scales recede somewhat."},
+  {"You are covered in slimy green scales. (rPois, AC +"},
+  {"Slimy green scales spread over your body.", "", ""},
+  {"Your slimy green scales disappear.", "", ""},
 },
 
-{ MUT_THIN_METALLIC_SCALES, 2, 3, mutflag::good, true,
+{ MUT_THIN_METALLIC_SCALES, 2, 1, mutflag::good, true,
   "thin metallic scales",
 
-  {"You are partially covered in thin metallic scales. (AC +2)",
-   "You are mostly covered in thin metallic scales. (AC +3)",
-   "You are completely covered in thin metallic scales. (AC +4, rElec)"},
-
-  {"Thin metallic scales grow over part of your body.",
-   "Thin metallic scales spread over more of your body.",
-   "Thin metallic scales cover your body completely."},
-
-  {"Your thin metallic scales disappear.",
-   "Your thin metallic scales recede somewhat.",
-   "Your thin metallic scales recede somewhat."},
+  {"You are covered in thin metallic scales. (rElec, AC +", "", ""},
+  {"Thin metallic scales spread over your body.", "", ""},
+  {"Your thin metallic scales disappear.", "", ""},
 },
 
-{ MUT_THIN_SKELETAL_STRUCTURE, 2, 3, mutflag::good, false,
+{ MUT_THIN_SKELETAL_STRUCTURE, 2, 1, mutflag::good, false,
   "thin skeletal structure",
 
-  {"You have a somewhat thin skeletal structure. (Dex +2, Stealth)",
-   "You have a moderately thin skeletal structure. (Dex +4, Stealth+)",
-   "You have an unnaturally thin skeletal structure. (Dex +6, Stealth++)"},
-
-  {"Your bones become slightly less dense.",
-   "Your bones become somewhat less dense.",
-   "Your bones become less dense."},
-
-  {"Your skeletal structure returns to normal.",
-   "Your skeletal structure densifies.",
-   "Your skeletal structure densifies."},
+  {"You have an unnaturally thin skeletal structure. (Stealth++, Dex +", "", ""},
+  {"Your bones become less dense.", "", ""},
+  {"Your skeletal structure redensifies.", "", ""},
 },
 
-{ MUT_YELLOW_SCALES, 2, 3, mutflag::good, true,
+{ MUT_YELLOW_SCALES, 2, 1, mutflag::good, true,
   "yellow scales",
 
-  {"You are partially covered in yellow scales. (AC +2)",
-   "You are mostly covered in yellow scales. (AC +3)",
-   "You are completely covered in yellow scales. (AC +4, rCorr)"},
-
-  {"Yellow scales grow over part of your body.",
-   "Yellow scales spread over more of your body.",
-   "Yellow scales cover your body completely."},
-
-  {"Your yellow scales disappear.",
-   "Your yellow scales recede somewhat.",
-   "Your yellow scales recede somewhat."},
+  {"You are covered in yellow scales. (rCorr, AC +", "", ""},
+  {"Yellow scales spread over your body.", "", ""},
+  {"Your yellow scales disappear.", "", ""},
 },
 
-{ MUT_STURDY_FRAME, 2, 3, mutflag::good, true,
+{ MUT_STURDY_FRAME, 2, 1, mutflag::good, true,
   "sturdy frame",
 
-  {"Your movements are slightly less encumbered by armour. (ER -2)",
-   "Your movements are less encumbered by armour. (ER -4)",
-   "Your movements are significantly less encumbered by armour. (ER -6)"},
-
-  {"You feel less encumbered by your armour.",
-   "You feel less encumbered by your armour.",
-   "You feel less encumbered by your armour."},
-
-  {"You feel more encumbered by your armour.",
-   "You feel more encumbered by your armour.",
-   "You feel more encumbered by your armour."},
+  {"Your movements are less encumbered by armour. (ER -", "", ""},
+  {"You feel less encumbered by your armour.", "",""},
+  {"You feel more encumbered by your armour.", "", ""},
 },
 
-{ MUT_SANGUINE_ARMOUR, 0, 3, mutflag::good, false,
+{ MUT_SANGUINE_ARMOUR, 0, 1, mutflag::good, false,
   "sanguine armour",
 
-  {"When seriously injured, your bleeding wounds create armour. (AC +",
-   "When seriously injured, your bleeding wounds create thick armour. (AC +",
-   "When seriously injured, your bleeding wounds create very thick armour. (AC +"},
-
-  {"You feel your blood ready itself to protect you.",
-   "You feel your blood thicken.",
-   "You feel your blood thicken."},
-
-  {"You feel your blood become entirely quiescent.",
-   "You feel your blood thin.",
-   "You feel your blood thin."},
+  {"When seriously injured, your bleeding wounds create armour. (AC +", "", ""},
+  {"You feel your blood ready itself to protect you.", "", ""},
+  {"You feel your blood become quiescent.", "", ""},
 },
 
 // Draconian rework mutations all the messaging on these is done specially.

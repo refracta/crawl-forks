@@ -929,15 +929,15 @@ public:
     bool mounted() const override;
     string mount_name(bool terse = false) const;
 
+    int ac_change_from_mutation(mutation_type mut) const;
+    int ac_changes_from_mutations() const;
+
 protected:
     void _removed_beholder(bool quiet = false);
     bool _possible_beholder(const monster* mon) const;
 
     void _removed_fearmonger(bool quiet = false);
     bool _possible_fearmonger(const monster* mon) const;
-
-private:
-    int ac_changes_from_mutations() const;
 };
 COMPILE_CHECK((int) SP_UNKNOWN_BRAND < 8*sizeof(you.seen_weapon[0]));
 COMPILE_CHECK((int) SP_UNKNOWN_BRAND < 8*sizeof(you.seen_armour[0]));

@@ -1695,7 +1695,7 @@ int player_res_fire(bool calc_unid, bool temp, bool items)
     rf += you.get_mutation_level(MUT_HEAT_RESISTANCE, temp);
     rf -= you.get_mutation_level(MUT_HEAT_VULNERABILITY, temp);
     rf -= you.get_mutation_level(MUT_TEMPERATURE_SENSITIVITY, temp);
-    rf += you.get_mutation_level(MUT_MOLTEN_SCALES, temp) == 3 ? 1 : 0;
+    rf += you.get_mutation_level(MUT_MOLTEN_SCALES, temp);
     rf += you.get_mutation_level(MUT_PROTOPLASM, temp) >= 2 ? 1 : 0;
 
     // draconian scales:
@@ -1826,7 +1826,7 @@ int player_res_cold(bool calc_unid, bool temp, bool items)
     rc += you.get_mutation_level(MUT_COLD_RESISTANCE, temp);
     rc -= you.get_mutation_level(MUT_COLD_VULNERABILITY, temp);
     rc -= you.get_mutation_level(MUT_TEMPERATURE_SENSITIVITY, temp);
-    rc += you.get_mutation_level(MUT_ICY_BLUE_SCALES, temp) == 3 ? 1 : 0;
+    rc += you.get_mutation_level(MUT_ICY_BLUE_SCALES, temp) ? 1 : 0;
     rc += you.get_mutation_level(MUT_PROTOPLASM, temp) ? 1 : 0;
 
     // draconian scales:
@@ -2374,6 +2374,7 @@ int player_prot_life(bool calc_unid, bool temp, bool items)
 
     // undead/demonic power
     pl += you.get_mutation_level(MUT_NEGATIVE_ENERGY_RESISTANCE, temp);
+    pl += you.get_mutation_level(MUT_ROUGH_BLACK_SCALES, temp);
 
     pl = min(3, pl);
 
@@ -2707,7 +2708,12 @@ static int _player_evasion_bonuses()
 
     // mutations
     if (you.get_mutation_level(MUT_DISTORTION_FIELD))
-        evbonus += you.get_mutation_level(MUT_DISTORTION_FIELD) + 1;
+    {
+        if (you.char_class == JOB_DEMONSPAWN)
+            evbonus += you.get_experience_level() / 3;
+        else
+            evbonus += 3;
+    }
 
     // transformation penalties/bonuses not covered by size alone:
     if (you.get_mutation_level(MUT_SLOW_REFLEXES))
@@ -2919,10 +2925,13 @@ int player_shield_class(bool temp)
     int shield = 0;
 
     // mutations
-    // +4, +6, +8 (displayed values)
-    shield += (you.get_mutation_level(MUT_LARGE_BONE_PLATES) > 0
-        ? you.get_mutation_level(MUT_LARGE_BONE_PLATES) * 400 + 400
-        : 0);
+    if (you.get_mutation_level(MUT_LARGE_BONE_PLATES))
+    {
+        if (you.char_class == JOB_DEMONSPAWN)
+            shield += you.experience_level * 200 / 3;
+        else
+            shield += 600;
+    }
 
     shield += you.branch_SH(true) * 200;
     shield += you.wearing(EQ_AMULET, AMU_REFLECTION) * 1000;
@@ -3659,6 +3668,10 @@ void level_change(bool skip_attribute_increase)
         // SIGHUP will save Crawl in the in-between state and rob the
         // player of their level-up perks.
 
+        // Used in Demonspawn messaging at the bottom. Need to be set before xl is gained.
+        const int AC = you.ac_changes_from_mutations();
+        const int SH = player_shield_class(false);
+
         const int new_exp = you.experience_level + 1;
         // some species need to do this at a specific time; most just do it at the end
         bool updated_maxhp = false;
@@ -3851,6 +3864,7 @@ void level_change(bool skip_attribute_increase)
             // that are still Species Demonspawn (if there are any) into a new species, but...
             if (you.char_class == JOB_DEMONSPAWN || you.species == SP_DEMONSPAWN) 
             {
+                const mutation_type scales = get_scales();
                 for (const player::demon_trait trait : you.demonic_traits)
                 {
                     if (trait.level_gained == you.experience_level)
@@ -3858,6 +3872,22 @@ void level_change(bool skip_attribute_increase)
                         mprf(MSGCH_INTRINSIC_GAIN,
                             "Your demonic ancestry asserts itself...");
                         perma_mutate(trait.mutation, 1, "demonic ancestry");
+                    }
+                }
+                if (scales != MUT_NON_MUTATION && scales == get_scales())
+                {
+                    if (AC < you.ac_changes_from_mutations())
+                        mprf(MSGCH_INTRINSIC_GAIN, "Your %s feel tougher.", you.species == SP_LIGNIFITE ? "demonic bark patches" : "scales");
+                    if (SH < player_shield_class())
+                        mprf(MSGCH_INTRINSIC_GAIN, "Your %s plates grow larger.", you.species == SP_LIGNIFITE ? "wooden" : "bone");
+                    if (!(you.experience_level % 3))
+                    {
+                        if (scales == MUT_STURDY_FRAME)
+                            mprf(MSGCH_INTRINSIC_GAIN, "You feel even less encumbered by your armour.");
+                        else if (scales == MUT_DISTORTION_FIELD)
+                            mprf(MSGCH_INTRINSIC_GAIN, "Your distortion field feels stronger.");
+                        else if (scales == MUT_THIN_SKELETAL_STRUCTURE)
+                            mprf(MSGCH_INTRINSIC_GAIN, "You feel more agile.");
                     }
                 }
             }
@@ -4030,7 +4060,7 @@ int player_stealth()
 
     // Mutations.
     stealth += STEALTH_PIP * you.get_mutation_level(MUT_NIGHTSTALKER);
-    stealth += (STEALTH_PIP / 2)
+    stealth += STEALTH_PIP * 2
                 * you.get_mutation_level(MUT_THIN_SKELETAL_STRUCTURE);
     stealth += STEALTH_PIP * you.get_mutation_level(MUT_CAMOUFLAGE) * 2;
     stealth += STEALTH_PIP * you.get_mutation_level(MUT_TRANSLUCENT_SKIN);
@@ -4839,8 +4869,7 @@ int get_real_hp(bool trans, bool rotted)
     // Mutations that increase HP by a percentage
     hitp *= 100 + (you.get_mutation_level(MUT_ROBUST) * 10)
                 + (you.attribute[ATTR_DIVINE_VIGOUR] * 5)
-                + (you.get_mutation_level(MUT_RUGGED_BROWN_SCALES) ?
-                   you.get_mutation_level(MUT_RUGGED_BROWN_SCALES) * 2 + 1 : 0)
+                + (you.get_mutation_level(MUT_RUGGED_BROWN_SCALES) * 7)
                 - (you.get_mutation_level(MUT_FRAIL) * 10)
                 - (hep_frail ? 10 : 0);
 
@@ -6706,7 +6735,7 @@ int player::missile_deflection() const
     if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE) && you.drac_colour == DR_MAGENTA)
         return 1;
 
-    if (get_mutation_level(MUT_DISTORTION_FIELD) == 3
+    if (get_mutation_level(MUT_DISTORTION_FIELD)
         || you.wearing_ego(EQ_ALL_ARMOUR, SPARM_REPULSION)
         || scan_artefacts(ARTP_RMSL)
         || have_passive(passive_t::upgraded_storm_shield))
@@ -6746,9 +6775,17 @@ int player::unadjusted_body_armour_penalty() const
     if (!body_armour)
         return 0;
 
+    int bonus = 0;
+    if (get_mutation_level(MUT_STURDY_FRAME))
+    {
+        if (you.char_class == JOB_DEMONSPAWN)
+            bonus = you.get_experience_level() / 3;
+        else
+            bonus = 3;
+    }
+
     // PARM_EVASION is always less than or equal to 0
-    return max(0, -property(*body_armour, PARM_EVASION) / 10
-                  - get_mutation_level(MUT_STURDY_FRAME) * 2);
+    return max(0, -property(*body_armour, PARM_EVASION) / 10 - bonus);
 }
 
 /**
@@ -6893,9 +6930,8 @@ int sanguine_armour_bonus()
     if (!you.duration[DUR_SANGUINE_ARMOUR])
         return 0;
 
-    const int mut_lev = you.get_mutation_level(MUT_SANGUINE_ARMOUR);
     // like iridescent, but somewhat moreso (when active)
-    return 300 + mut_lev * 300;
+    return 200 * you.get_experience_level() / 3;
 }
 
 /**
@@ -7006,7 +7042,8 @@ item_def * player::staff() const
 // Each instance of this class stores a mutation which might change a
 // player's AC and how much their AC should change if the player has
 // said mutation.
-class mutation_ac_changes{
+class mutation_ac_changes
+{
     public:
         /**
          * The AC a player gains from a given mutation. If the player
@@ -7015,61 +7052,72 @@ class mutation_ac_changes{
          * @return How much AC to give the player for the handled
          *         mutation.
          */
-        int get_ac_change_for_mutation(){
-            int ac_change = 0;
+        int get_ac_change_for_mutation()
+        {
+            int ac_change = ac_changes * you.get_mutation_level(mut, mutation_activation_threshold);
 
-            int mutation_level = you.get_mutation_level(mut, mutation_activation_threshold);
-
-            switch (mutation_level){
-                case 0:
-                    ac_change = 0;
-                    break;
-                case 1:
+            if (ac_change && you.char_class == JOB_DEMONSPAWN)
+            {
+                switch (ac_change)
+                {
                 case 2:
+                    return you.get_experience_level() / 5;
                 case 3:
-                    ac_change = ac_changes[mutation_level - 1];
+                    return you.get_experience_level() / 3;
+                case 5:
+                    return (you.get_experience_level() * 5) / 12;
+                default:
                     break;
+                }
             }
-
             // The output for this function is scaled differently than the UI.
             return ac_change * 100;
         }
 
         mutation_ac_changes(mutation_type mut_aug,
                             mutation_activity_type mutation_activation_threshold_aug,
-                            vector<int> ac_changes_aug)
+                            int ac_changes_aug)
         : mut (mut_aug),
           mutation_activation_threshold (mutation_activation_threshold_aug),
           ac_changes (ac_changes_aug)
         {
         }
 
-    private:
         mutation_type mut;
-        mutation_activity_type mutation_activation_threshold;
-        vector<int> ac_changes;
-};
 
-// Constant vectors for the most common mutation ac results used in
-// all_mutation_ac_changes
-const vector<int> ONE_TWO_THREE  = {1,2,3};
-const vector<int> TWO_THREE_FOUR = {2,3,4};
+    private:
+        mutation_activity_type mutation_activation_threshold;
+        int ac_changes;
+};
 
 vector<mutation_ac_changes> all_mutation_ac_changes = {
-     mutation_ac_changes(MUT_PHYSICAL_VULNERABILITY, mutation_activity_type::PARTIAL, {-5,-10,-15})
+     mutation_ac_changes(MUT_PHYSICAL_VULNERABILITY, mutation_activity_type::PARTIAL, -5)
     // Scale mutations are more easily disabled (forms etc.). This appears to be for flavour reasons.
     // Preserved behavior from before mutation ac was turned to data.
-    ,mutation_ac_changes(MUT_IRIDESCENT_SCALES,      mutation_activity_type::FULL,    {2, 4, 6})
-    ,mutation_ac_changes(MUT_RUGGED_BROWN_SCALES,    mutation_activity_type::FULL,    ONE_TWO_THREE)
-    ,mutation_ac_changes(MUT_ICY_BLUE_SCALES,        mutation_activity_type::FULL,    TWO_THREE_FOUR)
-    ,mutation_ac_changes(MUT_MOLTEN_SCALES,          mutation_activity_type::FULL,    TWO_THREE_FOUR)
-    ,mutation_ac_changes(MUT_SLIMY_GREEN_SCALES,     mutation_activity_type::FULL,    TWO_THREE_FOUR)
-    ,mutation_ac_changes(MUT_THIN_METALLIC_SCALES,   mutation_activity_type::FULL,    TWO_THREE_FOUR)
-    ,mutation_ac_changes(MUT_YELLOW_SCALES,          mutation_activity_type::FULL,    TWO_THREE_FOUR)
-#if TAG_MAJOR_VERSION == 34
-    ,mutation_ac_changes(MUT_ROUGH_BLACK_SCALES,     mutation_activity_type::FULL,    {2, 5, 8})
-#endif
+    ,mutation_ac_changes(MUT_IRIDESCENT_SCALES,      mutation_activity_type::FULL,    5)
+    ,mutation_ac_changes(MUT_RUGGED_BROWN_SCALES,    mutation_activity_type::FULL,    2)
+    ,mutation_ac_changes(MUT_ICY_BLUE_SCALES,        mutation_activity_type::FULL,    3)
+    ,mutation_ac_changes(MUT_MOLTEN_SCALES,          mutation_activity_type::FULL,    3)
+    ,mutation_ac_changes(MUT_SLIMY_GREEN_SCALES,     mutation_activity_type::FULL,    3)
+    ,mutation_ac_changes(MUT_THIN_METALLIC_SCALES,   mutation_activity_type::FULL,    3)
+    ,mutation_ac_changes(MUT_YELLOW_SCALES,          mutation_activity_type::FULL,    3)
+    ,mutation_ac_changes(MUT_ROUGH_BLACK_SCALES,     mutation_activity_type::FULL,    3)
 };
+
+int player::ac_change_from_mutation(mutation_type mut) const
+{
+    for (vector<mutation_ac_changes>::iterator it =
+            all_mutation_ac_changes.begin();
+            it != all_mutation_ac_changes.end(); ++it)
+    {
+        if (it->mut == mut)
+        {
+            return it->get_ac_change_for_mutation();
+        }
+    }
+
+    return 0; // just in case
+}
 
 /**
  * The AC changes the player has from mutations.

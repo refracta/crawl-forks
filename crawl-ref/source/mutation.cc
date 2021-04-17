@@ -267,10 +267,7 @@ static const mutation_type _all_scales[] =
 {
     MUT_DISTORTION_FIELD,           MUT_ICY_BLUE_SCALES,
     MUT_IRIDESCENT_SCALES,          MUT_LARGE_BONE_PLATES,
-    MUT_MOLTEN_SCALES,
-#if TAG_MAJOR_VERSION == 34
-    MUT_ROUGH_BLACK_SCALES,
-#endif
+    MUT_MOLTEN_SCALES,              MUT_ROUGH_BLACK_SCALES,
     MUT_RUGGED_BROWN_SCALES,        MUT_SLIMY_GREEN_SCALES,
     MUT_THIN_METALLIC_SCALES,       MUT_THIN_SKELETAL_STRUCTURE,
     MUT_YELLOW_SCALES,              MUT_STURDY_FRAME,
@@ -327,11 +324,7 @@ mutation_activity_type mutation_activity_level(mutation_type mut)
             return mutation_activity_type::FULL;
         }
         // Dex and HP changes are kept in all forms.
-#if TAG_MAJOR_VERSION == 34
-        if (mut == MUT_ROUGH_BLACK_SCALES)
-            return mutation_activity_type::PARTIAL;
-#endif
-        if (mut == MUT_RUGGED_BROWN_SCALES)
+        if (mut == MUT_RUGGED_BROWN_SCALES || mut == MUT_ROUGH_BLACK_SCALES)
             return mutation_activity_type::PARTIAL;
         else if (_get_mutation_def(mut).form_based)
             return mutation_activity_type::INACTIVE;
@@ -347,19 +340,15 @@ mutation_activity_type mutation_activity_level(mutation_type mut)
         case MUT_FAST:
         case MUT_SLOW:
         case MUT_IRIDESCENT_SCALES:
-            return mutation_activity_type::INACTIVE;
-#if TAG_MAJOR_VERSION == 34
         case MUT_ROUGH_BLACK_SCALES:
-#endif
+            return mutation_activity_type::INACTIVE;
         case MUT_RUGGED_BROWN_SCALES:
-            return mutation_activity_type::PARTIAL;
         case MUT_YELLOW_SCALES:
         case MUT_ICY_BLUE_SCALES:
         case MUT_MOLTEN_SCALES:
         case MUT_SLIMY_GREEN_SCALES:
         case MUT_THIN_METALLIC_SCALES:
-            return you.get_base_mutation_level(mut) > 2 ? mutation_activity_type::PARTIAL :
-                                                          mutation_activity_type::INACTIVE;
+            return mutation_activity_type::PARTIAL;
         default:
             break;
         }
@@ -1265,9 +1254,20 @@ static int _body_covered()
         covered += 3;
 
     for (mutation_type scale : _all_scales)
-        covered += you.get_base_mutation_level(scale);
+        covered += you.get_base_mutation_level(scale) * 3;
 
     return covered;
+}
+
+mutation_type get_scales()
+{
+    for (mutation_type scale : _all_scales)
+    {
+        if (you.get_base_mutation_level(scale))
+            return scale;
+    }
+
+    return MUT_NON_MUTATION;
 }
 
 bool physiology_mutation_conflict(mutation_type mutat, bool ds_roll)
@@ -1972,16 +1972,23 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
 
         case MUT_LARGE_BONE_PLATES:
             {
-                const char *arms;
-                if (you.species == SP_FELID)
-                    arms = "legs";
-                else if (you.species == SP_OCTOPODE)
-                    arms = "tentacles";
+                species_mutation_message msg = _spmut_msg(mutat);
+                if (msg.mutation != MUT_NON_MUTATION)
+                    mprf(MSGCH_MUTATION, "%s", msg.gain[cur_base_level - 1]);
                 else
-                    break;
-                mprf(MSGCH_MUTATION, "%s",
-                     replace_all(mdef.gain[cur_base_level - 1], "arms",
-                                 arms).c_str());
+                {
+                    const char *arms;
+                    if (you.species == SP_FELID)
+                        arms = "legs";
+                    else if (you.species == SP_OCTOPODE)
+                        arms = "tentacles";
+                    else
+                        break;
+
+                    mprf(MSGCH_MUTATION, "%s",
+                        replace_all(mdef.gain[cur_base_level - 1], "arms",
+                            arms).c_str());
+                }
                 gain_msg = false;
             }
             break;
@@ -2742,19 +2749,58 @@ string mutation_desc(mutation_type mut, int level, bool colour,
     else if (mut == MUT_ICEMAIL)
     {
         ostringstream ostr;
-        if (msg.mutation == MUT_NON_MUTATION)
-            ostr << mdef.have[0] << player_icemail_armour_class() << ")";
-        else
-            ostr << msg.have[0] << player_icemail_armour_class() << ")";
+        ostr << mdef.have[0] << player_icemail_armour_class() << ")";
         result = ostr.str();
+    }
+    else if (mut == MUT_DISTORTION_FIELD || mut == MUT_ICY_BLUE_SCALES || mut == MUT_IRIDESCENT_SCALES
+        || mut == MUT_RUGGED_BROWN_SCALES || mut == MUT_MOLTEN_SCALES || mut == MUT_SLIMY_GREEN_SCALES
+        || mut == MUT_THIN_METALLIC_SCALES || mut == MUT_YELLOW_SCALES || mut == MUT_ROUGH_BLACK_SCALES
+        || mut == MUT_THIN_SKELETAL_STRUCTURE || mut == MUT_STURDY_FRAME)
+    {
+        ostringstream ostr;
+        
+        int bonus = you.ac_change_from_mutation(mut);
+
+        if (!bonus)
+            bonus = you.char_class == JOB_DEMONSPAWN ? you.get_experience_level() / 3 : 3;
+
+        if (mut == MUT_THIN_SKELETAL_STRUCTURE)
+            bonus += 3;
+
+        if (msg.mutation == MUT_NON_MUTATION)
+            ostr << mdef.have[level - 1] << bonus << ")";
+        else
+            ostr << msg.have[level - 1] << bonus << ")";
+        result = ostr.str();
+    }
+    else if (mut == MUT_LARGE_BONE_PLATES)
+    {
+        ostringstream ostr; 
+
+        int bonus = (you.char_class == JOB_DEMONSPAWN) ? (you.get_experience_level() / 3 * 2) : 6;
+
+        if (msg.mutation == MUT_NON_MUTATION)
+        {
+            const char *arms;
+            if (you.species == SP_FELID)
+                arms = "legs";
+            else if (you.species == SP_OCTOPODE)
+                arms = "tentacles";
+            else
+                arms = "arms";
+
+            ostr << replace_all(mdef.have[level - 1], "arms", arms).c_str() << bonus << ")";
+        }
+        else
+            ostr << msg.have[level - 1] << bonus << ")";
+
+        result = ostr.str();
+
     }
     else if (mut == MUT_SANGUINE_ARMOUR)
     {
         ostringstream ostr;
-        if (msg.mutation == MUT_NON_MUTATION)
-            ostr << mdef.have[level - 1] << sanguine_armour_bonus() / 100 << ")";
-        else
-            ostr << msg.have[level - 1] << sanguine_armour_bonus() / 100 << ")";
+        ostr << mdef.have[level - 1] << sanguine_armour_bonus() / 100 << ")";
         result = ostr.str();
     }
     else if (mut == MUT_DRACONIAN_DEFENSE)
@@ -2890,32 +2936,29 @@ static const facet_def _demon_facets[] =
     { 0, { MUT_NON_MUTATION, MUT_NON_MUTATION, MUT_TALONS },
       { -33, -33, -33 } },
     // Scale mutations
-    { 1, { MUT_DISTORTION_FIELD, MUT_DISTORTION_FIELD, MUT_DISTORTION_FIELD },
+    { 1, { MUT_NON_MUTATION, MUT_NON_MUTATION, MUT_DISTORTION_FIELD },
       { -33, -33, 0 } },
-    { 1, { MUT_ICY_BLUE_SCALES, MUT_ICY_BLUE_SCALES, MUT_ICY_BLUE_SCALES },
+    { 1, { MUT_NON_MUTATION, MUT_NON_MUTATION, MUT_ICY_BLUE_SCALES },
       { -33, -33, 0 } },
-    { 1, { MUT_IRIDESCENT_SCALES, MUT_IRIDESCENT_SCALES, MUT_IRIDESCENT_SCALES },
+    { 1, { MUT_NON_MUTATION, MUT_NON_MUTATION, MUT_IRIDESCENT_SCALES },
       { -33, -33, 0 } },
-    { 1, { MUT_LARGE_BONE_PLATES, MUT_LARGE_BONE_PLATES, MUT_LARGE_BONE_PLATES },
+    { 1, { MUT_NON_MUTATION, MUT_NON_MUTATION, MUT_LARGE_BONE_PLATES },
       { -33, -33, 0 } },
-    { 1, { MUT_MOLTEN_SCALES, MUT_MOLTEN_SCALES, MUT_MOLTEN_SCALES },
+    { 1, { MUT_NON_MUTATION, MUT_NON_MUTATION, MUT_MOLTEN_SCALES },
       { -33, -33, 0 } },
-    { 1, { MUT_RUGGED_BROWN_SCALES, MUT_RUGGED_BROWN_SCALES,
-           MUT_RUGGED_BROWN_SCALES },
+    { 1, { MUT_NON_MUTATION, MUT_NON_MUTATION, MUT_RUGGED_BROWN_SCALES },
       { -33, -33, 0 } },
-    { 1, { MUT_SLIMY_GREEN_SCALES, MUT_SLIMY_GREEN_SCALES, MUT_SLIMY_GREEN_SCALES },
+    { 1, { MUT_NON_MUTATION, MUT_NON_MUTATION, MUT_SLIMY_GREEN_SCALES },
       { -33, -33, 0 } },
-    { 1, { MUT_THIN_METALLIC_SCALES, MUT_THIN_METALLIC_SCALES,
-        MUT_THIN_METALLIC_SCALES },
+    { 1, { MUT_NON_MUTATION, MUT_NON_MUTATION, MUT_THIN_METALLIC_SCALES },
       { -33, -33, 0 } },
-    { 1, { MUT_THIN_SKELETAL_STRUCTURE, MUT_THIN_SKELETAL_STRUCTURE,
-           MUT_THIN_SKELETAL_STRUCTURE },
+    { 1, { MUT_NON_MUTATION, MUT_NON_MUTATION, MUT_THIN_SKELETAL_STRUCTURE },
       { -33, -33, 0 } },
-    { 1, { MUT_YELLOW_SCALES, MUT_YELLOW_SCALES, MUT_YELLOW_SCALES },
+    { 1, { MUT_NON_MUTATION, MUT_NON_MUTATION, MUT_YELLOW_SCALES },
       { -33, -33, 0 } },
-    { 1, { MUT_STURDY_FRAME, MUT_STURDY_FRAME, MUT_STURDY_FRAME },
+    { 1, { MUT_NON_MUTATION, MUT_NON_MUTATION, MUT_STURDY_FRAME },
       { -33, -33, 0 } },
-    { 1, { MUT_SANGUINE_ARMOUR, MUT_SANGUINE_ARMOUR, MUT_SANGUINE_ARMOUR },
+    { 1, { MUT_NON_MUTATION, MUT_NON_MUTATION, MUT_SANGUINE_ARMOUR },
       { -33, -33, 0 } },
     // Tier 2 facets
     { 2, { MUT_HEAT_RESISTANCE, MUT_FLAME_CLOUD_IMMUNITY, MUT_IGNITE_BLOOD },
