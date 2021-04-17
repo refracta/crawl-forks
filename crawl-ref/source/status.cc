@@ -1253,15 +1253,14 @@ static void _describe_missiles(status_info& inf)
     }
     else if (level > 1)
     {
-        bool perm = false;
-        inf.light_colour = perm ? WHITE : LIGHTMAGENTA;
+        inf.light_colour = LIGHTMAGENTA;
         inf.light_text   = "DMsl";
         inf.short_text   = "deflect missiles";
         inf.long_text    = "You deflect missiles.";
     }
     else
     {
-        bool perm = you.get_mutation_level(MUT_DISTORTION_FIELD) == 3
+        bool perm = you.get_mutation_level(MUT_DISTORTION_FIELD)
                     || you.wearing_ego(EQ_ALL_ARMOUR, SPARM_REPULSION)
                     || you.scan_artefacts(ARTP_RMSL)
                     || have_passive(passive_t::upgraded_storm_shield);

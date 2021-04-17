@@ -3061,6 +3061,18 @@ static void tag_read_you(reader &th)
         _cap_mutation_at(MUT_HOOVES, 1);
         _cap_mutation_at(MUT_TALONS, 1);
         _cap_mutation_at(MUT_PASSIVE_MAPPING, 1);
+        _cap_mutation_at(MUT_DISTORTION_FIELD, 1);
+        _cap_mutation_at(MUT_ICY_BLUE_SCALES, 1);
+        _cap_mutation_at(MUT_IRIDESCENT_SCALES, 1);
+        _cap_mutation_at(MUT_LARGE_BONE_PLATES, 1);
+        _cap_mutation_at(MUT_MOLTEN_SCALES, 1);
+        _cap_mutation_at(MUT_SANGUINE_ARMOUR, 1);
+        _cap_mutation_at(MUT_RUGGED_BROWN_SCALES, 1);
+        _cap_mutation_at(MUT_SLIMY_GREEN_SCALES, 1);
+        _cap_mutation_at(MUT_THIN_METALLIC_SCALES, 1);
+        _cap_mutation_at(MUT_THIN_SKELETAL_STRUCTURE, 1);
+        _cap_mutation_at(MUT_YELLOW_SCALES, 1);
+        _cap_mutation_at(MUT_STURDY_FRAME, 1);
         you.mutation[MUT_TOUGH_SKIN] = you.innate_mutation[MUT_TOUGH_SKIN] = 0;
         you.mutation[MUT_SHAGGY_FUR] = you.innate_mutation[MUT_SHAGGY_FUR] = 0;
         you.mutation[MUT_STRONG] = 0;

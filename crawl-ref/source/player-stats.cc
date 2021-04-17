@@ -486,7 +486,13 @@ static int _dex_modifier(bool innate_only)
     if (!innate_only)
         result += you.mutated_stats[STAT_DEX];
 
-    result += 2 * _mut_level(MUT_THIN_SKELETAL_STRUCTURE, innate_only);
+    if (_mut_level(MUT_THIN_SKELETAL_STRUCTURE, innate_only))
+    {
+        if (you.char_class == JOB_DEMONSPAWN)
+            result += 3 + you.get_experience_level() / 3;
+        else
+            result += 6;
+    }
 
     return result;
 }
