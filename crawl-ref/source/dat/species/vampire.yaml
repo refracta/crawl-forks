@@ -45,7 +45,7 @@ levelup_stats:
   - dex
 mutations:
   1:
-    MUT_FANGS: 3
+    MUT_FANGS: 1
     MUT_ACUTE_VISION: 1
     MUT_UNBREATHING: 1
 fake_mutations:

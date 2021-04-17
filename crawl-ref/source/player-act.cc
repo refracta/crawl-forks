@@ -665,10 +665,10 @@ static string _foot_name_singular(bool *can_plural)
     if (!get_form()->foot_name.empty())
         return get_form()->foot_name;
 
-    if (you.get_mutation_level(MUT_HOOVES) >= 3)
+    if (you.get_mutation_level(MUT_HOOVES))
         return "hoof";
 
-    if (you.has_usable_talons())
+    if (you.has_talons())
         return "talon";
 
     if (you.has_tentacles())

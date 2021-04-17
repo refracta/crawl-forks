@@ -497,20 +497,12 @@ static const mutation_def mut_data[] =
 },
 
 // body-slot facets
-{ MUT_HORNS, 7, 3, mutflag::good, true,
+{ MUT_HORNS, 7, 1, mutflag::good, true,
   "horns",
 
-  {"You have a pair of small horns on your head.",
-   "You have a pair of horns on your head.",
-   "You have a pair of large horns on your head."},
-
-  {"A pair of horns grows on your head!",
-   "The horns on your head grow some more.",
-   "The horns on your head grow some more."},
-
-  {"The horns on your head shrink away.",
-   "The horns on your head shrink a bit.",
-   "The horns on your head shrink a bit."},
+  {"You have a pair of horns on your head.", "", ""},
+  {"A pair of horns grows on your head!", "", ""},
+  {"The horns on your head fall off.", "", ""},
 },
 
 { MUT_BEAK, 1, 1, mutflag::good, true,
@@ -537,85 +529,45 @@ static const mutation_def mut_data[] =
    "Your hands feel fleshier."},
 },
 
-{ MUT_FANGS, 1, 3, mutflag::good, true,
+{ MUT_FANGS, 1, 1, mutflag::good, true,
   "fangs",
 
-  {"You have very sharp teeth.",
-   "You have extremely sharp teeth.",
-   "You have razor-sharp teeth."},
-
-  {"Your teeth lengthen and sharpen.",
-   "Your teeth lengthen and sharpen some more.",
-   "Your teeth grow very long and razor-sharp."},
-
-  {"Your teeth shrink to normal size.",
-   "Your teeth shrink and become duller.",
-   "Your teeth shrink and become duller."},
+  {"You have razor-sharp fangs.", "", ""},
+  {"Your teeth extend into long, razor-sharp fangs."},
+  {"Your teeth shrink to normal size.", "", ""},
 },
 
-{ MUT_HOOVES, 5, 3, mutflag::good, true,
+{ MUT_HOOVES, 5, 1, mutflag::good, true,
   "hooves",
 
-  {"You have large cloven feet.",
-   "You have hoof-like feet.",
-   "You have hooves in place of feet."},
-
-  {"Your feet thicken and deform.",
-   "Your feet thicken and deform.",
-   "Your feet have mutated into hooves."},
-
-  {"Your hooves expand and flesh out into feet!",
-   "Your hooves look more like feet.",
-   "Your hooves look more like feet."},
+  {"You have hooves in place of feet.", "", ""},
+  {"Your feet thicken and reform into hooves.", "", ""},
+  {"Your hooves expand and flesh out into feet!", "", ""},
 },
 
-{ MUT_ANTENNAE, 4, 3, mutflag::good, true,
+{ MUT_ANTENNAE, 4, 1, mutflag::good, true,
   "antennae",
 
-  {"You have a pair of small antennae on your head.",
-   "You have a pair of antennae on your head.",
-   "You have a pair of large antennae on your head. (+Vis)"},
-
-  {"A pair of antennae grows on your head!",
-   "The antennae on your head grow some more.",
-   "The antennae on your head grow some more."},
-
-  {"The antennae on your head shrink away.",
-   "The antennae on your head shrink a bit.",
-   "The antennae on your head shrink a bit."},
+  {"You have a pair of antennae on your head. (+Vis)", "", ""},
+  {"A pair of antennae grows on your head!", "", ""},
+  {"The antennae on your head shrink away.", "", ""},
 },
 
-{ MUT_TALONS, 5, 3, mutflag::good, true,
+{ MUT_TALONS, 5, 1, mutflag::good, true,
   "talons",
 
-  {"You have sharp toenails.",
-   "You have razor-sharp toenails.",
-   "You have claws for feet."},
-
-  {"Your toenails lengthen and sharpen.",
-   "Your toenails lengthen and sharpen.",
-   "Your feet stretch into talons."},
-
-  {"Your talons dull and shrink into feet.",
-   "Your talons look more like feet.",
-   "Your talons look more like feet."},
+  {"You have razor-sharp talons for feet.", "", ""},
+  {"Your feet stretch into talons.", "", ""},
+  {"Your talons dull and shrink into feet.", "", ""},
 },
 
 // Octopode only
-{ MUT_TENTACLE_SPIKE, 10, 3, mutflag::good, true,
+{ MUT_TENTACLE_SPIKE, 10, 1, mutflag::good, true,
   "tentacle spike",
 
-  {"One of your tentacles bears a spike.",
-   "One of your tentacles bears a nasty spike.",
-   "One of your tentacles bears a large vicious spike."},
-
-  {"One of your lower tentacles grows a sharp spike.",
-   "Your tentacle spike grows bigger.",
-   "Your tentacle spike grows even bigger."},
-
-  {"Your tentacle spike disappears.",
-   "Your tentacle spike becomes smaller.",
-   "Your tentacle spike recedes somewhat."},
+  {"One of your tentacles bears a large vicious spike.", "", ""},
+  {"One of your lower tentacles grows a large vicious spike.", "", ""},
+  {"Your tentacle spike disappears.", "", ""},
 },
 
 { MUT_CONSTRICTING_TAIL, 0, 1, mutflag::good, true,
