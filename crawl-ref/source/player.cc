@@ -9233,7 +9233,7 @@ static int _get_potion_heal_factor()
 
     // start with penalties
     factor -= player_equip_unrand(UNRAND_VINES) ? 3 : 0;
-    factor -= you.mutation[MUT_NO_POTION_HEAL];
+    factor -= you.mutation[MUT_NO_POTION_HEAL] * 3;
 
     // then apply bonuses - Kryia's doubles potion healing
     factor *= player_equip_unrand(UNRAND_KRYIAS) ? 2 : 1;
@@ -9260,8 +9260,6 @@ void print_potion_heal_message()
     }
     else if (_get_potion_heal_factor() == 0)
         mpr("Your system rejects the healing.");
-    else if (_get_potion_heal_factor() < 3)
-        mpr("Your system partially rejects the healing.");
 }
 
 bool player::can_potion_heal()

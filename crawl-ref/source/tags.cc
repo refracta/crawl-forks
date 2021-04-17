@@ -3073,6 +3073,7 @@ static void tag_read_you(reader &th)
         _cap_mutation_at(MUT_THIN_SKELETAL_STRUCTURE, 1);
         _cap_mutation_at(MUT_YELLOW_SCALES, 1);
         _cap_mutation_at(MUT_STURDY_FRAME, 1);
+        _cap_mutation_at(MUT_NO_POTION_HEAL, 1);
         you.mutation[MUT_TOUGH_SKIN] = you.innate_mutation[MUT_TOUGH_SKIN] = 0;
         you.mutation[MUT_SHAGGY_FUR] = you.innate_mutation[MUT_SHAGGY_FUR] = 0;
         you.mutation[MUT_STRONG] = 0;
@@ -3136,22 +3137,6 @@ static void tag_read_you(reader &th)
         {
             you.mutation[MUT_SLOW_METABOLISM] -= 1;
             you.innate_mutation[MUT_SLOW_METABOLISM] -= 1;
-        }
-    }
-
-    if (th.getMinorVersion() < TAG_MINOR_ROT_IMMUNITY)
-    {
-        if (you.species == SP_VINE_STALKER)
-        {
-            you.mutation[MUT_NO_POTION_HEAL] =
-            you.innate_mutation[MUT_NO_POTION_HEAL] = 3;
-        }
-
-        if (you.species == SP_VINE_STALKER
-            || you.species == SP_GARGOYLE)
-        {
-            you.mutation[MUT_ROT_IMMUNITY] =
-            you.innate_mutation[MUT_ROT_IMMUNITY] = 1;
         }
     }
 
