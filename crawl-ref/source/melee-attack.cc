@@ -500,7 +500,7 @@ void melee_attack::do_ooze_engulf()
         && x_chance_in_y(you.get_mutation_level(MUT_SKIN_BREATHING) - 1, 3)
         && defender->alive()
         && !defender->as_monster()->has_ench(ENCH_WATER_HOLD)
-        && attacker->can_constrict(defender, true, true))
+        && attacker->can_constrict(defender, true))
     {
         defender->as_monster()->add_ench(mon_enchant(ENCH_WATER_HOLD, 1,
                                                      attacker, 1));
