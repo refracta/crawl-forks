@@ -141,7 +141,7 @@ static bool _reaching_weapon_attack(const item_def& wpn)
     // Assume all longer forms of reach use smite targeting.
     else
     {
-        hitfunc = make_unique<targeter_smite>(&you, reach_range, 0, 0, false,
+        hitfunc = make_unique<targeter_smite>(&you, reach_range, 0, 0, true,
                                               [](const coord_def& p) -> bool {
                                               return you.pos() != p; });
     }
