@@ -25,6 +25,7 @@
 #include "env.h"
 #include "fight.h"
 #include "fprop.h"
+#include "food.h"
 #include "god-companions.h"
 #include "god-conduct.h"
 #include "god-item.h"
@@ -2038,6 +2039,9 @@ int animate_remains(const coord_def &a, corpse_type class_allowed,
         if (class_allowed != CORPSE_BODY && si->sub_type != CORPSE_SKELETON)
             continue;
 
+        if (is_forbidden_food(*si) && class_allowed == CORPSE_SKELETON)
+            continue;
+
         number_found++;
 
         if (!_animatable_remains(*si))
@@ -2120,6 +2124,8 @@ int animate_dead(actor *caster, int /*pow*/, beh_type beha,
 bool cast_animate_skeleton(god_type god, bool fail, coord_def pos)
 {
     bool found = false;
+    bool forbidden_found = false;
+    string name = "";
 
     for (stack_iterator si(pos, true); si; ++si)
     {
@@ -2127,12 +2133,22 @@ bool cast_animate_skeleton(god_type god, bool fail, coord_def pos)
             && mons_class_can_be_zombified(si->mon_type)
             && mons_skeleton(si->mon_type))
         {
-            found = true;
+            if (!is_forbidden_food(*si))
+                found = true;
+            else
+            {
+                forbidden_found = true;
+                name = si->name(DESC_THE);
+            }
         }
     }
 
     if (!found)
+    {
+        if (forbidden_found)
+            mprf(MSGCH_GOD, "It would be sinful to animate %s.", name.c_str());
         return false;
+    }
 
     if (fail)
     {
