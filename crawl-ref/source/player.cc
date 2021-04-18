@@ -4420,11 +4420,10 @@ bool player::is_fairy() const
 
 bool player::cloud_immune(bool calc_unid, bool items) const
 {
-    if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE) && you.drac_colour == DR_CYAN)
-        return true;
-
     return have_passive(passive_t::cloud_immunity)
-        || actor::cloud_immune(calc_unid, items);
+        || actor::cloud_immune(calc_unid, items)
+        || you.get_mutation_level(MUT_SKIN_BREATHING)
+        || you.get_mutation_level(MUT_DRACONIAN_DEFENSE) && you.drac_colour == DR_CYAN;
 }
 
 unsigned int exp_needed(int lev, int exp_apt)
@@ -7422,7 +7421,8 @@ bool player::is_unbreathing(bool mt) const
 
     return !get_form()->breathes || petrified()
         || get_mutation_level(MUT_UNBREATHING)
-        || get_mutation_level(MUT_UNBREATHING_FORM);
+        || get_mutation_level(MUT_UNBREATHING_FORM)
+        || get_mutation_level(MUT_SKIN_BREATHING);
 }
 
 bool player::is_insubstantial() const
@@ -7513,7 +7513,7 @@ int player::res_water_drowning(bool mt) const
 {
     if (mt)
     {
-        if (you.mount == mount_type::hydra)
+        if (you.mount == mount_type::hydra || you.mount == mount_type::slime)
             return 1;
         return 0;
     }
@@ -7642,10 +7642,7 @@ bool player::res_wind(bool mt) const
     if (mt)
         return false;
 
-    if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE) && (you.drac_colour == DR_CYAN))
-        return true;
-
-    return false;
+    return you.get_mutation_level(MUT_DRACONIAN_DEFENSE) && (you.drac_colour == DR_CYAN);
 }
 
 bool player::res_petrify(bool temp, bool mt) const

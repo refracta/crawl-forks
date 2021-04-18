@@ -1902,10 +1902,10 @@ void monster::apply_enchantment(const mon_enchant &me)
     case ENCH_WATER_HOLD:
         if (!clear_far_engulf())
         {
+            const int dur = speed_to_duration(speed); // sequence point for randomness
             if (res_water_drowning() <= 0)
             {
-                lose_ench_duration(me, -speed_to_duration(speed));
-                int dur = speed_to_duration(speed); // sequence point for randomness
+                lose_ench_duration(me, -dur);
                 int dam = div_rand_round((50 + stepdown((float)me.duration, 30.0))
                                           * dur,
                             BASELINE_DELAY * 10);
@@ -1913,6 +1913,8 @@ void monster::apply_enchantment(const mon_enchant &me)
                     dam = dam * 3 / 2;
                 hurt(me.agent(), dam);
             }
+            if (me.agent()->is_player() && you.get_mutation_level(MUT_SKIN_BREATHING) == 3)
+                splash_with_acid(me.agent(), div_rand_round(dur, 10), true, "is burned by your ooze");
         }
         break;
 
