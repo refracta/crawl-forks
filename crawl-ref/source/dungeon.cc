@@ -6640,7 +6640,7 @@ static void _place_specific_trap(const coord_def& where, trap_spec* spec,
         }
         while (!is_regular_trap(spec_type)
 #if TAG_MAJOR_VERSION == 34
-               || spec_type == TRAP_NEEDLE || spec_type == TRAP_GAS
+               || spec_type == TRAP_DART || spec_type == TRAP_GAS
                || spec_type == TRAP_SHADOW || spec_type == TRAP_SHADOW_DORMANT
 #endif
                || !is_valid_shaft_level() && spec_type == TRAP_SHAFT);

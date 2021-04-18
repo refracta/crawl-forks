@@ -110,6 +110,8 @@ tileidx_t tileidx_trap(trap_type type)
         return TILE_DNGN_TRAP_PLATE;
     case TRAP_WEB:
         return TILE_DNGN_TRAP_WEB;
+    case TRAP_DART:
+        return TILE_DNGN_TRAP_DART;
     default:
         return TILE_DNGN_ERROR;
     }
