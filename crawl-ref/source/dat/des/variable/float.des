@@ -3648,7 +3648,7 @@ MAP
 ENDMAP
 
 NAME: cheibrodos_tormentor_scu
-DEPTH: D:5-, Depths
+DEPTH: D:6-, Depths
 TAGS: no_item_gen no_monster_gen
 ORIENT: float
 : if you.branch() == "Depths" then
@@ -3660,6 +3660,7 @@ MONS: death knight / w:5 wraith / w:2 freezing wraith / w:4 skeletal warrior
 ITEM: demon whip ego:pain / demon whip ego:draining / demon blade ego:pain \
       / demon blade ego:draining / demon trident ego:pain \
       / demon trident ego:draining
+KPROP: 1"- = no_tele_into
 KFEAT:  - = iron_grate
 FTILE:  c-" = FLOOR_NERVES_DARKGRAY
 TILE:   c = WALL_BARS_DARKGRAY
