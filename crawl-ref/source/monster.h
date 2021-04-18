@@ -484,9 +484,9 @@ public:
     bool drain_exp(actor *, bool quiet = false, int pow = 3) override;
     bool rot(actor *, int amount, bool quiet = false, bool no_cleanup = false)
         override;
-    void splash_with_acid(const actor* evildoer, int /*acid_strength*/ = -1,
+    void splash_with_acid(const actor* evildoer, int acid_strength = 1,
                           bool /*allow_corrosion*/ = true,
-                          const char* /*hurt_msg*/ = nullptr,
+                          const char* hurt_msg = nullptr,
                           bool /*mt*/ = false) override;
     bool corrode_equipment(const char* corrosion_source = "the acid",
                            int degree = 1, bool /*mt*/ = false) override;

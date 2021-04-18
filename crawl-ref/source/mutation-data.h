@@ -849,7 +849,23 @@ static const mutation_def mut_data[] =
    "Your protoplasm feels drier."},
 },
 
-// "You breathe through your skin. (rCloud, rDrown)"
+{ MUT_SKIN_BREATHING, 0, 3, mutflag::good | mutflag::jiyva, true,
+  "porous membrane",
+
+  {"Breathing through your porous membrane protects you from clouds and drowning. (rCloud, rDrown)",
+   "Breathing through your porous membrane protects you from clouds and drowning. (rCloud, rDrown)\n"
+   "You engulf enemies in ooze in melee combat.",
+   "Breathing through your porous membrane protects you from clouds and drowning. (rCloud, rDrown)\n"
+   "You engulf enemies in acidic ooze in melee combat."},
+
+  {"Your skin develops small pores you can breathe through.",
+   "Your pores begin to secrete an ooze you can engulf enemies in.",
+   "Your ooze becomes acidic."},
+
+  {"Your membrane feels hermetic.",
+   "Your membrane quits oozing.",
+   "Your ooze feels thinner."},
+},
 
 { MUT_GOLDEN_EYEBALLS, 0, 3, mutflag::good | mutflag::jiyva, true,
   "golden eyeballs",

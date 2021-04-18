@@ -4521,18 +4521,18 @@ bool monster::corrode_equipment(const char* corrosion_source, int degree, bool /
  * Attempts to apply corrosion to a monster.
  */
 void monster::splash_with_acid(const actor* evildoer, int acid_strength,
-                               bool /*allow_corrosion*/, const char* /*hurt_msg*/, bool /*mt*/)
+                               bool /*allow_corrosion*/, const char* hurt_msg, bool /*mt*/)
 {
     // Splashing with acid shouldn't do anything to immune targets
-    if (res_acid() == 3)
+    if (res_acid() == 3 || acid_strength <= 0)
         return;
 
     const int dam = roll_dice(acid_strength, 4);
     const int post_res_dam = resist_adjust_damage(this, BEAM_ACID, dam);
 
-    if (this->observable())
+    if (this->observable() && post_res_dam > 0)
     {
-        mprf("%s is splashed with acid%s", this->name(DESC_THE).c_str(),
+        mprf("%s %s%s", this->name(DESC_THE).c_str(), hurt_msg ? hurt_msg : "is splashed with acid",
              attack_strength_punctuation(post_res_dam).c_str());
     }
 
