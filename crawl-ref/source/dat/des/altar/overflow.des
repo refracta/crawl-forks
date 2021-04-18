@@ -3984,6 +3984,7 @@ ENDMAP
 NAME: nicolae_overflow_hidden_temple
 TAGS: temple_overflow_generic_5 temple_overflow_generic_4 temple_overflow_generic_3 \
       temple_overflow_generic_2 temple_overflow_generic_1 no_monster_gen
+DEPTH: D, !D:$, Depths, !Depths:$
 {{
   local altarcount = 1
   if is_validating() then
@@ -4010,15 +4011,15 @@ TAGS: temple_overflow_generic_5 temple_overflow_generic_4 temple_overflow_generi
 }}
 SUBST: } = })]
 MAP
- xxxxxxxxxxxxx
- xxxxaxxxbxxxx
+    xxxxxxx
+  xxxaxxxbxxx
  xxG...G...Gxx
  mm.........mm
 @m}.........cm@
  mm.........mm
  xxG...G...Gxx
- xxxxexxxdxxxx
- xxxxxxxxxxxxx
+  xxxexxxdxxx
+    xxxxxxx
 ENDMAP
 
 NAME:   chequers_temple_overflow_statue_of_worship

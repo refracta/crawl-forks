@@ -935,7 +935,8 @@ ORIENT:  encompass
 SUBVAULT: o : royal_jelly
 TAGS:    no_rotate no_dump
 SUBST:   ' : ' .:1,  ' : ' x:1,  ' = .x
-SUBST:   " : cc.aaa
+SUBST:   " = .taaa
+KFEAT:   t = slimeshroom
 KFEAT:   a = slimy_water
 SHUFFLE: ([{
 {{
@@ -1020,21 +1021,21 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ENDMAP
 
 NAME:    royal_jelly_end0
-TAGS:    royal_jelly no_rotate
+TAGS:    royal_jelly no_rotate no_pool_fixup
 KMONS:   1 = the royal jelly
 KMONS:   2 = acid blob
 KFEAT:   2 = slimy_water / floor
 KMONS:   3 = great orb of eyes / nothing
 KFEAT:   3 = slimy_water / floor
 SUBST:   4 = 23
-SUBST:   ' : aaa....
+SUBST:   ' : aa.
+SUBST:   C = cta
 NSUBST:  P = O / *|
 KMASK:   |O* = no_monster_gen
-KMASK:   C = no_pool_fixup
 KPROP:   |O* = no_jiyva
 KPROP:   |O* = no_tele_into
-KFEAT:   |O* = slimy_water
-KFEAT:   a = slimy_water
+KFEAT:   |O*a = slimy_water
+KFEAT:   t = slimeshroom
 KFEAT:   Z = altar_jiyva
 KITEM:   O = slimy rune of Zot
 KITEM:   * = star_item
@@ -1071,14 +1072,14 @@ MAP
   cc***cc4c***cc
  cc*|*cc''cc*|*cc
 cc*|P|*n4nn*|P|*cc
-cc**|*nn''nn*|**cc
-ccc**n|nn4n|n**ccc
+Cc**|*nn''nn*|**cC
+Ccc**n|nn4n|n**ccC
 ccccnnnn'3nnnncccc
 c'4'n'4'1.'4'n'4'c
 2'c'4'n'.Z'n'4'c'2
 ccccnnnn3'nnnncccc
-ccc**n|nn4n|n**ccc
-cc**|*nn''nn*|**cc
+Ccc**n|nn4n|n**ccC
+Cc**|*nn''nn*|**cC
 cc*|P|*n4nn*|P|*cc
  cc*|*cc''cc*|*cc
   cc***cc4c***cc

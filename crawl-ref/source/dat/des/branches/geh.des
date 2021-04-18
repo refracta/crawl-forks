@@ -570,6 +570,7 @@ NAME:    evilmike_geh
 ORIENT:  encompass
 SHUFFLE: ([{<
 KMASK:   . = no_monster_gen
+KPROP:   mlLR = no_tele_into
 NSUBST:  A = 1:+ / *=+cc
 SUBST:   B = ccc+
 SHUFFLE: CI / ''

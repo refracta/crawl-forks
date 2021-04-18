@@ -1670,11 +1670,13 @@ NAME: nicolae_vaults_sealed_display
 WEIGHT: 5
 TAGS: vaults_room no_windows
 KMASK: >* = no_monster_gen
+KPROP: *a> = no_tele_into
+KFEAT: a = closed_clear_door
 KMONS: 0 = 0 band / 0
 MAP
 xxxxxxx
 x..%x>x
-x+xxx+x
+x+xxxax
 x..x**x
 x.0x**x
 x..xmmx

@@ -188,6 +188,7 @@ KMONS: F = orange crystal statue
 : end
 : interest_check(_G)
 KMASK: _>C = opaque
+KPROP: _>C = no_tele_into
 MAP
 .........
 .ccccccc.

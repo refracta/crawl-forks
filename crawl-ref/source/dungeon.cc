@@ -3627,7 +3627,7 @@ static void _connectivity_fixup()
     // Furthermore Tomb has no normal stairs (and is vault fixed so can't screw up anyways)
     if (!is_connected_branch(lid) && lid.branch != BRANCH_PANDEMONIUM
         || lid.branch == BRANCH_TEMPLE || lid.branch == BRANCH_VESTIBULE
-        || lid.branch == BRANCH_TOMB)
+        || lid.branch == BRANCH_TOMB || (lid.branch == BRANCH_SLIME && lid.depth == brdepth[BRANCH_SLIME]))
     {
         return;
     }

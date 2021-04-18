@@ -1624,6 +1624,7 @@ PLACE:  Crypt:$
 MARKER: m = lua:portal_desc {wall_phase = 1}
 KFEAT:  m = iron_grate
 KMASK:  1 = opaque
+KPROP:  1 = no_tele_into
 MONS:   patrolling lich / patrolling ancient lich
 MONS:   bone dragon / curse skull / curse toe
 MONS:   flying skull / skeletal warrior / skeleton
@@ -1865,6 +1866,8 @@ KMONS:  C = hellwing
 KMONS:  E = skeleton w:13 / nothing
 KMONS:  F = patrolling reaper
 : end
+KPROP:  ijkl = no_tele_into
+SUBST:  i = *, j = -, k = 0, l = <
 SUBST:  n : ncc
 : set_feature_name("granite_statue", "gravestone")
 : set_feature_name("tree", "dead tree")
@@ -1894,11 +1897,11 @@ ttttT.t.T.............ccc-cccc-C'C-cccc-ccc..T...............T...t..tc3333333ctt
 tttttT.....cccccccccccccc-cVcC-'''-CcVc-cccccccccccccc.........T...tpcccnnnccctt
 ttttT..t..cc----+---------c-+-''x''-+-c---------+--E-cc....vvvv.T.t.Tttttttttttt
 ttttTt.....n-B--cccmmcccccc-c--'''--c-ccccccmmcccEEE-n..T..v44vT....Tttttttttttt
-ttttT..T..ccEEE-ccc00cc-----cc--'--cc-----cc00ccc-EEEcc....v--v....t.Ttttttttttt
-tttTt.T....n----cc--cc--ccccccc---ccccccc--cc--cc-E--n.....-vvv...t...Tttttttttt
-ttT.......ccc+ccc*-cc--ccccccccc+ccccccccc--cc-*ccc+ccc.........T....tTttttttttt
-ttT..t555..cc-cc**cc--ccccccc-------ccccccc--cc**cc-cc....T.......T....Ttttttttt
-tttT.55T..ccc-c<*ccc+cc-------AV-VA-------cc+ccc*<c-ccc.............t...Tttttttt
+ttttT..T..ccEEE-ccckkcc-----cc--'--cc-----cckkccc-EEEcc....v--v....t.Ttttttttttt
+tttTt.T....n----ccjjcc--ccccccc---ccccccc--ccjjcc-E--n.....-vvv...t...Tttttttttt
+ttT.......ccc+cccijcc--ccccccccc+ccccccccc--ccjiccc+ccc.........T....tTttttttttt
+ttT..t555..cc-cciicc--ccccccc-------ccccccc--cciicc-cc....T.......T....Ttttttttt
+tttT.55T..ccc-cliccc+cc-------AV-VA-------cc+cccilc-ccc.............t...Tttttttt
 ttttT5t....cc-cccc-EE-c-B-xxxx'''''xxxx-B-c----cccc-cc...vvvvvvv..T...t.Tttttttt
 tttttT....ccc+ccccEEEEc---xxxx'''''xxxx---c0--0cccc+ccc..v---4--v....t.Ttttttttt
 ttttT..t...n--'F-c-EE-c---xxxx''_''xxxx---c----c--'B-n...v-xxxx-v..T..tTtttttttt
