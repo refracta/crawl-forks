@@ -2217,8 +2217,9 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
             if (empowered && monster_at(entry.first))
             {
                 monster * mons = monster_at(entry.first);
-                if (cloud == CLOUD_BLOOD && x_chance_in_y(power, 
-                    mons->get_experience_level() * 2))
+                if (cloud == CLOUD_BLOOD 
+                    && x_chance_in_y(power, mons->get_experience_level() * 2)
+                    && !x_chance_in_y(mons->res_negative_energy(), 3))
                 {
                     mprf("You drain %s vigour!",
                         mons->name(DESC_ITS).c_str());
