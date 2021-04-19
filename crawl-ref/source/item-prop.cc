@@ -994,6 +994,9 @@ bool item_is_cursable(const item_def &item, bool ignore_holy_wrath)
         return false;
     }
 
+    if (item.is_type(OBJ_ARMOURS, ARM_QUICKSILVER_DRAGON_ARMOUR))
+        return false;
+
     if ((is_artefact(item) || item.cursed()) && artefact_property(item, ARTP_FRAGILE))
         return false;
     return true;
@@ -1047,6 +1050,9 @@ void do_curse_item(item_def &item, bool quiet)
 {
     // Already cursed?
     if (bool(item.flags & ISFLAG_CURSED) && item.props.exists(CURSE_PROPS_KEY))
+        return;
+
+    if (item.is_type(OBJ_ARMOURS, ARM_QUICKSILVER_DRAGON_ARMOUR))
         return;
 
     if (!is_weapon(item) && item.base_type != OBJ_ARMOURS
@@ -2075,6 +2081,9 @@ bool is_blessable_item(const item_def &item)
     switch (item.base_type)
     {
     case OBJ_ARMOURS:
+        if (item.sub_type == ARM_QUICKSILVER_DRAGON_ARMOUR)
+            return false;
+        // fallthrough . . . 
     case OBJ_SHIELDS:
     case OBJ_STAVES:
     case OBJ_WEAPONS:

@@ -4842,6 +4842,9 @@ void unmarshallItem(reader &th, item_def &item)
         item.brand = SPSTF_WIZARD;
     }
 
+    if (item.is_type(OBJ_ARMOURS, ARM_QUICKSILVER_DRAGON_ARMOUR) && item.cursed())
+        do_uncurse_item(item);
+
     if (item.is_type(OBJ_STAVES, STAFF_ENERGY))
     {
         switch (random2(7))

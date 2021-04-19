@@ -1794,7 +1794,8 @@ bool apply_curse(item_def &item, artefact_prop_type prop, bool silent)
         && item.base_type != OBJ_ARMOURS
         && item.base_type != OBJ_JEWELLERY
         && item.base_type != OBJ_SHIELDS
-        && item.base_type != OBJ_STAVES)
+        && item.base_type != OBJ_STAVES
+        || item.is_type(OBJ_ARMOURS, ARM_QUICKSILVER_DRAGON_ARMOUR))
     {
         return false;
     }
