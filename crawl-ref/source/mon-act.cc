@@ -2636,11 +2636,9 @@ static void _post_monster_move(monster* mons)
             }
     }
 
-    // BCADNOTE: This is the second time I've had to fall back on this bad conversion.
-    const monster * m = actor_by_mid(mons->mid)->as_monster();
-
     // Clear push/pull data if the monster is in a safe spot.
-    if ((mons->submerged() || !mons_avoids_cloud(m, mons->pos())) && (!mons->airborne() || monster_habitable_grid(m, grd(mons->pos()))))
+    if ((mons->submerged() || !mons_avoids_cloud(mons, mons->pos())) 
+        && (!mons->airborne() || monster_habitable_grid(mons, grd(mons->pos()))))
     {
         if (mons->props.exists(KNOCKBACK_KEY))
             mons->props.erase(KNOCKBACK_KEY);
@@ -2754,6 +2752,7 @@ void handle_monsters(bool with_noise)
                 (int)monster_queue.top().first->pos().y);
 
             monster_die(*monster_queue.top().first, nullptr, true, false, false);
+            continue;;
         }
 
         monster *mon = monster_queue.top().first;
@@ -2776,7 +2775,7 @@ void handle_monsters(bool with_noise)
             fire_final_effects();
         }
 
-        if (mon->has_action_energy())
+        if (mon->alive() && mon->has_action_energy())
             monster_queue.emplace(mon, mon->speed_increment);
 
         // If the player got banished, discard pending monster actions.
