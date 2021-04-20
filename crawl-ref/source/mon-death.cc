@@ -44,6 +44,7 @@
 #include "kills.h"
 #include "level-state-type.h"
 #include "libutil.h"
+#include "losglobal.h"
 #include "mapdef.h"
 #include "mapmark.h"
 #include "message.h"
@@ -1329,8 +1330,61 @@ static void _setup_balloon_pop(bolt & beam, const monster & origin)
     beam.damage = dice_def(3, 5);
     beam.name = "burst balloon";
     beam.colour = CYAN;
-    // BCADDO: Explosion Knockback and Disperse Clouds?
     beam.source_name = origin.name(DESC_A, true);
+}
+
+static void _explosion_knockback(monster * mons, coord_def pos, int size, string description, bool do_clouds)
+{
+    if (actor * act = actor_at(pos))
+    {
+        if (!(act->wearing_ego(EQ_BOOTS, SPARM_STURDY) || act->is_stationary()) && pos != mons->pos())
+        {
+            coord_def newpos = coord_def(0,0);
+            const bool is_left = (mons->pos().x - pos.x) >= 0;
+            const bool is_up   = (mons->pos().y - pos.y) >= 0;
+            for (rectangle_iterator sai(pos, size); sai; ++sai)
+            {
+                if (in_bounds(*sai) && grid_distance(*sai, mons->pos()) > grid_distance(pos, mons->pos()) && act->is_habitable(*sai)
+                    && !actor_at(*sai) && cell_see_cell(pos, *sai, LOS_SOLID))
+                {
+                    const int d0 = grid_distance(pos, *sai);
+                    const int d1 = newpos.origin() ? 0 : grid_distance(pos, newpos);
+                    const bool left = (pos.x - (*sai).x) >= 0;
+                    const bool up   = (pos.y - (*sai).y) >= 0;
+                    if (is_left == left && is_up == up && (newpos.origin() || (d0 > d1)))
+                        newpos = *sai;
+                }
+            }
+            if (!newpos.origin())
+            {
+                act->move_to_pos(newpos);
+                mprf("%s %s knocked back by the %s.", act->name(DESC_THE).c_str(),
+                    act->is_player() ? "are" : "is", description.c_str());
+            }
+        }
+    }
+
+    if (do_clouds && cloud_at(pos))
+    {
+        coord_def newpos = coord_def(0, 0);
+        const bool is_left = (mons->pos().x - pos.x) >= 0;
+        const bool is_up = (mons->pos().y - pos.y) >= 0;
+        for (rectangle_iterator sai(pos, size); sai; ++sai)
+        {
+            if (in_bounds(*sai) && grid_distance(*sai, mons->pos()) > grid_distance(pos, mons->pos())
+                && !cloud_at(*sai) && !cell_is_solid(*sai) && cell_see_cell(pos, *sai, LOS_NO_TRANS))
+            {
+                const int d0 = grid_distance(pos, *sai);
+                const int d1 = newpos.origin() ? 0 : grid_distance(pos, newpos);
+                const bool left = (pos.x - (*sai).x) >= 0;
+                const bool up = (pos.y - (*sai).y) >= 0;
+                if (is_left == left && is_up == up && (newpos.origin() || (d0 > d1)))
+                    newpos = *sai;
+            }
+        }
+        if (!newpos.origin())
+            swap_clouds(pos, newpos);
+    }
 }
 
 static bool _explode_monster(monster* mons, killer_type killer,
@@ -1483,34 +1537,15 @@ static bool _explode_monster(monster* mons, killer_type killer,
     {
         for (adjacent_iterator ai(mons->pos(), false); ai; ++ai)
         {
+            _explosion_knockback(mons, *ai, 2, "lava burst", false);
             if (!cell_is_solid(*ai) && !feat_is_critical(grd(*ai)) && !feat_is_watery(grd(*ai)))
                 temp_change_terrain(*ai, DNGN_LAVA, 20 + random2(80), TERRAIN_CHANGE_FLOOD);
-            if (actor * act = actor_at(*ai))
-            {
-                if (!(act->is_player() && you.wearing_ego(EQ_BOOTS, SPARM_STURDY) || act->is_stationary()))
-                {
-                    coord_def * newpos;
-                    for (adjacent_iterator sai(act->pos(), true); sai; ++sai)
-                    {
-                        if (grid_distance(*sai, mons->pos()) > grid_distance(act->pos(), mons->pos()) && act->is_habitable(*sai))
-                        {
-                            if (!newpos || coinflip())
-                            {
-                                coord_def x = *sai;
-                                newpos = &x;
-                            }
-                        }
-                    }
-                    if (newpos)
-                    {
-                        act->move_to_pos(*newpos);
-                        mprf("%s %s knocked back by the lava burst.", act->name(DESC_THE).c_str(), 
-                                                                      act->is_player() ? "are" : "is");
-                    }
-                }
-
-            }
         }
+    }
+    else if (mons->type == MONS_BALLOON_DOG)
+    {
+        for (rectangle_iterator ai(mons->pos(), 3); ai; ++ai)
+            _explosion_knockback(mons, *ai, 4, "rushing air", true);
     }
 
     // Detach monster from the grid first, so it doesn't get hit by
