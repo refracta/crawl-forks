@@ -3876,6 +3876,16 @@ tileidx_t tileidx_ability(const ability_type ability)
         return TILEG_ABILITY_JIYVA_SUBSUME;
     case ABIL_EJECT:
         return TILEG_ABILITY_JIYVA_EJECT;
+    case ABIL_SILENT_SCREAM:
+        return TILEG_ABILITY_JIYVA_SILENCE;
+    case ABIL_BUD_EYEBALLS:
+        return TILEG_ABILITY_JIYVA_EYEBALLS;
+    case ABIL_CORROSIVE_WAVE:
+        return TILEG_ABILITY_JIYVA_SLIMEWAVE;
+    case ABIL_FROST_BURST:
+        return TILEG_ABILITY_JIYVA_FROSTBURST;
+    case ABIL_SLIME_BOLT:
+        return TILEG_ABILITY_JIYVA_SLIMEBOLT;
     // Fedhas
     case ABIL_FEDHAS_FUNGAL_BLOOM:
         return TILEG_ABILITY_FEDHAS_FUNGAL_BLOOM;
