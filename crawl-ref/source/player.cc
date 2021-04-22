@@ -8520,10 +8520,16 @@ int player::innate_vision() const
     if (get_mutation_level(MUT_GOLDEN_EYEBALLS))
         x++;
 
+    if (get_mutation_level(MUT_BUDDING_EYEBALLS))
+        x++;
+
     if (have_passive(passive_t::sinv))
         x++;
 
     if (get_mutation_level(MUT_GOLDEN_EYEBALLS) == 3)
+        x++;
+
+    if (get_mutation_level(MUT_BUDDING_EYEBALLS) == 3)
         x++;
 
     if (has_mutation(MUT_IMPAIRED_VISION))

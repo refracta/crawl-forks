@@ -297,7 +297,13 @@ int attack::calc_to_hit(bool random, bool player_aux)
             mhit /= 20;
         }
 
-        // +0 for normal vision, +5 for Supernaturally Acute Vision, -5 For Impaired Vision
+        if (you.get_mutation_level(MUT_BUDDING_EYEBALLS))
+        {
+            mhit *= (20 + you.get_mutation_level(MUT_GOLDEN_EYEBALLS));
+            mhit /= 20;
+        }
+
+        // +0 for normal vision, +10% for Supernaturally Acute Vision, -10% For Impaired Vision
         mhit *= 10 + you.vision();
         mhit /= 10;
     }
