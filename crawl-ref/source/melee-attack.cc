@@ -4139,7 +4139,7 @@ void melee_attack::do_passive_freeze()
 
 void melee_attack::mons_do_eyeball_confusion()
 {
-    if (you.has_mutation(MUT_GOLDEN_EYEBALLS)
+    if (you.has_mutation(MUT_GOLDEN_EYEBALLS) || you.has_mutation(MUT_BUDDING_EYEBALLS)
         && attacker->alive()
         && adjacent(you.pos(), attacker->as_monster()->pos())
         && x_chance_in_y(3 + you.skill(SK_INVOCATIONS), 90))
@@ -4148,16 +4148,19 @@ void melee_attack::mons_do_eyeball_confusion()
 
         monster* mon = attacker->as_monster();
 
-        if (mon->check_res_magic(ench_pow) <= 0)
+        if (mon->check_res_magic(ench_pow) <= 0 || you.has_mutation(MUT_BUDDING_EYEBALLS))
         {
-            mprf("The eyeballs on your body gaze at %s.",
+            mprf("The eyeballs on your membranes gaze upon %s.",
                  mon->name(DESC_THE).c_str());
 
-            if (!mon->check_clarity())
+            if (!mon->check_clarity() && you.has_mutation(MUT_GOLDEN_EYEBALLS))
             {
                 mon->add_ench(mon_enchant(ENCH_CONFUSION, 0, &you,
                                           30 + random2(100)));
             }
+
+            if (you.has_mutation(MUT_BUDDING_EYEBALLS))
+                mon->malmutate("shining eyes");
         }
     }
 }

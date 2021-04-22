@@ -870,17 +870,34 @@ static const mutation_def mut_data[] =
 { MUT_GOLDEN_EYEBALLS, 0, 3, mutflag::good | mutflag::jiyva, true,
   "golden eyeballs",
 
-  {"Your body has grown golden eyes which may confuse attackers. (+Vis)",
-   "Your body has grown many golden eyes which increase your resistance against hostile enchantments and may confuse attackers. (+Vis, MR+)",
-   "Your body is covered in golden eyes which increase your resistance against hostile enchantments and may confuse attackers. (++Vis, MR++)"},
+  {"Your membrane is dotted with golden eyes which may confuse attackers. (+Vis)",
+   "Your membrane is coated in golden eyes which increase your resistance against hostile enchantments and may confuse attackers. (+Vis, MR+)",
+   "Your membrane is almost completely made up of golden eyes which increase your resistance against hostile enchantments and may confuse attackers. (++Vis, MR++)"},
 
-  {"Golden eyeballs grow over part of your body.",
-   "Golden eyeballs cover a large portion of your body.",
-   "Golden eyeballs cover you completely."},
+  {"Golden eyeballs ripple beneath your cytoplasm.",
+   "Golden eyeballs peer out through your membranes.",
+   "Golden eyeballs cover your extremities fully."},
 
-  {"The eyeballs on your body disappear.",
-   "The eyeballs on your body recede somewhat.",
-   "The eyeballs on your body recede somewhat."},
+  {"The eyeballs in your cytoplasm disappear.",
+   "The eyeballs in your cytoplasm recede somewhat.",
+   "The eyeballs in your cytoplasm recede somewhat."},
+},
+
+{ MUT_BUDDING_EYEBALLS, 0, 3, mutflag::good | mutflag::jiyva, true,
+  "budding eyeballs",
+
+  {"Your membrane is dotted with shining eyes which may malmutate attackers. (+Vis)",
+   "Your membrane is coated in shining eyes which may malmutate attackers. (+Vis)",
+   "A variety of eyeballs carouse through your cytoplasm. (++Vis)\n"
+   "You may expend your own health to spawn eyeballs from your flesh."},
+
+  {"Eyeballs ripple beneath your cytoplasm.",
+   "Eyeballs press against your membranes.",
+   "Eyeballs bud out of your cytoplasm, ready to form their own creatures!"},
+
+  {"The eyeballs in your cytoplasm disappear.",
+   "The eyeballs in your cytoplasm recede somewhat.",
+   "The eyeballs in your cytoplasm recede somewhat."},
 },
 
 { MUT_TRANSLUCENT_SKIN, 0, 3, mutflag::good | mutflag::jiyva, true,

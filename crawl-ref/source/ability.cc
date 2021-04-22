@@ -328,7 +328,9 @@ static const ability_def Ability_List[] =
       0, 150, 200, 0, {fail_basis::xl, 50, 1}, abflag::none },
 
     { ABIL_TURN_INVISIBLE, "Turn Invisible",
-      0, 200, 100, 0, {fail_basis::xl, 50, 2}, abflag::none },
+      0, 100, 100, 0, {fail_basis::xl, 50, 2}, abflag::none },
+    { ABIL_BUD_EYEBALLS, "Spawn Eyeballs",
+      0, 200, 200, 0, {fail_basis::xl, 50, 2}, abflag::none },
     { ABIL_SUBSUME, "Subsume Item", 0, 0, 0, 0,{}, abflag::starve_ok },
     { ABIL_EJECT, "Eject Item", 0, 0, 0, 0,{}, abflag::starve_ok },
 
@@ -2024,6 +2026,36 @@ static int _pois_res_multi(monster * mons)
     }
 }
 
+static void _spawn_eyeballs()
+{
+    const int power = you.experience_level + you.skill(SK_INVOCATIONS);
+    int sumcount = div_rand_round(power, 9);
+    sumcount += 1 + random2(sumcount);
+
+    for (int i = 0; i < sumcount; i++)
+    {
+        const monster_type mon = random_choose_weighted(
+             2, MONS_FLOATING_EYE,
+             1, MONS_GOLDEN_EYE,
+             1, MONS_SHINING_EYE,
+             4, MONS_EYE_OF_DEVASTATION);
+
+        monster * x = create_monster(
+            mgen_data(mon, BEH_FRIENDLY, you.pos(), MHITNOT, MG_NONE, GOD_JIYVA));
+        if (x)
+            x->add_ench(mon_enchant(ENCH_FAKE_ABJURATION, 5));
+
+        for (adjacent_iterator ai(you.pos()); ai; ++ai)
+        {
+            if (!actor_at(*ai))
+            {
+                x->move_to_pos(*ai, true, true);
+                break;
+            }
+        }
+    }
+}
+
 /*
  * Use an ability.
  *
@@ -2629,6 +2661,11 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         fail_check();
         you.props[INVIS_CONTAMLESS_KEY].get_bool() = true;
         potionlike_effect(POT_INVISIBILITY, 20 + you.experience_level + you.skill(SK_INVOCATIONS));
+        break;
+
+    case ABIL_BUD_EYEBALLS:
+        fail_check();
+        _spawn_eyeballs();
         break;
 
     case ABIL_SUBSUME:
@@ -4027,6 +4064,9 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
 
     if (you.get_mutation_level(MUT_TRANSLUCENT_SKIN) == 3 && !you.duration[DUR_INVIS])
         _add_talent(talents, ABIL_TURN_INVISIBLE, check_confused);
+
+    if (you.get_mutation_level(MUT_BUDDING_EYEBALLS) == 3)
+        _add_talent(talents, ABIL_BUD_EYEBALLS, check_confused);
 
     if (you.get_mutation_level(MUT_CYTOPLASMIC_SUSPENSION))
         _add_talent(talents, ABIL_SUBSUME, check_confused);
