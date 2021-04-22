@@ -237,7 +237,7 @@ spret cast_summon_ice_beast(int pow, god_type god, bool fail)
 
     if (monster * mon = create_monster(ice_beast))
     {
-        chaos_summon(SPELL_CALL_CANINE_FAMILIAR, mon, &you);
+        chaos_summon(SPELL_SUMMON_ICE_BEAST, mon, &you);
         mpr("A chill wind blows around you.");
     }
     else
