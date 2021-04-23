@@ -4192,7 +4192,8 @@ void melee_attack::do_spines()
 {
     if (defender->is_player())
     {
-        const int mut = you.get_mutation_level(MUT_SPINY);
+        // BCADDO: Make levels of normal Spiny matter more (or collapse to one level and combine something else into that facet).
+        const int mut = max(you.get_mutation_level(MUT_SPINY), you.get_mutation_level(MUT_FROST_BURST));
 
         if (mut && attacker->alive() && coinflip())
         {
@@ -4209,6 +4210,21 @@ void melee_attack::do_spines()
                                    make_stringf(" is struck by your spines%s", attack_strength_punctuation(hurt).c_str()).c_str());
 
             attacker->hurt(&you, hurt);
+
+            if (you.get_mutation_level(MUT_FROST_BURST))
+            {
+                const int dice_size = div_rand_round(you.experience_level + you.skill(SK_INVOCATIONS), 6);
+                const int ice_dmg = roll_dice(you.get_mutation_level(MUT_FROST_BURST), dice_size);
+                const int ice_hurt = resist_adjust_damage(attacker, BEAM_COLD, ice_dmg);
+
+                if (ice_hurt <= 0)
+                    return;
+
+                simple_monster_message(*attacker->as_monster(),
+                                       make_stringf(" is frozen%s", attack_strength_punctuation(hurt).c_str()).c_str());
+
+                attacker->hurt(&you, ice_hurt);
+            }
         }
     }
     else if (defender->as_monster()->is_spiny())

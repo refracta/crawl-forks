@@ -55,6 +55,15 @@ icicle5
 icicle6
 icicle7
 
+slimecicle0 BOLT_SLIMECICLE
+slimecicle1
+slimecicle2
+slimecicle3
+slimecicle4
+slimecicle5
+slimecicle6
+slimecicle7
+
 flame0 BOLT_FLAME
 flame1
 flame2

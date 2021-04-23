@@ -4323,11 +4323,11 @@ static void _chaos_bolt_flavour(bolt beam, int x)
     }
 }
 
-spret cast_starburst(int pow, bool fail, bool tracer)
+spret cast_starburst(int pow, bool fail, bool tracer, bool frostburst)
 {
-    int range = spell_range(SPELL_STARBURST, pow);
+    const int range = frostburst ? 3 : spell_range(SPELL_STARBURST, pow);
+    const bool chaos = !frostburst && determine_chaos(&you, SPELL_STARBURST);
 
-    bool chaos = determine_chaos(&you, SPELL_STARBURST);
     int x = random2(7);
 
     vector<coord_def> offsets = { coord_def(range, 0),
@@ -4350,25 +4350,26 @@ spret cast_starburst(int pow, bool fail, bool tracer)
     beam.foe_info.dont_stop = true;
     beam.attitude = ATT_FRIENDLY;
     beam.thrower      = KILL_YOU;
-    beam.origin_spell = SPELL_STARBURST;
+    beam.origin_spell = frostburst ? SPELL_NO_SPELL : SPELL_STARBURST;
     beam.draw_delay   = 5;
-    zappy(ZAP_BOLT_OF_FIRE, pow, false, beam);
-    if (_is_menacing(&you, SPELL_STARBURST))
+    zappy(frostburst ? ZAP_FROST_BURST : ZAP_BOLT_OF_FIRE, pow, false, beam);
+    if (!frostburst && _is_menacing(&you, SPELL_STARBURST))
         beam.damage.num++;
 
     for (const coord_def & offset : offsets)
     {
         beam.target = you.pos() + offset;
-        if (!tracer && !player_tracer(ZAP_BOLT_OF_FIRE, pow, beam))
+        if (!tracer && !player_tracer(frostburst ? ZAP_FROST_BURST : ZAP_BOLT_OF_FIRE, pow, beam))
             return spret::abort;
+
+        if (chaos)
+        {
+            _chaos_bolt_flavour(beam, x);
+            x++;
+        }
 
         if (tracer)
         {
-            if (chaos)
-            {
-                _chaos_bolt_flavour(beam, x);
-                x++;
-            }
             beam.fire();
             // something to hit
             if (beam.foe_info.count > 0)
@@ -4381,6 +4382,14 @@ spret cast_starburst(int pow, bool fail, bool tracer)
 
     fail_check();
 
+    if (frostburst)
+    {
+        bolt *shards = new bolt();
+        shards->origin_spell = SPELL_SLIME_SHARDS;
+        zappy(ZAP_FROST_BURST_EXPLOSION, pow, false, *shards);
+        beam.special_explosion = shards;
+    }
+
     // Randomize for nice animations
     shuffle_array(offsets);
     for (auto & offset : offsets)
@@ -4388,6 +4397,9 @@ spret cast_starburst(int pow, bool fail, bool tracer)
         beam.target = you.pos() + offset;
         beam.fire();
     }
+
+    if (frostburst)
+        mpr("<lightcyan>Frozen ooze rains from your shards!</lightcyan>");
 
     return spret::success;
 }

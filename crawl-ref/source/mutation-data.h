@@ -917,6 +917,23 @@ static const mutation_def mut_data[] =
    "Your maws seem quieter."},
 },
 
+{ MUT_FROST_BURST, 0, 3, mutflag::good | mutflag::jiyva, true,
+  "frigid spines",
+
+  {"You are partially covered in icy spines of congealed slime, which impale those that strike you. (rC+)",
+   "You are completely covered in icy spines of congealed slime, which impale those that strike you. (rC++)",
+   "You are completely covered in icy spines of congealed slime, which impale those that strike you. (rC++)\n"
+   "You may expend your own health to fire an icy burst of sharp spines in all directions."},
+
+  {"Parts of your protoplasm congeal into tough spines.",
+   "More of your protoplasm turns into barbs.",
+   "You may now fire spines of icy protoplasm from your flesh."},
+
+  {"Your protoplasm smooths out.",
+   "Your membrane is less covered in barbs.",
+   "You can no longer fire barbs from your flesh."},
+},
+
 { MUT_TRANSLUCENT_SKIN, 0, 3, mutflag::good | mutflag::jiyva, true,
   "translucent skin",
 
