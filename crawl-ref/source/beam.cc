@@ -3243,6 +3243,9 @@ void bolt::affect_ground()
         }
     }
 
+    if (is_explosion && origin_spell == SPELL_SLIME_SHARDS && !one_chance_in(3) && !feat_is_critical(grd(pos())) && !feat_is_watery(grd(pos())))
+        temp_change_terrain(pos(), DNGN_SLIMY_WATER, (6 + random2(3 + you.skill(SK_INVOCATIONS))) * BASELINE_DELAY, TERRAIN_CHANGE_SLIME);
+
     affect_place_clouds();
 }
 
@@ -3899,6 +3902,9 @@ void bolt::tracer_affect_player()
 bool bolt::misses_player()
 {
     if (flavour == BEAM_VISUAL)
+        return true;
+
+    if (origin_spell == SPELL_SLIME_SHARDS && you.is_icy())
         return true;
 
     if (is_explosion || aimed_at_feet || auto_hit)
@@ -6115,6 +6121,8 @@ void bolt::affect_monster(monster* mon)
              (postac || harmless) ? "" : " but does no damage",
              harmless ? "." : attack_strength_punctuation(final).c_str());
 
+        if (origin_spell == SPELL_SLIME_SHARDS && one_chance_in(3))
+            mon->splash_with_acid(&you, 1, true, "corroded by icy fragments");
     }
     else if (heard && !hit_noise_msg.empty())
         mprf(MSGCH_SOUND, "%s", hit_noise_msg.c_str());
@@ -7046,11 +7054,15 @@ const map<spell_type, explosion_sfx> spell_explosions = {
     } },
     { SPELL_ICEBLAST, {
         "The mass of ice explodes!",
-        "an explosion",
+        "the clash of breaking glass",
     } },
     { SPELL_GHOSTLY_SACRIFICE, {
         "The ghostly flame explodes!",
         "the shriek of haunting fire",
+    } },
+    { SPELL_SLIME_SHARDS, { // Intentionally empty to prevent message spam this happens 8 times in a row afterall.
+        "",
+        "",
     } },
 };
 

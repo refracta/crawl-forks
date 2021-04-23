@@ -333,6 +333,8 @@ static const ability_def Ability_List[] =
       0, 200, 200, 0, {fail_basis::xl, 50, 2}, abflag::none },
     { ABIL_SILENT_SCREAM, "Silent Scream",
       0, 100, 100, 0, {fail_basis::xl, 50, 2}, abflag::none },
+    { ABIL_FROST_BURST, "Frost Burst",
+      0, 200, 200, 0, {fail_basis::xl, 50, 2}, abflag::none },
     { ABIL_SUBSUME, "Subsume Item", 0, 0, 0, 0,{}, abflag::starve_ok },
     { ABIL_EJECT, "Eject Item", 0, 0, 0, 0,{}, abflag::starve_ok },
 
@@ -2671,8 +2673,10 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         return spret::success;
 
     case ABIL_SILENT_SCREAM:
-        return cast_silence(6 + you.experience_level + you.skill(SK_INVOCATIONS) * 2, fail, true);
-        break;
+        return cast_silence((6 + you.experience_level + you.skill(SK_INVOCATIONS)) * 2, fail, true);
+
+    case ABIL_FROST_BURST:
+        return cast_starburst(6 + you.experience_level + you.skill(SK_INVOCATIONS), fail, false, true);
 
     case ABIL_SUBSUME:
         if (subsume_item())
@@ -4076,6 +4080,9 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
 
     if (you.get_mutation_level(MUT_JIBBERING_MAWS) == 3)
         _add_talent(talents, ABIL_SILENT_SCREAM, check_confused);
+
+    if (you.get_mutation_level(MUT_FROST_BURST) == 3)
+        _add_talent(talents, ABIL_FROST_BURST, check_confused);
 
     if (you.get_mutation_level(MUT_CYTOPLASMIC_SUSPENSION))
         _add_talent(talents, ABIL_SUBSUME, check_confused);

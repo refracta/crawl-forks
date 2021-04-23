@@ -1828,6 +1828,7 @@ int player_res_cold(bool calc_unid, bool temp, bool items)
     rc -= you.get_mutation_level(MUT_TEMPERATURE_SENSITIVITY, temp);
     rc += you.get_mutation_level(MUT_ICY_BLUE_SCALES, temp) ? 1 : 0;
     rc += you.get_mutation_level(MUT_PROTOPLASM, temp) ? 1 : 0;
+    rc += min(you.get_mutation_level(MUT_FROST_BURST, temp), 2);
 
     // draconian scales:
     if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, temp))
@@ -7662,13 +7663,9 @@ int player::res_constrict(bool mt) const
     if (mt)
         return 0;
 
-    if (is_insubstantial())
-        return 3;
-
-    if (get_mutation_level(MUT_SLIME) >= 3)
-        return 3;
-
-    if (get_mutation_level(MUT_SPINY))
+    if (is_insubstantial()
+        || get_mutation_level(MUT_SLIME) >= 3
+        || get_mutation_level(MUT_SPINY))
         return 3;
 
     return 0;
@@ -8716,7 +8713,7 @@ bool player::polymorph(int pow, bool allow_immobile)
 
 bool player::is_icy() const
 {
-    return form == transformation::ice_beast;
+    return form == transformation::ice_beast || you.get_mutation_level(MUT_FROST_BURST) >= 2;
 }
 
 bool player::is_fiery() const

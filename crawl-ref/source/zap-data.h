@@ -256,6 +256,42 @@ static const zap_info zap_data[] =
 },
 
 {
+    ZAP_FROST_BURST,
+    "shard of frozen ooze",
+    60,
+    new calcdice_calculator<3, 10, 1, 6>,
+    new tohit_calculator<10, 1, 3>,
+    new calcdice_calculator<3, 10, 1, 6>,
+    new tohit_calculator<10, 1, 3>,
+    LIGHTCYAN,
+    false,
+    BEAM_ICE,
+    DCHAR_FIRED_MISSILE,
+    true,
+    false,
+    false,
+    6
+},
+
+{
+    ZAP_FROST_BURST_EXPLOSION,
+    "frozen ooze fragments",
+    60,
+    new calcdice_calculator<3, 3, 1, 9>,
+    new tohit_calculator<AUTOMATIC_HIT>,
+    new calcdice_calculator<3, 3, 1, 9>,
+    new tohit_calculator<AUTOMATIC_HIT>,
+    LIGHTCYAN,
+    false,
+    BEAM_ICE,
+    DCHAR_FIRED_MISSILE,
+    true,
+    false,
+    true,
+    6
+},
+
+{
     ZAP_BOLT_OF_COLD,
     "bolt of cold",
     200,

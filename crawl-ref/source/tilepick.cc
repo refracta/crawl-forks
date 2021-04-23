@@ -3276,6 +3276,8 @@ tileidx_t tileidx_bolt(const bolt &bolt)
     case LIGHTCYAN:
         if (bolt.name == "iron shot")
             return TILE_BOLT_IRON_SHOT + dir;
+        else if (bolt.name == "shard of frozen ooze")
+            return TILE_BOLT_SLIMECICLE + dir;
         else if (bolt.name == "zap")
             return TILE_BOLT_ZAP + dir % tile_main_count(TILE_BOLT_ZAP);
         break;
