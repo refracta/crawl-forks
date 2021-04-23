@@ -1740,15 +1740,10 @@ bool melee_attack::player_aux_apply(unarmed_attack_type atk)
     count_action(CACT_MELEE, -1, atk); // aux_attack subtype/auxtype
 
     aux_damage  = player_stat_modify_damage(aux_damage);
-
     aux_damage  = random2(aux_damage);
-
     aux_damage  = player_apply_fighting_skill(aux_damage, true);
-
     aux_damage  = player_apply_misc_modifiers(aux_damage);
-
     aux_damage  = player_apply_slaying_bonuses(aux_damage, true);
-
     aux_damage  = player_apply_final_multipliers(aux_damage);
 
     if (atk == UNAT_CONSTRICT || atk == UNAT_STAFF)
@@ -1993,10 +1988,27 @@ int melee_attack::player_apply_final_multipliers(int damage)
     return damage;
 }
 
+static string _bite_verbs(int damage)
+{
+    if (damage < HIT_WEAK)
+        return "nip";
+    else if (damage < HIT_MED)
+        return "bite";
+    else if (damage < HIT_STRONG)
+        return "chomp";
+    return "maul";
+}
+
 void melee_attack::set_attack_verb(int damage)
 {
     if (!attacker->is_player())
         return;
+
+    if (attack_number < 0)
+    {
+        attack_verb = _bite_verbs(damage);
+        return;
+    }
 
     if (mount_attack)
     {
@@ -2004,14 +2016,7 @@ void melee_attack::set_attack_verb(int damage)
         {
         case mount_type::drake: // fallthrough
         case mount_type::hydra:
-            if (damage < HIT_WEAK)
-                attack_verb = "nips";
-            else if (damage < HIT_MED)
-                attack_verb = "bites";
-            else if (damage < HIT_STRONG)
-                attack_verb = "chomps";
-            else
-                attack_verb = "mauls";
+            attack_verb = make_stringf("%ss", _bite_verbs(damage).c_str());
             break;
 
         case mount_type::slime:
@@ -2023,8 +2028,7 @@ void melee_attack::set_attack_verb(int damage)
                 attack_verb = "engulfs";
             else
                 attack_verb = "consumes";
-            break;
-            
+            break;   
 
         case mount_type::spider:
             attack_verb = "stings";
@@ -2649,9 +2653,7 @@ void melee_attack::attacker_sustain_passive_damage()
     if (!adjacent(attacker->pos(), defender->pos()) || is_riposte)
         return;
 
-    int acid_strength; 
-    
-    acid_strength = resist_adjust_damage(attacker, BEAM_ACID, 5, mount_attack);
+    int acid_strength = resist_adjust_damage(attacker, BEAM_ACID, 5, mount_attack);
 
     // Spectral weapons can't be corroded (but can take acid damage).
     // Mounts can't be corroded either (at least for now).

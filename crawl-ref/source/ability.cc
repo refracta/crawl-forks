@@ -331,6 +331,8 @@ static const ability_def Ability_List[] =
       0, 100, 100, 0, {fail_basis::xl, 50, 2}, abflag::none },
     { ABIL_BUD_EYEBALLS, "Spawn Eyeballs",
       0, 200, 200, 0, {fail_basis::xl, 50, 2}, abflag::none },
+    { ABIL_SILENT_SCREAM, "Silent Scream",
+      0, 100, 100, 0, {fail_basis::xl, 50, 2}, abflag::none },
     { ABIL_SUBSUME, "Subsume Item", 0, 0, 0, 0,{}, abflag::starve_ok },
     { ABIL_EJECT, "Eject Item", 0, 0, 0, 0,{}, abflag::starve_ok },
 
@@ -1474,7 +1476,7 @@ static bool _check_ability_possible(const ability_def& abil, bool quiet = false)
     }
 
     // Silence and water elementals
-    if (silenced(you.pos()) && you.get_mutation_level(MUT_SILENT_CAST) == 0
+    if (silenced(you.pos()) && !you.can_silent_cast()
         || you.duration[DUR_WATER_HOLD] && !you.res_water_drowning())
     {
         talent tal = get_talent(abil.ability, false);
@@ -2660,11 +2662,15 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         fail_check();
         you.props[INVIS_CONTAMLESS_KEY].get_bool() = true;
         potionlike_effect(POT_INVISIBILITY, 20 + you.experience_level + you.skill(SK_INVOCATIONS));
-        break;
+        return spret::success;
 
     case ABIL_BUD_EYEBALLS:
         fail_check();
         _spawn_eyeballs();
+        return spret::success;
+
+    case ABIL_SILENT_SCREAM:
+        return cast_silence(6 + you.experience_level + you.skill(SK_INVOCATIONS) * 2, fail, true);
         break;
 
     case ABIL_SUBSUME:
@@ -4067,6 +4073,9 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
     if (you.get_mutation_level(MUT_BUDDING_EYEBALLS) == 3)
         _add_talent(talents, ABIL_BUD_EYEBALLS, check_confused);
 
+    if (you.get_mutation_level(MUT_JIBBERING_MAWS) == 3)
+        _add_talent(talents, ABIL_SILENT_SCREAM, check_confused);
+
     if (you.get_mutation_level(MUT_CYTOPLASMIC_SUSPENSION))
         _add_talent(talents, ABIL_SUBSUME, check_confused);
 
@@ -4420,7 +4429,7 @@ vector<ability_type> get_god_abilities(bool ignore_silence, bool ignore_piety,
     if (silenced(you.pos()) && you_worship(GOD_WU_JIAN) && piety_rank() >= 2)
         abilities.push_back(ABIL_WU_JIAN_WALLJUMP);
 
-    if (!ignore_silence && silenced(you.pos()) && you.get_mutation_level(MUT_SILENT_CAST) == 0)
+    if (!ignore_silence && silenced(you.pos()) && !you.can_silent_cast())
         return abilities;
     // Remaining abilities are unusable if silenced.
     for (const auto& power : get_god_powers(you.religion))

@@ -211,7 +211,8 @@ int player::damage_type(int attack_number)
  */
 brand_type player::damage_brand(int which_attack)
 {
-    equipment_type slot; 
+    if (which_attack < 0)
+        return random_choose(SPWPN_ACID, SPWPN_ANTIMAGIC, SPWPN_CHAOS, SPWPN_DRAINING, SPWPN_ELECTROCUTION, SPWPN_VENOM, SPWPN_VAMPIRISM);
 
     if (you.mounted() && which_attack >= 2)
     {
@@ -232,6 +233,8 @@ brand_type player::damage_brand(int which_attack)
         }
         }
     }
+
+    equipment_type slot;
 
     if (which_attack == 0)
         slot = EQ_WEAPON0;

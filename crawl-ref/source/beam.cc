@@ -2428,7 +2428,7 @@ static bool _curare_hits_player(actor* agent, int levels, string name,
 
     if (mount)
     {
-        if (you.mount == mount_type::hydra && !one_chance_in(3))
+        if (you.res_poison(true, true) && !one_chance_in(3))
             return false;
 
         poison_mount(roll_dice(levels, 12) + 1);

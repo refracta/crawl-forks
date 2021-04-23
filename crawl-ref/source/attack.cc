@@ -1413,6 +1413,9 @@ int attack::calc_base_unarmed_damage()
         }
     }
 
+    if (attack_number < 0)
+        return 8;
+
     // BCADDO: It's a little wack that it's just a base damage additive then skill for most forms
     // Consider revising.
     int damage = get_form()->get_base_unarmed_damage();

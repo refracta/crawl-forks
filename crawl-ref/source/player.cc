@@ -9224,6 +9224,11 @@ bool player::form_uses_xl() const
         || form == transformation::bat && you.species != SP_VAMPIRE;
 }
 
+bool player::can_silent_cast() const
+{
+    return get_mutation_level(MUT_SILENT_CAST) || (get_mutation_level(MUT_JIBBERING_MAWS) >= 2);
+}
+
 bool player::have_serpentine_tail() const
 {
     return get_mutation_level(MUT_CONSTRICTING_TAIL) || get_mutation_level(MUT_GELATINOUS_TAIL);
