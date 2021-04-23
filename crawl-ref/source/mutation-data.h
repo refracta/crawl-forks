@@ -900,6 +900,23 @@ static const mutation_def mut_data[] =
    "The eyeballs in your cytoplasm recede somewhat."},
 },
 
+{ MUT_JIBBERING_MAWS, 0, 3, mutflag::good | mutflag::jiyva, true,
+  "jibbering maws",
+
+  {"You are covered in demonic mouths, which bite at your foes in melee.",
+   "You are covered in demonic mouths, which bite at your foes in melee; speaking demonic speech through these mouths allows you to ignore silence.",
+   "You are covered in demonic mouths, which bite at your foes in melee; speaking demonic speech through these mouths allows you to ignore silence.\n"
+   "You may expend your own health to let out a foul demonic scream, which shrouds you in unnatural silence and damages those that hear it."},
+
+  {"Foul demonic mouths cover your extremities.",
+   "Your demonic maws begin to gibber incessantly in a foul tongue.",
+   "You may now let out a demonic scream through your maws."},
+
+  {"The maws dotting your membranes disappear.",
+   "Your maws go quiet.",
+   "Your maws seem quieter."},
+},
+
 { MUT_TRANSLUCENT_SKIN, 0, 3, mutflag::good | mutflag::jiyva, true,
   "translucent skin",
 

@@ -55,6 +55,7 @@
 #define PETRIFIED_BY_KEY "petrified_by"
 #define NOXIOUS_BOG_KEY "noxious_bog_pow"
 #define INVIS_CONTAMLESS_KEY "contamless_invisibility"
+#define DEMON_SCREAM "damaging silence"
 
 // display/messaging breakpoints for penalties from Ru's MUT_HORROR
 #define HORROR_LVL_EXTREME  3
@@ -922,6 +923,7 @@ public:
 
     bool form_uses_xl() const;
     bool have_serpentine_tail() const;
+    bool can_silent_cast() const;
 
     bool clear_far_engulf() override;
 

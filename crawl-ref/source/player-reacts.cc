@@ -31,6 +31,7 @@
 #include "act-iter.h"
 #include "areas.h"
 #include "artefact.h"
+#include "attack.h" // attack_strength_punctuation
 #include "beam.h"
 #include "cloud.h"
 #include "clua.h"
@@ -549,7 +550,19 @@ static void _decrement_simple_duration(duration_type dur, int delay)
     }
 }
 
+static void _silence_damage()
+{
+    const int dam = 2 + div_rand_round(you.experience_level + you.skill(SK_INVOCATIONS), 9);
 
+    for (rectangle_iterator ri(you.pos(), you.silence_radius()); ri; ++ri)
+    {
+        if (monster * mon = monster_at(*ri))
+        {
+            mon->hurt(&you, dam, BEAM_MMISSILE, KILLED_BY_BEAM, "", "silent scream");
+            mprf("Your scream echoes through %s%s", mon->name(DESC_THE).c_str(), attack_strength_punctuation(dam).c_str());
+        }
+    }
+}
 
 /**
  * Decrement player durations based on how long the player's turn lasted in aut.
@@ -586,7 +599,11 @@ static void _decrement_durations()
 
     // Possible reduction of silence radius.
     if (you.duration[DUR_SILENCE])
+    {
+        if (you.props.exists(DEMON_SCREAM) && you.props[DEMON_SCREAM].get_bool() == true)
+            _silence_damage();
         invalidate_agrid();
+    }
     // and liquefying radius.
     if (you.duration[DUR_LIQUEFYING])
         invalidate_agrid();

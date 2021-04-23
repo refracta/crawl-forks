@@ -209,10 +209,38 @@ spret cast_song_of_slaying(int pow, bool fail)
     return spret::success;
 }
 
-spret cast_silence(int pow, bool fail)
+spret cast_silence(int pow, bool fail, bool abil)
 {
     fail_check();
-    mpr("A profound silence engulfs you.");
+
+    if (abil)
+    {
+        for (rectangle_iterator ri(you.pos(), 7); ri; ++ri)
+        {
+            if (monster * mon = monster_at(*ri))
+            {
+                if (mon->friendly())
+                {
+                    string prompt = make_stringf("Really attack %s?", mon->name(DESC_YOUR).c_str());
+                    if (yesno(prompt.c_str(), true, 'n'))
+                        break;
+                    else
+                    {
+                        canned_msg(MSG_OK);
+                        return spret::abort;
+                    }
+                }
+            }
+        }
+
+        mpr("<lightgreen>You let out a horrid demonic screech!</lightgreen>");
+        you.props[DEMON_SCREAM] = true;
+    }
+    else
+    {
+        mpr("A profound silence engulfs you.");
+        you.props[DEMON_SCREAM] = false;
+    }
 
     you.increase_duration(DUR_SILENCE, 10 + pow/4 + random2avg(pow/2, 2), 100);
     invalidate_agrid(true);
