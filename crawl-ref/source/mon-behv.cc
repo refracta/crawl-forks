@@ -375,6 +375,7 @@ void handle_behaviour(monster* mon)
     {
         simple_monster_message(*mon, " has wandered too far from their summoner and loses cohesion!");
         mon->lose_ench_duration(ENCH_ABJ, INFINITE_DURATION);
+        return;
     }
 
     // Change proxPlayer depending on invisibility and standing
