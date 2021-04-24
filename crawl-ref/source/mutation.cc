@@ -2058,6 +2058,7 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
         case MUT_FRAIL:
         case MUT_ROBUST:
         case MUT_RUGGED_BROWN_SCALES:
+        case MUT_ACID_WAVE:
             calc_hp();
             break;
 
@@ -2270,7 +2271,8 @@ static bool _delete_single_mutation_level(mutation_type mutat,
 
     // Do post-mutation effects.
     if (mutat == MUT_FRAIL || mutat == MUT_ROBUST
-        || mutat == MUT_RUGGED_BROWN_SCALES)
+        || mutat == MUT_RUGGED_BROWN_SCALES
+        || mutat == MUT_ACID_WAVE)
     {
         calc_hp();
     }

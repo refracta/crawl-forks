@@ -656,6 +656,7 @@ static inline int get_resistible_fraction(beam_type flavour)
     // Drowning damage from water is resistible by being a water thing, or
     // otherwise asphyx resistant.
     case BEAM_WATER:
+    case BEAM_ACID_WAVE:
         return 40;
 
     // Assume ice storm and throw icicle are mostly solid.

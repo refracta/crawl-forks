@@ -934,6 +934,23 @@ static const mutation_def mut_data[] =
    "You can no longer fire barbs from your flesh."},
 },
 
+{ MUT_ACID_WAVE, 0, 3, mutflag::good | mutflag::jiyva, true,
+  "hulking protoplasm",
+
+  {"Your protoplasm is much larger than normal. (HP +10%)",
+   "Your protoplasm is much larger and thicker than normal. (HP +20%, rElec+)",
+   "Your protoplasm is much larger and thicker than normal. (HP +30%, rElec+)\n"
+   "You may expend your own health to fire an acidic wave of ooze from your protoplasm."},
+
+  {"Your protoplasm grows larger.",
+   "Your protoplasm grows larger.",
+   "You may now fire caustic ooze from your protoplasm."},
+
+  {"Your protoplasm shrinks.",
+   "Your protoplasm shrinks.",
+   "You can no longer fire caustic ooze from your protoplasm."},
+},
+
 { MUT_TRANSLUCENT_SKIN, 0, 3, mutflag::good | mutflag::jiyva, true,
   "translucent skin",
 

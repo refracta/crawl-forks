@@ -309,7 +309,7 @@ static const zap_info zap_data[] =
     6
 },
 
-{ // Used only by phial of floods
+{ // Used by phial of floods
     ZAP_PRIMAL_WAVE,
     "torrent of water",
     200,
@@ -323,6 +323,24 @@ static const zap_info zap_data[] =
     LIGHTBLUE,
     false,
     BEAM_WATER,
+    DCHAR_WAVY,
+    true,
+    false,
+    false,
+    6
+},
+
+{ 
+    ZAP_CORROSIVE_WAVE,
+    "deluge of slime",
+    200,
+    new calcdice_calculator<4, 10, 1, 3>,
+    new tohit_calculator<10, 1, 1>,
+    new calcdice_calculator<4, 10, 1, 3>,
+    new tohit_calculator<10, 1, 1>,
+    LIGHTGREEN,
+    false,
+    BEAM_ACID_WAVE,
     DCHAR_WAVY,
     true,
     false,

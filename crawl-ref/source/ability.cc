@@ -335,6 +335,8 @@ static const ability_def Ability_List[] =
       0, 100, 100, 0, {fail_basis::xl, 50, 2}, abflag::none },
     { ABIL_FROST_BURST, "Frost Burst",
       0, 200, 200, 0, {fail_basis::xl, 50, 2}, abflag::none },
+    { ABIL_CORROSIVE_WAVE, "Corrosive Wave",
+      0, 100, 100, 0, {fail_basis::xl, 50, 2}, abflag::none },
     { ABIL_SUBSUME, "Subsume Item", 0, 0, 0, 0,{}, abflag::starve_ok },
     { ABIL_EJECT, "Eject Item", 0, 0, 0, 0,{}, abflag::starve_ok },
 
@@ -2608,7 +2610,6 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         // deliberate fall-through
     case ABIL_BLINK:            // mutation
         return cast_blink(fail);
-        break;
 
     case ABIL_EVOKE_BERSERK:    // amulet of rage, randarts
         fail_check();
@@ -2677,6 +2678,26 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
 
     case ABIL_FROST_BURST:
         return cast_starburst(6 + you.experience_level + you.skill(SK_INVOCATIONS), fail, false, true);
+
+    case ABIL_CORROSIVE_WAVE:
+    {
+        fail_check();
+        const int pow = 6 + you.experience_level + you.skill(SK_INVOCATIONS);
+        zappy(ZAP_CORROSIVE_WAVE, pow, false, beam);
+        beam.range = 4;
+        beam.origin_spell = SPELL_PRIMAL_WAVE;
+
+        direction_chooser_args args;
+        args.mode = TARG_HOSTILE;
+        args.top_prompt = "Squirt your ooze at?";
+        args.self = confirm_prompt_type::cancel;
+
+        if (!spell_direction(abild, beam, &args) || !player_tracer(ZAP_CORROSIVE_WAVE, pow, beam))
+            return spret::abort;
+
+        beam.fire();
+        break;
+    }
 
     case ABIL_SUBSUME:
         if (subsume_item())
@@ -4083,6 +4104,9 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
 
     if (you.get_mutation_level(MUT_FROST_BURST) == 3)
         _add_talent(talents, ABIL_FROST_BURST, check_confused);
+
+    if (you.get_mutation_level(MUT_ACID_WAVE) == 3)
+        _add_talent(talents, ABIL_CORROSIVE_WAVE, check_confused);
 
     if (you.get_mutation_level(MUT_CYTOPLASMIC_SUSPENSION))
         _add_talent(talents, ABIL_SUBSUME, check_confused);

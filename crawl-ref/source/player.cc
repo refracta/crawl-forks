@@ -1985,6 +1985,7 @@ int player_res_electricity(bool calc_unid, bool temp, bool items)
     // mutations:
     re += you.get_mutation_level(MUT_THIN_METALLIC_SCALES, temp) == 3 ? 1 : 0;
     re += you.get_mutation_level(MUT_SHOCK_RESISTANCE, temp);
+    re += you.get_mutation_level(MUT_ACID_WAVE, temp) >= 2 ? 1 : 0;
     re -= you.get_mutation_level(MUT_SHOCK_VULNERABILITY, temp);
 
     // draconian scales:
@@ -4868,6 +4869,7 @@ int get_real_hp(bool trans, bool rotted)
 
     // Mutations that increase HP by a percentage
     hitp *= 100 + (you.get_mutation_level(MUT_ROBUST) * 10)
+                + (you.get_mutation_level(MUT_ACID_WAVE) * 10)
                 + (you.attribute[ATTR_DIVINE_VIGOUR] * 5)
                 + (you.get_mutation_level(MUT_RUGGED_BROWN_SCALES) * 7)
                 - (you.get_mutation_level(MUT_FRAIL) * 10)
