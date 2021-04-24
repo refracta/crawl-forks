@@ -414,6 +414,35 @@ spret frog_hop(bool fail, bool spider)
     return spret::success; // TODO
 }
 
+spret blink_bolt(bool fail, int power)
+{
+    coord_def target;
+    targeter_beam tgt(&you, 6, ZAP_SLIMEBOLT, power, 0, 0);
+    tgt.obeys_mesmerise = true;
+    if (!_find_cblink_target(target, true, "cascade", &tgt))
+        return spret::abort;
+
+    bolt beam;
+    beam.source = you.pos();
+    beam.range = INFINITE_DISTANCE;
+    beam.target = target;
+    beam.aimed_at_spot = true;
+
+    if (!player_tracer(ZAP_SLIMEBOLT, power, beam, INFINITE_DISTANCE))
+        return spret::abort;
+
+    fail_check();
+
+    const int d = 6 + random2(3 + you.skill(SK_INVOCATIONS));
+    temp_change_terrain(you.pos(), DNGN_SLIMY_WATER, d * BASELINE_DELAY, TERRAIN_CHANGE_SLIME);
+    place_cloud(CLOUD_FIRE, you.pos(), d - 1, &you);
+
+    beam.fire();
+
+    move_player_to_grid(target, false);
+    return spret::success;
+}
+
 /**
  * Attempt to blink the player to a nearby tile of their choosing.
  *

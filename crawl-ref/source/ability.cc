@@ -337,6 +337,8 @@ static const ability_def Ability_List[] =
       0, 200, 200, 0, {fail_basis::xl, 50, 2}, abflag::none },
     { ABIL_CORROSIVE_WAVE, "Corrosive Wave",
       0, 100, 100, 0, {fail_basis::xl, 50, 2}, abflag::none },
+    { ABIL_SLIME_BOLT, "Fluid Rush",
+      0, 200, 200, 0, {fail_basis::xl, 50, 2}, abflag::none },
     { ABIL_SUBSUME, "Subsume Item", 0, 0, 0, 0,{}, abflag::starve_ok },
     { ABIL_EJECT, "Eject Item", 0, 0, 0, 0,{}, abflag::starve_ok },
 
@@ -2698,6 +2700,9 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         break;
     }
 
+    case ABIL_SLIME_BOLT:
+        return blink_bolt(fail, 6 + you.experience_level + you.skill(SK_INVOCATIONS));
+
     case ABIL_SUBSUME:
         if (subsume_item())
             return spret::success;
@@ -4106,6 +4111,9 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
 
     if (you.get_mutation_level(MUT_ACID_WAVE) == 3)
         _add_talent(talents, ABIL_CORROSIVE_WAVE, check_confused);
+
+    if (you.get_mutation_level(MUT_MELT) == 3)
+        _add_talent(talents, ABIL_SLIME_BOLT, check_confused);
 
     if (you.get_mutation_level(MUT_CYTOPLASMIC_SUSPENSION))
         _add_talent(talents, ABIL_SUBSUME, check_confused);

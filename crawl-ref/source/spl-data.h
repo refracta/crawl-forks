@@ -2183,6 +2183,18 @@ static const struct spell_desc spelldata[] =
 },
 
 {
+    SPELL_SLIME_SHARDS, "Slime Shards", "",
+    spschool::translocation | spschool::evocation,
+    spflag::dir_or_target | spflag::monster | spflag::noisy
+    | spflag::needs_tracer,
+    7,
+    0,
+    5, 5,
+    5, 0,
+    TILEG_GENERIC_MONSTER_SPELL,
+},
+
+{
     SPELL_TRIPLE_BREATH, "Triple Breath", "",
     spschool::fire | spschool::ice | spschool::poison | spschool::evocation,
     spflag::dir_or_target | spflag::monster | spflag::noisy

@@ -951,6 +951,23 @@ static const mutation_def mut_data[] =
    "You can no longer fire caustic ooze from your protoplasm."},
 },
 
+{ MUT_MELT, 0, 3, mutflag::good | mutflag::jiyva, true,
+  "melting flesh",
+
+  {"Your protoplasm is hot to the touch. (rF+)",
+   "Your boiling flesh constantly melts leaving a trail of flaming slime behind you. (rF++)",
+   "Your boiling flesh constantly melts leaving a trail of flaming slime behind you. (rF++)\n"
+   "You may expend your own health to melt completely and pass through monsters in a line."},
+
+  {"Your protoplasm heats up.",
+   "Your protoplasm begins to boil and spill everywhere.",
+   "You may now melt completely in order to ooze through your foes."},
+
+  {"Your protoplasm congeals.",
+   "Your protoplasm cools down.",
+   "You can no longer melt."},
+},
+
 { MUT_TRANSLUCENT_SKIN, 0, 3, mutflag::good | mutflag::jiyva, true,
   "translucent skin",
 
