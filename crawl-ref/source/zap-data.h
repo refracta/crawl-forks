@@ -348,6 +348,24 @@ static const zap_info zap_data[] =
     6
 },
 
+{ 
+    ZAP_SLIMEBOLT,
+    "torrent of ooze",
+    200,
+    new calcdice_calculator<3, 8, 1, 4>,
+    new tohit_calculator<12, 1, 6>,
+    new calcdice_calculator<3, 8, 1, 4>,
+    new tohit_calculator<12, 1, 6>,
+    LIGHTGREEN,
+    false,
+    BEAM_ACID_WAVE,
+    DCHAR_WAVY,
+    true,
+    true,
+    false,
+    4
+},
+
 _mon_hex_zap(ZAP_CONFUSE, BEAM_CONFUSION),
 
 {

@@ -1697,6 +1697,7 @@ int player_res_fire(bool calc_unid, bool temp, bool items)
     rf -= you.get_mutation_level(MUT_TEMPERATURE_SENSITIVITY, temp);
     rf += you.get_mutation_level(MUT_MOLTEN_SCALES, temp);
     rf += you.get_mutation_level(MUT_PROTOPLASM, temp) >= 2 ? 1 : 0;
+    rf += min(you.get_mutation_level(MUT_MELT, temp), 2);
 
     // draconian scales:
     if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, temp))

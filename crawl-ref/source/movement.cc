@@ -862,6 +862,19 @@ void move_player_action(coord_def move)
                                       0, -1);
                 }
             }
+
+            if (you.get_mutation_level(MUT_MELT) >= 2)
+            {
+                if (cell_is_solid(old_pos))
+                    ASSERT(you.wizmode_teleported_into_rock);
+                const dungeon_feature_type feat = grd(old_pos);
+                if (!feat_is_critical(feat) && !feat_is_watery(feat) && !cloud_at(old_pos) && one_chance_in(5))
+                {
+                    const int dur = random_range(5, 12);
+                    temp_change_terrain(old_pos, DNGN_SLIMY_WATER, dur * BASELINE_DELAY, TERRAIN_CHANGE_SLIME);
+                    check_place_cloud(CLOUD_FIRE, old_pos, dur - 1, &you);
+                }
+            }
         }
         apply_barbs_damage();
         remove_ice_armour_movement();

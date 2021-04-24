@@ -905,7 +905,8 @@ bool actor_cloud_immune(const actor &act, cloud_type type, bool mount)
                 return act.res_fire(mount) >= 3;
             return you.duration[DUR_FIRE_SHIELD]
                 || !mount && you.has_mutation(MUT_FLAME_CLOUD_IMMUNITY)
-                || !mount && player_equip_unrand(UNRAND_FIRESTARTER);
+                || !mount && player_equip_unrand(UNRAND_FIRESTARTER)
+                || !mount && you.has_mutation(MUT_MELT);
         case CLOUD_HOLY:
             return act.res_holy_energy(mount) >= 3;
         case CLOUD_COLD:

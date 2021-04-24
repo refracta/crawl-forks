@@ -3241,15 +3241,12 @@ void bolt::affect_ground()
         }
     }
 
-    if (is_explosion && origin_spell == SPELL_SLIME_SHARDS && !one_chance_in(3) && !feat_is_critical(grd(pos())) && !feat_is_watery(grd(pos())))
-        temp_change_terrain(pos(), DNGN_SLIMY_WATER, (6 + random2(3 + you.skill(SK_INVOCATIONS))) * BASELINE_DELAY, TERRAIN_CHANGE_SLIME);
-
     affect_place_clouds();
 }
 
 bool bolt::is_fiery() const
 {
-    return flavour == BEAM_FIRE || flavour == BEAM_LAVA || flavour == BEAM_STICKY_FLAME;
+    return flavour == BEAM_FIRE || flavour == BEAM_LAVA || flavour == BEAM_STICKY_FLAME || origin_spell == SPELL_SLIME_RUSH;
 }
 
 /// Can this bolt burn trees it hits?
@@ -3403,6 +3400,15 @@ void bolt::affect_place_clouds()
 
     if (origin_spell == SPELL_FLAMING_CLOUD)
         place_cloud(CLOUD_FIRE, p, (damage.roll() + damage.roll()) / 3, agent());
+
+    if (!feat_is_critical(grd(pos())) && !feat_is_watery(grd(pos())) && (is_explosion && origin_spell == SPELL_SLIME_SHARDS && !one_chance_in(3)
+        || flavour == BEAM_ACID_WAVE))
+    {
+        const int d = 6 + random2(3 + you.skill(SK_INVOCATIONS));
+        temp_change_terrain(pos(), DNGN_SLIMY_WATER, d * BASELINE_DELAY, TERRAIN_CHANGE_SLIME);
+        if (origin_spell == SPELL_SLIME_RUSH)
+            place_cloud(CLOUD_FIRE, p, d - 1, agent());
+    }
 
     // Fire/cold over water/lava
     if (feat == DNGN_LAVA && flavour == BEAM_COLD
