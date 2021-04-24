@@ -335,7 +335,7 @@ spret zapping(zap_type ztype, int power, bolt &pbolt,
                    bool fail = false);
 bool player_tracer(zap_type ztype, int power, bolt &pbolt, int range = 0);
 
-void create_feat_splash(coord_def center, int radius, int nattempts);
+void create_feat_splash(coord_def center, int radius, int nattempts, bool acid = false);
 
 void init_zap_index();
 void clear_zap_info_on_exit();

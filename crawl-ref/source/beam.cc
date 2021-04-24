@@ -1797,6 +1797,7 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
         }
         break;
 
+    case BEAM_ACID_WAVE:
     case BEAM_ACID:
     {
         hurted = resist_adjust_damage(mons, pbolt.flavour, hurted);
@@ -2579,12 +2580,13 @@ void fire_tracer(const monster* mons, bolt &pbolt, bool explode_only,
 }
 
 static coord_def _random_point_hittable_from(const coord_def &c,
-                                            int radius,
+                                            int base_radius,
                                             int margin = 1,
                                             int tries = 5)
 {
     while (tries-- > 0)
     {
+        const int radius = random_range(1, base_radius);
         const coord_def point = dgn_random_point_from(c, radius, margin);
         if (point.origin())
             continue;
@@ -2595,36 +2597,28 @@ static coord_def _random_point_hittable_from(const coord_def &c,
     return coord_def();
 }
 
-void create_feat_splash(coord_def center,
-                                int radius,
-                                int nattempts)
+void create_feat_splash(coord_def center, int radius, int nattempts, bool acid)
 {
+    const dungeon_feature_type feat = acid ? DNGN_SLIMY_WATER : DNGN_SHALLOW_WATER;
+    const terrain_change_type type = acid ? TERRAIN_CHANGE_SLIME : TERRAIN_CHANGE_FLOOD;
+
     // Always affect center, if compatible
-    if ((grd(center) == DNGN_FLOOR || grd(center) == DNGN_SHALLOW_WATER))
-    {
-        temp_change_terrain(center, DNGN_SHALLOW_WATER, 100 + random2(100),
-                            TERRAIN_CHANGE_FLOOD);
-    }
+    if ((grd(center) == DNGN_FLOOR || grd(center) == feat))
+        temp_change_terrain(center, feat, 100 + random2(100), type);
 
     if (grd(center) == DNGN_LAVA)
-    {
-        temp_change_terrain(center, DNGN_OBSIDIAN, 100 + random2(100),
-                            TERRAIN_CHANGE_FROZEN);
-    }
+        temp_change_terrain(center, DNGN_OBSIDIAN, 100 + random2(100), TERRAIN_CHANGE_FROZEN);
 
     for (int i = 0; i < nattempts; ++i)
     {
         const coord_def newp(_random_point_hittable_from(center, radius));
-        if (newp.origin() || (grd(newp) != DNGN_FLOOR && grd(newp) != DNGN_SHALLOW_WATER && grd(newp) != DNGN_LAVA))
+        if (newp.origin() || (grd(newp) != DNGN_FLOOR && grd(newp) != feat && grd(newp) != DNGN_LAVA))
             continue;
         
         if (grd(newp) == DNGN_LAVA)
-            temp_change_terrain(newp, DNGN_OBSIDIAN, 100 + random2(100),
-                TERRAIN_CHANGE_FROZEN);
+            temp_change_terrain(newp, DNGN_OBSIDIAN, 100 + random2(100), TERRAIN_CHANGE_FROZEN);
         else
-            temp_change_terrain(newp, DNGN_SHALLOW_WATER, 100 + random2(100),
-                TERRAIN_CHANGE_FLOOD);
-
+            temp_change_terrain(newp, feat, 100 + random2(100), type);
     }
 }
 
@@ -3033,7 +3027,11 @@ void bolt::affect_endpoint()
             noisy(spell_effect_noise(SPELL_PRIMAL_WAVE),
                   pos(), "You hear a splash.");
         }
-        create_feat_splash(pos(), 2, random_range(3, 12, 2));
+
+        if (flavour == BEAM_ACID_WAVE)
+            create_feat_splash(pos(), 3, random_range(8, 20, 2), true);
+        else
+            create_feat_splash(pos(), 2, random_range(3, 12, 2));
         break;
 
     case SPELL_BLINKBOLT:
@@ -4943,7 +4941,7 @@ void bolt::affect_player()
         damage_mount(mt_final_dam);
 
     // Acid. (Apply this afterward, to avoid bad message ordering.)
-    if (flavour == BEAM_ACID)
+    if (flavour == BEAM_ACID || flavour == BEAM_ACID_WAVE)
     {
         you.splash_with_acid(agent(), div_round_up(yu_final_dam, 10), true);
         if (hits_mount)
@@ -7715,6 +7713,7 @@ static string _beam_type_name(beam_type type)
     case BEAM_POISON:                return "weak poison";
     case BEAM_IRRADIATE:             return "mutagenic radiation";
     case BEAM_NEG:                   return "negative energy";
+    case BEAM_ACID_WAVE:             return "caustic ooze";
     case BEAM_ACID:                  return "acid";
     case BEAM_MIASMA:                return "miasma";
     case BEAM_SPORE:                 return "spores";
@@ -7833,7 +7832,7 @@ bool bolt::can_knockback(const actor &act, int dam) const
     if (act.is_stationary() || act.wearing_ego(EQ_BOOTS, SPARM_STURDY))
         return false;
 
-    return flavour == BEAM_WATER && origin_spell == SPELL_PRIMAL_WAVE
+    return origin_spell == SPELL_PRIMAL_WAVE
            || origin_spell == SPELL_FORCE_LANCE && dam
            || origin_spell == SPELL_MUSE_OAMS_AIR_BLAST && dam;
 }
