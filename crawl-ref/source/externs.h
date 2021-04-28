@@ -610,6 +610,7 @@ public:
                 iflags_t ignore_flags = 0x0) const;
     bool has_spells() const;
     bool cursed() const;
+    bool fragile() const;
     bool soul_bound() const;
     colour_t get_colour() const;
 

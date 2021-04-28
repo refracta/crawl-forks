@@ -997,7 +997,7 @@ bool item_is_cursable(const item_def &item, bool ignore_holy_wrath)
     if (item.is_type(OBJ_ARMOURS, ARM_QUICKSILVER_DRAGON_ARMOUR))
         return false;
 
-    if ((is_artefact(item) || item.cursed()) && artefact_property(item, ARTP_FRAGILE))
+    if (item.fragile())
         return false;
     return true;
 }

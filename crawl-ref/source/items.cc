@@ -3463,6 +3463,13 @@ bool item_def::cursed() const
     // BCADNOTE: We can probably deprecate ISFLAG_CURSED and rely on the prop existing...
 }
 
+bool item_def::fragile() const
+{
+    if ((is_artefact(*this) || this->cursed()) && artefact_property(*this, ARTP_FRAGILE))
+        return true;
+    return false;
+}
+
 bool item_def::soul_bound() const
 {
     if (!is_artefact(*this) && !this->cursed())

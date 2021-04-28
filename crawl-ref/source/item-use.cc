@@ -581,6 +581,12 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
                 mpr("You can't swap weapons while either is bound to your soul.");
                 return false;
             }
+            if ((you.weapon(0) && you.inv[you.equip[EQ_WEAPON0]].fragile())
+                || (you.weapon(1) && you.inv[you.equip[EQ_WEAPON1]].fragile()))
+            {
+                mpr("You can't swap weapons while either is fragile. You'd simply destroy the fragile one.");
+                return false;
+            }
             if (you.weapon(0) && is_range_weapon(*you.weapon(0)))
             {
                 mpr("Ranged weapons can only be wielded in your right hand.");

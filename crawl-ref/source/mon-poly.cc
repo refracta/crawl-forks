@@ -86,9 +86,7 @@ void monster_drop_things(monster* mons,
         {
             bool destroy = testbits(mitm[item].flags, ISFLAG_SUMMONED);
                  destroy |= mitm[item].base_type == OBJ_MISSILES;
-                 destroy |= (mitm[item].base_type != OBJ_BOOKS) 
-                          && (is_artefact(mitm[item]) || mitm[item].cursed()) 
-                          && artefact_property(mitm[item], ARTP_FRAGILE);
+                 destroy |= (mitm[item].base_type != OBJ_BOOKS) && mitm[item].fragile();
             if (destroy)
             {
                 item_was_destroyed(mitm[item]);

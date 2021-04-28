@@ -579,13 +579,6 @@ static bool _two_handed()
     return wep_type == HANDS_TWO;
 }
 
-static bool _is_item_cursed(item_def &item)
-{
-    if ((item.cursed() || is_artefact(item)) && artefact_property(item, ARTP_FRAGILE))
-        return true;
-    return false;
-}
-
 void ash_check_bondage(bool msg)
 {
     if (!will_have_passive(passive_t::bondage_skill_boost))
@@ -640,7 +633,7 @@ void ash_check_bondage(bool msg)
             slots[s]++;
             if (you.equip[i] != -1)
             {
-                if (_is_item_cursed(you.inv[you.equip[i]]))
+                if (you.inv[you.equip[i]].fragile())
                 {
                     if (s == ET_RIGHT
                         && (_two_handed()
@@ -681,7 +674,7 @@ void ash_check_bondage(bool msg)
     if (you.species == SP_FELID)
     {
         for (int i = EQ_LEFT_RING; i <= EQ_AMULET; ++i)
-            if (you.equip[i] != -1 && _is_item_cursed(you.inv[you.equip[i]]))
+            if (you.equip[i] != -1 && you.inv[you.equip[i]].fragile())
                 ++you.bondage_level;
 
         // Allow full bondage when all available slots are cursed.
