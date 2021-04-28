@@ -460,7 +460,8 @@ void tornado_damage(actor *caster, int dur, bool is_vortex)
     for (auto &entry : move_dest)
         if (actor* act = actor_by_mid(entry.first)) // should still be alive...
         {
-            ASSERT(entry.second == act->pos());
+            if (entry.second != act->pos())
+                continue;
 
             // Temporarily move to (0,0) to allow permutations.
             if (mgrd(act->pos()) == act->mindex())
