@@ -1545,6 +1545,7 @@ static void tag_construct_you(writer &th)
         marshallByte(th, you.mutation[j]);
         marshallByte(th, you.innate_mutation[j]);
         marshallByte(th, you.temp_mutation[j]);
+        marshallByte(th, you.suppressed_mutation[j]);
         marshallByte(th, you.sacrifices[j]);
     }
 
@@ -2960,7 +2961,13 @@ static void tag_read_you(reader &th)
         you.mutation[j]         = unmarshallUByte(th);
         you.innate_mutation[j]  = unmarshallUByte(th);
         you.temp_mutation[j]    = unmarshallUByte(th);
-        you.sacrifices[j] = unmarshallUByte(th);
+#if TAG_MAJOR_VERSION == 34
+        if (th.getMinorVersion() >= TAG_MINOR_JIYVA_REWORK)
+            you.suppressed_mutation[j] = unmarshallByte(th);
+        else
+            you.suppressed_mutation[j] = 0;
+#endif
+        you.sacrifices[j]       = unmarshallUByte(th);
     }
 
     // mutation fixups happen below here.
@@ -2968,54 +2975,6 @@ static void tag_read_you(reader &th)
     // `you.mutation` and `you.innate_mutation`.
 
 #if TAG_MAJOR_VERSION == 34
-    if (th.getMinorVersion() < TAG_MINOR_STAT_MUT)
-    {
-        // Convert excess mutational stats into base stats.
-        mutation_type stat_mutations[] = { MUT_STRONG, MUT_CLEVER, MUT_AGILE };
-        stat_type stat_types[] = { STAT_STR, STAT_INT, STAT_DEX };
-        for (int j = 0; j < 3; ++j)
-        {
-            mutation_type mut = stat_mutations[j];
-            stat_type stat = stat_types[j];
-            int total_mutation_level = you.temp_mutation[mut] + you.mutation[mut];
-            if (total_mutation_level > 2)
-            {
-                int new_level = max(0, min(you.temp_mutation[mut] - you.mutation[mut], 2));
-                you.temp_mutation[mut] = new_level;
-            }
-            if (you.mutation[mut] > 2)
-            {
-                int excess = you.mutation[mut] - 4;
-                if (excess > 0)
-                    you.base_stats[stat] += excess;
-                you.mutation[mut] = 2;
-            }
-        }
-        mutation_type bad_stat_mutations[] = { MUT_WEAK, MUT_DOPEY, MUT_CLUMSY };
-        for (int j = 0; j < 3; ++j)
-        {
-            mutation_type mut = bad_stat_mutations[j];
-            int level = you.mutation[mut];
-            switch (level)
-            {
-            case 0:
-            case 1:
-                you.mutation[mut] = 0;
-                break;
-            case 2:
-            case 3:
-                you.mutation[mut] = 1;
-                break;
-            default:
-                you.mutation[mut] = 2;
-                break;
-            };
-            if (you.temp_mutation[mut] > 2 && you.mutation[mut] < 2)
-                you.temp_mutation[mut] = 1;
-            else
-                you.temp_mutation[mut] = 0;
-        }
-    }
     you.mutation[MUT_FAST] = you.innate_mutation[MUT_FAST];
     you.mutation[MUT_SLOW] = you.innate_mutation[MUT_SLOW];
     you.mutation[MUT_BREATHE_FLAMES] = 0;
@@ -3090,67 +3049,7 @@ static void tag_read_you(reader &th)
         you.mutation[j] = you.innate_mutation[j] = you.sacrifices[j];
 
 #if TAG_MAJOR_VERSION == 34
-    if (th.getMinorVersion() < TAG_MINOR_NO_POTION_HEAL)
-    {   // These use to apply no matter what the minor tag
-        // was, so when TAG_MINOR_NO_POTION_HEAL was added
-        // these were all moved to only apply to previous
-        // tags.
-        if (you.mutation[MUT_TRAMPLE_RESISTANCE] > 0
-            || you.innate_mutation[MUT_TRAMPLE_RESISTANCE] > 0)
-        {
-            you.mutation[MUT_TRAMPLE_RESISTANCE] = 0;
-            you.innate_mutation[MUT_TRAMPLE_RESISTANCE] = 0;
-        }
-        if (you.mutation[MUT_CLING] == 1)
-            you.mutation[MUT_CLING] = 0;
-        if (you.species == SP_GARGOYLE)
-        {
-            you.mutation[MUT_POISON_RESISTANCE] =
-            you.innate_mutation[MUT_POISON_RESISTANCE] = 0;
-        }
-    }
-
-    if (th.getMinorVersion() < TAG_MINOR_DIET_MUT)
-    {
-        you.mutation[MUT_CARNIVOROUS] = you.innate_mutation[MUT_CARNIVOROUS];
-        you.mutation[MUT_HERBIVOROUS] = you.innate_mutation[MUT_HERBIVOROUS];
-    }
-
-    if (th.getMinorVersion() < TAG_MINOR_SAPROVOROUS
-        && you.species == SP_OGRE)
-    {
-        // Remove the innate level of fast metabolism
-        you.mutation[MUT_FAST_METABOLISM] -= 1;
-        you.innate_mutation[MUT_FAST_METABOLISM] -= 1;
-    }
-
-    if (th.getMinorVersion() < TAG_MINOR_CE_HA_DIET)
-    {
-        if (you.species == SP_CENTAUR)
-        {
-            you.mutation[MUT_FAST_METABOLISM] -= 1;
-            you.innate_mutation[MUT_FAST_METABOLISM] -= 1;
-
-            you.mutation[MUT_HERBIVOROUS] = 1;
-            you.innate_mutation[MUT_HERBIVOROUS] = 1;
-        }
-        else if (you.species == SP_HALFLING)
-        {
-            you.mutation[MUT_SLOW_METABOLISM] -= 1;
-            you.innate_mutation[MUT_SLOW_METABOLISM] -= 1;
-        }
-    }
-
-    if (th.getMinorVersion() < TAG_MINOR_FOUL_STENCH
-        && (you.species == SP_DEMONSPAWN || you.char_class == JOB_DEMONSPAWN)
-        && you.innate_mutation[MUT_SAPROVOROUS])
-    {
-        you.mutation[MUT_ROT_IMMUNITY] =
-        you.innate_mutation[MUT_ROT_IMMUNITY] = 1;
-    }
-
-    you.mutation[MUT_SAPROVOROUS] =
-    you.innate_mutation[MUT_SAPROVOROUS] = 0;
+    you.mutation[MUT_SAPROVOROUS] = you.innate_mutation[MUT_SAPROVOROUS] = 0;
 
     if (th.getMinorVersion() < TAG_MINOR_DS_CLOUD_MUTATIONS
         && (you.species == SP_DEMONSPAWN || you.char_class == JOB_DEMONSPAWN))

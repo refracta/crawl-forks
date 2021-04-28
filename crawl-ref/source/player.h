@@ -280,6 +280,7 @@ public:
     FixedVector<uint8_t, NUM_MUTATIONS> mutation;
     FixedVector<uint8_t, NUM_MUTATIONS> innate_mutation;
     FixedVector<uint8_t, NUM_MUTATIONS> temp_mutation;
+    FixedVector<uint8_t, NUM_MUTATIONS> suppressed_mutation;
     FixedVector<uint8_t, NUM_MUTATIONS> sacrifices;
 
     FixedVector<uint8_t, NUM_ABILITIES> sacrifice_piety;
@@ -652,22 +653,22 @@ public:
     int       branch_SH(bool allow_tran = true) const;
 
     // Information about player mutations. Implemented in mutation.cc
-    int       get_base_mutation_level(mutation_type mut, bool innate=true, bool temp=true, bool normal=true) const;
-    int       get_mutation_level(mutation_type mut, bool check_form=true) const;
+    int       get_base_mutation_level(mutation_type mut, bool innate = true, bool temp = true, bool normal = true, bool suppressed = true) const;
+    int       get_mutation_level(mutation_type mut, bool check_form = true) const;
     int       get_mutation_level(mutation_type mut, mutation_activity_type minact) const;
     int       get_innate_mutation_level(mutation_type mut) const;
     int       get_temp_mutation_level(mutation_type mut) const;
 
     int       get_training_target(const skill_type sk) const;
-    bool      set_training_target(const skill_type sk, const double target, bool announce=false);
-    bool      set_training_target(const skill_type sk, const int target, bool announce=false);
+    bool      set_training_target(const skill_type sk, const double target, bool announce = false);
+    bool      set_training_target(const skill_type sk, const int target, bool announce = false);
     void      clear_training_targets();
 
     bool      has_temporary_mutation(mutation_type mut) const;
     bool      has_innate_mutation(mutation_type mut) const;
-    bool      has_mutation(mutation_type mut, bool check_form=true) const;
+    bool      has_mutation(mutation_type mut, bool check_form = true) const;
 
-    int       how_mutated(bool innate=false, bool levels=false, bool temp=true, bool ds=false) const;
+    int       how_mutated(bool innate = false, bool levels = false, bool temp = true, bool ds = false, bool normal = true) const;
 
     int wearing(equipment_type slot, int sub_type, bool calc_unid = true, bool count_jiyva = true) const
         override;

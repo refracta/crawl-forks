@@ -34,6 +34,7 @@ void init_mut_index();
 bool is_body_facet(mutation_type mut);
 bool is_slime_mutation(mutation_type mut);
 bool undead_mutation_rot();
+bool suppress_mutation(bool temp = false, bool zin = false);
 
 bool mutate(mutation_type which_mutation, const string &reason,
             bool failMsg = true,

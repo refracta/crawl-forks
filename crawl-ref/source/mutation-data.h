@@ -31,6 +31,14 @@ static const mutation_def mut_data[] =
   { "", "", "" },
 },
 
+{ MUT_SUPPRESSION, 45, 255, mutflag::bad, false,
+  "suppression",
+
+  { "", "", "" },
+  { "", "", "" },
+  { "", "", "" },
+},
+
 { MUT_POISON_RESISTANCE, 4, 1, mutflag::good, true,
   "poison resistance",
 
@@ -575,7 +583,7 @@ static const mutation_def mut_data[] =
 
   {"You can use your snake-like lower body to constrict enemies.", "", ""},
   {"Your tail grows strong enough to constrict your enemies.", "", ""},
-  {"", "", ""},
+  {"Your tail weakens and can no longer constrict enemies.", "", ""},
 },
 
 // Naga and Draconian only

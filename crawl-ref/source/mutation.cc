@@ -47,6 +47,7 @@
 using namespace ui;
 
 static bool _delete_single_mutation_level(mutation_type mutat, const string &reason, bool transient);
+static bool _post_loss_effects(mutation_type mutat);
 
 struct body_facet_def
 {
@@ -182,7 +183,13 @@ static bool _mut_has_use(const mutation_def &mut, mutflag use)
 #define MUT_BAD(mut) _mut_has_use((mut), mutflag::bad)
 #define MUT_GOOD(mut) _mut_has_use((mut), mutflag::good)
 
-static int _mut_weight(const mutation_def &mut, mutflag use)
+static int _suppress_weight(bool temp)
+{
+    return you.how_mutated(temp ? false : true, true, false, true, temp ? true : false)
+        * (temp && you.char_class == JOB_DEMONSPAWN ? 2 : 1);
+}
+
+static int _mut_weight(const mutation_def &mut, mutflag use, bool temp = false)
 {
     switch (use)
     {
@@ -190,8 +197,11 @@ static int _mut_weight(const mutation_def &mut, mutflag use)
         case mutflag::qazlal:
         case mutflag::xom:
             return 1;
-        case mutflag::good:
         case mutflag::bad:
+            if (mut.mutation == MUT_SUPPRESSION)
+                return _suppress_weight(temp);
+            // fallthrough
+        case mutflag::good:
         default:
             return mut.weight;
     }
@@ -213,6 +223,10 @@ void init_mut_index()
         ASSERT_RANGE(mut, 0, NUM_MUTATIONS);
         ASSERT(mut_index[mut] == -1);
         mut_index[mut] = i;
+
+        if (mut == MUT_SUPPRESSION) // Weight handled specially.
+            continue;
+
         for (const auto flag : mutflags::range())
         {
             if (_mut_has_use(mut_data[i], flag))
@@ -421,13 +435,14 @@ bool player::has_innate_mutation(mutation_type mut) const
  * How much of mutation `mut` does the player have? This ignores form changes.
  * If all three bool arguments are false, this should always return 0.
  *
- * @param temp   include temporary mutation levels. defaults to true.
- * @param innate include innate mutation levels. defaults to true.
- * @param normal include normal (non-temp, non-innate) mutation levels. defaults to true.
+ * @param temp    -    include temporary mutation levels. defaults to true.
+ * @param innate   -   include innate mutation levels. defaults to true.
+ * @param normal   -   include normal (non-temp, non-innate) mutation levels. defaults to true.
+ * @param suppressed - include suppression (reduction of innates due to mutation; defaults to true).
  *
  * @return the total levels of the mutation.
  */
-int player::get_base_mutation_level(mutation_type mut, bool innate, bool temp, bool normal) const
+int player::get_base_mutation_level(mutation_type mut, bool innate, bool temp, bool normal, bool suppressed) const
 {
     ASSERT_RANGE(mut, 0, NUM_MUTATIONS);
     // you.mutation stores the total levels of all mutations
@@ -438,6 +453,8 @@ int player::get_base_mutation_level(mutation_type mut, bool innate, bool temp, b
         level -= you.innate_mutation[mut];
     if (!normal)
         level -= (you.mutation[mut] - (you.temp_mutation[mut] + you.innate_mutation[mut]));
+    if (suppressed)
+        level -= you.mutation[suppressed];
     ASSERT(level >= 0);
     return level;
 }
@@ -1024,9 +1041,10 @@ static bool _accept_mutation(mutation_type mutat, bool ignore_weight = false)
     return x_chance_in_y(weight, 10);
 }
 
-static mutation_type _get_mut_with_use(mutflag mt)
+static mutation_type _get_mut_with_use(mutflag mt, bool temp = false)
 {
-    const int tweight = lookup(total_weight, mt, 0);
+    const int suppress = (mt == mutflag::bad) ? _suppress_weight(temp) : 0;
+    const int tweight = lookup(total_weight, mt, 0) + suppress;
     ASSERT(tweight);
 
     int cweight = random2(tweight);
@@ -1035,7 +1053,7 @@ static mutation_type _get_mut_with_use(mutflag mt)
         if (!_mut_has_use(mutdef, mt))
             continue;
 
-        cweight -= _mut_weight(mutdef, mt);
+        cweight -= _mut_weight(mutdef, mt, temp);
         if (cweight >= 0)
             continue;
 
@@ -1762,6 +1780,96 @@ static string _drac_enhancer_msg(bool gain)
     return ostr.str();
 }
 
+static bool _is_suppressable_mutation(mutation_type mut)
+{
+    switch (mut)
+    {
+    // Weird flavourwise to suppress
+    case MUT_GODS_PITY:
+    // Let's not remeld Jivya's special slots
+    case MUT_ARM_MORPH:
+    case MUT_CORE_MELDING:
+    case MUT_CYTOPLASMIC_SUSPENSION:
+    case MUT_GELATINOUS_TAIL:
+    case MUT_LIMB_MORPHING:
+    case MUT_TENDRILS:
+    // Silencing a Silent Spectre would be too brutal.
+    case MUT_SILENT_CAST:
+    // Complicated to suppress and not worth the trouble.
+    case MUT_STATS:
+    // Uhh . . . yea Suppressing itself makes no sense.
+    case MUT_SUPPRESSION:
+    // Too fundamental to Draconian Race to Allow.
+    case MUT_DRACONIAN_DEFENSE:
+    case MUT_MAJOR_MARTIAL_APT_BOOST:
+    case MUT_MINOR_MARTIAL_APT_BOOST:
+    case MUT_DEFENSIVE_APT_BOOST:
+        return false;
+    case MUT_HOOVES:
+        if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
+            return false;
+    default:
+        break;
+    }
+    // Ru exceptions are handled by a specific sacrifice check.
+    return true;
+}
+
+bool suppress_mutation(bool temp, bool zin)
+{
+    vector<mutation_type> targets;
+
+    for (int i = 0; i < NUM_MUTATIONS; ++i)
+    {
+        const mutation_type m = static_cast<mutation_type>(i);
+        if (you.mutation[i] && !you.sacrifices[i] && !you.suppressed_mutation[i] && _is_suppressable_mutation(m))
+        {
+            if (you.innate_mutation[i])
+            {
+                if (!zin)
+                    targets.emplace_back(m);
+            }
+            else if (!temp)
+                targets.emplace_back(m);
+
+            if (zin)
+            {
+                for (unsigned int j = 0; j < you.demonic_traits.size(); j++)
+                {
+                    if (you.demonic_traits[j].mutation == i &&
+                        you.demonic_traits[j].level_gained <= you.experience_level)
+                    {
+                        targets.emplace_back(m);
+                        targets.emplace_back(m);
+                        j += 1000;
+                    }
+                }
+            }
+        }
+    }
+
+    if (!targets.size())
+        return false;
+
+    const mutation_type target = targets[random2(targets.size())];
+
+    you.suppressed_mutation[target] = temp ? 2 : 1;
+
+    const bool loss_msg = _post_loss_effects(target);
+
+    if (loss_msg)
+    {
+        const mutation_def& mdef = _get_mutation_def(target);
+        const species_mutation_message msg = _spmut_msg(target);
+        if (msg.mutation == MUT_NON_MUTATION)
+            mprf(MSGCH_MUTATION, "%s", mdef.lose[you.mutation[target]]);
+        else
+            mprf(MSGCH_MUTATION, "%s", msg.lose[you.mutation[target]]);
+    }
+
+    return true;
+}
+
 /*
  * Try to mutate the player, along with associated bookkeeping. This accepts mutation categories as well as particular mutations.
  *
@@ -1900,6 +2008,9 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
     const mutation_def& mdef = _get_mutation_def(mutat);
 
     bool gain_msg = true;
+
+    if (mutat == MUT_SUPPRESSION)
+        return suppress_mutation(mutclass == MUTCLASS_TEMPORARY);
 
     if (mutclass == MUTCLASS_INNATE)
     {
@@ -2166,43 +2277,9 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
     return true;
 }
 
-/*
- * Delete a single mutation level of fixed type `mutat`.
- * If `transient` is set, allow deleting temporary mutations, and prioritize them.
- * Note that if `transient` is true and there are no temporary mutations, this can delete non-temp mutations.
- * If `transient` is false, and there are only temp mutations, this will fail; otherwise it will delete a non-temp mutation.
- *
- * @mutat     the mutation to delete
- * @reason    why is it being deleted
- * @transient whether to allow (and prioritize) deletion of temporary mutations
- *
- * @return whether a mutation was deleted.
- */
-static bool _delete_single_mutation_level(mutation_type mutat,
-                                          const string &reason,
-                                          bool transient)
+static bool _post_loss_effects(mutation_type mutat)
 {
-    // are there some non-innate mutations to delete?
-    if (you.get_base_mutation_level(mutat, false, true, true) == 0)
-        return false;
-
-    bool was_transient = false;
-    if (you.has_temporary_mutation(mutat))
-    {
-        if (transient)
-            was_transient = true;
-        else if (you.get_base_mutation_level(mutat, false, false, true) == 0) // there are only temporary mutations to delete
-            return false;
-
-        // fall through: there is a non-temporary mutation level that can be deleted.
-    }
-
-    const mutation_def& mdef = _get_mutation_def(mutat);
-
     bool lose_msg = true;
-
-    if (mutat != MUT_STATS)
-        you.mutation[mutat]--;
 
     switch (mutat)
     {
@@ -2245,11 +2322,14 @@ static bool _delete_single_mutation_level(mutation_type mutat,
         break;
 
     case MUT_GELATINOUS_TAIL:
+    {
+        const mutation_def& mdef = _get_mutation_def(mutat);
         mprf(MSGCH_MUTATION, "%s%s", mdef.lose[0], you.has_tail(false) ? "back to its normal size." : "away completely.");
         remove_one_equip(EQ_BARDING, false, true);
         ash_check_bondage();
         lose_msg = false;
         break;
+    }
 
     default:
         break;
@@ -2257,8 +2337,48 @@ static bool _delete_single_mutation_level(mutation_type mutat,
 
     // For all those scale mutations.
     you.redraw_armour_class = true;
-
     notify_stat_change();
+
+    return lose_msg;
+}
+
+/*
+ * Delete a single mutation level of fixed type `mutat`.
+ * If `transient` is set, allow deleting temporary mutations, and prioritize them.
+ * Note that if `transient` is true and there are no temporary mutations, this can delete non-temp mutations.
+ * If `transient` is false, and there are only temp mutations, this will fail; otherwise it will delete a non-temp mutation.
+ *
+ * @mutat     the mutation to delete
+ * @reason    why is it being deleted
+ * @transient whether to allow (and prioritize) deletion of temporary mutations
+ *
+ * @return whether a mutation was deleted.
+ */
+static bool _delete_single_mutation_level(mutation_type mutat,
+                                          const string &reason,
+                                          bool transient)
+{
+    // are there some non-innate mutations to delete?
+    if (you.get_base_mutation_level(mutat, false, true, true) == 0)
+        return false;
+
+    bool was_transient = false;
+    if (you.has_temporary_mutation(mutat))
+    {
+        if (transient)
+            was_transient = true;
+        else if (you.get_base_mutation_level(mutat, false, false, true) == 0) // there are only temporary mutations to delete
+            return false;
+
+        // fall through: there is a non-temporary mutation level that can be deleted.
+    }
+
+    const mutation_def& mdef = _get_mutation_def(mutat);
+
+    const bool lose_msg = _post_loss_effects(mutat);
+
+    if (mutat != MUT_STATS)
+        you.mutation[mutat]--;
 
     if (lose_msg)
     {
@@ -3302,10 +3422,11 @@ bool temp_mutation_wanes()
  * @param levels Whether to add up mutation levels, as opposed to just counting number of mutations (default false).
  * @param temp   Whether to count temporary mutations (default true).
  * @param ds     Whether to count innate demonspawn mutations, ignored if innate is true (default false).
+ * @param normal Whether to count normal non-innate mutations. (default true).
  * @return Either the number of matching mutations, or the sum of their
  *         levels, depending on \c levels
  */
-int player::how_mutated(bool innate, bool levels, bool temp, bool ds) const
+int player::how_mutated(bool innate, bool levels, bool temp, bool ds, bool normal) const
 {
     int result = 0;
 
@@ -3313,7 +3434,7 @@ int player::how_mutated(bool innate, bool levels, bool temp, bool ds) const
     {
         if (you.mutation[i])
         {
-            const int mut_level = get_base_mutation_level(static_cast<mutation_type>(i), innate || ds, temp);
+            const int mut_level = get_base_mutation_level(static_cast<mutation_type>(i), innate || ds, temp, normal);
             bool include = false;
 
             if (ds)
