@@ -444,14 +444,6 @@ static const mutation_def mut_data[] =
   {"", "", ""},
 },
 
-{ MUT_UNBREATHING_FORM, 0, 1, mutflag::good, false,
-    "unbreathing",
-
-   { "You can survive without breathing.", "", "" },
-   { "You feel breathless.", "", "" },
-   { "", "", "" },
-},
-
 { MUT_TORMENT_RESISTANCE, 0, 1, mutflag::good, false,
   "torment resistance",
 

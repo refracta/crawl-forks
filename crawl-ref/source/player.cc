@@ -3614,7 +3614,7 @@ void change_drac_colour (draconian_colour new_colour)
         mprf(MSGCH_INTRINSIC_GAIN, "You feel yourself come back to life.");
 
         // Strip all the undead mutations.
-        you.mutation[MUT_UNBREATHING_FORM] = you.innate_mutation[MUT_UNBREATHING_FORM] = 0;
+        you.mutation[MUT_UNBREATHING] = you.innate_mutation[MUT_UNBREATHING] = 0;
         you.mutation[MUT_NEGATIVE_ENERGY_RESISTANCE] = you.innate_mutation[MUT_NEGATIVE_ENERGY_RESISTANCE] = 0;
         you.mutation[MUT_COLD_RESISTANCE] = you.innate_mutation[MUT_COLD_RESISTANCE] = (you.get_mutation_level(MUT_COLD_RESISTANCE) - 1);
         you.mutation[MUT_TORMENT_RESISTANCE] = you.innate_mutation[MUT_TORMENT_RESISTANCE] = 0;
@@ -7425,7 +7425,6 @@ bool player::is_unbreathing(bool mt) const
 
     return !get_form()->breathes || petrified()
         || get_mutation_level(MUT_UNBREATHING)
-        || get_mutation_level(MUT_UNBREATHING_FORM)
         || get_mutation_level(MUT_SKIN_BREATHING);
 }
 

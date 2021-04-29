@@ -502,7 +502,7 @@ void mummify()
     // Ineligant, but the more 'refined' way of doing it is no better and is more work.
 
     // Form version lets Draconians keep on transmutation; no effect on other --Mu since can't transmute.
-    you.mutation[MUT_UNBREATHING_FORM] = you.innate_mutation[MUT_UNBREATHING_FORM] = 1;
+    you.mutation[MUT_UNBREATHING] = you.innate_mutation[MUT_UNBREATHING] = 1;
 
     you.mutation[MUT_NEGATIVE_ENERGY_RESISTANCE] = you.innate_mutation[MUT_NEGATIVE_ENERGY_RESISTANCE] = 3;
     you.mutation[MUT_COLD_RESISTANCE] = you.innate_mutation[MUT_COLD_RESISTANCE] = (you.get_mutation_level(MUT_COLD_RESISTANCE) + 1);

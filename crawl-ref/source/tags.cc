@@ -2993,6 +2993,12 @@ static void tag_read_you(reader &th)
         if (you.species == SP_MERFOLK)
             you.mutation[MUT_MERFOLK_TAIL] = you.innate_mutation[MUT_MERFOLK_TAIL] = 1;
 
+        if (you.mutation[MUT_UNBREATHING_FORM])
+        {
+            you.mutation[MUT_UNBREATHING_FORM] = you.innate_mutation[MUT_UNBREATHING_FORM] = 0;
+            you.mutation[MUT_UNBREATHING] = you.innate_mutation[MUT_UNBREATHING] = 1;
+        }
+
         bool slimy = false;
         for (int i = 0; i < NUM_MUTATIONS; ++i)
         {
