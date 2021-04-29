@@ -2999,6 +2999,12 @@ static void tag_read_you(reader &th)
             you.mutation[MUT_UNBREATHING] = you.innate_mutation[MUT_UNBREATHING] = 1;
         }
 
+        if (you.species == SP_FAIRY)
+        {
+            you.mutation[MUT_TENGU_FLIGHT] = you.innate_mutation[MUT_TENGU_FLIGHT] = 0;
+            you.mutation[MUT_BIG_WINGS] = you.innate_mutation[MUT_BIG_WINGS] = 1;
+        }
+
         bool slimy = false;
         for (int i = 0; i < NUM_MUTATIONS; ++i)
         {

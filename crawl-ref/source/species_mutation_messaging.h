@@ -31,6 +31,14 @@ static const species_mutation_message spmu_data[] =
   {"", "", ""},
 },
 
+{ SP_FAIRY, MUT_BIG_WINGS,
+  "flight",
+
+  {"You are able to fly continuously.", "", ""},
+  {"You regain your ability to fly.", "", ""},
+  {"You can't fly anymore!", "", ""},
+},
+
 { SP_FELID, MUT_COLD_RESISTANCE, 
     "fur coat (rC)",
 

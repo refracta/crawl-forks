@@ -481,11 +481,11 @@ static const mutation_def mut_data[] =
 },
 
 { MUT_TENGU_FLIGHT, 0, 1, mutflag::good, false,
-  "able to fly",
+  "tengu flight",
 
-  {"You can fly continuously.", "", ""},
+  {"You can fly continuously. Your speed and evasion are boosted while flying.", "", ""},
   {"You have gained the ability to fly.", "", ""},
-  {"", "", ""},
+  {"Feathers fall from your wings; you can't fly anymore!", "", ""},
 },
 
 { MUT_HURL_HELLFIRE, 0, 1, mutflag::good, false,

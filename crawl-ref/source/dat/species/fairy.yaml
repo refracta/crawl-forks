@@ -43,7 +43,7 @@ mutations:
   1:
     MUT_SLOW: 1
     MUT_INSUBSTANTIAL: 1
-    MUT_TENGU_FLIGHT: 1
+    MUT_BIG_WINGS: 1
 fake_mutations:
   - long: You are too small to use any gear.
     short: no armour or weapons

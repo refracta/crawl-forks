@@ -2403,7 +2403,7 @@ int hepliakqlana_ally_movement_speed()
     mv += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_PONDEROUSNESS);
 
     // Tengu flight always active for ancestor.
-    if (you.species == SP_TENGU && you.experience_level > 3)
+    if (you.get_mutation_level(MUT_TENGU_FLIGHT))
         mv--;
 
     // Mutations: Ignoring temporary forms.
@@ -5896,7 +5896,7 @@ void float_player()
     else
         mpr("You fly up into the air.");
 
-    if (you.species == SP_TENGU)
+    if (you.get_mutation_level(MUT_TENGU_FLIGHT))
         you.redraw_evasion = true;
 }
 
@@ -5961,7 +5961,7 @@ bool land_player(bool quiet)
 
     if (!quiet)
         mpr("You float gracefully downwards.");
-    if (you.species == SP_TENGU)
+    if (you.get_mutation_level(MUT_TENGU_FLIGHT))
         you.redraw_evasion = true;
 
     you.attribute[ATTR_FLIGHT_UNCANCELLABLE] = 0;
@@ -7886,7 +7886,7 @@ bool player::tengu_flight() const
         return false;
 
     // Only Tengu get perks for flying.
-    return species == SP_TENGU && airborne();
+    return you.has_mutation(MUT_TENGU_FLIGHT);
 }
 
 /**
