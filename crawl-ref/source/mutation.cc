@@ -2298,6 +2298,7 @@ static bool _post_loss_effects(mutation_type mutat)
         update_vision_range();
         break;
 
+    case MUT_TENGU_FLIGHT:
     case MUT_BIG_WINGS:
         lose_permafly_source();
         break;

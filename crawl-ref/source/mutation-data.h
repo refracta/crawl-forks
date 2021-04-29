@@ -29,6 +29,7 @@ static const mutation_def mut_data[] =
   { "", "", "" },
   { "", "", "" },
   { "", "", "" },
+<<<<<<< HEAD
 },
 
 { MUT_SUPPRESSION, 45, 255, mutflag::bad, false,
@@ -37,6 +38,8 @@ static const mutation_def mut_data[] =
   { "", "", "" },
   { "", "", "" },
   { "", "", "" },
+=======
+>>>>>>> 994365e26125fded2c92faddc72f5e5cb5fc58e7
 },
 
 { MUT_POISON_RESISTANCE, 4, 1, mutflag::good, true,
@@ -826,6 +829,7 @@ static const mutation_def mut_data[] =
   {"You feel more slimy.",
    "You feel very pliable.",
    "Your body melts completely into viscous ooze."},
+<<<<<<< HEAD
 
   {"You resolidify.",
    "Your body stops oozing.",
@@ -963,6 +967,145 @@ static const mutation_def mut_data[] =
    "Your protoplasm begins to boil and spill everywhere.",
    "You may now melt completely in order to ooze through your foes."},
 
+=======
+
+  {"You resolidify.",
+   "Your body stops oozing.",
+   "Your body becomes less slimy."},
+},
+
+{ MUT_PROTOPLASM, 0, 3, mutflag::good | mutflag::jiyva, true,
+  "watery protoplasm",
+
+  {"Your watery protoplasm protects you from the cold. (rC+)",
+   "Your watery protoplasm protects you from extremes of temperature. (rF+, rC+)",
+   "Your watery protoplasm protects you from extremes of temperature. (rF+, rC+)\n"
+   "When hit by a fiery attack, your protoplasm may erupt scalding steam."},
+
+  {"A vacuole full of water envelops your skin.",
+   "Your protoplasm gets thicker and waterier.",
+   "Your protoplasm oozes water."},
+
+  {"Your protoplasm dries out and turns into skin.",
+   "Your protoplasm feels drier.",
+   "Your protoplasm feels drier."},
+},
+
+{ MUT_SKIN_BREATHING, 0, 3, mutflag::good | mutflag::jiyva, true,
+  "porous membrane",
+
+  {"Breathing through your porous membrane protects you from clouds and drowning. (rCloud, rDrown)",
+   "Breathing through your porous membrane protects you from clouds and drowning. (rCloud, rDrown)\n"
+   "You engulf enemies in ooze in melee combat.",
+   "Breathing through your porous membrane protects you from clouds and drowning. (rCloud, rDrown)\n"
+   "You engulf enemies in acidic ooze in melee combat."},
+
+  {"Your skin develops small pores you can breathe through.",
+   "Your pores begin to secrete an ooze you can engulf enemies in.",
+   "Your ooze becomes acidic."},
+
+  {"Your membrane feels hermetic.",
+   "Your membrane quits oozing.",
+   "Your ooze feels thinner."},
+},
+
+{ MUT_GOLDEN_EYEBALLS, 0, 3, mutflag::good | mutflag::jiyva, true,
+  "golden eyeballs",
+
+  {"Your membrane is dotted with golden eyes which may confuse attackers. (+Vis)",
+   "Your membrane is coated in golden eyes which increase your resistance against hostile enchantments and may confuse attackers. (+Vis, MR+)",
+   "Your membrane is almost completely made up of golden eyes which increase your resistance against hostile enchantments and may confuse attackers. (++Vis, MR++)"},
+
+  {"Golden eyeballs ripple beneath your cytoplasm.",
+   "Golden eyeballs peer out through your membranes.",
+   "Golden eyeballs cover your extremities fully."},
+
+  {"The eyeballs in your cytoplasm disappear.",
+   "The eyeballs in your cytoplasm recede somewhat.",
+   "The eyeballs in your cytoplasm recede somewhat."},
+},
+
+{ MUT_BUDDING_EYEBALLS, 0, 3, mutflag::good | mutflag::jiyva, true,
+  "budding eyeballs",
+
+  {"Your membrane is dotted with shining eyes which may malmutate attackers. (+Vis)",
+   "Your membrane is coated in shining eyes which may malmutate attackers. (+Vis)",
+   "A variety of eyeballs carouse through your cytoplasm. (++Vis)\n"
+   "You may expend your own health to spawn eyeballs from your flesh."},
+
+  {"Eyeballs ripple beneath your cytoplasm.",
+   "Eyeballs press against your membranes.",
+   "Eyeballs bud out of your cytoplasm, ready to form their own creatures!"},
+
+  {"The eyeballs in your cytoplasm disappear.",
+   "The eyeballs in your cytoplasm recede somewhat.",
+   "The eyeballs in your cytoplasm recede somewhat."},
+},
+
+{ MUT_JIBBERING_MAWS, 0, 3, mutflag::good | mutflag::jiyva, true,
+  "jibbering maws",
+
+  {"You are covered in demonic mouths, which bite at your foes in melee.",
+   "You are covered in demonic mouths, which bite at your foes in melee; speaking demonic speech through these mouths allows you to ignore silence.",
+   "You are covered in demonic mouths, which bite at your foes in melee; speaking demonic speech through these mouths allows you to ignore silence.\n"
+   "You may expend your own health to let out a foul demonic scream, which shrouds you in unnatural silence and damages those that hear it."},
+
+  {"Foul demonic mouths cover your extremities.",
+   "Your demonic maws begin to gibber incessantly in a foul tongue.",
+   "You may now let out a demonic scream through your maws."},
+
+  {"The maws dotting your membranes disappear.",
+   "Your maws go quiet.",
+   "Your maws seem quieter."},
+},
+
+{ MUT_FROST_BURST, 0, 3, mutflag::good | mutflag::jiyva, true,
+  "frigid spines",
+
+  {"You are partially covered in icy spines of congealed slime, which impale those that strike you. (rC+)",
+   "You are completely covered in icy spines of congealed slime, which impale those that strike you. (rC++)",
+   "You are completely covered in icy spines of congealed slime, which impale those that strike you. (rC++)\n"
+   "You may expend your own health to fire an icy burst of sharp spines in all directions."},
+
+  {"Parts of your protoplasm congeal into tough spines.",
+   "More of your protoplasm turns into barbs.",
+   "You may now fire spines of icy protoplasm from your flesh."},
+
+  {"Your protoplasm smooths out.",
+   "Your membrane is less covered in barbs.",
+   "You can no longer fire barbs from your flesh."},
+},
+
+{ MUT_ACID_WAVE, 0, 3, mutflag::good | mutflag::jiyva, true,
+  "hulking protoplasm",
+
+  {"Your protoplasm is much larger than normal. (HP +10%)",
+   "Your protoplasm is much larger and thicker than normal. (HP +20%, rElec+)",
+   "Your protoplasm is much larger and thicker than normal. (HP +30%, rElec+)\n"
+   "You may expend your own health to fire an acidic wave of ooze from your protoplasm."},
+
+  {"Your protoplasm grows larger.",
+   "Your protoplasm grows larger.",
+   "You may now fire caustic ooze from your protoplasm."},
+
+  {"Your protoplasm shrinks.",
+   "Your protoplasm shrinks.",
+   "You can no longer fire caustic ooze from your protoplasm."},
+},
+
+{ MUT_MELT, 0, 3, mutflag::good | mutflag::jiyva, true,
+  "melting flesh",
+
+  {"Your protoplasm is hot to the touch. (rF+)",
+   "Your boiling flesh constantly melts leaving a trail of flaming slime behind you. (rF++)",
+   "Your boiling flesh constantly melts leaving a trail of flaming slime behind you. (rF++)\n"
+   "You may expend your own health to melt completely and pass through monsters in a line."},
+
+  {"Your protoplasm heats up.",
+   "Your protoplasm begins to boil and spill everywhere.",
+   "You may now melt completely in order to ooze through your foes."},
+
+>>>>>>> 994365e26125fded2c92faddc72f5e5cb5fc58e7
   {"Your protoplasm congeals.",
    "Your protoplasm cools down.",
    "You can no longer melt."},
