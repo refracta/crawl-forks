@@ -99,9 +99,9 @@ static const vector<spell_type> spellbook_templates[] =
 {   // Book of Death
     SPELL_CORPSE_ROT,
     SPELL_SUBLIMATION_OF_BLOOD,
-    SPELL_AGONY,
     SPELL_EXCRUCIATING_WOUNDS,
     SPELL_BOLT_OF_DRAINING,
+    SPELL_AGONY,
 },
 
 {   // Book of Misfortune
@@ -287,8 +287,8 @@ static const vector<spell_type> spellbook_templates[] =
 {   // Akashic Record
     SPELL_DISPERSAL,
     SPELL_MALIGN_GATEWAY,
-    SPELL_DISJUNCTION,
     SPELL_CONTROLLED_BLINK,
+    SPELL_DISJUNCTION,
 },
 #endif
 

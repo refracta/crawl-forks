@@ -525,17 +525,14 @@ void trap_def::trigger(actor& triggerer)
                     name(DESC_A).c_str());
             for (monster_iterator mi; mi; ++mi)
             {
-                if (mi->no_tele())
+                if (!mi->alive() || mi->no_tele())
                     continue;
                 mi->blink(pos);
             }
-            if (!you_trigger)
-                you.blink(pos);
-            // Don't chain disperse
-            triggerer.blink(pos);
+            you.blink(pos);
             if (you.see_cell(pos))
             {
-                destroy();
+                //destroy();
                 place_cloud(CLOUD_TLOC_ENERGY, pos, roll_dice(3, 8), nullptr, 2);
             }
             break;

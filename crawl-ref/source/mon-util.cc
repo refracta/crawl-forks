@@ -5643,6 +5643,8 @@ monster *monster_by_mid(mid_t m, bool require_valid)
             return &menv[ANON_FRIENDLY_MONSTER];
         if (m == MID_YOU_FAULTLESS)
             return &menv[YOU_FAULTLESS];
+        if (m == MID_NOBODY)
+            return nullptr;
     }
 
     if (unsigned short *mc = map_find(env.mid_cache, m))

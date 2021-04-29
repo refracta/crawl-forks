@@ -128,10 +128,13 @@ void uncontrolled_blink(bool override_stasis, coord_def disp_center)
 
     bool adjacent = true;
     int positions = 0;
-    coord_def target;
+    coord_def target = coord_def (0, 0);
 
     for (rectangle_iterator ri(you.pos(), you.current_vision); ri; ++ri)
     {
+        if (!in_bounds(*ri))
+            continue;
+
         if (!you.see_cell_no_trans(*ri))
             continue;
 
@@ -143,7 +146,7 @@ void uncontrolled_blink(bool override_stasis, coord_def disp_center)
 
         if (!disp_center.origin())
         {
-            if ((grid_distance(*ri, disp_center) > you.current_vision) || !(cell_see_cell(*ri, disp_center, LOS_NO_TRANS)))
+            if ((grid_distance(*ri, disp_center) > you.current_vision) || !(cell_see_cell(*ri, disp_center, LOS_SOLID)))
                 continue;
         }
 

@@ -5923,13 +5923,13 @@ void monster::lose_energy(energy_use_type et, int div, int mult)
     if ((et == EUT_MOVE || et == EUT_SWIM) && has_ench(ENCH_FROZEN))
         energy_loss += 4;
 
-    // Randomize interval between servitor spellcasts
-    // TODO: is there a more transparent way to implement this than energy?
-    if ((et == EUT_SPELL && type == MONS_SPELLFORGED_SERVITOR))
-        energy_loss += random2(16);
-
     if (et == EUT_SPELL)
     {
+        // Randomize interval between servitor spellcasts
+        // TODO: is there a more transparent way to implement this than energy?
+        if (type == MONS_SPELLFORGED_SERVITOR)
+            energy_loss += random2(16);
+
         item_def * ring = mslot_item(MSLOT_JEWELLERY);
         if (ring && ring->is_type(OBJ_JEWELLERY, RING_WIZARDRY))
             energy_loss = div_rand_round(energy_loss * 7, 10);
