@@ -307,6 +307,11 @@ mutation_activity_type mutation_activity_level(mutation_type mut)
     // First make sure the player's form permits the mutation.
     if (!form_keeps_mutations())
     {
+        if (you.undead_state() && (mut == MUT_COLD_RESISTANCE || mut == MUT_UNBREATHING)
+            && you.innate_mutation[mut])
+        {
+            return mutation_activity_type::FULL;
+        }
         if (you.form == transformation::dragon)
         {
             if (mut == MUT_DRACONIAN_DEFENSE)
