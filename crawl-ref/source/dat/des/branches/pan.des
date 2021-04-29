@@ -3047,6 +3047,7 @@ NAME:   pan_captured_pigsty
 TAGS:   extra
 MONS:   red devil, holy swine
 KFEAT:  o = iron_grate
+KPROP:  2 = no_tele_into
 {{
 local function swineherd_die(monster, killer_type, killer_index, silent, wizard)
   local p = dgn.find_marker_positions_by_prop("pigsty_gate", 1)[1]

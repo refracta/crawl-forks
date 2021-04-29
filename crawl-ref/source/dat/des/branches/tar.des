@@ -651,6 +651,9 @@ KMONS:   0 = soul eater
 KMONS:   Z = skeleton / zombie
 SUBST:   ? = ?..., ? = 2., 0 = 002
 SHUFFLE: 3569
+SHUFFLE: ABCD
+SUBST: BCD = x
+KFEAT: AE = runed_door
 : serpent_of_hell_setup(_G)
 : tar_setup(_G)
 MAP
@@ -662,18 +665,18 @@ xxxx.................cccc..........ccc............................xxxx
 xxxx.............ccccc..cccc.....ccc.cccc.........................xxxx
 xxxx...........ccc.........ccccccc.....cc.........................xxxx
 xxxx.........ccc........6...........V..cc.........................xxxx
-xxxx........cc4........................cc...........xxxxxxxx......xxxx
+xxxx........cc4........................cc...........xxAAAAxx......xxxx
 xxxx........cc44xxx++xxx......D........cc..........xx......xx.....xxxx
 xxxx........ccxxx......xxx.......ccc++ccc....6....xx........xx....xxxx
-xxxx........cxx..........xxx.....ccc44ccc.........x..........x....xxxx
-xxxx........cx............xx....cccc44cc.........xx.9......7.xx...xxxx
-xxxx.......ccx.G........G.xxx7ccc..c44c..........x....||||....x...xxxx
-xxxx.......cxx............xxxcc..................x....||||....x...xxxx
-xxxx......ccx..............xxc...................xx.9......9.xx...xxxx
-xxxx......ccx..G........G..xxc..x.........x.......x..........x....xxxx
+xxxx........cxx..........xxx.....ccc44ccc........xx..........xx...xxxx
+xxxx........cx............xx....cccc44cc.........D,.9......7..B...xxxx
+xxxx.......ccx.G........G.xxx7ccc..c44c..........D....||||....B...xxxx
+xxxx.......cxx............xxxcc..................D....||||....B...xxxx
+xxxx......ccx..............xxc...................D..9......9..B...xxxx
+xxxx......ccx..G........G..xxc..x.........x......xx..........xx...xxxx
 xxxx......ccx..............xcc......??............xx........xx....xxxx
 xxxx.......cxx............xxc......2222............xx......xx.....xxxx
-xxxx.......ccx.G........G.xcc.......??..............xxxxxxxx......xxxx
+xxxx.......ccx.G........G.xcc.......??..............xxCCCCxx......xxxx
 xxxx........cx7..........7xc......................................xxxx
 xxxx........cxx....17....xxc....x.........x.......................xxxx
 xxxx........ccxxx......xxxcc......................................xxxx
@@ -684,24 +687,24 @@ xxxx..........cccccccccccc......x.........x............V..........xxxx
 xxxx..............................................................xxxx
 xxxx...........................................cccccccccccccccc...xxxx
 xxxx...........................................cccccccccccccccc...xxxx
-xxxx..................................6........cc$$$$$xx|||||cc...xxxx
-xxxx.......3........V...........x.........x....cc$$$$$xx|||||cc...xxxx
-xxxx................................7..........ccxxcccccccccccc...xxxx
-xxxx...........................................ccxxcccccccccccc...xxxx
-xxxx...........................................cc44744xx00000cc...xxxx
-xxxx.......ccccccccc+ccccccccc.................cc44444xx88888cc...xxxx
-xxxx.......c.................c..x.........x..ccccccccccccxxxxcc...xxxx
-xxxx.......c.x.x.x.x.x.x.x.x.c.................ccccccccccxxxxcc...xxxx
-xxxx.......c.................c......................+........cc...xxxx
-xxxx.......cx5x.x.x.x.x.x.x5xc......................+........cc...xxxx
-xxxx.......c.................c.................ccccccccccxxxxcc...xxxx
-xxxx.......c.x.x.x.x5x.x.x.x.c..x.........x..ccccccccccccxxxxcc...xxxx
-xxxx.......c.................c.................ccZZZZZxx88888cc...xxxx
-xxxx.......cxxxxxxx.x.xxxxxxxc.................ccZZZZZxx00000cc...xxxx
-xxxx.......c$$$$$$x....x$$$||c.................ccxxcccccccccccc...xxxx
-xxxx.......c$x$$x$xx.x.x$x$x|c.................ccxxcccccccccccc...xxxx
-xxxx.......c||||||+....+$$$||c..x....3....x....cc||xx444xx|||cc...xxxx
-xxxx.......ccccccccccccccccccc.................cc||xx444xx|7|cc...xxxx
+xxxx..................................6........cc$$$$$EE|||||cc...xxxx
+xxxx.......3........V...........x.........x....cc$$$$$EE|||||cc...xxxx
+xxxx................................7..........ccEEcccccccccccc...xxxx
+xxxx...........................................ccEEcccccccccccc...xxxx
+xxxx...........................................cc44744EE00000cc...xxxx
+xxxx.......ccccccccc+ccccccccc.................cc44444EE88888cc...xxxx
+xxxx.......c.................c..x.........x..ccccccccccccccEEcc...xxxx
+xxxx.......c.x.x.x.x.x.x.x.x.c.................ccccccccccccEEcc...xxxx
+xxxx.......c.................c......................EE.......cc...xxxx
+xxxx.......cx5x.x.x.x.x.x.x5xc......................EE.......cc...xxxx
+xxxx.......c.................c.................ccccccccccccEEcc...xxxx
+xxxx.......c.x.x.x.x5x.x.x.x.c..x.........x..ccccccccccccccEEcc...xxxx
+xxxx.......c.................c.................ccZZZZZEE88888cc...xxxx
+xxxx.......cxxxxxxx.x.xxxxxxxc.................ccZZZZZEE00000cc...xxxx
+xxxx.......c$$$$$$x....x$$$||c.................ccEEcccccccccccc...xxxx
+xxxx.......c$x$$x$xx.x.x$x$x|c.................ccEEcccccccccccc...xxxx
+xxxx.......c||||||+....+$$$||c..x....3....x....cc||EE444EE|||cc...xxxx
+xxxx.......ccccccccccccccccccc.................cc||EE444EE|7|cc...xxxx
 xxxx...........................................cccccccccccccccc...xxxx
 xxxx...........................................cccccccccccccccc...xxxx
 xxxx..............................................................xxxx
