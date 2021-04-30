@@ -480,7 +480,7 @@ static const mutation_def mut_data[] =
   {"", "", ""},
 },
 
-{ MUT_TENGU_FLIGHT, 0, 1, mutflag::good, false,
+{ MUT_TENGU_FLIGHT, 0, 1, mutflag::good, true,
   "tengu flight",
 
   {"You can fly continuously. Your speed and evasion are boosted while flying.", "", ""},

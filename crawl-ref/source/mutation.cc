@@ -457,7 +457,7 @@ int player::get_base_mutation_level(mutation_type mut, bool innate, bool temp, b
     if (!normal)
         level -= (you.mutation[mut] - (you.temp_mutation[mut] + you.innate_mutation[mut]));
     if (suppressed)
-        level -= you.mutation[suppressed];
+        level -= you.suppressed_mutation[mut];
     ASSERT(level >= 0);
     return level;
 }
@@ -2291,6 +2291,7 @@ static bool _post_loss_effects(mutation_type mutat)
             abil_swap(ABIL_BREATHE_POISON, ABIL_SPIT_POISON);
         break;
 
+    case MUT_DAYSTRIDER:
     case MUT_NIGHTSTALKER:
         update_vision_range();
         break;
