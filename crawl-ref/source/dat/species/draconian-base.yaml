@@ -52,9 +52,6 @@ mutations:
     MUT_DRACONIAN_ENHANCER: 1
   18:
     MUT_BIG_WINGS: 1
-fake_mutations:
-  - long: You cannot fit into any form of body armour.
-    short: no body armour
 recommended_jobs:
   - JOB_BERSERKER
   - JOB_TRANSMUTER

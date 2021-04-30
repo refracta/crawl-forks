@@ -1234,10 +1234,15 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
     const int sub_type = item.sub_type;
     const equipment_type slot = get_armour_slot(item);
 
-    if (species_is_draconian(you.species) && slot == EQ_BODY_ARMOUR)
+    if (you.get_mutation_level(MUT_DEFORMED) > 1 && slot == EQ_BODY_ARMOUR)
     {
         if (verbose)
-            mpr("Your wings%s won't fit in that.");
+        {
+            if (you.species == SP_DRACONIAN)
+                mpr("Your wings won't fit in that.");
+            else
+                mpr("You can't fit into that, misshapen as you are.");
+        }
         return false;
     }
 

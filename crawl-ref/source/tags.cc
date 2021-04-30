@@ -2964,6 +2964,9 @@ static void tag_read_you(reader &th)
             you.mutation[MUT_UNBREATHING] = you.innate_mutation[MUT_UNBREATHING] = 1;
         }
 
+        if (species_is_draconian(you.species))
+            you.mutation[MUT_DEFORMED] = you.innate_mutation[MUT_DEFORMED] = 2;
+
         if (you.species == SP_FAIRY)
         {
             you.mutation[MUT_TENGU_FLIGHT] = you.innate_mutation[MUT_TENGU_FLIGHT] = 0;

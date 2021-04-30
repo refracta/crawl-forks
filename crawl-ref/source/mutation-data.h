@@ -282,12 +282,17 @@ static const mutation_def mut_data[] =
   {"Your vision seems duller.", "", ""},
 },
 
-{ MUT_DEFORMED, 8, 1, mutflag::bad | mutflag::xom, true,
+{ MUT_DEFORMED, 8, 2, mutflag::bad | mutflag::xom, true,
   "deformed body",
 
-  {"Armour fits poorly on your strangely shaped body.", "", ""},
-  {"Your body twists and deforms.", "", ""},
-  {"Your body's shape seems more normal.", "", ""},
+  {"Armour fits poorly on your strangely shaped body.", 
+   "You cannot wear any armour on your peculiar form.", ""},
+
+  {"Your body twists and deforms.",
+   "Your body twists and deforms.", ""},
+
+  {"Your body's shape seems more normal.", 
+   "Your body's shape seems more normal.", ""},
 },
 
 { MUT_SPIT_POISON, 8, 2, mutflag::good, false,

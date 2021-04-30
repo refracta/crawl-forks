@@ -1804,6 +1804,10 @@ static bool _is_suppressable_mutation(mutation_type mut)
     case MUT_HOOVES:
         if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
             return false;
+        return true;
+    case MUT_DEFORMED:
+        if (you.innate_mutation[MUT_DEFORMED])
+            return false;
     default:
         break;
     }
@@ -2185,6 +2189,15 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
             remove_one_equip(EQ_BOOTS, false, true);
             // Recheck Ashenzari bondage in case our available slots changed.
             ash_check_bondage();
+            break;
+
+        case MUT_DEFORMED:
+            if (cur_base_level > 1)
+            {
+                remove_one_equip(EQ_BODY_ARMOUR, false, true);
+                // Recheck Ashenzari bondage in case our available slots changed.
+                ash_check_bondage();
+            }
             break;
 
         case MUT_CLAWS:
