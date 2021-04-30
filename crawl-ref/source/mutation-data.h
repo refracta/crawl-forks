@@ -1590,9 +1590,9 @@ static const mutation_def mut_data[] =
 },
 
 { MUT_PAWS, 0, 1, mutflag::good, true,
-  "sharp paws",
+  "sharp, stealthy paws",
 
-  {"Your sharp claws are effective at attacking unaware monsters.", "", ""},
+  {"Your feline paws and retractable claws are effective at attacking unaware monsters and moving quietly.", "", ""},
   {"", "", ""},
   {"", "", ""},
 },

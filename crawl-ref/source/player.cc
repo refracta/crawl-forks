@@ -4097,12 +4097,8 @@ int player_stealth()
 
             if (you.has_hooves())
                 stealth -= 20;
-            else if (you.species == SP_FELID
-                     && (you.form == transformation::none
-                         || you.form == transformation::appendage))
-            {
-                stealth += 20;  // paws
-            }
+            else if (you.get_mutation_level(MUT_PAWS))
+                stealth += STEALTH_PIP;
         }
     }
 

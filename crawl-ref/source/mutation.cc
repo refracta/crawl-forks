@@ -1800,6 +1800,8 @@ static bool _is_suppressable_mutation(mutation_type mut)
     case MUT_MAJOR_MARTIAL_APT_BOOST:
     case MUT_MINOR_MARTIAL_APT_BOOST:
     case MUT_DEFENSIVE_APT_BOOST:
+    // Felids mutating . . . feet? Nah
+    case MUT_PAWS:
         return false;
     case MUT_HOOVES:
         if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
