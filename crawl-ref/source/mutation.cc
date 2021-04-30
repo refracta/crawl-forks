@@ -95,7 +95,8 @@ static const body_facet_def _body_facets[] =
     //{ EQ_HELMET, MUT_BEAK },
     { EQ_GLOVES, MUT_CLAWS },
     { EQ_BOOTS, MUT_HOOVES },
-    { EQ_BOOTS, MUT_TALONS }
+    { EQ_BOOTS, MUT_TALONS },
+    { EQ_BOOTS, MUT_FROG_LEGS }
 };
 
 /**
@@ -143,6 +144,8 @@ static const int conflict[][3] =
     { MUT_FANGS,               MUT_BEAK,                   -1},
     { MUT_ANTENNAE,            MUT_HORNS,                  -1}, // currently overridden by physiology_mutation_conflict
     { MUT_HOOVES,              MUT_TALONS,                 -1}, // currently overridden by physiology_mutation_conflict
+    { MUT_HOOVES,              MUT_FROG_LEGS,              -1}, // currently overridden by physiology_mutation_conflict
+    { MUT_TALONS,              MUT_FROG_LEGS,              -1}, // currently overridden by physiology_mutation_conflict
     { MUT_TRANSLUCENT_SKIN,    MUT_CAMOUFLAGE,             -1}, // BCADDO: Special case for Jiyvite Octopode.
     { MUT_MUTATION_RESISTANCE, MUT_EVOLUTION,              -1},
     { MUT_ANTIMAGIC_BITE,      MUT_ACIDIC_BITE,            -1},
@@ -1335,7 +1338,7 @@ bool physiology_mutation_conflict(mutation_type mutat, bool ds_roll)
 
     // No feet.
     if (!player_has_feet(false, false)
-        && (mutat == MUT_HOOVES || mutat == MUT_TALONS))
+        && (mutat == MUT_HOOVES || mutat == MUT_TALONS || mutat == MUT_FROG_LEGS))
     {
         return true;
     }
@@ -1343,13 +1346,6 @@ bool physiology_mutation_conflict(mutation_type mutat, bool ds_roll)
     // Only nagas can get upgraded poison spit.
     if ((you.species != SP_NAGA || you.char_class == JOB_NAGA) && mutat == MUT_SPIT_POISON)
         return true;
-
-    // Only Draconians (and gargoyles) can get wings.
-    if (!species_is_draconian(you.species) && you.species != SP_GARGOYLE
-        && mutat == MUT_BIG_WINGS)
-    {
-        return true;
-    }
 
     // Felids have innate claws, and unlike trolls/ghouls, there are no
     // increases for them.
@@ -1359,7 +1355,7 @@ bool physiology_mutation_conflict(mutation_type mutat, bool ds_roll)
     // Merfolk have no feet in the natural form, and we never allow mutations
     // that show up only in a certain transformation.
     if ((you.species == SP_MERFOLK || you.char_class == JOB_MERFOLK)
-        && !ds_roll && (mutat == MUT_TALONS || mutat == MUT_HOOVES))
+        && !ds_roll && (mutat == MUT_TALONS || mutat == MUT_HOOVES || mutat == MUT_FROG_LEGS))
     {
         return true;
     }
@@ -2182,6 +2178,7 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
             add_daction(DACT_REAUTOMAP);
             break;
 
+        case MUT_FROG_LEGS:
         case MUT_HOOVES:
         case MUT_TALONS:
             // Hooves and talons force boots off.
@@ -2317,6 +2314,7 @@ static bool _post_loss_effects(mutation_type mutat)
     case MUT_BEAK:
     case MUT_CLAWS:
     case MUT_HOOVES:
+    case MUT_FROG_LEGS:
     case MUT_TALONS:
         // Recheck Ashenzari bondage in case our available slots changed.
         ash_check_bondage();
@@ -3054,6 +3052,8 @@ static const facet_def _demon_facets[] =
     { 0, { MUT_NON_MUTATION, MUT_NON_MUTATION, MUT_ANTENNAE },
       { -33, -33, -33 } },
     { 0, { MUT_NON_MUTATION, MUT_NON_MUTATION, MUT_HOOVES },
+      { -33, -33, -33 } },
+    { 0, { MUT_NON_MUTATION, MUT_FROG_LEGS, MUT_FROG_LEGS },
       { -33, -33, -33 } },
     { 0, { MUT_NON_MUTATION, MUT_NON_MUTATION, MUT_TALONS },
       { -33, -33, -33 } },

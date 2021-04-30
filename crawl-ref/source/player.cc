@@ -731,13 +731,9 @@ monster_type player_mons(bool transform)
 
 void update_vision_range()
 {
-    you.normal_vision = LOS_DEFAULT_RANGE;
+    you.normal_vision = LOS_DEFAULT_RANGE + you.get_mutation_level(MUT_DAYSTRIDER);
     int nom   = 1;
     int denom = 1;
-
-    // Barachi have +1 base LOS.
-    if (you.species == SP_BARACHI)
-        you.normal_vision += 1;
 
     // Nightstalker gives -1/-2/-3.
     if (you.get_mutation_level(MUT_NIGHTSTALKER))
@@ -6473,6 +6469,7 @@ bool player::can_swim(bool permanently) const
     // Transforming could be fatal if it would cause unequipment of
     // stat-boosting boots or heavy armour.
     return (species_can_swim(species) && !player_is_shapechanged()
+            || you.get_mutation_level(MUT_FROG_LEGS)
             || body_size(PSIZE_BODY) >= SIZE_GIANT
             || (!permanently && form_can_swim())
             || you.fishtail);

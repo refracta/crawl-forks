@@ -500,6 +500,15 @@ static const mutation_def mut_data[] =
   {"Your natural light goes out.", "Your natural light dims.", ""},
 },
 
+{
+  MUT_DAYSTRIDER, 0, 1, mutflag::bad, false,
+  "daystrider",
+
+  {"You can see and be seen from farther away.", "", ""},
+  {"You feel more exposed.", "", ""},
+  {"You return to the shadows of the dungeon.", "", ""},
+},
+
 { MUT_HURL_HELLFIRE, 0, 1, mutflag::good, false,
   "hellfire blast",
 
@@ -608,7 +617,7 @@ static const mutation_def mut_data[] =
 },
 
 // Draconian only
-{ MUT_BIG_WINGS, 4, 1, mutflag::good, true,
+{ MUT_BIG_WINGS, 0, 1, mutflag::good, true,
   "big wings",
 
   {"Your large and strong wings let you fly indefinitely.", "", ""},
@@ -633,14 +642,14 @@ static const mutation_def mut_data[] =
   {"", "", ""},
 },
 
-{ MUT_HOP, 0, 2, mutflag::good, true,
-  "strong legs",
+{ MUT_FROG_LEGS, 0, 2, mutflag::good, true,
+  "frog legs",
 
-  {"You can hop short distances.",
-   "You can hop long distances.", ""},
+  {"Your frog legs can swim and hop short distances.",
+   "Your frog legs can swim and hop long distances.", ""},
 
-  {"", "Your legs feel stronger.", ""},
-  {"", "", ""},
+  {"Your legs return to their normal shape.", "Your legs feel stronger.", ""},
+  {"The webbing on your feet shrivels and dries.", "Your legs feel weaker.", ""},
 },
 
 { MUT_HIGH_MAGIC, 2, 2, mutflag::good, false,

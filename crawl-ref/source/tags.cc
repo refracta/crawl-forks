@@ -2943,7 +2943,7 @@ static void tag_read_you(reader &th)
         you.mutated_stats[STAT_STR] = 0 + you.get_mutation_level(MUT_STRONG) - you.get_mutation_level(MUT_WEAK);
         you.mutated_stats[STAT_INT] = 0 + you.get_mutation_level(MUT_CLEVER) - you.get_mutation_level(MUT_DOPEY);
         you.mutated_stats[STAT_DEX] = 0 + you.get_mutation_level(MUT_AGILE) - you.get_mutation_level(MUT_CLUMSY);
-        you.mutation[MUT_STATS] = abs(you.mutated_stats[STAT_STR]) + abs(you.mutated_stats[STAT_INT]) + abs(you.mutated_stats[STAT_DEX]);
+        you.mutation[MUT_STATS] = (abs(you.mutated_stats[STAT_STR]) + abs(you.mutated_stats[STAT_INT]) + abs(you.mutated_stats[STAT_DEX])) / 10;
     }
     else
     {
@@ -2993,9 +2993,9 @@ static void tag_read_you(reader &th)
         if (you.species == SP_MERFOLK)
             you.mutation[MUT_MERFOLK_TAIL] = you.innate_mutation[MUT_MERFOLK_TAIL] = 1;
 
-        if (you.mutation[MUT_UNBREATHING_FORM])
+        if (you.mutation[MUT_DAYSTRIDER])
         {
-            you.mutation[MUT_UNBREATHING_FORM] = you.innate_mutation[MUT_UNBREATHING_FORM] = 0;
+            you.mutation[MUT_DAYSTRIDER] = you.innate_mutation[MUT_DAYSTRIDER] = 0;
             you.mutation[MUT_UNBREATHING] = you.innate_mutation[MUT_UNBREATHING] = 1;
         }
 
@@ -3004,6 +3004,9 @@ static void tag_read_you(reader &th)
             you.mutation[MUT_TENGU_FLIGHT] = you.innate_mutation[MUT_TENGU_FLIGHT] = 0;
             you.mutation[MUT_BIG_WINGS] = you.innate_mutation[MUT_BIG_WINGS] = 1;
         }
+
+        if (you.species == SP_BARACHI)
+            you.mutation[MUT_DAYSTRIDER] = you.innate_mutation[MUT_DAYSTRIDER] = 1;
 
         bool slimy = false;
         for (int i = 0; i < NUM_MUTATIONS; ++i)
@@ -4068,42 +4071,9 @@ static void tag_read_you_items(reader &th)
         for (int j = 0; j < count2; j++)
             you.force_autopickup[i][j] = unmarshallInt(th);
 #if TAG_MAJOR_VERSION == 34
-    if (th.getMinorVersion() < TAG_MINOR_FOOD_AUTOPICKUP)
-    {
-        const int oldstate = you.force_autopickup[OBJ_FOOD][NUM_FOODS];
-        you.force_autopickup[OBJ_FOOD][FOOD_RATION] = oldstate;
+    if (th.getMinorVersion() < TAG_MINOR_JIYVA_REWORK && you.species == SP_BARACHI)
+        remove_one_equip(EQ_BOOTS, false, true);
 
-        you.force_autopickup[OBJ_BOOKS][BOOK_MANUAL] =
-            you.force_autopickup[OBJ_BOOKS][NUM_BOOKS];
-    }
-    if (th.getMinorVersion() < TAG_MINOR_FOOD_PURGE_AP_FIX)
-    {
-        FixedVector<int, MAX_SUBTYPES> &food_pickups =
-            you.force_autopickup[OBJ_FOOD];
-
-        // If fruit pickup was not set explicitly during the time between
-        // FOOD_PURGE and FOOD_PURGE_AP_FIX, copy the old exemplar FOOD_PEAR.
-        if (food_pickups[FOOD_FRUIT] == AP_FORCE_NONE)
-            food_pickups[FOOD_FRUIT] = food_pickups[FOOD_PEAR];
-    }
-    if (you.species == SP_FORMICID)
-        remove_one_equip(EQ_HELMET, false, true);
-
-    if (th.getMinorVersion() < TAG_MINOR_CONSUM_APPEARANCE)
-    {
-        // merge scroll seeds
-        for (int subtype = 0; subtype < MAX_SUBTYPES; subtype++)
-        {
-            const int seed1 = you.item_description[IDESC_SCROLLS][subtype]
-                              & 0xff;
-            const int seed2 = you.item_description[IDESC_SCROLLS_II][subtype]
-                              & 0xff;
-            const int seed3 = OBJ_SCROLLS & 0xff;
-            you.item_description[IDESC_SCROLLS][subtype] =    seed1
-                                                           | (seed2 << 8)
-                                                           | (seed3 << 16);
-        }
-    }
     // Remove any decks if no longer worshipping Nemelex, now that items have
     // been loaded.
     if (th.getMinorVersion() < TAG_MINOR_NEMELEX_WRATH
@@ -4112,10 +4082,6 @@ static void tag_read_you_items(reader &th)
     {
         nemelex_reclaim_decks();
     }
-
-    // Reset training arrays for transfered gnolls that didn't train all skills.
-    if (th.getMinorVersion() < TAG_MINOR_GNOLLS_REDUX)
-        reset_training();
 
     // Move any books from inventory into the player's library.
     if (th.getMinorVersion() < TAG_MINOR_GOLDIFY_MANUALS)

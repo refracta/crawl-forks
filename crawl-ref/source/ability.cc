@@ -4043,7 +4043,7 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
             _add_talent(talents, ABIL_SHAFT_SELF, check_confused);
     }
 
-    if (you.get_mutation_level(MUT_HOP) && (form_keeps_mutations() && !you.mounted() || include_unusable))
+    if (you.get_mutation_level(MUT_FROG_LEGS) && (form_keeps_mutations() && !you.mounted() || include_unusable))
         _add_talent(talents, ABIL_HOP, check_confused);
 
     // Spit Poison, possibly upgraded to Breathe Poison.

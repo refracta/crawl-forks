@@ -1393,6 +1393,13 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
             return false;
         }
 
+        if (you.get_mutation_level(MUT_FROG_LEGS, false))
+        {
+            if (verbose)
+                mpr("You can't wear boots with large webbed feet!");
+            return false;
+        }
+
         if (you.has_talons(false) == 3)
         {
             if (verbose)

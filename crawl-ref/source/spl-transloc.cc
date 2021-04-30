@@ -367,7 +367,7 @@ spret frog_hop(bool fail, bool spider)
     const int splpow = calc_spell_power(SPELL_SUMMON_SPIDER_MOUNT, true);
 
     const int hop_range = spider ? (2 + div_round_up(splpow, 50)) // 3-6.
-                                 : (2 + you.get_mutation_level(MUT_HOP) * 2); // 4-6
+                                 : (2 + you.get_mutation_level(MUT_FROG_LEGS) * 2); // 4-6
     coord_def target;
     targeter_smite tgt(&you, hop_range, 0, spider ? SPIDER_FUZZ_RADIUS : HOP_FUZZ_RADIUS);
     tgt.obeys_mesmerise = true;
