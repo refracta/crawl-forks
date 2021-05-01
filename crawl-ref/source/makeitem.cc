@@ -1743,6 +1743,17 @@ static void _generate_scroll_item(item_def& item, int force_type,
     item.plus = 0;
 }
 
+static bool _is_banned_book(book_type book)
+{
+    switch (book)
+    {
+    case BOOK_NECRONOMICON:
+        return true;
+    default:
+        return false;
+    }
+}
+
 /// Choose a random spellbook type for the given level.
 static book_type _choose_book_type(int item_level)
 {
@@ -1752,6 +1763,9 @@ static book_type _choose_book_type(int item_level)
     {
         const book_type book = static_cast<book_type>(i);
         if (item_type_removed(OBJ_BOOKS, book))
+            continue;
+
+        if (_is_banned_book(book))
             continue;
 
         const int rarity = book_rarity(book);

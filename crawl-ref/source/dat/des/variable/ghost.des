@@ -1778,7 +1778,7 @@ WEIGHT:  5 (D:15)
 : kitem("D = " .. dgn.randart_aux_armour)
 KITEM:   EHK = any jewellery randart
 KITEM:   FJL = randbook owner:Kikubaaqudgha disc:necromancy numspells:6 \
-               / necronomicon / manual of necromancy
+               / manual of necromancy w:5
 KITEM:   12 = superb_item / star_item
 KMONS:   DEF = player ghost
 KMONS:   HJ1 =  lich

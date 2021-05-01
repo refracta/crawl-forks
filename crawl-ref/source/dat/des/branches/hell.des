@@ -74,7 +74,7 @@ MONS:   crimson imp / red devil / hellwing / hell hound
 MONS:   hellion / balrug / soul eater / smoke demon
 ITEM:   good_item demon blade / good_item demon whip / \
         good_item demon trident
-ITEM:   ring of fire ident:type / Necronomicon / \
+ITEM:   ring of fire ident:type / book of unlife / \
         grand grimoire / scroll of torment ident:type
 SUBST:  d=de, ?:?.l, ?=l.
 : hell_entry_feature(_G, 'A')
@@ -110,7 +110,7 @@ MONS:   crimson imp / red devil / hellwing / hell hound
 MONS:   hellion / balrug / soul eater w:20 / smoke demon w:20
 ITEM:   good_item demon blade / good_item demon whip /\
         good_item demon trident
-ITEM:   ring of fire ident:type / Necronomicon / \
+ITEM:   ring of fire ident:type / book of unlife / \
         grand grimoire / scroll of torment ident:type
 ITEM:   good_item demon blade / good_item demon whip /\
         good_item demon trident / w:30 nothing
