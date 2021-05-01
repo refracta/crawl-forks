@@ -760,7 +760,7 @@ static monsterentry mondata[] =
 },
 
 {
-    MONS_TEAL_DRACONIAN, 'd', LIGHTBLUE, "teal draconian",
+    MONS_TEAL_DRACONIAN, 'd', LIGHTBLUE, "turquoise draconian",
     M_FLIES | M_SPEAKS | M_INSUBSTANTIAL,
     MR_NO_FLAGS,
     10, MONS_DRACONIAN, MONS_TEAL_DRACONIAN, MH_UNDEAD, 40,

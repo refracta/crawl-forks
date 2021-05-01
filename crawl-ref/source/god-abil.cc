@@ -7641,7 +7641,7 @@ static string _name_from_colour(draconian_colour col)
     case DR_RED:            return "Red                 Fire                       rF+                Searing Flames";
     case DR_SCINTILLATING:  return "Scintillating       All (chaotically)          Any (chaos)        Bolt of Chaos";
     case DR_SILVER:         return "Silver              Earth                      rMut, AC+          Silver Fragments";
-    case DR_TEAL:           return "Teal                Translo, Transmu           Insubstantial      Spectral Mist";
+    case DR_TEAL:           return "Turquoise           Translo, Transmu           Insubstantial      Spectral Mist";
     case DR_WHITE:          return "White               Ice                        rC+                Chilling Bolt";
     default: case DR_BROWN: break; // Immature shouldn't come up here;
     }
