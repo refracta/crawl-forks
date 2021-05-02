@@ -423,7 +423,7 @@ static int _acquirement_food_subtype(bool /*divine*/, int& quantity,
 {
     int type_wanted;
     // Food is a little less predictable now. - bwr
-    if (you.species == SP_GHOUL)
+    if (you.get_mutation_level(MUT_ROTTING_BODY))
         type_wanted = FOOD_CHUNK;
     else
         type_wanted = FOOD_RATION;

@@ -881,7 +881,7 @@ static void _decrement_durations()
  */
 static void _rot_ghoul_players()
 {
-    if (you.species != SP_GHOUL)
+    if (!you.get_mutation_level(MUT_ROTTING_BODY))
         return;
 
     int resilience = 400;

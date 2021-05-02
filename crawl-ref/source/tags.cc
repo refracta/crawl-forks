@@ -2950,7 +2950,7 @@ static void tag_read_you(reader &th)
 
     if (th.getMinorVersion() < TAG_MINOR_JIYVA_REWORK)
     {
-        you.mutated_stats[STAT_STR] = 0 + you.get_mutation_level(MUT_STRONG) - you.get_mutation_level(MUT_WEAK);
+        you.mutated_stats[STAT_STR] = 0 + you.get_mutation_level(MUT_STRONG) - you.get_mutation_level(MUT_ROTTING_BODY);
         you.mutated_stats[STAT_INT] = 0 + you.get_mutation_level(MUT_CLEVER) - you.get_mutation_level(MUT_DOPEY);
         you.mutated_stats[STAT_DEX] = 0 + you.get_mutation_level(MUT_AGILE)  - you.get_mutation_level(MUT_CLUMSY);
         you.mutation[MUT_STATS] = div_round_up((abs(you.mutated_stats[STAT_STR]) + abs(you.mutated_stats[STAT_INT]) + abs(you.mutated_stats[STAT_DEX])), 10);
@@ -3020,7 +3020,7 @@ static void tag_read_you(reader &th)
         you.mutation[MUT_MULTIARM] = you.innate_mutation[MUT_MULTIARM] = 0;
         you.mutation[MUT_STASIS] = you.innate_mutation[MUT_STASIS] = 0;
         you.mutation[MUT_STRONG] = 0;
-        you.mutation[MUT_WEAK]   = 0;
+        you.mutation[MUT_ROTTING_BODY] = 0;
         you.mutation[MUT_CLEVER] = 0;
         you.mutation[MUT_DOPEY]  = 0;
         you.mutation[MUT_AGILE]  = 0;
@@ -3032,6 +3032,9 @@ static void tag_read_you(reader &th)
             you.mutation[MUT_BURROWING] = you.innate_mutation[MUT_BURROWING] = 1;
             you.mutation[MUT_MULTIARM] = you.innate_mutation[MUT_MULTIARM] = 1;
         }
+
+        if (you.species == SP_GHOUL)
+            you.mutation[MUT_ROTTING_BODY] = you.innate_mutation[MUT_ROTTING_BODY] = 1;
     }
 #endif
 

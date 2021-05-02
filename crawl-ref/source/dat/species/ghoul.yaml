@@ -54,10 +54,7 @@ mutations:
     MUT_COLD_RESISTANCE: 1
     MUT_CLAWS: 1
     MUT_UNBREATHING: 1
-fake_mutations:
-  - long: Your body is rotting away.
-    short: rotting body
-  - long: You thrive on raw meat.
+    MUT_ROTTING_BODY: 1
 recommended_jobs:
   - JOB_WARPER
   - JOB_GLADIATOR

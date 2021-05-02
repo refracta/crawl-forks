@@ -6381,7 +6381,7 @@ static void _stock_shop_item(int j, shop_type shop_type_,
                                         item_level);
         }
         else if (spec.gozag && shop_type_ == SHOP_FOOD
-                 && you.species == SP_GHOUL)
+                 && you.get_mutation_level(MUT_ROTTING_BODY))
         {
             item_index = _make_delicious_corpse();
         }

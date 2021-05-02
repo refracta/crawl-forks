@@ -186,6 +186,14 @@ static const mutation_def mut_data[] =
   {"You begin to regenerate regardless of the presence of monsters.", "", ""},
 },
 
+{ MUT_ROTTING_BODY, 0, 1, mutflag::bad, true,
+  "rotting body",
+
+  {"Your body is slowly rotting away. You can heal your form by consuming rotten meat.", "", ""},
+  {"", "", ""},
+  {"", "", ""},
+},
+
 { MUT_FAST_METABOLISM, 0, 3, mutflag::bad, false,
   "fast metabolism",
 

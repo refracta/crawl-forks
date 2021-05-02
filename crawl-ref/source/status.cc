@@ -1131,7 +1131,7 @@ static void _describe_airborne(status_info& inf)
 
 static void _describe_rotting(status_info& inf)
 {
-    if (you.species == SP_GHOUL)
+    if (you.get_mutation_level(MUT_ROTTING_BODY))
     {
         inf.short_text = "rotting";
         inf.long_text = "Your flesh is rotting";

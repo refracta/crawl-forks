@@ -4488,7 +4488,7 @@ static string _gozag_special_shop_name(shop_type type)
     {
         if (you.species == SP_VAMPIRE)
             return "Blood";
-        else if (you.species == SP_GHOUL)
+        else if (you.get_mutation_level(MUT_ROTTING_BODY))
             return "Carrion"; // yum!
     }
 
@@ -5238,9 +5238,6 @@ static map<const char*, vector<mutation_type>> sacrifice_vector_map =
         MUT_SHOUTITUS,
         MUT_INHIBITED_REGENERATION,
         MUT_NO_POTION_HEAL,
-        MUT_DOPEY,
-        MUT_CLUMSY,
-        MUT_WEAK,
     }},
 };
 
@@ -5588,22 +5585,7 @@ int get_sacrifice_piety(ability_type sac, bool include_skill)
                 piety_gain += 2 + _get_stat_piety(STAT_INT, 6);
             break;
         case ABIL_RU_SACRIFICE_PURITY:
-            if (mut == MUT_WEAK || mut == MUT_DOPEY || mut == MUT_CLUMSY)
-            {
-                const stat_type stat = mut == MUT_WEAK   ? STAT_STR
-                                     : mut == MUT_CLUMSY ? STAT_DEX
-                                     : mut == MUT_DOPEY  ? STAT_INT
-                                                         : NUM_STATS;
-                piety_gain += 4 + _get_stat_piety(stat, 4);
-            }
-            // the other sacrifices get sharply worse if you already
-            // have levels of them.
-            else if (you.get_mutation_level(mut) == 2)
-                piety_gain += 28;
-            else if (you.get_mutation_level(mut) == 1)
-                piety_gain += 21;
-            else
-                piety_gain += 14;
+            piety_gain += 28;
             break;
         case ABIL_RU_SACRIFICE_ARTIFICE:
             if (you.get_mutation_level(MUT_NO_LOVE))

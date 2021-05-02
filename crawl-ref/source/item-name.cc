@@ -3442,7 +3442,7 @@ bool is_good_item(const item_def &item)
         case POT_EXPERIENCE:
             return true;
         case POT_BENEFICIAL_MUTATION:
-            return you.species != SP_GHOUL; // Mummies are already handled
+            return !you.undead_state();
         default:
             return false;
         }

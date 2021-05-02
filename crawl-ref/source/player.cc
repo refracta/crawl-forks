@@ -4749,7 +4749,7 @@ void rot_hp(int hp_loss)
 
     calc_hp();
 
-    if (you.species != SP_GHOUL)
+    if (!you.get_mutation_level(MUT_ROTTING_BODY))
         xom_is_stimulated(hp_loss * 25);
 
     you.redraw_hit_points = true;
