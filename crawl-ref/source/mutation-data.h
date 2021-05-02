@@ -194,6 +194,14 @@ static const mutation_def mut_data[] =
   {"", "", ""},
 },
 
+{ MUT_GOBLINS_GREED, 0, 1, mutflag::good, false,
+  "goblin's greed",
+
+  {"Your goblin ancestry allows you to find more gold. (+20 %)", "", ""},
+  {"You feel a greedy glee.", "", ""},
+  {"You feel strangely charitable.", "", ""},
+},
+
 { MUT_FAST_METABOLISM, 0, 3, mutflag::bad, false,
   "fast metabolism",
 

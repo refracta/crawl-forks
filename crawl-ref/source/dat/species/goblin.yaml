@@ -47,11 +47,10 @@ mutations:
     MUT_LOW_MAGIC: 1
     MUT_GODS_PITY: 2
     MUT_MUTATION_RESISTANCE: 1
+    MUT_GOBLINS_GREED: 1
 fake_mutations:
   - long: Your stats never grow through leveling.
     short: stagnant stats
-  - long: Your goblin ancestry allows you to find more gold. (+20%)
-    short: goblin's greed
 recommended_jobs:
   - JOB_FIGHTER
   - JOB_BERSERKER

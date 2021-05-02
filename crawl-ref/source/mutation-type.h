@@ -70,9 +70,7 @@ enum mutation_type
 
     MUT_FAST,
     MUT_FAST_METABOLISM,
-#if TAG_MAJOR_VERSION == 34
-    MUT_FLEXIBLE_WEAK,
-#endif
+    MUT_GOBLINS_GREED,
     MUT_FRAIL,
     MUT_FOUL_STENCH,
     MUT_GOURMAND,

@@ -3035,6 +3035,9 @@ static void tag_read_you(reader &th)
 
         if (you.species == SP_GHOUL)
             you.mutation[MUT_ROTTING_BODY] = you.innate_mutation[MUT_ROTTING_BODY] = 1;
+
+        if (you.species == SP_GOBLIN)
+            you.mutation[MUT_GOBLINS_GREED] = you.innate_mutation[MUT_GOBLINS_GREED] = 1;
     }
 #endif
 
