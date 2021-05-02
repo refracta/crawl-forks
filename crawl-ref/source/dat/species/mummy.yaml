@@ -47,6 +47,7 @@ mutations:
     MUT_COLD_RESISTANCE: 1
     MUT_TORMENT_RESISTANCE: 1
     MUT_UNBREATHING: 1
+    MUT_HEAT_VULNERABILITY: 1
   13:
     MUT_NECRO_ENHANCER: 1
   26:
@@ -54,6 +55,4 @@ mutations:
 fake_mutations:
   - long: You do not eat or drink.
     short: no food or potions
-  - long: Your flesh is vulnerable to fire.
-    short: fire vulnerability
 create_enum: False

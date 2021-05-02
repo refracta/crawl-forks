@@ -3038,6 +3038,9 @@ static void tag_read_you(reader &th)
 
         if (you.species == SP_GOBLIN)
             you.mutation[MUT_GOBLINS_GREED] = you.innate_mutation[MUT_GOBLINS_GREED] = 1;
+
+        if (you.species == SP_LIGNIFITE || you.species == SP_MUMMY)
+            you.mutation[MUT_HEAT_VULNERABILITY] = you.innate_mutation[MUT_HEAT_VULNERABILITY] = 1;
     }
 #endif
 

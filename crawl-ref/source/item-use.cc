@@ -1382,9 +1382,7 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
         if (you.species == SP_LIGNIFITE)
         {
             if (verbose)
-            {
                 mpr("Gloves don't fit on your branches!");
-            }
             return false;
         }
     }
@@ -1405,7 +1403,7 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
             return false;
         }
 
-        if (you.has_talons(false) == 3)
+        if (you.has_talons(false))
         {
             if (verbose)
                 mpr("Boots don't fit your talons!");
