@@ -7347,8 +7347,13 @@ mon_holy_type player::holiness(bool temp, bool mt) const
         holi = MH_UNDEAD;
     else if (species == SP_GARGOYLE)
         holi = MH_NONLIVING;
+    else if (species == SP_LIGNIFITE && (!temp || you.form == transformation::none))
+        holi = MH_PLANT;
     else
         holi = MH_NATURAL;
+
+    if (species == SP_VINE_STALKER && (!temp || you.form == transformation::none))
+        holi |= MH_PLANT;
 
     // Petrification takes precedence over base holiness and lich form
     if (temp && (form == transformation::statue

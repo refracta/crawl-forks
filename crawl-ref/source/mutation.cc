@@ -1372,7 +1372,7 @@ bool physiology_mutation_conflict(mutation_type mutat, bool ds_roll)
     }
 
     // Already immune.
-    if (you.species == SP_GARGOYLE && mutat == MUT_POISON_RESISTANCE)
+    if ((player_res_poison(false, false, false) == 3) && mutat == MUT_POISON_RESISTANCE)
         return true;
 
     // We can't use is_useless_skill() here, since species that can still wear

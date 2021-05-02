@@ -1303,8 +1303,6 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
         break;
 
     case SPELL_STATUE_FORM:
-        if (SP_GARGOYLE == you.species)
-            return "you're already a statue.";
         if (you.undead_state(temp) == US_GHOST)
             return "you are incapable of being fully solid.";
         // fallthrough to other forms
@@ -1393,13 +1391,8 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
         break;
 
     case SPELL_SUBLIMATION_OF_BLOOD:
-        // XXX: write player_can_bleed(bool temp) & use that
-        if (you.species == SP_GARGOYLE
-            || you.undead_state(temp) != US_ALIVE
-            || (temp && !form_can_bleed(you.form)))
-        {
+        if (!you.can_bleed(temp))
             return "you have no blood to sublime.";
-        }
         if (you.magic_points == you.max_magic_points && temp)
             return "your reserves of magic are already full.";
         break;

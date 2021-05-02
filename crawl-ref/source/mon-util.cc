@@ -5484,7 +5484,6 @@ mon_body_shape get_mon_shape(const monster_type mc)
                 return static_cast<mon_body_shape>(MON_SHAPE_NAGA);
             case SP_OCTOPODE:
                 return static_cast<mon_body_shape>(MON_SHAPE_MISC);
-                break;
             case SP_TENGU:
             case SP_GARGOYLE:
                 return static_cast<mon_body_shape>(MON_SHAPE_HUMANOID_WINGED);
