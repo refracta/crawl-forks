@@ -6441,7 +6441,7 @@ void throw_monster_bits(const monster& mon)
 /// Add an ancestor spell to the given list.
 static void _add_ancestor_spell(monster_spells &spells, spell_type spell)
 {
-    if (you.species == SP_SILENT_SPECTRE)
+    if (you.get_mutation_level(MUT_SILENT_CAST))
         spells.emplace_back(spell, 25, MON_SPELL_MAGICAL);
     else
         spells.emplace_back(spell, 25, MON_SPELL_WIZARD);

@@ -626,6 +626,22 @@ static const mutation_def mut_data[] =
   { "Your symbiote's branches wither and fall away.", "", "" },
 },
 
+{ MUT_SILENCE_AURA, 0, 3, mutflag::good, false,
+  "silence aura",
+
+  { "You are surrounded by a small aura of unnatural quiet.", 
+    "You are surrounded by an aura of unnatural quiet.", 
+    "You are surrounded by a massive aura of unnatural quiet."},
+
+  { "You develop an aura of silence.",
+    "Your aura of unnatural quiet expands.",
+    "Your aura of unnatural quiet expands." },
+
+  { "The world fills with sound again. Your silence aura fades.", 
+    "Your aura of unnatural quiet shrinks.",
+    "Your aura of unnatural quiet shrinks."},
+},
+
 // Octopode only
 { MUT_TENTACLE_SPIKE, 10, 1, mutflag::good, true,
   "tentacle spike",

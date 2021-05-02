@@ -147,6 +147,7 @@ static const int conflict[][3] =
     { MUT_HOOVES,              MUT_FROG_LEGS,              -1}, // currently overridden by physiology_mutation_conflict
     { MUT_TALONS,              MUT_FROG_LEGS,              -1}, // currently overridden by physiology_mutation_conflict
     { MUT_TRANSLUCENT_SKIN,    MUT_CAMOUFLAGE,             -1}, // BCADDO: Special case for Jiyvite Octopode.
+    { MUT_SILENCE_AURA,        MUT_SHOUTITUS,              -1},
     { MUT_MUTATION_RESISTANCE, MUT_EVOLUTION,              -1},
     { MUT_ANTIMAGIC_BITE,      MUT_ACIDIC_BITE,            -1},
     { MUT_HEAT_RESISTANCE,     MUT_HEAT_VULNERABILITY,     -1},

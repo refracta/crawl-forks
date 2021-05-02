@@ -1183,7 +1183,7 @@ static bool _handle_scroll(monster& mons)
 
     case SCR_SILENCE:
         if (!mons.wont_attack() && (grid_distance(mons.pos(), you.pos()) < 5)
-                                && !(you.species == SP_SILENT_SPECTRE))
+                                && !(you.can_silent_cast()))
             {
                 mons.add_ench(ENCH_SILENCE);
                 invalidate_agrid(true);

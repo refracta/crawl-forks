@@ -2953,7 +2953,7 @@ static void tag_read_you(reader &th)
     {
         you.mutated_stats[STAT_STR] = 0 + you.get_mutation_level(MUT_STRONG) - you.get_mutation_level(MUT_ROTTING_BODY);
         you.mutated_stats[STAT_INT] = 0 + you.get_mutation_level(MUT_CLEVER) - you.get_mutation_level(MUT_DOPEY);
-        you.mutated_stats[STAT_DEX] = 0 + you.get_mutation_level(MUT_AGILE)  - you.get_mutation_level(MUT_CLUMSY);
+        you.mutated_stats[STAT_DEX] = 0 + you.get_mutation_level(MUT_AGILE)  - you.get_mutation_level(MUT_SILENCE_AURA);
         you.mutation[MUT_STATS] = div_round_up((abs(you.mutated_stats[STAT_STR]) + abs(you.mutated_stats[STAT_INT]) + abs(you.mutated_stats[STAT_DEX])), 10);
 
         if (you.species == SP_MERFOLK)
@@ -3025,7 +3025,7 @@ static void tag_read_you(reader &th)
         you.mutation[MUT_CLEVER] = 0;
         you.mutation[MUT_DOPEY]  = 0;
         you.mutation[MUT_AGILE]  = 0;
-        you.mutation[MUT_CLUMSY] = 0;
+        you.mutation[MUT_SILENCE_AURA] = 0;
         
         if (you.species == SP_FORMICID)
         {
@@ -3049,6 +3049,9 @@ static void tag_read_you(reader &th)
             if (you.experience_level >= 12)
                 you.mutation[MUT_ROOTS] = you.innate_mutation[MUT_ROOTS] = 1;
         }
+
+        if (you.species == SP_SILENT_SPECTRE)
+            you.mutation[MUT_SILENCE_AURA] = you.innate_mutation[MUT_SILENCE_AURA] = 2;
     }
 #endif
 

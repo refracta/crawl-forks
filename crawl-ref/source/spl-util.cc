@@ -1376,11 +1376,6 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
             return "you're too dead.";
         break;
 
-    case SPELL_SILENCE:
-        if (you.species == SP_SILENT_SPECTRE)
-            return "you're already silenced.";
-        break;
-
     case SPELL_OZOCUBUS_ARMOUR:
         if (temp && !player_effectively_in_light_armour())
             return "your body armour is too heavy.";
@@ -1437,7 +1432,7 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
         break;
 
     case SPELL_SONG_OF_SLAYING:
-        if (you.species == SP_SILENT_SPECTRE)
+        if (you.get_mutation_level(MUT_SILENCE_AURA))
             return "you cannot sing out loud.";
         break;
 

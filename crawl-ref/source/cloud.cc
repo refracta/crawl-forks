@@ -611,7 +611,7 @@ void manage_clouds()
             const bool you_see = you.see_cell(cloud.pos);
             if (you_see && !you_worship(GOD_QAZLAL))
                 mpr("Lightning arcs down from a storm cloud!");
-            if (!(you.species == SP_SILENT_SPECTRE && you_worship(GOD_QAZLAL)))
+            if (!(you.get_mutation_level(MUT_SILENCE_AURA) && you_worship(GOD_QAZLAL)))
                 noisy(spell_effect_noise(SPELL_LIGHTNING_BOLT), cloud.pos,
                       you_see || you_worship(GOD_QAZLAL) ? nullptr
                       : "You hear a mighty clap of thunder!");
@@ -1404,7 +1404,7 @@ static int _actor_cloud_damage(const actor *act,
             mpr("Lightning from the thunderstorm strikes something you cannot "
                 "see.");
         }
-        if (!mount && !(you.species == SP_SILENT_SPECTRE && you_worship(GOD_QAZLAL)))
+        if (!mount && !(you.get_mutation_level(MUT_SILENCE_AURA) && you_worship(GOD_QAZLAL)))
             noisy(spell_effect_noise(SPELL_LIGHTNING_BOLT), act->pos(),
                   act->is_player() || you.see_cell(act->pos())
                   || you_worship(GOD_QAZLAL)

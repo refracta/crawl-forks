@@ -40,9 +40,7 @@ enum mutation_type
     MUT_CARNIVOROUS,
     MUT_CLARITY,
     MUT_CLEVER, // Not a true mutation, used by a potion.
-#if TAG_MAJOR_VERSION == 34
-    MUT_CLUMSY,
-#endif
+    MUT_SILENCE_AURA,
 #if TAG_MAJOR_VERSION > 34
     MUT_COLD_BLOODED,
 #endif

@@ -495,10 +495,9 @@ static int _shrinking_aoe_range(int dur)
 
 int player::silence_radius() const
 {
-    if (you.species == SP_SILENT_SPECTRE)
-        return 4;
-    else
-        return _shrinking_aoe_range(duration[DUR_SILENCE]);
+    int SR = 2 * you.get_mutation_level(MUT_SILENCE_AURA);
+    
+    return max(SR, _shrinking_aoe_range(duration[DUR_SILENCE]));
 }
 
 int monster::silence_radius() const

@@ -5300,8 +5300,8 @@ static mutation_type _random_valid_sacrifice(const vector<mutation_type> &muts)
 
         // Special case a few weird interactions:
 
-        // Can't scream or read in permasilence. Hah.
-        if ((mut == MUT_SHOUTITUS || mut == MUT_NO_READ) && you.species == SP_SILENT_SPECTRE)
+        // Can't read in permasilence. Hah.
+        if (mut == MUT_NO_READ && you.species == SP_SILENT_SPECTRE)
             continue;
 
         // demonspawn can't get frail if they have a robust facet
