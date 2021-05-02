@@ -2649,11 +2649,8 @@ string mutation_overview()
     }
 
     // a bit more stuff
-    if (you.species == SP_OGRE || you.species == SP_TROLL
-        || species_is_draconian(you.species) || you.species == SP_SPRIGGAN)
-    {
+    if (you.body_size(PSIZE_TORSO) >= SIZE_LARGE || you.body_size(PSIZE_TORSO) <= SIZE_LITTLE)
         mutations.emplace_back("unfitting armour");
-    }
 
     if (you.species == SP_OCTOPODE)
     {

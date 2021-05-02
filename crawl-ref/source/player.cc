@@ -1496,16 +1496,13 @@ int player_hunger_rate()
 {
     int hunger = 3;
 
-    if (you.species == SP_TROLL)
-        hunger += 3;            // in addition to the +3 for fast metabolism
-
     if ((you.duration[DUR_REGENERATION] || you.duration[DUR_TROGS_HAND])
         && you.hp < you.hp_max)
     {
         hunger += 4;
     }
 
-    hunger += you.get_mutation_level(MUT_FAST_METABOLISM)
+    hunger += you.get_mutation_level(MUT_FAST_METABOLISM) * 2
             - you.get_mutation_level(MUT_SLOW_METABOLISM);
 
     // If Cheibriados has slowed your life processes, you will hunger less.
