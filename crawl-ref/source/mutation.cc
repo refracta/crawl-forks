@@ -649,15 +649,8 @@ string describe_mutations(bool drop_title)
     const string old_result = result;
 
     // Innate abilities which haven't been implemented as mutations yet.
-    // TODO: clean these up with respect to transformations. Currently
-    // we handle only Naga/Draconian AC and Yellow Draconian rAcid.
     for (const string& str : fake_mutations(you.species, false))
-    {
-        if (you.species == SP_MINOTAUR)
-            result += _annotate_form_based(str, !form_keeps_mutations());
-        else
-            result += str + "\n";
-    }
+        result += str + "\n";
 
     if (you.racial_ac(false) >= 100)
     {             
@@ -2709,6 +2702,9 @@ const char* mutation_name(mutation_type mut, bool allow_category, bool for_displ
         case DR_BROWN:              return "bugginess.";
         }
     }
+
+    if (mut == MUT_HORNS && you.get_mutation_level(MUT_HORNS) > 1)
+        return "horns, retaliatory headbutt";
 
     species_mutation_message msg = _spmut_msg(mut);
     if (msg.mutation == MUT_NON_MUTATION)

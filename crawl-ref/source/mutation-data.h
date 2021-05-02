@@ -539,12 +539,17 @@ static const mutation_def mut_data[] =
 },
 
 // body-slot facets
-{ MUT_HORNS, 7, 1, mutflag::good, true,
+{ MUT_HORNS, 7, 2, mutflag::good, true,
   "horns",
 
-  {"You have a pair of horns on your head.", "", ""},
-  {"A pair of horns grows on your head!", "", ""},
-  {"The horns on your head fall off.", "", ""},
+  {"You have a pair of horns on your head.",
+   "You reflexively attack those that strike you in melee with your horns.", ""},
+
+  {"A pair of horns grows on your head!", 
+   "Your feel an urge to charge someone with your horns.", ""},
+
+  {"The horns on your head fall off.", 
+   "You feel less irritable.", ""},
 },
 
 { MUT_BEAK, 1, 1, mutflag::good, true,

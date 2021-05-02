@@ -2644,11 +2644,6 @@ string mutation_overview()
     {
         if (species_is_draconian(you.species))
             mutations.push_back(_dragon_abil(str));
-        else if (you.species == SP_MINOTAUR)
-        {
-            mutations.push_back(
-                _annotate_form_based(str, !form_keeps_mutations()));
-        }
         else
             mutations.push_back(str);
     }

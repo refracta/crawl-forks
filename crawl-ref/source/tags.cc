@@ -3001,7 +3001,7 @@ static void tag_read_you(reader &th)
         _cap_mutation_at(MUT_FANGS, 1);
         _cap_mutation_at(MUT_HORNS, 1);
         _cap_mutation_at(MUT_ANTENNAE, 1);
-        _cap_mutation_at(MUT_HOOVES, 1);
+        _cap_mutation_at(MUT_HOOVES, you.species == SP_MINOTAUR ? 2 : 1);
         _cap_mutation_at(MUT_TALONS, 1);
         _cap_mutation_at(MUT_PASSIVE_MAPPING, 1);
         _cap_mutation_at(MUT_DISTORTION_FIELD, 1);
@@ -3042,6 +3042,13 @@ static void tag_read_you(reader &th)
 
         if (you.species == SP_LIGNIFITE || you.species == SP_MUMMY)
             you.mutation[MUT_HEAT_VULNERABILITY] = you.innate_mutation[MUT_HEAT_VULNERABILITY] = 1;
+
+        if (you.species == SP_LIGNIFITE)
+        {
+            you.mutation[MUT_BRANCHES] = you.innate_mutation[MUT_BRANCHES] = 1;
+            if (you.experience_level >= 12)
+                you.mutation[MUT_ROOTS] = you.innate_mutation[MUT_ROOTS] = 1;
+        }
     }
 #endif
 

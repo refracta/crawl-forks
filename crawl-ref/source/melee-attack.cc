@@ -399,11 +399,9 @@ bool melee_attack::handle_phase_dodged()
         // FIXME: player's attack is -1, even for auxes
         && effective_attack_number <= 0)
     {
-        if (defender->is_player() ?
-                you.species == SP_MINOTAUR :
-                mons_species(mons_base_type(*defender->as_monster()))
-                    == MONS_MINOTAUR || 
-                    (mons_is_hepliaklqana_ancestor(mons_base_type(*defender->as_monster())) 
+        if (defender->is_player() 
+            || mons_species(mons_base_type(*defender->as_monster())) == MONS_MINOTAUR
+            || (mons_is_hepliaklqana_ancestor(mons_base_type(*defender->as_monster())) 
                     && you.species == SP_MINOTAUR))
         {
             do_minotaur_retaliation();
@@ -4348,11 +4346,8 @@ void melee_attack::do_minotaur_retaliation()
         return;
     }
 
-    if (!form_keeps_mutations())
-    {
-        // You are in a non-minotaur form.
+    if (you.get_mutation_level(MUT_HORNS) < 2)
         return;
-    }
 
     if (5 * you.strength() + 7 * you.dex() > random2(600))
     {
