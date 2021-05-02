@@ -5495,7 +5495,7 @@ static int _piety_for_skill_by_sacrifice(ability_type sacrifice)
     if (sacrifice == ABIL_RU_SACRIFICE_HAND)
     {
         // No one-handed bows.
-        if (you.species != SP_FORMICID)
+        if (!you.has_innate_mutation(MUT_MULTIARM))
             piety_gain += _piety_for_skill(SK_BOWS);
     }
     return piety_gain;
@@ -6160,7 +6160,7 @@ bool ru_do_sacrifice(ability_type sac)
     if (sac == ABIL_RU_SACRIFICE_HAND)
     {
         // No one-handed bows.
-        if (you.species != SP_FORMICID)
+        if (!you.has_innate_mutation(MUT_MULTIARM))
             _ru_kill_skill(SK_BOWS);
     }
 

@@ -1360,14 +1360,12 @@ bool physiology_mutation_conflict(mutation_type mutat, bool ds_roll)
         return true;
     }
 
-    if (you.species == SP_FORMICID)
+    if (you.has_innate_mutation(MUT_STASIS))
     {
         // Formicids have stasis and so prevent mutations that would do nothing.
-        // Antennae provides SInv, so acute vision is pointless.
         if (mutat == MUT_BERSERK
             || mutat == MUT_BLINK
-            || mutat == MUT_TELEPORT
-            || mutat == MUT_ACUTE_VISION)
+            || mutat == MUT_TELEPORT)
         {
             return true;
         }
@@ -1802,13 +1800,15 @@ static bool _is_suppressable_mutation(mutation_type mut)
     case MUT_DEFENSIVE_APT_BOOST:
     // Felids mutating . . . feet? Nah
     case MUT_PAWS:
+    // Losing the ability to use your weapon combo would be too harsh.
+    case MUT_MULTIARM:
         return false;
     case MUT_HOOVES:
         if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
             return false;
         return true;
     case MUT_DEFORMED:
-        if (you.innate_mutation[MUT_DEFORMED])
+        if (you.innate_mutation[MUT_DEFORMED] > 1)
             return false;
     default:
         break;

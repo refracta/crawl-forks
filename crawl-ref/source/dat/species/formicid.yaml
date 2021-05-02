@@ -34,13 +34,9 @@ levelup_stats:
 mutations:
   1:
     MUT_ANTENNAE: 1
-fake_mutations:
-  - long: You cannot be hasted, slowed, berserked, paralysed or teleported.
-    short: permanent stasis
-  - long: You can dig through walls and to a lower floor.
-    short: dig shafts and tunnels
-  - long: Your four strong arms can wield two-handed weapons with a shield.
-    short: four strong arms
+    MUT_STASIS: 1
+    MUT_BURROWING: 1
+    MUT_MULTIARM: 1
 recommended_jobs:
   - JOB_FIGHTER
   - JOB_HUNTER

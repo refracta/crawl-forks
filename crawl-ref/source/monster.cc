@@ -513,7 +513,7 @@ hands_reqd_type monster::hands_reqd(const item_def &item, bool base) const
 {
     if (mons_genus(type) == MONS_FORMICID)
         return HANDS_ONE;
-    else if (mons_is_hepliaklqana_ancestor(type) && you.species == SP_FORMICID)
+    else if (mons_is_hepliaklqana_ancestor(type) && you.has_innate_mutation(MUT_MULTIARM))
         return HANDS_ONE;
     return actor::hands_reqd(item, base);
 }
@@ -6768,7 +6768,7 @@ bool monster::stasis() const
 {
     return mons_genus(type) == MONS_FORMICID
            || type == MONS_PLAYER_GHOST && ghost->species == SP_FORMICID
-           || mons_is_hepliaklqana_ancestor(type) && you.species == SP_FORMICID;
+           || mons_is_hepliaklqana_ancestor(type) && you.has_innate_mutation(MUT_STASIS);
 }
 
 bool monster::is_fairy() const

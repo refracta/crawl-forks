@@ -993,7 +993,7 @@ ability_type fixup_ability(ability_type ability)
     case ABIL_EVOKE_BERSERK:
     case ABIL_TROG_BERSERK:
         if (you.is_lifeless_undead(false)
-            || you.species == SP_FORMICID)
+            || you.get_mutation_level(MUT_STASIS))
         {
             return ABIL_NON_ABILITY;
         }
@@ -1001,7 +1001,7 @@ ability_type fixup_ability(ability_type ability)
 
     case ABIL_BLINK:
     case ABIL_EVOKE_BLINK:
-        if (you.species == SP_FORMICID)
+        if (you.get_mutation_level(MUT_STASIS))
             return ABIL_NON_ABILITY;
         return ability;
 
@@ -4035,15 +4035,14 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
     if (you.species == SP_DEEP_DWARF)
         _add_talent(talents, ABIL_HEAL_WOUNDS, check_confused);
 
-    if (you.species == SP_FORMICID
-        && (form_keeps_mutations() || include_unusable))
+    if (you.get_mutation_level(MUT_BURROWING, false) && (form_keeps_mutations() || include_unusable))
     {
         _add_talent(talents, ABIL_DIG, check_confused);
         if (!crawl_state.game_is_sprint() || brdepth[you.where_are_you] > 1)
             _add_talent(talents, ABIL_SHAFT_SELF, check_confused);
     }
 
-    if (you.get_mutation_level(MUT_FROG_LEGS) && (form_keeps_mutations() && !you.mounted() || include_unusable))
+    if (you.get_mutation_level(MUT_FROG_LEGS, false) && (form_keeps_mutations() && !you.mounted() || include_unusable))
         _add_talent(talents, ABIL_HOP, check_confused);
 
     // Spit Poison, possibly upgraded to Breathe Poison.

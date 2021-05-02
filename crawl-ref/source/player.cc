@@ -1298,7 +1298,7 @@ int player_teleport(bool calc_unid)
         return 0;
 
     // Short-circuit rings of teleport to prevent spam.
-    if (you.species == SP_FORMICID)
+    if (you.get_mutation_level(MUT_STASIS))
         return 0;
 
     int tp = 0;
@@ -2647,8 +2647,8 @@ static int _player_evasion_size_factor(bool base = false)
 // other medium-sized races)
 int player_shield_racial_factor()
 {
-    return max(1, 5 + (you.species == SP_FORMICID ? -2 // Same as trolls/centaurs/etc.
-                                                  : _player_evasion_size_factor(true))
+    return max(1, 5 + (you.get_mutation_level(MUT_MULTIARM) ? -2 // Same as trolls/centaurs/etc.
+                                                           : _player_evasion_size_factor(true))
                     - 2 * you.get_mutation_level(MUT_ARM_MORPH));
 }
 
@@ -4405,7 +4405,7 @@ bool player::gourmand(bool calc_unid, bool items) const
 
 bool player::stasis() const
 {
-    return (species == SP_FORMICID || you.attribute[ATTR_ROOTED]);
+    return (you.get_mutation_level(MUT_STASIS) || you.attribute[ATTR_ROOTED]);
 }
 
 bool player::is_fairy() const

@@ -2062,7 +2062,7 @@ static shield_type _hepliaklqana_shield_type(monster_type mc, int HD)
         return NUM_SHIELDS;
     else if (mc != MONS_ANCESTOR_KNIGHT)
     {
-        if (you.species == SP_FORMICID)
+        if (you.has_innate_mutation(MUT_MULTIARM))
             return SHD_SHIELD;
         else
             return NUM_SHIELDS;
@@ -3329,7 +3329,7 @@ bool player_can_join_god(god_type which_god)
         return false;
 
     // Stasis prevents berserk.
-    if (which_god == GOD_TROG && you.species == SP_FORMICID)
+    if (which_god == GOD_TROG && you.has_innate_mutation(MUT_STASIS))
         return false;
 
     // Fairies natural halo cuts them out of Dith; lack of melee cuts them out of Trog, Oka and Wu.

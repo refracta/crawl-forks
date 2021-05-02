@@ -3376,7 +3376,7 @@ bool is_emergency_item(const item_def &item)
         {
         case SCR_TELEPORTATION:
         case SCR_BLINKING:
-            return you.species != SP_FORMICID;
+            return !you.get_mutation_level(MUT_STASIS);
         case SCR_FEAR:
         case SCR_FOG:
             return true;
@@ -3391,7 +3391,7 @@ bool is_emergency_item(const item_def &item)
         {
         case POT_HASTE:
             return !have_passive(passive_t::no_haste)
-                && you.species != SP_FORMICID;
+                && !you.get_mutation_level(MUT_STASIS);
         case POT_HEAL_WOUNDS:
             return you.can_potion_heal();
         case POT_CURING:
@@ -3684,11 +3684,11 @@ bool is_useless_item(const item_def &item, bool temp)
         case SCR_RANDOM_USELESSNESS:
             return true;
         case SCR_TELEPORTATION:
-            return you.species == SP_FORMICID
+            return you.get_mutation_level(MUT_STASIS)
                    || crawl_state.game_is_sprint()
                    || player_in_branch(BRANCH_GAUNTLET);
         case SCR_BLINKING:
-            return you.species == SP_FORMICID;
+            return you.get_mutation_level(MUT_STASIS);
         case SCR_AMNESIA:
             return you_worship(GOD_TROG);
         case SCR_ENCHANT:
@@ -3777,7 +3777,7 @@ bool is_useless_item(const item_def &item, bool temp)
             // If you're poison resistant, poison is only useless.
             return !is_bad_item(item, temp);
         case POT_SLOWING:
-            return you.species == SP_FORMICID;
+            return you.get_mutation_level(MUT_STASIS);
 #endif
         case POT_HEAL_WOUNDS:
             return !you.can_potion_heal();
@@ -3804,7 +3804,7 @@ bool is_useless_item(const item_def &item, bool temp)
             return you.undead_state(temp)
                    && (you.species != SP_VAMPIRE
                        || temp && you.hunger_state < HS_SATIATED)
-                   || you.species == SP_FORMICID
+                   || you.get_mutation_level(MUT_STASIS)
                    || you.get_mutation_level(MUT_NO_ARTIFICE);
 
         case RING_RESIST_CORROSION:

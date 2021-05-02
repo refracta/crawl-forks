@@ -3017,14 +3017,21 @@ static void tag_read_you(reader &th)
         _cap_mutation_at(MUT_STURDY_FRAME, 1);
         _cap_mutation_at(MUT_NO_POTION_HEAL, 1);
         _cap_mutation_at(MUT_CLAWS, 2);
-        you.mutation[MUT_TOUGH_SKIN] = you.innate_mutation[MUT_TOUGH_SKIN] = 0;
-        you.mutation[MUT_SHAGGY_FUR] = you.innate_mutation[MUT_SHAGGY_FUR] = 0;
+        you.mutation[MUT_MULTIARM] = you.innate_mutation[MUT_MULTIARM] = 0;
+        you.mutation[MUT_STASIS] = you.innate_mutation[MUT_STASIS] = 0;
         you.mutation[MUT_STRONG] = 0;
         you.mutation[MUT_WEAK]   = 0;
         you.mutation[MUT_CLEVER] = 0;
         you.mutation[MUT_DOPEY]  = 0;
         you.mutation[MUT_AGILE]  = 0;
         you.mutation[MUT_CLUMSY] = 0;
+        
+        if (you.species == SP_FORMICID)
+        {
+            you.mutation[MUT_STASIS] = you.innate_mutation[MUT_STASIS] = 1;
+            you.mutation[MUT_BURROWING] = you.innate_mutation[MUT_BURROWING] = 1;
+            you.mutation[MUT_MULTIARM] = you.innate_mutation[MUT_MULTIARM] = 1;
+        }
     }
 #endif
 

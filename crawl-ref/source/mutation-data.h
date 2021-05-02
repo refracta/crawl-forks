@@ -1589,6 +1589,30 @@ static const mutation_def mut_data[] =
    "You regain some potential."},
 },
 
+{ MUT_STASIS, 0, 1, mutflag::good, false,
+  "permanent stasis",
+
+  {"You cannot be hasted, slowed, berserked, paralysed or teleported.", "", ""},
+  {"You feel a comfortable sense of stasis.", "", ""},
+  {"You feel weirdly uncertain.", "", ""},
+},
+
+{ MUT_BURROWING, 0, 1, mutflag::good, true,
+  "dig shafts and tunnels",
+
+  {"You can dig through walls and to a lower floor.", "", ""},
+  {"Your mandibles function properly again.", "", ""},
+  {"Your mandibles atrophy and become useless.", "", ""},
+},
+
+{ MUT_MULTIARM, 0, 1, mutflag::good, true,
+  "four arms",
+
+  { "You can wield any weapon or shield with a single pair of your four arms.", "", "" },
+  { "", "", "" },
+  { "", "", "" },
+},
+
 { MUT_PAWS, 0, 1, mutflag::good, true,
   "sharp, stealthy paws",
 

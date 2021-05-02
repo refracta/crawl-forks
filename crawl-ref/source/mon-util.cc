@@ -6691,12 +6691,8 @@ void set_ancestor_spells(monster &ancestor, bool notify)
 
     if (HD >= 13)
     {
-        if (you.species == SP_SILENT_SPECTRE)
-            ancestor.spells.emplace_back(SPELL_HASTE, 25, MON_SPELL_MAGICAL);
-        else if (you.species == SP_FORMICID)
-            ancestor.spells.emplace_back(SPELL_MIGHT, 25, MON_SPELL_WIZARD);
-        else
-            ancestor.spells.emplace_back(SPELL_HASTE, 25, MON_SPELL_WIZARD);
+        ancestor.spells.emplace_back(you.has_innate_mutation(MUT_STASIS) ? SPELL_MIGHT : SPELL_HASTE, 25, 
+                                     you.has_innate_mutation(MUT_SILENT_CAST) ? MON_SPELL_MAGICAL : MON_SPELL_WIZARD);
     }
 
     if (ancestor.spells.size())

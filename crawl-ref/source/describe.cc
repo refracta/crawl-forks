@@ -1395,7 +1395,7 @@ static string _handedness_string(const item_def &item)
     switch (you.hands_reqd(item))
     {
     case HANDS_ONE:
-        if (you.species == SP_FORMICID)
+        if (you.has_innate_mutation(MUT_MULTIARM))
             description += "It is wielded with one pair of hands.";
         else
             description += "It is one handed.";
