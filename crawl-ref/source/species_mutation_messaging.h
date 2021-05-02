@@ -66,6 +66,22 @@ static const species_mutation_message spmu_data[] =
    "Your wood feels wetter. You feel less combustible."},
 },
 
+{ SP_LIGNIFITE, MUT_ROOTS,
+  "roots",
+
+  { "You can plant your roots to grant stasis and boost your AC and Regeneration. Uprooting yourself takes awhile, however.", "", "" },
+  { "Your roots grow strong enough to plant themselves on the fly.", "", "" },
+  { "Your root system weakens and can no longer be planted.", "", "" },
+},
+
+{ SP_LIGNIFITE, MUT_BRANCHES,
+  "branches (SH +",
+
+  { "A tangle of shorter branches protects your body from attack. (SH +", "", "" },
+  { "Your branches feel lush and full again.", "", "" },
+  { "Your branches thin out.", "", "" },
+},
+
 { SP_FAIRY, MUT_MP_WANDS,
   "MP-powered wands",
 

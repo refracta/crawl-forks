@@ -685,17 +685,6 @@ string describe_mutations(bool drop_title)
                 && you.form == transformation::dragon));
     }
 
-    if (you.species == SP_LIGNIFITE)
-    {
-        result += _annotate_form_based(
-            make_stringf("A tangle of shorter branches protects your body from attack. (+%d SH)",
-                you.branch_SH(false)),
-            !form_keeps_mutations());
-        if (you.experience_level > 12)
-            result += _annotate_form_based("You can plant your roots to grant stasis and boost your AC and Regeneration.",
-                !form_keeps_mutations());
-    }
-
     if (you.species == SP_OCTOPODE)
     {
         result += _annotate_form_based("You are amphibious.",
@@ -2316,6 +2305,12 @@ static bool _post_loss_effects(mutation_type mutat)
         lose_permafly_source();
         break;
 
+    case MUT_ROOTS:
+        if (you.attribute[ATTR_ROOTED])
+            mprf("You are forceably ejected from the ground.");
+        you.attribute[ATTR_ROOTED] = 0;
+        break;
+
     case MUT_TENDRILS:
         remove_one_equip(EQ_RING_LEFT_TENDRIL, false, true);
         remove_one_equip(EQ_RING_RIGHT_TENDRIL, false, true);
@@ -2895,7 +2890,7 @@ string mutation_desc(mutation_type mut, int level, bool colour,
     {
         ostringstream ostr;
         
-        int bonus = you.ac_change_from_mutation(mut);
+        int bonus = you.ac_change_from_mutation(mut) / 100;
 
         if (!bonus)
             bonus = you.char_class == JOB_DEMONSPAWN ? you.get_experience_level() / 3 : 3;
@@ -2931,7 +2926,19 @@ string mutation_desc(mutation_type mut, int level, bool colour,
             ostr << msg.have[level - 1] << bonus << ")";
 
         result = ostr.str();
+    }
+    else if (mut == MUT_BRANCHES)
+    {
+        ostringstream ostr;
 
+        const int bonus = you.branch_SH(true);
+
+        if (msg.mutation == MUT_NON_MUTATION)
+            ostr << mdef.have[level - 1] << bonus << ")";
+        else
+            ostr << msg.have[level - 1] << bonus << ")";
+
+        result = ostr.str();
     }
     else if (mut == MUT_SANGUINE_ARMOUR)
     {

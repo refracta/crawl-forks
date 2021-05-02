@@ -1417,7 +1417,7 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
             return false;
         }
 
-        if (you.species == SP_LIGNIFITE)
+        if (you.species == SP_LIGNIFITE || you.get_mutation_level(MUT_ROOTS))
         {
             if (verbose)
                 mpr("Boots don't fit on your roots!");

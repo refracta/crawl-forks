@@ -52,6 +52,9 @@ mutations:
     MUT_FAST: 3
     MUT_UNBREATHING: 1
     MUT_HEAT_VULNERABILITY: 1
+    MUT_BRANCHES: 1
+  12:
+    MUT_ROOTS: 1
 recommended_jobs:
   - JOB_FIGHTER
   - JOB_MONK

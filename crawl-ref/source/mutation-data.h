@@ -603,6 +603,24 @@ static const mutation_def mut_data[] =
   {"Your talons dull and shrink into feet.", "", ""},
 },
 
+// Versions of roots and branches here is for randomly getting it as a Vine Stalker. 
+// Lignifite version is in species-mutation-messaging.h
+{ MUT_ROOTS, 0, 1, mutflag::good, true,
+  "roots",
+
+  { "You can plant your roots to grant stasis and boost your AC and Regeneration. Uprooting yourself takes awhile, however.", "", "" },
+  { "Your symbiote develops a strong root system that you can plant on the fly.", "", "" },
+  { "Your symbiote's root system withers and falls away.", "", "" },
+},
+
+{ MUT_BRANCHES, 0, 1, mutflag::good, true,
+  "branches (SH +",
+
+  { "A tangle of woody branches protects your body from attack. (SH +", "", "" },
+  { "Your symbiote develops woody branches upon its vines, shielding you from attack.", "", "" },
+  { "Your symbiote's branches wither and fall away.", "", "" },
+},
+
 // Octopode only
 { MUT_TENTACLE_SPIKE, 10, 1, mutflag::good, true,
   "tentacle spike",

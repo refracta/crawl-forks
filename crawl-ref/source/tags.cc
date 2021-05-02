@@ -2944,7 +2944,8 @@ static void tag_read_you(reader &th)
         if (you.char_class != JOB_MUMMY && you.species != SP_LIGNIFITE)
         {
             you.mutation[MUT_NECRO_ENHANCER] = you.innate_mutation[MUT_NECRO_ENHANCER] = 0;
-            you.mutation[MUT_HEAT_VULNERABILITY] = you.innate_mutation[MUT_HEAT_VULNERABILITY] = 0;
+            if (you.innate_mutation[MUT_HEAT_VULNERABILITY])
+                you.mutation[MUT_HEAT_VULNERABILITY] = you.innate_mutation[MUT_HEAT_VULNERABILITY] = 0;
         }
     }
 
@@ -3146,12 +3147,6 @@ static void tag_read_you(reader &th)
         dt.level_gained = unmarshallByte(th);
         ASSERT_RANGE(dt.level_gained, 1, 28);
         dt.mutation = static_cast<mutation_type>(unmarshallShort(th));
-#if TAG_MAJOR_VERSION == 34
-        if (dt.mutation == MUT_CONSERVE_POTIONS)
-            dt.mutation = MUT_FREEZING_CLOUD_IMMUNITY;
-        else if (dt.mutation == MUT_CONSERVE_SCROLLS)
-            dt.mutation = MUT_FLAME_CLOUD_IMMUNITY;
-#endif
         ASSERT_RANGE(dt.mutation, 0, NUM_MUTATIONS);
         you.demonic_traits.push_back(dt);
     }

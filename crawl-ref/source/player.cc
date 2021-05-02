@@ -902,6 +902,7 @@ bool player_has_feet(bool temp, bool include_mutations)
         || you.species == SP_FELID
         || you.species == SP_OCTOPODE
         || you.species == SP_LIGNIFITE
+        || you.get_mutation_level(MUT_ROOTS)
         || you.species == SP_FAIRY
         || you.char_class == JOB_NAGA
         || you.fishtail && temp)
@@ -3744,17 +3745,11 @@ void level_change(bool skip_attribute_increase)
                 if (you.experience_level == 13)
                 {
                     mprf(MSGCH_INTRINSIC_GAIN, "Your bark begins to get tough.");
-                    mprf(MSGCH_INTRINSIC_GAIN, "Your roots become strong enough to boost your regeneration and grant stasis.");
                     you.redraw_armour_class = true;
                 }
                 if (you.experience_level > 13)
                 {
                     mprf(MSGCH_INTRINSIC_GAIN, "Your bark becomes more resilient.");
-                    you.redraw_armour_class = true;
-                }
-                if (!(you.experience_level % 3))
-                {
-                    mprf(MSGCH_INTRINSIC_GAIN, "Your branches grow thicker.");
                     you.redraw_armour_class = true;
                 }
                 if (you.experience_level == 25 && you.attribute[ATTR_HELD])
@@ -3852,6 +3847,12 @@ void level_change(bool skip_attribute_increase)
             if ((you.species == SP_NAGA || you.char_class == JOB_NAGA) && !(you.experience_level % 3))
             {
                 mprf(MSGCH_INTRINSIC_GAIN, "Your skin feels tougher.");
+                you.redraw_armour_class = true;
+            }
+
+            if (!(you.experience_level % 3) && you.get_mutation_level(MUT_BRANCHES))
+            {
+                mprf(MSGCH_INTRINSIC_GAIN, "Your branches grow thicker.");
                 you.redraw_armour_class = true;
             }
 
@@ -7054,11 +7055,11 @@ class mutation_ac_changes
                 switch (ac_change)
                 {
                 case 2:
-                    return you.get_experience_level() / 5;
+                    return you.get_experience_level() * 20;
                 case 3:
-                    return you.get_experience_level() / 3;
+                    return you.get_experience_level() * 100 / 3;
                 case 5:
-                    return (you.get_experience_level() * 5) / 12;
+                    return you.get_experience_level() * 500 / 12;
                 default:
                     break;
                 }
@@ -7104,9 +7105,7 @@ int player::ac_change_from_mutation(mutation_type mut) const
             it != all_mutation_ac_changes.end(); ++it)
     {
         if (it->mut == mut)
-        {
             return it->get_ac_change_for_mutation();
-        }
     }
 
     return 0; // just in case
@@ -8440,14 +8439,7 @@ int player::has_tentacles(bool allow_tran) const
 
 int player::branch_SH (bool allow_tran) const
 {
-    if (allow_tran)
-    {
-        // Most transformations suppress branches.
-        if (!form_keeps_mutations())
-            return 0;
-    }
-
-    if (species != SP_LIGNIFITE)
+    if (!you.get_mutation_level(MUT_BRANCHES, !allow_tran))
         return 0;
 
     return (you.experience_level/3 + 1);
