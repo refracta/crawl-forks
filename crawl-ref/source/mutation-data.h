@@ -1066,6 +1066,14 @@ static const mutation_def mut_data[] =
    "Your skin's transparency fades."},
 },
 
+{ MUT_CYTOPLASM_TRAP, 0, 1, mutflag::good | mutflag::jiyva, true,
+  "cytoplasmic trap",
+
+  {"Your sticky cytoplasm may corrode those that touch it or capture the weapons of those that strike it.", "", ""},
+  {"Your cytoplasm feels particularly viscous and tacky.", "" ""},
+  {"Your cytoplasm feels less resinous.", "", ""},
+},
+
 { MUT_PSEUDOPODS, 0, 1, mutflag::good | mutflag::jiyva, true,
   " pseudopods",
 
@@ -1109,7 +1117,7 @@ static const mutation_def mut_data[] =
 { MUT_MISSILE_GUARD, 0, 1, mutflag::good | mutflag::jiyva, false, 
   "missile-eating ooze (DMsl+)",
 
-  {"You are covered in a sticky ooze that may intercept and inject missiles aimed at you. (DMsl+)", "", ""},
+  {"You are covered in a sticky ooze that may intercept and consume missiles aimed at you. (DMsl+)", "", ""},
   {"You exude a sticky ooze from your skin.", "", ""},
   {"The ooze on your skin dries up and flakes away.", "", ""},
 },

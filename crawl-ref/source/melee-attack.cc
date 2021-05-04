@@ -39,6 +39,7 @@
 #include "mon-poly.h"
 #include "mon-tentacle.h"
 #include "mon-util.h"
+#include "prompt.h"
 #include "religion.h"
 #include "shout.h"
 #include "spl-damage.h"
@@ -4172,21 +4173,31 @@ void melee_attack::mons_do_tendril_disarm()
     const int adj_mon_hd = mon->is_fighter() ? mon->get_hit_dice() * 3 / 2
                                              : mon->get_hit_dice();
 
-    /* BCADDO: Cytoplasmic Trap replaces this.
-    if (you.get_mutation_level(MUT_TENDRILS)
-        && one_chance_in(5)
-        && (random2(you.dex()) > adj_mon_hd
-            || random2(you.strength()) > adj_mon_hd))
+    if (you.get_mutation_level(MUT_CYTOPLASM_TRAP)
+        && one_chance_in(3)
+        && (random2(you.experience_level) > adj_mon_hd))
     {
         item_def* mons_wpn = mon->disarm();
         if (mons_wpn)
         {
-            mprf("Your tendrils lash around %s %s and pull it to the ground!",
+            mprf("%s %s gets stuck inside your cytoplasm!",
                  apostrophise(mon->name(DESC_THE)).c_str(),
                  mons_wpn->name(DESC_PLAIN).c_str());
+            if (!is_artefact(*mons_wpn))
+            {
+                string prompt = make_stringf("Consume %s?", mons_wpn->name(DESC_THE).c_str());
+                if (yesno(prompt.c_str(), true, 'y'))
+                {
+                    int healz = 3 + random2((you.experience_level + you.skill(SK_INVOCATIONS)) / 3);
+                    mprf("Tasty%s", attack_strength_punctuation(healz).c_str());
+                    you.heal(healz);
+                    lessen_hunger(healz * 10, false);
+                    return;
+                }
+            }
+            mpr("You let the item fall to your feet.");
         }
     }
-    */
 }
 
 void melee_attack::do_spines()
