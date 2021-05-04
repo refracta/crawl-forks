@@ -49,7 +49,7 @@ mutations:
     MUT_REGENERATION: 1
     MUT_CLAWS: 2
     MUT_GOURMAND: 1
-    MUT_FAST_METABOLISM: 3
+    MUT_FAST_METABOLISM: 2
 recommended_jobs:
   - JOB_FIGHTER
   - JOB_MONK

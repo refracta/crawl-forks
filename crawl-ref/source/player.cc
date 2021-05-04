@@ -1502,7 +1502,7 @@ int player_hunger_rate()
         hunger += 4;
     }
 
-    hunger += you.get_mutation_level(MUT_FAST_METABOLISM) * 2
+    hunger += you.get_mutation_level(MUT_FAST_METABOLISM) * 3
             - you.get_mutation_level(MUT_SLOW_METABOLISM);
 
     // If Cheibriados has slowed your life processes, you will hunger less.

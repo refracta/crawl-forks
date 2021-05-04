@@ -125,7 +125,6 @@ static const body_facet_def _body_facets[] =
  */
 static const int conflict[][3] =
 {
-    { MUT_REGENERATION,        MUT_SLOW_METABOLISM,         0},
     { MUT_REGENERATION,        MUT_INHIBITED_REGENERATION,  0},
     { MUT_ACUTE_VISION,        MUT_IMPAIRED_VISION,         0},
     { MUT_FAST,                MUT_SLOW,                    0},
