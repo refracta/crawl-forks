@@ -495,8 +495,11 @@ static int _shrinking_aoe_range(int dur)
 
 int player::silence_radius() const
 {
-    int SR = 2 * you.get_mutation_level(MUT_SILENCE_AURA);
+    int SR = -1;
     
+    if (you.get_mutation_level(MUT_SILENCE_AURA))
+        SR = 2 * you.get_mutation_level(MUT_SILENCE_AURA);
+
     return max(SR, _shrinking_aoe_range(duration[DUR_SILENCE]));
 }
 
