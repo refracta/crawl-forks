@@ -916,14 +916,13 @@ static void _describe_tentacles(status_info& inf)
 
 static void _describe_hunger(status_info& inf)
 {
-    const bool vamp = (you.species == SP_VAMPIRE);
     const bool kenku = (you.species == SP_TENGU);
 
     switch (you.hunger_state)
     {
     case HS_ENGORGED:
-        inf.light_colour = (vamp ? GREEN : LIGHTGREEN);
-        inf.light_text   = (vamp ? "Alive" : "Engorged");
+        inf.light_colour = LIGHTGREEN;
+        inf.light_text   = "Engorged";
         break;
     case HS_VERY_FULL:
         inf.light_colour = GREEN;
@@ -935,25 +934,25 @@ static void _describe_hunger(status_info& inf)
         break;
     case HS_HUNGRY:
         inf.light_colour = YELLOW;
-        inf.light_text   = (vamp ? "Thirsty" : kenku ? "Peckish" : "Hungry");
+        inf.light_text   = (kenku ? "Peckish" : "Hungry");
         break;
     case HS_VERY_HUNGRY:
         inf.light_colour = YELLOW;
-        inf.light_text   = (vamp ? "Awfully Thirsty" : kenku ? "Quite Peckish" : "Very Hungry");
+        inf.light_text   = (kenku ? "Quite Peckish" : "Very Hungry");
         break;
     case HS_NEAR_STARVING:
         inf.light_colour = YELLOW;
-        inf.light_text   = (vamp ? "Near Bloodless" : kenku ? "Ravenously Peckish" : "Near Starving");
+        inf.light_text   = (kenku ? "Ravenously Peckish" : "Near Starving");
         break;
     case HS_STARVING:
         inf.light_colour = LIGHTRED;
-        inf.light_text   = (vamp ? "Bloodless" : "Starving");
-        inf.short_text   = (vamp ? "bloodless" : "starving");
+        inf.light_text   = "Starving";
+        inf.short_text   = "starving";
         break;
     case HS_FAINTING:
         inf.light_colour = RED;
-        inf.light_text   = (vamp ? "Bloodless" : "Fainting");
-        inf.short_text   = (vamp ? "bloodless" : "fainting");
+        inf.light_text   = "Fainting";
+        inf.short_text   = "fainting";
         break;
     case HS_SATIATED: // no status light
     default:
@@ -1003,9 +1002,6 @@ static void _describe_regen(status_info& inf)
     const bool regen = (you.duration[DUR_REGENERATION] > 0
                         || you.duration[DUR_TROGS_HAND] > 0);
     const bool no_heal = !player_regenerates_hp();
-    // Does vampire hunger level affect regeneration rate significantly?
-    const bool vampmod = !no_heal && !regen && you.species == SP_VAMPIRE
-                         && you.hunger_state != HS_SATIATED;
 
     if (regen)
     {
@@ -1035,18 +1031,6 @@ static void _describe_regen(status_info& inf)
             inf.long_text  = "You are regenerating.";
         }
         _mark_expiring(inf, dur_expiring(DUR_REGENERATION));
-    }
-    else if (vampmod)
-    {
-        if (you.disease)
-            inf.short_text = "recuperating";
-        else
-            inf.short_text = "regenerating";
-
-        if (you.hunger_state < HS_SATIATED)
-            inf.short_text += " slowly";
-        else
-            inf.short_text += " quickly";
     }
 }
 
@@ -1185,9 +1169,7 @@ static void _describe_transform(status_info& inf)
     inf.short_text = form->get_long_name();
     inf.long_text = form->get_description();
 
-    const bool vampbat = (you.species == SP_VAMPIRE
-                          && you.form == transformation::bat);
-    const bool expire  = dur_expiring(DUR_TRANSFORMATION) && !vampbat;
+    const bool expire  = dur_expiring(DUR_TRANSFORMATION);
 
     inf.light_colour = _dur_colour(GREEN, expire);
     _mark_expiring(inf, expire);

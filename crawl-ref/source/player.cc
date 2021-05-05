@@ -3718,22 +3718,6 @@ void level_change(bool skip_attribute_increase)
 
             switch (you.species)
             {
-            case SP_VAMPIRE:
-                if (you.experience_level == 3)
-                {
-                    if (you.hunger_state > HS_SATIATED)
-                    {
-                        mprf(MSGCH_INTRINSIC_GAIN, "If you weren't so full, "
-                             "you could now transform into a vampire bat.");
-                    }
-                    else
-                    {
-                        mprf(MSGCH_INTRINSIC_GAIN,
-                             "You can now transform into a vampire bat.");
-                    }
-                }
-                break;
-
             case SP_LIGNIFITE:
                 if (!(you.experience_level % 5))
                 {
@@ -4167,48 +4151,6 @@ static void _display_char_status(int value, const char *fmt, ...)
     va_end(argp);
 }
 
-static void _display_vampire_status()
-{
-    string msg = "At your current hunger state you ";
-    vector<const char *> attrib;
-
-    switch (you.hunger_state)
-    {
-        case HS_FAINTING:
-        case HS_STARVING:
-            attrib.push_back("are immune to poison");
-            attrib.push_back("significantly resist cold");
-            attrib.push_back("are immune to negative energy");
-            attrib.push_back("resist torment");
-            attrib.push_back("do not heal.");
-            break;
-        case HS_NEAR_STARVING:
-        case HS_VERY_HUNGRY:
-        case HS_HUNGRY:
-            attrib.push_back("resist poison");
-            attrib.push_back("resist cold");
-            attrib.push_back("significantly resist negative energy");
-            attrib.push_back("have a slow metabolism");
-            attrib.push_back("heal slowly.");
-            break;
-        case HS_SATIATED:
-            attrib.push_back("resist negative energy.");
-            break;
-        case HS_FULL:
-        case HS_VERY_FULL:
-        case HS_ENGORGED:
-            attrib.push_back("have a fast metabolism");
-            attrib.push_back("heal quickly.");
-            break;
-    }
-
-    if (!attrib.empty())
-    {
-        msg += comma_separated_line(attrib.begin(), attrib.end());
-        mpr(msg);
-    }
-}
-
 static void _display_movement_speed()
 {
     const int move_cost = ((you.mounted() ? 10 : player_speed()) * player_movement_speed()) / 10;
@@ -4347,9 +4289,6 @@ void display_char_status()
     }
     else if (you.haloed())
         mpr("An external divine halo illuminates you.");
-
-    if (you.species == SP_VAMPIRE)
-        _display_vampire_status();
 
     status_info inf;
     for (unsigned i = 0; i <= STATUS_LAST_STATUS; ++i)
@@ -4939,8 +4878,6 @@ int get_real_mp(bool include_items)
 bool player_regenerates_hp()
 {
     if (you.has_mutation(MUT_NO_REGENERATION))
-        return false;
-    if (you.species == SP_VAMPIRE && you.hunger_state <= HS_STARVING)
         return false;
     return true;
 }
@@ -6584,17 +6521,9 @@ void player::banish(const actor* /*agent*/, const string &who, const int power,
     banished_power = power;
 }
 
-// For semi-undead species (Vampire!) reduce food cost for spells and abilities
-// to 50% (hungry, very hungry, near starving) or zero (starving).
+// BCADDO: Pointless function. Remove.
 int calc_hunger(int food_cost)
 {
-    if (you.undead_state() == US_SEMI_UNDEAD && you.hunger_state < HS_SATIATED)
-    {
-        if (you.hunger_state <= HS_STARVING)
-            return 0;
-
-        return food_cost/2;
-    }
     return food_cost;
 }
 
@@ -7571,17 +7500,11 @@ int player::res_rotting(bool temp, bool mt) const
     case US_ALIVE:
         return 0;
 
+    case US_SEMI_UNDEAD:
     case US_HUNGRY_DEAD:
         return 1; // rottable by Zin, not by necromancy
 
-    case US_SEMI_UNDEAD:
-        if (temp && hunger_state < HS_SATIATED)
-            return 1;
-        return 0; // no permanent resistance
-
     case US_UNDEAD:
-        return 3; // full immunity
-
     case US_GHOST:
         return 3; // full immunity
     }
@@ -8580,6 +8503,7 @@ void player::backlight()
     }
 }
 
+// BCADDO: Pointless function. Remove.
 bool player::can_mutate() const
 {
     return true;
@@ -9195,6 +9119,7 @@ bool player_has_orb()
     return you.chapter == CHAPTER_ESCAPING;
 }
 
+// BCADDO: Reconsider this.
 bool player::form_uses_xl() const
 {
     // No body parts that translate in any way to something fisticuffs could
@@ -9204,7 +9129,7 @@ bool player::form_uses_xl() const
     // should apply to more forms, too.  [1KB]
     return form == transformation::wisp || form == transformation::fungus
         || form == transformation::pig
-        || form == transformation::bat && you.species != SP_VAMPIRE;
+        || form == transformation::bat;
 }
 
 bool player::can_silent_cast() const

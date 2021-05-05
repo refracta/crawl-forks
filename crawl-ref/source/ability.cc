@@ -820,12 +820,8 @@ const string make_cost_description(ability_type ability)
     if (abil.hp_cost)
         ret += make_stringf(", %d HP", abil.hp_cost.cost(you.hp_max));
 
-    if (abil.food_cost && !you_foodless()
-        && (you.undead_state() != US_SEMI_UNDEAD
-            || you.hunger_state > HS_STARVING))
-    {
+    if (abil.food_cost && !you_foodless()) // BCADDO: Unhide amount. (Part of goldifying food?)
         ret += ", Hunger"; // randomised and exact amount hidden from player
-    }
 
     if (abil.piety_cost)
         ret += make_stringf(", %d Piety", abil.piety_cost);
@@ -910,9 +906,7 @@ static const string _detailed_cost_description(ability_type ability)
         ret << abil.hp_cost.cost(you.hp_max);
     }
 
-    if (abil.food_cost && !you_foodless()
-        && (you.undead_state() != US_SEMI_UNDEAD
-            || you.hunger_state > HS_STARVING))
+    if (abil.food_cost && !you_foodless())
     {
         have_cost = true;
         ret << "\nHunger : ";
@@ -1268,19 +1262,8 @@ static void _print_talent_description(const talent& tal)
 void no_ability_msg()
 {
     // Give messages if the character cannot use innate talents right now.
-    // * Vampires can't turn into bats when full of blood.
     // * Tengu can't start to fly if already flying.
-    if (you.species == SP_VAMPIRE && you.experience_level >= 3)
-    {
-        if (you.transform_uncancellable)
-            mpr("You can't untransform!");
-        else
-        {
-            ASSERT(you.hunger_state > HS_SATIATED);
-            mpr("Sorry, you're too full to transform right now.");
-        }
-    }
-    else if (you.get_mutation_level(MUT_TENGU_FLIGHT)
+    if (you.get_mutation_level(MUT_TENGU_FLIGHT)
              || you.get_mutation_level(MUT_BIG_WINGS))
     {
         if (you.airborne())
@@ -4064,13 +4047,6 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
             else
                 _add_talent(talents, ABIL_BREATHE_MEPHITIC, check_confused);
         }
-    }
-
-    if (you.species == SP_VAMPIRE && you.experience_level >= 3
-        && you.hunger_state <= HS_SATIATED
-        && you.form != transformation::bat)
-    {
-        _add_talent(talents, ABIL_TRAN_BAT, check_confused);
     }
 
     if (you.racial_permanent_flight() && !you.attribute[ATTR_PERM_FLIGHT] && !you.mounted())

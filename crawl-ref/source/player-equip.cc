@@ -1517,8 +1517,7 @@ static void _equip_jewellery_effect(item_def &item, bool unmeld,
         break;
 
     case AMU_THE_GOURMAND:
-        if (you.species == SP_VAMPIRE
-            || you_foodless() // Mummy or in lichform
+        if (you_foodless() // Mummy or in lichform
             || you.get_mutation_level(MUT_HERBIVOROUS) > 0) // Spriggan
         {
             mpr("After a brief, frighteningly intense craving, "
@@ -1533,7 +1532,6 @@ static void _equip_jewellery_effect(item_def &item, bool unmeld,
         else
         {
             mpr("You feel a craving for the dungeon's cuisine.");
-            // What's this supposed to achieve? (jpeg)
             you.duration[DUR_GOURMAND] = 0;
         }
         break;
