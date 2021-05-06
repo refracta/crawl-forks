@@ -1521,7 +1521,7 @@ static void _print_head_change_message(int old_heads, int new_heads)
 undead_form_reason lifeless_prevents_form(transformation which_trans,
                                           bool involuntary)
 {
-    if (!you.undead_state(false))
+    if (!you.undead_state(false) || you.undead_state(false) == US_SEMI_ALIVE)
         return UFR_GOOD; // not undead!
 
     if (which_trans == transformation::none)
@@ -1541,22 +1541,14 @@ undead_form_reason lifeless_prevents_form(transformation which_trans,
     if (you.species == SP_DRACONIAN && which_trans == transformation::dragon)
         return UFR_GOOD;
 
-    if (you.species != SP_VAMPIRE)
-        return UFR_TOO_DEAD; // ghouls & mummies can't become anything else
-
-    if (which_trans == transformation::lich)
-        return UFR_TOO_DEAD; // vampires can never lichform
-
-    if (which_trans == transformation::bat) // can batform on satiated or below
+    if (you.undead_state(false) == US_SEMI_UNDEAD)
     {
-        if (involuntary)
-            return UFR_TOO_DEAD; // but not as a forced polymorph effect
-
-        return you.hunger_state <= HS_SATIATED ? UFR_GOOD : UFR_TOO_ALIVE;
+        if (which_trans == transformation::lich)
+            return UFR_TOO_DEAD;
+        return UFR_GOOD;
     }
 
-    // other forms can only be entered when satiated or above.
-    return you.hunger_state >= HS_SATIATED ? UFR_GOOD : UFR_TOO_DEAD;
+    return UFR_TOO_DEAD;
 }
 
 /**

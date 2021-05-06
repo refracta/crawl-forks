@@ -3022,7 +3022,7 @@ static vector<command_type> _allowed_actions(const item_def& item)
             actions.push_back(CMD_WEAR_JEWELLERY);
         break;
     case OBJ_POTIONS:
-        if (you.undead_state() && you.undead_state() != US_GHOST)
+        if (you.undead_state() != US_UNDEAD)
             actions.push_back(CMD_QUAFF);
         break;
     default:

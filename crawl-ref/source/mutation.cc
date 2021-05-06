@@ -1627,8 +1627,11 @@ static bool _resist_mutation(mutation_permanence_class mutclass,
  *
  * @return true if so.
  */
-bool undead_mutation_rot()
+bool undead_mutation_rot(bool god_gift)
 {
+    if (god_gift || you_worship(GOD_JIYVA))
+        return false;
+
     return !you.can_safely_mutate();
 }
 
@@ -1785,13 +1788,18 @@ static bool _is_suppressable_mutation(mutation_type mut)
     // Losing the ability to use your weapon combo would be too harsh.
     case MUT_MULTIARM:
         return false;
+    // no feet on centaurs.
     case MUT_HOOVES:
         if (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR)
             return false;
         return true;
+    // no gaining armour.
     case MUT_DEFORMED:
         if (you.innate_mutation[MUT_DEFORMED] > 1)
             return false;
+    // no returning to life/death
+    case MUT_HALF_DEATH:
+        return false;
     default:
         break;
     }
@@ -1919,7 +1927,7 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
     }
 
     // Undead bodies don't mutate, they fall apart. -- bwr
-    if (undead_mutation_rot() && !((you.undead_state() == US_GHOST) && god_gift))
+    if (undead_mutation_rot(god_gift))
     {
         switch (mutclass)
         {
@@ -1928,10 +1936,7 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
                 return false;
             // fallthrough to normal mut
         case MUTCLASS_NORMAL:
-            if (you.undead_state() == US_GHOST)
-                mprf(MSGCH_MUTATION, "Wild energies bleed away your essence!");
-            else 
-                mprf(MSGCH_MUTATION, "Your body decomposes!");
+            mprf(MSGCH_MUTATION, "Your body decomposes!");
             lose_stat(STAT_RANDOM, 1);
             return true;
         case MUTCLASS_INNATE:
@@ -2064,6 +2069,23 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
             gain_msg = false;
             break;
 
+        case MUT_HALF_DEATH:
+            if (you.mutation[mutat] == 1)
+            {
+                switch (you.undead_state(false))
+                {
+                default:
+                case US_SEMI_ALIVE:
+                    mprf(MSGCH_MUTATION, "You feel yourself fall into an odd twilight state between life and death.");
+                    break;
+                case US_SEMI_UNDEAD:
+                    mprf(MSGCH_MUTATION, "You feel yourself come partially back to life.");
+                    break;
+                }
+                gain_msg = false;
+            }
+            break;
+
         case MUT_LARGE_BONE_PLATES:
             {
                 species_mutation_message msg = _spmut_msg(mutat);
@@ -2114,12 +2136,10 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
             break;
 
         case MUT_NO_LOVE:
-            {
             if (you.attribute[ATTR_SKELETON])
             {
                 you.attribute[ATTR_SKELETON] = 0;
                 mprf(MSGCH_DURATION, "Skeletons will no longer rise from your steps.");
-            }
             }
             break;
 
@@ -2280,6 +2300,21 @@ static bool _post_loss_effects(mutation_type mutat)
     case MUT_STATS:
         lose_msg = false;
         _unmutate_stats();
+        break;
+
+    case MUT_HALF_DEATH:
+        if (you.mutation[mutat] == 1)
+        {
+            switch (you.undead_state(false))
+            {
+            default:
+                mprf(MSGCH_MUTATION, "You return to your normal state of undeath.");
+            case US_ALIVE:
+                mprf(MSGCH_MUTATION, "You come fully back to life.");
+                break;
+            }
+            lose_msg = false;
+        }
         break;
 
     case MUT_SPIT_POISON:
@@ -2455,7 +2490,7 @@ bool delete_mutation(mutation_type which_mutation, const string &reason,
             }
         }
 
-        if (undead_mutation_rot() && !((you.undead_state() == US_GHOST) && god_gift))
+        if (undead_mutation_rot(god_gift))
             return false;
     }
 
@@ -2835,6 +2870,23 @@ string mutation_desc(mutation_type mut, int level, bool colour,
 
     if (mut == MUT_STATS)
         result = _stat_mut_msg(false, you.mutated_stats[STAT_STR], you.mutated_stats[STAT_INT], you.mutated_stats[STAT_DEX], false);
+    else if (mut == MUT_HALF_DEATH)
+    {
+        string base_msg;
+        switch (you.undead_state(false))
+        {
+        default:
+        case US_SEMI_ALIVE:
+            base_msg = "You require no food and take half damage from torment. You may still use Necromantic secrets and transmutations forms.";
+            break;
+        case US_SEMI_UNDEAD:
+            base_msg = "You are able to benefit from potions like a living creature and may once more use transmutations magic. "
+                       "You still require no food and cannot be raised to a blood rage.";
+            break;
+        }
+        result = make_stringf("You are in an odd twilight state between life and undeath. %s%s", 
+            base_msg.c_str(), you.mutation[mut] > 1 ? "\nYou exude an unnatural aura that makes creatures very uncomfortable and unable to regenerate." : "");
+    }
     else if (mut == MUT_PSEUDOPODS)
     {
         string brand = "Buggy";

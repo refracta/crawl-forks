@@ -772,7 +772,7 @@ public:
         const bool mutated = mutate(RANDOM_GOOD_MUTATION,
             "potion of mutation",
             true, false, false, true);
-        if (undead_mutation_rot())
+        if (undead_mutation_rot(false))
         {
             mpr("You feel dead inside.");
             return mutated;

@@ -916,6 +916,9 @@ static void _describe_tentacles(status_info& inf)
 
 static void _describe_hunger(status_info& inf)
 {
+    if (you_foodless(false))
+        return;
+
     const bool kenku = (you.species == SP_TENGU);
 
     switch (you.hunger_state)
@@ -958,6 +961,9 @@ static void _describe_hunger(status_info& inf)
     default:
         break;
     }
+
+    if (you_foodless(true))
+        inf.light_colour = LIGHTGRAY;
 }
 
 static void _describe_glow(status_info& inf)

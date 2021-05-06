@@ -2865,7 +2865,7 @@ int initial_wrath_penance_for(god_type god)
 
 void leave_xom()
 {
-    if (you.undead_state() == US_GHOST && (you.how_mutated() > 0))
+    if (!you.can_safely_mutate(false) && (you.how_mutated() > 0))
     {
         mprf("The chaos fades from your form.");
         delete_all_mutations("Fading Chaos");
@@ -3066,7 +3066,7 @@ void excommunication(bool voluntary, god_type new_god)
             add_daction(DACT_ALLY_SLIME);
         }
 
-        if (you.undead_state() == US_GHOST)
+        if (!you.can_safely_mutate(false))
         {
             mprf("Your slimy mutations fade away.");
             delete_all_mutations("Jiyva's Vengence");

@@ -7500,6 +7500,7 @@ int player::res_rotting(bool temp, bool mt) const
     case US_ALIVE:
         return 0;
 
+    case US_SEMI_ALIVE:
     case US_SEMI_UNDEAD:
     case US_HUNGRY_DEAD:
         return 1; // rottable by Zin, not by necromancy
@@ -7825,6 +7826,8 @@ bool player::spellcasting_unholy() const
  */
 undead_state_type player::undead_state(bool temp) const
 {
+    const bool half = you.get_mutation_level(MUT_HALF_DEATH);
+
     if (temp && you.form == transformation::lich)
         return US_UNDEAD;
     if (you.species == SP_DRACONIAN)
@@ -7832,11 +7835,21 @@ undead_state_type player::undead_state(bool temp) const
         if (you.drac_colour == DR_TEAL)
             return US_GHOST;
         if (you.drac_colour == DR_BONE || you.drac_colour == DR_OLIVE)
-            return US_UNDEAD;
+            return half ? US_SEMI_UNDEAD : US_UNDEAD;
     }
     if (you.char_class == JOB_MUMMY)
-        return US_UNDEAD;
-    return species_undead_type(you.species);
+        return half ? US_SEMI_UNDEAD : US_UNDEAD;
+
+    if (!half)
+        return species_undead_type(you.species);
+
+    switch (species_undead_type(you.species))
+    {
+    case US_ALIVE:
+        return US_SEMI_ALIVE;
+    default:
+        return US_SEMI_UNDEAD;
+    }
 }
 
 bool player::nightvision() const
@@ -8517,28 +8530,42 @@ bool player::can_mutate() const
  */
 bool player::can_safely_mutate(bool temp) const
 {
-    if (!can_mutate())
+    switch (you.undead_state(temp))
+    {
+    case US_UNDEAD:
+    case US_HUNGRY_DEAD:
         return false;
-
-    return undead_state(temp) == US_ALIVE
-        || undead_state(temp) == US_SEMI_UNDEAD;
+    default:
+        return true;
+    }
 }
 
-// Is the player too undead to bleed, rage, or polymorph?
+// Is the player too undead to bleed, or rage?
 bool player::is_lifeless_undead(bool temp) const
 {
-    if (undead_state() == US_SEMI_UNDEAD)
-        return temp ? hunger_state < HS_SATIATED : false;
-    else
-        return undead_state(temp) != US_ALIVE;
+    switch (undead_state(temp))
+    {
+    case US_ALIVE:
+    case US_SEMI_ALIVE:
+        return false;
+    default:
+        return true;
+    }
 }
 
 bool player::can_polymorph() const
 {
-    if (you.undead_state() == US_GHOST)
+    if (transform_uncancellable)
+        return false;
+
+    switch (undead_state())
+    {
+    case US_HUNGRY_DEAD:
+    case US_UNDEAD:
+        return false;
+    default:
         return true;
-    else 
-        return !(transform_uncancellable || is_lifeless_undead());
+    }
 }
 
 bool player::can_bleed(bool allow_tran) const
@@ -8568,9 +8595,6 @@ bool player::is_stationary() const
 bool player::malmutate(const string &reason)
 {
     ASSERT(!crawl_state.game_is_arena());
-
-    if (!can_mutate())
-        return false;
 
     const mutation_type mut_quality = one_chance_in(5) ? RANDOM_MUTATION
                                                        : RANDOM_BAD_MUTATION;
@@ -9697,7 +9721,7 @@ bool player::immune_to_hex(const spell_type hex) const
     case SPELL_CAUSE_FEAR:
         return clarity() || !(holiness() & MH_NATURAL) || berserk();
     case SPELL_PORKALATOR:
-        return is_lifeless_undead();
+        return can_polymorph();
     case SPELL_VIRULENCE:
         return res_poison() == 3;
     // don't include the hidden "sleep immunity" duration

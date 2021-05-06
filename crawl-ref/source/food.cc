@@ -118,10 +118,14 @@ void set_hunger(int new_hunger_level, bool suppress_msg)
 
 bool you_foodless(bool temp)
 {
-    if (you.undead_state(temp) == US_UNDEAD || you.undead_state(temp) == US_GHOST)
-        return true;
-    else
+    switch (you.undead_state(temp))
+    {
+    case US_ALIVE:
+    case US_HUNGRY_DEAD:
         return false;
+    default:
+        return true;
+    }
 }
 
 bool prompt_eat_item(int slot)

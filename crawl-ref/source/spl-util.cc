@@ -1363,7 +1363,7 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
         if (temp && you.duration[DUR_DEATHS_DOOR_COOLDOWN])
             return "you are still too close to death's doorway.";
         // Prohibited to all undead.
-        if (you.undead_state(temp))
+        if (you.undead_state(temp) && you.undead_state(temp) != US_SEMI_ALIVE)
             return "you're too dead.";
         break;
     case SPELL_NECROMUTATION:

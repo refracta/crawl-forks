@@ -1755,6 +1755,10 @@ bool mons_can_regenerate(const monster& m)
 {
     const monster& mon = get_tentacle_head(m);
 
+    // Sick aura.
+    if (mon.see_cell_no_trans(you.pos()) && you.get_mutation_level(MUT_HALF_DEATH) > 1)
+        return false;
+
     if (testbits(mon.flags, MF_NO_REGEN))
         return false;
 

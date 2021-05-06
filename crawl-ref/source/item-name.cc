@@ -3735,6 +3735,10 @@ bool is_useless_item(const item_def &item, bool temp)
         case POT_HASTE:
             return you.stasis();
 
+        case POT_LIGNIFY:
+            if (you.species == SP_LIGNIFITE)
+                return true;
+            // fallthrough
         case POT_CURE_MUTATION:
         case POT_MUTATION:
         case POT_BENEFICIAL_MUTATION:
@@ -3745,17 +3749,10 @@ bool is_useless_item(const item_def &item, bool temp)
 #endif
             return !you.can_safely_mutate(temp);
 
-        case POT_LIGNIFY:
-            if (you.species == SP_LIGNIFITE)
-                return true;
-            else if (you.undead_state(temp) == US_GHOST || you.undead_state(temp) == US_SEMI_UNDEAD)
-                return false;
-            return you.undead_state(temp);
-
 #if TAG_MAJOR_VERSION == 34
         case POT_FLIGHT:
             return you.permanent_flight()
-                   || you.racial_permanent_flight();
+                   || you.racial_permanent_flight(); // BCADDO: These are redundant . . . 
 
         case POT_PORRIDGE:
             return you.get_mutation_level(MUT_CARNIVOROUS) > 0;

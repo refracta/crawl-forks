@@ -39,6 +39,14 @@ static const mutation_def mut_data[] =
   { "", "", "" },
 },
 
+{ MUT_HALF_DEATH, 0, 2, mutflag::good | mutflag::jiyva, false,
+  "between life and death",
+
+  {"", "", ""},
+  {"", "You begin to exude an aura of decay.", ""},
+  {"", "Your aura receeds.", ""},
+},
+
 { MUT_POISON_RESISTANCE, 4, 1, mutflag::good, true,
   "poison resistance",
 

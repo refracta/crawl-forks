@@ -2885,12 +2885,6 @@ void drink(item_def* potion)
         return;
     }
 
-    if (you.berserk())
-    {
-        canned_msg(MSG_TOO_BERSERK);
-        return;
-    }
-
     if (you.duration[DUR_NO_POTIONS])
     {
         if (you.species == SP_LIGNIFITE)

@@ -8,6 +8,7 @@
 #include "cio.h"
 #include "describe.h"
 #include "env.h"
+#include "food.h"
 #include "invent.h"
 #include "item-name.h"
 #include "item-prop.h"
@@ -247,7 +248,7 @@ static bool _can_use_item(const item_def &item, bool equipped)
         return item.base_type != OBJ_POTIONS && item.base_type != OBJ_FOOD;
 
     // Ghosts can't use food.
-    if (you.undead_state() == US_GHOST && item.base_type == OBJ_FOOD)
+    if (you_foodless(false) && item.base_type == OBJ_FOOD)
         return false;
 
     // Silent spectres can't use scrolls.

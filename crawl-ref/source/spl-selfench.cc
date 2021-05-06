@@ -32,7 +32,10 @@
 spret cast_deaths_door(int pow, bool fail)
 {
     fail_check();
-    mpr("You stand defiantly in death's doorway!");
+    if (you.undead_state())
+        mpr("You step closer to the veil between life and death!");
+    else
+        mpr("You stand defiantly in death's doorway!");
     mprf(MSGCH_SOUND, "You seem to hear sand running through an hourglass...");
 
     you.set_duration(DUR_DEATHS_DOOR, 10 + random2avg(13, 3)

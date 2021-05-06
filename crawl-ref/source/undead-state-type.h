@@ -7,4 +7,5 @@ enum undead_state_type                // you.is_undead
     US_UNDEAD,          // Mummies
     US_GHOST,           // Silent Spectres
     US_SEMI_UNDEAD,     // Jiyva Mut
+    US_SEMI_ALIVE,      // Jiyva Mut
 };
