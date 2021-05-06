@@ -32,6 +32,7 @@
 #include "god-abil.h"
 #include "god-passive.h" // passive_t::convert_orcs
 #include "hints.h"
+#include "items.h" // destroy-item
 #include "item-prop.h"
 #include "mapdef.h"
 #include "message.h"
@@ -4173,11 +4174,13 @@ void melee_attack::mons_do_tendril_disarm()
     const int adj_mon_hd = mon->is_fighter() ? mon->get_hit_dice() * 3 / 2
                                              : mon->get_hit_dice();
 
-    if (you.get_mutation_level(MUT_CYTOPLASM_TRAP)
+    const int lvl = you.get_mutation_level(MUT_CYTOPLASM_TRAP);
+
+    if (lvl >= 2
         && one_chance_in(3)
         && (random2(you.experience_level) > adj_mon_hd))
     {
-        item_def* mons_wpn = mon->disarm();
+        item_def* mons_wpn = lvl == 2 ? nullptr : mon->disarm();
         if (mons_wpn)
         {
             mprf("%s %s gets stuck inside your cytoplasm!",
@@ -4185,17 +4188,19 @@ void melee_attack::mons_do_tendril_disarm()
                  mons_wpn->name(DESC_PLAIN).c_str());
             if (!is_artefact(*mons_wpn))
             {
-                string prompt = make_stringf("Consume %s?", mons_wpn->name(DESC_THE).c_str());
-                if (yesno(prompt.c_str(), true, 'y'))
-                {
-                    int healz = 3 + random2((you.experience_level + you.skill(SK_INVOCATIONS)) / 3);
-                    mprf("Tasty%s", attack_strength_punctuation(healz).c_str());
-                    you.heal(healz);
-                    lessen_hunger(healz * 10, false);
-                    return;
-                }
+                int healz = 3 + random2((you.experience_level + you.skill(SK_INVOCATIONS)) / 3);
+                mprf("Tasty%s", attack_strength_punctuation(healz).c_str());
+                you.heal(healz);
+                lessen_hunger(healz * 10, false);
+                destroy_item(mons_wpn->link);
+                return;
             }
-            mpr("You let the item fall to your feet.");
+            mpr("The inedible artefact falls slowly through you.");
+        }
+        else if (coinflip() && napalm_monster(mon, &you, lvl, false))
+        {
+            mprf("Your boiling cytoplasm sticks to %s, covering %s in liquid flames!", 
+                    mon->name(DESC_THE).c_str(), mon->pronoun(PRONOUN_OBJECTIVE).c_str());
         }
     }
 }

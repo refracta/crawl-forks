@@ -1044,8 +1044,8 @@ static const mutation_def mut_data[] =
   "melting flesh",
 
   {"Your protoplasm is hot to the touch. (rF+)",
-   "Your boiling flesh constantly melts leaving a trail of flaming slime behind you. (rF++)",
-   "Your boiling flesh constantly melts leaving a trail of flaming slime behind you. (rF++)\n"
+   "Your boiling flesh constantly melts leaving a trail of flaming slime behind you. (rF+)",
+   "Your boiling flesh constantly melts leaving a trail of flaming slime behind you. (rF+)\n"
    "You may expend your own health to melt completely and pass through monsters in a line."},
 
   {"Your protoplasm heats up.",
@@ -1074,12 +1074,18 @@ static const mutation_def mut_data[] =
    "Your skin's transparency fades."},
 },
 
-{ MUT_CYTOPLASM_TRAP, 0, 1, mutflag::good | mutflag::jiyva, true,
+{ MUT_CYTOPLASM_TRAP, 0, 3, mutflag::good | mutflag::jiyva, true,
   "cytoplasmic trap",
 
-  {"Your sticky cytoplasm may corrode those that touch it or capture the weapons of those that strike it.", "", ""},
-  {"Your cytoplasm feels particularly viscous and tacky.", "" ""},
-  {"Your cytoplasm feels less resinous.", "", ""},
+  {"Your cytoplasm is hot to the touch. (rF+)",
+   "Your viscous, smoldering cytoplasm coats everything that touches it. (rF+)",
+   "Your viscous, smoldering cytoplasm may burn those that touch it or capture the weapons of those that strike it. (rF+)"},
+  {"Your cytoplasm heats up.",
+   "Your cytoplasm feels particularly viscous and tacky.",
+   "Your hot gooey cytoplasm begins to capture things that hit it."},
+  {"Your cytoplasm feels colder.",
+   "Your cytoplasm feels less resinous.", 
+   "Your cytoplasm no longer captures weapons."},
 },
 
 { MUT_PSEUDOPODS, 0, 1, mutflag::good | mutflag::jiyva, true,
