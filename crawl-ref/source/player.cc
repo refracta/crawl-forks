@@ -7622,7 +7622,7 @@ int player_res_magic(bool calc_unid, bool temp)
 
     // Mutations
     rm += MR_PIP * you.get_mutation_level(MUT_MAGIC_RESISTANCE) * 2;
-    rm -= MR_PIP * you.get_mutation_level(MUT_MAGICAL_VULNERABILITY);
+    rm -= MR_PIP * you.get_mutation_level(MUT_MAGICAL_VULNERABILITY) * 2;
     if (you.get_mutation_level(MUT_GOLDEN_EYEBALLS))
         rm += MR_PIP * (you.get_mutation_level(MUT_GOLDEN_EYEBALLS) - 1);
 

@@ -2024,8 +2024,12 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
             gain_msg = false;
         }
     }
-    if (you.mutation[mutat] >= mdef.levels)
+    if (you.mutation[mutat] >= mdef.levels 
+        || you.mutation[mutat] >= (you.innate_mutation[mutat] + 1)
+            && !god_gift && !force_mutation)
+    {
         return false;
+    }
 
     // God gifts and forced mutations clear away conflicting mutations.
     int rc = _handle_conflicting_mutations(mutat, god_gift || force_mutation,

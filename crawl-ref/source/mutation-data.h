@@ -1626,18 +1626,15 @@ static const mutation_def mut_data[] =
     "You reflexes speed back up."},
 },
 
-{ MUT_MAGICAL_VULNERABILITY, 0, 3, mutflag::bad, false,
+{ MUT_MAGICAL_VULNERABILITY, 0, 2, mutflag::bad, false,
   "magic vulnerability",
 
-  {"You are slightly vulnerable to magic. (MR-)",
-    "You are vulnerable to magic. (MR--)",
-    "You are extremely vulnerable to magic. (MR---)"},
+  {"You are vulnerable to magic. (MR--)",
+    "You are very vulnerable to magic. (MR----)", ""},
   {"You feel vulnerable to magic.",
-    "You feel more vulnerable to magic.",
-    "You feel more vulnerable to magic."},
+    "You feel more vulnerable to magic.", ""},
   {"You no longer feel vulnerable to magic.",
-    "You feel less vulnerable to magic.",
-    "You feel less vulnerable to magic."},
+    "You feel less vulnerable to magic.", ""},
 },
 
 { MUT_ANTI_WIZARDRY, 0, 3, mutflag::bad, false,
