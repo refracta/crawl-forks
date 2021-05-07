@@ -170,20 +170,17 @@ static const mutation_def mut_data[] =
   {"You feel less vulnerable to electricity.", "", ""},
 },
 
-{ MUT_REGENERATION, 2, 3, mutflag::good, false,
+{ MUT_REGENERATION, 2, 2, mutflag::good, false,
   "regeneration",
 
-  {"Your natural rate of healing is unusually fast.",
-   "You heal very quickly.",
-   "You regenerate."},
+  {"You heal very quickly.",
+   "You regenerate.", ""},
 
   {"You begin to heal more quickly.",
-   "You begin to heal more quickly.",
-   "You begin to regenerate."},
+   "You begin to regenerate.", ""},
 
   {"Your rate of healing slows.",
-   "Your rate of healing slows.",
-   "Your rate of healing slows."},
+   "Your rate of healing slows.", ""},
 },
 
 { MUT_INHIBITED_REGENERATION, 3, 1, mutflag::bad, false,
