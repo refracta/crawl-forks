@@ -1991,7 +1991,7 @@ int colour_apt(skill_type skill, draconian_colour colour)
             return 4;
         return 0;
     case DR_SCINTILLATING:
-        if (is_magic_skill(skill) && skill != SK_SPELLCASTING)
+        if (is_magic_skill(skill) && skill != SK_SPELLCASTING && !is_removed_skill(skill))
             return 3;
         return 0;
     case DR_BLOOD:
