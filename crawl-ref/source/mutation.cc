@@ -125,37 +125,40 @@ static const body_facet_def _body_facets[] =
  */
 static const int conflict[][3] =
 {
-    { MUT_REGENERATION,        MUT_INHIBITED_REGENERATION,  0},
-    { MUT_ACUTE_VISION,        MUT_IMPAIRED_VISION,         0},
-    { MUT_FAST,                MUT_SLOW,                    0},
-    { MUT_ROBUST,              MUT_FRAIL,                   1},
-    { MUT_HIGH_MAGIC,          MUT_LOW_MAGIC,               1},
-    { MUT_WILD_MAGIC,          MUT_SUBDUED_MAGIC,           1},
-    { MUT_CARNIVOROUS,         MUT_HERBIVOROUS,             1},
-    { MUT_SLOW_METABOLISM,     MUT_FAST_METABOLISM,         1},
-    { MUT_REGENERATION,        MUT_INHIBITED_REGENERATION,  1},
-    { MUT_ACUTE_VISION,        MUT_IMPAIRED_VISION,         1},
-    { MUT_BERSERK,             MUT_CLARITY,                 1},
-    { MUT_INSUBSTANTIAL,       MUT_THIN_SKELETAL_STRUCTURE -1},
-    { MUT_INSUBSTANTIAL,       MUT_LARGE_BONE_PLATES       -1},
-    { MUT_SILENT_CAST,         MUT_SHOUTITUS               -1},
-    { MUT_FAST,                MUT_SLOW,                    1},
-    { MUT_FANGS,               MUT_BEAK,                   -1},
-    { MUT_ANTENNAE,            MUT_HORNS,                  -1}, // currently overridden by physiology_mutation_conflict
-    { MUT_HOOVES,              MUT_TALONS,                 -1}, // currently overridden by physiology_mutation_conflict
-    { MUT_HOOVES,              MUT_FROG_LEGS,              -1}, // currently overridden by physiology_mutation_conflict
-    { MUT_TALONS,              MUT_FROG_LEGS,              -1}, // currently overridden by physiology_mutation_conflict
-    { MUT_TRANSLUCENT_SKIN,    MUT_CAMOUFLAGE,             -1}, // BCADDO: Special case for Jiyvite Octopode.
-    { MUT_SILENCE_AURA,        MUT_SHOUTITUS,              -1},
-    { MUT_MUTATION_RESISTANCE, MUT_EVOLUTION,              -1},
-    { MUT_ANTIMAGIC_BITE,      MUT_ACIDIC_BITE,            -1},
-    { MUT_HEAT_RESISTANCE,     MUT_HEAT_VULNERABILITY,     -1},
-    { MUT_COLD_RESISTANCE,     MUT_COLD_VULNERABILITY,     -1},
-    { MUT_SHOCK_RESISTANCE,    MUT_SHOCK_VULNERABILITY,    -1},
-    { MUT_MAGIC_RESISTANCE,    MUT_MAGICAL_VULNERABILITY,  -1},
-    { MUT_NO_REGENERATION,     MUT_INHIBITED_REGENERATION, -1},
-    { MUT_NO_REGENERATION,     MUT_REGENERATION,           -1},
-    { MUT_FORLORN,             MUT_GODS_PITY,               1},
+    { MUT_REGENERATION,                 MUT_INHIBITED_REGENERATION,          0},
+    { MUT_ACUTE_VISION,                 MUT_IMPAIRED_VISION,                 0},
+    { MUT_FAST,                         MUT_SLOW,                            0},
+    { MUT_ROBUST,                       MUT_FRAIL,                           1},
+    { MUT_HIGH_MAGIC,                   MUT_LOW_MAGIC,                       1},
+    { MUT_WILD_MAGIC,                   MUT_SUBDUED_MAGIC,                   1},
+    { MUT_CARNIVOROUS,                  MUT_HERBIVOROUS,                     1},
+    { MUT_SLOW_METABOLISM,              MUT_FAST_METABOLISM,                 1},
+    { MUT_REGENERATION,                 MUT_INHIBITED_REGENERATION,          1},
+    { MUT_ACUTE_VISION,                 MUT_IMPAIRED_VISION,                 1},
+    { MUT_BERSERK,                      MUT_CLARITY,                         1},
+    { MUT_INSUBSTANTIAL,                MUT_THIN_SKELETAL_STRUCTURE         -1},
+    { MUT_INSUBSTANTIAL,                MUT_LARGE_BONE_PLATES               -1},
+    { MUT_SILENT_CAST,                  MUT_SHOUTITUS                       -1},
+    { MUT_FAST,                         MUT_SLOW,                            1},
+    { MUT_FANGS,                        MUT_BEAK,                           -1},
+    { MUT_ANTENNAE,                     MUT_HORNS,                          -1}, // currently overridden by physiology_mutation_conflict
+    { MUT_HOOVES,                       MUT_TALONS,                         -1}, // currently overridden by physiology_mutation_conflict
+    { MUT_HOOVES,                       MUT_FROG_LEGS,                      -1}, // currently overridden by physiology_mutation_conflict
+    { MUT_TALONS,                       MUT_FROG_LEGS,                      -1}, // currently overridden by physiology_mutation_conflict
+    { MUT_SILENCE_AURA,                 MUT_SHOUTITUS,                      -1},
+    { MUT_MUTATION_RESISTANCE,          MUT_EVOLUTION,                      -1},
+    { MUT_ANTIMAGIC_BITE,               MUT_ACIDIC_BITE,                    -1},
+    { MUT_NEGATIVE_ENERGY_RESISTANCE,   MUT_NEGATIVE_ENERGY_VULNERABILITY,  -1},
+    { MUT_ACID_RESISTANCE,              MUT_ACID_VULNERABILITY,             -1},
+    { MUT_ACID_RESISTANCE,              MUT_SLIME,                          -1},
+    { MUT_ACID_VULNERABILITY,           MUT_SLIME,                          -1},
+    { MUT_HEAT_RESISTANCE,              MUT_HEAT_VULNERABILITY,             -1},
+    { MUT_COLD_RESISTANCE,              MUT_COLD_VULNERABILITY,             -1},
+    { MUT_SHOCK_RESISTANCE,             MUT_SHOCK_VULNERABILITY,            -1},
+    { MUT_MAGIC_RESISTANCE,             MUT_MAGICAL_VULNERABILITY,          -1},
+    { MUT_NO_REGENERATION,              MUT_INHIBITED_REGENERATION,         -1},
+    { MUT_NO_REGENERATION,              MUT_REGENERATION,                   -1},
+    { MUT_FORLORN,                      MUT_GODS_PITY,                       1},
 };
 
 equipment_type beastly_slot(int mut)
@@ -1234,7 +1237,7 @@ static int _handle_conflicting_mutations(mutation_type mutation,
                     }
 
                 default:
-                    die("bad mutation conflict resulution");
+                    die("bad mutation conflict resolution");
                 }
             }
         }

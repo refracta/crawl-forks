@@ -50,6 +50,17 @@ static const species_mutation_message spmu_data[] =
    "Your fur thins out. You feel a chill.", ""},
 },
 
+{ SP_GOBLIN, MUT_GODS_PITY,
+  "god's pity",
+
+  {"The pity of the gods increases the power of your invoked divine abilities.",
+   "The pity of the gods increases the power of your passive and invoked divine abilities.", "" },
+  {"The dieties of the dungeon take pity on you.",
+   "The dieties of the dungeon take greater pity upon you.", "" },
+  {"The dieties treat you like any other subject.",
+   "The pity of the gods is waning.", "" },
+},
+
 { SP_LIGNIFITE, MUT_HEAT_VULNERABILITY,
   "woody flesh (rF-)",
 
