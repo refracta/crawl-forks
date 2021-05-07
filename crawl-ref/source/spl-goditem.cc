@@ -1097,8 +1097,10 @@ void torment_player(actor *attacker, torment_source_type taux)
 
     if (!player_res_torment())
     {
+        const int factor = (player_prot_life()) < 0 ? 7 : 5 - player_prot_life();
+
         // Negative energy resistance can alleviate torment.
-        hploss = max(0, you.hp * (50 - player_prot_life() * 10) / 100 - 1);
+        hploss = max(0, you.hp * factor / 10 - 1);
         // Statue form is only partial petrification.
         if (you.is_nonliving() || you.undead_state(true) == US_SEMI_ALIVE)
             hploss /= 2;

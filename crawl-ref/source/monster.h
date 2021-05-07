@@ -395,7 +395,7 @@ public:
     int res_holy_energy(bool /*mt*/ = false) const override;
     int res_negative_energy(bool intrinsic_only = false, bool /*mt*/ = false) const override;
     bool res_torment(bool /*mt*/ = false) const override;
-    int res_acid(bool calc_unid = true, bool /*mt*/ = false) const override;
+    int res_acid(bool calc_unid = true, bool items = true, bool /*mt*/ = false) const override;
     bool res_tornado(bool /*mt*/ = false) const override;
     bool res_wind(bool /*mt*/ = false) const override;
     bool res_petrify(bool /*temp*/ = true, bool /*mt*/ = false) const override;
@@ -403,7 +403,7 @@ public:
     int res_magic(bool calc_unid = true) const override;
     bool no_tele(bool calc_unid = true, bool permit_id = true,
                  bool blink = false) const override;
-    bool res_corr(bool calc_unid = true, bool items = true, bool /*mt*/ = false) const override;
+    int res_corr(bool calc_unid = true, bool items = true, bool /*mt*/ = false) const override;
     bool antimagic_susceptible() const override;
 
     bool stasis() const override;

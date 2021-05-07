@@ -291,7 +291,7 @@ public:
     virtual int  how_chaotic(bool check_spells_god = false) const = 0;
     virtual bool is_unbreathing(bool mt = false) const = 0;
     virtual bool is_insubstantial() const = 0;
-    virtual int res_acid(bool calc_unid = true, bool mt = false) const = 0;
+    virtual int res_acid(bool calc_unid = true, bool items = true, bool mt = false) const;
     virtual bool res_damnation() const = 0;
     virtual int res_fire(bool mt = false) const = 0;
     virtual int res_steam(bool mt = false) const = 0;
@@ -317,7 +317,7 @@ public:
 
     virtual bool gourmand(bool calc_unid = true, bool items = true) const;
 
-    virtual bool res_corr(bool calc_unid = true, bool items = true, bool mount = false) const;
+    virtual int res_corr(bool calc_unid = true, bool items = true, bool mount = false) const = 0;
     bool has_notele_item(bool calc_unid = true,
                          vector<item_def> *matches = nullptr) const;
     virtual bool stasis() const = 0;

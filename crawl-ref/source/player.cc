@@ -1834,84 +1834,22 @@ int player_res_cold(bool calc_unid, bool temp, bool items)
     return _clamp(rc, -3, temp && you.duration[DUR_COLD_VULN] ? 2 : 3);
 }
 
-bool player::res_corr(bool calc_unid, bool items, bool mt) const
+int player::res_corr(bool calc_unid, bool items, bool mt) const
 {
-    if (submerged(mt))
-        return true;
-
     if (mt)
     {
+        int sub = you.submerged(true) ? 1 : 0;
         switch (you.mount)
         {
-            case mount_type::spider:
-            case mount_type::hydra:
-                return 1;
-            default:
-                return 0;
+        case mount_type::spider:
+        case mount_type::hydra:
+            return sub + 1;
+        default:
+            return sub;
         }
     }
 
-    if (have_passive(passive_t::resist_corrosion))
-        return true;
-
-    if (get_mutation_level(MUT_ACID_RESISTANCE))
-        return true;
-
-    if (get_form()->res_acid())
-        return true;
-
-    if (you.duration[DUR_RESISTANCE])
-        return true;
-
-    if (items)
-    {
-        // Subsumption
-        const item_def * inside = you.slot_item(EQ_CYTOPLASM);
-
-        if (inside && get_weapon_brand(*inside) == SPWPN_ACID)
-            return true;
-
-        if (calc_unid)
-        {
-            // amulet of chaos
-            if (you.wearing(EQ_AMULET, AMU_CHAOS) && one_chance_in(3))
-                return true;
-
-            // dragonskin cloak: 0.5 to draconic resistances
-            if (player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
-                return true;
-        }
-    }
-
-    // BCADDO: This mainline TODO:
-    // TODO: why doesn't this use the usual form suppression mechanism?
-    if (form_keeps_mutations()
-        && get_mutation_level(MUT_YELLOW_SCALES) >= 3)
-    {
-        return true;
-    }
-
-    // draconian scales:
-    if (get_mutation_level(MUT_DRACONIAN_DEFENSE, true))
-    {
-        if (drac_colour == DR_SCINTILLATING && one_chance_in(3) && calc_unid)
-            return true;
-        if (drac_colour == DR_LIME)
-            return true;
-    }
-
-    if (get_mutation_level(MUT_SLIME, true))
-        return true;
-
-    return actor::res_corr(calc_unid, items);
-}
-
-int player_res_acid(bool calc_unid, bool items)
-{
-    if (you.mutation[MUT_SLIME] > 2)
-        return 3;
-
-    return you.res_corr(calc_unid, items) ? 1 : 0;
+    return _clamp(res_acid(calc_unid, items), -1, 1);
 }
 
 static int _relec_globals()
@@ -2369,10 +2307,9 @@ int player_prot_life(bool calc_unid, bool temp, bool items)
     // undead/demonic power
     pl += you.get_mutation_level(MUT_NEGATIVE_ENERGY_RESISTANCE, temp);
     pl += you.get_mutation_level(MUT_ROUGH_BLACK_SCALES, temp);
+    pl -= you.get_mutation_level(MUT_NEGATIVE_ENERGY_VULNERABILITY, temp);
 
-    pl = min(3, pl);
-
-    return pl;
+    return _clamp(pl, -3, 3);
 }
 
 // Placed here due to being based on the player movement speed
@@ -7359,21 +7296,78 @@ bool player::is_insubstantial() const
         return false;
 }
 
-int player::res_acid(bool calc_unid, bool mt) const
+int player::res_acid(bool calc_unid, bool items, bool mt) const
 {
     if (mt)
     {
-        switch (you.mount)
+        const int sub = submerged(true) ? 1 : 0;
+        switch (mount)
         {
         case mount_type::slime:
             return 3;
         case mount_type::spider:
-            return -1;
+            return sub - 1;
         default:
-            return 0;
+            return sub;
         }
     }
-    return player_res_acid(calc_unid);
+
+    if (get_mutation_level(MUT_SLIME) > 2)
+        return 3;
+
+    int ra = 0;
+
+    if (submerged())
+        ra++;
+
+    if (get_mutation_level(MUT_ACID_VULNERABILITY))
+        ra--;
+
+    if (get_mutation_level(MUT_ACID_RESISTANCE))
+        ra++;
+
+    if (get_form()->res_acid())
+        ra++;
+
+    if (duration[DUR_RESISTANCE])
+        ra++;
+
+    if (items)
+    {
+        // Subsumption
+        const item_def * inside = you.slot_item(EQ_CYTOPLASM);
+
+        if (inside && get_weapon_brand(*inside) == SPWPN_ACID)
+            ra++;
+
+        if (calc_unid)
+        {
+            // amulet of chaos
+            if (wearing(EQ_AMULET, AMU_CHAOS) && one_chance_in(3))
+                ra++;
+
+            // dragonskin cloak: 0.5 to draconic resistances
+            if (player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
+                ra++;
+        }
+    }
+
+    if (get_mutation_level(MUT_YELLOW_SCALES))
+        ra++;
+
+    // draconian scales:
+    if (get_mutation_level(MUT_DRACONIAN_DEFENSE, true))
+    {
+        if (drac_colour == DR_SCINTILLATING && one_chance_in(3) && calc_unid)
+            ra++;
+        if (drac_colour == DR_LIME)
+            ra++;
+    }
+
+    ra += actor::res_acid(calc_unid, items);
+    ra += get_mutation_level(MUT_SLIME, true);
+
+    return _clamp(ra, -3, 2);
 }
 
 int player::res_fire(bool mt) const
@@ -7534,7 +7528,7 @@ int player::res_holy_energy(bool mt) const
 int player::res_negative_energy(bool intrinsic_only, bool mt) const
 {
     if (mt)
-        return _clamp(_rn_globals(), 0, 3);
+        return _clamp(_rn_globals(), -3, 3);
 
     return player_prot_life(!intrinsic_only, true, !intrinsic_only);
 }
@@ -7975,8 +7969,9 @@ bool player::corrode_equipment(const char* corrosion_source, int degree, bool mt
     if (res_acid(true, mt) >= 3)
         return false;
 
+    int res = res_corr(true, true, mt);
     // rCorr protects against 50% of corrosion.
-    if (res_corr(true, true, mt))
+    if (res > 0)
     {
         degree = binomial(degree, 50);
         if (!degree)
@@ -7985,6 +7980,8 @@ bool player::corrode_equipment(const char* corrosion_source, int degree, bool mt
             return false;
         }
     }
+    else if (res < 0)
+        degree = div_rand_round(3 * degree, 2);
     // always increase duration, but...
     increase_duration(mt ? DUR_MOUNT_CORROSION : DUR_CORROSION, 10 + roll_dice(2, 4), 50,
                       make_stringf("%s corrodes %s!",

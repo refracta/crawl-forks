@@ -292,7 +292,7 @@ void ghost_demon::init_player_ghost()
     // clones might lack innate rPois, copy it. pghosts don't care.
     set_resist(resists, MR_RES_POISON, player_res_poison());
     set_resist(resists, MR_RES_NEG, you.res_negative_energy());
-    set_resist(resists, MR_RES_ACID, player_res_acid());
+    set_resist(resists, MR_RES_ACID, you.res_acid());
     // multi-level for players, boolean as an innate monster resistance
     set_resist(resists, MR_RES_STEAM, player_res_steam() ? 1 : 0);
     set_resist(resists, MR_RES_STICKY_FLAME, player_res_sticky_flame());

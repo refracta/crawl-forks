@@ -2952,7 +2952,7 @@ static void tag_read_you(reader &th)
     if (th.getMinorVersion() < TAG_MINOR_JIYVA_REWORK)
     {
         you.mutated_stats[STAT_STR] = 0 + you.get_mutation_level(MUT_STRONG) - you.get_mutation_level(MUT_ROTTING_BODY);
-        you.mutated_stats[STAT_INT] = 0 + you.get_mutation_level(MUT_CLEVER) - you.get_mutation_level(MUT_DOPEY);
+        you.mutated_stats[STAT_INT] = 0 + you.get_mutation_level(MUT_CLEVER) - you.get_mutation_level(MUT_NEGATIVE_ENERGY_VULNERABILITY);
         you.mutated_stats[STAT_DEX] = 0 + you.get_mutation_level(MUT_AGILE)  - you.get_mutation_level(MUT_SILENCE_AURA);
         you.mutation[MUT_STATS] = div_round_up((abs(you.mutated_stats[STAT_STR]) + abs(you.mutated_stats[STAT_INT]) + abs(you.mutated_stats[STAT_DEX])), 10);
 
@@ -3024,7 +3024,7 @@ static void tag_read_you(reader &th)
         you.mutation[MUT_STRONG] = 0;
         you.mutation[MUT_ROTTING_BODY] = 0;
         you.mutation[MUT_CLEVER] = 0;
-        you.mutation[MUT_DOPEY]  = 0;
+        you.mutation[MUT_NEGATIVE_ENERGY_VULNERABILITY]  = 0;
         you.mutation[MUT_AGILE]  = 0;
         you.mutation[MUT_SILENCE_AURA] = 0;
         

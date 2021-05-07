@@ -4148,22 +4148,17 @@ int monster::res_constrict(bool /*mt*/) const
     return 0;
 }
 
-bool monster::res_corr(bool calc_unid, bool items, bool /*mount*/) const
+int monster::res_corr(bool calc_unid, bool items, bool /*mount*/) const
 {
-    return actor::res_corr(calc_unid, items);
+    return max(min(res_acid(calc_unid, items), 1), -1);
 }
 
-int monster::res_acid(bool calc_unid, bool /*mount*/) const
+int monster::res_acid(bool calc_unid, bool items, bool /*mount*/) const
 {
     int u = get_mons_resist(*this, MR_RES_ACID);
 
     if (submerged())
         u++;
-
-    if (res_corr(calc_unid))
-    {
-        u++;
-    }
 
     if (inv[MSLOT_ARMOUR] != NON_ITEM && u < 2)
         u++;
@@ -4171,7 +4166,9 @@ int monster::res_acid(bool calc_unid, bool /*mount*/) const
     if (has_ench(ENCH_RESISTANCE) && u < 2)
         u++;
 
-    return u;
+    u += actor::res_acid(calc_unid, items);
+
+    return max(min(u, 3), -3);
 }
 
 /**
@@ -4504,6 +4501,8 @@ bool monster::corrode_equipment(const char* corrosion_source, int degree, bool /
             return false;
         }
     }
+    else if (rAcid < 0)
+        degree = div_rand_round(degree * 3, 2);
 
     if (you.see_cell(pos()))
     {

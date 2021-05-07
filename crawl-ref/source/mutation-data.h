@@ -495,6 +495,30 @@ static const mutation_def mut_data[] =
   {"", "", ""},
 },
 
+{ MUT_NEGATIVE_ENERGY_VULNERABILITY, 0, 3, mutflag::bad, false,
+  "negative energy vulnerability",
+
+  {"You are vulnerable to negative energy. (rN-)",
+   "You are very vulnerable to negative energy. (rN--)",
+   "You are extremely vulnerable to negative energy. (rN---)"},
+
+  {"You feel vulnerable to negative energy.",
+   "You feel vulnerable to negative energy.",
+   "You feel vulnerable to negative energy."},
+
+  {"You no longer feel vulnerable to negative energy.",
+   "You feel less vulnerable to negative energy.",
+   "You feel less vulnerable to negative energy."},
+},
+
+{ MUT_ACID_VULNERABILITY, 0, 1, mutflag::bad, false,
+  "acid vulnerability",
+
+  {"You are vulnerable to acid. (rCorr-)", "", ""},
+  {"You feel vulnerable to acid.", "", ""},
+  {"You no longer feel vulnerable to acid.", "", ""},
+},
+
 { MUT_NECRO_ENHANCER, 0, 2, mutflag::good, false,
   "in touch with death",
 

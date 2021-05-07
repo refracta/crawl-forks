@@ -778,7 +778,7 @@ public:
     int how_chaotic(bool check_spells_god) const override;
     bool is_unbreathing(bool mt = false) const override;
     bool is_insubstantial() const override;
-    int res_acid(bool calc_unid = true, bool mt = false) const override;
+    int res_acid(bool calc_unid = true, bool items = true, bool mt = false) const override;
     bool res_damnation() const override { return false; };
     int res_fire(bool mt = false) const override;
     int res_steam(bool mt = false) const override;
@@ -803,7 +803,7 @@ public:
     bool antimagic_susceptible() const override;
 
     bool gourmand(bool calc_unid = true, bool items = true) const override;
-    bool res_corr(bool calc_unid = true, bool items = true, bool mount = false) const override;
+    int res_corr(bool calc_unid = true, bool items = true, bool mount = false) const override;
     bool clarity(bool calc_unid = true, bool items = true) const override;
     bool stasis() const override;
     bool is_fairy() const override;
@@ -1023,7 +1023,6 @@ void update_mana_regen_amulet_attunement();
 
 int player_res_cold(bool calc_unid = true, bool temp = true,
                     bool items = true);
-int player_res_acid(bool calc_unid = true, bool items = true);
 
 bool player_res_torment(bool random = true);
 bool player_kiku_res_torment();
