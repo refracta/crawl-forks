@@ -1417,7 +1417,7 @@ public:
 
     int get_damage() const override
     {
-        return damage + max(0, you.get_mutation_level(MUT_STINGER) * 2 - 1);
+        return damage + you.get_mutation_level(MUT_STINGER) * 4;
     }
 
     int get_brand() const override

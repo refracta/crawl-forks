@@ -3020,6 +3020,7 @@ static void tag_read_you(reader &th)
         _cap_mutation_at(MUT_CLAWS, 2);
         _cap_mutation_at(MUT_FAST_METABOLISM, 2);
         _cap_mutation_at(MUT_MAGICAL_VULNERABILITY, 2);
+        _cap_mutation_at(MUT_STINGER, 1);
         you.mutation[MUT_MULTIARM] = you.innate_mutation[MUT_MULTIARM] = 0;
         you.mutation[MUT_STASIS] = you.innate_mutation[MUT_STASIS] = 0;
         you.mutation[MUT_STRONG] = 0;

@@ -326,14 +326,11 @@ mutation_activity_type mutation_activity_level(mutation_type mut)
         }
         if (you.form == transformation::dragon)
         {
-            if (mut == MUT_DRACONIAN_DEFENSE)
+            if (mut == MUT_DRACONIAN_DEFENSE || mut == MUT_DRACONIAN_ENHANCER
+                || mut == MUT_ACIDIC_BITE || mut == MUT_STINGER)
+            {
                 return mutation_activity_type::FULL;
-            if (mut == MUT_DRACONIAN_ENHANCER)
-                return mutation_activity_type::FULL;
-            if (mut == MUT_ACIDIC_BITE && you.drac_colour == DR_LIME)
-                return mutation_activity_type::FULL;
-            if (mut == MUT_STINGER && you.drac_colour == DR_GREEN)
-                return mutation_activity_type::FULL;
+            }
         }
         // Vampire bats keep their fangs.
         if (you.form == transformation::bat
@@ -1327,10 +1324,6 @@ bool physiology_mutation_conflict(mutation_type mutat, bool ds_roll)
     {
         return true;
     }
-
-    // Only nagas can get upgraded poison spit.
-    if ((you.species != SP_NAGA || you.char_class == JOB_NAGA) && mutat == MUT_SPIT_POISON)
-        return true;
 
     // Felids have innate claws, and unlike trolls/ghouls, there are no
     // increases for them.

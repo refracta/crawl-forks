@@ -230,16 +230,13 @@ static const mutation_def mut_data[] =
   "slow metabolism",
 
   {"You have a slow metabolism.",
-   "You need to consume almost no food.",
-   ""},
+   "You need to consume almost no food.", ""},
 
   {"Your metabolism slows.",
-   "Your metabolism slows.",
-   ""},
+   "Your metabolism slows.", ""},
 
   {"You feel a little hungry.",
-   "You feel a little hungry.",
-   ""},
+   "You feel a little hungry.", ""},
 },
 
 { MUT_MERFOLK_TAIL, 0, 1, mutflag::good, true,
@@ -322,17 +319,14 @@ static const mutation_def mut_data[] =
 { MUT_SPIT_POISON, 8, 2, mutflag::good, false,
   "spit poison",
 
-  {"You can spit poison.",
-   "You can exhale a cloud of poison.",
-   ""},
+  {"You can spit venom.",
+   "You can exhale a cloud of poison.", ""},
 
-  {"There is a nasty taste in your mouth for a moment.",
-   "There is a nasty taste in your mouth for a moment.",
-   ""},
+  {"A venom gland forms on the roof of your mouth.",
+   "Your venom gland gets more potent.", ""},
 
-  {"You feel an ache in your throat.",
-   "You feel an ache in your throat.",
-   ""},
+  {"Your venom gland atrophies and becomes useless.",
+   "Your venom becomes weaker.", ""},
 },
 
 #if TAG_MAJOR_VERSION == 34
@@ -406,7 +400,7 @@ static const mutation_def mut_data[] =
 
   {"You are somewhat resistant to further mutation.",
    "You are somewhat resistant to both further mutation and mutation removal.",
-   "You are almost entirely resistant to further mutation and mutation removal."},
+   "You are almost entirely immune to further mutation and mutation removal."},
 
   {"You feel genetically stable.",
    "You feel genetically stable.",
@@ -421,16 +415,13 @@ static const mutation_def mut_data[] =
   "evolution",
 
   {"You evolve.",
-   "You rapidly evolve.",
-   ""},
+   "You rapidly evolve.", ""},
 
   {"You feel nature experimenting on you. Don't worry, failures die fast.",
-   "Your genes go into a fast flux.",
-   ""},
+   "Your genes go into a fast flux.", ""},
 
   {"Nature stops experimenting on you.",
-   "Your wild genetic ride slows down.",
-   ""},
+   "Your wild genetic ride slows down.", ""},
 },
 
 { MUT_FRAIL, 10, 3, mutflag::bad | mutflag::xom, false,
@@ -470,7 +461,7 @@ static const mutation_def mut_data[] =
 
   {"You can survive without breathing.", "", ""},
   {"You feel breathless.", "", ""},
-  {"", "", ""},
+  {"You gasp for air.", "", ""},
 },
 
 { MUT_TORMENT_RESISTANCE, 0, 1, mutflag::good, false,
@@ -478,7 +469,7 @@ static const mutation_def mut_data[] =
 
   {"You are immune to unholy pain and torment.", "", ""},
   {"You feel a strange anaesthesia.", "", ""},
-  {"", "", ""},
+  {"You feel a sharp pain in your heart.", "", ""},
 },
 
 { MUT_NEGATIVE_ENERGY_RESISTANCE, 0, 3, mutflag::good, false,
@@ -490,9 +481,11 @@ static const mutation_def mut_data[] =
 
   {"You feel resistant to negative energy.",
    "You feel more resistant to negative energy.",
-   "You feel more resistant to negative energy."},
+   "You feel immune to negative energy."},
 
-  {"", "", ""},
+  {"You no longer feel resistant to negative energy.", 
+   "You feel less resistant to negative energy.", 
+   "You are no longer immune to negative energy."},
 },
 
 { MUT_NEGATIVE_ENERGY_VULNERABILITY, 0, 3, mutflag::bad, false,
@@ -692,20 +685,12 @@ static const mutation_def mut_data[] =
 },
 
 // Naga and Draconian only
-{ MUT_STINGER, 8, 3, mutflag::good, true,
+{ MUT_STINGER, 8, 1, mutflag::good, true,
   "stinger",
 
-  {"Your tail ends in a poisonous barb.",
-   "Your tail ends in a sharp poisonous barb.",
-   "Your tail ends in a wickedly sharp and poisonous barb."},
-
-  {"A poisonous barb forms on the end of your tail.",
-   "The barb on your tail looks sharper.",
-   "The barb on your tail looks very sharp."},
-
-  {"The barb on your tail disappears.",
-   "The barb on your tail seems less sharp.",
-   "The barb on your tail seems less sharp."},
+  {"Your tail ends in a sharp, venomous barb.", "", ""},
+  {"A venomous barb forms on the end of your tail.", "", ""},
+  {"The barb on your tail recedes.", "", ""},
 },
 
 // Draconian only
@@ -1417,7 +1402,7 @@ static const mutation_def mut_data[] =
 { MUT_COLD_BLOODED, 0, 1, mutflag::bad, true,
   "cold-blooded",
 
-  {"You are cold-blooded and may be slowed by cold attacks.", "", ""},
+  {"You are cold-blooded and are slowed more easily by cold attacks.", "", ""},
   {"You feel cold-blooded.", "", ""},
   {"You feel warm-blooded.", "", ""},
 },
