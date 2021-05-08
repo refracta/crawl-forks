@@ -3057,9 +3057,7 @@ static void tag_read_you(reader &th)
         if (you.species == SP_SILENT_SPECTRE)
             you.mutation[MUT_SILENCE_AURA] = you.innate_mutation[MUT_SILENCE_AURA] = 2;
     }
-#endif
 
-#if TAG_MAJOR_VERSION == 34
     // No minor version needed: all old felids should get MUT_PAWS.
     if (you.species == SP_FELID && you.innate_mutation[MUT_PAWS] < 1)
         you.mutation[MUT_PAWS] = you.innate_mutation[MUT_PAWS] = 1;
