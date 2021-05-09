@@ -4209,14 +4209,13 @@ void melee_attack::do_spines()
 {
     if (defender->is_player())
     {
-        // BCADDO: Make levels of normal Spiny matter more (or collapse to one level and combine something else into that facet).
-        const int mut = max(you.get_mutation_level(MUT_SPINY), you.get_mutation_level(MUT_FROST_BURST));
+        const int mut = you.get_mutation_level(MUT_SPINY) + (you.get_mutation_level(MUT_FROST_BURST) ? 1 : 0);
 
         if (mut && attacker->alive() && coinflip())
         {
-            const int maxdmg = you.experience_level + mut;
-            const int dmg = random_range(mut, maxdmg);
-            const int hurt = attacker->apply_ac(dmg, you.experience_level + mut);
+            const int maxdmg = div_rand_round(you.experience_level * mut, 3);
+            const int dmg    = random_range(mut, maxdmg);
+            const int hurt   = attacker->apply_ac(dmg, you.experience_level + mut);
 
             dprf(DIAG_COMBAT, "Spiny: dmg = %d hurt = %d", dmg, hurt);
 
@@ -4231,8 +4230,8 @@ void melee_attack::do_spines()
             if (you.get_mutation_level(MUT_FROST_BURST))
             {
                 const int dice_size = div_rand_round(you.experience_level + you.skill(SK_INVOCATIONS), 6);
-                const int ice_dmg = roll_dice(you.get_mutation_level(MUT_FROST_BURST), dice_size);
-                const int ice_hurt = resist_adjust_damage(attacker, BEAM_COLD, ice_dmg);
+                const int ice_dmg   = roll_dice(you.get_mutation_level(MUT_FROST_BURST), dice_size);
+                const int ice_hurt  = resist_adjust_damage(attacker, BEAM_COLD, ice_dmg);
 
                 if (ice_hurt <= 0)
                     return;

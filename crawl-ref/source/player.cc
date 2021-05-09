@@ -2078,6 +2078,9 @@ int player_res_poison(bool calc_unid, bool temp, bool items)
 
         if (you.duration[DUR_POISON_VULN])
             rp--;
+
+        if (you.get_mutation_level(MUT_POISON_SUSCEPTIBILITY))
+            rp--;
     }
 
     // don't allow rPois--, etc.

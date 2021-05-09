@@ -159,6 +159,8 @@ static const int conflict[][3] =
     { MUT_NO_REGENERATION,              MUT_INHIBITED_REGENERATION,         -1},
     { MUT_NO_REGENERATION,              MUT_REGENERATION,                   -1},
     { MUT_FORLORN,                      MUT_GODS_PITY,                       1},
+    { MUT_NIGHTSTALKER,                 MUT_DAYSTRIDER,                      0},
+    { MUT_NIGHTSTALKER,                 MUT_DAYSTRIDER,                      1},
 };
 
 equipment_type beastly_slot(int mut)
@@ -1314,6 +1316,15 @@ bool physiology_mutation_conflict(mutation_type mutat, bool ds_roll)
     if (you.species != SP_OCTOPODE && mutat == MUT_TENTACLE_SPIKE)
         return true;
 
+    if (mutat == MUT_STRONG_NOSE && !you.can_smell())
+        return true;
+
+    if ((mutat == MUT_FAIRY_LIGHT || mutat == MUT_SILENCE_AURA) && !you.innate_mutation[mutat])
+        return true;
+
+    if (mutat == MUT_DETERIORATION && you.undead_state())
+        return true;
+
     // Too squishy for horns.
     if (you.species == SP_OCTOPODE && mutat == MUT_HORNS)
         return true;
@@ -1714,11 +1725,14 @@ static string _drac_def_msg()
     return ostr.str();
 }
 
-static string _drac_enhancer_msg(bool gain)
+// type 1 = gain; 0 = have; -1 = lose.
+static string _drac_enhancer_msg(int type)
 {
     ostringstream ostr;
-    if (gain)
+    if (type > 0)
         ostr << _get_mutation_def(MUT_DRACONIAN_ENHANCER).gain[0];
+    else if (type < 0)
+        ostr << _get_mutation_def(MUT_DRACONIAN_ENHANCER).lose[you.get_mutation_level(MUT_DRACONIAN_ENHANCER, false) - 1];
     else
         ostr << _get_mutation_def(MUT_DRACONIAN_ENHANCER).have[you.get_mutation_level(MUT_DRACONIAN_ENHANCER, false) - 1];
 
@@ -1745,12 +1759,27 @@ static string _drac_enhancer_msg(bool gain)
     default:    // Shouldn't display ever; hopefully.
     case DR_BROWN:      ostr << "bugginess.";                                   break;
     case DR_SCINTILLATING:  // Special case; messaging unlike the others.
-        if (gain)
-            return "Your magic feels more chaotic and you randomly feel bursts of power when casting.";
-        else if (you.get_mutation_level(MUT_DRACONIAN_ENHANCER) > 1)
-            return "Your magic is chaotic and you often have strongly boosted spellpower when casting.";
+        if (type > 0)
+        {
+            if (you.get_mutation_level(MUT_DRACONIAN_ENHANCER) == 1)
+                return "Your magic feels more chaotic and you randomly feel bursts of power when casting.";
+            else
+                return "The bursts of power when casting become more profound.";
+        }
+        else if (type < 0)
+        {
+            if (you.get_mutation_level(MUT_DRACONIAN_ENHANCER) == 1)
+                return "Your magic no longer feels chaotic.";
+            else
+                return "The bursts of power while casting are less pronounced.";
+        }
         else
-            return "Your magic is chaotic and you often have boosted spellpower when casting.";
+        {
+            if (you.get_mutation_level(MUT_DRACONIAN_ENHANCER) > 1)
+                return "Your magic is chaotic and you often have strongly boosted spellpower when casting.";
+            else
+                return "Your magic is chaotic and you often have boosted spellpower when casting.";
+        }
     }
     return ostr.str();
 }
@@ -1759,6 +1788,10 @@ static bool _is_suppressable_mutation(mutation_type mut)
 {
     switch (mut)
     {
+    // Not getting rid of the racial gimmick
+    case MUT_MERFOLK_TAIL:
+    // Feels extremely weak and more lie a natural fact
+    case MUT_COLD_BLOODED:
     // Weird flavourwise to suppress
     case MUT_GODS_PITY:
     // Let's not remeld Jivya's special slots
@@ -1783,6 +1816,8 @@ static bool _is_suppressable_mutation(mutation_type mut)
     case MUT_PAWS:
     // Losing the ability to use your weapon combo would be too harsh.
     case MUT_MULTIARM:
+    // no returning to life/death
+    case MUT_HALF_DEATH:
         return false;
     // no feet on centaurs.
     case MUT_HOOVES:
@@ -1793,9 +1828,6 @@ static bool _is_suppressable_mutation(mutation_type mut)
     case MUT_DEFORMED:
         if (you.innate_mutation[MUT_DEFORMED] > 1)
             return false;
-    // no returning to life/death
-    case MUT_HALF_DEATH:
-        return false;
     default:
         break;
     }
@@ -2115,7 +2147,7 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
             break;
 
         case MUT_DRACONIAN_ENHANCER:
-            mprf(MSGCH_MUTATION, "%s", _drac_enhancer_msg(true).c_str());
+            mprf(MSGCH_MUTATION, "%s", _drac_enhancer_msg(1).c_str());
             gain_msg = false;
             break;
 
@@ -2300,6 +2332,11 @@ static bool _post_loss_effects(mutation_type mutat)
     case MUT_STATS:
         lose_msg = false;
         _unmutate_stats();
+        break;
+
+    case MUT_DRACONIAN_ENHANCER:
+        lose_msg = false;
+        mprf(MSGCH_MUTATION, "%s", _drac_enhancer_msg(-1).c_str());
         break;
 
     case MUT_HALF_DEATH:
@@ -2997,7 +3034,7 @@ string mutation_desc(mutation_type mut, int level, bool colour,
     else if (mut == MUT_DRACONIAN_DEFENSE)
         result = _drac_def_msg();
     else if (mut == MUT_DRACONIAN_ENHANCER)
-        result = _drac_enhancer_msg(false);
+        result = _drac_enhancer_msg(0);
     else if (mut == MUT_MINOR_MARTIAL_APT_BOOST)
     {
         ostringstream ostr;
