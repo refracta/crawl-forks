@@ -901,18 +901,26 @@ bool actor_cloud_immune(const actor &act, cloud_type type, bool mount)
     {
         case CLOUD_FIRE:
         case CLOUD_FOREST_FIRE:
-            if (!act.is_player())
-                return act.res_fire(mount) >= 3;
-            return you.duration[DUR_FIRE_SHIELD]
-                || !mount && you.has_mutation(MUT_FLAME_CLOUD_IMMUNITY)
-                || !mount && player_equip_unrand(UNRAND_FIRESTARTER);
+            if (act.res_fire(mount) >= 3)
+                return true;
+            if (act.is_player())
+            {
+                return you.duration[DUR_FIRE_SHIELD]
+                    || !mount && you.has_mutation(MUT_FLAME_CLOUD_IMMUNITY)
+                    || !mount && player_equip_unrand(UNRAND_FIRESTARTER);
+            }
+            return false;
         case CLOUD_HOLY:
             return act.res_holy_energy(mount) >= 3;
         case CLOUD_COLD:
             if (act.res_cold(mount) >= 3)
                 return true;
-            return you.has_mutation(MUT_FREEZING_CLOUD_IMMUNITY)
-                || player_equip_unrand(UNRAND_FROSTBITE);
+            if (act.is_player())
+            {
+                return !mount && you.has_mutation(MUT_FREEZING_CLOUD_IMMUNITY)
+                    || !mount && player_equip_unrand(UNRAND_FROSTBITE);
+            }
+            return false;
         case CLOUD_MEPHITIC:
             return act.res_poison(true, mount) > 0 || act.is_unbreathing(mount);
         case CLOUD_POISON:
