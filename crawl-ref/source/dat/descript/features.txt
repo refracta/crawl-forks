@@ -27,6 +27,13 @@ A roughly hewn altar of Beogh
 
 An altar to Beogh, unmistakably roughly hewn by orcish artisans.
 %%%%
+An ornate altar of Bahamut and Tiamat
+
+A divided altar to the twin gods Bahamut and Tiamat. Bahamut's half is of 
+solid gold and grandiose features; representing Bahamut's call of self-improvement. 
+Tiamat's half shifts and scintillates in the light; representing Tiamat's call 
+to constantly adapt and never stop changing.
+%%%%
 A snail-covered altar of Cheibriados
 
 A timeless altar to Cheibriados the Contemplative.
