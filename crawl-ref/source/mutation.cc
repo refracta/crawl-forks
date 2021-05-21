@@ -26,8 +26,10 @@
 #include "god-passive.h"
 #include "hints.h"
 #include "item-prop.h"
+#include "item-use.h" // can_wear_armour()
 #include "items.h"
 #include "libutil.h"
+#include "macro.h" // get_ch()
 #include "menu.h"
 #include "message.h"
 #include "mon-place.h"
@@ -48,6 +50,8 @@ using namespace ui;
 
 static bool _delete_single_mutation_level(mutation_type mutat, const string &reason, bool transient);
 static bool _post_loss_effects(mutation_type mutat);
+static void _transpose_gear();
+static void _return_gear();
 
 struct body_facet_def
 {
@@ -2101,6 +2105,10 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
             gain_msg = false;
             break;
 
+        case MUT_LIMB_MORPHING:
+            _transpose_gear();
+            break;
+
         case MUT_HALF_DEATH:
             if (you.mutation[mutat] == 1)
             {
@@ -2332,6 +2340,10 @@ static bool _post_loss_effects(mutation_type mutat)
     case MUT_STATS:
         lose_msg = false;
         _unmutate_stats();
+        break;
+
+    case MUT_LIMB_MORPHING:
+        _return_gear();
         break;
 
     case MUT_DRACONIAN_ENHANCER:
@@ -3721,4 +3733,80 @@ void reset_powered_by_death_duration()
 {
     const int pbd_dur = random_range(2, 5);
     you.set_duration(DUR_POWERED_BY_DEATH, pbd_dur);
+}
+
+static void _transpose_gear()
+{
+    int target_slot = EQ_FIRST_MORPH;
+    for (int slot = EQ_MIN_ARMOUR; slot <= EQ_MAX_ARMOUR; slot++)
+    {
+        const item_def *item = you.slot_item(static_cast<equipment_type>(slot));
+
+        if (item)
+        {
+            const equipment_type place = get_armour_slot(static_cast<armour_type>(item->sub_type));
+            you.equip[slot] = -1;
+            const bool meld = you.melded[slot];
+            you.melded.set(slot, false);
+            you.equip[target_slot] = item->link;
+            if (meld)
+                you.melded.set(target_slot, true);
+
+            target_slot++;
+            if (place == EQ_BODY_ARMOUR || place == EQ_BARDING)
+                target_slot++;
+        }
+    }
+}
+
+static void _return_gear()
+{
+    for (int slot = EQ_FIRST_MORPH; slot <= EQ_LAST_MORPH; slot++)
+    {
+        const item_def *item = you.slot_item(static_cast<equipment_type>(slot));
+
+        if (item)
+        {
+            const bool meld = you.melded[slot];
+            you.equip[slot] = -1;
+            you.melded.set(slot, false);
+
+            if (!can_wear_armour(*item, false, true))
+                continue;
+
+            const equipment_type place = get_armour_slot(static_cast<armour_type>(item->sub_type));
+            const item_def *conf = you.slot_item(static_cast<equipment_type>(place));
+            bool swap_item = true;
+
+            if (conf)
+            {
+                int keyin;
+                while (true)
+                {
+                    if (crawl_state.seen_hups)
+                        return;
+
+                    clear_messages();
+
+                    mprf_nojoin("[a] - %s.", conf->name(DESC_YOUR).c_str());
+                    mprf_nojoin("[b] - %s.", item->name(DESC_YOUR).c_str());
+
+                    mprf(MSGCH_PROMPT, "Continue wearing which item?");
+                    keyin = toalower(get_ch()) - 'a';
+                    if (keyin != 0 && keyin != 1)
+                        continue;
+
+                    break;
+                }
+                swap_item = keyin;
+            }
+
+            if (swap_item)
+            {
+                you.equip[place] = item->link;
+                if (meld)
+                    you.melded.set(place, true);
+            }
+        }
+    }
 }

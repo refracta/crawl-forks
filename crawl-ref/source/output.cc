@@ -1869,11 +1869,12 @@ static string _itosym(int level, int max = 1)
 static const char *s_equip_slot_names[] =
 {
     "Weapon", "Shield", "Cloak",  "Helmet", "Gloves", "Boots",
-    "Barding", "Armour", "Cytoplasm", "Left Ring", "Right Ring", 
+    "Barding", "Armour", "Left Ring", "Right Ring", 
     "Amulet", "First Ring", "Second Ring", "Third Ring", 
     "Fourth Ring", "Fifth Ring", "Sixth Ring", "Seventh Ring", 
-    "Eighth Ring", "Left Tendril Ring", "Right Tendril Ring", 
-    "Jewelry", "Amulet Ring"
+    "Eighth Ring", "Jewelry", "Amulet Ring", "Left Tendril Ring", 
+    "Right Tendril Ring", "Cytoplasm", "Jiyva0", "Jiyva1",
+    "Jiyva2", "Jiyva3", "Jiyva4", "Jiyva5", "Jiyva6"
 };
 
 const char *equip_slot_to_name(int equip)
@@ -1886,6 +1887,9 @@ const char *equip_slot_to_name(int equip)
     {
         return "Ring";
     }
+
+    if (equip >= EQ_JIYVA0)
+        return "Armour";
 
     if (equip == EQ_WEAPON1)
         return "Weapon";

@@ -277,6 +277,13 @@ string item_def::name(description_level_type descrip, bool terse, bool ident,
                 case EQ_BOOTS:
                 case EQ_BARDING:
                 case EQ_BODY_ARMOUR:
+                case EQ_JIYVA0:
+                case EQ_JIYVA1:
+                case EQ_JIYVA2:
+                case EQ_JIYVA3:
+                case EQ_JIYVA4:
+                case EQ_JIYVA5:
+                case EQ_JIYVA6:
                     buff << " (worn)";
                     break;
                 case EQ_CYTOPLASM:

@@ -1121,6 +1121,15 @@ static const mutation_def mut_data[] =
   {"Your tendrils retract into your body.", "", ""},
 },
 
+{ MUT_LIMB_MORPHING, 0, 1, mutflag::good | mutflag::jiyva, false,
+  "amorphous body", 
+
+  {"Your body is completely amorphous, allowing you to wear any combination of armour;"
+      " including, but not limited to, multiple body armours on an elongated torso, gloves on your feet, boots on your elbows, etc.", "", ""},
+  {"Your body becomes completely amorphous.", "", ""},
+  {"Your body feels more rigid.", "", ""},
+},
+
 { MUT_CYTOPLASMIC_SUSPENSION, 0, 1, mutflag::good | mutflag::jiyva, false, 
   "cytoplasmic subsumption",
 
