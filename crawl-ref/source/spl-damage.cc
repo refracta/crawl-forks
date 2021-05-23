@@ -3047,7 +3047,7 @@ bool setup_fragmentation_beam(bolt &beam, int pow, const actor *caster,
             beam.damage.num = 3;
             return _finish_LRD_setup(beam, caster);
         }
-        else if (you.form == transformation::ice_beast) // blast of ice
+        else if (you.is_icy()) // blast of ice
         {
             beam.name       = "icy blast";
             beam.colour     = WHITE;
@@ -3055,7 +3055,7 @@ bool setup_fragmentation_beam(bolt &beam, int pow, const actor *caster,
             beam.flavour    = BEAM_ICE;
             return _finish_LRD_setup(beam, caster);
         }
-        else if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, true) && you.drac_colour == DR_BONE)
+        else if (you.is_skeletal())
         {
             beam.name = "blast of bone shards";
             beam.colour = WHITE;

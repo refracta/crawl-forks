@@ -322,7 +322,7 @@ public:
                          vector<item_def> *matches = nullptr) const;
     virtual bool stasis() const = 0;
     virtual bool cloud_immune(bool calc_unid = true, bool items = true) const;
-    virtual bool run(bool calc_unid = true, bool items = true) const;
+    virtual int run(bool calc_unid = true, bool items = true) const;
     virtual bool angry(bool calc_unid = true, bool items = true) const;
     virtual bool clarity(bool calc_unid = true, bool items = true) const;
     virtual bool faith(bool calc_unid = true, bool items = true) const;

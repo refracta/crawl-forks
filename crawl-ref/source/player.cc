@@ -827,6 +827,15 @@ maybe_bool you_can_wear(equipment_type eq, bool temp)
     case EQ_CYTOPLASM:
         return you.get_mutation_level(MUT_CYTOPLASMIC_SUSPENSION) ? MB_TRUE : MB_FALSE;
 
+    case EQ_JIYVA0:
+    case EQ_JIYVA1:
+    case EQ_JIYVA2:
+    case EQ_JIYVA3:
+    case EQ_JIYVA4:
+    case EQ_JIYVA5:
+    case EQ_JIYVA6:
+        return you.get_mutation_level(MUT_AMORPHOUS_BODY) ? MB_TRUE : MB_FALSE;
+
     default:
         break;
     }
@@ -872,7 +881,6 @@ maybe_bool you_can_wear(equipment_type eq, bool temp)
             alternate.sub_type = SHD_BUCKLER;
         break;
 
-
     case EQ_HELMET:
         dummy.sub_type = ARM_HELMET;
         alternate.sub_type = ARM_HAT;
@@ -910,11 +918,15 @@ bool player_has_feet(bool temp, bool include_mutations)
         return false;
     }
 
-    if (include_mutations &&
-        (you.get_mutation_level(MUT_HOOVES, temp)
-         || you.get_mutation_level(MUT_TALONS, temp)))
+    if (include_mutations)
     {
+        if (you.get_mutation_level(MUT_AMORPHOUS_BODY, temp))
+            return coinflip();
+        if (you.get_mutation_level(MUT_HOOVES, temp)
+            || you.get_mutation_level(MUT_TALONS, temp))
+        {
         return false;
+        }
     }
 
     return true;
@@ -1053,11 +1065,25 @@ int player::wearing(equipment_type slot, int sub_type, bool calc_unid, bool coun
     case EQ_CLOAK:
     case EQ_GLOVES:
     case EQ_HELMET:
-        if (count_jiyva && (item = slot_item(EQ_CYTOPLASM))
-            && item->is_type(OBJ_ARMOURS, sub_type)
-            && (calc_unid || item_type_known(*item)))
+        if (count_jiyva)
+
         {
-            ret++;
+            if ((item = slot_item(EQ_CYTOPLASM))
+                && item->is_type(OBJ_ARMOURS, sub_type)
+                && (calc_unid || item_type_known(*item)))
+            {
+                ret++;
+            }
+
+            for (int i = EQ_FIRST_MORPH; i <= EQ_LAST_MORPH; i++)
+            {
+                if ((item = slot_item(static_cast<equipment_type>(i)))
+                    && item->sub_type == sub_type
+                    && (calc_unid || item_type_known(*item)))
+                {
+                    ret++;
+                }
+            }
         }
         // fallthrough
     default:
@@ -1096,6 +1122,16 @@ int player::wearing_ego(equipment_type slot, int special, bool calc_unid) const
             && (calc_unid || item_type_known(*item)))
         {
             ret++;
+        }
+
+        for (int i = EQ_FIRST_MORPH; i <= EQ_LAST_MORPH; i++)
+        {
+            if ((item = slot_item(static_cast<equipment_type>(i)))
+                && get_armour_ego_type(*item) == special
+                && (calc_unid || item_type_known(*item)))
+            {
+                ret++;
+            }
         }
     }
 
@@ -1316,6 +1352,28 @@ int player_teleport(bool calc_unid)
     return tp;
 }
 
+static int _jiyva_scan_props(armour_flag prop)
+{
+    int retval = 0;
+
+    const item_def * inside = you.slot_item(EQ_CYTOPLASM);
+    if (inside && inside->base_type == OBJ_ARMOURS)
+        retval += armour_type_prop(inside->sub_type, prop);
+
+    if (!you.get_mutation_level(MUT_AMORPHOUS_BODY))
+        return retval;
+
+    for (int i = EQ_FIRST_MORPH; i <= EQ_LAST_MORPH; i++)
+    {
+        const item_def * armour = you.slot_item(static_cast<equipment_type>(i));
+
+        if (armour)
+            retval += armour_type_prop(armour->sub_type, prop);
+    }
+
+    return retval;
+}
+
 // Computes bonuses to regeneration from most sources. Does not handle
 // slow regeneration, or Trog's Hand.
 static int _player_bonus_regen()
@@ -1331,9 +1389,7 @@ static int _player_bonus_regen()
     }
 
     if (you.attribute[ATTR_ROOTED])
-    {
         rr += 100;
-    }
 
     // Jewellery.
     if (you.props[REGEN_AMULET_ACTIVE].get_int() == 1)
@@ -1346,6 +1402,9 @@ static int _player_bonus_regen()
     const item_def *body_armour = you.slot_item(EQ_BODY_ARMOUR);
     if (body_armour)
         rr += armour_type_prop(body_armour->sub_type, ARMF_REGENERATION) * REGEN_PIP;
+
+    // Jiyva troll leather
+    rr += _jiyva_scan_props(ARMF_REGENERATION) * REGEN_PIP;
 
     // Fast heal mutation.
     rr += you.get_mutation_level(MUT_REGENERATION) * REGEN_PIP;
@@ -1371,12 +1430,8 @@ static int _player_bonus_regen()
 // Inhibited regeneration: stops regeneration when monsters are visible
 bool regeneration_is_inhibited()
 {
-    switch (you.get_mutation_level(MUT_INHIBITED_REGENERATION))
+    if (you.get_mutation_level(MUT_INHIBITED_REGENERATION))
     {
-    case 0:
-      return false;
-    case 1:
-      {
         for (monster_near_iterator mi(you.pos(), LOS_NO_TRANS); mi; ++mi)
         {
             if (mons_is_threatening(**mi)
@@ -1386,12 +1441,8 @@ bool regeneration_is_inhibited()
                 return true;
             }
         }
-        return false;
-      }
-    default:
-      die("Unknown inhibited regeneration level.");
-      break;
     }
+    return false;
 }
 
 int player_regen()
@@ -1647,6 +1698,9 @@ int player_res_fire(bool calc_unid, bool temp, bool items)
         if (body_armour)
             rf += armour_type_prop(body_armour->sub_type, ARMF_RES_FIRE);
 
+        // Jiyva body armour
+        rf += _jiyva_scan_props(ARMF_RES_FIRE);
+
         // ego armours
         rf += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_FIRE_RESISTANCE);
         rf += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_RESISTANCE);
@@ -1660,17 +1714,10 @@ int player_res_fire(bool calc_unid, bool temp, bool items)
 
         // Subsumption effects not handled elsewhere.
         const item_def * inside = you.slot_item(EQ_CYTOPLASM);
-
-        if (inside)
+        if (inside && (get_weapon_brand(*inside) == SPWPN_MOLTEN
+                    || get_weapon_brand(*inside) == SPWPN_DRAGON_SLAYING))
         {
-            if (get_weapon_brand(*inside) == SPWPN_MOLTEN
-                || get_weapon_brand(*inside) == SPWPN_DRAGON_SLAYING)
-            {
-                rf++;
-            }
-
-            if (inside->base_type == OBJ_ARMOURS)
-                rf += armour_type_prop(inside->sub_type, ARMF_RES_FIRE);
+            rf++;
         }
 
         // dragonskin cloak: 0.5 to draconic resistances
@@ -1724,9 +1771,7 @@ int player_res_steam(bool calc_unid, bool temp, bool items)
         if (body_armour)
             res += armour_type_prop(body_armour->sub_type, ARMF_RES_STEAM) * 2;
 
-        const item_def * inside = you.slot_item(EQ_CYTOPLASM);
-        if (inside && inside->base_type == OBJ_ARMOURS)
-            res += armour_type_prop(inside->sub_type, ARMF_RES_STEAM) * 2;
+        res += _jiyva_scan_props(ARMF_RES_STEAM) * 2;
     }
 
     res += rf * 2;
@@ -1786,6 +1831,8 @@ int player_res_cold(bool calc_unid, bool temp, bool items)
         if (body_armour)
             rc += armour_type_prop(body_armour->sub_type, ARMF_RES_COLD);
 
+        rc += _jiyva_scan_props(ARMF_RES_COLD);
+
         // ego armours
         rc += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_COLD_RESISTANCE);
         rc += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_RESISTANCE);
@@ -1799,15 +1846,8 @@ int player_res_cold(bool calc_unid, bool temp, bool items)
 
         // Subsumption
         const item_def * inside = you.slot_item(EQ_CYTOPLASM);
-        
-        if (inside)
-        {
-            if (get_weapon_brand(*inside) == SPWPN_FREEZING)
-                rc++;
-
-            if (inside->base_type == OBJ_ARMOURS)
-                rc += armour_type_prop(inside->sub_type, ARMF_RES_COLD);
-        }
+        if (inside && get_weapon_brand(*inside) == SPWPN_FREEZING)
+            rc++;
 
         // dragonskin cloak: 0.5 to draconic resistances
         if (calc_unid && player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
@@ -1885,20 +1925,15 @@ int player_res_electricity(bool calc_unid, bool temp, bool items)
         if (body_armour)
             re += armour_type_prop(body_armour->sub_type, ARMF_RES_ELEC);
 
+        re += _jiyva_scan_props(ARMF_RES_ELEC);
+
         // randart weapons:
         re += you.scan_artefacts(ARTP_ELECTRICITY, calc_unid);
 
         // Subsumption
         const item_def * inside = you.slot_item(EQ_CYTOPLASM);
-
-        if (inside)
-        {
-            if (get_weapon_brand(*inside) == SPWPN_ELECTROCUTION)
-                re++;
-
-            if (inside->base_type == OBJ_ARMOURS)
-                re += armour_type_prop(inside->sub_type, ARMF_RES_ELEC);
-        }
+        if (inside && get_weapon_brand(*inside) == SPWPN_ELECTROCUTION)
+            re++;
 
         if (calc_unid)
         {
@@ -2017,20 +2052,17 @@ int player_res_poison(bool calc_unid, bool temp, bool items)
         if (body_armour)
             rp += armour_type_prop(body_armour->sub_type, ARMF_RES_POISON);
 
+        // jiyva armours
+        rp += _jiyva_scan_props(ARMF_RES_POISON);
+
         // rPois+ artefacts
         rp += you.scan_artefacts(ARTP_POISON, calc_unid);
 
         // Subsumption
         const item_def * inside = you.slot_item(EQ_CYTOPLASM);
 
-        if (inside)
-        {
-            if (get_weapon_brand(*inside) == SPWPN_VENOM)
-                rp++;
-            
-            if (inside->base_type == OBJ_ARMOURS)
-                rp += armour_type_prop(inside->sub_type, ARMF_RES_POISON);
-        }
+        if (inside && get_weapon_brand(*inside) == SPWPN_VENOM)
+            rp++;
 
         if (calc_unid)
         {
@@ -2263,17 +2295,13 @@ int player_prot_life(bool calc_unid, bool temp, bool items)
         if (body_armour)
             pl += armour_type_prop(body_armour->sub_type, ARMF_RES_NEG);
 
-        const item_def *inside = you.slot_item(EQ_CYTOPLASM);
+        pl += _jiyva_scan_props(ARMF_RES_NEG);
 
-        if (inside)
+        const item_def *inside = you.slot_item(EQ_CYTOPLASM);
+        if (inside && (get_weapon_brand(*inside) == SPWPN_VAMPIRISM || get_weapon_brand(*inside) == SPWPN_PAIN
+                   || get_weapon_brand(*inside) == SPWPN_DRAINING || get_weapon_brand(*inside) == SPWPN_HOLY_WRATH))
         {
-            if (get_weapon_brand(*inside) == SPWPN_VAMPIRISM || get_weapon_brand(*inside) == SPWPN_PAIN
-                || get_weapon_brand(*inside) == SPWPN_DRAINING || get_weapon_brand(*inside) == SPWPN_HOLY_WRATH)
-            {
-                pl++;
-            }
-            if (inside->base_type == OBJ_ARMOURS)
-                pl += armour_type_prop(inside->sub_type, ARMF_RES_NEG);
+            pl++;
         }
 
         // randart wpns
@@ -2328,8 +2356,7 @@ int hepliakqlana_ally_movement_speed()
         mv = 6; 
 
     // armour
-    if (you.run())
-        mv -= 1;
+    mv -= you.run();
 
     mv += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_PONDEROUSNESS);
 
@@ -2342,10 +2369,7 @@ int hepliakqlana_ally_movement_speed()
         mv -= fast + 1;
 
     if (int slow = you.get_mutation_level(MUT_SLOW, false))
-    {
-        mv *= 10 + slow * 2;
-        mv /= 10;
-    }
+        mv += slow * 2;
 
     if (mv < FASTEST_PLAYER_MOVE_SPEED)
         mv = FASTEST_PLAYER_MOVE_SPEED;
@@ -2412,8 +2436,7 @@ int player_movement_speed()
         }
 
         // armour
-        if (you.run()) // BCADDO: for SC: this will need to be able to stack.
-            mv -= 1;
+        mv -= you.run();
 
         mv += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_PONDEROUSNESS);
 
@@ -2422,10 +2445,14 @@ int player_movement_speed()
             mv -= fast + 1;
 
         if (int slow = you.get_mutation_level(MUT_SLOW))
-        {
-            mv *= 10 + slow * 2;
-            mv /= 10;
-        }
+            mv += slow * 2;
+
+        // Tengu can move slightly faster when flying.
+        if (you.tengu_flight())
+            mv--;
+
+        if (you.duration[DUR_FROZEN])
+            mv += 3;
     }
 
     // Wading through water is very slow.
@@ -2447,13 +2474,6 @@ int player_movement_speed()
         mv += 2 + min(div_rand_round(you.piety, 20), 8);
     else if (player_under_penance(GOD_CHEIBRIADOS))
         mv += 2 + min(div_rand_round(you.piety_max[GOD_CHEIBRIADOS], 20), 8);
-
-    // Tengu can move slightly faster when flying.
-    if (you.tengu_flight())
-        mv--;
-
-    if (!you.mounted() && you.duration[DUR_FROZEN])
-        mv += 3;
 
     if (you.duration[DUR_GRASPING_ROOTS])
         mv += 3;
@@ -2530,6 +2550,18 @@ bool is_effectively_light_armour(const item_def *item)
 
 bool player_effectively_in_light_armour()
 {
+    if (you.get_mutation_level(MUT_AMORPHOUS_BODY))
+    {
+        for (int i = EQ_FIRST_MORPH; i <= EQ_LAST_MORPH; i++)
+        {
+            const item_def * worn = you.slot_item(static_cast<equipment_type>(i));
+
+            if (!is_effectively_light_armour(worn))
+                return false;
+        }
+        return true;
+    }
+
     const item_def *armour = you.slot_item(EQ_BODY_ARMOUR, false);
     return is_effectively_light_armour(armour);
 }
@@ -2595,8 +2627,11 @@ static int _player_adjusted_evasion_penalty(const int scale)
 {
     int piece_armour_evasion_penalty = 0;
 
+    const int start = you.get_mutation_level(MUT_AMORPHOUS_BODY) ? EQ_FIRST_MORPH : EQ_MIN_ARMOUR;
+    const int finish = you.get_mutation_level(MUT_AMORPHOUS_BODY) ? EQ_LAST_MORPH : EQ_MAX_ARMOUR;
+
     // Some lesser armours have small penalties now (barding).
-    for (int i = EQ_MIN_ARMOUR; i < EQ_MAX_ARMOUR; i++)
+    for (int i = start; i < finish; i++)
     {
         if (!you.slot_item(static_cast<equipment_type>(i)))
             continue;
@@ -2683,14 +2718,14 @@ static int _player_scale_evasion(int prescaled_ev, const int scale)
     if (you.fishtail)
     {
         const int ev_bonus = max(2 * scale, prescaled_ev / 4);
-        return prescaled_ev + ev_bonus;
+        prescaled_ev += ev_bonus;
     }
 
     // Flying Tengu get a 20% evasion bonus.
     if (you.tengu_flight())
     {
         const int ev_bonus = max(1 * scale, prescaled_ev / 5);
-        return prescaled_ev + ev_bonus;
+        prescaled_ev += ev_bonus;
     }
 
     if (you.has_tentacles())
@@ -2703,7 +2738,7 @@ static int _player_scale_evasion(int prescaled_ev, const int scale)
     if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
     {
         const int ev_bonus = max(1 * scale, prescaled_ev / 5);
-        return prescaled_ev + ev_bonus;
+        prescaled_ev += ev_bonus;
     }
 
     return prescaled_ev;
@@ -2821,6 +2856,7 @@ int player_wizardry(spell_type spell)
 
     if ((get_staff_facet(*staff) == SPSTF_WIZARD) && staff_enhances_spell(staff, spell))
         wiz++;
+
     return wiz;
 }
 
@@ -3947,14 +3983,10 @@ int player_stealth()
         stealth += pips * STEALTH_PIP;
     }
 
-    if (inside && inside->base_type == OBJ_ARMOURS)
-    {
-        const int pips = armour_type_prop(inside->sub_type, ARMF_STEALTH);
-        stealth += pips * STEALTH_PIP;
+    stealth += _jiyva_scan_props(ARMF_STEALTH) * STEALTH_PIP;
 
-        if (get_armour_ego_type(*inside) == SPARM_STEALTH)
-            stealth += STEALTH_PIP;
-    }
+    if (inside && get_armour_ego_type(*inside) == SPARM_STEALTH)
+        stealth += STEALTH_PIP;
 
     stealth += STEALTH_PIP * you.scan_artefacts(ARTP_STEALTH);
 
@@ -4389,10 +4421,28 @@ int slaying_bonus(bool ranged, bool weapon)
         && !ranged && weapon)
         ret += 2;
 
-    const item_def *inside = you.slot_item(EQ_CYTOPLASM);
+    if (!ranged && !weapon)
+    {
+        const item_def *gloves = you.slot_item(EQ_GLOVES);
+        if (gloves && gloves->sub_type == ARM_CLAW)
+            ret += gloves->plus;
 
+        if (you.get_mutation_level(MUT_AMORPHOUS_BODY))
+        {
+            for (int i = EQ_FIRST_MORPH; i <= EQ_LAST_MORPH; i++)
+            {
+                item_def * worn = you.slot_item(static_cast<equipment_type>(i));
+
+                if (worn && worn->is_type(OBJ_ARMOURS, ARM_CLAW))
+                    ret += worn->plus;
+            }
+        }
+    }
+
+    const item_def *inside = you.slot_item(EQ_CYTOPLASM);
     if (inside && (inside->base_type == OBJ_WEAPONS 
-                || inside->base_type == OBJ_SHIELDS && is_hybrid(inside->sub_type)))
+                || inside->base_type == OBJ_SHIELDS && is_hybrid(inside->sub_type)
+                || inside->is_type(OBJ_ARMOURS, ARM_CLAW) && !ranged && !weapon))
     {
         ret += inside->plus;
     }
@@ -4805,7 +4855,6 @@ int get_real_mp(bool include_items)
             enp /= 3;
 
         const item_def *inside = you.slot_item(EQ_CYTOPLASM);
-
         if (inside && get_weapon_brand(*inside) == SPWPN_ANTIMAGIC && !you.wearing_ego(EQ_GLOVES, SPARM_WIELDING))
             enp /= 3;
     }
@@ -5681,7 +5730,7 @@ bool invis_allowed(bool quiet, string *fail_reason)
             reason = "Your divine halo glows too radiantly";
         else if (weapon)
             reason = "Your weapon shines too brightly";
-        else if (you.species == SP_FAIRY)
+        else if (you.get_mutation_level(MUT_FAIRY_LIGHT))
             reason = "Your natural light cannot be put out";
         else
             die("haloed by an unknown source");
@@ -5901,7 +5950,11 @@ void handle_player_drowning(int delay, bool water)
 int count_worn_ego(int which_ego)
 {
     int result = 0;
-    for (int slot = EQ_MIN_ARMOUR; slot <= EQ_MAX_ARMOUR; ++slot)
+
+    const int start = you.get_mutation_level(MUT_AMORPHOUS_BODY) ? EQ_FIRST_MORPH : EQ_MIN_ARMOUR;
+    const int finish = you.get_mutation_level(MUT_AMORPHOUS_BODY) ? EQ_LAST_MORPH : EQ_MAX_ARMOUR;
+
+    for (int slot = start; slot <= finish; ++slot)
     {
         if (you.equip[slot] != -1 && !you.melded[slot]
             && get_armour_ego_type(you.inv[you.equip[slot]]) == which_ego)
@@ -5909,6 +5962,9 @@ int count_worn_ego(int which_ego)
             result++;
         }
     }
+
+    if (you.equip[EQ_CYTOPLASM] != -1 && get_armour_ego_type(you.inv[you.equip[EQ_CYTOPLASM]]) == which_ego)
+        result++;
 
     return result;
 }
@@ -6464,12 +6520,6 @@ void player::banish(const actor* /*agent*/, const string &who, const int power,
     banished_power = power;
 }
 
-// BCADDO: Pointless function. Remove.
-int calc_hunger(int food_cost)
-{
-    return food_cost;
-}
-
 /*
  * Approximate the loudest noise the player heard in the last
  * turn, possibly rescaling. This gets updated every
@@ -6634,9 +6684,22 @@ void player::ablate_deflection()
  */
 int player::unadjusted_body_armour_penalty() const
 {
+    int malus = 0;
+
     const item_def *body_armour = slot_item(EQ_BODY_ARMOUR, false);
-    if (!body_armour)
-        return 0;
+    if (body_armour)
+        return malus += property(*body_armour, PARM_EVASION);
+
+    if (you.get_mutation_level(MUT_AMORPHOUS_BODY))
+    {
+        for (int i = EQ_FIRST_MORPH; i <= EQ_LAST_MORPH; i++)
+        {
+            item_def * worn = slot_item(static_cast<equipment_type>(i));
+
+            if (worn && get_armour_slot(static_cast<armour_type>(worn->sub_type)) == EQ_BODY_ARMOUR)
+                malus += property(*worn, PARM_EVASION);
+        }
+    }
 
     int bonus = 0;
     if (get_mutation_level(MUT_STURDY_FRAME))
@@ -6648,7 +6711,7 @@ int player::unadjusted_body_armour_penalty() const
     }
 
     // PARM_EVASION is always less than or equal to 0
-    return max(0, -property(*body_armour, PARM_EVASION) / 10 - bonus);
+    return max(0, - malus / 10 - bonus);
 }
 
 /**
@@ -6774,6 +6837,7 @@ int player::skill(skill_type sk, int scale, bool real, bool drained, bool temp) 
     return level;
 }
 
+// BCADDO: Revisit this?
 int player_icemail_armour_class()
 {
     if (!you.has_mutation(MUT_ICEMAIL))
@@ -6821,6 +6885,8 @@ int player::base_ac_from(const item_def &armour, int scale) const
     // The deformed don't fit into body armour very well.
     // (This includes nagas and centaurs.)
     if (get_armour_slot(armour) == EQ_BODY_ARMOUR
+            && !get_mutation_level(MUT_CORE_MELDING)
+            && !get_mutation_level(MUT_AMORPHOUS_BODY)
             && get_mutation_level(MUT_DEFORMED))
     {
         return AC - base / 2;
@@ -7016,7 +7082,10 @@ int player::base_ac(int scale) const
 {
     int AC = 0;
 
-    for (int eq = EQ_MIN_ARMOUR; eq <= EQ_MAX_ARMOUR; ++eq)
+    const int start = you.get_mutation_level(MUT_AMORPHOUS_BODY) ? EQ_FIRST_MORPH : EQ_MIN_ARMOUR;
+    const int finish = you.get_mutation_level(MUT_AMORPHOUS_BODY) ? EQ_LAST_MORPH : EQ_MAX_ARMOUR;
+
+    for (int eq = start; eq <= finish; ++eq)
     {
         if (!slot_item(static_cast<equipment_type>(eq)))
             continue;
@@ -7144,6 +7213,17 @@ int player::gdr_perc() const
 
     if (body_armour)
         gdr += base_ac_from(*body_armour);
+
+    if (you.get_mutation_level(MUT_AMORPHOUS_BODY))
+    {
+        for (int i = EQ_FIRST_MORPH; i <= EQ_LAST_MORPH; i++)
+        {
+            const item_def * worn = you.slot_item(static_cast<equipment_type>(i));
+
+            if (worn && get_armour_slot(static_cast<armour_type>(worn->sub_type)))
+                gdr += base_ac_from(*worn);
+        }
+    }
 
     gdr += (racial_ac(true)/100);
 
@@ -7283,8 +7363,17 @@ int player::how_chaotic(bool /*check_spells_god*/) const
  */
 bool player::is_unbreathing(bool mt) const
 {
-    if (mt) // no mount is currently unbreathing.
+    if (mt)
+    {
+        switch (you.mount)
+        {
+        case mount_type::slime:
+            return true;
+        default:
+            break;
+        }
         return false;
+    }
 
     return !get_form()->breathes || petrified()
         || get_mutation_level(MUT_UNBREATHING)
@@ -7608,15 +7697,12 @@ int player_res_magic(bool calc_unid, bool temp)
     if (body_armour)
         rm += armour_type_prop(body_armour->sub_type, ARMF_RES_MAGIC) * MR_PIP;
 
+    rm += _jiyva_scan_props(ARMF_RES_MAGIC) * MR_PIP;
+
     // Subsumption effects not handled elsewhere.
     const item_def *inside = you.slot_item(EQ_CYTOPLASM);
-    if (inside)
-    {
-        if (get_weapon_brand(*inside) == SPWPN_ANTIMAGIC)
-            rm += MR_PIP * 3;
-        if (inside->base_type == OBJ_ARMOURS)
-            rm += armour_type_prop(inside->sub_type, ARMF_RES_MAGIC) * MR_PIP;
-    }
+    if (inside && get_weapon_brand(*inside) == SPWPN_ANTIMAGIC)
+        rm += MR_PIP * 3;
 
     // ego armours
     rm += MR_PIP * you.wearing_ego(EQ_ALL_ARMOUR, SPARM_MAGIC_RESISTANCE,
@@ -7797,7 +7883,7 @@ bool player::racial_permanent_flight() const
 
 bool player::tengu_flight() const
 {
-    if (you.mounted() || you.form != transformation::none)
+    if (mounted() || form != transformation::none || !permanent_flight())
         return false;
 
     // Only Tengu get perks for flying.
@@ -7857,13 +7943,20 @@ bool player::nightvision() const
     return have_passive(passive_t::nightvision);
 }
 
-// BCADNOTE: This is wrong, what's it used for?
+// BCADNOTE: Fixed the function; still think it's unused though.
 reach_type player::reach_range() const
 {
-    const item_def *wpn = weapon();
+    reach_type retval = REACH_NONE;
+
+    item_def *wpn = weapon();
     if (wpn)
-        return weapon_reach(*wpn);
-    return REACH_NONE;
+        retval = weapon_reach(*wpn);
+    
+    wpn = weapon(1);
+    if (wpn && weapon_reach(*wpn) > retval)
+        retval = weapon_reach(*wpn);
+
+    return retval;
 }
 
 monster_type player::mons_species(bool /*zombie_base*/) const
@@ -8307,19 +8400,6 @@ int player::has_usable_tail(bool allow_tran) const
     return has_tail(allow_tran);
 }
 
-// Whether the player has a usable offhand for the
-// purpose of punching.
-bool player::has_usable_offhand() const
-{
-    if (get_mutation_level(MUT_MISSING_HAND))
-        return false;
-    if (slot_item(EQ_WEAPON1))
-        return false;
-
-    const item_def* wp = slot_item(EQ_WEAPON0);
-    return !wp || hands_reqd(*wp) != HANDS_TWO;
-}
-
 int player::usable_tentacles(bool allow_tran) const
 {
     int numtentacle = has_tentacles(allow_tran);
@@ -8519,7 +8599,7 @@ void player::backlight()
     }
 }
 
-// BCADDO: Pointless function. Remove.
+// BCADNOTE: Exists because player version is different than monster version. NOT Pointless.
 bool player::can_mutate() const
 {
     return true;
@@ -8658,9 +8738,10 @@ bool player::is_fiery() const
     return false;
 }
 
+// BCADNOTE: Should liches be skeletal?
 bool player::is_skeletal() const
 {
-    return false;
+    return get_mutation_level(MUT_DRACONIAN_DEFENSE, true) && drac_colour == DR_BONE;
 }
 
 void player::shiftto(const coord_def &c)

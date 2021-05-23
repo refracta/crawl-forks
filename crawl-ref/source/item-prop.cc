@@ -105,7 +105,7 @@ static const armour_def Armour_prop[] =
     { ARM_CRYSTAL_PLATE_ARMOUR, "crystal plate",         14, -230,   800,
         EQ_BODY_ARMOUR, SIZE_SMALL, SIZE_MEDIUM, false, ARMF_NO_FLAGS, 500 },
 
-    { ARM_TROLL_LEATHER_ARMOUR, "troll leather",  4,  -40,    150,
+    { ARM_TROLL_LEATHER_ARMOUR, "troll leather",          4,  -40,    150,
        EQ_BODY_ARMOUR, SIZE_LITTLE, SIZE_GIANT, false, ARMF_REGENERATION, 25 },
 
     { ARM_DEEP_TROLL_LEATHER_ARMOUR, "deep troll leather",  7,  -100,    200,
@@ -114,7 +114,7 @@ static const armour_def Armour_prop[] =
     { ARM_IRON_TROLL_LEATHER_ARMOUR, "iron troll leather",  11, -180,    250,
        EQ_BODY_ARMOUR, SIZE_LITTLE, SIZE_GIANT, false, ARMF_REGENERATION, 25 },
 
-    { ARM_SALAMANDER_HIDE_ARMOUR, "salamander hide", 4, -50, 250,
+    { ARM_SALAMANDER_HIDE_ARMOUR, "salamander hide",      4, -50, 250,
        EQ_BODY_ARMOUR, SIZE_LITTLE, SIZE_GIANT, false, ARMF_RES_FIRE | ARMF_BERSERK, 25},
 
     { ARM_CLOAK,                "cloak",                  1,   0,   45,

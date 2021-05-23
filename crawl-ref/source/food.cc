@@ -45,17 +45,13 @@
 static void _describe_food_change(int hunger_increment);
 static void _heal_from_food(int hp_amt);
 
-void make_hungry(int hunger_amount, bool suppress_msg,
-                 bool magic)
+void make_hungry(int hunger_amount, bool suppress_msg)
 {
     if (crawl_state.disables[DIS_HUNGER])
         return;
 
     if (you_foodless())
         return;
-
-    if (magic)
-        hunger_amount = calc_hunger(hunger_amount);
 
     if (hunger_amount == 0 && !suppress_msg)
         return;

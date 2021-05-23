@@ -562,7 +562,8 @@ static int _count_digits(int val)
 static const equipment_type e_order[] =
 {
     EQ_WEAPON0, EQ_WEAPON1, EQ_BODY_ARMOUR, EQ_HELMET, EQ_CLOAK,
-    EQ_GLOVES, EQ_BARDING, EQ_BOOTS, EQ_CYTOPLASM, EQ_AMULET, 
+    EQ_GLOVES, EQ_BARDING, EQ_BOOTS, EQ_JIYVA0, EQ_JIYVA1, EQ_JIYVA2,
+    EQ_JIYVA3, EQ_JIYVA4, EQ_JIYVA5, EQ_JIYVA6, EQ_CYTOPLASM, EQ_AMULET, 
     EQ_LEFT_RING, EQ_RIGHT_RING, EQ_FAIRY_JEWEL, EQ_RING_ONE, 
     EQ_RING_TWO, EQ_RING_THREE, EQ_RING_FOUR, EQ_RING_FIVE, 
     EQ_RING_SIX, EQ_RING_SEVEN, EQ_RING_EIGHT, 
@@ -1888,7 +1889,7 @@ const char *equip_slot_to_name(int equip)
         return "Ring";
     }
 
-    if (equip >= EQ_JIYVA0)
+    if (equip >= EQ_FIRST_MORPH && equip <= EQ_LAST_MORPH)
         return "Armour";
 
     if (equip == EQ_WEAPON1)
@@ -1967,12 +1968,37 @@ static string _stealth_bar(int sw)
 }
 static string _status_mut_rune_list(int sw);
 
+static int _skip_empties()
+{
+    if (!you.get_mutation_level(MUT_AMORPHOUS_BODY))
+        return 0;
+
+    int retval = 0;
+
+    for (int i = EQ_FIRST_MORPH; i <= EQ_LAST_MORPH; i++)
+    {
+        item_def * worn = you.slot_item(static_cast<equipment_type>(i));
+
+        if (worn)
+        {
+            equipment_type slot = get_armour_slot(static_cast<armour_type>(worn->sub_type));
+
+            if (slot == EQ_BODY_ARMOUR || slot == EQ_BARDING)
+                retval++;
+        }
+    }
+
+    return retval;
+}
+
 // helper for print_overview_screen
 static void _print_overview_screen_equip(column_composer& cols,
                                          vector<char>& equip_chars,
                                          int sw)
 {
     sw = min(max(sw, 79), 640);
+
+    int skip = _skip_empties();
 
     for (equipment_type eqslot : e_order)
     {
@@ -2016,6 +2042,23 @@ static void _print_overview_screen_equip(column_composer& cols,
 
         if (eqslot == EQ_BOOTS && !you_can_wear(eqslot) && you_can_wear(EQ_BARDING))
             continue;
+
+        if (eqslot >= EQ_MIN_ARMOUR && eqslot <= EQ_MAX_ARMOUR && you.get_mutation_level(MUT_AMORPHOUS_BODY))
+            continue;
+
+        if (eqslot >= EQ_FIRST_MORPH && eqslot <= EQ_LAST_MORPH)
+        {
+            if (!you.get_mutation_level(MUT_AMORPHOUS_BODY))
+                continue;
+
+            item_def * worn = you.slot_item(eqslot);
+
+            if (skip && !worn)
+            {
+                skip--;
+                continue;
+            }
+        }
 
         const string slot_name_lwr = lowercase_string(equip_slot_to_name(eqslot));
 

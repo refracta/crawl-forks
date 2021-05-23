@@ -646,7 +646,6 @@ public:
     int       has_fangs(bool allow_tran = true) const;
     int       has_tail(bool allow_tran = true) const;
     int       has_usable_tail(bool allow_tran = true) const;
-    bool      has_usable_offhand() const;
     int       has_usable_pseudopods(bool allow_tran = true) const;
     int       has_tentacles(bool allow_tran = true) const;
     int       usable_tentacles(bool allow_tran = true) const override;
@@ -1003,8 +1002,6 @@ int player_movement_speed();
 int player_hunger_rate();
 
 string player_name();
-
-int calc_hunger(int food_cost);
 
 int player_icemail_armour_class();
 int player_staff_shielding();

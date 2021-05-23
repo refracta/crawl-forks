@@ -522,7 +522,7 @@ static void _equip_weapon_effect(item_def& item, bool showMsgs, bool unmeld, equ
                 && !unmeld
                 && !you.wearing_ego(EQ_GLOVES, SPARM_WIELDING))
             {
-                make_hungry(4500, false, false);
+                make_hungry(4500, false);
             }
         }
     }
@@ -703,7 +703,7 @@ static void _equip_weapon_effect(item_def& item, bool showMsgs, bool unmeld, equ
                     && !unmeld
                     && !you.wearing_ego(EQ_GLOVES, SPARM_WIELDING))
                 {
-                    make_hungry(4500, false, false);
+                    make_hungry(4500, false);
                 }
                 break;
 
@@ -976,7 +976,7 @@ static void _wielding_wear_effects(bool unwield, bool unmeld)
                     mprf("You're filled with a deep hunger from your vampiric %s as it comes closer to your body!", wpn0.c_str());
                 else
                     mprf("You're filled with a deep hunger from your vampiric %s as you don your gloves!", wpn0.c_str());
-                make_hungry(4500, false, false);
+                make_hungry(4500, false);
             }
             else if (you.weapon(0) && is_unrandom_artefact(*you.weapon(0), UNRAND_MAJIN))
             {
@@ -984,7 +984,7 @@ static void _wielding_wear_effects(bool unwield, bool unmeld)
                     mpr("You're filled with a deep hunger from the Majin-Bo as it comes closer to your body!");
                 else
                     mpr("You're filled with a deep hunger from the Majin-Bo as you don your gloves!");
-                make_hungry(4500, false, false);
+                make_hungry(4500, false);
             }
 
             if (you.wearing_ego(EQ_WEAPON1, SPWPN_VAMPIRISM))
@@ -994,9 +994,9 @@ static void _wielding_wear_effects(bool unwield, bool unmeld)
                 else
                     mprf("You're filled with a deep hunger from your vampiric %s as you don your gloves!", wpn1.c_str());
                 if (you.hunger >= 5000)
-                    make_hungry(4500, false, false);
+                    make_hungry(4500, false);
                 else
-                    make_hungry(you.hunger - 500, false, false);
+                    make_hungry(you.hunger - 500, false);
                     // Two of these in a row can outright kill a player. This is a failsafe.
             }
 
@@ -1007,9 +1007,9 @@ static void _wielding_wear_effects(bool unwield, bool unmeld)
                 else
                     mpr("You're filled with a deep hunger from the Majin-Bo as you don your gloves!");
                 if (you.hunger >= 5000)
-                    make_hungry(4500, false, false);
+                    make_hungry(4500, false);
                 else
-                    make_hungry(you.hunger - 500, false, false);
+                    make_hungry(you.hunger - 500, false);
                 // Two of these in a row can outright kill a player. This is a failsafe.
             }
         }

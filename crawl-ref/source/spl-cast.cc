@@ -1117,9 +1117,9 @@ bool cast_a_spell(bool check_range, spell_type spell)
     if (!staff_energy && you.undead_state() != US_UNDEAD)
     {
         const int spellh = spell_hunger(spell);
-        if (calc_hunger(spellh) > 0)
+        if (spellh > 0)
         {
-            make_hungry(spellh, true, true);
+            make_hungry(spellh, true);
             learned_something_new(HINT_SPELL_HUNGER);
         }
     }

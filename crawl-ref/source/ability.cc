@@ -3834,7 +3834,7 @@ static void _pay_ability_costs(const ability_def& abil)
         dec_hp(hp_cost, false);
 
     if (food_cost)
-        make_hungry(food_cost, false, true);
+        make_hungry(food_cost, false);
 
     if (piety_cost)
         lose_piety(piety_cost);

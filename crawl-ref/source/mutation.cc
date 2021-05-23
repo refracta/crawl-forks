@@ -1803,7 +1803,7 @@ static bool _is_suppressable_mutation(mutation_type mut)
     case MUT_CORE_MELDING:
     case MUT_CYTOPLASMIC_SUSPENSION:
     case MUT_GELATINOUS_TAIL:
-    case MUT_LIMB_MORPHING:
+    case MUT_AMORPHOUS_BODY:
     case MUT_TENDRILS:
     // Silencing a Silent Spectre would be too brutal.
     case MUT_SILENT_CAST:
@@ -2105,7 +2105,7 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
             gain_msg = false;
             break;
 
-        case MUT_LIMB_MORPHING:
+        case MUT_AMORPHOUS_BODY:
             _transpose_gear();
             break;
 
@@ -2236,7 +2236,7 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
             break;
 
         case MUT_DEFORMED:
-            if (cur_base_level > 1)
+            if (cur_base_level > 1 && !you.get_mutation_level(MUT_CORE_MELDING))
             {
                 remove_one_equip(EQ_BODY_ARMOUR, false, true);
                 // Recheck Ashenzari bondage in case our available slots changed.
@@ -2342,7 +2342,7 @@ static bool _post_loss_effects(mutation_type mutat)
         _unmutate_stats();
         break;
 
-    case MUT_LIMB_MORPHING:
+    case MUT_AMORPHOUS_BODY:
         _return_gear();
         break;
 
@@ -3123,8 +3123,11 @@ string mutation_desc(mutation_type mut, int level, bool colour,
 
             const bool extra = you.get_base_mutation_level(mut, false, true, true) > 0;
 
-            if (fully_inactive || (mut == MUT_COLD_BLOODED && player_res_cold(false) > 0))
+            if (fully_inactive || (mut == MUT_COLD_BLOODED && player_res_cold(false) > 0)
+                || (mut == MUT_DEFORMED && you.get_mutation_level(MUT_CORE_MELDING) || you.get_mutation_level(MUT_AMORPHOUS_BODY)))
+            {
                 colourname = "darkgrey";
+            }
             else if (is_sacrifice)
                 colourname = "lightred";
             else if (partially_active)

@@ -836,7 +836,19 @@ void ArmourOnDelay::finish()
     if (is_artefact(armour))
         armour.flags |= ISFLAG_NOTED_ID;
 
-    const equipment_type eq_slot = get_armour_slot(armour);
+    equipment_type eq_slot = get_armour_slot(armour);
+
+    if (you.get_mutation_level(MUT_AMORPHOUS_BODY))
+    {
+        for (int i = EQ_FIRST_MORPH; i <= EQ_LAST_MORPH; i++)
+        {
+            eq_slot = static_cast<equipment_type>(i);
+            item_def * worn = you.slot_item(eq_slot);
+
+            if (!worn)
+                break;
+        }
+    }
 
 #ifdef USE_SOUND
     parse_sound(EQUIP_ARMOUR_SOUND);
@@ -876,8 +888,19 @@ bool EjectionDelay::invalidated()
 
 void ArmourOffDelay::finish()
 {
-    const equipment_type slot = get_armour_slot(armour);
-    ASSERT(you.equip[slot] == armour.link);
+    equipment_type slot = get_armour_slot(armour);
+
+    if (you.get_mutation_level(MUT_AMORPHOUS_BODY))
+    {
+        for (int i = EQ_FIRST_MORPH; i <= EQ_LAST_MORPH; i++)
+        {
+            slot = static_cast<equipment_type>(i);
+            item_def * worn = you.slot_item(slot);
+
+            if (worn && worn->link == armour.link)
+                break;
+        }
+    }
 
 #ifdef USE_SOUND
     parse_sound(DEQUIP_ARMOUR_SOUND);

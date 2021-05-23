@@ -1051,9 +1051,18 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
 
 bool item_is_worn(int inv_slot)
 {
-    for (int i = EQ_MIN_ARMOUR; i <= EQ_MAX_WORN; ++i)
-        if (inv_slot == you.equip[i])
-            return true;
+    if (you.get_mutation_level(MUT_AMORPHOUS_BODY))
+    {
+        for (int i = EQ_FIRST_MORPH; i <= EQ_LAST_MORPH; ++i)
+            if (inv_slot == you.equip[i])
+                return true;
+    }
+    else
+    {
+        for (int i = EQ_MIN_ARMOUR; i <= EQ_MAX_WORN; ++i)
+            if (inv_slot == you.equip[i])
+                return true;
+    }
 
     return false;
 }
@@ -1230,6 +1239,9 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
 
         return false;
     }
+
+    if (you.get_mutation_level(MUT_AMORPHOUS_BODY))
+        return true;
 
     const int sub_type = item.sub_type;
     const equipment_type slot = get_armour_slot(item);
@@ -1528,7 +1540,7 @@ static bool _jester_check(const item_def &item, const bool remove)
     return true;
 }
 
-static bool _can_takeoff_armour(int item);
+static bool _can_takeoff_armour(int item, bool do_jester = true);
 
 // Like can_wear_armour, but also takes into account currently worn equipment.
 // e.g. you may be able to *wear* that robe, but you can't equip it if your
@@ -1546,10 +1558,32 @@ static bool _can_equip_armour(const item_def &item)
     if (!_jester_check(item, false))
         return false;
 
-    const equipment_type slot = get_armour_slot(item);
-    const int equipped = you.equip[slot];
-    if (equipped != -1 && !_can_takeoff_armour(equipped))
-        return false;
+    if (you.get_mutation_level(MUT_AMORPHOUS_BODY))
+    {
+        int count = 0;
+        int unavailable = 0;
+        for (int i = EQ_FIRST_MORPH; i <= EQ_LAST_MORPH; i++)
+        {
+            count += 1;
+
+            item_def * worn = you.slot_item(static_cast<equipment_type>(i));
+
+            if (worn && !_can_takeoff_armour(worn->link, false))
+            {
+                equipment_type type = get_armour_slot(static_cast<armour_type>(worn->sub_type));
+                unavailable += (type == EQ_BODY_ARMOUR || type == EQ_BARDING) ? 2 : 1;
+            }
+        }
+        if (unavailable >= count)
+            return false;
+    }
+    else
+    {
+        const equipment_type slot = get_armour_slot(item);
+        const int equipped = you.equip[slot];
+        if (equipped != -1 && !_can_takeoff_armour(equipped))
+            return false;
+    }
     return can_wear_armour(item, true, false);
 }
 
@@ -1621,19 +1655,66 @@ bool wear_armour(int item)
         return false;
     }
 
-    bool swapping = false;
+    int swapping = 0;
     const equipment_type slot = get_armour_slot(invitem);
-    if ((slot == EQ_CLOAK
-           || slot == EQ_HELMET
-           || slot == EQ_GLOVES
-           || slot == EQ_BOOTS
-           || slot == EQ_BODY_ARMOUR
-           || slot == EQ_BARDING)
-        && you.equip[slot] != -1)
+
+    if (you.get_mutation_level(MUT_AMORPHOUS_BODY))
     {
-        if (!takeoff_armour(you.equip[slot]))
-            return false;
-        swapping = true;
+        int free_slots = 0;
+        for (int i = EQ_FIRST_MORPH; i <= EQ_LAST_MORPH; i++)
+        {
+            item_def * worn = you.slot_item(static_cast<equipment_type>(i));
+
+            if (!worn)
+            {
+                free_slots++;
+                continue;
+            }
+
+            const equipment_type wslot = get_armour_slot(static_cast<armour_type>(worn->sub_type));
+            if (wslot == EQ_BODY_ARMOUR || wslot == EQ_BARDING)
+                free_slots--;
+        }
+
+        while (free_slots < ((slot == EQ_BODY_ARMOUR || slot == EQ_BARDING) ? 2 : 1))
+        {
+            if (crawl_state.seen_hups)
+                return false;
+
+            mprf("You can't put this on without taking something off first.");
+
+            int remov = prompt_invent_item("Take off which item?", menu_type::invlist,
+                            OBJ_ARMOURS, OPER_TAKEOFF, invprompt_flag::no_warning);
+
+            if (prompt_failed(remov))
+                return false;
+
+            if (!takeoff_armour(remov))
+                return false;
+
+            equipment_type rslot = get_armour_slot(you.inv[remov]);
+
+            if (rslot == EQ_BODY_ARMOUR || rslot == EQ_BARDING)
+                free_slots++;
+
+            free_slots++;
+            swapping++;
+        }
+    }
+    else
+    {
+        if ((slot == EQ_CLOAK
+            || slot == EQ_HELMET
+            || slot == EQ_GLOVES
+            || slot == EQ_BOOTS
+            || slot == EQ_BODY_ARMOUR
+            || slot == EQ_BARDING)
+            && you.equip[slot] != -1)
+        {
+            if (!takeoff_armour(you.equip[slot]))
+                return false;
+            swapping++;
+        }
     }
 
     you.turn_is_over = true;
@@ -1646,12 +1727,12 @@ bool wear_armour(int item)
 
     const int delay = armour_equip_delay(invitem);
     if (delay)
-        start_delay<ArmourOnDelay>(delay - (swapping ? 0 : 1), invitem);
+        start_delay<ArmourOnDelay>(delay + swapping - 1, invitem);
 
     return true;
 }
 
-static bool _can_takeoff_armour(int item)
+static bool _can_takeoff_armour(int item, bool do_jester)
 {
     const item_def& invitem = you.inv[item];
     if (invitem.base_type != OBJ_ARMOURS)
@@ -1666,7 +1747,7 @@ static bool _can_takeoff_armour(int item)
         return false;
     }
 
-    if (!_jester_check(invitem, true))
+    if (do_jester && !_jester_check(invitem, true))
         return false;
 
     const equipment_type slot = get_armour_slot(invitem);
@@ -1707,30 +1788,6 @@ bool takeoff_armour(int item)
     // below 0, we should get confirmation.
     if (!_safe_to_remove_or_wear(invitem, true))
         return false;
-
-    const equipment_type slot = get_armour_slot(invitem);
-
-    // TODO: isn't this check covered above by the call to item_is_worn? The
-    // only way to return false inside this switch would be if the player is
-    // wearing a hat on their feet or something like that.
-    switch (slot)
-    {
-    case EQ_BODY_ARMOUR:
-    case EQ_CLOAK:
-    case EQ_HELMET:
-    case EQ_GLOVES:
-    case EQ_BOOTS:
-    case EQ_BARDING:
-        if (item != you.equip[slot])
-        {
-            mpr("You aren't wearing that!");
-            return false;
-        }
-        break;
-
-    default:
-        break;
-    }
 
     you.turn_is_over = true;
 
