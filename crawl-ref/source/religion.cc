@@ -1156,8 +1156,14 @@ static mutation_type _choose_gift()
         if (current >= max)
             continue;
 
-        if ((max > 1) && (current + 1 == max) && you.get_mutation_level(MUT_SLIME, false) < 3)
+        if (you.get_mutation_level(MUT_SLIME, false) < 3
+            && (((max > 1) && (current + 1 == max)) 
+            || mut == MUT_CYTOPLASMIC_SUSPENSION || mut == MUT_AMORPHOUS_BODY
+            || mut == MUT_TENDRILS || mut == MUT_ARM_MORPH
+            || mut == MUT_CORE_MELDING || mut == MUT_GELATINOUS_TAIL))
+        {
             return MUT_SLIME;
+        }
 
         return mut;
     }
