@@ -1184,7 +1184,7 @@ static bool _jiyva_mutate()
     }
     case 3:
         if (you.how_mutated())
-            return delete_mutation(one_chance_in(3) ? RANDOM_MUTATION : RANDOM_BAD_MUTATION, "Jiyva's grace", true, false, true);
+            return delete_mutation(RANDOM_MUTATION, "Jiyva's grace", true, false, true);
         // else fallthrough.
     default: // 1, 2 and fallthroughs.
         return mutate(one_chance_in(3) ? RANDOM_MUTATION : RANDOM_GOOD_MUTATION, "Jiyva's grace", true, false, true);

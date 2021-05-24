@@ -1643,6 +1643,50 @@ bool undead_mutation_rot(bool god_gift)
     return !god_gift && !you.can_safely_mutate();
 }
 
+static string _pseudopod_message(bool gain)
+{
+    string brand = "Buggy";
+    string effect = "";
+    switch (you.pseudopod_brand)
+    {
+    case SPWPN_MOLTEN:
+        brand = "Scorching";
+        effect = "dousing the target in sticky flames.";
+        break;
+    case SPWPN_ACID:
+        brand = "Corrosive";
+        break;
+    case SPWPN_ELECTROCUTION:
+        brand = "Electrifying";
+        effect = "malmutating the target.";
+        break;
+    case SPWPN_VENOM:
+        brand = "Noxious";
+        effect = "slowing targets, who aren't immune to poison.";
+        break;
+    case SPWPN_VAMPIRISM:
+        brand = "Vampiric";
+        if (!you_foodless(false))
+            effect = "feeding you.";
+        break;
+    default:
+        break;
+    }
+    ostringstream ostr;
+    const mutation_def& mdef = _get_mutation_def(MUT_PSEUDOPODS);
+    // Assumes no species has a unique message for this.
+    ostr << brand.c_str();
+    if (gain)
+        ostr << mdef.gain[0];
+    else
+        ostr << mdef.have[0];
+    if (effect.length() && !gain)
+        ostr << ", sometimes " << effect.c_str();
+    else
+        ostr << ".";
+    return ostr.str();
+}
+
 static species_mutation_message _spmut_msg(mutation_type mutat)
 {
     for (unsigned int i = 0; i < spmu_length; ++i)
@@ -2104,6 +2148,11 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
 
         case MUT_AMORPHOUS_BODY:
             _transpose_gear();
+            break;
+
+        case MUT_PSEUDOPODS:
+            mprf(MSGCH_MUTATION, "%s", _pseudopod_message(true).c_str());
+            gain_msg = false;
             break;
 
         case MUT_HALF_DEATH:
@@ -2951,43 +3000,7 @@ string mutation_desc(mutation_type mut, int level, bool colour,
             base_msg.c_str(), you.mutation[mut] > 1 ? "\nYou exude an unnatural aura that makes creatures very uncomfortable and unable to regenerate." : "");
     }
     else if (mut == MUT_PSEUDOPODS)
-    {
-        string brand = "Buggy";
-        string effect = "";
-        switch (you.pseudopod_brand)
-        {
-        case SPWPN_MOLTEN:
-            brand = "Scorching";
-            effect = "dousing the target in sticky flames.";
-            break;
-        case SPWPN_ACID:
-            brand = "Corrosive";
-            break;
-        case SPWPN_ELECTROCUTION:
-            brand = "Electrifying";
-            effect = "malmutating the target.";
-            break;
-        case SPWPN_VENOM:
-            brand = "Noxious";
-            effect = "slowing targets, who aren't immune to poison.";
-            break;
-        case SPWPN_VAMPIRISM:
-            brand = "Vampiric";
-            if (!you_foodless(false))
-                effect = "feeding you.";
-            break;
-        default:
-            break;
-        }
-        ostringstream ostr;
-        // Assumes no species has a unique message for this.
-        ostr << brand.c_str() << mdef.have[0];
-        if (effect.length())
-            ostr << ", sometimes " << effect.c_str();
-        else
-            ostr << ".";
-        result = ostr.str();
-    }
+        result = _pseudopod_message(false);
     else if (mut == MUT_ICEMAIL)
     {
         ostringstream ostr;
@@ -3144,6 +3157,8 @@ string mutation_desc(mutation_type mut, int level, bool colour,
             }
             else if (is_sacrifice)
                 colourname = "lightred";
+            else if (is_slime_mutation(mut))
+                colourname = partially_active ? "lightgreen" : "green";
             else if (partially_active)
                 colourname = demonspawn ? "yellow"    : "blue";
             else if (extra)
@@ -3157,8 +3172,6 @@ string mutation_desc(mutation_type mut, int level, bool colour,
             colourname = "brown";
         else if (you.form == transformation::appendage && you.attribute[ATTR_APPENDAGE] == mut)
             colourname = "lightgreen";
-        else if (is_slime_mutation(mut))
-            colourname = "green";
         else if (temporary)
             colourname = (you.get_base_mutation_level(mut, true, false, true) > 0) ?
                          "lightmagenta" : "magenta";
