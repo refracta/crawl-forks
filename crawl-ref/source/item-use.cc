@@ -1232,7 +1232,7 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
 {
     const object_class_type base_type = item.base_type;
 
-    if (base_type != OBJ_ARMOURS || you.species == SP_FELID || you.species == SP_FAIRY)
+    if (base_type != OBJ_ARMOURS)
     {
         if (verbose)
             mpr("You can't wear that.");
@@ -1245,6 +1245,18 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
 
     const int sub_type = item.sub_type;
     const equipment_type slot = get_armour_slot(item);
+
+    // Jiyva override!
+    if (you.get_mutation_level(MUT_CORE_MELDING) && slot == EQ_BODY_ARMOUR)
+        return true;
+
+    if (you.species == SP_FELID || you.species == SP_FAIRY)
+    {
+        if (verbose)
+            mpr("You can't wear that.");
+
+        return false;
+    }
 
     if (you.get_mutation_level(MUT_DEFORMED) > 1 && slot == EQ_BODY_ARMOUR)
     {
@@ -1595,7 +1607,7 @@ bool wear_armour(int item)
     // conditions that would make it impossible to wear any type of armour.
     // TODO: perhaps also worth checking here whether all available armour slots
     // are cursed. Same with jewellery.
-    if (you.species == SP_FELID || you.species == SP_FAIRY)
+    if ((you.species == SP_FELID || you.species == SP_FAIRY) && !you.get_mutation_level(MUT_CORE_MELDING))
     {
         mpr("You can't wear anything.");
         return false;
@@ -2591,7 +2603,7 @@ static int _subsumption_delay(const item_def & item)
     case OBJ_STAVES:
     case OBJ_WEAPONS:
     case OBJ_SHIELDS:
-        return                   !can_wield(&item) ? 7 :
+        return      !can_wield(&item, false, true) ? 7 :
                (you.hands_reqd(item) == HANDS_TWO) ? 5
                                                    : 3;
     default: // Nothing should get here.

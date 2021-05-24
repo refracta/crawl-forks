@@ -1176,6 +1176,14 @@ static const mutation_def mut_data[] =
    "Your connection to magical radiation recedes."},
 },
 
+{ MUT_CORE_MELDING, 0, 1, mutflag::good | mutflag:: jiyva, true,
+  "core melding",
+
+   { "The liquid core of your body molds to fit into any body armour near perfectly. (Reduced Encumberance from Armour).", "", "" },
+   { "The core of your form feels very pliable.", "", "" },
+   { "Your core feels rigid.", "", "" },
+},
+
 { MUT_ACIDIC_BITE, 3, 1, mutflag::good, true,
   "acidic bite",
 

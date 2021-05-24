@@ -2956,6 +2956,9 @@ static void tag_read_you(reader &th)
         you.mutated_stats[STAT_DEX] = 0 + you.get_mutation_level(MUT_AGILE)  - you.get_mutation_level(MUT_SILENCE_AURA);
         you.mutation[MUT_STATS] = div_round_up((abs(you.mutated_stats[STAT_STR]) + abs(you.mutated_stats[STAT_INT]) + abs(you.mutated_stats[STAT_DEX])), 10);
 
+        if (you.species == SP_FAIRY && you.religion == GOD_JIYVA)
+            you.religion = GOD_NO_GOD; // Soft excommunicate since Jiyva makes no sense for Fairy now.
+
         if (you.species == SP_MERFOLK)
             you.mutation[MUT_MERFOLK_TAIL] = you.innate_mutation[MUT_MERFOLK_TAIL] = 1;
 
@@ -2977,16 +2980,7 @@ static void tag_read_you(reader &th)
         if (you.species == SP_BARACHI)
             you.mutation[MUT_DAYSTRIDER] = you.innate_mutation[MUT_DAYSTRIDER] = 1;
 
-        bool slimy = false;
-        for (int i = 0; i < NUM_MUTATIONS; ++i)
-        {
-            if (is_slime_mutation(static_cast<mutation_type>(i))
-                && you.has_mutation(static_cast<mutation_type>(i)))
-            {
-                slimy = true;
-                you.mutation[i] = you.innate_mutation[i] = 0;
-            }
-        }
+        const bool slimy = remove_slime_mutations();
         if (slimy)
             mprf(MSGCH_ERROR, "Resetting old Jiyva Mutations. . .");
         _cap_mutation_at(MUT_SHOUTITUS, 1);

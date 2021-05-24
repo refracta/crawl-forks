@@ -343,61 +343,6 @@ static void _abyss_speed(int /*time_delta*/)
         --you.abyss_speed;
 }
 
-static void _jiyva_effects(int /*time_delta*/)
-{
-    if (have_passive(passive_t::jellies_army) && one_chance_in(10))
-    {
-        int total_jellies = 1 + random2(5);
-        bool success = false;
-        for (int num_jellies = total_jellies; num_jellies > 0; num_jellies--)
-        {
-            // Spread jellies around the level.
-            coord_def newpos;
-            do
-            {
-                newpos = random_in_bounds();
-            }
-            while (grd(newpos) != DNGN_FLOOR
-                       && grd(newpos) != DNGN_SHALLOW_WATER
-                   || monster_at(newpos)
-                   || cloud_at(newpos)
-                   || testbits(env.pgrid(newpos), FPROP_NO_JIYVA));
-
-            mgen_data mg(MONS_JELLY, BEH_STRICT_NEUTRAL, newpos);
-            mg.god = GOD_JIYVA;
-            mg.non_actor_summoner = "Jiyva";
-
-            if (create_monster(mg))
-                success = true;
-        }
-
-        if (success && !silenced(you.pos()))
-        {
-            switch (random2(3))
-            {
-                case 0:
-                    simple_god_message(" gurgles merrily.");
-                    break;
-                case 1:
-                    mprf(MSGCH_SOUND, "You hear %s splatter%s.",
-                         total_jellies > 1 ? "a series of" : "a",
-                         total_jellies > 1 ? "s" : "");
-                    break;
-                case 2:
-                    simple_god_message(" says: Divide and consume!");
-                    break;
-            }
-        }
-    }
-
-    if (have_passive(passive_t::fluid_stats)
-        && x_chance_in_y(you.piety / 4, MAX_PIETY)
-        && !player_under_penance() && one_chance_in(4))
-    {
-        jiyva_stat_action();
-    }
-}
-
 static void _evolve(int /*time_delta*/)
 {
     if (int lev = you.get_mutation_level(MUT_EVOLUTION))
@@ -465,7 +410,9 @@ static struct timed_effect timed_effects[] =
     { nullptr,                         0,     0, false },
 #endif
     { _abyss_speed,                  100,   300, false },
-    { _jiyva_effects,                100,   300, false },
+#if TAG_MAJOR_VERSION == 34
+    { nullptr,                       100,   300, false },
+#endif
     { _evolve,                      5000, 15000, false },
 #if TAG_MAJOR_VERSION == 34
     { nullptr,                         0,     0, false },

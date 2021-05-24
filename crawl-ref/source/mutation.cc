@@ -1640,10 +1640,7 @@ static bool _resist_mutation(mutation_permanence_class mutclass,
  */
 bool undead_mutation_rot(bool god_gift)
 {
-    if (god_gift || you_worship(GOD_JIYVA))
-        return false;
-
-    return !you.can_safely_mutate();
+    return !god_gift && !you.can_safely_mutate();
 }
 
 static species_mutation_message _spmut_msg(mutation_type mutat)
@@ -2624,6 +2621,23 @@ bool delete_all_mutations(const string &reason)
     you.attribute[ATTR_TEMP_MUT_XP] = 0;
 
     return !you.how_mutated();
+}
+
+bool remove_slime_mutations()
+{
+    bool ret = false;
+    for (int i = 0; i < NUM_MUTATIONS; ++i)
+    {
+        const mutation_type mut = static_cast<mutation_type>(i);
+        if (is_slime_mutation(mut) && you.has_mutation(mut))
+        {
+            ret = true;
+            you.innate_mutation[i] = 0;
+            while (_delete_single_mutation_level(mut, "Jiyva's retribution", true))
+                ; // for the messages
+        }
+    }
+    return ret;
 }
 
 /*

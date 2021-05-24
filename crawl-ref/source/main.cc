@@ -1518,7 +1518,7 @@ static void _experience_check()
 
 static void _do_remove_armour()
 {
-    if (you.species == SP_FELID)
+    if (you.species == SP_FELID && !you.get_mutation_level(MUT_CORE_MELDING))
     {
         mpr("You can't remove your fur, sorry.");
         return;

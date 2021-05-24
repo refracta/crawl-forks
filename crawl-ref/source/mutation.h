@@ -56,6 +56,7 @@ bool delete_mutation(mutation_type which_mutation, const string &reason,
                      bool disallow_mismatch = false);
 
 bool delete_all_mutations(const string &reason);
+bool remove_slime_mutations();
 
 const char* mutation_name(mutation_type mut, bool allow_category = false, bool for_display = false);
 const char* category_mutation_name(mutation_type mut);

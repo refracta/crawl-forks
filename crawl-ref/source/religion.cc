@@ -1139,22 +1139,56 @@ static int _preferably_unseen_item(const vector<int> &item_types,
 }
 #endif
 
+static mutation_type _choose_gift()
+{
+    if (you.num_current_gifts[you.religion] == 0)
+        return MUT_SLIME;
+
+    vector<mutation_type> local = you.jiyva_mut_set;
+    shuffle_array(local);
+
+    for (int i = 0; i <= (int)local.size(); i++)
+    {
+        const mutation_type mut = local[i];
+        const int max = mutation_max_levels(mut);
+        const int current = you.get_mutation_level(mut, false);
+
+        if (current >= max)
+            continue;
+
+        if ((max > 1) && (current + 1 == max) && you.get_mutation_level(MUT_SLIME, false) < 3)
+            return MUT_SLIME;
+
+        return mut;
+    }
+
+    // if we've made it here we've finished our mut set out.
+    return MUT_NON_MUTATION;
+}
+
 static bool _jiyva_mutate()
 {
     simple_god_message(" alters your body.");
 
-    const int rand = random2(100);
+    const int rand = !(you.num_current_gifts[you.religion] % 6) ? 0 : random2(4);
 
-    if (rand < 5)
-        return delete_mutation(RANDOM_SLIME_MUTATION, "Jiyva's grace", true, false, true);
-    else if (rand < 30)
-        return delete_mutation(RANDOM_NON_SLIME_MUTATION, "Jiyva's grace", true, false, true);
-    else if (rand < 55)
-        return mutate(RANDOM_MUTATION, "Jiyva's grace", true, false, true);
-    else if (rand < 75)
-        return mutate(RANDOM_SLIME_MUTATION, "Jiyva's grace", true, false, true);
-    else
-        return mutate(RANDOM_GOOD_MUTATION, "Jiyva's grace", true, false, true);
+    switch (rand)
+    {
+    case 0:
+    {
+        const mutation_type gift = _choose_gift();
+
+        if (gift != MUT_NON_MUTATION)
+            return mutate(_choose_gift(), "Jiyva's grace", true, false, true, true, MUTCLASS_INNATE);
+        // else fallthrough.
+    }
+    case 3:
+        if (you.how_mutated())
+            return delete_mutation(one_chance_in(3) ? RANDOM_MUTATION : RANDOM_BAD_MUTATION, "Jiyva's grace", true, false, true);
+        // else fallthrough.
+    default: // 1, 2 and fallthroughs.
+        return mutate(one_chance_in(3) ? RANDOM_MUTATION : RANDOM_GOOD_MUTATION, "Jiyva's grace", true, false, true);
+    }
 }
 
 static set<spell_type> _vehumet_eligible_gift_spells(set<spell_type> excluded_spells)
@@ -1444,20 +1478,30 @@ static bool _give_equipment_gift()
 
 static bool _gift_jiyva_gift(bool forced)
 {
+    // Possible gifts stat action (piety 2+)
+    // Random mutation or set Jiyva mutation (piety 3+)
+    // Cure bad mutation (piety 3+)
+
     if (forced || you.piety >= piety_breakpoint(2)
                   && random2(you.piety) > 50
-                  && one_chance_in(4) && !you.gift_timeout
-                  && (you.can_safely_mutate() || you.get_mutation_level(MUT_INSUBSTANTIAL) == 1))
+                  && one_chance_in(4) && !you.gift_timeout)
     {
-        if (_jiyva_mutate())
+        bool mut = false;
+        if (you.piety >= piety_breakpoint(3) && 
+            one_chance_in(3) || !(you.num_current_gifts[you.religion] % 4))
         {
-            inc_gift_timeout(15 + roll_dice(2, 4));
-            you.num_current_gifts[you.religion]++;
-            you.num_total_gifts[you.religion]++;
-            return true;
+            mut = _jiyva_mutate();
+            if (mut)
+                inc_gift_timeout(18 + roll_dice(3, 4));
         }
-        else
-            mpr("You feel as though nothing has changed.");
+        if (!mut)
+        {
+            inc_gift_timeout(6 + random2(3));
+            jiyva_stat_action();
+        }
+        you.num_current_gifts[you.religion]++;
+        you.num_total_gifts[you.religion]++;
+        return true;
     }
     return false;
 }
@@ -1688,16 +1732,6 @@ static bool _is_plant_follower(const monster* mon)
 {
     return mon->alive() && mons_is_plant(*mon)
            && mon->attitude == ATT_FRIENDLY;
-}
-
-static bool _has_jelly()
-{
-    ASSERT(you_worship(GOD_JIYVA));
-
-    for (monster_iterator mi; mi; ++mi)
-        if (mons_is_god_gift(**mi, GOD_JIYVA))
-            return true;
-    return false;
 }
 
 bool is_follower(const monster& mon)
@@ -3066,11 +3100,8 @@ void excommunication(bool voluntary, god_type new_god)
             add_daction(DACT_ALLY_SLIME);
         }
 
-        if (!you.can_safely_mutate(false))
-        {
+        if (remove_slime_mutations())
             mprf("Your slimy mutations fade away.");
-            delete_all_mutations("Jiyva's Vengence");
-        }
 
         break;
 
@@ -3333,9 +3364,10 @@ bool player_can_join_god(god_type which_god)
         return false;
 
     // Fairies natural halo cuts them out of Dith; lack of melee cuts them out of Trog, Oka and Wu.
-    // Being considered "Holy" cuts them out of Yred.
+    // Being considered "Holy" cuts them out of Yred. Too much of new Jiyva doesn't work with fairy.
     if (you.species == SP_FAIRY && (which_god == GOD_DITHMENOS || which_god == GOD_TROG 
-        || which_god == GOD_OKAWARU || which_god == GOD_WU_JIAN || which_god == GOD_YREDELEMNUL))
+        || which_god == GOD_OKAWARU || which_god == GOD_WU_JIAN || which_god == GOD_YREDELEMNUL
+        || which_god == GOD_JIYVA))
         return false;
 
     if (which_god == GOD_GOZAG && you.gold < gozag_service_fee())
@@ -3703,30 +3735,70 @@ static void _join_hepliaklqana()
                                     mg.mname.c_str()).c_str());
 }
 
+static mutation_type _choose_passive_slot(mutation_type active, mutation_type passive)
+{
+    mutation_type ret = passive;
+
+    while (ret == passive)
+    {
+        // Not REALLY weighted; just using weights add in booleans.
+        ret = random_choose_weighted(                                           1, MUT_PROTOPLASM,
+                                                                                1, MUT_MISSILE_GUARD,
+                                                                                1, MUT_HALF_DEATH,
+                                           active == MUT_TRANSLUCENT_SKIN ? 0 : 1, MUT_RADIOSYNTHESIS,
+                                           active == MUT_BUDDING_EYEBALLS ? 0 : 1, MUT_GOLDEN_EYEBALLS,
+            you.get_mutation_level(MUT_UNBREATHING) || you.undead_state() ? 0 : 1, MUT_SKIN_BREATHING,
+                          active == MUT_MELT || active == MUT_FROST_BURST ? 0 : 1, MUT_CYTOPLASM_TRAP);
+    }
+
+    return ret;
+}
+
 void jiyva_setup()
 {
     if (you.pseudopod_brand != SPWPN_NORMAL)
         return;
 
+    if (you.species == SP_FAIRY)
+        return;
+
     you.pseudopod_brand = random_choose(SPWPN_ACID, SPWPN_MOLTEN, SPWPN_VAMPIRISM, SPWPN_VENOM, SPWPN_ELECTROCUTION);
 
-    // BCADDO: Mutation set setup here!.
+    int wear_count = 0;
+
+    for (int i = EQ_MIN_ARMOUR; i <= EQ_MAX_ARMOUR; i++)
+    {
+        if (you_can_wear(static_cast<equipment_type>(i)))
+            wear_count++;
+    }
+
+    vector<mutation_type> set;
+    const mutation_type active_slot_mut = random_choose(MUT_TRANSLUCENT_SKIN, MUT_BUDDING_EYEBALLS, MUT_MELT, 
+                                                        MUT_ACID_WAVE, MUT_FROST_BURST, MUT_JIBBERING_MAWS);
+    const mutation_type passive_slot0 = _choose_passive_slot(active_slot_mut, MUT_NON_MUTATION);
+
+    set.push_back(_choose_passive_slot(active_slot_mut, passive_slot0));
+    set.push_back(active_slot_mut);
+    set.push_back(passive_slot0);
+    set.push_back(MUT_PSEUDOPODS);
+
+        // BCADNOTE: I was trying to avoid directly checking felidness, but there wasn't anything else to check that lined up right.
+        // Not REALLY weighted; just using weights add in booleans.
+    set.push_back(random_choose_weighted(1, MUT_CYTOPLASMIC_SUSPENSION,
+                                         1, MUT_CORE_MELDING,
+                    wear_count < 4 ? 0 : 1, MUT_AMORPHOUS_BODY,
+           you.species == SP_FELID ? 0 : 1, MUT_ARM_MORPH, 
+        you.species == SP_OCTOPODE ? 0 : 1, MUT_TENDRILS, 
+          you_can_wear(EQ_BARDING) ? 0 : 1, MUT_GELATINOUS_TAIL));
+
+    shuffle_array(set);
+    you.jiyva_mut_set = set;
 }
 
 /// Setup when joining the gelatinous groupies of Jiyva.
 static void _join_jiyva()
 {
     jiyva_setup();
-
-    // Complimentary jelly upon joining.
-    if (_has_jelly())
-        return;
-
-    mgen_data mg(MONS_JELLY, BEH_STRICT_NEUTRAL, you.pos());
-    mg.set_summoned(&you, 0, 0, GOD_JIYVA);
-
-    delayed_monster(mg);
-    simple_god_message(" grants you a jelly!");
 }
 
 /// Setup when joining the sacred cult of Ru.

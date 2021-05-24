@@ -6701,6 +6701,9 @@ int player::unadjusted_body_armour_penalty() const
         }
     }
 
+    if (get_mutation_level(MUT_CORE_MELDING))
+        malus /= 3;
+
     int bonus = 0;
     if (get_mutation_level(MUT_STURDY_FRAME))
     {

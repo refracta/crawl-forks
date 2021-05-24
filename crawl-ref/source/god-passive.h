@@ -185,14 +185,11 @@ enum class passive_t
     /// You are immune to slime covered walls
     slime_wall_immune,
 
-    /// Jiyva protects you from corrosion
-    resist_corrosion,
-
-    /// Jiyva summons jellies to protect you
-    jellies_army,
-
     /// Jiyva adjusts your stats as needed.
     fluid_stats,
+
+    /// Jiyva turns you into a slime.
+    mutation_gifts,
 
     // You have a chance to spawn slimes when hit hard
     spawn_slimes_on_hit,

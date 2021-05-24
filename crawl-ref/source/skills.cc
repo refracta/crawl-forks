@@ -2103,7 +2103,11 @@ int species_apt(skill_type skill, species_type species)
     }
 
     if (_spec_skills[species][skill] == UNUSABLE_SKILL)
+    {
+        if (skill == SK_ARMOUR && (you.get_mutation_level(MUT_CORE_MELDING) || you.get_mutation_level(MUT_AMORPHOUS_BODY)))
+            return -1;
         return UNUSABLE_SKILL;
+    }
     return _spec_skills[species][skill] - you.get_mutation_level(MUT_UNSKILLED) + mod;
 }
 
