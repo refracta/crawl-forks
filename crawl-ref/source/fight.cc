@@ -209,7 +209,7 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
     {
         ASSERT(!crawl_state.game_is_arena());
 
-        if (you.species == SP_FAIRY)
+        if (you.species == SP_FAIRY && !you.duration[DUR_CONFUSING_TOUCH])
         {
             mpr("You're too small and insubstantial to effectively melee attack.");
             stop_running();
