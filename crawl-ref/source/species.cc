@@ -71,7 +71,7 @@ string display_sp_name()
 {
     if (you.get_mutation_level(MUT_SLIME) >= 3)
     {
-        if (you.undead_state())
+        if (you.undead_state() && you.undead_state() != US_SEMI_ALIVE)
         {
             if (you.is_insubstantial())
                 return "Ectoplasm";

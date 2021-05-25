@@ -111,6 +111,8 @@ static const char *skill_titles[NUM_SKILLS][6] =
     {"Evocations",     "Charlatan",     "Prestidigitator", "Fetichist",       "Evocator",       "Talismancer"},
 };
 
+static const char *slimy_fight_titles[6] =
+    {"Fighting", "Consumer", "Devourer", "Assimilator", "Voracious Slime", "Titanic Slime"};
 static const char *martial_arts_titles[6] =
     {"Unarmed Combat", "Insei", "Martial Artist", "Black Belt", "Sensei", "Grand Master"};
 static const char *claw_and_tooth_titles[6] =
@@ -1653,6 +1655,11 @@ string skill_title_by_rank(skill_type best_skill, uint8_t skill_rank,
                 else if (skill_rank == 5)
                     result = "Planerender";
             }
+            break;
+
+        case SK_FIGHTING:
+            if (you.get_mutation_level(MUT_SLIME) >= 2)
+                result = slimy_fight_titles[skill_rank];
             break;
 
         case SK_UNARMED_COMBAT:
