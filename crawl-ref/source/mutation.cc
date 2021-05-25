@@ -1009,9 +1009,12 @@ static int _calc_mutation_amusement_value(mutation_type which_mutation)
     return amusement;
 }
 
-static bool _accept_mutation(mutation_type mutat, bool ignore_weight = false)
+static bool _accept_mutation(mutation_type mutat, bool ignore_weight, bool temp)
 {
     if (!_is_valid_mutation(mutat))
+        return false;
+
+    if (temp && mutat == MUT_STATS)
         return false;
 
     if (physiology_mutation_conflict(mutat))
@@ -1085,7 +1088,7 @@ bool is_slime_mutation(mutation_type mut)
     return _mut_has_use(mut_data[mut_index[mut]], mutflag::jiyva);
 }
 
-static mutation_type _get_random_xom_mutation()
+static mutation_type _get_random_xom_mutation(bool temp)
 {
     mutation_type mutat = NUM_MUTATIONS;
 
@@ -1098,7 +1101,7 @@ static mutation_type _get_random_xom_mutation()
         else if (one_chance_in(5))
             mutat = _get_mut_with_use(mutflag::xom);
     }
-    while (!_accept_mutation(mutat, false));
+    while (!_accept_mutation(mutat, false, temp));
 
     return mutat;
 }
@@ -1108,7 +1111,7 @@ static mutation_type _get_random_qazlal_mutation()
     return _get_mut_with_use(mutflag::qazlal);
 }
 
-static mutation_type _get_random_mutation(mutation_type mutclass)
+static mutation_type _get_random_mutation(mutation_type mutclass, bool temp)
 {
     mutflag mt;
     switch (mutclass)
@@ -1133,7 +1136,7 @@ static mutation_type _get_random_mutation(mutation_type mutclass)
     for (int attempt = 0; attempt < 100; ++attempt)
     {
         mutation_type mut = _get_mut_with_use(mt);
-        if (_accept_mutation(mut, true))
+        if (_accept_mutation(mut, true, temp))
             return mut;
     }
 
@@ -2042,10 +2045,10 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
     case RANDOM_GOOD_MUTATION:
     case RANDOM_BAD_MUTATION:
     case RANDOM_CORRUPT_MUTATION:
-        mutat = _get_random_mutation(which_mutation);
+        mutat = _get_random_mutation(which_mutation, mutclass == MUTCLASS_TEMPORARY);
         break;
     case RANDOM_XOM_MUTATION:
-        mutat = _get_random_xom_mutation();
+        mutat = _get_random_xom_mutation(mutclass == MUTCLASS_TEMPORARY);
         break;
     case RANDOM_SLIME_MUTATION:
         mutat = _get_random_slime_mutation();
@@ -3129,6 +3132,12 @@ string mutation_desc(mutation_type mut, int level, bool colour,
     {
         const char* colourname = (MUT_BAD(mdef) ? "red" : "lightgrey");
         const bool permanent   = you.has_innate_mutation(mut);
+
+        if (mut == MUT_STATS)
+        {
+            if (you.mutated_stats[STAT_STR] + you.mutated_stats[STAT_INT] + you.mutated_stats[STAT_DEX] >= 0)
+                colourname = "lightgrey"; // Otherwise it was already set to red by the default.
+        }
 
         if (permanent)
         {

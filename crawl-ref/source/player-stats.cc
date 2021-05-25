@@ -419,9 +419,7 @@ static int _strength_modifier(bool innate_only)
         result += get_form()->str_mod;
     }
 
-    // mutations
-    if (!innate_only)
-        result += you.mutated_stats[STAT_STR];
+    result += you.mutated_stats[STAT_STR];
 
     return result;
 }
@@ -450,9 +448,7 @@ static int _int_modifier(bool innate_only)
         result += you.scan_artefacts(ARTP_INTELLIGENCE);
     }
 
-    // mutations
-    if (!innate_only)
-        result += you.mutated_stats[STAT_INT];
+    result += you.mutated_stats[STAT_INT];
 
     return result;
 }
@@ -484,11 +480,9 @@ static int _dex_modifier(bool innate_only)
         result += get_form()->dex_mod;
     }
 
-    // mutations
-    if (!innate_only)
-        result += you.mutated_stats[STAT_DEX];
+    result += you.mutated_stats[STAT_DEX];
 
-    if (_mut_level(MUT_THIN_SKELETAL_STRUCTURE, innate_only))
+    if (_mut_level(MUT_THIN_SKELETAL_STRUCTURE, false))
     {
         if (you.char_class == JOB_DEMONSPAWN)
             result += 3 + you.get_experience_level() / 3;
