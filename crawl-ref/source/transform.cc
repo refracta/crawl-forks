@@ -47,12 +47,12 @@ static const int EQF_NONE = 0;
 static const int EQF_HANDS = SLOTF(EQ_WEAPON0) | SLOTF(EQ_WEAPON1)
                              | SLOTF(EQ_GLOVES);
 // core body slots (statue form)
-static const int EQF_STATUE = SLOTF(EQ_GLOVES) | SLOTF(EQ_BOOTS)
+static const int EQF_STATUE = SLOTF(EQ_GLOVES) | SLOTF(EQ_BOOTS) | SLOTF(EQ_BARDING)
                               | SLOTF(EQ_BODY_ARMOUR);
 // more core body slots (Lear's Hauberk)
 static const int EQF_LEAR = EQF_STATUE | SLOTF(EQ_HELMET);
 // everything you can (W)ear
-static const int EQF_WEAR = EQF_LEAR | SLOTF(EQ_CLOAK) | SLOTF(EQ_WEAPON1);
+static const int EQF_WEAR = EQF_LEAR | SLOTF(EQ_CLOAK);
 // everything but jewellery
 static const int EQF_PHYSICAL = EQF_HANDS | EQF_WEAR;
 // all rings (except for the macabre finger amulet's)
@@ -60,7 +60,8 @@ static const int EQF_RINGS = SLOTF(EQ_LEFT_RING) | SLOTF(EQ_RIGHT_RING)
                              | SLOTF(EQ_RING_ONE) | SLOTF(EQ_RING_TWO)
                              | SLOTF(EQ_RING_THREE) | SLOTF(EQ_RING_FOUR)
                              | SLOTF(EQ_RING_FIVE) | SLOTF(EQ_RING_SIX)
-                             | SLOTF(EQ_RING_SEVEN) | SLOTF(EQ_RING_EIGHT);
+                             | SLOTF(EQ_RING_SEVEN) | SLOTF(EQ_RING_EIGHT)
+                             | SLOTF(EQ_RING_LEFT_TENDRIL) | SLOTF(EQ_RING_RIGHT_TENDRIL);
 // amulet & pal
 static const int EQF_AMULETS = SLOTF(EQ_AMULET) | SLOTF(EQ_RING_AMULET);
 // everything
@@ -128,9 +129,15 @@ bool Form::slot_available(int slot) const
         return !all_blocked(EQF_WEAR);
     if (slot == EQ_RINGS)
         return !all_blocked(EQF_RINGS);
+    if (slot == EQ_CYTOPLASM)
+        return true;
 
     if (slot == EQ_STAFF)
+    {
+        if (you.slot_item(EQ_CYTOPLASM)->base_type == OBJ_STAVES)
+            return true;
         slot = EQ_WEAPON0;
+    }
     return !(blocked_slots & SLOTF(slot));
 }
 
@@ -556,7 +563,7 @@ public:
     {
         if (you.species == SP_DEEP_DWARF && one_chance_in(10))
             return "You inwardly fear your resemblance to a lawn ornament.";
-        else if (you.species == SP_GARGOYLE)
+        else if (you.species == SP_GARGOYLE && previous_trans == transformation::none)
             return "Your body stiffens and grows slower.";
         else
             return Form::transform_message(previous_trans);
@@ -579,6 +586,8 @@ public:
         // This only handles lava orcs going statue -> stoneskin.
         if (you.species == SP_GARGOYLE)
             return "You revert to a slightly less stony form.";
+        else if (you.species == SP_LIGNIFITE)
+            return "You revert to your normal woody form.";
         return "You revert to your normal fleshy form.";
     }
 
@@ -1469,15 +1478,6 @@ static int _transform_duration(transformation which_trans, int pow)
     return get_form(which_trans)->get_duration(pow);
 }
 
-static int _beastly_appendage_level(int appendage)
-{
-    switch (appendage)
-    {
-    case MUT_HORNS: return 2;
-    default:        return 3;
-    }
-}
-
 /**
  * Print an appropriate message when the number of heads the player has
  * changes during a refresh of hydra form.
@@ -1521,7 +1521,7 @@ static void _print_head_change_message(int old_heads, int new_heads)
 undead_form_reason lifeless_prevents_form(transformation which_trans,
                                           bool involuntary)
 {
-    if (!you.undead_state(false))
+    if (!you.undead_state(false) || you.undead_state(false) == US_SEMI_ALIVE)
         return UFR_GOOD; // not undead!
 
     if (which_trans == transformation::none)
@@ -1541,22 +1541,14 @@ undead_form_reason lifeless_prevents_form(transformation which_trans,
     if (you.species == SP_DRACONIAN && which_trans == transformation::dragon)
         return UFR_GOOD;
 
-    if (you.species != SP_VAMPIRE)
-        return UFR_TOO_DEAD; // ghouls & mummies can't become anything else
-
-    if (which_trans == transformation::lich)
-        return UFR_TOO_DEAD; // vampires can never lichform
-
-    if (which_trans == transformation::bat) // can batform on satiated or below
+    if (you.undead_state(false) == US_SEMI_UNDEAD)
     {
-        if (involuntary)
-            return UFR_TOO_DEAD; // but not as a forced polymorph effect
-
-        return you.hunger_state <= HS_SATIATED ? UFR_GOOD : UFR_TOO_ALIVE;
+        if (which_trans == transformation::lich)
+            return UFR_TOO_DEAD;
+        return UFR_GOOD;
     }
 
-    // other forms can only be entered when satiated or above.
-    return you.hunger_state >= HS_SATIATED ? UFR_GOOD : UFR_TOO_DEAD;
+    return UFR_TOO_DEAD;
 }
 
 /**
@@ -1868,7 +1860,7 @@ bool transform(int pow, transformation which_trans, bool involuntary,
         {
             int app = you.attribute[ATTR_APPENDAGE];
             ASSERT(app != NUM_MUTATIONS);
-            you.mutation[app] = _beastly_appendage_level(app);
+            you.mutation[app] = 1;
         }
         break;
 
@@ -1977,7 +1969,7 @@ void untransform(bool skip_move)
         ASSERT(beastly_slot(app) != EQ_NONE);
         const int levels = you.get_base_mutation_level(app);
         // Preserve extra mutation levels acquired after transforming.
-        const int beast_levels = _beastly_appendage_level(app);
+        const int beast_levels = 1;
         const int extra = max(0, levels - you.get_innate_mutation_level(app)
                                         - beast_levels);
         you.mutation[app] = you.get_innate_mutation_level(app) + extra;
@@ -2034,22 +2026,6 @@ void untransform(bool skip_move)
     if (you.species == SP_MERFOLK)
         init_player_doll();
 #endif
-
-    // If nagas wear boots while transformed, they fall off again afterwards:
-    // I don't believe this is currently possible, and if it is we
-    // probably need something better to cover all possibilities.  -bwr
-
-    // Removed barding check, no transformed creatures can wear barding
-    // anyway.
-    // *coughs* Ahem, blade hands... -- jpeg
-    if (you.species == SP_NAGA || you.species == SP_CENTAUR 
-        || you.char_class == JOB_CENTAUR || you.char_class == JOB_NAGA)
-    {
-        const int arm = you.equip[EQ_BOOTS];
-
-        if (arm != -1 && you.inv[arm].sub_type == ARM_BOOTS)
-            remove_one_equip(EQ_BOOTS);
-    }
 
     // End Ozocubu's Icy Armour if you unmelded wearing heavy armour
     if (you.duration[DUR_ICY_ARMOUR]

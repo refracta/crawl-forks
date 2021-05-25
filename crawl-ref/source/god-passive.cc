@@ -276,26 +276,14 @@ static const vector<god_passive> god_passives[] =
     {
         { -1, passive_t::neutral_slimes,
               "Slimes and eye monsters are NOW neutral towards you" },
-        { -1, passive_t::jellies_army,
-              "GOD NOW summons jellies to protect you" },
-        { -1, passive_t::jelly_eating,
-              "GOD NOW allows jellies to devour items" },
-        { -1, passive_t::fluid_stats,
-              "GOD NOW adjusts your attributes periodically" },
+        { -1, passive_t::slime_feed,
+              "GOD NOW dissolves the corpses of fallen enemies into ooze and feeds you" },
         {  0, passive_t::slime_wall_immune,
-              "are NOW immune to slime covered walls" },
-        {  2, passive_t::slime_feed,
-              "Items consumed by your fellow slimes NOW feed you" },
-        {  3, passive_t::resist_corrosion,
-              "GOD NOW protects you from corrosion" },
-        {  4, passive_t::slime_mp,
-              "Items consumed by your fellow slimes NOW restore"
-              " your magical power"
-        },
-        {  5, passive_t::slime_hp,
-              "Items consumed by your fellow slimes NOW restore"
-              " your health"
-        },
+              "are NOW immune to slime covered walls" },  
+        {  2, passive_t::fluid_stats,
+              "GOD NOW adjusts your attributes periodically" },
+        {  3, passive_t::mutation_gifts,
+              "GOD NOW mutates you to become more slimelike and less burdened by negative mutations" },
         {  6, passive_t::spawn_slimes_on_hit,
               "spawn slimes when struck by massive blows" },
         {  6, passive_t::unlock_slime_vaults,
@@ -490,70 +478,6 @@ int chei_stat_boost(int piety)
     }
 }
 
-// Eat from one random off-level item stack.
-void jiyva_eat_offlevel_items()
-{
-    // For wizard mode 'J' command
-    if (!have_passive(passive_t::jelly_eating))
-        return;
-
-    if (crawl_state.game_is_sprint())
-        return;
-
-    while (true)
-    {
-        if (one_chance_in(200))
-            break;
-
-        const int branch = random2(NUM_BRANCHES);
-
-        // Choose level based on main dungeon depth so that levels of
-        // short branches aren't picked more often.
-        ASSERT(brdepth[branch] <= MAX_BRANCH_DEPTH);
-        const int level = random2(MAX_BRANCH_DEPTH) + 1;
-
-        const level_id lid(static_cast<branch_type>(branch), level);
-
-        if (lid == level_id::current() || !you.level_visited(lid))
-            continue;
-
-        dprf("Checking %s", lid.describe().c_str());
-
-        level_excursion le;
-        le.go_to(lid);
-        while (true)
-        {
-            if (one_chance_in(200))
-                break;
-
-            const coord_def p = random_in_bounds();
-
-            if (igrd(p) == NON_ITEM || testbits(env.pgrid(p), FPROP_NO_JIYVA))
-                continue;
-
-            for (stack_iterator si(p); si; ++si)
-            {
-                if (!item_is_jelly_edible(*si) || one_chance_in(4))
-                    continue;
-
-                if (one_chance_in(4))
-                    break;
-
-                dprf("Eating %s on %s",
-                     si->name(DESC_PLAIN).c_str(), lid.describe().c_str());
-
-                // Needs a message now to explain possible hp or mp
-                // gain from jiyva_slurp_bonus()
-                mpr("You hear a distant slurping noise.");
-                jiyva_slurp_item_stack(*si);
-                item_was_destroyed(*si);
-                destroy_item(si.index());
-            }
-            return;
-        }
-    }
-}
-
 // Effect of God's Pity II on Passives
 int apply_pity(int power)
 {
@@ -596,6 +520,11 @@ void ash_check_bondage(bool msg)
             s = ET_LEFT;
         else if (i <= EQ_MAX_ARMOUR)
             s = ET_ARMOUR;
+        else if (!you.get_mutation_level(MUT_CYTOPLASMIC_SUSPENSION)
+            && i == EQ_CYTOPLASM)
+        {
+            continue;
+        }
         // Missing hands mean fewer rings
         else if (you.species != SP_OCTOPODE && i == EQ_LEFT_RING
             && you.get_mutation_level(MUT_MISSING_HAND))
@@ -622,6 +551,12 @@ void ash_check_bondage(bool msg)
         else if (!player_equip_unrand(UNRAND_FINGER_AMULET)
                  && i == EQ_RING_AMULET)
         {
+            continue;
+        }
+        else if (!you.get_mutation_level(MUT_TENDRILS)
+            && i == EQ_RING_LEFT_TENDRIL || i == EQ_RING_RIGHT_TENDRIL)
+        {
+            // Impossible to have this mutation while !Jiyva, but future proofing!
             continue;
         }
         else
@@ -1206,7 +1141,7 @@ void qazlal_storm_clouds()
     // You are a *storm*. You are pretty loud!
     // Silent Spectres never make noise unless they intentionally send
     // things outside their aura.
-    if (you.species != SP_SILENT_SPECTRE)
+    if (!you.get_mutation_level(MUT_SILENCE_AURA))
         noisy(min((int)you.piety, piety_breakpoint(5)) / 10, you.pos());
 
     const int radius = you.piety >= piety_breakpoint(3) ? 2 : 1;
@@ -2088,4 +2023,51 @@ void uskayaw_bonds_audience()
     }
     else // Reset the timer because we didn't actually execute.
         you.props[USKAYAW_BOND_TIMER] = 0;
+}
+
+static void _slimify_feat(coord_def pos)
+{
+    dungeon_feature_type feat = grd(pos);
+
+    if (feat_is_critical(feat))
+        return;
+
+    dungeon_feature_type new_feat = DNGN_FLOOR;
+
+    if (feat == DNGN_SLIMY_WATER || feat == DNGN_DEEP_SLIMY_WATER || feat == DNGN_DEEP_WATER)
+        new_feat = DNGN_DEEP_SLIMY_WATER;
+    else if (feat_has_solid_floor(feat))
+        new_feat = DNGN_SLIMY_WATER;
+    else if (feat_is_tree(feat))
+        new_feat = DNGN_SLIMESHROOM;
+    else if (feat_is_diggable(feat, true)
+        || feat == DNGN_SILVER_WALL && one_chance_in(10)
+        || feat == DNGN_METAL_WALL && one_chance_in(5)
+        || feat == DNGN_STONE_WALL && one_chance_in(3))
+    {
+        new_feat = DNGN_SLIMY_WALL;
+    }
+    else if ((feat == DNGN_SLIMY_WALL || feat_is_door(feat)) && one_chance_in(3))
+    {
+        destroy_wall(pos);
+        new_feat = DNGN_SLIMY_WATER;
+    }
+
+    if (new_feat == DNGN_FLOOR)
+        return;
+
+    const int turns = 10 + random2avg(you.skill(SK_INVOCATIONS), 2);
+
+    temp_change_terrain(pos, new_feat, turns * BASELINE_DELAY, TERRAIN_CHANGE_SLIME, you.as_monster());
+}
+
+void jiyva_passive_slime()
+{
+    _slimify_feat(you.pos());
+
+    for (adjacent_iterator ai(you.pos()); ai; ++ai)
+    {
+        if (one_chance_in(4))
+            _slimify_feat(*ai);
+    }
 }

@@ -499,8 +499,7 @@ static bool _boosted_ev()
 
 static bool _boosted_sh()
 {
-    return you.duration[DUR_DIVINE_SHIELD]
-           || qazlal_sh_boost() > 0;
+    return player_shield_class(true) > player_shield_class();
 }
 
 #ifdef DGL_SIMPLE_MESSAGING
@@ -563,10 +562,12 @@ static int _count_digits(int val)
 static const equipment_type e_order[] =
 {
     EQ_WEAPON0, EQ_WEAPON1, EQ_BODY_ARMOUR, EQ_HELMET, EQ_CLOAK,
-    EQ_GLOVES, EQ_BOOTS, EQ_AMULET, EQ_LEFT_RING, EQ_RIGHT_RING,
-    EQ_FAIRY_JEWEL, EQ_RING_ONE, EQ_RING_TWO, EQ_RING_THREE, 
-    EQ_RING_FOUR, EQ_RING_FIVE, EQ_RING_SIX, EQ_RING_SEVEN, 
-    EQ_RING_EIGHT, EQ_RING_AMULET,
+    EQ_GLOVES, EQ_BARDING, EQ_BOOTS, EQ_JIYVA0, EQ_JIYVA1, EQ_JIYVA2,
+    EQ_JIYVA3, EQ_JIYVA4, EQ_JIYVA5, EQ_JIYVA6, EQ_CYTOPLASM, EQ_AMULET, 
+    EQ_LEFT_RING, EQ_RIGHT_RING, EQ_FAIRY_JEWEL, EQ_RING_ONE, 
+    EQ_RING_TWO, EQ_RING_THREE, EQ_RING_FOUR, EQ_RING_FIVE, 
+    EQ_RING_SIX, EQ_RING_SEVEN, EQ_RING_EIGHT, 
+    EQ_RING_LEFT_TENDRIL, EQ_RING_RIGHT_TENDRIL, EQ_RING_AMULET,
 };
 
 static void _print_stats_equip(int x, int y)
@@ -878,7 +879,7 @@ static void _print_stats_ac(int x, int y)
 
     // SH:
     text_col = HUD_VALUE_COLOUR;
-    if (you.incapacitated() && you.shielded())
+    if (player_shield_class(true) < player_shield_class())
         text_col = RED;
     else if (_boosted_sh())
         text_col = LIGHTBLUE;
@@ -1869,10 +1870,12 @@ static string _itosym(int level, int max = 1)
 static const char *s_equip_slot_names[] =
 {
     "Weapon", "Shield", "Cloak",  "Helmet", "Gloves", "Boots",
-    "UNUSED", "Armour", "Left Ring", "Right Ring", "Amulet",
-    "First Ring", "Second Ring", "Third Ring", "Fourth Ring", 
-    "Fifth Ring", "Sixth Ring", "Seventh Ring", 
-    "Eighth Ring", "Jewelry", "Amulet Ring"
+    "Barding", "Armour", "Left Ring", "Right Ring", 
+    "Amulet", "First Ring", "Second Ring", "Third Ring", 
+    "Fourth Ring", "Fifth Ring", "Sixth Ring", "Seventh Ring", 
+    "Eighth Ring", "Jewelry", "Amulet Ring", "Left Tendril Ring", 
+    "Right Tendril Ring", "Cytoplasm", "Jiyva0", "Jiyva1",
+    "Jiyva2", "Jiyva3", "Jiyva4", "Jiyva5", "Jiyva6"
 };
 
 const char *equip_slot_to_name(int equip)
@@ -1886,15 +1889,11 @@ const char *equip_slot_to_name(int equip)
         return "Ring";
     }
 
+    if (equip >= EQ_FIRST_MORPH && equip <= EQ_LAST_MORPH)
+        return "Armour";
+
     if (equip == EQ_WEAPON1)
         return "Weapon";
-
-    if (equip == EQ_BOOTS
-        && (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR ||
-            you.species == SP_NAGA    || you.char_class == JOB_NAGA))
-    {
-        return "Barding";
-    }
 
     if (equip < EQ_FIRST_EQUIP || equip >= NUM_EQUIP)
         return "";
@@ -1969,12 +1968,37 @@ static string _stealth_bar(int sw)
 }
 static string _status_mut_rune_list(int sw);
 
+static int _skip_empties()
+{
+    if (!you.get_mutation_level(MUT_AMORPHOUS_BODY))
+        return 0;
+
+    int retval = 0;
+
+    for (int i = EQ_FIRST_MORPH; i <= EQ_LAST_MORPH; i++)
+    {
+        item_def * worn = you.slot_item(static_cast<equipment_type>(i));
+
+        if (worn)
+        {
+            equipment_type slot = get_armour_slot(static_cast<armour_type>(worn->sub_type));
+
+            if (slot == EQ_BODY_ARMOUR || slot == EQ_BARDING)
+                retval++;
+        }
+    }
+
+    return retval;
+}
+
 // helper for print_overview_screen
 static void _print_overview_screen_equip(column_composer& cols,
                                          vector<char>& equip_chars,
                                          int sw)
 {
     sw = min(max(sw, 79), 640);
+
+    int skip = _skip_empties();
 
     for (equipment_type eqslot : e_order)
     {
@@ -1990,7 +2014,7 @@ static void _print_overview_screen_equip(column_composer& cols,
             continue;
 
         if (you.species == SP_FAIRY && eqslot != EQ_FAIRY_JEWEL
-                                    && eqslot != EQ_RING_AMULET)
+            && eqslot != EQ_RING_AMULET)
         {
             continue;
         }
@@ -2004,8 +2028,37 @@ static void _print_overview_screen_equip(column_composer& cols,
         if (you.get_mutation_level(MUT_MISSING_HAND) && eqslot == EQ_WEAPON1)
             continue;
 
-        if (eqslot == EQ_RING_AMULET && !you_can_wear(eqslot))
+        if (!you.get_mutation_level(MUT_TENDRILS) &&
+            (eqslot == EQ_RING_LEFT_TENDRIL || eqslot == EQ_RING_RIGHT_TENDRIL))
+        {
             continue;
+        }
+
+        if ((eqslot == EQ_RING_AMULET || eqslot == EQ_BARDING || eqslot == EQ_CYTOPLASM) 
+            && !you_can_wear(eqslot))
+        {
+            continue;
+        }
+
+        if (eqslot == EQ_BOOTS && !you_can_wear(eqslot) && you_can_wear(EQ_BARDING))
+            continue;
+
+        if (eqslot >= EQ_MIN_ARMOUR && eqslot <= EQ_MAX_ARMOUR && you.get_mutation_level(MUT_AMORPHOUS_BODY))
+            continue;
+
+        if (eqslot >= EQ_FIRST_MORPH && eqslot <= EQ_LAST_MORPH)
+        {
+            if (!you.get_mutation_level(MUT_AMORPHOUS_BODY))
+                continue;
+
+            item_def * worn = you.slot_item(eqslot);
+
+            if (skip && !worn)
+            {
+                skip--;
+                continue;
+            }
+        }
 
         const string slot_name_lwr = lowercase_string(equip_slot_to_name(eqslot));
 
@@ -2052,12 +2105,8 @@ static void _print_overview_screen_equip(column_composer& cols,
             const bool plural = !you.get_mutation_level(MUT_MISSING_HAND);
             str = string("  - Blade Hand") + (plural ? "s" : "");
         }
-        else if (eqslot == EQ_BOOTS
-                 && (you.species == SP_NAGA || you.species == SP_CENTAUR
-                     || you.char_class == JOB_NAGA || you.char_class == JOB_CENTAUR))
-        {
-            str = "<darkgrey>(no " + slot_name_lwr + ")</darkgrey>";
-        }
+        else if (eqslot == EQ_CYTOPLASM)
+            str = "<darkgrey>(nothing subsumed)</darkgrey>";
         else if (!you_can_wear(eqslot))
             str = "<darkgrey>(" + slot_name_lwr + " unavailable)</darkgrey>";
         else if (!you_can_wear(eqslot, true))
@@ -2642,21 +2691,13 @@ string mutation_overview()
     {
         if (species_is_draconian(you.species))
             mutations.push_back(_dragon_abil(str));
-        else if (you.species == SP_MINOTAUR)
-        {
-            mutations.push_back(
-                _annotate_form_based(str, !form_keeps_mutations()));
-        }
         else
             mutations.push_back(str);
     }
 
     // a bit more stuff
-    if (you.species == SP_OGRE || you.species == SP_TROLL
-        || species_is_draconian(you.species) || you.species == SP_SPRIGGAN)
-    {
+    if (you.body_size(PSIZE_TORSO) >= SIZE_LARGE || you.body_size(PSIZE_TORSO) <= SIZE_LITTLE)
         mutations.emplace_back("unfitting armour");
-    }
 
     if (you.species == SP_OCTOPODE)
     {
@@ -2701,7 +2742,7 @@ string mutation_overview()
             if (ordinary_levels > 1)
                 current = make_stringf("strongly %s", current.c_str()).c_str();
         }
-        else if (max_levels > 1)
+        else if (max_levels > 1 && mut != MUT_STATS)
         {
             // add on any numeric levels
             ostringstream ostr;

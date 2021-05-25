@@ -225,10 +225,8 @@ int book_rarity(book_type which_book)
 
     case BOOK_ANNIHILATIONS:
     case BOOK_GRAND_GRIMOIRE:
-        return 92;
-
     case BOOK_NECRONOMICON:  // Kikubaaqudgha special
-        return 98;
+        return 92;
 
     default:
         return 1;

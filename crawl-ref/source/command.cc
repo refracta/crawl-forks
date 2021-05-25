@@ -272,13 +272,9 @@ void list_armour()
                  (i == EQ_HELMET)      ? "Helmet " :
                  (i == EQ_GLOVES)      ? "Gloves " :
                  (i == EQ_BODY_ARMOUR) ? "Armour " :
-                 (i == EQ_BOOTS) ?
-                 ((you.species == SP_CENTAUR
-                   || you.species == SP_NAGA
-                   || you.char_class == JOB_CENTAUR
-                   || you.char_class == JOB_NAGA)    ? "Barding"
-                                                     : "Boots  ")
-                                 : "unknown")
+                 (i == EQ_BOOTS)       ? "Boots  " :
+                 (i == EQ_BARDING)     ? "Barding" 
+                                       : "unknown")
              << " : ";
 
         if (you_can_wear(i) == MB_FALSE)
@@ -319,20 +315,22 @@ void list_jewellery()
         int       colour       = MSGCOL_BLACK;
 
         const char *slot =
-                 (i == EQ_LEFT_RING)   ? "Left ring" :
-                 (i == EQ_RIGHT_RING)  ? "Right ring" :
-                 (i == EQ_AMULET)      ? "Amulet" :
-                 (i == EQ_RING_ONE)    ? "1st ring" :
-                 (i == EQ_RING_TWO)    ? "2nd ring" :
-                 (i == EQ_RING_THREE)  ? "3rd ring" :
-                 (i == EQ_RING_FOUR)   ? "4th ring" :
-                 (i == EQ_RING_FIVE)   ? "5th ring" :
-                 (i == EQ_RING_SIX)    ? "6th ring" :
-                 (i == EQ_RING_SEVEN)  ? "7th ring" :
-                 (i == EQ_RING_EIGHT)  ? "8th ring" :
-                 (i == EQ_FAIRY_JEWEL) ? "Around core" :
-                 (i == EQ_RING_AMULET) ? "Amulet ring"
-                                       : "unknown";
+                 (i == EQ_LEFT_RING)           ? "Left ring" :
+                 (i == EQ_RIGHT_RING)          ? "Right ring" :
+                 (i == EQ_AMULET)              ? "Amulet" :
+                 (i == EQ_RING_ONE)            ? "1st ring" :
+                 (i == EQ_RING_TWO)            ? "2nd ring" :
+                 (i == EQ_RING_THREE)          ? "3rd ring" :
+                 (i == EQ_RING_FOUR)           ? "4th ring" :
+                 (i == EQ_RING_FIVE)           ? "5th ring" :
+                 (i == EQ_RING_SIX)            ? "6th ring" :
+                 (i == EQ_RING_SEVEN)          ? "7th ring" :
+                 (i == EQ_RING_EIGHT)          ? "8th ring" :
+                 (i == EQ_RING_LEFT_TENDRIL)   ? "left tendril" :
+                 (i == EQ_RING_RIGHT_TENDRIL)  ? "right tendril" :
+                 (i == EQ_FAIRY_JEWEL)         ? "Around core" :
+                 (i == EQ_RING_AMULET)         ? "Amulet ring"
+                                               : "unknown";
 
         string item;
         if (you_can_wear(i, true) == MB_FALSE)

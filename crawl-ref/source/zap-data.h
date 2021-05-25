@@ -256,6 +256,42 @@ static const zap_info zap_data[] =
 },
 
 {
+    ZAP_FROST_BURST,
+    "shard of frozen ooze",
+    60,
+    new calcdice_calculator<3, 10, 1, 6>,
+    new tohit_calculator<10, 1, 3>,
+    new calcdice_calculator<3, 10, 1, 6>,
+    new tohit_calculator<10, 1, 3>,
+    LIGHTCYAN,
+    false,
+    BEAM_ICE,
+    DCHAR_FIRED_MISSILE,
+    true,
+    false,
+    false,
+    6
+},
+
+{
+    ZAP_FROST_BURST_EXPLOSION,
+    "frozen ooze fragments",
+    60,
+    new calcdice_calculator<3, 3, 1, 9>,
+    new tohit_calculator<AUTOMATIC_HIT>,
+    new calcdice_calculator<3, 3, 1, 9>,
+    new tohit_calculator<AUTOMATIC_HIT>,
+    LIGHTCYAN,
+    false,
+    BEAM_ICE,
+    DCHAR_FIRED_MISSILE,
+    true,
+    false,
+    true,
+    6
+},
+
+{
     ZAP_BOLT_OF_COLD,
     "bolt of cold",
     200,
@@ -273,7 +309,7 @@ static const zap_info zap_data[] =
     6
 },
 
-{ // Used only by phial of floods
+{ // Used by phial of floods
     ZAP_PRIMAL_WAVE,
     "torrent of water",
     200,
@@ -292,6 +328,42 @@ static const zap_info zap_data[] =
     false,
     false,
     6
+},
+
+{ 
+    ZAP_CORROSIVE_WAVE,
+    "deluge of slime",
+    200,
+    new calcdice_calculator<4, 10, 1, 3>,
+    new tohit_calculator<10, 1, 1>,
+    new calcdice_calculator<4, 10, 1, 3>,
+    new tohit_calculator<10, 1, 1>,
+    LIGHTGREEN,
+    false,
+    BEAM_ACID_WAVE,
+    DCHAR_WAVY,
+    true,
+    false,
+    false,
+    6
+},
+
+{ 
+    ZAP_SLIMEBOLT,
+    "torrent of ooze",
+    200,
+    new calcdice_calculator<3, 8, 1, 4>,
+    new tohit_calculator<12, 1, 6>,
+    new calcdice_calculator<3, 8, 1, 4>,
+    new tohit_calculator<12, 1, 6>,
+    LIGHTGREEN,
+    false,
+    BEAM_ACID_WAVE,
+    DCHAR_WAVY,
+    true,
+    true,
+    false,
+    4
 },
 
 _mon_hex_zap(ZAP_CONFUSE, BEAM_CONFUSION),

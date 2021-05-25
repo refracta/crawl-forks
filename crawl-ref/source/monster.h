@@ -280,7 +280,7 @@ public:
                              bool rescale = true) const override;
     int         has_claws(bool allow_tran = true) const override;
 
-    int wearing(equipment_type slot, int type, bool calc_unid = true) const
+    int wearing(equipment_type slot, int type, bool calc_unid = true, bool /*count_jiyva*/ = true) const
         override;
     int wearing_ego(equipment_type slot, int type, bool calc_unid = true) const
         override;
@@ -395,7 +395,7 @@ public:
     int res_holy_energy(bool /*mt*/ = false) const override;
     int res_negative_energy(bool intrinsic_only = false, bool /*mt*/ = false) const override;
     bool res_torment(bool /*mt*/ = false) const override;
-    int res_acid(bool calc_unid = true, bool /*mt*/ = false) const override;
+    int res_acid(bool calc_unid = true, bool items = true, bool /*mt*/ = false) const override;
     bool res_tornado(bool /*mt*/ = false) const override;
     bool res_wind(bool /*mt*/ = false) const override;
     bool res_petrify(bool /*temp*/ = true, bool /*mt*/ = false) const override;
@@ -403,7 +403,7 @@ public:
     int res_magic(bool calc_unid = true) const override;
     bool no_tele(bool calc_unid = true, bool permit_id = true,
                  bool blink = false) const override;
-    bool res_corr(bool calc_unid = true, bool items = true, bool /*mt*/ = false) const override;
+    int res_corr(bool calc_unid = true, bool items = true, bool /*mt*/ = false) const override;
     bool antimagic_susceptible() const override;
 
     bool stasis() const override;
@@ -484,9 +484,9 @@ public:
     bool drain_exp(actor *, bool quiet = false, int pow = 3) override;
     bool rot(actor *, int amount, bool quiet = false, bool no_cleanup = false)
         override;
-    void splash_with_acid(const actor* evildoer, int /*acid_strength*/ = -1,
+    void splash_with_acid(const actor* evildoer, int acid_strength = 1,
                           bool /*allow_corrosion*/ = true,
-                          const char* /*hurt_msg*/ = nullptr,
+                          const char* hurt_msg = nullptr,
                           bool /*mt*/ = false) override;
     bool corrode_equipment(const char* corrosion_source = "the acid",
                            int degree = 1, bool /*mt*/ = false) override;
@@ -516,8 +516,6 @@ public:
     int stat_maxhp() const override { return max_hit_points; }
     int stealth() const override { return 0; }
 
-
-    bool    shielded() const override;
     int     shield_bonus(bool random = true) const override;
     int     shield_block_penalty() const override;
     void    shield_block_succeeded(actor *foe) override;

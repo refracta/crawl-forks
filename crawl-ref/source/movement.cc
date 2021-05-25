@@ -253,7 +253,10 @@ bool cancel_confused_move(bool stationary)
 
         if (dangerous != DNGN_FLOOR)
         {
-            prompt += (dangerous == DNGN_LAVA ? "lava" : "deep water");
+            prompt += (            dangerous == DNGN_LAVA ? "lava" :
+                            dangerous == DNGN_SLIMY_WATER ? "caustic ooze" :
+                       dangerous == DNGN_DEEP_SLIMY_WATER ? "deep caustic ooze"
+                                                          : "deep water");
             prompt += flight ? " while you are losing your buoyancy"
                              : " while your transformation is expiring";
         }
@@ -632,6 +635,13 @@ void move_player_action(coord_def move)
         }
     }
 
+    if (you.mounted() && (you.mount == mount_type::slime) 
+        && (feat_is_diggable(grd(targ), true) || feat_is_tree(grd(targ))))
+    {
+        targ_pass = true;
+        you.digging = true;
+    }
+
     // You can swap places with a friendly or good neutral monster if
     // you're not confused, or even with hostiles if both of you are inside
     // a sanctuary.
@@ -760,12 +770,21 @@ void move_player_action(coord_def move)
 
         if (you.digging)
         {
-            mprf("You dig through %s.", feature_description_at(targ, false,
-                 DESC_THE, false).c_str());
+            if (you.mount == mount_type::slime)
+            {
+                mprf("Your slimy mount dissolves %s.", feature_description_at(targ, false,
+                    DESC_THE, false).c_str());
+                you.digging = false; // Toggled back off to prevent mandibles messages.
+            }
+            else
+            {
+                mprf("You dig through %s.", feature_description_at(targ, false,
+                    DESC_THE, false).c_str());
+                make_hungry(50, true);
+            }
+            additional_time_taken += BASELINE_DELAY / 5;
             destroy_wall(targ);
             noisy(6, you.pos());
-            make_hungry(50, true);
-            additional_time_taken += BASELINE_DELAY / 5;
         }
 
         if (swap)
@@ -800,7 +819,6 @@ void move_player_action(coord_def move)
             targ_monst->apply_location_effects(targ);
         else
         {
-
             if (you.duration[DUR_NOXIOUS_BOG])
             {
                 if (cell_is_solid(old_pos))
@@ -842,6 +860,19 @@ void move_player_action(coord_def move)
                     ASSERT(cloud != CLOUD_NONE);
                     check_place_cloud(cloud, old_pos, random_range(3, 10), &you,
                                       0, -1);
+                }
+            }
+
+            if (you.get_mutation_level(MUT_MELT) >= 2)
+            {
+                if (cell_is_solid(old_pos))
+                    ASSERT(you.wizmode_teleported_into_rock);
+                const dungeon_feature_type feat = grd(old_pos);
+                if (!feat_is_critical(feat) && !feat_is_watery(feat) && !cloud_at(old_pos) && one_chance_in(5))
+                {
+                    const int dur = random_range(5, 12);
+                    temp_change_terrain(old_pos, DNGN_SLIMY_WATER, dur * BASELINE_DELAY, TERRAIN_CHANGE_SLIME);
+                    check_place_cloud(CLOUD_FIRE, old_pos, dur - 1, &you);
                 }
             }
         }

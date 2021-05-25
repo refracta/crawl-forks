@@ -495,10 +495,12 @@ static int _shrinking_aoe_range(int dur)
 
 int player::silence_radius() const
 {
-    if (you.species == SP_SILENT_SPECTRE)
-        return 4;
-    else
-        return _shrinking_aoe_range(duration[DUR_SILENCE]);
+    int SR = -1;
+    
+    if (you.get_mutation_level(MUT_SILENCE_AURA))
+        SR = 2 * you.get_mutation_level(MUT_SILENCE_AURA);
+
+    return max(SR, _shrinking_aoe_range(duration[DUR_SILENCE]));
 }
 
 int monster::silence_radius() const
@@ -553,8 +555,8 @@ int player::halo_radius() const
                                                     / piety_breakpoint(5);
     }
 
-    if (you.species == SP_FAIRY)
-        size = max(size, 2);
+    if (you.get_mutation_level(MUT_FAIRY_LIGHT))
+        size = max(size, 2 * you.get_mutation_level(MUT_FAIRY_LIGHT));
     else if (player_equip_unrand(UNRAND_EOS))
         size = max(size, 3);
     else if (you.attribute[ATTR_HEAVENLY_STORM] > 0)

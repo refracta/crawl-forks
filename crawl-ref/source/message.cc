@@ -1909,26 +1909,32 @@ void canned_msg(canned_message_type which_message)
             mprf(MSGCH_EXAMINE_FILTER, "Huh?");
             crawl_state.cancel_cmd_repeat();
             break;
-        case MSG_EMPTY_HANDED_ALREADY:
-            if (you.has_usable_claws(true))
-                mpr("Your claws are already primed for unarmed combat.");
-            else if (you.has_tentacles(true))
-                mpr("Your tentacles are already primed for unarmed combat.");
-            else if (you.get_mutation_level(MUT_MISSING_HAND))
-                mpr("Your fist is already primed for unarmed combat.");
-            else
-                mpr("Your fists are already primed for unarmed combat.");
-            break;
         case MSG_EMPTY_HANDED_NOW:
-            if (you.has_usable_claws(true))
-                mpr("You prep your claws for unarmed combat!");
-            else if (you.has_tentacles(true))
-                mpr("You prep your tentacles for unarmed combat!");
-            else if (you.get_mutation_level(MUT_MISSING_HAND) || you.weapon(0) || you.weapon(1))
-                mpr("You prep your fist for unarmed combat!");
+        case MSG_EMPTY_HANDED_ALREADY:
+        {
+            string noun = "";
+            bool plural = true;
+
+            if (you.species == SP_LIGNIFITE)
+                noun = make_stringf("%sbranches", you.has_usable_claws() ? "thorny " : "");
+            else if (you.has_tentacles())
+                noun = make_stringf("%stentacles", you.has_usable_claws() ? "toothy " : "");
             else
-                mpr("You prep your fists for unarmed combat!");
+            {
+                noun = (you.has_usable_claws() ? "claw" : "fist");
+
+                if (!you.get_mutation_level(MUT_MISSING_HAND))
+                    noun = noun + "s";
+                else
+                    plural = false;
+            }
+
+            if (which_message == MSG_EMPTY_HANDED_ALREADY)
+                mprf("Your %s %s already primed for unarmed combat.", noun.c_str(), plural ? "are" : "is");
+            else
+                mprf("You prep your %s for unarmed combat.", noun.c_str());
             break;
+        }
         case MSG_YOU_BLINK:
             mpr("You blink.");
             break;

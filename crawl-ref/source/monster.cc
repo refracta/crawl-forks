@@ -513,7 +513,7 @@ hands_reqd_type monster::hands_reqd(const item_def &item, bool base) const
 {
     if (mons_genus(type) == MONS_FORMICID)
         return HANDS_ONE;
-    else if (mons_is_hepliaklqana_ancestor(type) && you.species == SP_FORMICID)
+    else if (mons_is_hepliaklqana_ancestor(type) && you.has_innate_mutation(MUT_MULTIARM))
         return HANDS_ONE;
     return actor::hands_reqd(item, base);
 }
@@ -3071,16 +3071,6 @@ bool monster::pacified() const
     return attitude == ATT_NEUTRAL && testbits(flags, MF_PACIFIED);
 }
 
-/**
- * Returns whether the monster currently has any kind of shield.
- */
-bool monster::shielded() const
-{
-    return shield()
-           || has_ench(ENCH_CONDENSATION_SHIELD)
-           || wearing(EQ_AMULET, AMU_REFLECTION) > 0;
-}
-
 int monster::shield_bonus(bool random) const
 {
     if (incapacitated() && random)
@@ -4158,22 +4148,17 @@ int monster::res_constrict(bool /*mt*/) const
     return 0;
 }
 
-bool monster::res_corr(bool calc_unid, bool items, bool /*mount*/) const
+int monster::res_corr(bool calc_unid, bool items, bool /*mount*/) const
 {
-    return actor::res_corr(calc_unid, items);
+    return max(min(res_acid(calc_unid, items), 1), -1);
 }
 
-int monster::res_acid(bool calc_unid, bool /*mount*/) const
+int monster::res_acid(bool calc_unid, bool items, bool /*mount*/) const
 {
     int u = get_mons_resist(*this, MR_RES_ACID);
 
     if (submerged())
         u++;
-
-    if (res_corr(calc_unid))
-    {
-        u++;
-    }
 
     if (inv[MSLOT_ARMOUR] != NON_ITEM && u < 2)
         u++;
@@ -4181,7 +4166,9 @@ int monster::res_acid(bool calc_unid, bool /*mount*/) const
     if (has_ench(ENCH_RESISTANCE) && u < 2)
         u++;
 
-    return u;
+    u += actor::res_acid(calc_unid, items);
+
+    return max(min(u, 3), -3);
 }
 
 /**
@@ -4514,6 +4501,8 @@ bool monster::corrode_equipment(const char* corrosion_source, int degree, bool /
             return false;
         }
     }
+    else if (rAcid < 0)
+        degree = div_rand_round(degree * 3, 2);
 
     if (you.see_cell(pos()))
     {
@@ -4531,18 +4520,18 @@ bool monster::corrode_equipment(const char* corrosion_source, int degree, bool /
  * Attempts to apply corrosion to a monster.
  */
 void monster::splash_with_acid(const actor* evildoer, int acid_strength,
-                               bool /*allow_corrosion*/, const char* /*hurt_msg*/, bool /*mt*/)
+                               bool /*allow_corrosion*/, const char* hurt_msg, bool /*mt*/)
 {
     // Splashing with acid shouldn't do anything to immune targets
-    if (res_acid() == 3)
+    if (res_acid() == 3 || acid_strength <= 0)
         return;
 
     const int dam = roll_dice(acid_strength, 4);
     const int post_res_dam = resist_adjust_damage(this, BEAM_ACID, dam);
 
-    if (this->observable())
+    if (this->observable() && post_res_dam > 0)
     {
-        mprf("%s is splashed with acid%s", this->name(DESC_THE).c_str(),
+        mprf("%s %s%s", this->name(DESC_THE).c_str(), hurt_msg ? hurt_msg : "is splashed with acid",
              attack_strength_punctuation(post_res_dam).c_str());
     }
 
@@ -6778,7 +6767,7 @@ bool monster::stasis() const
 {
     return mons_genus(type) == MONS_FORMICID
            || type == MONS_PLAYER_GHOST && ghost->species == SP_FORMICID
-           || mons_is_hepliaklqana_ancestor(type) && you.species == SP_FORMICID;
+           || mons_is_hepliaklqana_ancestor(type) && you.has_innate_mutation(MUT_STASIS);
 }
 
 bool monster::is_fairy() const

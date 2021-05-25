@@ -1430,6 +1430,8 @@ static void tag_construct_you(writer &th)
         marshallByte(th, you.base_stats[i]);
     for (int i = 0; i < NUM_STATS; ++i)
         marshallByte(th, you.stat_loss[i]);
+    for (int i = 0; i < NUM_STATS; ++i)
+        marshallByte(th, you.jiyva_stat_targets[i]);
 
     CANARY;
 
@@ -1532,6 +1534,10 @@ static void tag_construct_you(writer &th)
         marshallInt(th, you.next_timer_effect[j]);
     }
 
+    marshallByte(th, you.mutated_stats[STAT_STR]);
+    marshallByte(th, you.mutated_stats[STAT_INT]);
+    marshallByte(th, you.mutated_stats[STAT_DEX]);
+
     // how many mutations/demon powers?
     marshallShort(th, NUM_MUTATIONS);
     for (int j = 0; j < NUM_MUTATIONS; ++j)
@@ -1539,6 +1545,7 @@ static void tag_construct_you(writer &th)
         marshallByte(th, you.mutation[j]);
         marshallByte(th, you.innate_mutation[j]);
         marshallByte(th, you.temp_mutation[j]);
+        marshallByte(th, you.suppressed_mutation[j]);
         marshallByte(th, you.sacrifices[j]);
     }
 
@@ -1548,6 +1555,11 @@ static void tag_construct_you(writer &th)
         marshallByte(th, you.demonic_traits[j].level_gained);
         marshallShort(th, you.demonic_traits[j].mutation);
     }
+
+    marshallByte(th, you.jiyva_mut_set.size());
+    for (int j = 0; j < int(you.jiyva_mut_set.size()); ++j)
+        marshallShort(th, you.jiyva_mut_set[j]);
+    marshallShort(th, you.pseudopod_brand);
 
     if (species_is_draconian(you.species))
     {
@@ -1890,17 +1902,7 @@ static follower unmarshall_follower(reader &th)
 {
     follower f;
     unmarshallMonster(th, f.mons);
-#if TAG_MAJOR_VERSION == 34
-    if (th.getMinorVersion() >= TAG_MINOR_FOLLOWER_TRANSIT_TIME)
-#endif
-        f.transit_start_time = unmarshallInt(th);
-#if TAG_MAJOR_VERSION == 34
-    else
-    {
-        //Set transit_start_time to 0 and let follower heal completely
-        f.transit_start_time = 0;
-    }
-#endif
+    f.transit_start_time = unmarshallInt(th);
     for (int i = 0; i < NUM_MONSTER_SLOTS; ++i)
         unmarshallItem(th, f.items[i]);
     return f;
@@ -2382,21 +2384,21 @@ static void tag_read_you(reader &th)
     ASSERT_RANGE(you.experience_level, 1, 28);
     ASSERT(you.religion < NUM_GODS);
     ASSERT_RANGE(crawl_state.type, GAME_TYPE_UNSPECIFIED + 1, NUM_GAME_TYPE);
-    you.last_mid          = unmarshallInt(th);
-    you.piety             = unmarshallUByte(th);
+    you.last_mid = unmarshallInt(th);
+    you.piety = unmarshallUByte(th);
     ASSERT(you.piety <= MAX_PIETY);
 #if TAG_MAJOR_VERSION == 34
     if (th.getMinorVersion() < TAG_MINOR_ROTTING)
         unmarshallUByte(th);
 #endif
-    you.pet_target        = unmarshallShort(th);
+    you.pet_target = unmarshallShort(th);
 
-    you.max_level         = unmarshallByte(th);
-    you.where_are_you     = static_cast<branch_type>(unmarshallUByte(th));
+    you.max_level = unmarshallByte(th);
+    you.where_are_you = static_cast<branch_type>(unmarshallUByte(th));
     ASSERT(you.where_are_you < NUM_BRANCHES);
-    you.depth             = unmarshallByte(th);
+    you.depth = unmarshallByte(th);
     ASSERT(you.depth > 0);
-    you.chapter           = static_cast<game_chapter>(unmarshallUByte(th));
+    you.chapter = static_cast<game_chapter>(unmarshallUByte(th));
     ASSERT(you.chapter < NUM_CHAPTERS);
 
 #if TAG_MAJOR_VERSION == 34
@@ -2412,10 +2414,10 @@ static void tag_read_you(reader &th)
     if (th.getMinorVersion() < TAG_MINOR_CALC_UNRAND_REACTS)
         unmarshallShort(th);
 #endif
-    you.berserk_penalty   = unmarshallByte(th);
+    you.berserk_penalty = unmarshallByte(th);
 #if TAG_MAJOR_VERSION == 34
     if (th.getMinorVersion() >= TAG_MINOR_GARGOYLE_DR
-      && th.getMinorVersion() < TAG_MINOR_RM_GARGOYLE_DR)
+        && th.getMinorVersion() < TAG_MINOR_RM_GARGOYLE_DR)
     {
         unmarshallInt(th); // Slough an integer.
     }
@@ -2429,26 +2431,26 @@ static void tag_read_you(reader &th)
 
     you.abyss_speed = unmarshallInt(th);
 
-    you.disease         = unmarshallInt(th);
-    you.hp              = unmarshallShort(th);
-    you.hunger          = unmarshallShort(th);
-    you.fishtail        = unmarshallBoolean(th);
-    you.form            = unmarshall_int_as<transformation>(th);
+    you.disease = unmarshallInt(th);
+    you.hp = unmarshallShort(th);
+    you.hunger = unmarshallShort(th);
+    you.fishtail = unmarshallBoolean(th);
+    you.form = unmarshall_int_as<transformation>(th);
     ASSERT_RANGE(static_cast<int>(you.form), 0, NUM_TRANSFORMS);
     ASSERT(you.form != transformation::none || !you.transform_uncancellable);
 #if TAG_MAJOR_VERSION == 34
     if (th.getMinorVersion() >= TAG_MINOR_MOUNTS)
     {
-        you.mount           = unmarshall_int_as<mount_type>(th);
-        you.mount_hp_max    = unmarshallInt(th);
-        you.mount_hp        = unmarshallInt(th);
+        you.mount = unmarshall_int_as<mount_type>(th);
+        you.mount_hp_max = unmarshallInt(th);
+        you.mount_hp = unmarshallInt(th);
     }
     if (th.getMinorVersion() >= TAG_MINOR_MOUNT_REGEN)
-        you.mount_hp_regen  = unmarshallInt(th);
+        you.mount_hp_regen = unmarshallInt(th);
     if (th.getMinorVersion() >= TAG_MINOR_MOUNT_ENERGY)
     {
-        you.mount_energy    = unmarshallInt(th);
-        you.mount_heads     = unmarshallInt(th);
+        you.mount_energy = unmarshallInt(th);
+        you.mount_heads = unmarshallInt(th);
     }
 #endif
     EAT_CANARY;
@@ -2482,8 +2484,8 @@ static void tag_read_you(reader &th)
     for (int i = count; i < NUM_EQUIP; ++i)
         you.melded.set(i, false);
 
-    you.magic_points              = unmarshallUByte(th);
-    you.max_magic_points          = unmarshallByte(th);
+    you.magic_points = unmarshallUByte(th);
+    you.max_magic_points = unmarshallByte(th);
 
     for (int i = 0; i < NUM_STATS; ++i)
         you.base_stats[i] = unmarshallByte(th);
@@ -2500,7 +2502,7 @@ static void tag_read_you(reader &th)
         // Give base stat points.
         species_stat_init(you.species);
 
-        const set<stat_type> all_stats = {STAT_STR, STAT_INT, STAT_DEX};
+        const set<stat_type> all_stats = { STAT_STR, STAT_INT, STAT_DEX };
         int num_points = you.experience_level / 3;
         for (int i = 0; i < num_points; ++i)
             modify_stat(*random_iterator(all_stats), 1, false);
@@ -2515,6 +2517,13 @@ static void tag_read_you(reader &th)
         you.stat_loss[i] = unmarshallByte(th);
 
 #if TAG_MAJOR_VERSION == 34
+    for (int i = 0; i < NUM_STATS; ++i)
+    {
+        if (th.getMinorVersion() >= TAG_MINOR_JIYVA_REWORK)
+            you.jiyva_stat_targets = unmarshallByte(th);
+        else
+            you.jiyva_stat_targets = JSTAT_UNSET;
+    }
     if (th.getMinorVersion() < TAG_MINOR_STAT_ZERO_DURATION)
     {
         for (int i = 0; i < NUM_STATS; ++i)
@@ -2531,23 +2540,23 @@ static void tag_read_you(reader &th)
 #if TAG_MAJOR_VERSION == 34
     if (th.getMinorVersion() < TAG_MINOR_INT_REGEN)
     {
-        you.hit_points_regeneration   = unmarshallByte(th);
+        you.hit_points_regeneration = unmarshallByte(th);
         you.magic_points_regeneration = unmarshallByte(th);
         unmarshallShort(th);
     }
     else
     {
 #endif
-    you.hit_points_regeneration   = unmarshallInt(th);
-    you.magic_points_regeneration = unmarshallInt(th);
+        you.hit_points_regeneration = unmarshallInt(th);
+        you.magic_points_regeneration = unmarshallInt(th);
 #if TAG_MAJOR_VERSION == 34
     }
 #endif
 
-    you.experience                = unmarshallInt(th);
+    you.experience = unmarshallInt(th);
     you.total_experience = unmarshallInt(th);
-    you.gold                      = unmarshallInt(th);
-    you.exp_available             = unmarshallInt(th);
+    you.gold = unmarshallInt(th);
+    you.exp_available = unmarshallInt(th);
 #if TAG_MAJOR_VERSION == 34
     if (th.getMinorVersion() < TAG_MINOR_XP_SCALING)
     {
@@ -2557,18 +2566,18 @@ static void tag_read_you(reader &th)
     if (th.getMinorVersion() < TAG_MINOR_NO_ZOTDEF)
         unmarshallInt(th);
 #endif
-    you.zigs_completed            = unmarshallInt(th);
-    you.zig_max                   = unmarshallByte(th);
+    you.zigs_completed = unmarshallInt(th);
+    you.zig_max = unmarshallByte(th);
 #if TAG_MAJOR_VERSION == 34
     if (th.getMinorVersion() < TAG_MINOR_TRACK_BANISHER)
         you.banished_by = "";
     else
 #endif
-        you.banished_by           = unmarshallString(th);
+        you.banished_by = unmarshallString(th);
 
-    you.hp_max_adj_temp           = unmarshallShort(th);
-    you.hp_max_adj_perm           = unmarshallShort(th);
-    you.mp_max_adj                = unmarshallShort(th);
+    you.hp_max_adj_temp = unmarshallShort(th);
+    you.hp_max_adj_perm = unmarshallShort(th);
+    you.mp_max_adj = unmarshallShort(th);
 #if TAG_MAJOR_VERSION == 34
     if (th.getMinorVersion() < TAG_MINOR_REMOVE_BASE_MP)
     {
@@ -2594,12 +2603,12 @@ static void tag_read_you(reader &th)
     if (th.getMinorVersion() >= TAG_MINOR_GOLDIFY_BOOKS)
     {
 #endif
-    unmarshallFixedBitVector<NUM_SPELLS>(th, you.spell_library);
-    unmarshallFixedBitVector<NUM_SPELLS>(th, you.hidden_spells);
+        unmarshallFixedBitVector<NUM_SPELLS>(th, you.spell_library);
+        unmarshallFixedBitVector<NUM_SPELLS>(th, you.hidden_spells);
 
 #if TAG_MAJOR_VERSION == 34
-    _fixup_library_spells(you.spell_library);
-    _fixup_library_spells(you.hidden_spells);
+        _fixup_library_spells(you.spell_library);
+        _fixup_library_spells(you.hidden_spells);
     }
 #endif
     // how many spells?
@@ -2700,7 +2709,7 @@ static void tag_read_you(reader &th)
             if (a == 21)                a = ABIL_STOP_FLYING;
             if (a == 19)                a = ABIL_FLY;
             if (a == 17 || a == 18)     a += 33;
-            if (a = 16)                 a = ABIL_DAMNATION;
+            if (a = 16)                 a = ABIL_HELLFIRE;
             if (a = 15)                 a = ABIL_CANCEL_PPROJ;
             if (a = 13)                 a = ABIL_END_TRANSFORMATION;
             if (a = 11)                 a = ABIL_BLINK;
@@ -2747,11 +2756,11 @@ static void tag_read_you(reader &th)
     ASSERT(count <= NUM_SKILLS);
     for (int j = 0; j < count; ++j)
     {
-        you.skills[j]          = unmarshallUByte(th);
+        you.skills[j] = unmarshallUByte(th);
         ASSERT(you.skills[j] <= 27 || you.wizard);
 
-        you.train[j]    = (training_status)unmarshallByte(th);
-        you.train_alt[j]    = (training_status)unmarshallByte(th);
+        you.train[j] = (training_status)unmarshallByte(th);
+        you.train_alt[j] = (training_status)unmarshallByte(th);
 #if TAG_MAJOR_VERSION == 34
         // Gnolls always train all skills.
         if (th.getMinorVersion() < TAG_MINOR_GNOLLS_REDUX
@@ -2773,7 +2782,7 @@ static void tag_read_you(reader &th)
             you.manual_points[j] = 0;
 #endif
         you.ct_skill_points[j] = unmarshallInt(th);
-        you.skill_order[j]     = unmarshallByte(th);
+        you.skill_order[j] = unmarshallByte(th);
 #if TAG_MAJOR_VERSION == 34
         if (th.getMinorVersion() >= TAG_MINOR_TRAINING_TARGETS)
         {
@@ -2866,7 +2875,7 @@ static void tag_read_you(reader &th)
     {
         you.attribute[ATTR_DIVINE_REGENERATION] = 0;
         you.duration[DUR_TROGS_HAND] = max(you.duration[DUR_TROGS_HAND],
-                                           you.duration[DUR_REGENERATION]);
+            you.duration[DUR_REGENERATION]);
         you.duration[DUR_REGENERATION] = 0;
     }
     if (you.attribute[ATTR_SEARING_RAY] > 3)
@@ -2886,39 +2895,27 @@ static void tag_read_you(reader &th)
             }
         }
     }
-
 #endif
 
-#if TAG_MAJOR_VERSION == 34
-    // Nemelex item type sacrifice toggles.
-    if (th.getMinorVersion() < TAG_MINOR_NEMELEX_WEIGHTS)
-    {
-        count = unmarshallByte(th);
-        ASSERT(count <= NUM_OBJECT_CLASSES);
-        for (int j = 0; j < count; ++j)
-            unmarshallInt(th);
-    }
-#endif
-
-    int timer_count = 0;
-#if TAG_MAJOR_VERSION == 34
-    if (th.getMinorVersion() >= TAG_MINOR_EVENT_TIMERS)
-    {
-#endif
-    timer_count = unmarshallByte(th);
+    int timer_count = unmarshallByte(th);
     ASSERT(timer_count <= NUM_TIMERS);
     for (int j = 0; j < timer_count; ++j)
     {
         you.last_timer_effect[j] = unmarshallInt(th);
         you.next_timer_effect[j] = unmarshallInt(th);
     }
-#if TAG_MAJOR_VERSION == 34
-    }
-    else
-        timer_count = 0;
-#endif
+
     // We'll have to fix up missing/broken timer entries after
     // we unmarshall you.elapsed_time.
+
+#if TAG_MAJOR_VERSION == 34
+    if (th.getMinorVersion() >= TAG_MINOR_JIYVA_REWORK)
+    {
+        you.mutated_stats[STAT_STR] = unmarshallByte(th);
+        you.mutated_stats[STAT_INT] = unmarshallByte(th);
+        you.mutated_stats[STAT_DEX] = unmarshallByte(th);
+    }
+#endif
 
     // how many mutations/demon powers?
     count = unmarshallShort(th);
@@ -2928,7 +2925,13 @@ static void tag_read_you(reader &th)
         you.mutation[j]         = unmarshallUByte(th);
         you.innate_mutation[j]  = unmarshallUByte(th);
         you.temp_mutation[j]    = unmarshallUByte(th);
-        you.sacrifices[j] = unmarshallUByte(th);
+#if TAG_MAJOR_VERSION == 34
+        if (th.getMinorVersion() >= TAG_MINOR_JIYVA_REWORK)
+            you.suppressed_mutation[j] = unmarshallUByte(th);
+        else
+            you.suppressed_mutation[j] = 0;
+#endif
+        you.sacrifices[j]       = unmarshallUByte(th);
     }
 
     // mutation fixups happen below here.
@@ -2936,196 +2939,117 @@ static void tag_read_you(reader &th)
     // `you.mutation` and `you.innate_mutation`.
 
 #if TAG_MAJOR_VERSION == 34
-    if (th.getMinorVersion() < TAG_MINOR_STAT_MUT)
-    {
-        // Convert excess mutational stats into base stats.
-        mutation_type stat_mutations[] = { MUT_STRONG, MUT_CLEVER, MUT_AGILE };
-        stat_type stat_types[] = { STAT_STR, STAT_INT, STAT_DEX };
-        for (int j = 0; j < 3; ++j)
-        {
-            mutation_type mut = stat_mutations[j];
-            stat_type stat = stat_types[j];
-            int total_mutation_level = you.temp_mutation[mut] + you.mutation[mut];
-            if (total_mutation_level > 2)
-            {
-                int new_level = max(0, min(you.temp_mutation[mut] - you.mutation[mut], 2));
-                you.temp_mutation[mut] = new_level;
-            }
-            if (you.mutation[mut] > 2)
-            {
-                int excess = you.mutation[mut] - 4;
-                if (excess > 0)
-                    you.base_stats[stat] += excess;
-                you.mutation[mut] = 2;
-            }
-        }
-        mutation_type bad_stat_mutations[] = { MUT_WEAK, MUT_DOPEY, MUT_CLUMSY };
-        for (int j = 0; j < 3; ++j)
-        {
-            mutation_type mut = bad_stat_mutations[j];
-            int level = you.mutation[mut];
-            switch (level)
-            {
-            case 0:
-            case 1:
-                you.mutation[mut] = 0;
-                break;
-            case 2:
-            case 3:
-                you.mutation[mut] = 1;
-                break;
-            default:
-                you.mutation[mut] = 2;
-                break;
-            };
-            if (you.temp_mutation[mut] > 2 && you.mutation[mut] < 2)
-                you.temp_mutation[mut] = 1;
-            else
-                you.temp_mutation[mut] = 0;
-        }
-    }
-    you.mutation[MUT_FAST] = you.innate_mutation[MUT_FAST];
-    you.mutation[MUT_SLOW] = you.innate_mutation[MUT_SLOW];
-    you.mutation[MUT_BREATHE_FLAMES] = 0;
-
-    // BCADDO: Add a minor tag here next minor bump.
-    if (you.species == SP_MERFOLK)
-        you.mutation[MUT_MERFOLK_TAIL] = you.innate_mutation[MUT_MERFOLK_TAIL] = 1;
-
     if (th.getMinorVersion() < TAG_MINOR_MOUNT_ENERGY)
-    { 
+    {
         if (you.char_class != JOB_MUMMY && you.species != SP_LIGNIFITE)
         {
             you.mutation[MUT_NECRO_ENHANCER] = you.innate_mutation[MUT_NECRO_ENHANCER] = 0;
-            you.mutation[MUT_HEAT_VULNERABILITY] = you.innate_mutation[MUT_HEAT_VULNERABILITY] = 0;
+            if (you.innate_mutation[MUT_HEAT_VULNERABILITY])
+                you.mutation[MUT_HEAT_VULNERABILITY] = you.innate_mutation[MUT_HEAT_VULNERABILITY] = 0;
         }
     }
-#endif
 
-    for (int j = count; j < NUM_MUTATIONS; ++j)
-        you.mutation[j] = you.innate_mutation[j] = you.sacrifices[j];
+    if (th.getMinorVersion() < TAG_MINOR_JIYVA_REWORK)
+    {
+        you.mutated_stats[STAT_STR] = 0 + you.get_mutation_level(MUT_STRONG) - you.get_mutation_level(MUT_ROTTING_BODY);
+        you.mutated_stats[STAT_INT] = 0 + you.get_mutation_level(MUT_CLEVER) - you.get_mutation_level(MUT_NEGATIVE_ENERGY_VULNERABILITY);
+        you.mutated_stats[STAT_DEX] = 0 + you.get_mutation_level(MUT_AGILE)  - you.get_mutation_level(MUT_SILENCE_AURA);
+        you.mutation[MUT_STATS] = div_round_up((abs(you.mutated_stats[STAT_STR]) + abs(you.mutated_stats[STAT_INT]) + abs(you.mutated_stats[STAT_DEX])), 10);
 
-#if TAG_MAJOR_VERSION == 34
-    if (th.getMinorVersion() < TAG_MINOR_NO_POTION_HEAL)
-    {   // These use to apply no matter what the minor tag
-        // was, so when TAG_MINOR_NO_POTION_HEAL was added
-        // these were all moved to only apply to previous
-        // tags.
-        if (you.mutation[MUT_TELEPORT_CONTROL] == 1)
-            you.mutation[MUT_TELEPORT_CONTROL] = 0;
-        if (you.mutation[MUT_TRAMPLE_RESISTANCE] > 0
-            || you.innate_mutation[MUT_TRAMPLE_RESISTANCE] > 0)
+        if (you.species == SP_FAIRY && you.religion == GOD_JIYVA)
+            you.religion = GOD_NO_GOD; // Soft excommunicate since Jiyva makes no sense for Fairy now.
+
+        if (you.species == SP_MERFOLK)
+            you.mutation[MUT_MERFOLK_TAIL] = you.innate_mutation[MUT_MERFOLK_TAIL] = 1;
+
+        if (you.get_mutation_level(MUT_DAYSTRIDER))
         {
-            you.mutation[MUT_TRAMPLE_RESISTANCE] = 0;
-            you.innate_mutation[MUT_TRAMPLE_RESISTANCE] = 0;
+            you.mutation[MUT_DAYSTRIDER] = you.innate_mutation[MUT_DAYSTRIDER] = 0;
+            you.mutation[MUT_UNBREATHING] = you.innate_mutation[MUT_UNBREATHING] = 1;
         }
-        if (you.mutation[MUT_CLING] == 1)
-            you.mutation[MUT_CLING] = 0;
-        if (you.species == SP_GARGOYLE)
+
+        if (species_is_draconian(you.species))
+            you.mutation[MUT_DEFORMED] = you.innate_mutation[MUT_DEFORMED] = 2;
+
+        if (you.species == SP_FAIRY)
         {
-            you.mutation[MUT_POISON_RESISTANCE] =
-            you.innate_mutation[MUT_POISON_RESISTANCE] = 0;
+            you.mutation[MUT_TENGU_FLIGHT] = you.innate_mutation[MUT_TENGU_FLIGHT] = 0;
+            you.mutation[MUT_BIG_WINGS] = you.innate_mutation[MUT_BIG_WINGS] = 1;
         }
+
+        if (you.species == SP_BARACHI)
+            you.mutation[MUT_DAYSTRIDER] = you.innate_mutation[MUT_DAYSTRIDER] = 1;
+
+        const bool slimy = remove_slime_mutations();
+        if (slimy)
+            mprf(MSGCH_ERROR, "Resetting old Jiyva Mutations. . .");
+        _cap_mutation_at(MUT_SHOUTITUS, 1);
+        _cap_mutation_at(MUT_BERSERK, 1);
+        _cap_mutation_at(MUT_DETERIORATION, 1);
+        _cap_mutation_at(MUT_TELEPORT, 1);
+        _cap_mutation_at(MUT_MAGIC_RESISTANCE, 1);
+        _cap_mutation_at(MUT_LOW_MAGIC, 2);
+        _cap_mutation_at(MUT_HIGH_MAGIC, 2);
+        _cap_mutation_at(MUT_WILD_MAGIC, 1);
+        _cap_mutation_at(MUT_SUBDUED_MAGIC, 1);
+        _cap_mutation_at(MUT_FANGS, 1);
+        _cap_mutation_at(MUT_HORNS, 1);
+        _cap_mutation_at(MUT_ANTENNAE, 1);
+        _cap_mutation_at(MUT_HOOVES, you.species == SP_MINOTAUR ? 2 : 1);
+        _cap_mutation_at(MUT_TALONS, 1);
+        _cap_mutation_at(MUT_PASSIVE_MAPPING, 1);
+        _cap_mutation_at(MUT_DISTORTION_FIELD, 1);
+        _cap_mutation_at(MUT_ICY_BLUE_SCALES, 1);
+        _cap_mutation_at(MUT_IRIDESCENT_SCALES, 1);
+        _cap_mutation_at(MUT_LARGE_BONE_PLATES, 1);
+        _cap_mutation_at(MUT_MOLTEN_SCALES, 1);
+        _cap_mutation_at(MUT_SANGUINE_ARMOUR, 1);
+        _cap_mutation_at(MUT_RUGGED_BROWN_SCALES, 1);
+        _cap_mutation_at(MUT_SLIMY_GREEN_SCALES, 1);
+        _cap_mutation_at(MUT_THIN_METALLIC_SCALES, 1);
+        _cap_mutation_at(MUT_THIN_SKELETAL_STRUCTURE, 1);
+        _cap_mutation_at(MUT_YELLOW_SCALES, 1);
+        _cap_mutation_at(MUT_STURDY_FRAME, 1);
+        _cap_mutation_at(MUT_NO_POTION_HEAL, 1);
+        _cap_mutation_at(MUT_CLAWS, 2);
+        _cap_mutation_at(MUT_FAST_METABOLISM, 2);
+        _cap_mutation_at(MUT_MAGICAL_VULNERABILITY, 2);
+        _cap_mutation_at(MUT_STINGER, 1);
+        _cap_mutation_at(MUT_REGENERATION, 1);
+        you.mutation[MUT_MULTIARM] = you.innate_mutation[MUT_MULTIARM] = 0;
+        you.mutation[MUT_STASIS] = you.innate_mutation[MUT_STASIS] = 0;
+        you.mutation[MUT_STRONG] = 0;
+        you.mutation[MUT_ROTTING_BODY] = 0;
+        you.mutation[MUT_CLEVER] = 0;
+        you.mutation[MUT_NEGATIVE_ENERGY_VULNERABILITY]  = 0;
+        you.mutation[MUT_AGILE]  = 0;
+        you.mutation[MUT_SILENCE_AURA] = 0;
+        
         if (you.species == SP_FORMICID)
         {
-            you.mutation[MUT_ANTENNAE] = you.innate_mutation[MUT_ANTENNAE] = 3;
-            you.mutation[MUT_EXOSKELETON] =
-            you.innate_mutation[MUT_EXOSKELETON] = 0;
+            you.mutation[MUT_STASIS] = you.innate_mutation[MUT_STASIS] = 1;
+            you.mutation[MUT_BURROWING] = you.innate_mutation[MUT_BURROWING] = 1;
+            you.mutation[MUT_MULTIARM] = you.innate_mutation[MUT_MULTIARM] = 1;
         }
-    }
 
-    if (th.getMinorVersion() < TAG_MINOR_DIET_MUT)
-    {
-        you.mutation[MUT_CARNIVOROUS] = you.innate_mutation[MUT_CARNIVOROUS];
-        you.mutation[MUT_HERBIVOROUS] = you.innate_mutation[MUT_HERBIVOROUS];
-    }
+        if (you.species == SP_GHOUL)
+            you.mutation[MUT_ROTTING_BODY] = you.innate_mutation[MUT_ROTTING_BODY] = 1;
 
-    if (th.getMinorVersion() < TAG_MINOR_SAPROVOROUS
-        && you.species == SP_OGRE)
-    {
-        // Remove the innate level of fast metabolism
-        you.mutation[MUT_FAST_METABOLISM] -= 1;
-        you.innate_mutation[MUT_FAST_METABOLISM] -= 1;
-    }
+        if (you.species == SP_GOBLIN)
+            you.mutation[MUT_GOBLINS_GREED] = you.innate_mutation[MUT_GOBLINS_GREED] = 1;
 
-    if (th.getMinorVersion() < TAG_MINOR_CE_HA_DIET)
-    {
-        if (you.species == SP_CENTAUR)
+        if (you.species == SP_LIGNIFITE || you.species == SP_MUMMY)
+            you.mutation[MUT_HEAT_VULNERABILITY] = you.innate_mutation[MUT_HEAT_VULNERABILITY] = 1;
+
+        if (you.species == SP_LIGNIFITE)
         {
-            you.mutation[MUT_FAST_METABOLISM] -= 1;
-            you.innate_mutation[MUT_FAST_METABOLISM] -= 1;
-
-            you.mutation[MUT_HERBIVOROUS] = 1;
-            you.innate_mutation[MUT_HERBIVOROUS] = 1;
-        }
-        else if (you.species == SP_HALFLING)
-        {
-            you.mutation[MUT_SLOW_METABOLISM] -= 1;
-            you.innate_mutation[MUT_SLOW_METABOLISM] -= 1;
-        }
-    }
-
-    if (th.getMinorVersion() < TAG_MINOR_ROT_IMMUNITY)
-    {
-        if (you.species == SP_VINE_STALKER)
-        {
-            you.mutation[MUT_NO_POTION_HEAL] =
-            you.innate_mutation[MUT_NO_POTION_HEAL] = 3;
+            you.mutation[MUT_BRANCHES] = you.innate_mutation[MUT_BRANCHES] = 1;
+            if (you.experience_level >= 12)
+                you.mutation[MUT_ROOTS] = you.innate_mutation[MUT_ROOTS] = 1;
         }
 
-        if (you.species == SP_VINE_STALKER
-            || you.species == SP_GARGOYLE)
-        {
-            you.mutation[MUT_ROT_IMMUNITY] =
-            you.innate_mutation[MUT_ROT_IMMUNITY] = 1;
-        }
-    }
-
-    if (th.getMinorVersion() < TAG_MINOR_FOUL_STENCH
-        && (you.species == SP_DEMONSPAWN || you.char_class == JOB_DEMONSPAWN)
-        && you.innate_mutation[MUT_SAPROVOROUS])
-    {
-        you.mutation[MUT_ROT_IMMUNITY] =
-        you.innate_mutation[MUT_ROT_IMMUNITY] = 1;
-    }
-
-    you.mutation[MUT_SAPROVOROUS] =
-    you.innate_mutation[MUT_SAPROVOROUS] = 0;
-
-    if (th.getMinorVersion() < TAG_MINOR_DS_CLOUD_MUTATIONS
-        && (you.species == SP_DEMONSPAWN || you.char_class == JOB_DEMONSPAWN))
-    {
-        if (you.innate_mutation[MUT_CONSERVE_POTIONS])
-        {
-            you.mutation[MUT_CONSERVE_POTIONS] =
-            you.innate_mutation[MUT_CONSERVE_POTIONS] = 0;
-
-            you.mutation[MUT_FREEZING_CLOUD_IMMUNITY] =
-            you.innate_mutation[MUT_FREEZING_CLOUD_IMMUNITY] = 1;
-        }
-        if (you.innate_mutation[MUT_CONSERVE_SCROLLS])
-        {
-            you.mutation[MUT_CONSERVE_SCROLLS] =
-            you.innate_mutation[MUT_CONSERVE_SCROLLS] = 0;
-
-            you.mutation[MUT_FLAME_CLOUD_IMMUNITY] =
-            you.innate_mutation[MUT_FLAME_CLOUD_IMMUNITY] = 1;
-        }
-    }
-
-    if (th.getMinorVersion() < TAG_MINOR_METABOLISM)
-    {
-        you.mutation[MUT_FAST_METABOLISM] =
-        you.innate_mutation[MUT_FAST_METABOLISM];
-
-        you.mutation[MUT_SLOW_METABOLISM] =
-        you.innate_mutation[MUT_SLOW_METABOLISM];
-    }
-
-    if (th.getMinorVersion() < TAG_MINOR_NO_JUMP
-        && you.species == SP_FELID && you.innate_mutation[MUT_JUMP] != 0)
-    {
-        you.mutation[MUT_JUMP] = 0;
+        if (you.species == SP_SILENT_SPECTRE)
+            you.mutation[MUT_SILENCE_AURA] = you.innate_mutation[MUT_SILENCE_AURA] = 2;
     }
 
     // No minor version needed: all old felids should get MUT_PAWS.
@@ -3142,22 +3066,10 @@ static void tag_read_you(reader &th)
             give_level_mutations(you.species, xl);
     }
 
-    if (th.getMinorVersion() < TAG_MINOR_NO_FORLORN)
-    {
-        if (you.mutation[MUT_FORLORN])
-            you.mutation[MUT_FORLORN] = 0;
-    }
-
     if (th.getMinorVersion() < TAG_MINOR_MP_WANDS)
     {
         if (you.mutation[MUT_MP_WANDS] > 1)
             you.mutation[MUT_MP_WANDS] = 1;
-    }
-
-    if (th.getMinorVersion() < TAG_MINOR_DETERIORATION)
-    {
-        if (you.mutation[MUT_DETERIORATION] > 2)
-            you.mutation[MUT_DETERIORATION] = 2;
     }
 
     if (th.getMinorVersion() < TAG_MINOR_BLINK_MUT)
@@ -3241,14 +3153,25 @@ static void tag_read_you(reader &th)
         dt.level_gained = unmarshallByte(th);
         ASSERT_RANGE(dt.level_gained, 1, 28);
         dt.mutation = static_cast<mutation_type>(unmarshallShort(th));
-#if TAG_MAJOR_VERSION == 34
-        if (dt.mutation == MUT_CONSERVE_POTIONS)
-            dt.mutation = MUT_FREEZING_CLOUD_IMMUNITY;
-        else if (dt.mutation == MUT_CONSERVE_SCROLLS)
-            dt.mutation = MUT_FLAME_CLOUD_IMMUNITY;
-#endif
         ASSERT_RANGE(dt.mutation, 0, NUM_MUTATIONS);
         you.demonic_traits.push_back(dt);
+    }
+
+    if (th.getMinorVersion() >= TAG_MINOR_JIYVA_REWORK)
+    {
+        count = unmarshallUByte(th);
+        you.jiyva_mut_set.clear();
+        for (int j = 0; j < count; ++j)
+        {
+            mutation_type mut = static_cast<mutation_type>(unmarshallShort(th));
+            you.jiyva_mut_set.push_back(mut);
+        }
+        you.pseudopod_brand = static_cast<brand_type>(unmarshallShort(th));
+    }
+    else
+    {
+        you.pseudopod_brand = SPWPN_NORMAL;
+        jiyva_setup();
     }
 
     if (species_is_draconian(you.species))
@@ -3353,23 +3276,7 @@ static void tag_read_you(reader &th)
     ASSERT(count <= NUM_GODS);
     for (int i = 0; i < count; i++)
     {
-#if TAG_MAJOR_VERSION == 34
-        if (th.getMinorVersion() < TAG_MINOR_XP_PENANCE && i == GOD_GOZAG)
-        {
-            unmarshallUByte(th);
-            you.penance[i] = 0;
-            continue;
-        }
-#endif
         you.penance[i] = unmarshallUByte(th);
-#if TAG_MAJOR_VERSION == 34
-        if (th.getMinorVersion() < TAG_MINOR_NEMELEX_WRATH
-            && player_under_penance(GOD_NEMELEX_XOBEH)
-            && i == GOD_NEMELEX_XOBEH)
-        {
-            you.penance[i] = max(you.penance[i] - 100, 0);
-        }
-#endif
         ASSERT(you.penance[i] <= MAX_PENANCE);
     }
 
@@ -3404,24 +3311,6 @@ static void tag_read_you(reader &th)
         you.one_time_ability_used.set(i, unmarshallBoolean(th));
     for (int i = 0; i < count; i++)
         you.piety_max[i] = unmarshallByte(th);
-#if TAG_MAJOR_VERSION == 34
-    if (th.getMinorVersion() < TAG_MINOR_NEMELEX_DUNGEONS)
-    {
-        unmarshallByte(th);
-        for (int i = 0; i < NEM_GIFT_SUMMONING; i++)
-            unmarshallBoolean(th);
-        unmarshallBoolean(th); // dungeons weight
-        for (int i = NEM_GIFT_SUMMONING; i < NUM_NEMELEX_GIFT_TYPES; i++)
-            unmarshallBoolean(th);
-    }
-    else if (th.getMinorVersion() < TAG_MINOR_NEMELEX_WEIGHTS)
-    {
-        count = unmarshallByte(th);
-        ASSERT(count == NUM_NEMELEX_GIFT_TYPES);
-        for (int i = 0; i < count; i++)
-            unmarshallBoolean(th);
-    }
-#endif
 
     you.gift_timeout   = unmarshallByte(th);
 #if TAG_MAJOR_VERSION == 34
@@ -3917,13 +3806,35 @@ static void tag_read_you_items(reader &th)
             continue;
         }
 
-        // If wearing anything in the no-longer existant shield slot; unwear.
-        if (item && i == EQ_OLD_SHIELD)
+#if TAG_MAJOR_VERSION == 34
+        if (th.getMinorVersion() < TAG_MINOR_GOLDIFY_MANUALS)
         {
-            you.equip[i] = -1;
-            you.melded.set(i, false);
-            continue;
+            // If wearing anything in the no-longer existant shield slot; unwear.
+            // Note slot shift. Barding split into seperate slot from Boot to allow wearing both (Jiyva)
+            // New barding slot overwrote old shield slot (No worries the old tag takes care of it).
+            if (item && i == EQ_BARDING)
+            {
+                you.equip[i] = -1;
+                you.melded.set(i, false);
+                continue;
+            }
         }
+#endif
+
+        if (th.getMinorVersion() < TAG_MINOR_JIYVA_REWORK)
+        {
+            if (item && i == EQ_BOOTS && (item->sub_type == ARM_NAGA_BARDING || item->sub_type == ARM_CENTAUR_BARDING))
+            {
+                you.equip[EQ_BARDING] = item->link;
+                if (you.melded[EQ_BOOTS])
+                    you.melded.set(EQ_BARDING, true);
+
+                you.equip[i] = -1;
+                you.melded.set(i, false);
+                continue;
+            }
+        }
+
 
         if (item && i != EQ_AMULET && i != EQ_FAIRY_JEWEL && item->is_type(OBJ_JEWELLERY, AMU_CHAOS))
         {
@@ -4088,42 +3999,9 @@ static void tag_read_you_items(reader &th)
         for (int j = 0; j < count2; j++)
             you.force_autopickup[i][j] = unmarshallInt(th);
 #if TAG_MAJOR_VERSION == 34
-    if (th.getMinorVersion() < TAG_MINOR_FOOD_AUTOPICKUP)
-    {
-        const int oldstate = you.force_autopickup[OBJ_FOOD][NUM_FOODS];
-        you.force_autopickup[OBJ_FOOD][FOOD_RATION] = oldstate;
+    if (th.getMinorVersion() < TAG_MINOR_JIYVA_REWORK && you.species == SP_BARACHI)
+        remove_one_equip(EQ_BOOTS, false, true);
 
-        you.force_autopickup[OBJ_BOOKS][BOOK_MANUAL] =
-            you.force_autopickup[OBJ_BOOKS][NUM_BOOKS];
-    }
-    if (th.getMinorVersion() < TAG_MINOR_FOOD_PURGE_AP_FIX)
-    {
-        FixedVector<int, MAX_SUBTYPES> &food_pickups =
-            you.force_autopickup[OBJ_FOOD];
-
-        // If fruit pickup was not set explicitly during the time between
-        // FOOD_PURGE and FOOD_PURGE_AP_FIX, copy the old exemplar FOOD_PEAR.
-        if (food_pickups[FOOD_FRUIT] == AP_FORCE_NONE)
-            food_pickups[FOOD_FRUIT] = food_pickups[FOOD_PEAR];
-    }
-    if (you.species == SP_FORMICID)
-        remove_one_equip(EQ_HELMET, false, true);
-
-    if (th.getMinorVersion() < TAG_MINOR_CONSUM_APPEARANCE)
-    {
-        // merge scroll seeds
-        for (int subtype = 0; subtype < MAX_SUBTYPES; subtype++)
-        {
-            const int seed1 = you.item_description[IDESC_SCROLLS][subtype]
-                              & 0xff;
-            const int seed2 = you.item_description[IDESC_SCROLLS_II][subtype]
-                              & 0xff;
-            const int seed3 = OBJ_SCROLLS & 0xff;
-            you.item_description[IDESC_SCROLLS][subtype] =    seed1
-                                                           | (seed2 << 8)
-                                                           | (seed3 << 16);
-        }
-    }
     // Remove any decks if no longer worshipping Nemelex, now that items have
     // been loaded.
     if (th.getMinorVersion() < TAG_MINOR_NEMELEX_WRATH
@@ -4132,10 +4010,6 @@ static void tag_read_you_items(reader &th)
     {
         nemelex_reclaim_decks();
     }
-
-    // Reset training arrays for transfered gnolls that didn't train all skills.
-    if (th.getMinorVersion() < TAG_MINOR_GNOLLS_REDUX)
-        reset_training();
 
     // Move any books from inventory into the player's library.
     if (th.getMinorVersion() < TAG_MINOR_GOLDIFY_MANUALS)

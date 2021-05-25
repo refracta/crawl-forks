@@ -142,7 +142,7 @@ spret cast_tornado(int /*powc*/, bool fail)
 
     you.props["tornado_since"].get_int() = you.elapsed_time;
     _set_tornado_durations(determine_chaos(&you, SPELL_TORNADO));
-    if (you.species == SP_TENGU)
+    if (you.get_mutation_level(MUT_TENGU_FLIGHT))
         you.redraw_evasion = true;
 
     return spret::success;
@@ -534,7 +534,7 @@ void cancel_tornado(bool tloc)
         {
             you.duration[DUR_FLIGHT] = 0;
             you.attribute[ATTR_FLIGHT_UNCANCELLABLE] = 0;
-            if (you.species == SP_TENGU)
+            if (you.get_mutation_level(MUT_TENGU_FLIGHT))
                 you.redraw_evasion = true;
             // NO checking for water, since this is called only during level
             // change, and being, say, banished from above water shouldn't

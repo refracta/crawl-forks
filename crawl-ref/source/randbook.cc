@@ -998,8 +998,7 @@ void make_book_kiku_gift(item_def &book, bool first)
     // spell, to complement Receive Corpses.
     if (first)
     {
-        bool can_bleed = you.species != SP_GARGOYLE
-            && you.undead_state() == US_ALIVE;
+        bool can_bleed = you.can_bleed(false);
         bool can_regen = you.undead_state() == US_ALIVE;
 
         chosen_spells[0] = SPELL_PAIN;

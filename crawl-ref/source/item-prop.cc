@@ -105,7 +105,7 @@ static const armour_def Armour_prop[] =
     { ARM_CRYSTAL_PLATE_ARMOUR, "crystal plate",         14, -230,   800,
         EQ_BODY_ARMOUR, SIZE_SMALL, SIZE_MEDIUM, false, ARMF_NO_FLAGS, 500 },
 
-    { ARM_TROLL_LEATHER_ARMOUR, "troll leather",  4,  -40,    150,
+    { ARM_TROLL_LEATHER_ARMOUR, "troll leather",          4,  -40,    150,
        EQ_BODY_ARMOUR, SIZE_LITTLE, SIZE_GIANT, false, ARMF_REGENERATION, 25 },
 
     { ARM_DEEP_TROLL_LEATHER_ARMOUR, "deep troll leather",  7,  -100,    200,
@@ -114,7 +114,7 @@ static const armour_def Armour_prop[] =
     { ARM_IRON_TROLL_LEATHER_ARMOUR, "iron troll leather",  11, -180,    250,
        EQ_BODY_ARMOUR, SIZE_LITTLE, SIZE_GIANT, false, ARMF_REGENERATION, 25 },
 
-    { ARM_SALAMANDER_HIDE_ARMOUR, "salamander hide", 4, -50, 250,
+    { ARM_SALAMANDER_HIDE_ARMOUR, "salamander hide",      4, -50, 250,
        EQ_BODY_ARMOUR, SIZE_LITTLE, SIZE_GIANT, false, ARMF_RES_FIRE | ARMF_BERSERK, 25},
 
     { ARM_CLOAK,                "cloak",                  1,   0,   45,
@@ -145,12 +145,13 @@ static const armour_def Armour_prop[] =
     // and shapeshift status.
     { ARM_BOOTS,                "boots",                  1,   0,   45,
         EQ_BOOTS,       SIZE_SMALL,  SIZE_MEDIUM, true },
+
     // Changed max. barding size to large to allow for the appropriate
     // monster types (monsters don't differentiate between torso and general).
     { ARM_CENTAUR_BARDING,      "centaur barding",        4,  -60,  230,
-        EQ_BOOTS,       SIZE_MEDIUM, SIZE_LARGE, true },
+        EQ_BARDING,       SIZE_MEDIUM, SIZE_LARGE, true },
     { ARM_NAGA_BARDING,         "naga barding",           4,  -60,  230,
-        EQ_BOOTS,       SIZE_MEDIUM, SIZE_LARGE, true },
+        EQ_BARDING,       SIZE_MEDIUM, SIZE_LARGE, true },
 
     // Note: shields use ac-value as sh-value, EV pen is used as the basis
     // to calculate adjusted shield penalty.
@@ -3047,27 +3048,15 @@ bool gives_resistance(const item_def &item)
 
 bool item_is_jelly_edible(const item_def &item)
 {
-    if (item_is_stationary_net(item))
-        return false;
-
-    // Don't eat artefacts or the horn of Geryon.
-    if (is_artefact(item) || item_is_horn_of_geryon(item))
-        return false;
-
-    // Don't eat zigfigs. (They're artefact-like, and Jiyvaites shouldn't worry
-    // about losing them.)
-    if (item.base_type == OBJ_MISCELLANY && item.sub_type == MISC_ZIGGURAT)
-        return false;
-
     // Don't eat mimics.
     if (item.flags & ISFLAG_MIMIC)
         return false;
 
-    // Don't eat special game items.
-    if (item_is_orb(item) || item.base_type == OBJ_RUNES)
-        return false;
+    // Only eat corpses now.
+    if (item.base_type == OBJ_CORPSES)
+        return true;
 
-    return true;
+    return false;
 }
 
 equipment_type get_item_slot(const item_def& item)

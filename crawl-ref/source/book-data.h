@@ -353,6 +353,7 @@ static const vector<spell_type> spellbook_templates[] =
 },
 
 {   // Grand Grimoire
+    SPELL_HAUNT,
     SPELL_MONSTROUS_MENAGERIE,
     SPELL_MALIGN_GATEWAY,
     SPELL_SUMMON_JUNGLE,

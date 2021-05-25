@@ -21,9 +21,12 @@
 #endif
 
 #include "artefact.h"
+#include "attack.h"
 #include "beam.h"
 #include "chardump.h"
+#include "cloud.h"
 #include "colour.h"
+#include "coordit.h"
 #include "delay.h"
 #include "dgn-event.h"
 #include "end.h"
@@ -61,6 +64,7 @@
 #include "state.h"
 #include "stringutil.h"
 #include "teleport.h"
+#include "terrain.h"
 #include "transform.h"
 #include "traps.h"
 #include "tutorial.h"
@@ -195,7 +199,7 @@ int check_your_resists(int hurted, beam_type flavour, string source,
 
     case BEAM_WAND_HEALING:
         if (hurted && you.hp < you.hp_max)
-            mpr("Your wounds heal themselves!");
+            mprf("Your wounds heal themselves%s", attack_strength_punctuation(hurted).c_str());
         if (you.species == SP_FAIRY)
             hurted = div_rand_round(hurted, 8);
         you.heal(hurted);
@@ -249,7 +253,6 @@ int check_your_resists(int hurted, beam_type flavour, string source,
             if (you.res_poison(true, mount) > 0)
                 _mount_resists(mount);
         }
-
         break;
 
     case BEAM_POISON_ARROW:
@@ -328,6 +331,11 @@ int check_your_resists(int hurted, beam_type flavour, string source,
         hurted = resist_adjust_damage(&you, flavour, hurted, mount);
         if (hurted < original && doEffects)
             _mount_resists(mount);
+        if (hurted > original && doEffects)
+        {
+            mpr("Your flesh is eroded terribly!");
+            xom_is_stimulated(200);
+        }
         break;
 
     case BEAM_MIASMA:
@@ -562,7 +570,7 @@ bool drain_player(int power, bool announce_full, bool ignore_protection)
     if (crawl_state.disables[DIS_AFFLICTIONS])
         return false;
 
-    const int protection = ignore_protection ? 0 : player_prot_life();
+    const int protection = (ignore_protection && player_prot_life() > 0) ? 0 : player_prot_life();
 
     if (protection == 3)
     {
@@ -578,9 +586,12 @@ bool drain_player(int power, bool announce_full, bool ignore_protection)
         power /= (protection * 2);
     }
 
+    if (protection < 0)
+        power = div_rand_round(power * 3, 2);
+
     if (power > 0)
     {
-        mpr("You feel drained.");
+        mprf("You feel %sdrained.", protection < 0 ? "severely " : "");
         xom_is_stimulated(15);
 
         you.attribute[ATTR_XP_DRAIN] += power;
@@ -832,6 +843,19 @@ static void _tiamat_retribution(int dam, bool fiery)
     }
 }
 
+static void _boil_protoplasm(int dam, bool fiery)
+{
+    if (!fiery || you.get_mutation_level(MUT_PROTOPLASM) < 3)
+        return;
+
+    if (x_chance_in_y(dam * 6, you.hp_max))
+    {
+        mpr("Your protoplasm boils!");
+        for (adjacent_iterator ai(you.pos(), false); ai; ++ai)
+            if (!cell_is_solid(*ai) && !cloud_at(*ai))
+                place_cloud(CLOUD_STEAM, *ai, you.experience_level / 3 + random2(dam), &you, 2);
+    }
+}
 
 static void _maybe_fog(int dam)
 {
@@ -863,8 +887,8 @@ static void _maybe_fog(int dam)
 
 static void _deteriorate(int dam)
 {
-    if (x_chance_in_y(you.get_mutation_level(MUT_DETERIORATION), 4)
-        && dam > you.hp_max / 10)
+    if (x_chance_in_y(you.get_mutation_level(MUT_DETERIORATION), 2)
+        && dam > you.hp_max / 20)
     {
         mprf(MSGCH_WARN, "Your body deteriorates!");
         lose_stat(STAT_RANDOM, 1);
@@ -1175,6 +1199,7 @@ void ouch(int dam, kill_method_type death_type, mid_t source, const char *aux,
             _maybe_fog(dam);
             _powered_by_pain(dam);
             _tiamat_retribution(dam, fiery);
+            _boil_protoplasm(dam, fiery);
             if (sanguine_armour_valid())
                 activate_sanguine_armour();
             if (death_type != KILLED_BY_POISON)

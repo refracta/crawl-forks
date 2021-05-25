@@ -134,6 +134,8 @@ static void _equip_use_warning(const item_def& item);
 
 static void _assert_valid_slot(equipment_type eq, equipment_type slot)
 {
+    if (slot == EQ_CYTOPLASM)
+        return;
     if (eq == slot)
         return;
     if (eq == EQ_RINGS) // all other slots are unique
@@ -145,6 +147,11 @@ static void _assert_valid_slot(equipment_type eq, equipment_type slot)
             r1 = EQ_RING_ONE, r2 = EQ_RING_EIGHT;
         if (slot >= r1 && slot <= r2)
             return;
+        if (you.get_mutation_level(MUT_TENDRILS) &&
+            (slot == EQ_RING_LEFT_TENDRIL || slot == EQ_RING_RIGHT_TENDRIL))
+        {
+            return;
+        }
         if (const item_def* amu = you.slot_item(EQ_AMULET, true))
             if (is_unrandom_artefact(*amu, UNRAND_FINGER_AMULET) && slot == EQ_RING_AMULET)
                 return;
@@ -167,13 +174,28 @@ void equip_effect(equipment_type slot, int item_slot, bool unmeld, bool msg)
 
     const interrupt_block block_unmeld_interrupts(unmeld);
 
-    if (slot >= EQ_CLOAK && slot <= EQ_BODY_ARMOUR 
-        || (item.base_type == OBJ_SHIELDS && !is_hybrid(item.sub_type)))
+    switch (item.base_type)
+    {
+    case OBJ_ARMOURS:
         _equip_armour_effect(item, unmeld, slot);
-    else if (slot == EQ_WEAPON0 || slot == EQ_WEAPON1)
+        break;
+    case OBJ_SHIELDS:
+        if (!is_hybrid(item.sub_type))
+            _equip_armour_effect(item, unmeld, slot);
+        else
+            _equip_weapon_effect(item, msg, unmeld, slot);
+        break;
+    case OBJ_MISCELLANY: // Lantern of shadows
+    case OBJ_WEAPONS:
+    case OBJ_STAVES:
         _equip_weapon_effect(item, msg, unmeld, slot);
-    else if (slot >= EQ_FIRST_JEWELLERY && slot <= EQ_LAST_JEWELLERY)
+        break;
+    case OBJ_JEWELLERY:
         _equip_jewellery_effect(item, unmeld, slot);
+        break;
+    default: // No other item classes are currently wieldable.
+        break;
+    }
 }
 
 void unequip_effect(equipment_type slot, int item_slot, bool meld, bool msg)
@@ -185,13 +207,28 @@ void unequip_effect(equipment_type slot, int item_slot, bool meld, bool msg)
 
     const interrupt_block block_meld_interrupts(meld);
 
-    if (slot >= EQ_CLOAK && slot <= EQ_BODY_ARMOUR 
-        || (item.base_type == OBJ_SHIELDS && !is_hybrid(item.sub_type)))
+    switch (item.base_type)
+    {
+    case OBJ_ARMOURS:
         _unequip_armour_effect(item, meld, slot);
-    else if (slot == EQ_WEAPON0 || slot == EQ_WEAPON1)
-        _unequip_weapon_effect(item, msg, meld,slot);
-    else if (slot >= EQ_FIRST_JEWELLERY && slot <= EQ_LAST_JEWELLERY)
+        break;
+    case OBJ_SHIELDS:
+        if (!is_hybrid(item.sub_type))
+            _unequip_armour_effect(item, meld, slot);
+        else
+            _unequip_weapon_effect(item, msg, meld, slot);
+        break;
+    case OBJ_MISCELLANY: // Lantern of shadows
+    case OBJ_WEAPONS:
+    case OBJ_STAVES:
+        _unequip_weapon_effect(item, msg, meld, slot);
+        break;
+    case OBJ_JEWELLERY:
         _unequip_jewellery_effect(item, msg, meld, slot);
+        break;
+    default: // No other item classes are currently wieldable.
+        break;
+    }
 }
 
 ///////////////////////////////////////////////////////////
@@ -485,7 +522,7 @@ static void _equip_weapon_effect(item_def& item, bool showMsgs, bool unmeld, equ
                 && !unmeld
                 && !you.wearing_ego(EQ_GLOVES, SPARM_WIELDING))
             {
-                make_hungry(4500, false, false);
+                make_hungry(4500, false);
             }
         }
     }
@@ -666,7 +703,7 @@ static void _equip_weapon_effect(item_def& item, bool showMsgs, bool unmeld, equ
                     && !unmeld
                     && !you.wearing_ego(EQ_GLOVES, SPARM_WIELDING))
                 {
-                    make_hungry(4500, false, false);
+                    make_hungry(4500, false);
                 }
                 break;
 
@@ -939,7 +976,7 @@ static void _wielding_wear_effects(bool unwield, bool unmeld)
                     mprf("You're filled with a deep hunger from your vampiric %s as it comes closer to your body!", wpn0.c_str());
                 else
                     mprf("You're filled with a deep hunger from your vampiric %s as you don your gloves!", wpn0.c_str());
-                make_hungry(4500, false, false);
+                make_hungry(4500, false);
             }
             else if (you.weapon(0) && is_unrandom_artefact(*you.weapon(0), UNRAND_MAJIN))
             {
@@ -947,7 +984,7 @@ static void _wielding_wear_effects(bool unwield, bool unmeld)
                     mpr("You're filled with a deep hunger from the Majin-Bo as it comes closer to your body!");
                 else
                     mpr("You're filled with a deep hunger from the Majin-Bo as you don your gloves!");
-                make_hungry(4500, false, false);
+                make_hungry(4500, false);
             }
 
             if (you.wearing_ego(EQ_WEAPON1, SPWPN_VAMPIRISM))
@@ -957,9 +994,9 @@ static void _wielding_wear_effects(bool unwield, bool unmeld)
                 else
                     mprf("You're filled with a deep hunger from your vampiric %s as you don your gloves!", wpn1.c_str());
                 if (you.hunger >= 5000)
-                    make_hungry(4500, false, false);
+                    make_hungry(4500, false);
                 else
-                    make_hungry(you.hunger - 500, false, false);
+                    make_hungry(you.hunger - 500, false);
                     // Two of these in a row can outright kill a player. This is a failsafe.
             }
 
@@ -970,9 +1007,9 @@ static void _wielding_wear_effects(bool unwield, bool unmeld)
                 else
                     mpr("You're filled with a deep hunger from the Majin-Bo as you don your gloves!");
                 if (you.hunger >= 5000)
-                    make_hungry(4500, false, false);
+                    make_hungry(4500, false);
                 else
-                    make_hungry(you.hunger - 500, false, false);
+                    make_hungry(you.hunger - 500, false);
                 // Two of these in a row can outright kill a player. This is a failsafe.
             }
         }
@@ -1480,8 +1517,7 @@ static void _equip_jewellery_effect(item_def &item, bool unmeld,
         break;
 
     case AMU_THE_GOURMAND:
-        if (you.species == SP_VAMPIRE
-            || you_foodless() // Mummy or in lichform
+        if (you_foodless() // Mummy or in lichform
             || you.get_mutation_level(MUT_HERBIVOROUS) > 0) // Spriggan
         {
             mpr("After a brief, frighteningly intense craving, "
@@ -1496,7 +1532,6 @@ static void _equip_jewellery_effect(item_def &item, bool unmeld,
         else
         {
             mpr("You feel a craving for the dungeon's cuisine.");
-            // What's this supposed to achieve? (jpeg)
             you.duration[DUR_GOURMAND] = 0;
         }
         break;

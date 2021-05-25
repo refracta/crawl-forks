@@ -324,8 +324,23 @@ static const ability_def Ability_List[] =
     { ABIL_STOP_FLYING, "Stop Flying", 0, 0, 0, 0, {}, abflag::starve_ok },
     { ABIL_PLANT_ROOTS, "Plant Roots", 3, 0, 100, 0,{ fail_basis::xl, 42, 3 }, abflag::none },
     { ABIL_DEROOT, "Unearth Roots", 0, 0, 0, 0,{}, abflag::starve_ok },
-    { ABIL_DAMNATION, "Hellfire Blast",
-        0, 150, 200, 0, {fail_basis::xl, 50, 1}, abflag::none },
+    { ABIL_HELLFIRE, "Hurl Hellfire",
+      0, 150, 200, 0, {fail_basis::xl, 50, 1}, abflag::none },
+
+    { ABIL_TURN_INVISIBLE, "Turn Invisible",
+      0, 100, 100, 0, {fail_basis::xl, 50, 2}, abflag::none },
+    { ABIL_BUD_EYEBALLS, "Spawn Eyeballs",
+      0, 200, 200, 0, {fail_basis::xl, 50, 2}, abflag::none },
+    { ABIL_SILENT_SCREAM, "Silent Scream",
+      0, 100, 100, 0, {fail_basis::xl, 50, 2}, abflag::none },
+    { ABIL_FROST_BURST, "Frost Burst",
+      0, 200, 200, 0, {fail_basis::xl, 50, 2}, abflag::none },
+    { ABIL_CORROSIVE_WAVE, "Corrosive Wave",
+      0, 100, 100, 0, {fail_basis::xl, 50, 2}, abflag::none },
+    { ABIL_SLIME_BOLT, "Fluid Rush",
+      0, 200, 200, 0, {fail_basis::xl, 50, 2}, abflag::none },
+    { ABIL_SUBSUME, "Subsume Item", 0, 0, 0, 0,{}, abflag::starve_ok },
+    { ABIL_EJECT, "Eject Item", 0, 0, 0, 0,{}, abflag::starve_ok },
 
     { ABIL_CANCEL_PPROJ, "Cancel Portal Projectile",
       0, 0, 0, 0, {}, abflag::instant | abflag::starve_ok },
@@ -506,12 +521,16 @@ static const ability_def Ability_List[] =
       0, 0, 0, 25, {fail_basis::invo}, abflag::none },
 
     // Jiyva
-    { ABIL_JIYVA_CALL_JELLY, "Request Jelly",
-      2, 0, 0, 2, {fail_basis::invo}, abflag::none },
+    { ABIL_JIYVA_DISSOLUTION, "Dissolution",
+      4, 0, 100, 2, {fail_basis::invo, 40, 4, 25}, abflag::none },
+    { ABIL_JIYVA_SET_TARGETS_FREE, "Set Stat Targets",
+      0, 0, 0, 0, {fail_basis::invo}, abflag::instant },
+    { ABIL_JIYVA_SET_TARGETS, "Set Stat Targets",
+      0, 0, 0, 4, {fail_basis::invo}, abflag::instant },
+    { ABIL_JIYVA_SLIME_MOUNT, "Oozing Slime Mount",
+      8, 0, 500, 8, { fail_basis::invo, 90, 6, 10 }, abflag::none },
     { ABIL_JIYVA_SLIMIFY, "Slimify",
-      4, 0, 0, 12, {fail_basis::invo, 90, 0, 2}, abflag::none },
-    { ABIL_JIYVA_CURE_BAD_MUTATION, "Cure Bad Mutation",
-      0, 0, 0, 20, {fail_basis::invo}, abflag::none },
+      6, 0, 200, 12, {fail_basis::invo, 90, 0, 2}, abflag::none },
 
     // Fedhas
     { ABIL_FEDHAS_FUNGAL_BLOOM, "Fungal Bloom",
@@ -801,12 +820,8 @@ const string make_cost_description(ability_type ability)
     if (abil.hp_cost)
         ret += make_stringf(", %d HP", abil.hp_cost.cost(you.hp_max));
 
-    if (abil.food_cost && !you_foodless()
-        && (you.undead_state() != US_SEMI_UNDEAD
-            || you.hunger_state > HS_STARVING))
-    {
+    if (abil.food_cost && !you_foodless()) // BCADDO: Unhide amount. (Part of goldifying food?)
         ret += ", Hunger"; // randomised and exact amount hidden from player
-    }
 
     if (abil.piety_cost)
         ret += make_stringf(", %d Piety", abil.piety_cost);
@@ -891,9 +906,7 @@ static const string _detailed_cost_description(ability_type ability)
         ret << abil.hp_cost.cost(you.hp_max);
     }
 
-    if (abil.food_cost && !you_foodless()
-        && (you.undead_state() != US_SEMI_UNDEAD
-            || you.hunger_state > HS_STARVING))
+    if (abil.food_cost && !you_foodless())
     {
         have_cost = true;
         ret << "\nHunger : ";
@@ -974,7 +987,7 @@ ability_type fixup_ability(ability_type ability)
     case ABIL_EVOKE_BERSERK:
     case ABIL_TROG_BERSERK:
         if (you.is_lifeless_undead(false)
-            || you.species == SP_FORMICID)
+            || you.get_mutation_level(MUT_STASIS))
         {
             return ABIL_NON_ABILITY;
         }
@@ -982,25 +995,27 @@ ability_type fixup_ability(ability_type ability)
 
     case ABIL_BLINK:
     case ABIL_EVOKE_BLINK:
-        if (you.species == SP_FORMICID)
+        if (you.get_mutation_level(MUT_STASIS))
             return ABIL_NON_ABILITY;
-        else
-            return ability;
+        return ability;
+
+    case ABIL_JIYVA_SET_TARGETS:
+        if (you.jiyva_stat_targets[0] = JSTAT_UNSET)
+            return ABIL_JIYVA_SET_TARGETS_FREE; // first time's free.
+        return ability;
 
     case ABIL_LUGONU_ABYSS_EXIT:
     case ABIL_LUGONU_ABYSS_ENTER:
         if (brdepth[BRANCH_ABYSS] == -1)
             return ABIL_NON_ABILITY;
-        else
-            return ability;
+        return ability;
 
     case ABIL_TSO_BLESS_WEAPON:
     case ABIL_KIKU_BLESS_WEAPON:
     case ABIL_LUGONU_BLESS_WEAPON:
         if (you.species == SP_FELID || you.species == SP_FAIRY)
             return ABIL_NON_ABILITY;
-        else
-            return ability;
+        return ability;
 
     case ABIL_ELYVILON_HEAL_OTHER:
     case ABIL_TSO_SUMMON_DIVINE_WARRIOR:
@@ -1011,8 +1026,7 @@ ability_type fixup_ability(ability_type ability)
     case ABIL_QAZLAL_ELEMENTAL_FORCE:
         if (you.get_mutation_level(MUT_NO_LOVE))
             return ABIL_NON_ABILITY;
-        else
-            return ability;
+        return ability;
 
     case ABIL_SIF_MUNA_DIVINE_ENERGY:
         if (you.attribute[ATTR_DIVINE_ENERGY])
@@ -1022,8 +1036,7 @@ ability_type fixup_ability(ability_type ability)
     case ABIL_ASHENZARI_TRANSFER_KNOWLEDGE:
         if (you.species == SP_GNOLL)
             return ABIL_NON_ABILITY;
-        else
-            return ability;
+        return ability;
 
     // Can only make the choices once.
     case ABIL_BAHAMUT_PROTECTION:
@@ -1249,19 +1262,8 @@ static void _print_talent_description(const talent& tal)
 void no_ability_msg()
 {
     // Give messages if the character cannot use innate talents right now.
-    // * Vampires can't turn into bats when full of blood.
     // * Tengu can't start to fly if already flying.
-    if (you.species == SP_VAMPIRE && you.experience_level >= 3)
-    {
-        if (you.transform_uncancellable)
-            mpr("You can't untransform!");
-        else
-        {
-            ASSERT(you.hunger_state > HS_SATIATED);
-            mpr("Sorry, you're too full to transform right now.");
-        }
-    }
-    else if (you.get_mutation_level(MUT_TENGU_FLIGHT)
+    if (you.get_mutation_level(MUT_TENGU_FLIGHT)
              || you.get_mutation_level(MUT_BIG_WINGS))
     {
         if (you.airborne())
@@ -1463,7 +1465,7 @@ static bool _check_ability_possible(const ability_def& abil, bool quiet = false)
     }
 
     // Silence and water elementals
-    if (silenced(you.pos()) && you.get_mutation_level(MUT_SILENT_CAST) == 0
+    if (silenced(you.pos()) && !you.can_silent_cast()
         || you.duration[DUR_WATER_HOLD] && !you.res_water_drowning())
     {
         talent tal = get_talent(abil.ability, false);
@@ -1664,6 +1666,15 @@ static bool _check_ability_possible(const ability_def& abil, bool quiet = false)
         }
         return true;
     }
+
+    case ABIL_JIYVA_DISSOLUTION:
+        if (!jiyva_check_dissolve())
+        {
+            if (!quiet)
+                mpr("No dissolvable items are in range.");
+            return false;
+        }
+        return true;
 
     case ABIL_SPIT_POISON:
     case ABIL_BREATHE_DART:
@@ -2003,6 +2014,36 @@ static int _pois_res_multi(monster * mons)
         return 25;
     case 3:
         return 1000; // Arbitrarily high to be completely impossible to succeed.
+    }
+}
+
+static void _spawn_eyeballs()
+{
+    const int power = you.experience_level + you.skill(SK_INVOCATIONS);
+    int sumcount = div_rand_round(power, 9);
+    sumcount += 1 + random2(sumcount);
+
+    for (int i = 0; i < sumcount; i++)
+    {
+        const monster_type mon = random_choose_weighted(
+             2, MONS_FLOATING_EYE,
+             1, MONS_GOLDEN_EYE,
+             1, MONS_SHINING_EYE,
+             4, MONS_EYE_OF_DEVASTATION);
+
+        monster * x = create_monster(
+            mgen_data(mon, BEH_FRIENDLY, you.pos(), MHITNOT, MG_NONE, GOD_JIYVA));
+        if (x)
+            x->add_ench(mon_enchant(ENCH_FAKE_ABJURATION, 5));
+
+        for (adjacent_iterator ai(you.pos()); ai; ++ai)
+        {
+            if (!actor_at(*ai))
+            {
+                x->move_to_pos(*ai, true, true);
+                break;
+            }
+        }
     }
 }
 
@@ -2554,7 +2595,6 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         // deliberate fall-through
     case ABIL_BLINK:            // mutation
         return cast_blink(fail);
-        break;
 
     case ABIL_EVOKE_BERSERK:    // amulet of rage, randarts
         fail_check();
@@ -2594,15 +2634,68 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         break;
 
     // DEMONIC POWERS:
-    case ABIL_DAMNATION:
+    case ABIL_HELLFIRE:
         fail_check();
-        if (your_spells(SPELL_HURL_DAMNATION,
+        if (your_spells(SPELL_HURL_HELLFIRE,
                         you.experience_level * 10,
                         false) == spret::abort)
         {
             return spret::abort;
         }
         break;
+
+    // Jiyva powers:
+    case ABIL_TURN_INVISIBLE:
+        if (!invis_allowed())
+            return spret::abort;
+        fail_check();
+        you.props[INVIS_CONTAMLESS_KEY].get_bool() = true;
+        potionlike_effect(POT_INVISIBILITY, 20 + you.experience_level + you.skill(SK_INVOCATIONS));
+        return spret::success;
+
+    case ABIL_BUD_EYEBALLS:
+        fail_check();
+        _spawn_eyeballs();
+        return spret::success;
+
+    case ABIL_SILENT_SCREAM:
+        return cast_silence((6 + you.experience_level + you.skill(SK_INVOCATIONS)) * 2, fail, true);
+
+    case ABIL_FROST_BURST:
+        return cast_starburst(6 + you.experience_level + you.skill(SK_INVOCATIONS), fail, false, true);
+
+    case ABIL_CORROSIVE_WAVE:
+    {
+        fail_check();
+        const int pow = 6 + you.experience_level + you.skill(SK_INVOCATIONS);
+        zappy(ZAP_CORROSIVE_WAVE, pow, false, beam);
+        beam.range = 4;
+        beam.origin_spell = SPELL_PRIMAL_WAVE;
+
+        direction_chooser_args args;
+        args.mode = TARG_HOSTILE;
+        args.top_prompt = "Squirt your ooze at?";
+        args.self = confirm_prompt_type::cancel;
+
+        if (!spell_direction(abild, beam, &args) || !player_tracer(ZAP_CORROSIVE_WAVE, pow, beam))
+            return spret::abort;
+
+        beam.fire();
+        break;
+    }
+
+    case ABIL_SLIME_BOLT:
+        return blink_bolt(fail, 6 + you.experience_level + you.skill(SK_INVOCATIONS));
+
+    case ABIL_SUBSUME:
+        if (subsume_item())
+            return spret::success;
+        return spret::abort;
+
+    case ABIL_EJECT:
+        if (eject_item())
+            return spret::success;
+        return spret::abort;
 
     case ABIL_EVOKE_TURN_INVISIBLE:     // cloaks, randarts
         if (!invis_allowed())
@@ -3296,16 +3389,17 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         }
         break;
 
-    case ABIL_JIYVA_CALL_JELLY:
+    case ABIL_JIYVA_DISSOLUTION:
     {
         fail_check();
-        mgen_data mg(MONS_JELLY, BEH_STRICT_NEUTRAL, you.pos(),
-                     MHITNOT, MG_NONE, GOD_JIYVA);
+        jiyva_dissolution();
+        break;
+    }
 
-        mg.non_actor_summoner = "Jiyva";
-
-        if (!create_monster(mg))
-            return spret::abort;
+    case ABIL_JIYVA_SET_TARGETS_FREE:
+    case ABIL_JIYVA_SET_TARGETS:
+    {
+        jiyva_set_targets();
         break;
     }
 
@@ -3340,10 +3434,8 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         break;
     }
 
-    case ABIL_JIYVA_CURE_BAD_MUTATION:
-        fail_check();
-        jiyva_remove_bad_mutation();
-        break;
+    case ABIL_JIYVA_SLIME_MOUNT:
+        return gain_mount(mount_type::slime, 0, fail);
 
     case ABIL_CHEIBRIADOS_TIME_STEP:
         fail_check();
@@ -3742,7 +3834,7 @@ static void _pay_ability_costs(const ability_def& abil)
         dec_hp(hp_cost, false);
 
     if (food_cost)
-        make_hungry(food_cost, false, true);
+        make_hungry(food_cost, false);
 
     if (piety_cost)
         lose_piety(piety_cost);
@@ -3926,15 +4018,14 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
     if (you.species == SP_DEEP_DWARF)
         _add_talent(talents, ABIL_HEAL_WOUNDS, check_confused);
 
-    if (you.species == SP_FORMICID
-        && (form_keeps_mutations() || include_unusable))
+    if (you.get_mutation_level(MUT_BURROWING, false) && (form_keeps_mutations() || include_unusable))
     {
         _add_talent(talents, ABIL_DIG, check_confused);
         if (!crawl_state.game_is_sprint() || brdepth[you.where_are_you] > 1)
             _add_talent(talents, ABIL_SHAFT_SELF, check_confused);
     }
 
-    if (you.get_mutation_level(MUT_HOP) && (form_keeps_mutations() && !you.mounted() || include_unusable))
+    if (you.get_mutation_level(MUT_FROG_LEGS, false) && (form_keeps_mutations() && !you.mounted() || include_unusable))
         _add_talent(talents, ABIL_HOP, check_confused);
 
     // Spit Poison, possibly upgraded to Breathe Poison.
@@ -3958,13 +4049,6 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
         }
     }
 
-    if (you.species == SP_VAMPIRE && you.experience_level >= 3
-        && you.hunger_state <= HS_SATIATED
-        && you.form != transformation::bat)
-    {
-        _add_talent(talents, ABIL_TRAN_BAT, check_confused);
-    }
-
     if (you.racial_permanent_flight() && !you.attribute[ATTR_PERM_FLIGHT] && !you.mounted())
     {
         // Tengu can fly starting at XL 5
@@ -3973,11 +4057,8 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
         _add_talent(talents, ABIL_FLY, check_confused);
     }
 
-    if (you.species == SP_LIGNIFITE && you.experience_level > 12
-        && !you.attribute[ATTR_ROOTED] && form_keeps_mutations())
-    {
+    if (you.get_mutation_level(MUT_ROOTS) && !you.attribute[ATTR_ROOTED])
         _add_talent(talents, ABIL_PLANT_ROOTS, check_confused);
-    }
 
     if (you.attribute[ATTR_ROOTED])
         _add_talent(talents, ABIL_DEROOT, check_confused);
@@ -3986,8 +4067,32 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
         _add_talent(talents, ABIL_STOP_FLYING, check_confused);
 
     // Mutations
-    if (you.get_mutation_level(MUT_HURL_DAMNATION))
-        _add_talent(talents, ABIL_DAMNATION, check_confused);
+    if (you.get_mutation_level(MUT_HURL_HELLFIRE))
+        _add_talent(talents, ABIL_HELLFIRE, check_confused);
+
+    if (you.get_mutation_level(MUT_TRANSLUCENT_SKIN) == 3 && !you.duration[DUR_INVIS])
+        _add_talent(talents, ABIL_TURN_INVISIBLE, check_confused);
+
+    if (you.get_mutation_level(MUT_BUDDING_EYEBALLS) == 3)
+        _add_talent(talents, ABIL_BUD_EYEBALLS, check_confused);
+
+    if (you.get_mutation_level(MUT_JIBBERING_MAWS) == 3)
+        _add_talent(talents, ABIL_SILENT_SCREAM, check_confused);
+
+    if (you.get_mutation_level(MUT_FROST_BURST) == 3)
+        _add_talent(talents, ABIL_FROST_BURST, check_confused);
+
+    if (you.get_mutation_level(MUT_ACID_WAVE) == 3)
+        _add_talent(talents, ABIL_CORROSIVE_WAVE, check_confused);
+
+    if (you.get_mutation_level(MUT_MELT) == 3)
+        _add_talent(talents, ABIL_SLIME_BOLT, check_confused);
+
+    if (you.get_mutation_level(MUT_CYTOPLASMIC_SUSPENSION))
+        _add_talent(talents, ABIL_SUBSUME, check_confused);
+
+    if (you.equip[EQ_CYTOPLASM] != -1)
+        _add_talent(talents, ABIL_EJECT, check_confused);
 
     if (you.duration[DUR_TRANSFORMATION] && !you.transform_uncancellable)
         _add_talent(talents, ABIL_END_TRANSFORMATION, check_confused);
@@ -4024,8 +4129,10 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
     if (you.duration[DUR_PORTAL_PROJECTILE])
         _add_talent(talents, ABIL_CANCEL_PPROJ, check_confused);
 
+    const item_def * inside = you.slot_item(EQ_CYTOPLASM);
+
     // Evocations from items.
-    if (you.scan_artefacts(ARTP_BLINK)
+    if ((you.scan_artefacts(ARTP_BLINK) || (inside && get_weapon_brand(*inside) == SPWPN_DISTORTION))
         && !you.get_mutation_level(MUT_NO_ARTIFICE))
     {
         _add_talent(talents, ABIL_EVOKE_BLINK, check_confused);
@@ -4334,7 +4441,7 @@ vector<ability_type> get_god_abilities(bool ignore_silence, bool ignore_piety,
     if (silenced(you.pos()) && you_worship(GOD_WU_JIAN) && piety_rank() >= 2)
         abilities.push_back(ABIL_WU_JIAN_WALLJUMP);
 
-    if (!ignore_silence && silenced(you.pos()) && you.get_mutation_level(MUT_SILENT_CAST) == 0)
+    if (!ignore_silence && silenced(you.pos()) && !you.can_silent_cast())
         return abilities;
     // Remaining abilities are unusable if silenced.
     for (const auto& power : get_god_powers(you.religion))

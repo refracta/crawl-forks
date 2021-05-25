@@ -88,9 +88,7 @@ function crypt_loot_plus(e)
           "bloodbane / leech / sword_of_zonguldrok / " ..
           "finisher / scythe_of_curses / majin-bo / sceptre_of_torment / " ..
           "undeadhunter")
-  e.kitem("i = necronomicon / " .. book .. "necromutation / " ..
-          book .. "death's_door / " .. book .. "haunt / " ..
-          book .. "borgnjor's_revivification / " .. book .. "infestation")
+  e.kitem("i = manual of necromancy / book of unlife")
   e.kitem("j = lamp of fire w:15 / phial of floods w:15 / " ..
           "fan of gales w:15 / crystal ball of energy / " ..
           "staff of transmutation ident:type, staff of death / " ..

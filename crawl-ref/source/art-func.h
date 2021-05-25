@@ -114,7 +114,7 @@ static bool _ASMODEUS_evoke(item_def */*item*/, bool* did_work,
 {
     if (_evoke_sceptre_of_asmodeus())
     {
-        make_hungry(200, false, true);
+        make_hungry(200, false);
         *did_work = true;
         practise_evoking(1);
     }
@@ -199,7 +199,7 @@ static bool _DISPATER_evoke(item_def */*item*/, bool* did_work, bool* unevokable
     *did_work = true;
     int power = you.skill(SK_EVOCATIONS, 8);
 
-    if (your_spells(SPELL_HURL_DAMNATION, power, false) == spret::abort)
+    if (your_spells(SPELL_HURL_HELLFIRE, power, false) == spret::abort)
     {
         *unevokable = true;
         return false;
@@ -208,7 +208,7 @@ static bool _DISPATER_evoke(item_def */*item*/, bool* did_work, bool* unevokable
     mpr("You feel the staff feeding on your energy!");
     dec_hp(14, false);
     dec_mp(4);
-    make_hungry(100, false, true);
+    make_hungry(100, false);
     practise_evoking(random_range(1, 2));
 
     return false;
@@ -474,7 +474,7 @@ static bool _WUCAD_MU_evoke(item_def */*item*/, bool* did_work, bool* unevokable
 
     const int mp_inc_base = 3 + random2(5);
     inc_mp(mp_inc_base + you.skill_rdiv(SK_EVOCATIONS, 1, 3));
-    make_hungry(50, false, true);
+    make_hungry(50, false);
 
     *did_work = true;
     practise_evoking(1);

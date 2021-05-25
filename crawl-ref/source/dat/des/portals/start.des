@@ -47,7 +47,7 @@ NAME:    bcadren_noble_market
 TAGS:    arrival no_rotate no_hmirror no_vmirror no_mimic
 ORIENT:  encompass
 KFEAT:  0 = book shop type:Expert suffix:Tomes greed:9 count:3 use_all ; \
-			necronomicon | book of annihilations | grand grimoire
+			scroll of random uselessness | book of annihilations | grand grimoire
 KFEAT:  1 = armour shop count:10 greed:10 type:Dragon suffix:Armour use_all ; \
             mundane not_cursed storm dragon scales | mundane not_cursed fire dragon scales |\
             mundane not_cursed shadow dragon scales | mundane not_cursed quicksilver dragon scales |\

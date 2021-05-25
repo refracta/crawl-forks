@@ -43,7 +43,8 @@ mutations:
   1:
     MUT_SLOW: 1
     MUT_INSUBSTANTIAL: 1
-    MUT_TENGU_FLIGHT: 1
+    MUT_BIG_WINGS: 1
+    MUT_FAIRY_LIGHT: 1
 fake_mutations:
   - long: You are too small to use any gear.
     short: no armour or weapons
@@ -55,8 +56,6 @@ fake_mutations:
     short: fairy magic
   - long: You are extremely frail but all attacks that strike you do exactly one damage.
     short: fairy shield
-  - long: You exude a bright light in a small radius around yourself.
-    short: fairy light
   - long: The effect of potions and godly healing effects is reduced to match your tiny health and magic reserves.
     short: decreased potion and divine healing
 recommended_jobs:

@@ -275,8 +275,19 @@ string item_def::name(description_level_type descrip, bool terse, bool ident,
                 case EQ_HELMET:
                 case EQ_GLOVES:
                 case EQ_BOOTS:
+                case EQ_BARDING:
                 case EQ_BODY_ARMOUR:
+                case EQ_JIYVA0:
+                case EQ_JIYVA1:
+                case EQ_JIYVA2:
+                case EQ_JIYVA3:
+                case EQ_JIYVA4:
+                case EQ_JIYVA5:
+                case EQ_JIYVA6:
                     buff << " (worn)";
+                    break;
+                case EQ_CYTOPLASM:
+                    buff << " (subsumed)";
                     break;
                 case EQ_LEFT_RING:
                 case EQ_RIGHT_RING:
@@ -303,14 +314,17 @@ string item_def::name(description_level_type descrip, bool terse, bool ident,
                 case EQ_RING_EIGHT:
                     buff << " (on tentacle)";
                     break;
+                case EQ_RING_LEFT_TENDRIL:
+                    buff << " (left tendril)";
+                    break;
+                case EQ_RING_RIGHT_TENDRIL:
+                    buff << " (right tendril)";
+                    break;
                 case EQ_RING_AMULET:
                     buff << " (on amulet)";
                     break;
                 case EQ_FAIRY_JEWEL:
                     buff << " (around core)";
-                    break;
-                case EQ_OLD_SHIELD:
-                    buff << " (OLD SHIELD; USELESS)";
                     break;
                 default:
                     die("Item in an invalid slot");
@@ -3369,7 +3383,7 @@ bool is_emergency_item(const item_def &item)
         {
         case SCR_TELEPORTATION:
         case SCR_BLINKING:
-            return you.species != SP_FORMICID;
+            return !you.get_mutation_level(MUT_STASIS);
         case SCR_FEAR:
         case SCR_FOG:
             return true;
@@ -3384,7 +3398,7 @@ bool is_emergency_item(const item_def &item)
         {
         case POT_HASTE:
             return !have_passive(passive_t::no_haste)
-                && you.species != SP_FORMICID;
+                && !you.get_mutation_level(MUT_STASIS);
         case POT_HEAL_WOUNDS:
             return you.can_potion_heal();
         case POT_CURING:
@@ -3435,7 +3449,7 @@ bool is_good_item(const item_def &item)
         case POT_EXPERIENCE:
             return true;
         case POT_BENEFICIAL_MUTATION:
-            return you.species != SP_GHOUL; // Mummies are already handled
+            return !you.undead_state();
         default:
             return false;
         }
@@ -3493,8 +3507,7 @@ bool is_bad_item(const item_def &item, bool temp)
         case POT_STRONG_POISON:
         case POT_POISON:
             // Poison is not that bad if you're poison resistant.
-            return player_res_poison(false) <= 0
-                   || !temp && you.species == SP_VAMPIRE;
+            return player_res_poison(false) <= 0;
 #endif
         default:
             return false;
@@ -3564,8 +3577,7 @@ bool is_dangerous_item(const item_def &item, bool temp)
         case SCR_SILENCE:
             return true;
         case SCR_TORMENT:
-            return !you.get_mutation_level(MUT_TORMENT_RESISTANCE)
-                   || !temp && you.species == SP_VAMPIRE;
+            return !you.get_mutation_level(MUT_TORMENT_RESISTANCE);
         case SCR_HOLY_WORD:
             return you.undead_or_demonic();
         default:
@@ -3677,11 +3689,11 @@ bool is_useless_item(const item_def &item, bool temp)
         case SCR_RANDOM_USELESSNESS:
             return true;
         case SCR_TELEPORTATION:
-            return you.species == SP_FORMICID
+            return you.get_mutation_level(MUT_STASIS)
                    || crawl_state.game_is_sprint()
                    || player_in_branch(BRANCH_GAUNTLET);
         case SCR_BLINKING:
-            return you.species == SP_FORMICID;
+            return you.get_mutation_level(MUT_STASIS);
         case SCR_AMNESIA:
             return you_worship(GOD_TROG);
         case SCR_ENCHANT:
@@ -3730,6 +3742,10 @@ bool is_useless_item(const item_def &item, bool temp)
         case POT_HASTE:
             return you.stasis();
 
+        case POT_LIGNIFY:
+            if (you.species == SP_LIGNIFITE)
+                return true;
+            // fallthrough
         case POT_CURE_MUTATION:
         case POT_MUTATION:
         case POT_BENEFICIAL_MUTATION:
@@ -3740,24 +3756,13 @@ bool is_useless_item(const item_def &item, bool temp)
 #endif
             return !you.can_safely_mutate(temp);
 
-        case POT_LIGNIFY:
-            if (you.undead_state(temp) == US_GHOST)
-                return false;
-            else if (you.species == SP_LIGNIFITE)
-                return true;
-            else
-                return you.undead_state(temp)
-                       && (you.species != SP_VAMPIRE
-                           || temp && you.hunger_state < HS_SATIATED);
-
 #if TAG_MAJOR_VERSION == 34
         case POT_FLIGHT:
             return you.permanent_flight()
-                   || you.racial_permanent_flight();
+                   || you.racial_permanent_flight(); // BCADDO: These are redundant . . . 
 
         case POT_PORRIDGE:
-            return you.species == SP_VAMPIRE
-                    || you.get_mutation_level(MUT_CARNIVOROUS) > 0;
+            return you.get_mutation_level(MUT_CARNIVOROUS) > 0;
         case POT_BLOOD_COAGULATED:
 #endif
         case POT_BLOOD:
@@ -3770,7 +3775,7 @@ bool is_useless_item(const item_def &item, bool temp)
             // If you're poison resistant, poison is only useless.
             return !is_bad_item(item, temp);
         case POT_SLOWING:
-            return you.species == SP_FORMICID;
+            return you.get_mutation_level(MUT_STASIS);
 #endif
         case POT_HEAL_WOUNDS:
             return !you.can_potion_heal();
@@ -3795,13 +3800,12 @@ bool is_useless_item(const item_def &item, bool temp)
         {
         case AMU_RAGE:
             return you.undead_state(temp)
-                   && (you.species != SP_VAMPIRE
-                       || temp && you.hunger_state < HS_SATIATED)
-                   || you.species == SP_FORMICID
+                   && you.undead_state(temp) != US_SEMI_UNDEAD
+                   || you.get_mutation_level(MUT_STASIS)
                    || you.get_mutation_level(MUT_NO_ARTIFICE);
 
         case RING_RESIST_CORROSION:
-            return you.res_corr(false, false);
+            return you.get_mutation_level(MUT_SLIME) == 3; // Immune
 
         case AMU_THE_GOURMAND:
             return player_likes_chunks(true)
@@ -3825,9 +3829,7 @@ bool is_useless_item(const item_def &item, bool temp)
             return you.get_mutation_level(MUT_NO_REGENERATION) > 0
                    || (temp
                        && you.get_mutation_level(MUT_INHIBITED_REGENERATION) > 0
-                       && regeneration_is_inhibited())
-                   || (temp && you.species == SP_VAMPIRE
-                       && you.hunger_state <= HS_STARVING);
+                       && regeneration_is_inhibited());
 
 #if TAG_MAJOR_VERSION == 34
         case AMU_MANA_REGENERATION:
@@ -3835,8 +3837,7 @@ bool is_useless_item(const item_def &item, bool temp)
 #endif
 
         case RING_POISON_RESISTANCE:
-            return player_res_poison(false, temp, false) > 0
-                   && (temp || you.species != SP_VAMPIRE);
+            return player_res_poison(false, temp, false) > 0;
 
         case RING_WIZARDRY:
             return you_worship(GOD_TROG);

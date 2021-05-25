@@ -33,7 +33,8 @@ void init_mut_index();
 
 bool is_body_facet(mutation_type mut);
 bool is_slime_mutation(mutation_type mut);
-bool undead_mutation_rot();
+bool undead_mutation_rot(bool god_gift);
+bool suppress_mutation(bool temp = false, bool zin = false);
 
 bool mutate(mutation_type which_mutation, const string &reason,
             bool failMsg = true,
@@ -55,10 +56,12 @@ bool delete_mutation(mutation_type which_mutation, const string &reason,
                      bool disallow_mismatch = false);
 
 bool delete_all_mutations(const string &reason);
+bool remove_slime_mutations();
 
 const char* mutation_name(mutation_type mut, bool allow_category = false, bool for_display = false);
 const char* category_mutation_name(mutation_type mut);
 mutation_type mutation_from_name(string name, bool allow_category, vector<mutation_type> *partial_matches = nullptr);
+mutation_type get_scales();
 
 string mut_upgrade_summary(mutation_type mut);
 int mutation_max_levels(mutation_type mut);

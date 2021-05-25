@@ -2243,10 +2243,10 @@ string scorefile_entry::death_description(death_desc_verbosity verbosity) const
             desc += "lava";
         else
         {
-            if (you.undead_state() == US_UNDEAD)
-                desc += "Turned to ash by lava";
             if (you.undead_state() == US_GHOST)
                 desc += "Lost beneath molten lava";
+            else if (you.undead_state())
+                desc += "Turned to ash by lava";
             else
                 desc += "Took a swim in molten lava";
         }
@@ -2255,7 +2255,8 @@ string scorefile_entry::death_description(death_desc_verbosity verbosity) const
     case KILLED_BY_WATER:
         if (you.undead_state())
         {
-            if (you.undead_state() == US_GHOST) {
+            if (you.undead_state() == US_GHOST)
+            {
                 if (terse)
                     desc = "sank";
                 else

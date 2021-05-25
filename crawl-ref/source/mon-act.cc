@@ -174,7 +174,10 @@ static void _escape_water_hold(monster& mons)
 {
     if (mons.has_ench(ENCH_WATER_HOLD))
     {
-        simple_monster_message(mons, " slips free of the water.");
+        if (mons.get_ench(ENCH_WATER_HOLD).agent()->is_player())
+            simple_monster_message(mons, " slips free of your ooze.");
+        else
+            simple_monster_message(mons, " slips free of the water.");
         mons.del_ench(ENCH_WATER_HOLD);
     }
 
@@ -1180,7 +1183,7 @@ static bool _handle_scroll(monster& mons)
 
     case SCR_SILENCE:
         if (!mons.wont_attack() && (grid_distance(mons.pos(), you.pos()) < 5)
-                                && !(you.species == SP_SILENT_SPECTRE))
+                                && !(you.can_silent_cast()))
             {
                 mons.add_ench(ENCH_SILENCE);
                 invalidate_agrid(true);
@@ -2887,22 +2890,10 @@ static bool _monster_eat_item(monster* mons)
 
         int quant = si->quantity;
 
-        if (si->base_type != OBJ_GOLD)
-        {
-            quant = min(quant, max_eat - eaten);
+        quant = min(quant, max_eat - eaten);
 
-            hps_changed += quant * 3;
-            eaten += quant;
-        }
-        else
-        {
-            // Shouldn't be much trouble to digest a huge pile of gold!
-            if (quant > 500)
-                quant = 500 + roll_dice(2, (quant - 500) / 2);
-
-            hps_changed += quant / 10 + 1;
-            eaten++;
-        }
+        hps_changed += quant * 8;
+        eaten += quant;
 
         if (eaten && !shown_msg && player_can_hear(mons->pos()))
         {
@@ -2910,9 +2901,6 @@ static bool _monster_eat_item(monster* mons)
                  you.see_cell(mons->pos()) ? "" : " distant");
             shown_msg = true;
         }
-
-        if (you_worship(GOD_JIYVA))
-            jiyva_slurp_item_stack(*si, quant);
 
         if (quant >= si->quantity)
             item_was_destroyed(*si);

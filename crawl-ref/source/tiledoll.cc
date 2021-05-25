@@ -469,18 +469,7 @@ void fill_doll_equipment(dolls_data &result)
             else if (species_is_draconian(you.species))
                 result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS_DRAC;
             else
-                switch (you.get_mutation_level(MUT_HORNS))
-                {
-                case 1:
-                    result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS1;
-                    break;
-                case 2:
-                    result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS2;
-                    break;
-                case 3:
-                    result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS3;
-                    break;
-                }
+                result.parts[TILEP_PART_HELM] = TILEP_HELM_HORNS3;
         }
         else
             result.parts[TILEP_PART_HELM] = 0;
@@ -492,10 +481,12 @@ void fill_doll_equipment(dolls_data &result)
     // Boots.
     if (result.parts[TILEP_PART_BOOTS] == TILEP_SHOW_EQUIP)
     {
-        const int item = you.melded[EQ_BOOTS] ? -1 : you.equip[EQ_BOOTS];
+        int item = you.melded[EQ_BOOTS] ? -1 : you.equip[EQ_BOOTS];
+        if (item == -1)
+            item = you.melded[EQ_BARDING] ? -1 : you.equip[EQ_BARDING];
         if (item != -1)
             result.parts[TILEP_PART_BOOTS] = tilep_equ_boots(you.inv[item]);
-        else if (you.get_mutation_level(MUT_HOOVES) >= 3)
+        else if (you.get_mutation_level(MUT_HOOVES))
             result.parts[TILEP_PART_BOOTS] = TILEP_BOOTS_HOOVES;
         else
             result.parts[TILEP_PART_BOOTS] = 0;
@@ -566,6 +557,9 @@ void fill_doll_equipment(dolls_data &result)
             case mount_type::hydra:
                 result.parts[TILEP_PART_MOUNT_FRONT] = TILEP_MOUNT_FRONT_HYDRA;
                 break;
+            case mount_type::slime:
+                result.parts[TILEP_PART_MOUNT_FRONT] = TILEP_MOUNT_FRONT_SLIME;
+                break;
             default:
                 result.parts[TILEP_PART_MOUNT_BACK] = 0;
                 break;
@@ -588,6 +582,9 @@ void fill_doll_equipment(dolls_data &result)
                 break;
             case mount_type::hydra:
                 result.parts[TILEP_PART_MOUNT_BACK] = TILEP_MOUNT_BACK_HYDRA;
+                break;
+            case mount_type::slime:
+                result.parts[TILEP_PART_MOUNT_BACK] = TILEP_MOUNT_BACK_SLIME;
                 break;
             default:
                 result.parts[TILEP_PART_MOUNT_BACK] = 0;

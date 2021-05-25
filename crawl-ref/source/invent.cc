@@ -510,9 +510,9 @@ string no_selectables_message(int item_selector)
             return "You aren't carrying any items that you can evoke.";
     case OSEL_CURSED_WORN:
         return "None of your equipped items are cursed.";
+    case OSEL_SUBSUMABLE:
+        return "You aren't carrying any item, which you can subsume.";
 #if TAG_MAJOR_VERSION == 34
-    case OSEL_UNCURSED_WORN_ARMOUR:
-        return "You aren't wearing any piece of uncursed armour.";
     case OSEL_UNCURSED_WORN_JEWELLERY:
         return "You aren't wearing any piece of uncursed jewellery.";
 #endif
@@ -1032,6 +1032,8 @@ const char* item_slot_name(equipment_type type)
     case EQ_GLOVES:      return "gloves";
     case EQ_BOOTS:       return "boots";
     case EQ_BODY_ARMOUR: return "body";
+    case EQ_BARDING:     return "barding";
+    case EQ_CYTOPLASM:   return "cytoplasm";
     default:             return "";
     }
 }
@@ -1116,10 +1118,10 @@ bool item_is_selected(const item_def &i, int selector)
     case OSEL_CURSED_WORN:
         return i.cursed() && item_is_equipped(i);
 
-#if TAG_MAJOR_VERSION == 34
-    case OSEL_UNCURSED_WORN_ARMOUR:
-        return !i.cursed() && item_is_equipped(i) && itype == OBJ_ARMOURS;
+    case OSEL_SUBSUMABLE:
+        return item_is_subsumable(i);
 
+#if TAG_MAJOR_VERSION == 34
     case OSEL_UNCURSED_WORN_JEWELLERY:
         return !i.cursed() && item_is_equipped(i) && itype == OBJ_JEWELLERY;
 #endif
@@ -2079,6 +2081,33 @@ bool prompt_failed(int retval)
     crawl_state.cancel_cmd_repeat();
 
     return true;
+}
+
+bool item_is_subsumable(const item_def &item)
+{
+    if (!you.get_mutation_level(MUT_CYTOPLASMIC_SUSPENSION))
+        return false;
+
+    if (item.link == you.equip[EQ_CYTOPLASM])
+        return false;
+
+    // The lantern needs to be wielded to be used.
+    if (item.is_type(OBJ_MISCELLANY, MISC_LANTERN_OF_SHADOWS))
+        return true;
+
+    switch (item.base_type)
+    {
+    case OBJ_ARMOURS:
+    case OBJ_JEWELLERY:
+    case OBJ_SHIELDS:
+    case OBJ_STAVES:
+    case OBJ_WEAPONS:
+        return true;
+    default:
+        break;
+    }
+
+    return false;
 }
 
 // Most items are wieldable, but this function check for items that needs to be

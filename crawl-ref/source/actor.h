@@ -116,7 +116,7 @@ public:
     virtual item_def *slot_item(equipment_type eq,
                                 bool include_melded=false) const = 0;
     virtual int wearing(equipment_type slot, int sub_type,
-                        bool calc_unid = true) const = 0;
+                        bool calc_unid = true, bool count_jiyva = true) const = 0;
     virtual int wearing_ego(equipment_type slot, int sub_type,
                             bool calc_unid = true) const = 0;
     virtual int scan_artefacts(artefact_prop_type which_property,
@@ -266,7 +266,6 @@ public:
                  bool for_real = true, bool mount = false) const;
     virtual int evasion(ev_ignore_type ign = ev_ignore::none,
                         const actor *attacker = nullptr) const = 0;
-    virtual bool shielded() const = 0;
     virtual int shield_bonus(bool random = true) const = 0;
     virtual int shield_block_penalty() const = 0;
     virtual int shield_bypass_ability(int tohit) const = 0;
@@ -292,7 +291,7 @@ public:
     virtual int  how_chaotic(bool check_spells_god = false) const = 0;
     virtual bool is_unbreathing(bool mt = false) const = 0;
     virtual bool is_insubstantial() const = 0;
-    virtual int res_acid(bool calc_unid = true, bool mt = false) const = 0;
+    virtual int res_acid(bool calc_unid = true, bool items = true, bool mt = false) const;
     virtual bool res_damnation() const = 0;
     virtual int res_fire(bool mt = false) const = 0;
     virtual int res_steam(bool mt = false) const = 0;
@@ -318,12 +317,12 @@ public:
 
     virtual bool gourmand(bool calc_unid = true, bool items = true) const;
 
-    virtual bool res_corr(bool calc_unid = true, bool items = true, bool mount = false) const;
+    virtual int res_corr(bool calc_unid = true, bool items = true, bool mount = false) const = 0;
     bool has_notele_item(bool calc_unid = true,
                          vector<item_def> *matches = nullptr) const;
     virtual bool stasis() const = 0;
     virtual bool cloud_immune(bool calc_unid = true, bool items = true) const;
-    virtual bool run(bool calc_unid = true, bool items = true) const;
+    virtual int run(bool calc_unid = true, bool items = true) const;
     virtual bool angry(bool calc_unid = true, bool items = true) const;
     virtual bool clarity(bool calc_unid = true, bool items = true) const;
     virtual bool faith(bool calc_unid = true, bool items = true) const;

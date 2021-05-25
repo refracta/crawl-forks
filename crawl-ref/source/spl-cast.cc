@@ -382,10 +382,10 @@ int raw_spell_fail(spell_type spell)
 
     chance2 += get_form()->spellcasting_penalty;
 
-    chance2 -= 2 * you.get_mutation_level(MUT_SUBDUED_MAGIC);
+    chance2 -= 12 * you.get_mutation_level(MUT_SUBDUED_MAGIC);
     if (silenced(you.pos()))
         chance2 += 3 * you.get_mutation_level(MUT_SILENT_CAST);
-    chance2 += 4 * you.get_mutation_level(MUT_WILD_MAGIC);
+    chance2 += 12 * you.get_mutation_level(MUT_WILD_MAGIC);
     chance2 += 4 * you.get_mutation_level(MUT_ANTI_WIZARDRY);
 
     if (you.props.exists(SAP_MAGIC_KEY))
@@ -477,8 +477,8 @@ int calc_spell_power(spell_type spell, bool apply_intel, bool fail_rate_check,
         power = apply_enhancement(power, _spell_enhancement(spell));
 
         // Wild magic boosts spell power but decreases success rate.
-        power *= (10 + 3 * you.get_mutation_level(MUT_WILD_MAGIC));
-        power /= (10 + 3 * you.get_mutation_level(MUT_SUBDUED_MAGIC));
+        power *= (10 + 9 * you.get_mutation_level(MUT_WILD_MAGIC));
+        power /= (10 + 10 * you.get_mutation_level(MUT_SUBDUED_MAGIC));
 
         // Augmentation boosts spell power at high HP.
         power *= 10 + 4 * augmentation_amount();
@@ -506,12 +506,9 @@ int calc_spell_power(spell_type spell, bool apply_intel, bool fail_rate_check,
 
 static int _additive_power(spell_type spell)
 {
-    item_def * staff;
-    if (you.weapon(0) && you.weapon(0)->base_type == OBJ_STAVES)
-        staff = you.weapon(0);
-    else if (you.weapon(1) && you.weapon(1)->base_type == OBJ_STAVES)
-        staff = you.weapon(1);
-    else
+    item_def * staff = you.staff();
+
+    if (!staff)
         return 0;
 
     if (staff_enhances_spell(staff, spell))
@@ -706,9 +703,7 @@ static int _spell_enhancement(spell_type spell)
     const spschools_type typeflags = get_spell_disciplines(spell);
     int enhanced = 0;
 
-    if (you.weapon(0) && you.weapon(0)->base_type == OBJ_STAVES && staff_enhances_spell(you.weapon(0), spell))
-        enhanced++;
-    else if (you.weapon(1) && you.weapon(1)->base_type == OBJ_STAVES && staff_enhances_spell(you.weapon(1), spell))
+    if (you.staff() && staff_enhances_spell(you.staff(), spell))
         enhanced++;
 
     if (typeflags & spschool::hexes)
@@ -861,7 +856,7 @@ bool can_cast_spells(bool quiet)
         return false;
     }
 
-    if (silenced(you.pos()) && (you.get_mutation_level(MUT_SILENT_CAST) == 0))
+    if (silenced(you.pos()) && !you.can_silent_cast())
     {
         if (!quiet)
             mpr("You cannot cast spells when silenced!");
@@ -1112,6 +1107,7 @@ bool cast_a_spell(bool check_range, spell_type spell)
     practise_casting(spell, cast_result == spret::success);
     if (cast_result == spret::success)
     {
+        contaminate_player(spell_difficulty(spell) * 350 * you.get_mutation_level(MUT_RADIOSYNTHESIS));
         did_god_conduct(DID_SPELL_CASTING, 1 + random2(5));
         count_action(CACT_CAST, spell);
     }
@@ -1121,9 +1117,9 @@ bool cast_a_spell(bool check_range, spell_type spell)
     if (!staff_energy && you.undead_state() != US_UNDEAD)
     {
         const int spellh = spell_hunger(spell);
-        if (calc_hunger(spellh) > 0)
+        if (spellh > 0)
         {
-            make_hungry(spellh, true, true);
+            make_hungry(spellh, true);
             learned_something_new(HINT_SPELL_HUNGER);
         }
     }
@@ -1408,7 +1404,7 @@ static unique_ptr<targeter> _spell_targeter(spell_type spell, int pow,
     case SPELL_ICEBLAST:
         return make_unique<targeter_beam>(&you, range, ZAP_ICEBLAST, pow,
                                           1, 1);
-    case SPELL_HURL_DAMNATION:
+    case SPELL_HURL_HELLFIRE:
         return make_unique<targeter_beam>(&you, range, ZAP_DAMNATION, pow,
                                           1, 1);
     case SPELL_MEPHITIC_CLOUD:

@@ -211,7 +211,8 @@ int player::damage_type(int attack_number)
  */
 brand_type player::damage_brand(int which_attack)
 {
-    equipment_type slot; 
+    if (which_attack < 0)
+        return random_choose(SPWPN_ACID, SPWPN_ANTIMAGIC, SPWPN_CHAOS, SPWPN_DRAINING, SPWPN_ELECTROCUTION, SPWPN_VENOM, SPWPN_VAMPIRISM);
 
     if (you.mounted() && which_attack >= 2)
     {
@@ -222,6 +223,8 @@ brand_type player::damage_brand(int which_attack)
             return SPWPN_NORMAL;
         case mount_type::drake:
             return SPWPN_FREEZING;
+        case mount_type::slime:
+            return SPWPN_ACID;
         case mount_type::spider:
         {
             if (you.duration[DUR_ENSNARE])
@@ -230,6 +233,8 @@ brand_type player::damage_brand(int which_attack)
         }
         }
     }
+
+    equipment_type slot;
 
     if (which_attack == 0)
         slot = EQ_WEAPON0;
@@ -250,7 +255,7 @@ brand_type player::damage_brand(int which_attack)
     if (duration[DUR_CONFUSING_TOUCH])
         return SPWPN_CONFUSE;
 
-    if (you.wearing(EQ_GLOVES, ARM_CLAW) && !melded[EQ_GLOVES])
+    if (you.wearing(EQ_GLOVES, ARM_CLAW, true, false) && !melded[EQ_GLOVES])
         return get_weapon_brand(inv[equip[EQ_GLOVES]]);
 
     if (you.form == transformation::scorpion)
@@ -456,7 +461,7 @@ item_def *player::weapon(int which_attack) const
 // Give hands required to wield weapon.
 hands_reqd_type player::hands_reqd(const item_def &item, bool base) const
 {
-    if (species == SP_FORMICID || species == SP_OCTOPODE)
+    if (species == SP_OCTOPODE || you.get_mutation_level(MUT_MULTIARM) || you.get_mutation_level(MUT_ARM_MORPH))
         return HANDS_ONE;
     else
         return actor::hands_reqd(item, base);
@@ -519,7 +524,7 @@ bool player::could_wield(const item_def &item, bool ignore_brand,
 
     const size_type bsize = body_size(PSIZE_TORSO, ignore_transform);
     // Small species wielding large weapons...
-    if (!is_weapon_wieldable(item, bsize))
+    if (!is_weapon_wieldable(item, bsize) && !you.get_mutation_level(MUT_ARM_MORPH))
     {
         if (!quiet)
         {
@@ -663,10 +668,10 @@ static string _foot_name_singular(bool *can_plural)
     if (!get_form()->foot_name.empty())
         return get_form()->foot_name;
 
-    if (you.get_mutation_level(MUT_HOOVES) >= 3)
+    if (you.get_mutation_level(MUT_HOOVES))
         return "hoof";
 
-    if (you.has_usable_talons())
+    if (you.has_talons())
         return "talon";
 
     if (you.has_tentacles())
@@ -767,6 +772,10 @@ string player::unarmed_attack_name() const
     {
         if (species == SP_FELID)
             default_name = "Teeth and claws";
+        else if (species == SP_LIGNIFITE)
+            default_name = "Thorns";
+        else if (species == SP_OCTOPODE)
+            default_name = "Teeth";
         else
             default_name = "Claws";
     }
@@ -793,8 +802,7 @@ void player::attacking(actor *other, bool ranged)
     if (ranged || mons_is_firewood(*(monster*) other))
         return;
 
-    const int chance = pow(3, get_mutation_level(MUT_BERSERK) - 1);
-    if (has_mutation(MUT_BERSERK) && x_chance_in_y(chance, 100))
+    if (has_mutation(MUT_BERSERK) && one_chance_in(5))
         go_berserk(false);
     if ((have_passive(passive_t::berserkitis) || player_under_penance(GOD_TROG)) && x_chance_in_y(you.piety, 2500))
         go_berserk(false);
@@ -964,6 +972,8 @@ bool player::is_web_immune() const
     if (you.mounted() && you.mount == mount_type::spider)
         return true;
     else if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
+        return true;
+    else if (you.get_mutation_level(MUT_SLIME) >= 3)
         return true;
     else
         return false;

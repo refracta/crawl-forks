@@ -537,8 +537,6 @@ int detect_items(int pow)
         map_radius = get_los_radius();
     else
     {
-        if (you.has_mutation(MUT_JELLY_GROWTH))
-            map_radius = 5;
         // Check which god may be providing detect_items and set map_radius
         if (have_passive(passive_t::detect_items))
         {
@@ -1099,10 +1097,12 @@ void torment_player(actor *attacker, torment_source_type taux)
 
     if (!player_res_torment())
     {
+        const int factor = (player_prot_life()) < 0 ? 7 : 5 - player_prot_life();
+
         // Negative energy resistance can alleviate torment.
-        hploss = max(0, you.hp * (50 - player_prot_life() * 10) / 100 - 1);
+        hploss = max(0, you.hp * factor / 10 - 1);
         // Statue form is only partial petrification.
-        if (you.form == transformation::statue || you.species == SP_GARGOYLE)
+        if (you.is_nonliving() || you.undead_state(true) == US_SEMI_ALIVE)
             hploss /= 2;
 
         // draconian scales:

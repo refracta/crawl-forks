@@ -24,8 +24,10 @@ enum unarmed_attack_type
     UNAT_TENTACLES2,
     UNAT_TENTACLES3,
     UNAT_TENTACLES4,
+    UNAT_TENDRIL1,
+    UNAT_TENDRIL2,
     UNAT_FIRST_ATTACK = UNAT_CONSTRICT,
-    UNAT_LAST_ATTACK = UNAT_TENTACLES4,
+    UNAT_LAST_ATTACK = UNAT_TENDRIL2,
     NUM_UNARMED_ATTACKS,
 };
 
@@ -143,6 +145,7 @@ private:
     void mons_do_eyeball_confusion();
     void mons_do_tendril_disarm();
     void apply_black_mark_effects();
+    void do_ooze_engulf();
 private:
     // Player-attack specific stuff
     // Auxiliary unarmed attacks.

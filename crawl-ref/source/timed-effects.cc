@@ -220,26 +220,29 @@ static void _hell_effects(int /*time_delta*/)
 static void _handle_magic_contamination()
 {
     int added_contamination = 0;
+    int dissipation = 25;
+    bool no_contam = you.props.exists(INVIS_CONTAMLESS_KEY) && you.props[INVIS_CONTAMLESS_KEY].get_bool();
 
     // Scale has been increased by a factor of 1000, but the effect now happens
     // every turn instead of every 20 turns, so everything has been multiplied
     // by 50 and scaled to you.time_taken.
 
     //Increase contamination each turn while invisible
-    if (you.duration[DUR_INVIS])
-        added_contamination += INVIS_CONTAM_PER_TURN;
-    //If not invisible, normal dissipation
-    else
-        added_contamination -= 25;
+    //And cancel out dissipation
+    if (you.duration[DUR_INVIS] && !no_contam)
+        added_contamination += INVIS_CONTAM_PER_TURN + dissipation;
 
     // The Orb halves dissipation (well a bit more, I had to round it),
     // but won't cause glow on its own -- otherwise it'd spam the player
     // with messages about contamination oscillating near zero.
-    if (you.magic_contamination && player_has_orb())
-        added_contamination += 13;
+    if (player_has_orb())
+        dissipation = div_rand_round(dissipation, 2);
+
+    if (you.get_mutation_level(MUT_RADIOSYNTHESIS))
+        dissipation = div_rand_round(dissipation, 2);
 
     // Scaling to turn length
-    added_contamination = div_rand_round(added_contamination * you.time_taken,
+    added_contamination = div_rand_round((added_contamination - dissipation) * you.time_taken,
                                          BASELINE_DELAY);
 
     contaminate_player(added_contamination, false);
@@ -248,13 +251,18 @@ static void _handle_magic_contamination()
 // Bad effects from magic contamination.
 static void _magic_contamination_effects()
 {
-    mprf(MSGCH_WARN, "Your body shudders with the violent release "
-                     "of wild energies!");
-
     const int contam = you.magic_contamination;
+    const bool can_mutate = !you.get_mutation_level(MUT_RADIOSYNTHESIS);
+    const bool boom = contam > 10000 && coinflip();
+
+    if (can_mutate || boom)
+    {
+        mprf(MSGCH_WARN, "Your body shudders with the violent release "
+                         "of wild energies!");
+    }
 
     // For particularly violent releases, make a little boom.
-    if (contam > 10000 && coinflip())
+    if (boom)
     {
         bolt beam;
 
@@ -274,16 +282,25 @@ static void _magic_contamination_effects()
         beam.explode();
     }
 
-    const mutation_permanence_class mutclass = MUTCLASS_NORMAL;
+    if (can_mutate)
+    {
+        if (one_chance_in(3))
+        {
+            const int x = 2 + random2(3);
+            for (int i = 0; i < x; i++)
+                temp_mutate(RANDOM_BAD_MUTATION, "mutagenic glow");
+        }
 
-    // We want to warp the player, not do good stuff!
-    mutate(one_chance_in(5) ? RANDOM_MUTATION : RANDOM_BAD_MUTATION,
-           "mutagenic glow", true, coinflip(), false, false, mutclass);
+        // We want to warp the player, not do good stuff!
+        mutate(one_chance_in(5) ? RANDOM_MUTATION : RANDOM_BAD_MUTATION,
+            "mutagenic glow", true, coinflip());
+    }
 
     // we're meaner now, what with explosions and whatnot, but
     // we dial down the contamination a little faster if its actually
     // mutating you.  -- GDL
-    contaminate_player(-(random2(contam / 4) + 1000));
+    if (can_mutate || boom)
+        contaminate_player(-(random2(contam / 4) + 1000));
 }
 // Checks if the player should be hit with magic contaimination effects,
 // then actually does it if they should be.
@@ -324,64 +341,6 @@ static void _abyss_speed(int /*time_delta*/)
         ++you.abyss_speed;
     else if (one_chance_in(5) && you.abyss_speed > 0)
         --you.abyss_speed;
-}
-
-static void _jiyva_effects(int /*time_delta*/)
-{
-    if (have_passive(passive_t::jellies_army) && one_chance_in(10))
-    {
-        int total_jellies = 1 + random2(5);
-        bool success = false;
-        for (int num_jellies = total_jellies; num_jellies > 0; num_jellies--)
-        {
-            // Spread jellies around the level.
-            coord_def newpos;
-            do
-            {
-                newpos = random_in_bounds();
-            }
-            while (grd(newpos) != DNGN_FLOOR
-                       && grd(newpos) != DNGN_SHALLOW_WATER
-                   || monster_at(newpos)
-                   || cloud_at(newpos)
-                   || testbits(env.pgrid(newpos), FPROP_NO_JIYVA));
-
-            mgen_data mg(MONS_JELLY, BEH_STRICT_NEUTRAL, newpos);
-            mg.god = GOD_JIYVA;
-            mg.non_actor_summoner = "Jiyva";
-
-            if (create_monster(mg))
-                success = true;
-        }
-
-        if (success && !silenced(you.pos()))
-        {
-            switch (random2(3))
-            {
-                case 0:
-                    simple_god_message(" gurgles merrily.");
-                    break;
-                case 1:
-                    mprf(MSGCH_SOUND, "You hear %s splatter%s.",
-                         total_jellies > 1 ? "a series of" : "a",
-                         total_jellies > 1 ? "s" : "");
-                    break;
-                case 2:
-                    simple_god_message(" says: Divide and consume!");
-                    break;
-            }
-        }
-    }
-
-    if (have_passive(passive_t::fluid_stats)
-        && x_chance_in_y(you.piety / 4, MAX_PIETY)
-        && !player_under_penance() && one_chance_in(4))
-    {
-        jiyva_stat_action();
-    }
-
-    if (have_passive(passive_t::jelly_eating) && one_chance_in(25))
-        jiyva_eat_offlevel_items();
 }
 
 static void _evolve(int /*time_delta*/)
@@ -451,7 +410,9 @@ static struct timed_effect timed_effects[] =
     { nullptr,                         0,     0, false },
 #endif
     { _abyss_speed,                  100,   300, false },
-    { _jiyva_effects,                100,   300, false },
+#if TAG_MAJOR_VERSION == 34
+    { nullptr,                       100,   300, false },
+#endif
     { _evolve,                      5000, 15000, false },
 #if TAG_MAJOR_VERSION == 34
     { nullptr,                         0,     0, false },

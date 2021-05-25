@@ -31,7 +31,7 @@ constexpr int hunger_threshold[HS_ENGORGED + 1] =
 
 bool eat_food(int slot = -1);
 
-void make_hungry(int hunger_amount, bool suppress_msg, bool magic = false);
+void make_hungry(int hunger_amount, bool suppress_msg);
 
 void lessen_hunger(int statiated_amount, bool suppress_msg, int max = - 1);
 

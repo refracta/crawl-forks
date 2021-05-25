@@ -31,6 +31,7 @@
 #include "act-iter.h"
 #include "areas.h"
 #include "artefact.h"
+#include "attack.h" // attack_strength_punctuation
 #include "beam.h"
 #include "cloud.h"
 #include "clua.h"
@@ -444,9 +445,12 @@ void player_reacts_to_monsters()
     if (you.duration[DUR_FIRE_SHIELD] > 0)
         manage_fire_shield();
 
+    if (you.mounted() && you.mount == mount_type::slime)
+        jiyva_passive_slime();
+
     check_monster_detect();
 
-    if (have_passive(passive_t::detect_items) || you.has_mutation(MUT_JELLY_GROWTH)
+    if (have_passive(passive_t::detect_items)
         || you.get_mutation_level(MUT_STRONG_NOSE) > 0)
     {
         detect_items(-1);
@@ -546,7 +550,19 @@ static void _decrement_simple_duration(duration_type dur, int delay)
     }
 }
 
+static void _silence_damage()
+{
+    const int dam = 2 + div_rand_round(you.experience_level + you.skill(SK_INVOCATIONS), 9);
 
+    for (rectangle_iterator ri(you.pos(), you.silence_radius()); ri; ++ri)
+    {
+        if (monster * mon = monster_at(*ri))
+        {
+            mon->hurt(&you, dam, BEAM_MMISSILE, KILLED_BY_BEAM, "", "silent scream");
+            mprf("Your scream echoes through %s%s", mon->name(DESC_THE).c_str(), attack_strength_punctuation(dam).c_str());
+        }
+    }
+}
 
 /**
  * Decrement player durations based on how long the player's turn lasted in aut.
@@ -583,7 +599,11 @@ static void _decrement_durations()
 
     // Possible reduction of silence radius.
     if (you.duration[DUR_SILENCE])
+    {
+        if (you.props.exists(DEMON_SCREAM) && you.props[DEMON_SCREAM].get_bool() == true)
+            _silence_damage();
         invalidate_agrid();
+    }
     // and liquefying radius.
     if (you.duration[DUR_LIQUEFYING])
         invalidate_agrid();
@@ -595,16 +615,10 @@ static void _decrement_durations()
         you.duration[DUR_TRANSFORMATION] = 1;
     }
 
-    // Vampire bat transformations are permanent (until ended), unless they
-    // are uncancellable (polymorph wand on a full vampire).
-    if (you.species != SP_VAMPIRE || you.form != transformation::bat
-        || you.transform_uncancellable)
+    if (_decrement_a_duration(DUR_TRANSFORMATION, delay, nullptr, random2(3),
+                                "Your transformation is almost over."))
     {
-        if (_decrement_a_duration(DUR_TRANSFORMATION, delay, nullptr, random2(3),
-                                  "Your transformation is almost over."))
-        {
-            untransform();
-        }
+        untransform();
     }
 
     if (you.mounted())
@@ -861,7 +875,7 @@ static void _decrement_durations()
  */
 static void _rot_ghoul_players()
 {
-    if (you.species != SP_GHOUL)
+    if (!you.get_mutation_level(MUT_ROTTING_BODY))
         return;
 
     int resilience = 400;

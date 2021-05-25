@@ -34,22 +34,17 @@ aptitudes:
   poison_magic: 1
   invocations: -1
   evocations: 1
-can_swim: true
 str: 9
 int: 8
 dex: 7
 levelup_stat_frequency: 4
 mutations:
   1:
+    MUT_DAYSTRIDER: 1
     MUT_SLOW: 1
-    MUT_HOP: 1
+    MUT_FROG_LEGS: 1
   13:
-    MUT_HOP: 1
-fake_mutations:
-  - long: You can be seen from farther away. (+LOS)
-    short: +LOS
-  - long: You can swim through water.
-    short: swims
+    MUT_FROG_LEGS: 1
 recommended_jobs:
   - JOB_FIGHTER
   - JOB_BERSERKER

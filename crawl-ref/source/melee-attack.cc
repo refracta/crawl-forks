@@ -32,6 +32,7 @@
 #include "god-abil.h"
 #include "god-passive.h" // passive_t::convert_orcs
 #include "hints.h"
+#include "items.h" // destroy-item
 #include "item-prop.h"
 #include "mapdef.h"
 #include "message.h"
@@ -39,6 +40,7 @@
 #include "mon-poly.h"
 #include "mon-tentacle.h"
 #include "mon-util.h"
+#include "prompt.h"
 #include "religion.h"
 #include "shout.h"
 #include "spl-damage.h"
@@ -399,11 +401,9 @@ bool melee_attack::handle_phase_dodged()
         // FIXME: player's attack is -1, even for auxes
         && effective_attack_number <= 0)
     {
-        if (defender->is_player() ?
-                you.species == SP_MINOTAUR :
-                mons_species(mons_base_type(*defender->as_monster()))
-                    == MONS_MINOTAUR || 
-                    (mons_is_hepliaklqana_ancestor(mons_base_type(*defender->as_monster())) 
+        if (defender->is_player() 
+            || mons_species(mons_base_type(*defender->as_monster())) == MONS_MINOTAUR
+            || (mons_is_hepliaklqana_ancestor(mons_base_type(*defender->as_monster())) 
                     && you.species == SP_MINOTAUR))
         {
             do_minotaur_retaliation();
@@ -491,6 +491,23 @@ void melee_attack::apply_black_mark_effects()
                 defender->drain_exp(attacker, false, 10);
                 break;
         }
+    }
+}
+
+void melee_attack::do_ooze_engulf()
+{
+    if (attacker->is_player()
+        && x_chance_in_y(you.get_mutation_level(MUT_SKIN_BREATHING) - 1, 3)
+        && defender->alive()
+        && !defender->as_monster()->has_ench(ENCH_WATER_HOLD)
+        && attacker->can_constrict(defender, true))
+    {
+        defender->as_monster()->add_ench(mon_enchant(ENCH_WATER_HOLD, 1,
+                                                     attacker, 1));
+        mprf("You engulf %s in ooze!", defender->name(DESC_THE).c_str());
+        // Smothers sticky flame.
+        defender->expose_to_element(BEAM_WATER, 0);
+        defender->expose_to_element(BEAM_ACID, 0);
     }
 }
 
@@ -644,7 +661,10 @@ bool melee_attack::handle_phase_hit()
         return false;
 
     if (damage_done > 0)
+    {
         apply_black_mark_effects();
+        do_ooze_engulf();
+    }
 
     if (attacker->is_player() && !cancel_remaining)
     {
@@ -1351,24 +1371,18 @@ public:
 
     int get_damage() const override
     {
-        if (you.has_usable_hooves())
-        {
-            // Max hoof damage: 10.
-            return damage + you.get_mutation_level(MUT_HOOVES) * 5 / 3;
-        }
+        if (you.has_hooves())
+            return 10;
 
-        if (you.has_usable_talons())
-        {
-            // Max talon damage: 9.
-            return damage + 1 + you.get_mutation_level(MUT_TALONS);
-        }
+        if (you.has_talons())
+            return 9;
 
         return 3; // Shouldn't get here but in case
     }
 
     string get_verb() const override
     {
-        if (you.has_usable_talons())
+        if (you.has_talons())
             return "claw";
         return name;
     }
@@ -1378,24 +1392,14 @@ class AuxTentacleSpike: public AuxAttackType
 {
 public:
     AuxTentacleSpike()
-    : AuxAttackType(5, "pierce") { };
-
-    int get_damage() const override
-    {
-        return damage + you.get_mutation_level(MUT_TENTACLE_SPIKE);
-    }
+    : AuxAttackType(8, "pierce") { };
 };
 
 class AuxHeadbutt: public AuxAttackType
 {
 public:
     AuxHeadbutt()
-    : AuxAttackType(5, "headbutt") { };
-
-    int get_damage() const override
-    {
-        return damage + you.get_mutation_level(MUT_HORNS) * 3;
-    }
+    : AuxAttackType(12, "headbutt") { };
 };
 
 class AuxPeck: public AuxAttackType
@@ -1413,7 +1417,7 @@ public:
 
     int get_damage() const override
     {
-        return damage + max(0, you.get_mutation_level(MUT_STINGER) * 2 - 1);
+        return damage + you.get_mutation_level(MUT_STINGER) * 4;
     }
 
     int get_brand() const override
@@ -1422,41 +1426,12 @@ public:
     }
 };
 
+// BCADDO: Remove this unused Aux type.
 class AuxPunch: public AuxAttackType
 {
 public:
     AuxPunch()
-    : AuxAttackType(5, "punch") { };
-
-    // BCADNOTE: Is this ever used anymore?
-
-    int get_damage() const override
-    {
-        const int base_dam = damage + you.skill_rdiv(SK_UNARMED_COMBAT, 1, 2);
-
-        if (you.form == transformation::blade_hands)
-            return base_dam + 6;
-
-        if (you.has_usable_claws())
-            return base_dam + roll_dice(you.has_claws(), 3);
-
-        return base_dam;
-    }
-
-    string get_name() const override
-    {
-        if (you.form == transformation::blade_hands)
-            return "slash";
-
-        if (you.has_usable_claws())
-            return "claw";
-
-        if (you.has_tentacles())
-            return "tentacle-slap";
-
-        return name;
-    }
-
+    : AuxAttackType(5, "bug") { };
 };
 
 class AuxBite: public AuxAttackType
@@ -1467,7 +1442,7 @@ public:
 
     int get_damage() const override
     {
-        const int fang_damage = you.has_usable_fangs() * 2;
+        const int fang_damage = you.has_fangs() * 6;
         if (you.get_mutation_level(MUT_ANTIMAGIC_BITE))
             return fang_damage + div_rand_round(you.get_hit_dice(), 3);
 
@@ -1495,11 +1470,11 @@ class AuxPseudopods: public AuxAttackType
 {
 public:
     AuxPseudopods()
-    : AuxAttackType(4, "bludgeon") { };
+    : AuxAttackType(12, "engulf") { };
 
-    int get_damage() const override
+    int get_brand() const override
     {
-        return damage * you.has_usable_pseudopods();
+        return you.pseudopod_brand;
     }
 };
 
@@ -1537,12 +1512,26 @@ public:
     int get_damage() const { return damage + div_rand_round(you.experience_level, 3); }
 };
 
+class AuxTendril1 : public AuxAttackType
+{
+public:
+    AuxTendril1()
+        : AuxAttackType(8, "lash") { };
+};
+
+class AuxTendril2 : public AuxAttackType
+{
+public:
+    AuxTendril2()
+        : AuxAttackType(8, "flog") { };
+};
+
 static const AuxConstrict       AUX_CONSTRICT = AuxConstrict();
 static const AuxStaff           AUX_STAFF = AuxStaff();
 static const AuxStaffSlap       AUX_STAFFSLAP = AuxStaffSlap();
 static const AuxKick            AUX_KICK = AuxKick();
-static const AuxTentacleSpike   AUX_TENTACLE_SPIKE = AuxTentacleSpike();
 static const AuxPeck            AUX_PECK = AuxPeck();
+static const AuxTentacleSpike   AUX_TENTACLE_SPIKE = AuxTentacleSpike();
 static const AuxHeadbutt        AUX_HEADBUTT = AuxHeadbutt();
 static const AuxTailslap        AUX_TAILSLAP = AuxTailslap();
 static const AuxPunch           AUX_PUNCH = AuxPunch();
@@ -1552,6 +1541,8 @@ static const AuxTentacles       AUX_TENTACLES = AuxTentacles();
 static const AuxTentacles2      AUX_TENTACLES2 = AuxTentacles2();
 static const AuxTentacles3      AUX_TENTACLES3 = AuxTentacles3();
 static const AuxTentacles4      AUX_TENTACLES4 = AuxTentacles4();
+static const AuxTendril1        AUX_TENDRIL1 = AuxTendril1();
+static const AuxTendril2        AUX_TENDRIL2 = AuxTendril2();
 
 static const AuxAttackType* const aux_attack_types[] =
 {
@@ -1569,7 +1560,9 @@ static const AuxAttackType* const aux_attack_types[] =
     &AUX_TENTACLES,
     &AUX_TENTACLES2,
     &AUX_TENTACLES3,
-    &AUX_TENTACLES4
+    &AUX_TENTACLES4,
+    &AUX_TENDRIL1,
+    &AUX_TENDRIL2,
 };
 
 
@@ -1747,15 +1740,10 @@ bool melee_attack::player_aux_apply(unarmed_attack_type atk)
     count_action(CACT_MELEE, -1, atk); // aux_attack subtype/auxtype
 
     aux_damage  = player_stat_modify_damage(aux_damage);
-
     aux_damage  = random2(aux_damage);
-
     aux_damage  = player_apply_fighting_skill(aux_damage, true);
-
     aux_damage  = player_apply_misc_modifiers(aux_damage);
-
     aux_damage  = player_apply_slaying_bonuses(aux_damage, true);
-
     aux_damage  = player_apply_final_multipliers(aux_damage);
 
     if (atk == UNAT_CONSTRICT || atk == UNAT_STAFF)
@@ -1781,11 +1769,32 @@ bool melee_attack::player_aux_apply(unarmed_attack_type atk)
             if (damage_brand == SPWPN_VENOM && coinflip())
                 poison_monster(defender->as_monster(), &you);
 
-            // Normal vampiric biting attack, not if already got stabbing special.
-            if (damage_brand == SPWPN_VAMPIRISM && you.species == SP_VAMPIRE
-                && (!stab_attempt || stab_bonus <= 0))
+            if (atk == UNAT_PSEUDOPODS)
             {
-                _player_vampire_draws_blood(defender->as_monster(), damage_done);
+                switch (damage_brand)
+                {
+                case SPWPN_VENOM:
+                {
+                    int rP = defender->res_poison();
+                    if (one_chance_in(3 + rP) && rP < 3)
+                        drain_defender_speed();
+                    break;
+                }
+                case SPWPN_ELECTROCUTION:
+                    if (one_chance_in(3))
+                        defender->malmutate("mutagenic pseudopod");
+                    break;
+                case SPWPN_MOLTEN:
+                    if (one_chance_in(3))
+                        napalm_monster(defender->as_monster(), attacker);
+                    break;
+                case SPWPN_VAMPIRISM:
+                    if (one_chance_in(3))
+                        lessen_hunger(damage_done, false);
+                    break;
+                default:
+                    break;
+                }
             }
 
             if (damage_brand == SPWPN_ANTIMAGIC && you.has_mutation(MUT_ANTIMAGIC_BITE)
@@ -1979,10 +1988,27 @@ int melee_attack::player_apply_final_multipliers(int damage)
     return damage;
 }
 
+static string _bite_verbs(int damage)
+{
+    if (damage < HIT_WEAK)
+        return "nip";
+    else if (damage < HIT_MED)
+        return "bite";
+    else if (damage < HIT_STRONG)
+        return "chomp";
+    return "maul";
+}
+
 void melee_attack::set_attack_verb(int damage)
 {
     if (!attacker->is_player())
         return;
+
+    if (attack_number < 0)
+    {
+        attack_verb = _bite_verbs(damage);
+        return;
+    }
 
     if (mount_attack)
     {
@@ -1990,15 +2016,19 @@ void melee_attack::set_attack_verb(int damage)
         {
         case mount_type::drake: // fallthrough
         case mount_type::hydra:
-            if (damage < HIT_WEAK)
-                attack_verb = "nips";
-            else if (damage < HIT_MED)
-                attack_verb = "bites";
-            else if (damage < HIT_STRONG)
-                attack_verb = "chomps";
-            else
-                attack_verb = "mauls";
+            attack_verb = make_stringf("%ss", _bite_verbs(damage).c_str());
             break;
+
+        case mount_type::slime:
+            if (damage < HIT_WEAK)
+                attack_verb = "slaps";
+            else if (damage < HIT_MED)
+                attack_verb = "smacks";
+            else if (damage < HIT_STRONG)
+                attack_verb = "engulfs";
+            else
+                attack_verb = "consumes";
+            break;   
 
         case mount_type::spider:
             attack_verb = "stings";
@@ -2533,15 +2563,10 @@ bool melee_attack::attack_chops_heads(int dam, int dam_type)
 
     // Only cutting implements.
     if (dam_type != DVORP_SLICING && dam_type != DVORP_CHOPPING
-        && dam_type != DVORP_CLAWING && dam_type != DVORP_DP
-        && dam_type != DVORP_TP)
+        && dam_type != DVORP_DP && dam_type != DVORP_TP)
     {
         return false;
     }
-
-    // Small claws are not big enough.
-    if (dam_type == DVORP_CLAWING && attacker->has_claws() < 3)
-        return false;
 
     // You need to have done at least some damage.
     if (dam <= 0 || dam < 4 && coinflip())
@@ -2628,9 +2653,7 @@ void melee_attack::attacker_sustain_passive_damage()
     if (!adjacent(attacker->pos(), defender->pos()) || is_riposte)
         return;
 
-    int acid_strength; 
-    
-    acid_strength = resist_adjust_damage(attacker, BEAM_ACID, 5, mount_attack);
+    int acid_strength = resist_adjust_damage(attacker, BEAM_ACID, 5, mount_attack);
 
     // Spectral weapons can't be corroded (but can take acid damage).
     // Mounts can't be corroded either (at least for now).
@@ -4118,24 +4141,28 @@ void melee_attack::do_passive_freeze()
 
 void melee_attack::mons_do_eyeball_confusion()
 {
-    if (you.has_mutation(MUT_EYEBALLS)
+    if (you.has_mutation(MUT_GOLDEN_EYEBALLS) || you.has_mutation(MUT_BUDDING_EYEBALLS)
         && attacker->alive()
         && adjacent(you.pos(), attacker->as_monster()->pos())
-        && x_chance_in_y(you.get_mutation_level(MUT_EYEBALLS), 20))
+        && x_chance_in_y(3 + you.skill(SK_INVOCATIONS), 90))
     {
-        const int ench_pow = you.get_mutation_level(MUT_EYEBALLS) * 30;
+        const int ench_pow = you.get_mutation_level(MUT_GOLDEN_EYEBALLS) * (you.skill(SK_INVOCATIONS) + 3) * 2;
+
         monster* mon = attacker->as_monster();
 
-        if (mon->check_res_magic(ench_pow) <= 0)
+        if (mon->check_res_magic(ench_pow) <= 0 || you.has_mutation(MUT_BUDDING_EYEBALLS))
         {
-            mprf("The eyeballs on your body gaze at %s.",
+            mprf("The eyeballs on your membranes gaze upon %s.",
                  mon->name(DESC_THE).c_str());
 
-            if (!mon->check_clarity())
+            if (!mon->check_clarity() && you.has_mutation(MUT_GOLDEN_EYEBALLS))
             {
                 mon->add_ench(mon_enchant(ENCH_CONFUSION, 0, &you,
                                           30 + random2(100)));
             }
+
+            if (you.has_mutation(MUT_BUDDING_EYEBALLS))
+                mon->malmutate("shining eyes");
         }
     }
 }
@@ -4147,17 +4174,33 @@ void melee_attack::mons_do_tendril_disarm()
     const int adj_mon_hd = mon->is_fighter() ? mon->get_hit_dice() * 3 / 2
                                              : mon->get_hit_dice();
 
-    if (you.get_mutation_level(MUT_TENDRILS)
-        && one_chance_in(5)
-        && (random2(you.dex()) > adj_mon_hd
-            || random2(you.strength()) > adj_mon_hd))
+    const int lvl = you.get_mutation_level(MUT_CYTOPLASM_TRAP);
+
+    if (lvl >= 2
+        && one_chance_in(3)
+        && (random2(you.experience_level) > adj_mon_hd))
     {
-        item_def* mons_wpn = mon->disarm();
+        item_def* mons_wpn = lvl == 2 ? nullptr : mon->disarm();
         if (mons_wpn)
         {
-            mprf("Your tendrils lash around %s %s and pull it to the ground!",
+            mprf("%s %s gets stuck inside your cytoplasm!",
                  apostrophise(mon->name(DESC_THE)).c_str(),
                  mons_wpn->name(DESC_PLAIN).c_str());
+            if (!is_artefact(*mons_wpn))
+            {
+                int healz = 3 + random2((you.experience_level + you.skill(SK_INVOCATIONS)) / 3);
+                mprf("Tasty%s", attack_strength_punctuation(healz).c_str());
+                you.heal(healz);
+                lessen_hunger(healz * 10, false);
+                destroy_item(mons_wpn->link);
+                return;
+            }
+            mpr("The inedible artefact falls slowly through you.");
+        }
+        else if (coinflip() && napalm_monster(mon, &you, lvl, false))
+        {
+            mprf("Your boiling cytoplasm sticks to %s, covering %s in liquid flames!", 
+                    mon->name(DESC_THE).c_str(), mon->pronoun(PRONOUN_OBJECTIVE).c_str());
         }
     }
 }
@@ -4166,13 +4209,13 @@ void melee_attack::do_spines()
 {
     if (defender->is_player())
     {
-        const int mut = you.get_mutation_level(MUT_SPINY);
+        const int mut = you.get_mutation_level(MUT_SPINY) + (you.get_mutation_level(MUT_FROST_BURST) ? 1 : 0);
 
         if (mut && attacker->alive() && coinflip())
         {
-            const int maxdmg = you.experience_level + mut;
-            const int dmg = random_range(mut, maxdmg);
-            const int hurt = attacker->apply_ac(dmg, you.experience_level + mut);
+            const int maxdmg = div_rand_round(you.experience_level * mut, 3);
+            const int dmg    = random_range(mut, maxdmg);
+            const int hurt   = attacker->apply_ac(dmg, you.experience_level + mut);
 
             dprf(DIAG_COMBAT, "Spiny: dmg = %d hurt = %d", dmg, hurt);
 
@@ -4183,6 +4226,21 @@ void melee_attack::do_spines()
                                    make_stringf(" is struck by your spines%s", attack_strength_punctuation(hurt).c_str()).c_str());
 
             attacker->hurt(&you, hurt);
+
+            if (you.get_mutation_level(MUT_FROST_BURST))
+            {
+                const int dice_size = div_rand_round(you.experience_level + you.skill(SK_INVOCATIONS), 6);
+                const int ice_dmg   = roll_dice(you.get_mutation_level(MUT_FROST_BURST), dice_size);
+                const int ice_hurt  = resist_adjust_damage(attacker, BEAM_COLD, ice_dmg);
+
+                if (ice_hurt <= 0)
+                    return;
+
+                simple_monster_message(*attacker->as_monster(),
+                                       make_stringf(" is frozen%s", attack_strength_punctuation(hurt).c_str()).c_str());
+
+                attacker->hurt(&you, ice_hurt);
+            }
         }
     }
     else if (defender->as_monster()->is_spiny())
@@ -4272,7 +4330,7 @@ void melee_attack::do_minotaur_retaliation()
         return;
     if (!defender->is_player())
     {
-        if (you.wearing(EQ_HELMET, ARM_SKULL))
+        if (you.wearing(EQ_HELMET, ARM_SKULL, true, false))
             return;
         // monsters have no STR or DEX
         if (x_chance_in_y(2, 5))
@@ -4303,18 +4361,13 @@ void melee_attack::do_minotaur_retaliation()
         return;
     }
 
-    if (!form_keeps_mutations())
-    {
-        // You are in a non-minotaur form.
+    if (you.get_mutation_level(MUT_HORNS) < 2)
         return;
-    }
-    // This will usually be 2, but could be 3 if the player mutated more.
-    const int mut = you.get_mutation_level(MUT_HORNS);
 
     if (5 * you.strength() + 7 * you.dex() > random2(600))
     {
         // Use the same damage formula as a regular headbutt.
-        int dmg = 5 + mut * 3;
+        int dmg = 12;
         dmg = player_stat_modify_damage(dmg);
         dmg = random2(dmg);
         dmg = player_apply_fighting_skill(dmg, true);
@@ -4516,11 +4569,11 @@ bool melee_attack::_extra_aux_attack(unarmed_attack_type atk)
     switch (atk)
     {
     case UNAT_CONSTRICT:
-        return you.get_mutation_level(MUT_CONSTRICTING_TAIL)
+        return you.have_serpentine_tail()
                 || you.species == SP_OCTOPODE && x_chance_in_y(you.usable_tentacles(), 4);
 
     case UNAT_KICK:
-        return you.has_usable_hooves() || you.has_usable_talons();
+        return you.has_hooves() || you.has_talons();
 
     case UNAT_TENTACLE_SPIKE:
         return you.get_mutation_level(MUT_TENTACLE_SPIKE) && x_chance_in_y(you.usable_tentacles(), 4);
@@ -4529,13 +4582,17 @@ bool melee_attack::_extra_aux_attack(unarmed_attack_type atk)
         return you.get_mutation_level(MUT_BEAK) && !one_chance_in(3);
 
     case UNAT_HEADBUTT:
-        return you.get_mutation_level(MUT_HORNS) && !you.wearing(EQ_HELMET, ARM_SKULL) && !one_chance_in(3);
+        return you.get_mutation_level(MUT_HORNS) && !you.wearing(EQ_HELMET, ARM_SKULL, true, false) && !one_chance_in(3);
 
     case UNAT_TAILSLAP:
         return you.has_usable_tail() && coinflip();
 
     case UNAT_PSEUDOPODS:
         return you.has_usable_pseudopods() && !one_chance_in(3);
+
+    case UNAT_TENDRIL1:
+    case UNAT_TENDRIL2:
+        return you.get_mutation_level(MUT_TENDRILS) && coinflip();
 
     case UNAT_TENTACLES:
         return x_chance_in_y(you.usable_tentacles(), 6);
@@ -4557,12 +4614,12 @@ bool melee_attack::_extra_aux_attack(unarmed_attack_type atk)
 
     case UNAT_BITE:
         return you.get_mutation_level(MUT_ANTIMAGIC_BITE)
-               || (you.has_usable_fangs()
+               || (you.has_fangs()
                    || you.get_mutation_level(MUT_ACIDIC_BITE))
                    && x_chance_in_y(2, 5);
 
     case UNAT_PUNCH:
-        return player_gets_aux_punch();
+        return false;
 
     default:
         return false;

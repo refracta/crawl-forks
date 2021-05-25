@@ -127,7 +127,7 @@
 	   "potion of might", "potion of mutation", "scroll of magic mapping" }
 
       elseif s == "N" then i = { "book of necromancy", "naga barding",
-       "necronomicon", "needle", "manual of necromancy" }
+       "manual of necromancy" }
 
       elseif s == "O" then i = { "any" }
 

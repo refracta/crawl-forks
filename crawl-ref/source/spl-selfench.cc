@@ -32,7 +32,10 @@
 spret cast_deaths_door(int pow, bool fail)
 {
     fail_check();
-    mpr("You stand defiantly in death's doorway!");
+    if (you.undead_state())
+        mpr("You step closer to the veil between life and death!");
+    else
+        mpr("You stand defiantly in death's doorway!");
     mprf(MSGCH_SOUND, "You seem to hear sand running through an hourglass...");
 
     you.set_duration(DUR_DEATHS_DOOR, 10 + random2avg(13, 3)
@@ -209,10 +212,38 @@ spret cast_song_of_slaying(int pow, bool fail)
     return spret::success;
 }
 
-spret cast_silence(int pow, bool fail)
+spret cast_silence(int pow, bool fail, bool abil)
 {
     fail_check();
-    mpr("A profound silence engulfs you.");
+
+    if (abil)
+    {
+        for (rectangle_iterator ri(you.pos(), 7); ri; ++ri)
+        {
+            if (monster * mon = monster_at(*ri))
+            {
+                if (mon->friendly())
+                {
+                    string prompt = make_stringf("Really attack %s?", mon->name(DESC_YOUR).c_str());
+                    if (yesno(prompt.c_str(), true, 'n'))
+                        break;
+                    else
+                    {
+                        canned_msg(MSG_OK);
+                        return spret::abort;
+                    }
+                }
+            }
+        }
+
+        mpr("<lightgreen>You let out a horrid demonic screech!</lightgreen>");
+        you.props[DEMON_SCREAM] = true;
+    }
+    else
+    {
+        mpr("A profound silence engulfs you.");
+        you.props[DEMON_SCREAM] = false;
+    }
 
     you.increase_duration(DUR_SILENCE, 10 + pow/4 + random2avg(pow/2, 2), 100);
     invalidate_agrid(true);
@@ -298,9 +329,11 @@ spret cast_noxious_bog(int pow, bool fail)
 
 void noxious_bog_cell(coord_def p)
 {
-    if (grd(p) == DNGN_DEEP_WATER || grd(p) == DNGN_LAVA 
+    if (grd(p) == DNGN_DEEP_WATER || grd(p) == DNGN_LAVA
         || grd(p) == DNGN_SLIMY_WATER || grd(p) == DNGN_DEEP_SLIMY_WATER)
+    {
         return;
+    }
 
     const int turns = 10
                     + random2avg(you.props[NOXIOUS_BOG_KEY].get_int() / 20, 2);

@@ -1789,7 +1789,7 @@ static const struct spell_desc spelldata[] =
 },
 
 {
-    SPELL_HURL_DAMNATION, "Hellfire Blast", "",
+    SPELL_HURL_HELLFIRE, "Hellfire Blast", "",
     spschool::fire | spschool::evocation,
     spflag::dir_or_target | spflag::unholy | spflag::monster
         | spflag::needs_tracer,
@@ -2163,6 +2163,30 @@ static const struct spell_desc spelldata[] =
     spschool::random | spschool::evocation,
     spflag::dir_or_target | spflag::monster | spflag::noisy
         | spflag::needs_tracer,
+    7,
+    0,
+    5, 5,
+    5, 0,
+    TILEG_GENERIC_MONSTER_SPELL,
+},
+
+{
+    SPELL_SLIME_SHARDS, "Slime Shards", "",
+    spschool::ice | spschool::evocation,
+    spflag::dir_or_target | spflag::monster | spflag::noisy
+    | spflag::needs_tracer,
+    7,
+    0,
+    5, 5,
+    5, 0,
+    TILEG_GENERIC_MONSTER_SPELL,
+},
+
+{
+    SPELL_SLIME_SHARDS, "Slime Shards", "",
+    spschool::translocation | spschool::evocation,
+    spflag::dir_or_target | spflag::monster | spflag::noisy
+    | spflag::needs_tracer,
     7,
     0,
     5, 5,

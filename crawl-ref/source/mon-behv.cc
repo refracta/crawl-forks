@@ -645,8 +645,7 @@ void handle_behaviour(monster* mon)
                     {
                         if (mon->foe == MHITYOU)
                         {
-                            if (silenced(mon->pos()) && you.species == SP_SILENT_SPECTRE ||
-                                you.duration[DUR_SILENCE])
+                            if (you.silence_radius() >= grid_distance(you.pos(), mon->pos()))
                                 sil_aware = 100; // More interactive stealth penalty for silence.
                             else
                                 sil_aware = 50;

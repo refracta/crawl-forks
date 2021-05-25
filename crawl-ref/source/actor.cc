@@ -202,11 +202,18 @@ bool actor::gourmand(bool calc_unid, bool items) const
     return items && wearing(EQ_AMULET, AMU_THE_GOURMAND, calc_unid);
 }
 
-bool actor::res_corr(bool calc_unid, bool items, bool /*mount*/) const
+int actor::res_acid(bool calc_unid, bool items, bool /*mount*/) const
 {
-    return items && (wearing(EQ_RINGS, RING_RESIST_CORROSION, calc_unid)
-                     || wearing(EQ_BODY_ARMOUR, ARM_ACID_DRAGON_ARMOUR, calc_unid)
-                     || scan_artefacts(ARTP_RCORR, calc_unid));
+    int ra = 0;
+
+    if (items)
+    {
+        ra += wearing(EQ_RINGS, RING_RESIST_CORROSION, calc_unid);
+        ra += wearing(EQ_BODY_ARMOUR, ARM_ACID_DRAGON_ARMOUR, calc_unid);
+        ra += scan_artefacts(ARTP_RCORR, calc_unid);
+    }
+
+    return min(3, ra);
 }
 
 bool actor::cloud_immune(bool calc_unid, bool items) const
@@ -232,9 +239,11 @@ bool actor::has_notele_item(bool calc_unid, vector<item_def> *matches) const
 }
 
 // permaswift effects like boots of running and lightning scales
-bool actor::run(bool calc_unid, bool items) const
+int actor::run(bool calc_unid, bool items) const
 {
-    return items && wearing_ego(EQ_BOOTS, SPARM_RUNNING, calc_unid);
+    if (items)
+        return wearing_ego(EQ_BOOTS, SPARM_RUNNING, calc_unid);
+    return 0;
 }
 
 bool actor::angry(bool calc_unid, bool items) const
@@ -302,6 +311,13 @@ bool actor::extra_harm(bool calc_unid, bool items) const
 
 bool actor::rmut_from_item(bool calc_unid) const
 {
+    if (is_player())
+    {
+        const item_def * inside = slot_item(EQ_CYTOPLASM);
+        if (inside && get_weapon_brand(*inside) == SPWPN_SILVER)
+            return true;
+    }
+
     return scan_artefacts(ARTP_RMUT, calc_unid);
 }
 

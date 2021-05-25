@@ -561,6 +561,13 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
 
     if (prompt_failed(item_slot))
         return false;
+    else if (item_slot == you.equip[EQ_CYTOPLASM])
+    {
+        if (!yesno("You need to eject it from your cytoplasm first. Continue?", true, 'n'))
+            return false;
+        if (!eject_item())
+            return false;
+    }
     else if (item_slot == you.equip[EQ_WEAPON0]
         || item_slot == you.equip[EQ_WEAPON1])
     {
@@ -797,6 +804,16 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
         }
     }
 
+    if (new_wpn.base_type == OBJ_STAVES && you.slot_item(EQ_CYTOPLASM) && you.slot_item(EQ_CYTOPLASM)->base_type == OBJ_STAVES)
+    {
+        if (!yesno("You can only attune to one staff at a time. Eject your current staff?", true, 'n'))
+        {
+            canned_msg(MSG_OK);
+            return false;
+        }
+        eject_item();
+    }
+
     if (you.hands_reqd(new_wpn) == HANDS_TWO)
     {
         if (you.weapon(0))
@@ -877,7 +894,6 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
     else if (new_wpn.base_type == OBJ_STAVES && you.weapon(1) && you.weapon(1)->base_type == OBJ_STAVES)
     {
         if (you.weapon(1)->soul_bound())
-
         {
             mpr("You can't unwield your magical staff to draw a new one.");
             return false;
@@ -1035,9 +1051,18 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
 
 bool item_is_worn(int inv_slot)
 {
-    for (int i = EQ_MIN_ARMOUR; i <= EQ_MAX_WORN; ++i)
-        if (inv_slot == you.equip[i])
-            return true;
+    if (you.get_mutation_level(MUT_AMORPHOUS_BODY))
+    {
+        for (int i = EQ_FIRST_MORPH; i <= EQ_LAST_MORPH; ++i)
+            if (inv_slot == you.equip[i])
+                return true;
+    }
+    else
+    {
+        for (int i = EQ_MIN_ARMOUR; i <= EQ_MAX_WORN; ++i)
+            if (inv_slot == you.equip[i])
+                return true;
+    }
 
     return false;
 }
@@ -1207,7 +1232,7 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
 {
     const object_class_type base_type = item.base_type;
 
-    if (base_type != OBJ_ARMOURS || you.species == SP_FELID || you.species == SP_FAIRY)
+    if (base_type != OBJ_ARMOURS)
     {
         if (verbose)
             mpr("You can't wear that.");
@@ -1215,13 +1240,33 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
         return false;
     }
 
+    if (you.get_mutation_level(MUT_AMORPHOUS_BODY))
+        return true;
+
     const int sub_type = item.sub_type;
     const equipment_type slot = get_armour_slot(item);
 
-    if (species_is_draconian(you.species) && slot == EQ_BODY_ARMOUR)
+    // Jiyva override!
+    if (you.get_mutation_level(MUT_CORE_MELDING) && slot == EQ_BODY_ARMOUR)
+        return true;
+
+    if (you.species == SP_FELID || you.species == SP_FAIRY)
     {
         if (verbose)
-            mpr("Your wings%s won't fit in that.");
+            mpr("You can't wear that.");
+
+        return false;
+    }
+
+    if (you.get_mutation_level(MUT_DEFORMED) > 1 && slot == EQ_BODY_ARMOUR)
+    {
+        if (verbose)
+        {
+            if (you.species == SP_DRACONIAN)
+                mpr("Your wings won't fit in that.");
+            else
+                mpr("You can't fit into that, misshapen as you are.");
+        }
         return false;
     }
 
@@ -1235,7 +1280,8 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
     if (sub_type == ARM_NAGA_BARDING || sub_type == ARM_CENTAUR_BARDING)
     {
         if ((you.species == SP_NAGA || you.char_class == JOB_NAGA) && sub_type == ARM_NAGA_BARDING
-            || (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR) && sub_type == ARM_CENTAUR_BARDING)
+            || (you.species == SP_CENTAUR || you.char_class == JOB_CENTAUR) && sub_type == ARM_CENTAUR_BARDING
+            || you.get_mutation_level(MUT_GELATINOUS_TAIL))
         {
             if (ignore_temporary || !player_is_shapechanged())
                 return true;
@@ -1264,7 +1310,7 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
             return false;
         }
 
-        if (you.get_mutation_level(MUT_CLAWS, !ignore_temporary) >= 3)
+        if (you.get_mutation_level(MUT_CLAWS, !ignore_temporary) >= 2)
         {
             if (verbose)
             {
@@ -1274,8 +1320,7 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
             return false;
         }
 
-        if (you.get_mutation_level(MUT_HORNS, !ignore_temporary) >= 3
-            || you.get_mutation_level(MUT_ANTENNAE, !ignore_temporary) >= 3)
+        if (you.get_mutation_level(MUT_ANTENNAE, !ignore_temporary))
         {
             if (verbose)
                 mpr("The hauberk won't fit your head.");
@@ -1361,23 +1406,28 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
         if (you.species == SP_LIGNIFITE)
         {
             if (verbose)
-            {
                 mpr("Gloves don't fit on your branches!");
-            }
             return false;
         }
     }
 
     if (sub_type == ARM_BOOTS)
     {
-        if (you.get_mutation_level(MUT_HOOVES, false) == 3)
+        if (you.get_mutation_level(MUT_HOOVES, false))
         {
             if (verbose)
                 mpr("You can't wear boots with hooves!");
             return false;
         }
 
-        if (you.has_talons(false) == 3)
+        if (you.get_mutation_level(MUT_FROG_LEGS, false))
+        {
+            if (verbose)
+                mpr("You can't wear boots with large webbed feet!");
+            return false;
+        }
+
+        if (you.has_talons(false))
         {
             if (verbose)
                 mpr("Boots don't fit your talons!");
@@ -1391,7 +1441,7 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
             return false;
         }
 
-        if (you.species == SP_LIGNIFITE)
+        if (you.species == SP_LIGNIFITE || you.get_mutation_level(MUT_ROOTS))
         {
             if (verbose)
                 mpr("Boots don't fit on your roots!");
@@ -1408,18 +1458,11 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
 
     if (slot == EQ_HELMET)
     {
-        // Horns 3 & Antennae 3 mutations disallow all headgear
-        if (you.get_mutation_level(MUT_HORNS, false) == 3)
-        {
-            if (verbose)
-                mpr("You can't wear any headgear with your large horns!");
-            return false;
-        }
-
+        // Antennae disallow all headgear
         if (you.get_mutation_level(MUT_ANTENNAE, false) == 3)
         {
             if (verbose)
-                mpr("You can't wear any headgear with your large antennae!");
+                mpr("You can't wear any headgear with your antennae!");
             return false;
         }
 
@@ -1437,13 +1480,6 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
             {
                 if (verbose)
                     mpr("You can't wear that with your beak!");
-                return false;
-            }
-
-            if (you.get_mutation_level(MUT_ANTENNAE, false))
-            {
-                if (verbose)
-                    mpr("You can't wear that with your antennae!");
                 return false;
             }
 
@@ -1516,7 +1552,7 @@ static bool _jester_check(const item_def &item, const bool remove)
     return true;
 }
 
-static bool _can_takeoff_armour(int item);
+static bool _can_takeoff_armour(int item, bool do_jester = true);
 
 // Like can_wear_armour, but also takes into account currently worn equipment.
 // e.g. you may be able to *wear* that robe, but you can't equip it if your
@@ -1534,10 +1570,32 @@ static bool _can_equip_armour(const item_def &item)
     if (!_jester_check(item, false))
         return false;
 
-    const equipment_type slot = get_armour_slot(item);
-    const int equipped = you.equip[slot];
-    if (equipped != -1 && !_can_takeoff_armour(equipped))
-        return false;
+    if (you.get_mutation_level(MUT_AMORPHOUS_BODY))
+    {
+        int count = 0;
+        int unavailable = 0;
+        for (int i = EQ_FIRST_MORPH; i <= EQ_LAST_MORPH; i++)
+        {
+            count += 1;
+
+            item_def * worn = you.slot_item(static_cast<equipment_type>(i));
+
+            if (worn && !_can_takeoff_armour(worn->link, false))
+            {
+                equipment_type type = get_armour_slot(static_cast<armour_type>(worn->sub_type));
+                unavailable += (type == EQ_BODY_ARMOUR || type == EQ_BARDING) ? 2 : 1;
+            }
+        }
+        if (unavailable >= count)
+            return false;
+    }
+    else
+    {
+        const equipment_type slot = get_armour_slot(item);
+        const int equipped = you.equip[slot];
+        if (equipped != -1 && !_can_takeoff_armour(equipped))
+            return false;
+    }
     return can_wear_armour(item, true, false);
 }
 
@@ -1549,7 +1607,7 @@ bool wear_armour(int item)
     // conditions that would make it impossible to wear any type of armour.
     // TODO: perhaps also worth checking here whether all available armour slots
     // are cursed. Same with jewellery.
-    if (you.species == SP_FELID || you.species == SP_FAIRY)
+    if ((you.species == SP_FELID || you.species == SP_FAIRY) && !you.get_mutation_level(MUT_CORE_MELDING))
     {
         mpr("You can't wear anything.");
         return false;
@@ -1609,18 +1667,66 @@ bool wear_armour(int item)
         return false;
     }
 
-    bool swapping = false;
+    int swapping = 0;
     const equipment_type slot = get_armour_slot(invitem);
-    if ((slot == EQ_CLOAK
-           || slot == EQ_HELMET
-           || slot == EQ_GLOVES
-           || slot == EQ_BOOTS
-           || slot == EQ_BODY_ARMOUR)
-        && you.equip[slot] != -1)
+
+    if (you.get_mutation_level(MUT_AMORPHOUS_BODY))
     {
-        if (!takeoff_armour(you.equip[slot]))
-            return false;
-        swapping = true;
+        int free_slots = 0;
+        for (int i = EQ_FIRST_MORPH; i <= EQ_LAST_MORPH; i++)
+        {
+            item_def * worn = you.slot_item(static_cast<equipment_type>(i));
+
+            if (!worn)
+            {
+                free_slots++;
+                continue;
+            }
+
+            const equipment_type wslot = get_armour_slot(static_cast<armour_type>(worn->sub_type));
+            if (wslot == EQ_BODY_ARMOUR || wslot == EQ_BARDING)
+                free_slots--;
+        }
+
+        while (free_slots < ((slot == EQ_BODY_ARMOUR || slot == EQ_BARDING) ? 2 : 1))
+        {
+            if (crawl_state.seen_hups)
+                return false;
+
+            mprf("You can't put this on without taking something off first.");
+
+            int remov = prompt_invent_item("Take off which item?", menu_type::invlist,
+                            OBJ_ARMOURS, OPER_TAKEOFF, invprompt_flag::no_warning);
+
+            if (prompt_failed(remov))
+                return false;
+
+            if (!takeoff_armour(remov))
+                return false;
+
+            equipment_type rslot = get_armour_slot(you.inv[remov]);
+
+            if (rslot == EQ_BODY_ARMOUR || rslot == EQ_BARDING)
+                free_slots++;
+
+            free_slots++;
+            swapping++;
+        }
+    }
+    else
+    {
+        if ((slot == EQ_CLOAK
+            || slot == EQ_HELMET
+            || slot == EQ_GLOVES
+            || slot == EQ_BOOTS
+            || slot == EQ_BODY_ARMOUR
+            || slot == EQ_BARDING)
+            && you.equip[slot] != -1)
+        {
+            if (!takeoff_armour(you.equip[slot]))
+                return false;
+            swapping++;
+        }
     }
 
     you.turn_is_over = true;
@@ -1633,12 +1739,12 @@ bool wear_armour(int item)
 
     const int delay = armour_equip_delay(invitem);
     if (delay)
-        start_delay<ArmourOnDelay>(delay - (swapping ? 0 : 1), invitem);
+        start_delay<ArmourOnDelay>(delay + swapping - 1, invitem);
 
     return true;
 }
 
-static bool _can_takeoff_armour(int item)
+static bool _can_takeoff_armour(int item, bool do_jester)
 {
     const item_def& invitem = you.inv[item];
     if (invitem.base_type != OBJ_ARMOURS)
@@ -1653,7 +1759,7 @@ static bool _can_takeoff_armour(int item)
         return false;
     }
 
-    if (!_jester_check(invitem, true))
+    if (do_jester && !_jester_check(invitem, true))
         return false;
 
     const equipment_type slot = get_armour_slot(invitem);
@@ -1695,29 +1801,6 @@ bool takeoff_armour(int item)
     if (!_safe_to_remove_or_wear(invitem, true))
         return false;
 
-    const equipment_type slot = get_armour_slot(invitem);
-
-    // TODO: isn't this check covered above by the call to item_is_worn? The
-    // only way to return false inside this switch would be if the player is
-    // wearing a hat on their feet or something like that.
-    switch (slot)
-    {
-    case EQ_BODY_ARMOUR:
-    case EQ_CLOAK:
-    case EQ_HELMET:
-    case EQ_GLOVES:
-    case EQ_BOOTS:
-        if (item != you.equip[slot])
-        {
-            mpr("You aren't wearing that!");
-            return false;
-        }
-        break;
-
-    default:
-        break;
-    }
-
     you.turn_is_over = true;
 
     const int delay = armour_equip_delay(invitem);
@@ -1756,6 +1839,11 @@ static vector<equipment_type> _current_ring_types()
             ret.push_back(EQ_LEFT_RING);
         ret.push_back(EQ_RIGHT_RING);
     }
+    if (you.get_mutation_level(MUT_TENDRILS))
+    {
+        ret.push_back(EQ_RING_LEFT_TENDRIL);
+        ret.push_back(EQ_RING_RIGHT_TENDRIL);
+    }
     if (player_equip_unrand(UNRAND_FINGER_AMULET))
         ret.push_back(EQ_RING_AMULET);
     return ret;
@@ -1773,18 +1861,20 @@ static char _ring_slot_key(equipment_type slot)
 {
     switch (slot)
     {
-    case EQ_LEFT_RING:      return '<';
-    case EQ_RIGHT_RING:     return '>';
-    case EQ_FAIRY_JEWEL:    return '.';
-    case EQ_RING_AMULET:    return '^';
-    case EQ_RING_ONE:       return '1';
-    case EQ_RING_TWO:       return '2';
-    case EQ_RING_THREE:     return '3';
-    case EQ_RING_FOUR:      return '4';
-    case EQ_RING_FIVE:      return '5';
-    case EQ_RING_SIX:       return '6';
-    case EQ_RING_SEVEN:     return '7';
-    case EQ_RING_EIGHT:     return '8';
+    case EQ_LEFT_RING:              return '<';
+    case EQ_RIGHT_RING:             return '>';
+    case EQ_FAIRY_JEWEL:            return '.';
+    case EQ_RING_AMULET:            return '^';
+    case EQ_RING_ONE:               return '1';
+    case EQ_RING_TWO:               return '2';
+    case EQ_RING_THREE:             return '3';
+    case EQ_RING_FOUR:              return '4';
+    case EQ_RING_FIVE:              return '5';
+    case EQ_RING_SIX:               return '6';
+    case EQ_RING_SEVEN:             return '7';
+    case EQ_RING_EIGHT:             return '8';
+    case EQ_RING_LEFT_TENDRIL:      return '(';
+    case EQ_RING_RIGHT_TENDRIL:     return ')';
     default:
         die("Invalid ring slot");
     }
@@ -2499,6 +2589,149 @@ static bool _puton_item(int item_slot, bool prompt_slot,
     return true;
 }
 
+// Ejection delay is half of Subsumption delay; rounded up.
+static int _subsumption_delay(const item_def & item)
+{
+    switch (item.base_type)
+    {
+    case OBJ_ARMOURS:
+        return armour_equip_delay(item) * 1.5;
+    case OBJ_JEWELLERY:
+        return 2;
+    case OBJ_MISCELLANY: // Only the Lantern of Shadows
+        return 3;
+    case OBJ_STAVES:
+    case OBJ_WEAPONS:
+    case OBJ_SHIELDS:
+        return      !can_wield(&item, false, true) ? 7 :
+               (you.hands_reqd(item) == HANDS_TWO) ? 5
+                                                   : 3;
+    default: // Nothing should get here.
+        mpr("Unhandled Subsumption Delay (Please report!). Defaulting to 3 turns.");
+        return 3;
+    }
+}
+
+bool subsume_item(int slot)
+{
+    if (!you.get_mutation_level(MUT_CYTOPLASMIC_SUSPENSION))
+    {
+        mpr("You can't subsume anything.");
+        return false;
+    }
+
+    if (inv_count() < 1)
+    {
+        canned_msg(MSG_NOTHING_CARRIED);
+        return false;
+    }
+
+    if (you.berserk())
+    {
+        canned_msg(MSG_TOO_BERSERK);
+        return false;
+    }
+
+    const int equipn =
+        (slot == -1) ? prompt_invent_item("Subsume which item?",
+            menu_type::invlist,
+            OSEL_SUBSUMABLE,
+            OPER_WEAR,
+            invprompt_flag::no_warning
+            | invprompt_flag::hide_known)
+        : slot;
+
+    if (prompt_failed(equipn))
+        return false;
+
+    item_def &item = you.inv[equipn];
+
+    if (!item_is_subsumable(item))
+    {
+        mpr("You can't subsume that!");
+        return false;
+    }
+
+    if (item_is_equipped(item))
+    {
+        switch (item.base_type)
+        {
+        case OBJ_ARMOURS: // Removing armour is slow so prompt...
+            if (!yesno("You have to take that off in order to subsume it. Continue?", true, 'n'))
+            {
+                canned_msg(MSG_OK);
+                return false;
+            }
+            takeoff_armour(item.link);
+            break;
+        case OBJ_JEWELLERY: // Rest are fast so no prompt.
+            remove_ring(item.link);
+            break;
+        case OBJ_SHIELDS:
+        case OBJ_STAVES:
+        case OBJ_WEAPONS:
+        case OBJ_MISCELLANY: // Lantern of Shadows.
+            unwield_item(item.link == you.equip[EQ_WEAPON0]);
+            break;
+        default:
+            mprf(MSGCH_ERROR, "Unhandled item type.");
+            return false;
+        }
+    }
+
+    if (item.base_type == OBJ_STAVES)
+    {
+        const bool hand0 = you.weapon(0) && you.weapon(0)->base_type == OBJ_STAVES;
+        const bool hand1 = you.weapon(1) && you.weapon(1)->base_type == OBJ_STAVES;
+
+        if (hand0 || hand1)
+        {
+            if (!yesno("You can only attune one staff at a time, unwield your current one?", true, 'n'))
+            {
+                canned_msg(MSG_OK);
+                return false;
+            }
+            unwield_item(hand0);
+        }
+    }
+
+    if (you.equip[EQ_CYTOPLASM] != -1)
+        eject_item();
+
+    int delay = _subsumption_delay(item);
+    start_delay<SubsumptionDelay>(delay, item);
+
+    return true;
+}
+
+bool eject_item()
+{
+    if (!you.get_mutation_level(MUT_CYTOPLASMIC_SUSPENSION))
+    {
+        mpr("You don't have a cytoplasmic pocket to eject from.");
+        return false;
+    }
+
+    if (you.equip[EQ_CYTOPLASM] == -1)
+    {
+        mpr("Nothing to eject.");
+        return false;
+    }
+
+    if (you.berserk())
+    {
+        canned_msg(MSG_TOO_BERSERK);
+        return false;
+    }
+
+    item_def &item = *you.slot_item(EQ_CYTOPLASM);
+    int delay = (_subsumption_delay(item) / 2);
+
+    start_delay<EjectionDelay>(delay, item);
+
+    return true;
+}
+
 // Put on a ring or amulet. (If slot is -1, first prompt for which item to put on)
 bool puton_ring(int slot, bool allow_prompt, bool check_for_inscriptions)
 {
@@ -2718,12 +2951,6 @@ void drink(item_def* potion)
     if (you.undead_state() == US_UNDEAD)
     {
         mpr("You can't drink.");
-        return;
-    }
-
-    if (you.berserk())
-    {
-        canned_msg(MSG_TOO_BERSERK);
         return;
     }
 
@@ -3655,7 +3882,7 @@ string cannot_read_item_reason(const item_def &item)
             return "";
 
         case SCR_CURSE_ARMOUR:
-            return _no_items_reason(OSEL_UNCURSED_WORN_ARMOUR);
+            return "Removed item can't be used.";
 
         case SCR_CURSE_JEWELLERY:
             return _no_items_reason(OSEL_UNCURSED_WORN_JEWELLERY);

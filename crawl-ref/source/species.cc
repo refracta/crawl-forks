@@ -69,6 +69,17 @@ species_type str_to_species(const string &species)
 */
 string display_sp_name()
 {
+    if (you.get_mutation_level(MUT_SLIME) >= 3)
+    {
+        if (you.undead_state() && you.undead_state() != US_SEMI_ALIVE)
+        {
+            if (you.is_insubstantial())
+                return "Ectoplasm";
+            return "Death Ooze";
+        }
+        return "Slime";
+    }
+
     string name = species_name(you.species);
 
     switch (you.char_class)
@@ -491,7 +502,7 @@ void mummify()
     // Ineligant, but the more 'refined' way of doing it is no better and is more work.
 
     // Form version lets Draconians keep on transmutation; no effect on other --Mu since can't transmute.
-    you.mutation[MUT_UNBREATHING_FORM] = you.innate_mutation[MUT_UNBREATHING_FORM] = 1;
+    you.mutation[MUT_UNBREATHING] = you.innate_mutation[MUT_UNBREATHING] = 1;
 
     you.mutation[MUT_NEGATIVE_ENERGY_RESISTANCE] = you.innate_mutation[MUT_NEGATIVE_ENERGY_RESISTANCE] = 3;
     you.mutation[MUT_COLD_RESISTANCE] = you.innate_mutation[MUT_COLD_RESISTANCE] = (you.get_mutation_level(MUT_COLD_RESISTANCE) + 1);
@@ -519,7 +530,7 @@ void give_basic_mutations(species_type species)
     if (you.char_class == JOB_CENTAUR)
     {
         you.mutation[MUT_FAST] = you.innate_mutation[MUT_FAST] = 2;
-        you.mutation[MUT_HOOVES] = you.innate_mutation[MUT_HOOVES] = 3;
+        you.mutation[MUT_HOOVES] = you.innate_mutation[MUT_HOOVES] = 1;
     }
 
     if (you.char_class == JOB_NAGA)

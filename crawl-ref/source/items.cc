@@ -1729,7 +1729,7 @@ void get_gold(const item_def& item, int quant, bool quiet)
 
     if (you_worship(GOD_ZIN))
         quant -= zin_tithe(item, quant, quiet);
-    if (you.species == SP_GOBLIN)
+    if (you.get_mutation_level(MUT_GOBLINS_GREED))
         quant = div_rand_round((quant * 12), 10);
     if (quant <= 0)
         return;
@@ -2561,6 +2561,12 @@ bool drop_item(int item_dropped, int quant_drop)
 {
     item_def &item = you.inv[item_dropped];
 
+    if (item.soul_bound())
+    {
+        mprf("%s is bound to your soul!", item.name(DESC_THE).c_str());
+        return false;
+    }
+
     if (quant_drop < 0 || quant_drop > item.quantity)
         quant_drop = item.quantity;
 
@@ -2575,7 +2581,9 @@ bool drop_item(int item_dropped, int quant_drop)
      || item_dropped == you.equip[EQ_RING_SIX]
      || item_dropped == you.equip[EQ_RING_SEVEN]
      || item_dropped == you.equip[EQ_RING_EIGHT]
-     || item_dropped == you.equip[EQ_RING_AMULET])
+     || item_dropped == you.equip[EQ_RING_AMULET]
+     || item_dropped == you.equip[EQ_RING_LEFT_TENDRIL]
+     || item_dropped == you.equip[EQ_RING_RIGHT_TENDRIL])
     {
         if (!Options.easy_unequip)
             mpr("You will have to take that off first.");
@@ -2588,13 +2596,6 @@ bool drop_item(int item_dropped, int quant_drop)
             return true;
         }
 
-        return false;
-    }
-
-    if ((item_dropped == you.equip[EQ_WEAPON0] || item_dropped == you.equip[EQ_WEAPON1])
-        && item.soul_bound())
-    {
-        mprf("%s is bound to your soul!", item.name(DESC_THE).c_str());
         return false;
     }
 
@@ -2624,13 +2625,8 @@ bool drop_item(int item_dropped, int quant_drop)
     //
     // Unwield needs to be done before copy in order to clear things
     // like temporary brands. -- bwr
-    if ((item_dropped == you.equip[EQ_WEAPON0])  && quant_drop >= item.quantity)
+    if ((item_dropped == you.equip[EQ_WEAPON0]) && quant_drop >= item.quantity)
     {
-        if (you.weapon(0)->soul_bound())
-        {
-            mprf("%s is bound to your soul!", you.weapon(0)->name(DESC_THE).c_str());
-            return false;
-        }
         if (!unwield_item(true, true))
             return false;
         // May have been destroyed by removal. Returning true because we took
@@ -2641,12 +2637,17 @@ bool drop_item(int item_dropped, int quant_drop)
 
     if ((item_dropped == you.equip[EQ_WEAPON1]) && quant_drop >= item.quantity)
     {
-        if (you.weapon(1)->soul_bound())
-        {
-            mprf("%s is bound to your soul!", you.weapon(1)->name(DESC_THE).c_str());
-            return false;
-        }
         if (!unwield_item(false, true))
+            return false;
+        // May have been destroyed by removal. Returning true because we took
+        // time to swap away.
+        else if (!item.defined())
+            return true;
+    }
+
+    if (item_dropped == you.equip[EQ_CYTOPLASM] && quant_drop >= item.quantity)
+    {
+        if (!eject_item())
             return false;
         // May have been destroyed by removal. Returning true because we took
         // time to swap away.
@@ -3613,7 +3614,6 @@ colour_t item_def::armour_colour() const
 
     if (armour_type_is_hide((armour_type)sub_type))
         return mons_class_colour(monster_for_hide((armour_type)sub_type));
-
 
     // TODO: move (some of?) this into item-prop.cc
     switch (sub_type)

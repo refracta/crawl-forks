@@ -140,6 +140,28 @@ static actor * _hydra_target(actor * original_target)
     return target;
 }
 
+static bool _handle_maws_attack(actor * target, bool simu, bool * did_hit, wu_jian_attack_type wu, int wu_num)
+{
+    const int lvl = you.get_mutation_level(MUT_JIBBERING_MAWS);
+
+    if (!lvl)
+        return false;
+
+    const int atks = lvl + random2(lvl * 2);
+    bool hit = false;
+
+    for (int i = 1; i <= atks; ++i)
+    {
+        target = _hydra_target(target);
+
+        if (!target)
+            return hit;
+
+        hit |= _handle_player_attack(target, simu, -1, i == atks ? 1 : 3, did_hit, wu, wu_num);
+    }
+    return hit;
+}
+
 // Hydra mount will keep attacking as long as there is a valid adjacent target (pseudocleave).
 static bool _handle_hydra_attack(actor * target, bool simu, bool * did_hit, wu_jian_attack_type wu, int wu_num)
 {
@@ -233,7 +255,8 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
         bool attacked = false;
         coord_def pos = defender->pos();
 
-        bool xtra_atk = you.form == transformation::scorpion;
+        bool xtra_atk = (you.form == transformation::scorpion || you.get_mutation_level(MUT_JIBBERING_MAWS));
+        bool mount_atk = false;
 
         if (you.mounted() && !you.petrified(true))
         {
@@ -241,16 +264,18 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
             {
                 if (you.mount_energy >= 15)
                 {
-                    xtra_atk = true;
+                    mount_atk = true;
                     you.mount_energy -= 15;
                 }
             }
             else if (you.mount_energy >= 10)
             {
-                xtra_atk = true;
+                mount_atk = true;
                 you.mount_energy -= 10;
             }
         }
+        
+        xtra_atk |= mount_atk;
 
         if (!you.weapon(0) || is_melee_weapon(*you.weapon(0)))
         {
@@ -269,6 +294,7 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
                         || defender->is_banished()
                         || defender->temp_attitude()) // If it's not hostile the melee attack charmed or pacified it.
                     {
+                        local_time |= _handle_maws_attack(defender, simu, did_hit, wu, wu_num);
                         local_time |= _handle_hydra_attack(defender, simu, did_hit, wu, wu_num);
                         return local_time;
                     }
@@ -302,6 +328,7 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
                 || defender->is_banished()
                 || defender->temp_attitude()) // If it's not hostile the melee attack charmed or pacified it.
             {
+                local_time |= _handle_maws_attack(defender, simu, did_hit, wu, wu_num);
                 local_time |= _handle_hydra_attack(defender, simu, did_hit, wu, wu_num);
                 return local_time;
             }
@@ -322,9 +349,12 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
             }
             else if (xtra_atk)
             {
+                if (you.get_mutation_level(MUT_JIBBERING_MAWS))
+                    local_time |= _handle_maws_attack(defender, simu, did_hit, wu, wu_num);
+
                 if (you.mount == mount_type::hydra)
                     local_time |= _handle_hydra_attack(defender, simu, did_hit, wu, wu_num);
-                else
+                else if (mount_atk)
                     local_time |= _handle_player_attack(defender, simu, 2, 1, did_hit, wu, wu_num);
             }
         }
@@ -626,6 +656,7 @@ static inline int get_resistible_fraction(beam_type flavour)
     // Drowning damage from water is resistible by being a water thing, or
     // otherwise asphyx resistant.
     case BEAM_WATER:
+    case BEAM_ACID_WAVE:
         return 40;
 
     // Assume ice storm and throw icicle are mostly solid.

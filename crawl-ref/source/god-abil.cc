@@ -103,9 +103,25 @@ static bool _player_sacrificed_arcana();
 int apply_invo_enhancer(int power, bool message)
 {
     double calc = (double)power;
-    if (message && player_spec_invo() > 0)
-        god_speaks(you.religion,"You feel a surge of divine energy.");
-    return rand_round(calc * pow(1.5,player_spec_invo()));
+    const int spec = player_spec_invo();
+    if (spec > 0)
+    {
+        if (message)
+        {
+            if (spec > 1)
+                god_speaks(you.religion, "You feel a strong surge of divine energy!");
+            else
+                god_speaks(you.religion, "You feel a surge of divine energy!");
+        }
+        return rand_round(calc * pow(1.5, player_spec_invo()));
+    }
+    else if (spec) //< 0
+    {
+        if (message)
+            mpr("<lightred>You feel forlorn.</lightred>");
+        return rand_round(calc * pow(0.5, -player_spec_invo()));
+    }
+    return power;
 }
 
 /** Would a god currently allow using a one-time six-star ability?
@@ -733,11 +749,11 @@ recite_eligibility zin_check_recite_to_single_monster(const monster *mon,
 int zin_recite_power()
 {
     // Resistance is now based on HD.
-    // Anything at or above (30+30)/2 = 30 'power' (HD) is completely immune.
-    const int power_mult = 10;
+    // Anything at or above (33+31)/2 = 32 'power' (HD) is completely immune.
+    const int power_mult = 11;
     const int invo_power = apply_invo_enhancer(you.skill_rdiv(SK_INVOCATIONS, power_mult), false)
                            + 3 * power_mult;
-    const int piety_power = you.piety * 3 / 2;
+    const int piety_power = you.piety * 7 / 4;
     return (invo_power + piety_power) / 2 / power_mult;
 }
 
@@ -1845,6 +1861,154 @@ bool beogh_resurrect()
     beogh_convert_orc(mon, conv_t::resurrection);
 
     return true;
+}
+
+bool jiyva_check_dissolve()
+{
+    for (radius_iterator rad(you.pos(), LOS_NO_TRANS, true); rad;
+        ++rad)
+    {
+        for (stack_iterator stack_it(*rad); stack_it; ++stack_it)
+        {
+            if (stack_it->defined() && !is_artefact(*stack_it))
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void slimify_position(int iterations, coord_def pos, bool boost_slime_rate)
+{
+    for (int x = iterations; x > 0; x--)
+    {
+        dungeon_feature_type feat = grd(pos);
+        int dur = 13 + random2(you.skill(SK_INVOCATIONS));
+        coord_def target = pos;
+        if ((feat == DNGN_SLIMY_WATER && !one_chance_in(4)) || feat == DNGN_DEEP_SLIMY_WATER || feat_is_critical(feat))
+        {
+            int y = 1;
+            for (adjacent_iterator ai(pos); ai; ++ai)
+            {
+                feat = grd(*ai);
+                if ((feat_has_solid_floor(feat) || feat == DNGN_DEEP_WATER || feat_is_wall(feat)) && !feat_is_critical(feat) && one_chance_in(y++))
+                    target = *ai;
+            }
+        }
+        feat = grd(target);
+
+        if (feat_is_critical(feat))
+            break; // Failed to find a non-critical target; unlikely but could happen.
+
+        bool deep = (feat == DNGN_DEEP_WATER || feat == DNGN_SLIMY_WATER);
+        bool wall = (feat_is_wall(feat));
+
+        temp_change_terrain(target, deep ? DNGN_DEEP_SLIMY_WATER : wall ? DNGN_SLIMY_WALL : DNGN_SLIMY_WATER, dur * 10, TERRAIN_CHANGE_SLIME);
+    }
+
+    if (boost_slime_rate)
+    {
+        iterations *= 2;
+        iterations += random2(you.skill(SK_INVOCATIONS));
+    }
+
+    if (!actor_at(pos) && x_chance_in_y(iterations, 200))
+    {
+        monster * slime = create_monster(mgen_data(x_chance_in_y(you.experience_level, 45) ? MONS_SLIME_CREATURE : MONS_JELLY, BEH_GOOD_NEUTRAL, pos, MHITNOT));
+        if (slime)
+        {
+            slime->move_to_pos(pos);
+            if (boost_slime_rate)
+                slime->add_ench(ENCH_CHARM);
+        }
+    }
+}
+
+bool jiyva_set_targets()
+{
+    for (int stat = 0; stat < NUM_STATS; stat++)
+    {
+        while (true)
+        {
+            if (crawl_state.seen_hups)
+                return false;
+
+            clear_messages();
+            if (stat == 0)
+                mprf(MSGCH_GOD, "You beseech Jiyva %s to mold your form to suit your methods.", you.jiyva_second_name.c_str());
+            mprf(MSGCH_GOD, "Jiyva %s's viscid voice percolates through your skull.", you.jiyva_second_name.c_str());
+            mprf(MSGCH_PROMPT, "In what way should I shape your %s, my child?", stat_name((stat_type)stat).c_str());
+            mpr_nojoin(MSGCH_PLAIN, "  [a] - Low");
+            mpr_nojoin(MSGCH_PLAIN, "  [b] - Average");
+            mpr_nojoin(MSGCH_PROMPT, "<lightgrey>  [c] - High</lightgrey>");
+
+            int keyin = toalower(get_ch()) - 'a';
+            if (keyin < 0 || keyin > 3)
+                continue;
+
+            you.jiyva_stat_targets[stat] = keyin;
+
+            break;
+        }
+    }
+
+    int target_stats[NUM_STATS];
+    calc_jiyva_stat_targets(target_stats);
+
+    clear_messages();
+    mprf(MSGCH_PROMPT, "Approximate stat targets based on inputs:");
+
+    for (int i = 0; i < NUM_STATS; i++)
+    {
+        int x = target_stats[i];
+        mprf_nojoin(MSGCH_PLAIN, "%d%s   %s", x, x < 10 ? "  " : x < 100 ? " " : "", uppercase_first(stat_name((stat_type)i)).c_str());
+    }
+
+    if (yesno("Confirm these targets?", true, 1))
+    {
+        clear_messages();
+        mprf(MSGCH_GOD, "Jiyva %s will slowly mold your form to your will!", you.jiyva_second_name.c_str());
+        return true;
+    }
+
+    return jiyva_set_targets(); // Yes loop.
+}
+
+bool jiyva_dissolution()
+{
+    mprf(MSGCH_GOD, "You call upon Jiyva %s to melt useless items into sacred ooze!", you.jiyva_second_name.c_str());
+
+    int placed_ooze = 0;
+
+    for (radius_iterator rad(you.pos(), LOS_NO_TRANS, true); rad;
+        ++rad)
+    {
+        for (stack_iterator stack_it(*rad); stack_it; ++stack_it)
+        {
+            if (stack_it->defined() && !is_artefact(*stack_it))
+            {
+                placed_ooze++;
+                item_was_destroyed(*stack_it);
+                destroy_item(stack_it->index());
+
+                coord_def cord = *rad;
+                slimify_position(1 + random2(div_rand_round(you.skill(SK_INVOCATIONS), 9)), cord, true);
+            }
+        }
+    }
+    
+    if (placed_ooze > 0)
+    {
+        mprf(MSGCH_GOD, "%s item%s dissolve%s into slime.", placed_ooze == 1 ? "An" : 
+                                                            placed_ooze < 6  ? "A few" : 
+                                                            placed_ooze < 16 ? "Some" 
+                                                                             : "A lot of", 
+                                                            placed_ooze == 1 ? ""  : "s", 
+                                                            placed_ooze == 1 ? "s" : "");
+    }
+
+    return (placed_ooze > 0); // Should always be true; but just in case.
 }
 
 bool jiyva_remove_bad_mutation()
@@ -4324,7 +4488,7 @@ static string _gozag_special_shop_name(shop_type type)
     {
         if (you.species == SP_VAMPIRE)
             return "Blood";
-        else if (you.species == SP_GHOUL)
+        else if (you.get_mutation_level(MUT_ROTTING_BODY))
             return "Carrion"; // yum!
     }
 
@@ -5074,9 +5238,6 @@ static map<const char*, vector<mutation_type>> sacrifice_vector_map =
         MUT_SHOUTITUS,
         MUT_INHIBITED_REGENERATION,
         MUT_NO_POTION_HEAL,
-        MUT_DOPEY,
-        MUT_CLUMSY,
-        MUT_WEAK,
     }},
 };
 
@@ -5139,14 +5300,8 @@ static mutation_type _random_valid_sacrifice(const vector<mutation_type> &muts)
 
         // Special case a few weird interactions:
 
-        // Vampires can't get inhibited regeneration for some reason related
-        // to their existing regen silliness.
-        // Neither can deep dwarf, for obvious reasons.
-        if (mut == MUT_INHIBITED_REGENERATION && you.species == SP_VAMPIRE)
-            continue;
-
-        // Can't scream in permasilence. Hah.
-        if (mut == MUT_SHOUTITUS && you.species == SP_SILENT_SPECTRE)
+        // Can't read in permasilence. Hah.
+        if (mut == MUT_NO_READ && you.species == SP_SILENT_SPECTRE)
             continue;
 
         // demonspawn can't get frail if they have a robust facet
@@ -5337,7 +5492,7 @@ static int _piety_for_skill_by_sacrifice(ability_type sacrifice)
     if (sacrifice == ABIL_RU_SACRIFICE_HAND)
     {
         // No one-handed bows.
-        if (you.species != SP_FORMICID)
+        if (!you.has_innate_mutation(MUT_MULTIARM))
             piety_gain += _piety_for_skill(SK_BOWS);
     }
     return piety_gain;
@@ -5430,26 +5585,7 @@ int get_sacrifice_piety(ability_type sac, bool include_skill)
                 piety_gain += 2 + _get_stat_piety(STAT_INT, 6);
             break;
         case ABIL_RU_SACRIFICE_PURITY:
-            if (mut == MUT_WEAK || mut == MUT_DOPEY || mut == MUT_CLUMSY)
-            {
-                const stat_type stat = mut == MUT_WEAK   ? STAT_STR
-                                     : mut == MUT_CLUMSY ? STAT_DEX
-                                     : mut == MUT_DOPEY  ? STAT_INT
-                                                         : NUM_STATS;
-                piety_gain += 4 + _get_stat_piety(stat, 4);
-            }
-            // the other sacrifices get sharply worse if you already
-            // have levels of them.
-            else if (you.get_mutation_level(mut) == 2)
-                piety_gain += 28;
-            else if (you.get_mutation_level(mut) == 1)
-                piety_gain += 21;
-            else
-                piety_gain += 14;
-
-            if (mut == MUT_SHOUTITUS)
-                piety_gain /= 2; // screaming just isn't that bad.
-
+            piety_gain += 28;
             break;
         case ABIL_RU_SACRIFICE_ARTIFICE:
             if (you.get_mutation_level(MUT_NO_LOVE))
@@ -6006,7 +6142,7 @@ bool ru_do_sacrifice(ability_type sac)
     if (sac == ABIL_RU_SACRIFICE_HAND)
     {
         // No one-handed bows.
-        if (you.species != SP_FORMICID)
+        if (!you.has_innate_mutation(MUT_MULTIARM))
             _ru_kill_skill(SK_BOWS);
     }
 

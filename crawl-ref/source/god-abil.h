@@ -100,7 +100,11 @@ void sif_do_channel_energy(int pow);
 void trog_do_trogs_hand();
 void trog_remove_trogs_hand();
 
+void slimify_position(int iterations, coord_def pos, bool boost_slime_rate = false);
+bool jiyva_check_dissolve();
+bool jiyva_dissolution();
 bool jiyva_remove_bad_mutation();
+bool jiyva_set_targets();
 
 bool given_gift(const monster* mons);
 bool beogh_can_gift_items_to(const monster* mons, bool quiet = true);

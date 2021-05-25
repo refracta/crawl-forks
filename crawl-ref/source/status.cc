@@ -236,9 +236,14 @@ bool fill_status_info(int status, status_info& inf)
             inf.light_text = "drake";
             break;
         case mount_type::hydra:
-            inf.light_colour = LIGHTGREEN;
+            inf.light_colour = GREEN;
             inf.short_text = "hydra mount";
             inf.light_text = "hydra";
+            break;
+        case mount_type::slime:
+            inf.light_colour = LIGHTGREEN;
+            inf.short_text = "slime mount";
+            inf.light_text = "slime";
             break;
         case mount_type::spider:
             inf.light_colour = BROWN;
@@ -911,14 +916,16 @@ static void _describe_tentacles(status_info& inf)
 
 static void _describe_hunger(status_info& inf)
 {
-    const bool vamp = (you.species == SP_VAMPIRE);
+    if (you_foodless(false))
+        return;
+
     const bool kenku = (you.species == SP_TENGU);
 
     switch (you.hunger_state)
     {
     case HS_ENGORGED:
-        inf.light_colour = (vamp ? GREEN : LIGHTGREEN);
-        inf.light_text   = (vamp ? "Alive" : "Engorged");
+        inf.light_colour = LIGHTGREEN;
+        inf.light_text   = "Engorged";
         break;
     case HS_VERY_FULL:
         inf.light_colour = GREEN;
@@ -930,30 +937,33 @@ static void _describe_hunger(status_info& inf)
         break;
     case HS_HUNGRY:
         inf.light_colour = YELLOW;
-        inf.light_text   = (vamp ? "Thirsty" : kenku ? "Peckish" : "Hungry");
+        inf.light_text   = (kenku ? "Peckish" : "Hungry");
         break;
     case HS_VERY_HUNGRY:
         inf.light_colour = YELLOW;
-        inf.light_text   = (vamp ? "Awfully Thirsty" : kenku ? "Quite Peckish" : "Very Hungry");
+        inf.light_text   = (kenku ? "Quite Peckish" : "Very Hungry");
         break;
     case HS_NEAR_STARVING:
         inf.light_colour = YELLOW;
-        inf.light_text   = (vamp ? "Near Bloodless" : kenku ? "Ravenously Peckish" : "Near Starving");
+        inf.light_text   = (kenku ? "Ravenously Peckish" : "Near Starving");
         break;
     case HS_STARVING:
         inf.light_colour = LIGHTRED;
-        inf.light_text   = (vamp ? "Bloodless" : "Starving");
-        inf.short_text   = (vamp ? "bloodless" : "starving");
+        inf.light_text   = "Starving";
+        inf.short_text   = "starving";
         break;
     case HS_FAINTING:
         inf.light_colour = RED;
-        inf.light_text   = (vamp ? "Bloodless" : "Fainting");
-        inf.short_text   = (vamp ? "bloodless" : "fainting");
+        inf.light_text   = "Fainting";
+        inf.short_text   = "fainting";
         break;
     case HS_SATIATED: // no status light
     default:
         break;
     }
+
+    if (you_foodless(true))
+        inf.light_colour = LIGHTGRAY;
 }
 
 static void _describe_glow(status_info& inf)
@@ -982,9 +992,9 @@ static void _describe_glow(status_info& inf)
         "slightly ",
         "",
         "heavily ",
-        "very heavily ",
-        "very very heavily ", // this is silly but no one will ever see it
-        "impossibly ",        // (likewise)
+        "thoroughly ",
+        "massively ",
+        "impossibly ",
     };
     ASSERT(signed_cont >= 0);
 
@@ -998,9 +1008,6 @@ static void _describe_regen(status_info& inf)
     const bool regen = (you.duration[DUR_REGENERATION] > 0
                         || you.duration[DUR_TROGS_HAND] > 0);
     const bool no_heal = !player_regenerates_hp();
-    // Does vampire hunger level affect regeneration rate significantly?
-    const bool vampmod = !no_heal && !regen && you.species == SP_VAMPIRE
-                         && you.hunger_state != HS_SATIATED;
 
     if (regen)
     {
@@ -1030,18 +1037,6 @@ static void _describe_regen(status_info& inf)
             inf.long_text  = "You are regenerating.";
         }
         _mark_expiring(inf, dur_expiring(DUR_REGENERATION));
-    }
-    else if (vampmod)
-    {
-        if (you.disease)
-            inf.short_text = "recuperating";
-        else
-            inf.short_text = "regenerating";
-
-        if (you.hunger_state < HS_SATIATED)
-            inf.short_text += " slowly";
-        else
-            inf.short_text += " quickly";
     }
 }
 
@@ -1126,7 +1121,7 @@ static void _describe_airborne(status_info& inf)
 
 static void _describe_rotting(status_info& inf)
 {
-    if (you.species == SP_GHOUL)
+    if (you.get_mutation_level(MUT_ROTTING_BODY))
     {
         inf.short_text = "rotting";
         inf.long_text = "Your flesh is rotting";
@@ -1180,9 +1175,7 @@ static void _describe_transform(status_info& inf)
     inf.short_text = form->get_long_name();
     inf.long_text = form->get_description();
 
-    const bool vampbat = (you.species == SP_VAMPIRE
-                          && you.form == transformation::bat);
-    const bool expire  = dur_expiring(DUR_TRANSFORMATION) && !vampbat;
+    const bool expire  = dur_expiring(DUR_TRANSFORMATION);
 
     inf.light_colour = _dur_colour(GREEN, expire);
     _mark_expiring(inf, expire);
@@ -1238,17 +1231,24 @@ static void _describe_missiles(status_info& inf)
     if (!level)
         return;
 
-    if (level > 1)
+    if (level > 2)
     {
-        bool perm = false;
-        inf.light_colour = perm ? WHITE : LIGHTMAGENTA;
+        inf.light_colour = LIGHTGREEN;
+        inf.light_text = "DMsl+";
+        inf.short_text = "devour missiles";
+        inf.long_text = "You devour missiles.";
+
+    }
+    else if (level > 1)
+    {
+        inf.light_colour = LIGHTMAGENTA;
         inf.light_text   = "DMsl";
         inf.short_text   = "deflect missiles";
         inf.long_text    = "You deflect missiles.";
     }
     else
     {
-        bool perm = you.get_mutation_level(MUT_DISTORTION_FIELD) == 3
+        bool perm = you.get_mutation_level(MUT_DISTORTION_FIELD)
                     || you.wearing_ego(EQ_ALL_ARMOUR, SPARM_REPULSION)
                     || you.scan_artefacts(ARTP_RMSL)
                     || have_passive(passive_t::upgraded_storm_shield);

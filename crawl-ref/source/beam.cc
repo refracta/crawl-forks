@@ -505,8 +505,8 @@ void zappy(zap_type z_type, int power, bool is_monster, bolt &pbolt)
         pbolt.hit = (*hit_calc)(power);
         if (pbolt.hit != AUTOMATIC_HIT && !is_monster)
         {
-            pbolt.hit *= (20 + you.vision());
-            pbolt.hit /= 20;
+            pbolt.hit *= (10 + you.vision());
+            pbolt.hit /= 10;
             pbolt.hit = max(0, pbolt.hit);
         }
     }
@@ -1797,6 +1797,7 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
         }
         break;
 
+    case BEAM_ACID_WAVE:
     case BEAM_ACID:
     {
         hurted = resist_adjust_damage(mons, pbolt.flavour, hurted);
@@ -2428,7 +2429,7 @@ static bool _curare_hits_player(actor* agent, int levels, string name,
 
     if (mount)
     {
-        if (you.mount == mount_type::hydra && !one_chance_in(3))
+        if (you.res_poison(true, true) && !one_chance_in(3))
             return false;
 
         poison_mount(roll_dice(levels, 12) + 1);
@@ -2579,12 +2580,13 @@ void fire_tracer(const monster* mons, bolt &pbolt, bool explode_only,
 }
 
 static coord_def _random_point_hittable_from(const coord_def &c,
-                                            int radius,
+                                            int base_radius,
                                             int margin = 1,
                                             int tries = 5)
 {
     while (tries-- > 0)
     {
+        const int radius = random_range(1, base_radius);
         const coord_def point = dgn_random_point_from(c, radius, margin);
         if (point.origin())
             continue;
@@ -2595,36 +2597,28 @@ static coord_def _random_point_hittable_from(const coord_def &c,
     return coord_def();
 }
 
-void create_feat_splash(coord_def center,
-                                int radius,
-                                int nattempts)
+void create_feat_splash(coord_def center, int radius, int nattempts, bool acid)
 {
+    const dungeon_feature_type feat = acid ? DNGN_SLIMY_WATER : DNGN_SHALLOW_WATER;
+    const terrain_change_type type = acid ? TERRAIN_CHANGE_SLIME : TERRAIN_CHANGE_FLOOD;
+
     // Always affect center, if compatible
-    if ((grd(center) == DNGN_FLOOR || grd(center) == DNGN_SHALLOW_WATER))
-    {
-        temp_change_terrain(center, DNGN_SHALLOW_WATER, 100 + random2(100),
-                            TERRAIN_CHANGE_FLOOD);
-    }
+    if ((grd(center) == DNGN_FLOOR || grd(center) == feat))
+        temp_change_terrain(center, feat, 100 + random2(100), type);
 
     if (grd(center) == DNGN_LAVA)
-    {
-        temp_change_terrain(center, DNGN_OBSIDIAN, 100 + random2(100),
-                            TERRAIN_CHANGE_FROZEN);
-    }
+        temp_change_terrain(center, DNGN_OBSIDIAN, 100 + random2(100), TERRAIN_CHANGE_FROZEN);
 
     for (int i = 0; i < nattempts; ++i)
     {
         const coord_def newp(_random_point_hittable_from(center, radius));
-        if (newp.origin() || (grd(newp) != DNGN_FLOOR && grd(newp) != DNGN_SHALLOW_WATER && grd(newp) != DNGN_LAVA))
+        if (newp.origin() || (grd(newp) != DNGN_FLOOR && grd(newp) != feat && grd(newp) != DNGN_LAVA))
             continue;
         
         if (grd(newp) == DNGN_LAVA)
-            temp_change_terrain(newp, DNGN_OBSIDIAN, 100 + random2(100),
-                TERRAIN_CHANGE_FROZEN);
+            temp_change_terrain(newp, DNGN_OBSIDIAN, 100 + random2(100), TERRAIN_CHANGE_FROZEN);
         else
-            temp_change_terrain(newp, DNGN_SHALLOW_WATER, 100 + random2(100),
-                TERRAIN_CHANGE_FLOOD);
-
+            temp_change_terrain(newp, feat, 100 + random2(100), type);
     }
 }
 
@@ -3033,7 +3027,11 @@ void bolt::affect_endpoint()
             noisy(spell_effect_noise(SPELL_PRIMAL_WAVE),
                   pos(), "You hear a splash.");
         }
-        create_feat_splash(pos(), 2, random_range(3, 12, 2));
+
+        if (flavour == BEAM_ACID_WAVE)
+            create_feat_splash(pos(), 3, random_range(8, 20, 2), true);
+        else
+            create_feat_splash(pos(), 2, random_range(3, 12, 2));
         break;
 
     case SPELL_BLINKBOLT:
@@ -3248,7 +3246,7 @@ void bolt::affect_ground()
 
 bool bolt::is_fiery() const
 {
-    return flavour == BEAM_FIRE || flavour == BEAM_LAVA || flavour == BEAM_STICKY_FLAME;
+    return flavour == BEAM_FIRE || flavour == BEAM_LAVA || flavour == BEAM_STICKY_FLAME || origin_spell == SPELL_SLIME_RUSH;
 }
 
 /// Can this bolt burn trees it hits?
@@ -3402,6 +3400,15 @@ void bolt::affect_place_clouds()
 
     if (origin_spell == SPELL_FLAMING_CLOUD)
         place_cloud(CLOUD_FIRE, p, (damage.roll() + damage.roll()) / 3, agent());
+
+    if (!feat_is_critical(grd(pos())) && !feat_is_watery(grd(pos())) && (is_explosion && origin_spell == SPELL_SLIME_SHARDS && !one_chance_in(3)
+        || flavour == BEAM_ACID_WAVE))
+    {
+        const int d = 6 + random2(3 + you.skill(SK_INVOCATIONS));
+        temp_change_terrain(pos(), DNGN_SLIMY_WATER, d * BASELINE_DELAY, TERRAIN_CHANGE_SLIME);
+        if (origin_spell == SPELL_SLIME_RUSH)
+            place_cloud(CLOUD_FIRE, p, d - 1, agent());
+    }
 
     // Fire/cold over water/lava
     if (feat == DNGN_LAVA && flavour == BEAM_COLD
@@ -3640,6 +3647,9 @@ static bool _test_beam_hit(int attack, int defence, bool pierce,
 {
     if (attack == AUTOMATIC_HIT)
         return true;
+
+    if (defl >= 3)
+        defl--;
 
     if (pierce)
     {
@@ -3898,6 +3908,9 @@ bool bolt::misses_player()
     if (flavour == BEAM_VISUAL)
         return true;
 
+    if (origin_spell == SPELL_SLIME_SHARDS && you.is_icy())
+        return true;
+
     if (is_explosion || aimed_at_feet || auto_hit)
         return false;
 
@@ -3922,7 +3935,6 @@ bool bolt::misses_player()
     const int SH = player_shield_class();
     if ((player_omnireflects() && is_omnireflectable()
          || is_blockable())
-        && you.shielded()
         && !aimed_at_feet
         && SH > 0)
     {
@@ -3994,9 +4006,20 @@ bool bolt::misses_player()
     }
     else if (defl && !_test_beam_hit(real_tohit, dodge, pierce, defl, r))
     {
+        int healz = 0; 
+        
+        if (defl >= 3)
+        {
+            you.heal(healz);
+            healz = 4 + random2(8);
+        }
+
         // active voice to imply stronger effect
-        mprf(defl == 1 ? "The %s is repelled." : "You deflect the %s!",
-             name.c_str());
+        mprf(defl == 1 ? "The %s is repelled%s." : 
+             defl >= 3 ? "You devour the %s%s"  :
+                         "You deflect the %s%s!",
+             name.c_str(), defl < 3 ? "" : attack_strength_punctuation(healz).c_str());
+
         you.ablate_deflection();
         count_action(CACT_DODGE, DODGE_DEFLECT);
     }
@@ -4545,6 +4568,8 @@ void impale_player_with_barbs(bool mt)
     {
         if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
             mpr("The barbed spikes sting slightly as they fall through your immaterial body.");
+        else if (you.get_mutation_level(MUT_SLIME) >= 3)
+            mpr("The barbed spikes fail to stick to your viscuous form.");
         else
         {
             mpr("The barbed spikes become lodged in your body.");
@@ -4852,18 +4877,6 @@ void bolt::affect_player()
                 was_affected = true;
             }
         }
-
-        if (hits_you && you.has_mutation(MUT_JELLY_MISSILE)
-            && you.hp < you.hp_max
-            && !you.duration[DUR_DEATHS_DOOR]
-            && item_is_jelly_edible(*item)
-            && coinflip())
-        {
-            mprf("Your attached jelly eats %s!", item->name(DESC_THE).c_str());
-            inc_hp(random2(yu_final_dam / 2));
-            canned_msg(MSG_GAIN_HEALTH);
-            drop_item = false;
-        }
     }
 
     // Sticky flame.
@@ -4934,7 +4947,7 @@ void bolt::affect_player()
         damage_mount(mt_final_dam);
 
     // Acid. (Apply this afterward, to avoid bad message ordering.)
-    if (flavour == BEAM_ACID)
+    if (flavour == BEAM_ACID || flavour == BEAM_ACID_WAVE)
     {
         you.splash_with_acid(agent(), div_round_up(yu_final_dam, 10), true);
         if (hits_mount)
@@ -6112,6 +6125,8 @@ void bolt::affect_monster(monster* mon)
              (postac || harmless) ? "" : " but does no damage",
              harmless ? "." : attack_strength_punctuation(final).c_str());
 
+        if (origin_spell == SPELL_SLIME_SHARDS && one_chance_in(3))
+            mon->splash_with_acid(&you, 1, true, "corroded by icy fragments");
     }
     else if (heard && !hit_noise_msg.empty())
         mprf(MSGCH_SOUND, "%s", hit_noise_msg.c_str());
@@ -7009,7 +7024,7 @@ struct explosion_sfx
 
 // A map from origin_spells to special explosion info for each.
 const map<spell_type, explosion_sfx> spell_explosions = {
-    { SPELL_HURL_DAMNATION, {
+    { SPELL_HURL_HELLFIRE, {
         "The hellfire blast explodes!",
         "an accursed explosion",
     } },
@@ -7043,11 +7058,15 @@ const map<spell_type, explosion_sfx> spell_explosions = {
     } },
     { SPELL_ICEBLAST, {
         "The mass of ice explodes!",
-        "an explosion",
+        "the clash of breaking glass",
     } },
     { SPELL_GHOSTLY_SACRIFICE, {
         "The ghostly flame explodes!",
         "the shriek of haunting fire",
+    } },
+    { SPELL_SLIME_SHARDS, { // Intentionally empty to prevent message spam this happens 8 times in a row afterall.
+        "",
+        "",
     } },
 };
 
@@ -7700,6 +7719,7 @@ static string _beam_type_name(beam_type type)
     case BEAM_POISON:                return "weak poison";
     case BEAM_IRRADIATE:             return "mutagenic radiation";
     case BEAM_NEG:                   return "negative energy";
+    case BEAM_ACID_WAVE:             return "caustic ooze";
     case BEAM_ACID:                  return "acid";
     case BEAM_MIASMA:                return "miasma";
     case BEAM_SPORE:                 return "spores";
@@ -7818,7 +7838,7 @@ bool bolt::can_knockback(const actor &act, int dam) const
     if (act.is_stationary() || act.wearing_ego(EQ_BOOTS, SPARM_STURDY))
         return false;
 
-    return flavour == BEAM_WATER && origin_spell == SPELL_PRIMAL_WAVE
+    return origin_spell == SPELL_PRIMAL_WAVE
            || origin_spell == SPELL_FORCE_LANCE && dam
            || origin_spell == SPELL_MUSE_OAMS_AIR_BLAST && dam;
 }

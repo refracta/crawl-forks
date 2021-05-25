@@ -53,6 +53,7 @@ void dec_penance(god_type god, int val);
 void leave_xom();
 void excommunication(bool voluntary = false, god_type new_god = GOD_NO_GOD);
 
+void jiyva_setup();
 bool gain_piety(int pgn, int denominator = 1, bool should_scale_piety = true);
 void dock_piety(int pietyloss, int penance);
 void god_speaks(god_type god, const char *mesg);
@@ -110,6 +111,7 @@ lifesaving_chance elyvilon_lifesaving();
 bool god_protects_from_harm();
 bool jiyva_is_dead();
 void set_penance_xp_timeout();
+void inc_gift_timeout(int val);
 bool fedhas_protects_species(monster_type mc);
 bool fedhas_protects(const monster* target);
 bool fedhas_neutralises(const monster& target);

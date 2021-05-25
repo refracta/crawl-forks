@@ -185,23 +185,11 @@ enum class passive_t
     /// You are immune to slime covered walls
     slime_wall_immune,
 
-    /// Jiyva protects you from corrosion
-    resist_corrosion,
-
-    /// Items consumed by your fellow slimes restores your mana reserve
-    slime_mp,
-
-    /// Items consumed by your fellow slimes restores your health
-    slime_hp,
-
-    /// Jiyva summons jellies to protect you
-    jellies_army,
-
-    /// Jiyva allows jellies to eats off-level and seen items.
-    jelly_eating,
-
     /// Jiyva adjusts your stats as needed.
     fluid_stats,
+
+    /// Jiyva turns you into a slime.
+    mutation_gifts,
 
     // You have a chance to spawn slimes when hit hard
     spawn_slimes_on_hit,
@@ -275,7 +263,6 @@ bool have_passive(passive_t passive);
 bool will_have_passive(passive_t passive);
 int rank_for_passive(passive_t passive);
 int chei_stat_boost(int piety = you.piety);
-void jiyva_eat_offlevel_items();
 void ash_init_bondage(player *y);
 void ash_check_bondage(bool msg = true);
 string ash_describe_bondage(int flags, bool level);
@@ -300,6 +287,7 @@ void shadow_monster_reset(monster *mon);
 void dithmenos_shadow_melee(actor* target);
 void dithmenos_shadow_throw(const dist &d, const item_def &item);
 void dithmenos_shadow_spell(bolt* orig_beam, spell_type spell);
+void jiyva_passive_slime();
 void uskayaw_prepares_audience();
 void uskayaw_bonds_audience();
 

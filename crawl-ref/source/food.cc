@@ -45,17 +45,13 @@
 static void _describe_food_change(int hunger_increment);
 static void _heal_from_food(int hp_amt);
 
-void make_hungry(int hunger_amount, bool suppress_msg,
-                 bool magic)
+void make_hungry(int hunger_amount, bool suppress_msg)
 {
     if (crawl_state.disables[DIS_HUNGER])
         return;
 
     if (you_foodless())
         return;
-
-    if (magic)
-        hunger_amount = calc_hunger(hunger_amount);
 
     if (hunger_amount == 0 && !suppress_msg)
         return;
@@ -118,10 +114,14 @@ void set_hunger(int new_hunger_level, bool suppress_msg)
 
 bool you_foodless(bool temp)
 {
-    if (you.undead_state(temp) == US_UNDEAD || you.undead_state(temp) == US_GHOST)
-        return true;
-    else
+    switch (you.undead_state(temp))
+    {
+    case US_ALIVE:
+    case US_HUNGRY_DEAD:
         return false;
+    default:
+        return true;
+    }
 }
 
 bool prompt_eat_item(int slot)
@@ -427,7 +427,7 @@ int prompt_eat_chunks(bool only_auto)
             // might want to save chunks as a ghoul. Ghouls can auto_eat if
             // they have rotted hp.
             const bool no_auto = you.undead_state()
-                && !(you.species == SP_GHOUL && player_rotted());
+                && !(you.get_mutation_level(MUT_ROTTING_BODY) && player_rotted());
 
             // If this chunk is safe to eat, just do so without prompting.
             if (easy_eat && !bad && i_feel_safe() && !(only_auto && no_auto))
@@ -478,7 +478,7 @@ static const char *_chunk_flavour_phrase(bool likes_chunks)
 {
     const char *phrase = "tastes terrible.";
 
-    if (you.species == SP_GHOUL)
+    if (you.get_mutation_level(MUT_ROTTING_BODY))
         phrase = "tastes great!";
     else if (likes_chunks)
         phrase = "tastes great.";
@@ -583,7 +583,7 @@ static void _eat_chunk(item_def& food)
     {
     case CE_CLEAN:
     {
-        if (you.species == SP_GHOUL)
+        if (you.get_mutation_level(MUT_ROTTING_BODY))
         {
             suppress_msg = true;
             const int hp_amt = 1 + random2avg(5 + you.experience_level, 3);
@@ -700,7 +700,7 @@ bool is_preferred_food(const item_def &food)
     if (you_foodless())
         return false;
 
-    if (you.species == SP_GHOUL)
+    if (you.get_mutation_level(MUT_ROTTING_BODY))
         return food.is_type(OBJ_FOOD, FOOD_CHUNK);
 
 #if TAG_MAJOR_VERSION == 34
@@ -811,7 +811,7 @@ corpse_effect_type determine_chunk_effect(corpse_effect_type chunktype)
     switch (chunktype)
     {
     case CE_NOXIOUS:
-        if (you.species == SP_GHOUL)
+        if (you.get_mutation_level(MUT_ROTTING_BODY))
             chunktype = CE_CLEAN;
         break;
 
@@ -882,7 +882,7 @@ int you_max_hunger()
         return HUNGER_DEFAULT;
 
     // Ghouls can never be full or above.
-    if (you.species == SP_GHOUL)
+    if (you.get_mutation_level(MUT_ROTTING_BODY))
         return hunger_threshold[HS_SATIATED];
 
     return hunger_threshold[HS_ENGORGED];

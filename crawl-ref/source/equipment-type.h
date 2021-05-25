@@ -11,9 +11,7 @@ enum equipment_type
     EQ_HELMET,
     EQ_GLOVES,
     EQ_BOOTS,
-#if TAG_MAJOR_VERSION == 34
-    EQ_OLD_SHIELD,
-#endif
+    EQ_BARDING,
     EQ_BODY_ARMOUR,
     EQ_FIRST_JEWELLERY,
     EQ_LEFT_RING = EQ_FIRST_JEWELLERY,
@@ -32,9 +30,22 @@ enum equipment_type
     EQ_FAIRY_JEWEL,
     // Finger amulet provides an extra ring slot
     EQ_RING_AMULET,
-    EQ_LAST_JEWELLERY = EQ_RING_AMULET,
+    // Tendrils
+    EQ_RING_LEFT_TENDRIL,
+    EQ_RING_RIGHT_TENDRIL,
+    EQ_LAST_JEWELLERY = EQ_RING_RIGHT_TENDRIL,
+    EQ_CYTOPLASM, // Weird case.
+    EQ_JIYVA0, // Morphing Slots
+    EQ_JIYVA1,
+    EQ_JIYVA2,
+    EQ_JIYVA3,
+    EQ_JIYVA4,
+    EQ_JIYVA5,
+    EQ_JIYVA6,
     NUM_EQUIP,
 
+    EQ_FIRST_MORPH = EQ_JIYVA0,
+    EQ_LAST_MORPH = EQ_JIYVA6,
     EQ_MIN_ARMOUR = EQ_CLOAK,
     EQ_MAX_ARMOUR = EQ_BODY_ARMOUR,
     EQ_MAX_WORN   = EQ_RING_AMULET,

@@ -466,7 +466,7 @@ bool mons_class_flag(monster_type mc, monclass_flags_t bits)
     return me && (me->bitfields & bits);
 }
 
-int monster::wearing(equipment_type slot, int sub_type, bool calc_unid) const
+int monster::wearing(equipment_type slot, int sub_type, bool calc_unid, bool /*count_jiyva*/) const
 {
     int ret = 0;
     const item_def *item = 0;
@@ -503,6 +503,7 @@ int monster::wearing(equipment_type slot, int sub_type, bool calc_unid) const
     case EQ_HELMET:
     case EQ_GLOVES:
     case EQ_BOOTS:
+    case EQ_BARDING:
     case EQ_WEAPON1:
         item = mslot_item(MSLOT_SHIELD);
         if (item && item->is_type(OBJ_SHIELDS, sub_type))
@@ -565,6 +566,7 @@ int monster::wearing_ego(equipment_type slot, int special, bool calc_unid) const
     case EQ_HELMET:
     case EQ_GLOVES:
     case EQ_BOOTS:
+    case EQ_BARDING:
     case EQ_WEAPON1:
         item = mslot_item(MSLOT_SHIELD);
         if (item && item->base_type == OBJ_SHIELDS
@@ -1144,7 +1146,7 @@ bool mons_is_plant(const monster& mon)
 
 bool mons_eats_items(const monster& mon)
 {
-    return mons_is_slime(mon) && have_passive(passive_t::jelly_eating);
+    return mons_is_slime(mon);
 }
 
 /* Is the actor susceptible to vampirism?
@@ -1752,6 +1754,10 @@ bool mons_class_can_regenerate(monster_type mc)
 bool mons_can_regenerate(const monster& m)
 {
     const monster& mon = get_tentacle_head(m);
+
+    // Sick aura.
+    if (mon.see_cell_no_trans(you.pos()) && you.get_mutation_level(MUT_HALF_DEATH) > 1)
+        return false;
 
     if (testbits(mon.flags, MF_NO_REGEN))
         return false;
@@ -2666,7 +2672,7 @@ static int _exper_value(const monster_type mc, const int hd, int maxhp, const in
             case SPELL_SMITING:
             case SPELL_SUMMON_EYEBALLS:
             case SPELL_CALL_DOWN_DAMNATION:
-            case SPELL_HURL_DAMNATION:
+            case SPELL_HURL_HELLFIRE:
             case SPELL_SYMBOL_OF_TORMENT:
             case SPELL_GLACIATE:
             case SPELL_FIRE_STORM:
@@ -5482,7 +5488,6 @@ mon_body_shape get_mon_shape(const monster_type mc)
                 return static_cast<mon_body_shape>(MON_SHAPE_NAGA);
             case SP_OCTOPODE:
                 return static_cast<mon_body_shape>(MON_SHAPE_MISC);
-                break;
             case SP_TENGU:
             case SP_GARGOYLE:
                 return static_cast<mon_body_shape>(MON_SHAPE_HUMANOID_WINGED);
@@ -6270,7 +6275,7 @@ bool mons_is_notable(const monster& mons)
         return true;
     }
     // Jellies are never interesting to Jiyva.
-    if (mons.type == MONS_JELLY && have_passive(passive_t::jellies_army))
+    if (mons.type == MONS_JELLY && you_worship(GOD_JIYVA))
         return false;
     if (mons_threat_level(mons) == MTHRT_NASTY)
         return true;
@@ -6440,7 +6445,7 @@ void throw_monster_bits(const monster& mon)
 /// Add an ancestor spell to the given list.
 static void _add_ancestor_spell(monster_spells &spells, spell_type spell)
 {
-    if (you.species == SP_SILENT_SPECTRE)
+    if (you.get_mutation_level(MUT_SILENT_CAST))
         spells.emplace_back(spell, 25, MON_SPELL_MAGICAL);
     else
         spells.emplace_back(spell, 25, MON_SPELL_WIZARD);
@@ -6573,7 +6578,7 @@ void set_ancestor_spells(monster &ancestor, bool notify)
         else if (species_is_draconian(you.species)) // SCORCHER! 
         {
             _add_ancestor_spell(ancestor.spells, HD >= 17 ?
-                SPELL_HURL_DAMNATION :
+                SPELL_HURL_HELLFIRE :
                 SPELL_FIREBALL);
             _add_ancestor_spell(ancestor.spells, HD >= 13 ?
                 SPELL_BOLT_OF_FIRE :
@@ -6689,12 +6694,8 @@ void set_ancestor_spells(monster &ancestor, bool notify)
 
     if (HD >= 13)
     {
-        if (you.species == SP_SILENT_SPECTRE)
-            ancestor.spells.emplace_back(SPELL_HASTE, 25, MON_SPELL_MAGICAL);
-        else if (you.species == SP_FORMICID)
-            ancestor.spells.emplace_back(SPELL_MIGHT, 25, MON_SPELL_WIZARD);
-        else
-            ancestor.spells.emplace_back(SPELL_HASTE, 25, MON_SPELL_WIZARD);
+        ancestor.spells.emplace_back(you.has_innate_mutation(MUT_STASIS) ? SPELL_MIGHT : SPELL_HASTE, 25, 
+                                     you.has_innate_mutation(MUT_SILENT_CAST) ? MON_SPELL_MAGICAL : MON_SPELL_WIZARD);
     }
 
     if (ancestor.spells.size())

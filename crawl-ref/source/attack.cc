@@ -265,7 +265,7 @@ int attack::calc_to_hit(bool random, bool player_aux)
         else
         {
             // Claws give a slight bonus to accuracy when active
-            mhit *= (you.get_mutation_level(MUT_CLAWS) > 0
+            mhit *= (you.get_mutation_level(MUT_CLAWS)
                      && wpn_skill == SK_UNARMED_COMBAT) ? 1.1 : 1;
 
             mhit *= (2700 + you.skill(wpn_skill, 100));
@@ -291,13 +291,19 @@ int attack::calc_to_hit(bool random, bool player_aux)
             mhit *= 0.85;
 
         // mutation
-        if (you.get_mutation_level(MUT_EYEBALLS))
+        if (you.get_mutation_level(MUT_GOLDEN_EYEBALLS))
         {
-            mhit *= (20 + you.get_mutation_level(MUT_EYEBALLS));
+            mhit *= (20 + you.get_mutation_level(MUT_GOLDEN_EYEBALLS));
             mhit /= 20;
         }
 
-        // +0 for normal vision, +5 for Supernaturally Acute Vision, -5 For Impaired Vision
+        if (you.get_mutation_level(MUT_BUDDING_EYEBALLS))
+        {
+            mhit *= (20 + you.get_mutation_level(MUT_GOLDEN_EYEBALLS));
+            mhit /= 20;
+        }
+
+        // +0 for normal vision, +10% for Supernaturally Acute Vision, -10% For Impaired Vision
         mhit *= 10 + you.vision();
         mhit /= 10;
     }
@@ -358,8 +364,8 @@ int attack::calc_to_hit(bool random, bool player_aux)
         const int how_transparent = you.get_mutation_level(MUT_TRANSLUCENT_SKIN);
         if (defender->is_player() && how_transparent)
         {
-            mhit *= (20 - 1 * how_transparent); 
-            mhit /= 20;
+            mhit *= (10 - 1 * how_transparent); 
+            mhit /= 10;
         }
 
         if (defender->backlit(false))
@@ -1105,6 +1111,17 @@ int attack::inflict_damage(int dam, beam_type flavour, bool clean)
 {
     if (flavour == NUM_BEAMS)
         flavour = special_damage_flavour;
+
+    if (attacker->is_player())
+    {
+        const item_def * inside = you.slot_item(EQ_CYTOPLASM);
+        if (inside && get_weapon_brand(*inside) == SPWPN_REAPING)
+        {
+            defender->props["reaping_damage"].get_int() += dam;
+            defender->props["reaper"].get_int() = attacker->mid;
+        }
+    }
+
     // Auxes temporarily clear damage_brand so we don't need to check
     if (damage_brand == SPWPN_REAPING
         || damage_brand == SPWPN_CHAOS && one_chance_in(100))
@@ -1385,6 +1402,8 @@ int attack::calc_base_unarmed_damage()
         switch (you.mount)
         {
         default:
+        case mount_type::slime:
+            return 30;
         case mount_type::hydra:
             return 18;
         case mount_type::drake:
@@ -1394,13 +1413,16 @@ int attack::calc_base_unarmed_damage()
         }
     }
 
+    if (attack_number < 0)
+        return 8;
+
     // BCADDO: It's a little wack that it's just a base damage additive then skill for most forms
     // Consider revising.
     int damage = get_form()->get_base_unarmed_damage();
 
     // Claw damage only applies for bare hands.
     if (you.has_usable_claws())
-        damage += you.has_claws();
+        damage += div_rand_round(you.has_claws() * 3, 2);
 
     if (you.form_uses_xl())
         damage += div_rand_round(you.experience_level, 3);
@@ -1461,6 +1483,7 @@ int attack::calc_damage()
         switch (you.mount)
         {
         case mount_type::drake:
+        case mount_type::slime:
             potential_damage *= 2500 + random2(you.skill(SK_INVOCATIONS, 100) + 1);
             break;
         case mount_type::spider:

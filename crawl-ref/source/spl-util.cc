@@ -1261,7 +1261,7 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
     case SPELL_CONTROLLED_BLINK:
         // XXX: this is a little redundant with you_no_tele_reason()
         // but trying to sort out temp and so on is a mess
-        if (you.species == SP_FORMICID)
+        if (you.get_mutation_level(MUT_STASIS))
             return "your stasis prevents you from teleporting.";
 
         if (temp && you.no_tele(false, false, true))
@@ -1298,11 +1298,11 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
     case SPELL_DEFLECT_MISSILES:
         if (temp && you.attribute[ATTR_DEFLECT_MISSILES])
             return "you're already deflecting missiles.";
+        if (you.get_mutation_level(MUT_MISSILE_GUARD))
+            return "it would provide no further protection beyond your natural sticky ooze.";
         break;
 
     case SPELL_STATUE_FORM:
-        if (SP_GARGOYLE == you.species)
-            return "you're already a statue.";
         if (you.undead_state(temp) == US_GHOST)
             return "you are incapable of being fully solid.";
         // fallthrough to other forms
@@ -1322,15 +1322,11 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
         {
             return "your undead flesh cannot be transformed.";
         }
-        if (you.undead_state(temp) == US_SEMI_UNDEAD && you.is_lifeless_undead())
-            return "your current blood level is not sufficient.";
         break;
 
     case SPELL_REGENERATION:
         if (you.undead_state(temp) == US_UNDEAD)
             return "you're too dead to regenerate.";
-        if (you.undead_state(temp) == US_GHOST)
-            return "you need a body to regenerate.";
         break;
 
     case SPELL_EXCRUCIATING_WOUNDS:
@@ -1367,18 +1363,13 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
         if (temp && you.duration[DUR_DEATHS_DOOR_COOLDOWN])
             return "you are still too close to death's doorway.";
         // Prohibited to all undead.
-        if (you.undead_state(temp))
+        if (you.undead_state(temp) && you.undead_state(temp) != US_SEMI_ALIVE)
             return "you're too dead.";
         break;
     case SPELL_NECROMUTATION:
         // only prohibited to actual undead, not lichformed players
         if (you.undead_state(false))
             return "you're too dead.";
-        break;
-
-    case SPELL_SILENCE:
-        if (you.species == SP_SILENT_SPECTRE)
-            return "you're already silenced.";
         break;
 
     case SPELL_OZOCUBUS_ARMOUR:
@@ -1391,13 +1382,8 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
         break;
 
     case SPELL_SUBLIMATION_OF_BLOOD:
-        // XXX: write player_can_bleed(bool temp) & use that
-        if (you.species == SP_GARGOYLE
-            || you.undead_state(temp) != US_ALIVE
-            || (temp && !form_can_bleed(you.form)))
-        {
+        if (!you.can_bleed(temp))
             return "you have no blood to sublime.";
-        }
         if (you.magic_points == you.max_magic_points && temp)
             return "your reserves of magic are already full.";
         break;
@@ -1442,7 +1428,7 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
         break;
 
     case SPELL_SONG_OF_SLAYING:
-        if (you.species == SP_SILENT_SPECTRE)
+        if (you.get_mutation_level(MUT_SILENCE_AURA))
             return "you cannot sing out loud.";
         break;
 

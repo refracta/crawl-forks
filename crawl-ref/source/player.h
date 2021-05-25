@@ -54,6 +54,8 @@
 #define PARALYSED_BY_KEY "paralysed_by"
 #define PETRIFIED_BY_KEY "petrified_by"
 #define NOXIOUS_BOG_KEY "noxious_bog_pow"
+#define INVIS_CONTAMLESS_KEY "contamless_invisibility"
+#define DEMON_SCREAM "damaging silence"
 
 // display/messaging breakpoints for penalties from Ru's MUT_HORROR
 #define HORROR_LVL_EXTREME  3
@@ -145,8 +147,10 @@ public:
     int max_magic_points;
     int mp_max_adj;             // max MP loss (ability costs, tutorial bonus)
 
+    FixedVector<int8_t, NUM_STATS> mutated_stats;
     FixedVector<int8_t, NUM_STATS> stat_loss;
     FixedVector<int8_t, NUM_STATS> base_stats;
+    FixedVector<int8_t, NUM_STATS> jiyva_stat_targets;
 
     int hunger;
     int disease;
@@ -276,6 +280,7 @@ public:
     FixedVector<uint8_t, NUM_MUTATIONS> mutation;
     FixedVector<uint8_t, NUM_MUTATIONS> innate_mutation;
     FixedVector<uint8_t, NUM_MUTATIONS> temp_mutation;
+    FixedVector<uint8_t, NUM_MUTATIONS> suppressed_mutation;
     FixedVector<uint8_t, NUM_MUTATIONS> sacrifices;
 
     FixedVector<uint8_t, NUM_ABILITIES> sacrifice_piety;
@@ -287,6 +292,10 @@ public:
     };
 
     vector<demon_trait> demonic_traits;
+
+    // Jiyva Rework Variables
+    vector<mutation_type> jiyva_mut_set;
+    brand_type pseudopod_brand;
 
     // Draconian Rework Variables
     bool major_first;
@@ -633,39 +642,34 @@ public:
     int       has_claws(bool allow_tran = true) const override;
     bool      has_usable_claws(bool allow_tran = true) const;
     int       has_talons(bool allow_tran = true) const;
-    bool      has_usable_talons(bool allow_tran = true) const;
     int       has_hooves(bool allow_tran = true) const;
-    bool      has_usable_hooves(bool allow_tran = true) const;
     int       has_fangs(bool allow_tran = true) const;
-    int       has_usable_fangs(bool allow_tran = true) const;
     int       has_tail(bool allow_tran = true) const;
     int       has_usable_tail(bool allow_tran = true) const;
-    bool      has_usable_offhand() const;
-    int       has_pseudopods(bool allow_tran = true) const;
     int       has_usable_pseudopods(bool allow_tran = true) const;
     int       has_tentacles(bool allow_tran = true) const;
     int       usable_tentacles(bool allow_tran = true) const override;
     int       branch_SH(bool allow_tran = true) const;
 
     // Information about player mutations. Implemented in mutation.cc
-    int       get_base_mutation_level(mutation_type mut, bool innate=true, bool temp=true, bool normal=true) const;
-    int       get_mutation_level(mutation_type mut, bool check_form=true) const;
+    int       get_base_mutation_level(mutation_type mut, bool innate = true, bool temp = true, bool normal = true, bool suppressed = true) const;
+    int       get_mutation_level(mutation_type mut, bool check_form = true) const;
     int       get_mutation_level(mutation_type mut, mutation_activity_type minact) const;
     int       get_innate_mutation_level(mutation_type mut) const;
     int       get_temp_mutation_level(mutation_type mut) const;
 
     int       get_training_target(const skill_type sk) const;
-    bool      set_training_target(const skill_type sk, const double target, bool announce=false);
-    bool      set_training_target(const skill_type sk, const int target, bool announce=false);
+    bool      set_training_target(const skill_type sk, const double target, bool announce = false);
+    bool      set_training_target(const skill_type sk, const int target, bool announce = false);
     void      clear_training_targets();
 
     bool      has_temporary_mutation(mutation_type mut) const;
     bool      has_innate_mutation(mutation_type mut) const;
-    bool      has_mutation(mutation_type mut, bool check_form=true) const;
+    bool      has_mutation(mutation_type mut, bool check_form = true) const;
 
-    int       how_mutated(bool innate=false, bool levels=false, bool temp=true, bool ds=false) const;
+    int       how_mutated(bool innate = false, bool levels = false, bool temp = true, bool ds = false, bool normal = true) const;
 
-    int wearing(equipment_type slot, int sub_type, bool calc_unid = true) const
+    int wearing(equipment_type slot, int sub_type, bool calc_unid = true, bool count_jiyva = true) const
         override;
     int wearing_ego(equipment_type slot, int type, bool calc_unid = true) const
         override;
@@ -773,7 +777,7 @@ public:
     int how_chaotic(bool check_spells_god) const override;
     bool is_unbreathing(bool mt = false) const override;
     bool is_insubstantial() const override;
-    int res_acid(bool calc_unid = true, bool mt = false) const override;
+    int res_acid(bool calc_unid = true, bool items = true, bool mt = false) const override;
     bool res_damnation() const override { return false; };
     int res_fire(bool mt = false) const override;
     int res_steam(bool mt = false) const override;
@@ -798,7 +802,7 @@ public:
     bool antimagic_susceptible() const override;
 
     bool gourmand(bool calc_unid = true, bool items = true) const override;
-    bool res_corr(bool calc_unid = true, bool items = true, bool mount = false) const override;
+    int res_corr(bool calc_unid = true, bool items = true, bool mount = false) const override;
     bool clarity(bool calc_unid = true, bool items = true) const override;
     bool stasis() const override;
     bool is_fairy() const override;
@@ -851,7 +855,6 @@ public:
     int stat_maxhp() const override  { return hp_max; }
     int stealth() const override     { return player_stealth(); }
 
-    bool shielded() const override;
     int shield_bonus(bool random = true) const override;
     int shield_block_penalty() const override;
     int shield_bypass_ability(int tohit) const override;
@@ -919,6 +922,8 @@ public:
     bool attempt_escape(int attempts = 1);
 
     bool form_uses_xl() const;
+    bool have_serpentine_tail() const;
+    bool can_silent_cast() const;
 
     bool clear_far_engulf() override;
 
@@ -926,15 +931,15 @@ public:
     bool mounted() const override;
     string mount_name(bool terse = false) const;
 
+    int ac_change_from_mutation(mutation_type mut) const;
+    int ac_changes_from_mutations() const;
+
 protected:
     void _removed_beholder(bool quiet = false);
     bool _possible_beholder(const monster* mon) const;
 
     void _removed_fearmonger(bool quiet = false);
     bool _possible_fearmonger(const monster* mon) const;
-
-private:
-    int ac_changes_from_mutations() const;
 };
 COMPILE_CHECK((int) SP_UNKNOWN_BRAND < 8*sizeof(you.seen_weapon[0]));
 COMPILE_CHECK((int) SP_UNKNOWN_BRAND < 8*sizeof(you.seen_armour[0]));
@@ -998,8 +1003,6 @@ int player_hunger_rate();
 
 string player_name();
 
-int calc_hunger(int food_cost);
-
 int player_icemail_armour_class();
 int player_staff_shielding();
 int sanguine_armour_bonus();
@@ -1017,7 +1020,6 @@ void update_mana_regen_amulet_attunement();
 
 int player_res_cold(bool calc_unid = true, bool temp = true,
                     bool items = true);
-int player_res_acid(bool calc_unid = true, bool items = true);
 
 bool player_res_torment(bool random = true);
 bool player_kiku_res_torment();
@@ -1039,7 +1041,7 @@ int player_res_poison(bool calc_unid = true, bool temp = true,
                       bool items = true);
 int player_res_magic(bool calc_unid = true, bool temp = true);
 
-int player_shield_class();
+int player_shield_class(bool temp = true);
 int player_displayed_shield_class();
 bool player_omnireflects();
 

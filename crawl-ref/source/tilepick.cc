@@ -3276,6 +3276,8 @@ tileidx_t tileidx_bolt(const bolt &bolt)
     case LIGHTCYAN:
         if (bolt.name == "iron shot")
             return TILE_BOLT_IRON_SHOT + dir;
+        else if (bolt.name == "shard of frozen ooze")
+            return TILE_BOLT_SLIMECICLE + dir;
         else if (bolt.name == "zap")
             return TILE_BOLT_ZAP + dir % tile_main_count(TILE_BOLT_ZAP);
         break;
@@ -3706,7 +3708,7 @@ tileidx_t tileidx_ability(const ability_type ability)
 
     // Species-specific abilities.
     // Demonspawn-only
-    case ABIL_DAMNATION:
+    case ABIL_HELLFIRE:
         return TILEG_ABILITY_HURL_DAMNATION;
     // Tengu, Draconians
     case ABIL_FLY:
@@ -3730,6 +3732,7 @@ tileidx_t tileidx_ability(const ability_type ability)
         return TILEG_ABILITY_EVOKE_BERSERK;
     case ABIL_EVOKE_BLINK:
         return TILEG_ABILITY_BLINK;
+    case ABIL_TURN_INVISIBLE:
     case ABIL_EVOKE_TURN_INVISIBLE:
         return TILEG_ABILITY_EVOKE_INVISIBILITY;
     case ABIL_EVOKE_TURN_VISIBLE:
@@ -3862,12 +3865,29 @@ tileidx_t tileidx_ability(const ability_type ability)
     case ABIL_BEOGH_RESURRECTION:
         return TILEG_ABILITY_BEOGH_RESURRECTION;
     // Jiyva
-    case ABIL_JIYVA_CALL_JELLY:
-        return TILEG_ABILITY_JIYVA_REQUEST_JELLY;
+    case ABIL_JIYVA_SET_TARGETS_FREE:
+    case ABIL_JIYVA_SET_TARGETS:
+        return TILEG_ABILITY_JIYVA_SET_STAT_TARGETS;
+    case ABIL_JIYVA_DISSOLUTION:
+        return TILEG_ABILITY_JIYVA_DISSOLUTION;
     case ABIL_JIYVA_SLIMIFY:
         return TILEG_ABILITY_JIYVA_SLIMIFY;
-    case ABIL_JIYVA_CURE_BAD_MUTATION:
-        return TILEG_ABILITY_JIYVA_CURE_BAD_MUTATIONS;
+    case ABIL_JIYVA_SLIME_MOUNT:
+        return TILEG_ABILITY_JIYVA_SLIME_MOUNT;
+    case ABIL_SUBSUME:
+        return TILEG_ABILITY_JIYVA_SUBSUME;
+    case ABIL_EJECT:
+        return TILEG_ABILITY_JIYVA_EJECT;
+    case ABIL_SILENT_SCREAM:
+        return TILEG_ABILITY_JIYVA_SILENCE;
+    case ABIL_BUD_EYEBALLS:
+        return TILEG_ABILITY_JIYVA_EYEBALLS;
+    case ABIL_CORROSIVE_WAVE:
+        return TILEG_ABILITY_JIYVA_SLIMEWAVE;
+    case ABIL_FROST_BURST:
+        return TILEG_ABILITY_JIYVA_FROSTBURST;
+    case ABIL_SLIME_BOLT:
+        return TILEG_ABILITY_JIYVA_SLIMEBOLT;
     // Fedhas
     case ABIL_FEDHAS_FUNGAL_BLOOM:
         return TILEG_ABILITY_FEDHAS_FUNGAL_BLOOM;

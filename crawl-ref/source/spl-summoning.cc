@@ -237,7 +237,7 @@ spret cast_summon_ice_beast(int pow, god_type god, bool fail)
 
     if (monster * mon = create_monster(ice_beast))
     {
-        chaos_summon(SPELL_CALL_CANINE_FAMILIAR, mon, &you);
+        chaos_summon(SPELL_SUMMON_ICE_BEAST, mon, &you);
         mpr("A chill wind blows around you.");
     }
     else
@@ -3004,7 +3004,7 @@ bool battlesphere_can_mirror(spell_type spell)
         || spell == SPELL_FIRE_STORM
         || spell == SPELL_VAMPIRIC_DRAINING
         || spell == SPELL_POISON_ARROW
-        || spell == SPELL_HURL_DAMNATION
+        || spell == SPELL_HURL_HELLFIRE
         || spell == SPELL_IRON_SHOT
         || spell == SPELL_STONE_ARROW
         || spell == SPELL_SHOCK

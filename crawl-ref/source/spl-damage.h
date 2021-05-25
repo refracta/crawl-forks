@@ -61,6 +61,7 @@ spret cast_dazzling_spray(int pow, coord_def aim, bool fail);
 spret cast_toxic_radiance(actor *caster, int pow, bool fail = false,
                                bool mon_tracer = false);
 void toxic_radiance_effect(actor* agent, int mult, bool on_cast = false, bool chaos = false);
+void sickening_aura(const int delay);
 
 spret cast_searing_ray(int pow, bolt &beam, bool fail);
 void handle_searing_ray();
@@ -80,10 +81,10 @@ spret cast_ignition(const actor *caster, int pow, bool fail);
 
 spret cast_borgnjors_vile_clutch(int pow, bolt &beam, bool fail);
 
-spret cast_starburst(int pow, bool fail, bool tracer=false);
+spret cast_starburst(int pow, bool fail, bool tracer = false, bool frostburst = false);
 void foxfire_attack(const monster *foxfire, const actor *target);
 
-spret cast_hailstorm(int pow, bool fail, bool tracer=false);
+spret cast_hailstorm(int pow, bool fail, bool tracer = false);
 
 spret cast_imb(int pow, bool fail);
 

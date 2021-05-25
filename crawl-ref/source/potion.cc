@@ -112,8 +112,6 @@ public:
             int amount = 5 + random2(7);
             if (is_potion && !you.can_potion_heal() && player_rotted())
             {
-                // Treat the effectiveness of rot removal as if the player
-                // had two levels of MUT_NO_POTION_HEAL
                 unrot_hp(div_rand_round(amount,3));
                 unrotted = true;
             }
@@ -650,12 +648,6 @@ public:
 
     bool effect(bool was_known = true, int = 40, bool=true) const override
     {
-        if (you.species == SP_VAMPIRE && you.hunger_state < HS_SATIATED)
-        {
-            mpr("You feel slightly irritated.");
-            return false;
-        }
-
         you.go_berserk(was_known, true);
         return true;
     }
@@ -780,7 +772,7 @@ public:
         const bool mutated = mutate(RANDOM_GOOD_MUTATION,
             "potion of mutation",
             true, false, false, true);
-        if (undead_mutation_rot())
+        if (undead_mutation_rot(false))
         {
             mpr("You feel dead inside.");
             return mutated;

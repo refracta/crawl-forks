@@ -79,7 +79,7 @@ static int _get_full_exclusion_radius()
 {
     // XXX: dedup with update_vision_range()!
     return LOS_DEFAULT_RANGE - you.get_mutation_level(MUT_NIGHTSTALKER)
-                             + (you.species == SP_BARACHI ? 1 : 0);
+                             + you.get_mutation_level(MUT_DAYSTRIDER);
 }
 
 /**
