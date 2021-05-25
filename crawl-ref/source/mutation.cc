@@ -140,8 +140,6 @@ static const int conflict[][3] =
     { MUT_REGENERATION,                 MUT_INHIBITED_REGENERATION,          1},
     { MUT_ACUTE_VISION,                 MUT_IMPAIRED_VISION,                 1},
     { MUT_BERSERK,                      MUT_CLARITY,                         1},
-    { MUT_INSUBSTANTIAL,                MUT_THIN_SKELETAL_STRUCTURE         -1},
-    { MUT_INSUBSTANTIAL,                MUT_LARGE_BONE_PLATES               -1},
     { MUT_SILENT_CAST,                  MUT_SHOUTITUS                       -1},
     { MUT_FAST,                         MUT_SLOW,                            1},
     { MUT_FANGS,                        MUT_BEAK,                           -1},
@@ -1743,7 +1741,10 @@ static string _drac_def_msg()
         ostr << "grant you resistance to rotting caused by mutagenic radiation. (rMut)";
         break;
     case DR_PEARL:
-        ostr << "boost your defenses and vastly increase your resistance to negative energy. (AC++, rN+++)";
+        if (you.char_class == JOB_DEMONSPAWN)
+            ostr << "boost your defenses, increase your resistance to negative energy and remove your vulnerability to holy energy. (AC++, rN+, rHoly)";
+        else
+            ostr << "boost your defenses and vastly increase your resistance to negative energy. (AC++, rN+++)";
         break;
     case DR_PINK:
         ostr << "grant you exceptional clarity of mind. (clarity)";
@@ -2886,7 +2887,9 @@ const char* mutation_name(mutation_type mut, bool allow_category, bool for_displ
         case DR_LIME:               return "rCorr";
         case DR_MAGENTA:            return "rMsl";
         case DR_OLIVE:              return "rMut";
-        case DR_PEARL:              return "AC++, rN+++";
+        case DR_PEARL:              if (you.char_class == JOB_DEMONSPAWN)
+                                        return "AC++, rHoly, rN+";
+                                    return "AC++, rN+++";
         case DR_PINK:               return "clarity";
         case DR_PLATINUM:           return "fast, rMut";
         case DR_PURPLE:             return "MR++";

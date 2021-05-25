@@ -45,6 +45,7 @@
 #include "state.h"
 #include "stringutil.h"
 #include "rltiles/tiledef-dngn.h"
+#include "teleport.h"
 #include "tileview.h"
 #include "transform.h"
 #include "traps.h"
@@ -1179,7 +1180,10 @@ static bool _dgn_check_terrain_monsters(const coord_def &pos)
 {
     if (monster* m = monster_at(pos))
     {
-        m->apply_location_effects(pos);
+        if (!m->can_pass_through(pos))
+            blink_out(m);
+        else
+            m->apply_location_effects(pos);
         return true;
     }
     else
@@ -1232,7 +1236,7 @@ static void _dgn_check_terrain_player(const coord_def pos)
     if (you.can_pass_through(pos))
         move_player_to_grid(pos, false);
     else
-        you_teleport_now();
+        blink_out(&you);
 }
 
 /**
@@ -1300,9 +1304,7 @@ void dungeon_terrain_changed(const coord_def &pos,
         mpr("A porticulus slams shut!");
     }
 
-    if (_dgn_check_terrain_monsters(pos) && feat_is_wall(nfeat))
-        return;
-
+    _dgn_check_terrain_monsters(pos);
     _dgn_check_terrain_covering(pos, grd(pos), nfeat);
 
     if (nfeat != DNGN_UNSEEN)
@@ -2473,6 +2475,7 @@ bool revert_terrain_change(coord_def pos, terrain_change_type ctype)
             env.map_knowledge(pos).set_feature(newfeat, colour);
         dungeon_terrain_changed(pos, newfeat, false, true);
         env.grid_colours(pos) = colour;
+
         return true;
     }
     else

@@ -933,7 +933,7 @@ static string _colour_name(draconian_colour colour)
     case DR_RED:            return "red";
     case DR_SCINTILLATING:  return "scintillating";
     case DR_SILVER:         return "silver";
-    case DR_TEAL:           return "teal";
+    case DR_TEAL:           return "turquoise";
     case DR_WHITE:          return "white";
     default:                break;
     }

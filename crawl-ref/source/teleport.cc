@@ -11,6 +11,7 @@
 #include "coord.h"
 #include "coordit.h"
 #include "delay.h"
+#include "directn.h"
 #include "env.h"
 #include "fprop.h"
 #include "libutil.h"
@@ -21,6 +22,8 @@
 #include "mon-place.h"
 #include "mon-tentacle.h"
 #include "random.h"
+#include "spl-transloc.h"
+#include "stringutil.h"
 #include "terrain.h"
 #include "view.h"
 
@@ -429,12 +432,69 @@ void blink_close(monster* mon)
 #endif
 }
 
+bool blink_out(actor* moved)
+{
+    coord_def target = coord_def (0,0);
+    coord_def pos = moved->pos();
+
+    for (rectangle_iterator ri(pos, 12); ri; ++ri)
+    {
+        if (valid_blink_destination(moved, *ri))
+        {
+            if (target.origin())
+            {
+                target = *ri;
+                continue;
+            }
+
+            int x = grid_distance(pos, *ri);
+            int y = grid_distance(pos, target);
+            
+            if (x < y || x == y && one_chance_in(3))
+                target = *ri;
+        }
+    }
+
+    if (target.origin())
+    {
+        for (rectangle_iterator ri(pos, 12); ri; ++ri)
+        {
+            if (valid_blink_destination(moved, *ri, false, true, false))
+            {
+                if (target.origin())
+                {
+                    target = *ri;
+                    continue;
+                }
+
+                int x = grid_distance(pos, *ri);
+                int y = grid_distance(pos, target);
+
+                if (x < y || x == y && one_chance_in(3))
+                    target = *ri;
+            }
+        }
+    }
+
+    if (target.origin())
+    {
+        if (moved->is_player())
+            you_teleport_now();
+        else
+            monster_teleport(moved->as_monster(), true, true);
+        return true;
+    }
+
+    return moved->move_to_pos(target, false, true);
+}
+
 // This only checks the contents of the tile - nothing in between.
 // Could compact most of this into a big boolean if you wanted to trade
 // readability for dubious speed improvements.
 bool valid_blink_destination(const actor* moved, const coord_def& target,
                              bool forbid_sanctuary,
-                             bool forbid_unhabitable)
+                             bool forbid_unhabitable,
+                             bool require_los)
 {
     ASSERT(moved);
 
@@ -448,7 +508,7 @@ bool valid_blink_destination(const actor* moved, const coord_def& target,
         return false;
     if (forbid_sanctuary && is_sanctuary(target))
         return false;
-    if (!moved->see_cell_no_trans(target))
+    if (require_los && !moved->see_cell_no_trans(target))
         return false;
 
     return true;

@@ -1109,15 +1109,22 @@ static void _fixup_sewer_stairs()
         {
             stair_num++;
 
+            bool c = true;
             if (stair_num == target_stair)
             {
-                target_stair = -1;
-                _set_grd(*ri, DNGN_FLOOR);
-                if (!dgn_place_map(random_map_for_tag("sewer_entrance"), false, false, *ri))
-                    _set_grd(*ri, DNGN_STONE_STAIRS_DOWN_I);
+                if (dgn_vault_at(*ri))
+                    target_stair++;
+                else
+                {
+                    target_stair = -1;
+                    _set_grd(*ri, DNGN_FLOOR);
+                    if (!dgn_place_map(random_map_for_tag("sewer_entrance"), false, false, *ri))
+                        _set_grd(*ri, DNGN_STONE_STAIRS_DOWN_I);
+                    c = false;
+                }
             }
 
-            else
+            if (c)
             {
                 env.tile_flv(*ri).feat_idx =
                     store_tilename_get_index("dngn_portal_sewer");
@@ -2397,13 +2404,6 @@ static void _dgn_verify_connectivity(unsigned nvaults)
         throw dgn_veto_exception("Isolated areas with no stairs.");
     }
 
-    if (_branch_needs_stairs() && !_fixup_stone_stairs(true))
-    {
-        dprf(DIAG_DNGN, "Warning: failed to preserve vault stairs.");
-        if (!_fixup_stone_stairs(false))
-            throw dgn_veto_exception("Failed to fix stone stairs.");
-    }
-
     if (!_branch_entrances_are_connected())
         throw dgn_veto_exception("A disconnected branch entrance.");
 
@@ -2809,6 +2809,13 @@ static void _post_vault_build()
             depth -= 3;
         } while (depth > 0);
     }
+
+    if (_branch_needs_stairs() && !_fixup_stone_stairs(true))
+    {
+        dprf(DIAG_DNGN, "Warning: failed to preserve vault stairs.");
+        if (!_fixup_stone_stairs(false))
+            throw dgn_veto_exception("Failed to fix stone stairs.");
+    }
 }
 
 static void _build_dungeon_level()
@@ -2857,8 +2864,6 @@ static void _build_dungeon_level()
             _place_chance_vaults();
         }
 
-        _fixup_sewer_stairs();
-
         // Ruination and plant clumps.
         _post_vault_build();
 
@@ -2870,6 +2875,8 @@ static void _build_dungeon_level()
             _place_feature_mimics();
 
         _place_traps();
+
+        _fixup_sewer_stairs();
 
         // Any vault-placement activity must happen before this check.
         _dgn_verify_connectivity(nvaults);

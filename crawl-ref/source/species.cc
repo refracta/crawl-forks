@@ -149,7 +149,7 @@ string species_name(species_type speci, species_name_type spname_type, bool play
         case DR_RED:            return "Red Draconian";
         case DR_SCINTILLATING:  return "Scintillating Draconian";
         case DR_SILVER:         return "Silver Draconian";
-        case DR_TEAL:           return "Spectral Draconian";
+        case DR_TEAL:           return "Turquoise Draconian";
         case DR_WHITE:          return "White Draconian";
         }
     }

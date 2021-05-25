@@ -231,7 +231,7 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
     {
         ASSERT(!crawl_state.game_is_arena());
 
-        if (you.species == SP_FAIRY)
+        if (you.species == SP_FAIRY && !you.duration[DUR_CONFUSING_TOUCH])
         {
             mpr("You're too small and insubstantial to effectively melee attack.");
             stop_running();
@@ -307,7 +307,7 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
         }
         else if (!you.weapon(1) || is_melee_weapon(*you.weapon(1)))
         {
-            if (!(you.weapon(0) && you.hands_reqd(*you.weapon(0)) == HANDS_TWO))
+            if (!(you.weapon(0) && you.hands_reqd(*you.weapon(0)) == HANDS_TWO) && !you.get_mutation_level(MUT_MISSING_HAND))
             {
                 attacked = true;
                 local_time = _handle_player_attack(defender, simu, 1, xtra_atk ? 0 : 2, did_hit, wu, wu_num);
