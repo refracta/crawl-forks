@@ -2993,9 +2993,9 @@ static void tag_read_you(reader &th)
         _cap_mutation_at(MUT_WILD_MAGIC, 1);
         _cap_mutation_at(MUT_SUBDUED_MAGIC, 1);
         _cap_mutation_at(MUT_FANGS, 1);
-        _cap_mutation_at(MUT_HORNS, 1);
+        _cap_mutation_at(MUT_HORNS, you.species == SP_MINOTAUR ? 2 : 1);
         _cap_mutation_at(MUT_ANTENNAE, 1);
-        _cap_mutation_at(MUT_HOOVES, you.species == SP_MINOTAUR ? 2 : 1);
+        _cap_mutation_at(MUT_HOOVES, 1);
         _cap_mutation_at(MUT_TALONS, 1);
         _cap_mutation_at(MUT_PASSIVE_MAPPING, 1);
         _cap_mutation_at(MUT_DISTORTION_FIELD, 1);
