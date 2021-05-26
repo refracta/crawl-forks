@@ -3054,7 +3054,18 @@ static void tag_read_you(reader &th)
 
     // BCADDO: Add minor version in the future:
     if (species_is_draconian(you.species))
+    {
         you.mutation[MUT_DEFORMED] = you.innate_mutation[MUT_DEFORMED] = 2;
+        remove_one_equip(EQ_BODY_ARMOUR, false, true);
+    }
+
+    if (abs(you.mutated_stats[STAT_STR]) + abs(you.mutated_stats[STAT_INT]) + abs(you.mutated_stats[STAT_DEX]) > (you.get_mutation_level(MUT_STATS) - 1) / 10)
+    {
+        you.mutated_stats[STAT_STR] = 0;
+        you.mutated_stats[STAT_INT] = 0;
+        you.mutated_stats[STAT_DEX] = 0;
+        you.mutation[MUT_STATS] = 0;
+    }
 
     // No minor version needed: all old felids should get MUT_PAWS.
     if (you.species == SP_FELID && you.innate_mutation[MUT_PAWS] < 1)
