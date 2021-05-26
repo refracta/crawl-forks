@@ -3052,6 +3052,10 @@ static void tag_read_you(reader &th)
             you.mutation[MUT_SILENCE_AURA] = you.innate_mutation[MUT_SILENCE_AURA] = 2;
     }
 
+    // BCADDO: Add minor version in the future:
+    if (species_is_draconian(you.species))
+        you.mutation[MUT_DEFORMED] = you.innate_mutation[MUT_DEFORMED] = 2;
+
     // No minor version needed: all old felids should get MUT_PAWS.
     if (you.species == SP_FELID && you.innate_mutation[MUT_PAWS] < 1)
         you.mutation[MUT_PAWS] = you.innate_mutation[MUT_PAWS] = 1;
