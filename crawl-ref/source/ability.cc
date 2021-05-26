@@ -164,7 +164,6 @@ skill_type invo_skill(god_type god)
             return SK_EVOCATIONS;
 #endif
         case GOD_ASHENZARI:
-        case GOD_JIYVA:
         case GOD_GOZAG:
         case GOD_RU:
         case GOD_TROG:
@@ -3430,7 +3429,7 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
             msg = "your " + you.hand_name(true);
         mprf(MSGCH_DURATION, "A thick mucus forms on %s.", msg.c_str());
         you.increase_duration(DUR_SLIMIFY,
-                              apply_invo_enhancer(random2avg(you.piety / 4, 2) + 3,false), 100);
+                              apply_invo_enhancer(random2avg(you.piety / 4, 2) + 3, false), 100);
         break;
     }
 

@@ -10,6 +10,7 @@
 #include <cstring>
 
 #include "env.h"
+#include "god-abil.h"
 #include "god-passive.h"
 #include "message.h"
 #include "mpr.h"
@@ -62,8 +63,9 @@ spret gain_mount(mount_type mount, int pow, bool fail)
 
     if (pow == 0)
     {
-        dur = 100 + you.skill(SK_INVOCATIONS) * 2 + random2(you.skill(SK_INVOCATIONS));
-        mount_hp *= 10 + you.skill(SK_INVOCATIONS);
+        pow = apply_invo_enhancer(you.skill(SK_INVOCATIONS), true);
+        dur = 100 + pow * 2 + random2(pow);
+        mount_hp *= 10 + pow;
         mount_hp = div_rand_round(mount_hp, 10);
     }
     else

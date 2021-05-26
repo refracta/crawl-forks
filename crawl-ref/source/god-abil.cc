@@ -1993,7 +1993,7 @@ bool jiyva_dissolution()
                 destroy_item(stack_it->index());
 
                 coord_def cord = *rad;
-                slimify_position(1 + random2(div_rand_round(you.skill(SK_INVOCATIONS), 9)), cord, true);
+                slimify_position(1 + random2(div_rand_round(apply_invo_enhancer(you.skill(SK_INVOCATIONS), true), 9)), cord, true);
             }
         }
     }
