@@ -8642,16 +8642,13 @@ bool player::is_lifeless_undead(bool temp) const
 
 bool player::can_polymorph() const
 {
-    if (transform_uncancellable)
-        return false;
-
     switch (undead_state())
     {
     case US_HUNGRY_DEAD:
     case US_UNDEAD:
         return false;
     default:
-        return true;
+        return !transform_uncancellable;
     }
 }
 
@@ -8682,6 +8679,9 @@ bool player::is_stationary() const
 bool player::malmutate(const string &reason)
 {
     ASSERT(!crawl_state.game_is_arena());
+
+    if (!can_mutate())
+        return false;
 
     const mutation_type mut_quality = one_chance_in(5) ? RANDOM_MUTATION
                                                        : RANDOM_BAD_MUTATION;

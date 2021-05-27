@@ -3800,7 +3800,7 @@ bool is_useless_item(const item_def &item, bool temp)
         {
         case AMU_RAGE:
             return you.undead_state(temp)
-                   && you.undead_state(temp) != US_SEMI_UNDEAD
+                   && you.undead_state(temp) != US_SEMI_ALIVE
                    || you.get_mutation_level(MUT_STASIS)
                    || you.get_mutation_level(MUT_NO_ARTIFICE);
 
