@@ -3754,7 +3754,7 @@ bool is_useless_item(const item_def &item, bool temp)
         case POT_GAIN_INTELLIGENCE:
         case POT_GAIN_DEXTERITY:
 #endif
-            return !you.can_safely_mutate(temp);
+            return !lifeless_prevents_form(transformation::tree);
 
 #if TAG_MAJOR_VERSION == 34
         case POT_FLIGHT:

@@ -7916,24 +7916,27 @@ bool player::spellcasting_unholy() const
  */
 undead_state_type player::undead_state(bool temp) const
 {
-    const bool half = you.get_mutation_level(MUT_HALF_DEATH);
+    const bool half = you.mutation[MUT_HALF_DEATH];
+    // BCADNOTE: Can't call get_mutation level here; it causes a crash
+    // when called in the middle of transforming. No idea why just that it does.
+    // as such half death CANNOT be suppressed.
 
-    if (temp && you.form == transformation::lich)
+    if (temp && form == transformation::lich)
         return US_UNDEAD;
-    if (you.species == SP_DRACONIAN)
+    if (species == SP_DRACONIAN)
     {
-        if (you.drac_colour == DR_TEAL)
+        if (drac_colour == DR_TEAL)
             return US_GHOST;
-        if (you.drac_colour == DR_BONE || you.drac_colour == DR_OLIVE)
+        if (drac_colour == DR_BONE || drac_colour == DR_OLIVE)
             return half ? US_SEMI_UNDEAD : US_UNDEAD;
     }
-    if (you.char_class == JOB_MUMMY)
+    if (char_class == JOB_MUMMY)
         return half ? US_SEMI_UNDEAD : US_UNDEAD;
 
     if (!half)
-        return species_undead_type(you.species);
+        return species_undead_type(species);
 
-    switch (species_undead_type(you.species))
+    switch (species_undead_type(species))
     {
     case US_ALIVE:
         return US_SEMI_ALIVE;

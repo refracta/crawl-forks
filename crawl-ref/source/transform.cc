@@ -1518,6 +1518,7 @@ static void _print_head_change_message(int old_heads, int new_heads)
  *                      player is too satiated as a vampire; UFR_TOO_DEAD if
  *                      the player is too dead (or too thirsty as a vampire).
  */
+// BCADDO: Involuntary no longer does anything; remove.
 undead_form_reason lifeless_prevents_form(transformation which_trans,
                                           bool involuntary)
 {
