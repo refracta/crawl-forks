@@ -729,7 +729,7 @@ static const mutation_def mut_data[] =
   {"Your frog legs can swim and hop short distances.",
    "Your frog legs can swim and hop long distances.", ""},
 
-  {"Your legs return to their normal shape.", "Your legs feel stronger.", ""},
+  {"Your toes lengthen and a thick webbing forms between them. You feel like hopping.", "Your legs feel stronger.", ""},
   {"The webbing on your feet shrivels and dries.", "Your legs feel weaker.", ""},
 },
 
