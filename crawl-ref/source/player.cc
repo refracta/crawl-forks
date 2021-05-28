@@ -453,6 +453,7 @@ bool swap_check(monster* mons, coord_def &loc, bool quiet)
     // XXX: We still need the location so we can swap the foxfire and kill it
     // in its new location (which is finalized after the player's movement is
     // complete).
+    // BCADDO: Movement verb.
     if ((mons->type == MONS_FOXFIRE || mons->type == MONS_EPHEMERAL_SPIRIT) && !quiet
         && !yesno(make_stringf("Do you really want to walk into %s?",
                   mons->name(DESC_YOUR).c_str()).c_str(), true, 'N'))
@@ -6393,7 +6394,7 @@ bool player::in_liquid() const
 bool player::can_swim(bool permanently) const
 {
     if (mounted())
-        return (!permanently || species_can_swim(species)) && mount == mount_type::hydra;
+        return (!permanently || species_can_swim(species)) && mount_likes_water();
     // Transforming could be fatal if it would cause unequipment of
     // stat-boosting boots or heavy armour.
     return (species_can_swim(species) && !player_is_shapechanged()

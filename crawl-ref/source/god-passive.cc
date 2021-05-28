@@ -2040,17 +2040,17 @@ static void _slimify_feat(coord_def pos)
         new_feat = DNGN_SLIMY_WATER;
     else if (feat_is_tree(feat))
         new_feat = DNGN_SLIMESHROOM;
+    else if (feat == DNGN_SLIMY_WALL || feat == DNGN_GRATE || feat_is_door(feat))
+    {
+        destroy_wall(pos);
+        new_feat = DNGN_SLIMY_WATER;
+    }
     else if (feat_is_diggable(feat, true)
         || feat == DNGN_SILVER_WALL && one_chance_in(10)
         || feat == DNGN_METAL_WALL && one_chance_in(5)
         || feat == DNGN_STONE_WALL && one_chance_in(3))
     {
         new_feat = DNGN_SLIMY_WALL;
-    }
-    else if ((feat == DNGN_SLIMY_WALL || feat_is_door(feat)) && one_chance_in(3))
-    {
-        destroy_wall(pos);
-        new_feat = DNGN_SLIMY_WATER;
     }
 
     if (new_feat == DNGN_FLOOR)

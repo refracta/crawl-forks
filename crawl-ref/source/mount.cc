@@ -445,6 +445,23 @@ int mount_gdr()
     return max(min(gdr, 50), 0);
 }
 
+bool mount_likes_water()
+{
+    if (!you.mounted())
+        return false;
+
+    switch (you.mount)
+    {
+    case mount_type::slime:
+    case mount_type::hydra:
+        return true;
+    default:
+    case mount_type::spider:
+    case mount_type::drake:
+        return false;
+    }
+}
+
 int mount_ac()
 {
     ASSERT(you.mounted());

@@ -13,6 +13,7 @@ enum class mount_type
     slime
 };
 
+bool mount_likes_water();
 void damage_mount(int amount);
 void dismount();
 void cure_mount_debuffs();
