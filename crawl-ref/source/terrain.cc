@@ -1304,7 +1304,6 @@ void dungeon_terrain_changed(const coord_def &pos,
         mpr("A porticulus slams shut!");
     }
 
-    _dgn_check_terrain_monsters(pos);
     _dgn_check_terrain_covering(pos, grd(pos), nfeat);
 
     if (nfeat != DNGN_UNSEEN)
@@ -1328,6 +1327,7 @@ void dungeon_terrain_changed(const coord_def &pos,
             destroy_trap(pos);
     }
 
+    _dgn_check_terrain_monsters(pos);
     _dgn_check_terrain_items(pos, preserve_items);
     if (!wizmode)
         _dgn_check_terrain_player(pos);
