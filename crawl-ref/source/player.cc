@@ -6689,7 +6689,7 @@ int player::unadjusted_body_armour_penalty() const
 
     const item_def *body_armour = slot_item(EQ_BODY_ARMOUR, false);
     if (body_armour)
-        return malus += property(*body_armour, PARM_EVASION);
+        malus += property(*body_armour, PARM_EVASION);
 
     if (you.get_mutation_level(MUT_AMORPHOUS_BODY))
     {

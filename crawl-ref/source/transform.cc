@@ -720,7 +720,6 @@ public:
         if (you.undead_state() == US_ALIVE)
             return "You feel yourself come back to life.";
         return "You feel your undeath return to normal.";
-        // ^^^ vampires only, probably
     }
 };
 
