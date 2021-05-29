@@ -672,15 +672,17 @@ string describe_mutations(bool drop_title)
                                    you.species == SP_CENTAUR   ? "horsehide"                      :
                                    you.species == SP_OGRE      ? "tough skin"                     :
                                    you.species == SP_LIGNIFITE ? "bark"                           : 
-                                   you.species == SP_FELID     ? "fur coat"                       : "";
+                                   you.species == SP_FELID     ? "fur coat"                       :
+                                   you.species == SP_OCTOPODE  ? "gelatinous body"                : "";
 
         const bool plural = race_string.length() && job_string.length();
 
         result += _annotate_form_based(
-            make_stringf("Your %s%s%s %s resilient. (AC +%d)", race_string.c_str(), 
-                plural ? " and " : "", 
+            make_stringf("Your %s%s%s %s resilient. (AC +%d%s)", race_string.c_str(),
+                plural ? " and " : "",
                 job_string.c_str(), plural || you.species == SP_DRACONIAN ? "are" : "is",
-                you.racial_ac(false) / 100),
+                you.racial_ac(false) / 100,
+                you.species == SP_OCTOPODE ? ", EV +1" : ""),
             player_is_shapechanged()
             && !(species_is_draconian(you.species)
                 && you.form == transformation::dragon));
