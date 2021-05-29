@@ -500,6 +500,8 @@ int player::get_temp_mutation_level(mutation_type mut) const
 int player::get_mutation_level(mutation_type mut, mutation_activity_type minact) const
 {
     ASSERT_RANGE(mut, 0, NUM_MUTATIONS);
+    if (!is_valid_mutation(mut))
+        return 0;
     if (mutation_activity_level(mut) < minact)
         return 0;
     return get_base_mutation_level(mut, true, true);

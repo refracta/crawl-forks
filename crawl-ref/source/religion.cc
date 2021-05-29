@@ -1147,11 +1147,15 @@ static mutation_type _choose_gift()
     vector<mutation_type> local = you.jiyva_mut_set;
     shuffle_array(local);
 
-    for (int i = 0; i <= (int)local.size(); i++)
+    for (int i = 0; i < (int)local.size(); i++)
     {
         const mutation_type mut = local[i];
         const int max = mutation_max_levels(mut);
         const int current = you.get_mutation_level(mut, false);
+
+        // The <= -> < should prevent this but stopgap incase of mutation removal.
+        if (!is_valid_mutation(mut))
+            continue;
 
         if (current >= max)
             continue;
