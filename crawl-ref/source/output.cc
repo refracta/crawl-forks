@@ -2721,6 +2721,10 @@ string mutation_overview()
     for (unsigned i = 0; i < NUM_MUTATIONS; ++i)
     {
         const mutation_type mut = static_cast<mutation_type>(i);
+
+        if (!is_valid_mutation(mut))
+            continue;
+
         if (!you.has_mutation(mut))
             continue;
 

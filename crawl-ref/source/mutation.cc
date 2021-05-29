@@ -281,7 +281,7 @@ static const mutation_category_def& _get_category_mutation_def(mutation_type mut
     return category_mut_data[category_mut_index[mut-CATEGORY_MUTATIONS]];
 }
 
-static bool _is_valid_mutation(mutation_type mut)
+bool is_valid_mutation(mutation_type mut)
 {
     return mut >= 0 && mut < NUM_MUTATIONS && mut_index[mut] != -1;
 }
@@ -542,6 +542,10 @@ void validate_mutations(bool debug_msg)
     for (int i = 0; i < NUM_MUTATIONS; i++)
     {
         mutation_type mut = static_cast<mutation_type>(i);
+
+        if (!is_valid_mutation(mut))
+            continue;
+        
         if (debug_msg && you.mutation[mut] > 0)
         {
             dprf("mutation %s: total %d innate %d temp %d",
@@ -749,6 +753,10 @@ string describe_mutations(bool drop_title)
     for (int i = 0; i < NUM_MUTATIONS; i++)
     {
         mutation_type mut_type = static_cast<mutation_type>(i);
+
+        if (!is_valid_mutation(mut_type))
+            continue;
+
         if (you.has_innate_mutation(mut_type))
         {
             if (you.char_class == JOB_CENTAUR && mut_type == MUT_TALONS)
@@ -785,6 +793,10 @@ string describe_mutations(bool drop_title)
     for (int i = 0; i < NUM_MUTATIONS; i++)
     {
         mutation_type mut_type = static_cast<mutation_type>(i);
+
+        if (!is_valid_mutation(mut_type))
+            continue;
+
         if (you.get_base_mutation_level(mut_type, false, false, true) > 0
             && !you.has_innate_mutation(mut_type) && !you.has_temporary_mutation(mut_type))
         {
@@ -797,6 +809,10 @@ string describe_mutations(bool drop_title)
     for (int i = 0; i < NUM_MUTATIONS; i++)
     {
         mutation_type mut_type = static_cast<mutation_type>(i);
+
+        if (!is_valid_mutation(mut_type))
+            continue;
+
         if (you.has_temporary_mutation(mut_type))
         {
             result += mutation_desc(mut_type, -1, true);
@@ -1009,7 +1025,7 @@ static int _calc_mutation_amusement_value(mutation_type which_mutation)
 
 static bool _accept_mutation(mutation_type mutat, bool ignore_weight, bool temp)
 {
-    if (!_is_valid_mutation(mutat))
+    if (!is_valid_mutation(mutat))
         return false;
 
     if (temp && mutat == MUT_STATS)
@@ -2316,7 +2332,7 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
         break;
     }
 
-    if (!_is_valid_mutation(mutat))
+    if (!is_valid_mutation(mutat))
         return false;
 
     // [Cha] don't allow teleportitis in sprint
@@ -2831,7 +2847,7 @@ const char* mutation_name(mutation_type mut, bool allow_category, bool for_displ
         return _get_category_mutation_def(mut).short_desc;
 
     // note -- this can produce crashes if fed invalid mutations, e.g. if allow_category is false and mut is a category mutation
-    if (!_is_valid_mutation(mut))
+    if (!is_valid_mutation(mut))
         return nullptr;
 
     if (!for_display)
@@ -3014,7 +3030,7 @@ mutation_type mutation_from_name(string name, bool allow_category, vector<mutati
  */
 string mut_upgrade_summary(mutation_type mut)
 {
-    if (!_is_valid_mutation(mut))
+    if (!is_valid_mutation(mut))
         return nullptr;
 
     string mut_desc =
@@ -3025,7 +3041,7 @@ string mut_upgrade_summary(mutation_type mut)
 
 int mutation_max_levels(mutation_type mut)
 {
-    if (!_is_valid_mutation(mut))
+    if (!is_valid_mutation(mut))
         return 0;
 
     return _get_mutation_def(mut).levels;
@@ -3620,7 +3636,7 @@ void draconian_setup()
 
 bool perma_mutate(mutation_type which_mut, int how_much, const string &reason)
 {
-    ASSERT(_is_valid_mutation(which_mut));
+    ASSERT(is_valid_mutation(which_mut));
 
     int cap = get_mutation_cap(which_mut);
     how_much = min(how_much, cap);
