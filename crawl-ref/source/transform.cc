@@ -1805,10 +1805,6 @@ bool transform(int pow, transformation which_trans, bool involuntary,
             abil_swap(draconian_breath(false), ABIL_BREATHE_METAL);
         break;
 
-    case transformation::scorpion:
-        leave_web();
-        break;
-
     case transformation::tree:
         mpr("Your roots penetrate the ground.");
         if (you.duration[DUR_TELEPORT])

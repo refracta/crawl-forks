@@ -1292,15 +1292,15 @@ string attack::defender_name(bool allow_reflexive)
 
 int attack::player_stat_modify_damage(int damage)
 {
-    int dammod = 39;
+    const int rand_strength = you.strength() < 0 ? you.strength() / 2 - random2(-you.strength())
+                                                 : you.strength() / 2 + random2(you.strength());
 
-    if (you.strength() > 10)
-        dammod += (random2(you.strength() - 9) * 2);
-    else if (you.strength() < 10)
-        dammod -= (random2(11 - you.strength()) * 3);
-
-    damage *= dammod;
-    damage /= 39;
+    // At 10 rand_strength, damage is multiplied by 1.0
+    // Each point of rand_strength over 10 increases this by 0.025 (2.5%),
+    // rand_strength below 10 reduces the multiplied by the same amount.
+    // Minimum multiplier is 0.01 (1%) (reached at -30 str).
+    damage *= max(1.0, 75 + 2.5 * rand_strength);
+    damage /= 100;
 
     return damage;
 }
@@ -1318,7 +1318,7 @@ int attack::player_apply_weapon_skill(int damage)
 
 int attack::player_apply_fighting_skill(int damage, bool aux)
 {
-    const int base = aux? 40 : 30;
+    const int base = aux ? 40 : 30;
 
     damage *= base * 100 + (random2(you.skill(SK_FIGHTING, 100) + 1));
     damage /= base * 100;
@@ -1594,7 +1594,7 @@ int attack::apply_defender_ac(int damage, int damage_max) const
         local_ac = ac_type::half;
     if (attk_flavour == AF_PIERCE_AC)
         local_ac = ac_type::half;
-    if (attacker->is_player() && you.form == transformation::scorpion && damage_brand != SPWPN_NORMAL)
+    if (attacker->is_player() && you.form == transformation::scorpion && damage_brand == SPWPN_PROTECTION)
         local_ac = ac_type::half;
     int after_ac = defender->apply_ac(damage, damage_max,
                                       local_ac, stab_bypass, true, mount_defend);
@@ -2121,15 +2121,15 @@ int attack::player_stab(int damage)
         alert_nearby_monsters();
     }
 
+    int stab = 0;
     if (stab_bonus)
     {
         // Let's make sure we have some damage to work with...
-        damage = max(1, damage);
-
-        damage = player_stab_weapon_bonus(damage);
+        stab = max(1, damage);
+        stab = player_stab_weapon_bonus(damage);
     }
 
-    return damage;
+    return stab;
 }
 
 /* Check for stab and prepare combat for stab-values
@@ -2158,11 +2158,11 @@ void attack::player_stab_check()
     {
         st = STAB_SLEEPING;
     }
-    stab_attempt = st != STAB_NO_STAB;
+    stab_attempt = (st != STAB_NO_STAB);
     stab_bonus = stab_bonus_denom(st);
 
     // See if we need to roll against dexterity / stabbing.
-    if (stab_attempt && stab_bonus > 1)
+    if (stab_attempt && (stab_bonus > 1))
     {
         stab_attempt = x_chance_in_y(you.skill_rdiv(wpn_skill, 1, 2)
                                      + you.skill_rdiv(SK_STEALTH, 1, 2)

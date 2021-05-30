@@ -1969,15 +1969,7 @@ static void _xom_pseudo_miscast(int /*sever*/)
         string str = "A monocle briefly appears over your ";
         str += random_choose("right", "left");
         if (you.form == transformation::scorpion)
-        {
-            if (coinflip())
-                str += " primary";
-            else
-            {
-                str += random_choose(" front", " middle", " rear");
-                str += " secondary";
-            }
-        }
+            str += random_choose(" front", " middle", " rear", " lateral");
         str += " eye.";
         messages.push_back(str);
     }

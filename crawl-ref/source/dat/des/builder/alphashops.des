@@ -80,10 +80,9 @@
        "manual of charms", "potion of curing", "wand of clouds" }
 
       elseif s == "D" then i = { "book of death", "book of debilitation",
-       "book of dreams", "book of the dragon", "dagger", "demon blade",
-       "demon trident", "demon whip", "dire flail", "double sword",
-       "ring of dexterity", "manual of dodging", "wand of disintegration",
-       "staff of death" }
+       "book of dreams","dagger", "demon blade", "demon trident", 
+	   "demon whip", "dire flail", "double sword", "ring of dexterity", 
+	   "manual of dodging", "wand of disintegration", "staff of death" }
 
       elseif s == "E" then i = { "book of enchantments", "manual of evocations",
        "eveningstar", "ring of evasion", "executioner's axe",
