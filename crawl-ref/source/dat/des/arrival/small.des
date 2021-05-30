@@ -2432,13 +2432,11 @@ ENDMAP
 
 ##############################################################
 # The zoo
-# With low chance (10%), the monsters spell Crawl or crawl.
-# This is considered harmless and not ASCII art. Don't hand
-# in other vaults where monsters spell other words, though :)
+# The monsters always spell Crawl or crawl.
+# This is considered harmless and not ASCII art.
 NAME:    onia_arrival_zoo_common
 TAGS:    arrival no_trap_gen
 ORIENT:  float
-: if crawl.one_chance_in(10) then
 SHUFFLE: 16
 MONS:    centaur / centaur warrior / yaktaur / yaktaur captain
 MONS:    rat / sewer rat / hell rat / quokka
@@ -2446,17 +2444,7 @@ MONS:    worker ant / soldier ant / queen ant
 MONS:    worm / tyrant leech
 MONS:    komodo dragon / iguana / basilisk
 MONS:    ettin / frost giant / stone giant / fire giant
-: else
-SHUFFLE: 1234567
-MONS:    cinder newt / leopard gecko / iguana / crocodile / komodo dragon
-MONS:    hog / jackal / wolf / hound
-MONS:    giant cockroach / worker ant / butterfly / killer bee /\
-         redback
-MONS:    swamp worm / lindwurm / worm
-MONS:    swamp drake / hydra / wyvern / rime drake
-MONS:    polar bear / black bear
-MONS:    black mamba / water moccasin / anaconda / salamander
-: end
+KPROP:   123456 = no_tele_into
 MAP
 xxxxxxxx@xxxxxxxx
 xxxxxx.G.G.xxxxxx
