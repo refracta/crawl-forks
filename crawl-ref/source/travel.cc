@@ -59,6 +59,7 @@
 #include "unicode.h"
 #include "unwind.h"
 #include "view.h"
+#include "xom.h"
 
 enum IntertravelDestination
 {
@@ -4622,6 +4623,16 @@ void explore_discoveries::found_feature(const coord_def &pos,
                 desc = cleaned_feature_description(pos);
             runed_doors.emplace_back(desc, 1);
             es_flags |= ES_RUNED_DOOR;
+        }
+
+        if (you_worship(GOD_XOM))
+        {
+            if (xom_is_bored() || !xom_is_nice(get_tension(GOD_XOM)) && one_chance_in(3))
+            {
+                if (!env.properties.exists(XOM_DOOR_KEY))
+                    xom_take_action(XOM_BAD_OPEN_DOORS, 0);
+            }
+            env.properties[XOM_DOOR_KEY] = true;
         }
     }
     else if (feat == DNGN_TRANSPORTER)

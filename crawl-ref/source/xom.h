@@ -10,6 +10,7 @@
 #define XOM_CLOUD_TRAIL_TYPE_KEY "xom_cloud_trail_type"
 #define XOM_NAME_KEY             "xom_name"
 #define XOM_AX_TITLE_KEY         "xom_ax_title"
+#define XOM_DOOR_KEY             "xom_doors_attempted"
 
 struct item_def;
 
@@ -76,13 +77,15 @@ enum xom_event_type
     XOM_BAD_BLINK_MONSTERS,
     XOM_BAD_CHAOS_CLOUD,
     XOM_BAD_SWAP_MONSTERS,
-    XOM_LAST_BAD_ACT = XOM_BAD_SWAP_MONSTERS,
+    XOM_BAD_OPEN_DOORS,
+    XOM_LAST_BAD_ACT = XOM_BAD_OPEN_DOORS,
     XOM_LAST_REAL_ACT = XOM_LAST_BAD_ACT,
 
     XOM_PLAYER_DEAD = 100, // player already dead (shouldn't happen)
     NUM_XOM_EVENTS
 };
 
+bool xom_is_bored();
 void xom_tick();
 void xom_is_stimulated(int maxinterestingness,
                        xom_message_type message_type = XM_NORMAL,

@@ -22,6 +22,7 @@
 #include "dbg-util.h"
 #endif
 #include "delay.h"
+#include "dgn-event.h"
 #include "directn.h"
 #include "english.h"
 #include "env.h"
@@ -63,6 +64,7 @@
 #include "stringutil.h"
 #include "teleport.h"
 #include "terrain.h"
+#include "tilepick.h"
 #include "transform.h"
 #include "traps.h"
 #include "travel.h"
@@ -202,7 +204,7 @@ static string _get_xom_speech(const string &key)
     return result;
 }
 
-static bool _xom_is_bored()
+bool xom_is_bored()
 {
     return you_worship(GOD_XOM) && !you.gift_timeout;
 }
@@ -211,7 +213,7 @@ static bool _xom_feels_nasty()
 {
     // Xom will only directly kill you with a bad effect if you're under
     // penance from him, or if he's bored.
-    return you.penance[GOD_XOM] || _xom_is_bored();
+    return you.penance[GOD_XOM] || xom_is_bored();
 }
 
 bool xom_is_nice(int tension)
@@ -2700,7 +2702,7 @@ static bool _allow_xom_banishment()
         return true;
 
     // If Xom is bored, banishment becomes viable earlier.
-    if (_xom_is_bored())
+    if (xom_is_bored())
         return !_will_not_banish();
 
     // Below the minimum experience level, only fake banishment is allowed.
@@ -2758,6 +2760,44 @@ static void _xom_do_banishment(bool real)
 
 static void _xom_banishment(int /*sever*/) { _xom_do_banishment(true); }
 static void _xom_pseudo_banishment(int) { _xom_do_banishment(false); }
+
+static void _xom_open_door(int /*sever*/)
+{
+    bool first_door = true;
+    for (rectangle_iterator ri(you.pos(), you.current_vision); ri; ++ri)
+    {
+        dungeon_feature_type feat = grd(*ri);
+        vector<coord_def> excludes;
+        if (feat_is_door(feat))
+        {
+            dgn_open_door(*ri);
+            set_terrain_changed(*ri);
+            dungeon_events.fire_position_event(DET_DOOR_OPENED, *ri);
+
+            if (first_door)
+            {
+                god_speaks(GOD_XOM, _get_xom_speech("doors").c_str());
+                noisy(15, *ri);
+            }
+
+            if (env.map_knowledge(*ri).seen())
+            {
+                env.map_knowledge(*ri).set_feature(grd(*ri));
+#ifdef USE_TILE
+                env.tile_bk_bg(*ri) = tileidx_feature_base(grd(*ri));
+#endif
+            }
+
+            if (is_excluded(*ri))
+                excludes.push_back(*ri);
+            
+            first_door = false;
+        }
+
+        update_exclusion_los(excludes);
+        viewwindow();
+    }
+}
 
 static void _xom_noise(int /*sever*/)
 {
@@ -3272,7 +3312,7 @@ void xom_take_action(xom_event_type action, int sever)
     const int  orig_hp       = you.hp;
     const transformation orig_form = you.form;
     const FixedVector<uint8_t, NUM_MUTATIONS> orig_mutation = you.mutation;
-    const bool was_bored = _xom_is_bored();
+    const bool was_bored = xom_is_bored();
 
     const bool bad_effect = _action_is_bad(action);
 
@@ -3287,7 +3327,7 @@ void xom_take_action(xom_event_type action, int sever)
 
     // If we got here because Xom was bored, reset gift timeout according
     // to the badness of the effect.
-    if (bad_effect && _xom_is_bored())
+    if (bad_effect && xom_is_bored())
     {
         const int badness = _xom_event_badness(action);
         const int interest = random2avg(badness * 60, 2);
@@ -3705,6 +3745,7 @@ static const map<xom_event_type, xom_event> xom_events = {
     { XOM_BAD_BANISHMENT, { "banishment", _xom_banishment, 50}},
     { XOM_BAD_PSEUDO_BANISHMENT, {"psuedo-banishment", _xom_pseudo_banishment,
                                   10}},
+    { XOM_BAD_OPEN_DOORS, { "open runed doors", _xom_open_door, 45}},
 };
 
 static void _do_xom_event(xom_event_type event_type, int sever)
@@ -3834,7 +3875,7 @@ void debug_xom_effects()
 
     if (player_under_penance(GOD_XOM))
         fprintf(ostat, "You are under Xom's penance!\n");
-    else if (_xom_is_bored())
+    else if (xom_is_bored())
         fprintf(ostat, "Xom is BORED.\n");
     fprintf(ostat, "\nRunning %d times through entire mood cycle.\n", N);
     fprintf(ostat, "---- OUTPUT EFFECT PERCENTAGES ----\n");

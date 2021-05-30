@@ -407,6 +407,14 @@ Xom shushes you conspicuously.
 
 Xom whispers: Shhh!
 %%%%
+Xom doors
+
+Xom says "What's behind door number 3?"
+
+Xom maniacally slams open every door you can see.
+
+Xom chortles "Why do they keep these things closed?"
+%%%%
 Xom cloud
 
 "The weather's been a little too boring around here."
