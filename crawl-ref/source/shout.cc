@@ -683,7 +683,6 @@ void issue_orders()
     if (!_issue_order(keyn, mons_targd))
         return;
 
-    you.turn_is_over = true;
     you.pet_target = mons_targd;
     // Allow patrolling for "Stop fighting!" and "Wait here!"
     _set_friendly_foes(keyn == 's' || keyn == 'w');
