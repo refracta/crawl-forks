@@ -236,7 +236,7 @@ KFEAT:  G = book shop type:Further suffix:Studies_in_the_Mystic_Arts count:18 gr
             book of enchantments | book of the tempests | book of death |\
             book of transfigurations | fen folio |\
             book of the sky | book of the warp | book of beasts |\
-            book of unlife | book of the earth | book of the dragon |\
+            book of unlife | book of the earth | scroll of random uselessness |\
             book of burglary | book of dreams | book of alchemy
 KFEAT:  H = distillery shop type:Alchemist suffix:Brewery count:15 greed:20 use_all ; \
 			potion of curing q:1 | potion of curing q:2 | potion of heal wounds q:1 |\

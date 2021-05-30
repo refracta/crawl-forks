@@ -1074,8 +1074,8 @@ This blessing may only be used once, and it cannot be used on artefact weapons.
 Receive Book of the Dragon ability
 
 Grants you the Book of the Dragon, a spellbook containing the most sacred spells
-for dragonkin. Along with your copy of the book; Tiamat will bless you with 
-Wizardry for the spells it contains for as long as you worship Bahamut & Tiamat.
+for dragonkin. The sacred "Dragon's Call" spell can only be found through this 
+power or the omniscience of Sif Muna.
 %%%%
 Hop ability
 

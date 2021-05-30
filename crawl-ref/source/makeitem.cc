@@ -1747,6 +1747,7 @@ static bool _is_banned_book(book_type book)
 {
     switch (book)
     {
+    case BOOK_DRAGON:
     case BOOK_NECRONOMICON:
         return true;
     default:

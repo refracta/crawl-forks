@@ -109,7 +109,7 @@ static const form_entry formdata[] =
     EQF_PHYSICAL, MR_RES_POISON,
     DEFAULT_DURATION, 10, 0, SIZE_GIANT, 15,
     16, 0, 0, true, 0, 20,
-    SPWPN_NORMAL, GREEN, "Teeth and claws", { "hit", "claw", "bite", "maul" },
+    SPWPN_NORMAL, GREEN, "Teeth and claws", { "hit", "claw", "slash", "lacerate" },
     FC_ENABLE, FC_FORBID, FC_ENABLE, true, false,
     "roar", 6, "foreclaw", "", "bow your head before", "flesh"
 },
