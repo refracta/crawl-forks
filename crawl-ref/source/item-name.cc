@@ -3745,16 +3745,14 @@ bool is_useless_item(const item_def &item, bool temp)
         case POT_LIGNIFY:
             if (you.species == SP_LIGNIFITE)
                 return true;
-            // fallthrough
+            return lifeless_prevents_form(transformation::tree);
         case POT_CURE_MUTATION:
         case POT_MUTATION:
         case POT_BENEFICIAL_MUTATION:
-#if TAG_MAJOR_VERSION == 34
         case POT_GAIN_STRENGTH:
         case POT_GAIN_INTELLIGENCE:
         case POT_GAIN_DEXTERITY:
-#endif
-            return !lifeless_prevents_form(transformation::tree);
+            return !you.can_safely_mutate();
 
 #if TAG_MAJOR_VERSION == 34
         case POT_FLIGHT:
