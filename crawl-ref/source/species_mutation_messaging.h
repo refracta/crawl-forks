@@ -64,7 +64,7 @@ static const species_mutation_message spmu_data[] =
 { SP_LIGNIFITE, MUT_HEAT_VULNERABILITY,
   "woody flesh (rF-)",
 
-  {"Your woody flesh burns easily. (rF-", 
+  {"Your woody flesh burns easily. (rF-)", 
    "Your woody flesh burns very easily. (rF--)",
    "Your dry woody flesh could combust at any time. (rF---)"},
 
