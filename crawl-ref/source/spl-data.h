@@ -567,7 +567,8 @@ static const struct spell_desc spelldata[] =
 {
     SPELL_CALL_DOWN_DAMNATION, "Hellfire Smite", "",
     spschool::fire | spschool::evocation,
-    spflag::target | spflag::area | spflag::unholy | spflag::needs_tracer,
+    spflag::target | spflag::area | spflag::unholy | spflag::needs_tracer
+    | spflag::monster,
     9,
     200,
     LOS_RADIUS, LOS_RADIUS,
@@ -1202,7 +1203,7 @@ static const struct spell_desc spelldata[] =
     SPELL_DISINTEGRATE, "Disintegrate Wand", "",
     spschool::hexes | spschool::evocation,
     spflag::dir_or_target | spflag::not_self | spflag::needs_tracer
-        | spflag::MR_check,
+        | spflag::MR_check | spflag::monster,
     6,
     200,
     LOS_RADIUS, LOS_RADIUS,

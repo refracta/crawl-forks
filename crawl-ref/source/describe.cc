@@ -3456,6 +3456,12 @@ static string _player_spell_stats(const spell_type spell)
                      schools.find("/") != string::npos ? "s" : "",
                      schools.c_str());
 
+    if (spell_typematch(spell, spschool::evocation))
+    {
+        description += "\n\nNot a true spell. Found only as a natural ability, evoked power or invoked godly power.\n";
+        return description;
+    }
+
     if (!crawl_state.need_save
         || (get_spell_flags(spell) & spflag::monster))
     {

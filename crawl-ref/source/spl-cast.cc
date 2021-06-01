@@ -2562,12 +2562,18 @@ string spell_schools_string(spell_type spell)
     {
         if (spell_typematch(spell, bit))
         {
+            if (bool(bit & spschool::evocation))
+                continue;
+
             if (already)
                 desc += "/";
             desc += spelltype_long_name(bit);
             already = true;
         }
     }
+
+    if (desc.empty())
+        return "None";
 
     return desc;
 }
