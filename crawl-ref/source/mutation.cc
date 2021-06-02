@@ -2414,7 +2414,7 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
             you.innate_mutation[mutat]++;
 
         const int cur_base_level = you.get_base_mutation_level(mutat);
-        gain_msg |= _pregain_effects(mutat, mutclass == MUTCLASS_TEMPORARY, which_mutation);
+        gain_msg &= _pregain_effects(mutat, mutclass == MUTCLASS_TEMPORARY, which_mutation);
 
         // For all those scale mutations.
         you.redraw_armour_class = true;
