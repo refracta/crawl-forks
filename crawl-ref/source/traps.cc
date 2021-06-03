@@ -532,7 +532,7 @@ void trap_def::trigger(actor& triggerer)
             you.blink(pos);
             if (you.see_cell(pos))
             {
-                //destroy();
+                destroy();
                 place_cloud(CLOUD_TLOC_ENERGY, pos, roll_dice(3, 8), nullptr, 2);
             }
             break;
