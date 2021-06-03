@@ -1693,7 +1693,9 @@ static void _make_acquirement_items()
     }
 
     rand_acq_classes.emplace_back(OBJ_JEWELLERY);
-    rand_acq_classes.emplace_back(OBJ_BOOKS);
+
+    if (!you_worship(GOD_TROG))
+        rand_acq_classes.emplace_back(OBJ_BOOKS);
     
     if (coinflip()) // Just to make them a bit rarer than the rest.
         rand_acq_classes.emplace_back(OBJ_MANUALS);
