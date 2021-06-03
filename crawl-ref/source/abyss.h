@@ -36,6 +36,8 @@ void abyss_morph();
 void banished(const string &who = "", const int power = 0);
 void push_features_to_abyss();
 
+void start_order();
+void end_order();
 void generate_abyss();
 void maybe_shift_abyss_around_player();
 void abyss_maybe_spawn_xp_exit();

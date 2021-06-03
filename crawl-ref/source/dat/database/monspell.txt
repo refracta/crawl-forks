@@ -549,6 +549,12 @@ wretched star cast
 
 @The_monster@ glows turbulently.
 %%%%
+silver star cast
+
+@The_monster@ shines blindingly.
+
+@The_monster@ seems to fold into itself.
+%%%%
 thrashing horror cast
 
 @The_monster@ churns violently!
@@ -816,6 +822,10 @@ Static Discharge shock serpent cast
 Corrupting Pulse wretched star cast
 
 @The_monster@ pulses with an eldritch light!
+%%%%
+Holy Suppression silver star cast
+
+@The_monster@ lets out a burst of cleansing silver light!
 ###########################################################################
 # Generic messages for priests and wizards which have been polymorphed into
 # something without hands.

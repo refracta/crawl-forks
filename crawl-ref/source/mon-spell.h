@@ -1724,6 +1724,13 @@ static const mon_spellbook mspell_list[] =
       }
     },
 
+    {  MST_SILVER_STAR,
+      {
+       { SPELL_SILVER_SHOT, 60, MON_SPELL_MAGICAL },
+       { SPELL_HOLY_SUPPRESSION, 40, MON_SPELL_MAGICAL },
+      }
+    },
+
     {  MST_ORB_OF_FIRE,
       {
        { SPELL_BOLT_OF_FIRE, 32, MON_SPELL_MAGICAL },

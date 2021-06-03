@@ -2781,18 +2781,38 @@ static const struct spell_desc spelldata[] =
     TILEG_BEASTLY_APPENDAGE,
 },
 
-#if TAG_MAJOR_VERSION == 34
 {
-    SPELL_SILVER_BLAST, "Silver Blast", "",
-    spschool::earth,
-    spflag::dir_or_target,
-    5,
+    SPELL_SILVER_SHOT, "Silver Shot", "",
+    spschool::earth | spschool::evocation,
+    spflag::dir_or_target | spflag::monster,
+    7,
     200,
     5, 5,
-    0, 0,
-    TILEG_ERROR,
+    0, 7,
+    TILEG_GENERIC_MONSTER_SPELL,
 },
-#endif
+
+{
+    SPELL_SACRED_ORDER, "Stabilize", "",
+    spschool::translocation | spschool::evocation,
+    spflag::area | spflag::monster,
+    8,
+    200,
+    -1, -1,
+    0, 0,
+    TILEG_GENERIC_MONSTER_SPELL,
+},
+
+{
+    SPELL_HOLY_SUPPRESSION, "Consecrate", "",
+    spschool::transmutation | spschool::evocation,
+    spflag::area | spflag::monster,
+    4,
+    200,
+    8, 8,
+    4, 4,
+    TILEG_GENERIC_MONSTER_SPELL,
+},
 
 {
     SPELL_ENSNARE, "Ensnare", "",

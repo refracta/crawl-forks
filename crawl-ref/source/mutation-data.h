@@ -174,8 +174,8 @@ static const mutation_def mut_data[] =
   "electricity vulnerability",
 
   {"You are vulnerable to electric shocks.", "", ""},
-  {"You feel vulnerable to electricity.", "", ""},
-  {"You feel less vulnerable to electricity.", "", ""},
+  {"You feel more conductive.", "", ""},
+  {"You feel more insulated.", "", ""},
 },
 
 { MUT_REGENERATION, 15, 2, mutflag::good, false,

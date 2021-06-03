@@ -2302,6 +2302,23 @@ bool mutate_terrain_change_duration(coord_def pos, int delta, bool replace)
     return true;
 }
 
+// Only used by Silver Stars to check if they are currently in their own sanctum.
+bool order_at(const coord_def pos)
+{
+    for (map_marker *marker : env.markers.get_markers_at(pos))
+    {
+        if (marker->get_type() == MAT_TERRAIN_CHANGE)
+        {
+            map_terrain_change_marker* tmarker =
+                dynamic_cast<map_terrain_change_marker*>(marker);
+
+            if (tmarker->change_type == TERRAIN_CHANGE_IMPRISON)
+                return true;
+        }
+    }
+    return false;
+}
+
 void temp_change_terrain(coord_def pos, dungeon_feature_type newfeat, int dur,
                          terrain_change_type type, const monster* mon)
 {

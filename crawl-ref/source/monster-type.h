@@ -703,7 +703,9 @@ enum monster_type                      // menv[].type
     MONS_SERAPH,
 #if TAG_MAJOR_VERSION == 34
     MONS_PHOENIX,
+#endif
     MONS_SILVER_STAR,
+#if TAG_MAJOR_VERSION == 34
     MONS_BLESSED_TOE,
     MONS_SHEDU,
 #endif

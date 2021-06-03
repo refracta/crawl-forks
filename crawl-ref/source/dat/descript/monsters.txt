@@ -2207,6 +2207,17 @@ A terrible spirit which brings an unearthly silence to the area around it,
 making it impossible to recite the magical incantations involved with casting
 spells or reading scrolls.
 %%%%
+silver star
+
+Zin's truth given form as a crystalline silver being, incomprehensibly perfect 
+in its geometry. It wages war against the chaos and corruption of this world{{
+    if you.god() == "Zin" then
+        return ". It acknowledges you as a servant of Zin"
+    else
+        return ", which no doubt includes you"
+    end
+}}.
+%%%%
 simulacrum
 
 An ice replica of a monster, animated by the powers of necromancy.

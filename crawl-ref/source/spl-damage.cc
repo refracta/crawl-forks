@@ -3076,6 +3076,13 @@ bool setup_fragmentation_beam(bolt &beam, int pow, const actor *caster,
             beam.damage.num = 3;
             break;
 
+        case MONS_SILVER_STAR:
+            beam.name       = "blast of silver fragments";
+            beam.colour     = ETC_SILVER;
+            beam.damage.num = 4;
+            beam.flavour    = BEAM_SILVER_FRAG;
+            break;
+
         case MONS_IRON_ELEMENTAL:
         case MONS_IRON_GOLEM:
         case MONS_PEACEKEEPER:

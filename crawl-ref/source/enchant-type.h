@@ -180,6 +180,7 @@ enum enchant_type
     ENCH_ENTROPIC_BURST,
     ENCH_CHAOTIC_INFUSION,
     ENCH_CHAOSNADO,
+    ENCH_SACRED_ORDER,
     // Update enchant_names[] in mon-ench.cc when adding or removing
     // enchantments.
     NUM_ENCHANTMENTS

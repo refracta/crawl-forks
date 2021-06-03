@@ -860,6 +860,16 @@ Traps an enemy in a ring of blessed flame. These flames are especially
 dangerous to undead and demonic creatures, and have no effect on holy
 creatures.
 %%%%
+Stabilize spell
+
+Zin's order attempts to subdue the effects of chaos on the target; making 
+its unnatural and demonic mutations fade for awhile.
+%%%%
+Consecrate spell
+
+Purifying order pushes against the chaos of the abyss; stopping its shifting 
+for a time and creating a small sanctum.
+%%%%
 Hydra Form spell
 
 Transforms the caster into an amphibious, many-headed hydra for a brief
@@ -1473,6 +1483,11 @@ usable while silenced.
 
 The effect starts out with a radius depending on power, which will then shrink,
 eventually covering only the caster, before it times out.
+%%%%
+Silver Shot spell
+
+Fires a beam of Zin's blessed silver energy; deals extra damage to the mutated 
+and chaotic.
 %%%%
 Simulacrum spell
 

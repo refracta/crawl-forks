@@ -114,6 +114,49 @@ void slime_convert(monster* mons)
     }
 }
 
+void god_pacify(monster* mons)
+{
+    if (mons->god == you.religion
+        && !mons->neutral()
+        && !mons->friendly()
+        && !testbits(mons->flags, MF_ATT_CHANGE_ATTEMPT))
+    {
+        switch (you.religion)
+        {
+        case GOD_CHEIBRIADOS:
+            mprf("%s acknowledges you as a friend and chills out.", mons->name(DESC_THE, true).c_str());
+            break;
+        case GOD_ELYVILON:
+            mprf("%s acknowledges you as a healer.", mons->name(DESC_THE, true).c_str());
+            break;
+        case GOD_FEDHAS:
+            mprf("%s acknowledges you as a naturalist.", mons->name(DESC_THE, true).c_str());
+            break;
+        case GOD_JIYVA:
+            mprf("%s acknowledges you as a fellow slime.", mons->name(DESC_THE, true).c_str());
+            break;
+        case GOD_SHINING_ONE:
+            mprf("%s acknowledges you as a fellow soldier.", mons->name(DESC_THE, true).c_str());
+            break;
+        case GOD_SIF_MUNA:
+            mprf("%s acknowledges you as a fellow scholar.", mons->name(DESC_THE, true).c_str());
+            break;
+        case GOD_XOM:
+            mprf("%s acknowledges you as a fellow toy.", mons->name(DESC_THE, true).c_str());
+            break;
+        case GOD_ZIN:
+            mprf("%s acknowledges you as a servant of order.", mons->name(DESC_THE, true).c_str());
+            break;
+        default:
+            return;
+        }
+
+        mons->attitude = ATT_GOOD_NEUTRAL;
+        mons->flags |= MF_WAS_NEUTRAL;
+        mons_att_changed(mons);
+    }
+}
+
 void fedhas_neutralise(monster* mons)
 {
     if (have_passive(passive_t::friendly_plants)

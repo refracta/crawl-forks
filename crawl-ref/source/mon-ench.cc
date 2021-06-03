@@ -9,6 +9,7 @@
 
 #include <sstream>
 
+#include "abyss.h" // Sacred Order
 #include "act-iter.h"
 #include "areas.h"
 #include "attitude-change.h"
@@ -311,6 +312,10 @@ void monster::add_enchantment_effect(const mon_enchant &ench, bool quiet)
 
     case ENCH_STILL_WINDS:
         start_still_winds();
+        break;
+
+    case ENCH_SACRED_ORDER:
+        start_order();
         break;
 
     case ENCH_RING_OF_THUNDER:
@@ -977,6 +982,10 @@ void monster::remove_enchantment_effect(const mon_enchant &me, bool quiet)
 
     case ENCH_STILL_WINDS:
         end_still_winds();
+        break;
+
+    case ENCH_SACRED_ORDER:
+        end_order();
         break;
 
     default:
@@ -2219,9 +2228,9 @@ static const char *enchant_names[] =
     "corrosion", "gold_lust", "drained", "repel missiles",
     "deflect missiles",
 #if TAG_MAJOR_VERSION == 34
-    "negative_vuln", "condensation_shield",
+    "negative_vuln", 
 #endif
-    "resistant", "hexed", "corpse_armour",
+    "condensation_shield", "resistant", "hexed", "corpse_armour",
 #if TAG_MAJOR_VERSION == 34
     "chanting_fire_storm", "chanting_word_of_entropy",
 #endif
@@ -2230,7 +2239,7 @@ static const char *enchant_names[] =
     "stilling the winds", "thunder_ringed", "pinned_by_whirlwind",
     "vortex", "vortex_cooldown", "vile_clutch", "trapped_in_lava", "stick",
     "elec_vuln", "cold_vuln", "phys_vuln", "staff_shield_down", "entropic_burst",
-    "chaotic_infusion", "chaosnado",
+    "chaotic_infusion", "chaosnado", "sacred_order",
     "buggy",
 };
 

@@ -459,7 +459,10 @@ int player::get_base_mutation_level(mutation_type mut, bool innate, bool temp, b
     if (!innate)
         level -= you.innate_mutation[mut];
     if (!normal)
-        level -= (you.mutation[mut] - (you.temp_mutation[mut] + you.innate_mutation[mut]));
+    {
+        level -= you.mutation[mut];
+        level += you.temp_mutation[mut] + you.innate_mutation[mut];
+    }
     if (suppressed)
         level -= you.suppressed_mutation[mut] ? 1 : 0;
     
@@ -3728,29 +3731,33 @@ int player::how_mutated(bool innate, bool levels, bool temp, bool ds, bool norma
     {
         if (you.mutation[i])
         {
-            const int mut_level = get_base_mutation_level(static_cast<mutation_type>(i), innate || ds, temp, normal);
-            bool include = false;
-
-            if (ds)
+            if (ds && !innate)
             {
-                for (unsigned int j = 0; j < you.demonic_traits.size(); j++)
+                const int mut_level = get_base_mutation_level(static_cast<mutation_type>(i), true, false, false);
+
+                if (mut_level)
                 {
-                    if (you.demonic_traits[j].mutation == i &&
-                        you.demonic_traits[j].level_gained <= you.experience_level)
+                    for (unsigned int j = 0; j < you.demonic_traits.size(); j++)
                     {
-                        include = true;
-                        j += 1000;
+                        if (you.demonic_traits[j].mutation == i &&
+                            you.demonic_traits[j].level_gained <= you.experience_level)
+                        {
+                            if (levels)
+                                result += mut_level;
+                            else 
+                                result++;
+                            j += 1000;
+                        }
                     }
                 }
             }
 
-            if (!ds || include)
-            {
-                if (levels)
-                    result += mut_level;
-                else if (mut_level > 0)
-                    result++;
-            }
+            const int mut_level = get_base_mutation_level(static_cast<mutation_type>(i), innate, temp, normal);
+
+            if (levels)
+                result += mut_level;
+            else if (mut_level > 0)
+                result++;
         }
         if (innate && you.props.exists("num_sacrifice_muts"))
             result -= you.props["num_sacrifice_muts"].get_int();

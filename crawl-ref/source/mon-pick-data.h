@@ -911,6 +911,7 @@ static const pop_entry pop_abyss[] =
   {  1,  5,    8, FLAT, MONS_HELL_KNIGHT },
   {  1,  5,    8, FLAT, MONS_NECROMANCER },
   {  1,  5,    8, FLAT, MONS_WIZARD },
+  {  1,  5,  124, FLAT, MONS_SILVER_STAR },
   {  1,  5,   33, FLAT, MONS_HOLY_FLAN },
   {  1,  5,   11, FLAT, MONS_ANGEL },
   {  1,  5,   14, FLAT, MONS_DAEVA },
@@ -975,6 +976,7 @@ static const pop_entry pop_pan[] =
   {  1,  1,   50, FLAT, MONS_ANGEL },
   {  1,  1,   40, FLAT, MONS_CHERUB },
   {  1,  1,   25, FLAT, MONS_DAEVA },
+  {  1,  1,   25, FLAT, MONS_SILVER_STAR },
   { 0,0,0,FLAT,MONS_0 }
 };
 

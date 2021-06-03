@@ -1086,8 +1086,10 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
             case MONS_JELLY:
                 mon->god = GOD_JIYVA;
                 break;
-            case MONS_MUMMY:
             case MONS_DRACONIAN:
+                mon->god = GOD_BAHAMUT_TIAMAT;
+                break;
+            case MONS_MUMMY:
             case MONS_ELF:
                 // [ds] Vault defs can request priest monsters of unusual types.
             default:
@@ -1100,8 +1102,11 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
     else if (mg.cls == MONS_ROYAL_JELLY)
         mon->god = GOD_JIYVA;
     // Mennas belongs to Zin.
-    else if (mg.cls == MONS_MENNAS)
+    else if (mg.cls == MONS_MENNAS
+            || mg.cls == MONS_SILVER_STAR)
+    {
         mon->god = GOD_ZIN;
+    }
     // Yiuf is a faithful Xommite.
     else if (mg.cls == MONS_CRAZY_YIUF)
         mon->god = GOD_XOM;
@@ -1262,6 +1267,12 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
 
     if (mons_class_itemuse(mon->type) & MU_THROW_MASK)
         maybe_give_throw_spell(*mon, mg.place.absdepth());
+
+    if (mon->type == MONS_SILVER_STAR && place.branch == BRANCH_ABYSS)
+    {
+        mon->spells.emplace_back(SPELL_SACRED_ORDER, 20, MON_SPELL_MAGICAL);
+        mon->props[CUSTOM_SPELLS_KEY] = true;
+    }
 
     if (mon->type == MONS_HELLBINDER || mon->type == MONS_CLOUD_MAGE)
     {

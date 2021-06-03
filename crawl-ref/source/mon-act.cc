@@ -1757,6 +1757,7 @@ static void _pre_monster_move(monster& mons)
 
     fedhas_neutralise(&mons);
     slime_convert(&mons);
+    god_pacify(&mons);
 
     if (!mons_can_traverse(mons, mons.pos(), false, false))
         blink_out(&mons);

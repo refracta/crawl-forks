@@ -578,23 +578,22 @@ static int _mons_class_halo_radius(monster_type type)
     }
     switch (type)
     {
+    case MONS_HOLY_SWINE:
+        return 1;  // only notionally holy
     case MONS_HOLY_FLAN:
     case MONS_FAIRY:
         return 2;
     case MONS_ANGEL:
-        return 4;
     case MONS_CHERUB:
-        return 4;
     case MONS_DAEVA:
+    case MONS_SILVER_STAR:
         return 4;
+    case MONS_MENNAS:
+        return 5;
     case MONS_OPHAN:
         return 6;
     case MONS_SERAPH:
         return 7; // highest rank among sentient ones
-    case MONS_HOLY_SWINE:
-        return 1;  // only notionally holy
-    case MONS_MENNAS:
-        return 5;
     default:
         return -1;
     }

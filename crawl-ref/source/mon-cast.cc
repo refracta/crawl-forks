@@ -40,6 +40,7 @@
 #include "libutil.h"
 #include "losglobal.h"
 #include "mapmark.h"
+#include "mapdef.h"
 #include "message.h"
 #include "misc.h"
 #include "mon-act.h"
@@ -1372,6 +1373,7 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
     case SPELL_STICKY_FLAME_RANGE:
     case SPELL_STING:
     case SPELL_IRON_SHOT:
+    case SPELL_SILVER_SHOT:
     case SPELL_STONE_ARROW:
     case SPELL_FORCE_LANCE:
     case SPELL_CORROSIVE_BOLT:
@@ -1705,7 +1707,6 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
 
 #if TAG_MAJOR_VERSION == 34
     case SPELL_HOLY_LIGHT:
-    case SPELL_SILVER_BLAST:
         beam.name     = "beam of golden light";
         beam.damage   = dice_def(3, 8 + power / 11);
         beam.colour   = ETC_HOLY;
@@ -2083,6 +2084,8 @@ bool setup_mons_cast(const monster* mons, bolt &pbolt, spell_type spell_cast,
 #endif
     case SPELL_THROW_ALLY:
     case SPELL_CORRUPTING_PULSE:
+    case SPELL_SACRED_ORDER:
+    case SPELL_HOLY_SUPPRESSION:
     case SPELL_SIREN_SONG:
     case SPELL_AVATAR_SONG:
     case SPELL_REPEL_MISSILES:
@@ -3523,7 +3526,7 @@ static void _corrupting_pulse(monster *mons)
         if (!is_sanctuary(you.pos())
             && cell_see_cell(you.pos(), mons->pos(), LOS_SOLID))
         {
-            int num_mutations = one_chance_in(4) ? 2 : 1;
+            int num_mutations = 1 + coinflip();
             for (int i = 0; i < num_mutations; ++i)
                 temp_mutate(RANDOM_CORRUPT_MUTATION, "wretched star");
         }
@@ -3538,6 +3541,54 @@ static void _corrupting_pulse(monster *mons)
             m->corrupt();
         }
     }
+}
+
+static void _suppression(monster *mons)
+{
+    if (cell_see_cell(you.pos(), mons->pos(), LOS_DEFAULT))
+    {
+        targeter_radius hitfunc(mons, LOS_SOLID);
+        flash_view_delay(UA_MONSTER, WHITE, 300, &hitfunc);
+
+        if (!is_sanctuary(you.pos())
+            && cell_see_cell(you.pos(), mons->pos(), LOS_SOLID))
+        {
+            int num_mutations = 1 + coinflip();
+            for (int i = 0; i < num_mutations; ++i)
+                suppress_mutation(true, true);
+        }
+    }
+}
+
+static void _order(monster *mons)
+{
+    if (you.where_are_you != BRANCH_ABYSS)
+        return;
+
+    int radius = 5 + random2(3);
+    coord_def pos = mons->pos();
+
+    for (rectangle_iterator ri(pos, radius, true); ri; ++ri)
+    {
+        coord_def it = *ri;
+        if (grid_distance(it, pos) == radius
+            && it.x != pos.x
+            && it.y != pos.y)
+        {
+            if (actor * act = actor_at(it))
+                act->blink(pos);
+            temp_change_terrain(it, DNGN_SILVER_WALL, INFINITE_DURATION, TERRAIN_CHANGE_IMPRISON, mons);
+        }
+        else
+        {
+            temp_change_terrain(it, DNGN_FLOOR, INFINITE_DURATION, TERRAIN_CHANGE_IMPRISON, mons);
+            env.tile_flv(it).floor_idx =
+                store_tilename_get_index("floor_limestone");
+            env.tile_flv(it).floor = TILE_FLOOR_LIMESTONE;
+        }
+    }
+
+    mons->add_ench(mon_enchant(ENCH_SACRED_ORDER, 2));
 }
 
 // Returns the clone just created (null otherwise)
@@ -3626,6 +3677,13 @@ static bool _elec_vulnerable(actor* victim)
 static bool _mutation_vulnerable(actor* victim)
 {
     return victim->can_mutate();
+}
+
+static bool _suppression_vulnerable(actor* victim)
+{
+    // BCADDO: Monster version?
+
+    return (victim->is_player() && you.how_mutated(false, false, false, true, true));
 }
 
 static void _cast_black_mark(monster* agent)
@@ -7421,6 +7479,14 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         _corrupting_pulse(mons);
         return;
 
+    case SPELL_HOLY_SUPPRESSION:
+        _suppression(mons);
+        return;
+
+    case SPELL_SACRED_ORDER:
+        _order(mons);
+        return;
+
     case SPELL_THROW_ALLY:
         _maybe_throw_ally(*mons);
         return;
@@ -8732,6 +8798,14 @@ static bool _ms_waste_of_time(monster* mon, mon_spell_slot slot)
         return !trace_los(mon, _mutation_vulnerable)
                || you.visible_to(mon)
                   && friendly;
+    case SPELL_HOLY_SUPPRESSION:
+        return !trace_los(mon, _suppression_vulnerable)
+               || you.visible_to(mon)
+                  && friendly;
+    case SPELL_SACRED_ORDER:
+        return you.where_are_you != BRANCH_ABYSS
+            || mon->has_ench(ENCH_SACRED_ORDER)
+            && order_at(mon->pos());
     case SPELL_TORNADO:
         return mon->has_ench(ENCH_TORNADO)
                || mon->has_ench(ENCH_CHAOSNADO)

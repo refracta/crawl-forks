@@ -1766,6 +1766,7 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
         }
         break;
 
+    case BEAM_SILVER:
     case BEAM_SILVER_FRAG:
     {
         if (doFlavouredEffects)
@@ -7730,6 +7731,7 @@ static string _beam_type_name(beam_type type)
     case BEAM_ENERGY:                return "energy";
     case BEAM_HOLY:                  return "cleansing flame";
     case BEAM_FRAG:                  return "fragments";
+    case BEAM_SILVER:                return "silver blast";
     case BEAM_SILVER_FRAG:           return "silver fragments";
     case BEAM_LAVA:                  return "magma";
     case BEAM_PARADOXICAL:           return "freezing flame";

@@ -31,6 +31,7 @@
 #include "item-prop.h"
 #include "item-status-flag-type.h"
 #include "items.h"
+#include "level-state-type.h"
 #include "libutil.h"
 #include "mapmark.h"
 #include "maps.h"
@@ -398,6 +399,9 @@ void banished(const string &who, const int power)
     ASSERT(!crawl_state.game_is_arena());
     if (brdepth[BRANCH_ABYSS] == -1)
         return;
+
+    end_order();
+    end_still_winds();
 
     if (player_in_branch(BRANCH_ABYSS))
     {
@@ -1338,6 +1342,9 @@ static void _abyss_apply_terrain(const map_bitmask &abyss_genlevel_mask,
     int delta = you.time_taken * (you.abyss_speed + 40) / 200;
     for (rectangle_iterator ri(MAPGEN_BORDER); ri; ++ri)
     {
+        if (order_at(*ri))
+            continue;
+
         const coord_def p(*ri);
         const coord_def abyss_coord = p + abyssal_state.major_coord;
         bool turned_to_floor = map_masked(p, MMT_TURNED_TO_FLOOR);
@@ -1687,8 +1694,26 @@ static void _increase_depth()
         abyssal_state.phase -= PI;
 }
 
+void start_order()
+{
+    env.level_state |= LSTATE_ORDERED;
+    mprf(MSGCH_WARN, "The abyss stops shifting.");
+}
+
+void end_order()
+{
+    for (monster_iterator mon_it; mon_it; ++mon_it)
+        if (mon_it->has_ench(ENCH_SACRED_ORDER))
+            return;
+    env.level_state &= ~LSTATE_ORDERED;
+    mprf(MSGCH_DURATION, "The abyss returns to normal.");
+}
+
 void abyss_morph()
 {
+    if (env.level_state & LSTATE_ORDERED)
+        return;
+
     if (abyssal_state.destroy_all_terrain)
     {
         _destroy_all_terrain(false);
@@ -1727,6 +1752,9 @@ static bool _abyss_force_descent()
 
 void abyss_teleport()
 {
+    end_order();
+    end_still_winds();
+
     xom_abyss_feature_amusement_check xomcheck;
     dprf(DIAG_ABYSS, "New area Abyss teleport.");
 

@@ -3941,14 +3941,14 @@ MONS:   angel
 MONS:   cherub
 MONS:   angel
 MONS:   ophan
-MONS:   ophan
+MONS:   silver star
 MONS:   daeva
 #  8 was phoenix but they were removed.
 KMONS:  9 = pearl dragon
 KMONS:  0 = apis
 KMONS:  A = apis
 KMONS:  B = daeva god:Zin
-KMONS:  Z = daeva god:Zin
+KMONS:  Z = silver star
 KMONS:  S = patrolling seraph
 KFEAT:  _ = altar_the_shining_one
 KFEAT:  E = altar_elyvilon
@@ -3963,7 +3963,7 @@ COLOUR: "0 = green
 FTILE:  -ZBghi&v = floor_vault
 SUBST:  D& = +, '"- = ., H = G, C = c
 : set_feature_name("granite_statue", "golden statue")
-: set_random_mon_list("angel w:20 / cherub / ophan / daeva / apis w:20")
+: set_random_mon_list("angel w:20 / silver star w:5 / cherub / ophan / daeva / apis w:20")
 MAP
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 xxxxxxxCCCCCxxxxxxxxxxxxwwwwxxxxxxxxxwwwxxxwwwxxxxxxCCCCCCCCCCCCCCCCCxxxxxxxxxxx

@@ -150,6 +150,7 @@ int check_your_resists(int hurted, beam_type flavour, string source,
         }
         break;
 
+    case BEAM_SILVER:
     case BEAM_SILVER_FRAG:
         if (doEffects)
         {
