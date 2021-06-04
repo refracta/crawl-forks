@@ -499,7 +499,7 @@ void fill_doll_equipment(dolls_data &result)
             result.parts[TILEP_PART_ARM] = tilep_equ_gloves(you.inv[item]);
         else if (you.has_mutation(MUT_TENTACLE_SPIKE))
             result.parts[TILEP_PART_ARM] = TILEP_ARM_OCTOPODE_SPIKE;
-        else if (you.has_claws(false) >= 3)
+        else if (you.has_claws(false) >= 2)
             result.parts[TILEP_PART_ARM] = TILEP_ARM_CLAWS;
         else
             result.parts[TILEP_PART_ARM] = 0;
