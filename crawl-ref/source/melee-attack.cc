@@ -4213,7 +4213,7 @@ void melee_attack::do_spines()
 
         if (mut && attacker->alive() && coinflip())
         {
-            const int maxdmg = div_rand_round(you.experience_level * mut, 3);
+            const int maxdmg = max(div_rand_round(you.experience_level * mut, 3), mut);
             const int dmg    = random_range(mut, maxdmg);
             const int hurt   = attacker->apply_ac(dmg, you.experience_level + mut);
 
