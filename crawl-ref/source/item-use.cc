@@ -1394,7 +1394,7 @@ bool can_wear_armour(const item_def &item, bool verbose, bool ignore_temporary)
 
     if (sub_type == ARM_GLOVES || sub_type == ARM_CLAW)
     {
-        if (you.has_claws(false) == 3)
+        if (you.has_claws(false) >= 2)
         {
             if (verbose)
             {
