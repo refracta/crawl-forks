@@ -48,7 +48,7 @@
 
 using namespace ui;
 
-static bool _delete_single_mutation_level(mutation_type mutat, const string &reason, bool transient);
+static bool _delete_single_mutation_level(mutation_type mutat, const string &reason, bool transient, bool innate = false);
 static bool _post_loss_effects(mutation_type mutat, bool temp = false);
 static void _transpose_gear();
 static void _return_gear();
@@ -1205,7 +1205,8 @@ int mut_check_conflict(mutation_type mut, bool innate_only)
 static int _handle_conflicting_mutations(mutation_type mutation,
                                          bool override,
                                          const string &reason,
-                                         bool temp = false)
+                                         bool temp = false,
+                                         bool innate = false)
 {
     // If we have one of the pair, delete all levels of the other,
     // and continue processing.
@@ -1218,6 +1219,13 @@ static int _handle_conflicting_mutations(mutation_type mutation,
 
             if (mutation == a && you.get_base_mutation_level(b) > 0)
             {
+                if (innate && you.has_innate_mutation(b))
+                {
+                    // Override for conflicting innate mutations.
+                    _delete_single_mutation_level(b, reason, false, true);
+                    return -1;
+                }
+
                 // can never delete innate mutations. For case -1 and 0, fail if there are any, otherwise,
                 // make sure there is a non-innate instance to delete.
                 if (you.has_innate_mutation(b) &&
@@ -2590,28 +2598,37 @@ static bool _post_loss_effects(mutation_type mutat, bool temp)
  */
 static bool _delete_single_mutation_level(mutation_type mutat,
                                           const string &reason,
-                                          bool transient)
+                                          bool transient,
+                                          bool innate)
 {
-    // are there some non-innate mutations to delete?
-    if (you.get_base_mutation_level(mutat, false, true, true) == 0)
-        return false;
-
     bool was_transient = false;
-    if (you.has_temporary_mutation(mutat))
+
+    if (!innate)
     {
-        if (transient)
-            was_transient = true;
-        else if (you.get_base_mutation_level(mutat, false, false, true) == 0) // there are only temporary mutations to delete
+        // are there some non-innate mutations to delete?
+        if (you.get_base_mutation_level(mutat, false, true, true) == 0)
             return false;
 
-        // fall through: there is a non-temporary mutation level that can be deleted.
+        if (you.has_temporary_mutation(mutat))
+        {
+            if (transient)
+                was_transient = true;
+            else if (you.get_base_mutation_level(mutat, false, false, true) == 0) // there are only temporary mutations to delete
+                return false;
+
+            // fall through: there is a non-temporary mutation level that can be deleted.
+        }
     }
 
     const mutation_def& mdef = _get_mutation_def(mutat);
     const bool lose_msg = _post_loss_effects(mutat, was_transient);
 
     if (mutat != MUT_STATS)
+    {
+        if (innate)
+            you.innate_mutation[mutat]--;
         you.mutation[mutat]--;
+    }
 
     if (lose_msg)
     {
@@ -3652,8 +3669,9 @@ bool perma_mutate(mutation_type which_mut, int how_much, const string &reason)
     // clear out conflicting mutations
     int count = 0;
     while (rc == 1 && ++count < 100)
-        rc = _handle_conflicting_mutations(which_mut, true, reason);
-    ASSERT(rc == 0);
+        rc = _handle_conflicting_mutations(which_mut, true, reason, false, true);
+    if (rc != 0)
+        return true;
 
     int levels = 0;
     while (how_much-- > 0)
