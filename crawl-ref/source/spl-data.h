@@ -626,7 +626,7 @@ static const struct spell_desc spelldata[] =
     spflag::area,
     4,
     100,
-    6, 6,
+    2, 2,
     4, 10,
     TILEG_ISKENDERUNS_MYSTIC_BLAST,
 },
