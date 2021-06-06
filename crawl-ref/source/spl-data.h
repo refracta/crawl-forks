@@ -699,7 +699,7 @@ static const struct spell_desc spelldata[] =
 },
 
 {
-    SPELL_ANIMATE_SKELETON, "Pryten's Skeletal Uprising", "",
+    SPELL_SKELETAL_UPRISING, "Pryten's Skeletal Uprising", "",
     spschool::necromancy | spschool::charms,
     spflag::corpse_violating | spflag::utility,
     3,

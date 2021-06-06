@@ -1003,7 +1003,7 @@ void make_book_kiku_gift(item_def &book, bool first)
 
         chosen_spells[0] = SPELL_PAIN;
         chosen_spells[1] = SPELL_CORPSE_ROT;
-        chosen_spells[2] = SPELL_ANIMATE_SKELETON;
+        chosen_spells[2] = SPELL_SKELETAL_UPRISING;
         if (can_bleed) // Replace one of the corpse-using spells
             chosen_spells[random_range(1, 2)] = SPELL_SUBLIMATION_OF_BLOOD;
 

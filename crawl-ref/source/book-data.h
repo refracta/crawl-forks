@@ -157,7 +157,7 @@ static const vector<spell_type> spellbook_templates[] =
 
 {   // Book of Necromancy
     SPELL_PAIN,
-    SPELL_ANIMATE_SKELETON,
+    SPELL_SKELETAL_UPRISING,
     SPELL_VAMPIRIC_DRAINING,
     SPELL_REGENERATION,
     SPELL_ANIMATE_DEAD,
@@ -222,7 +222,7 @@ static const vector<spell_type> spellbook_templates[] =
 
 #if TAG_MAJOR_VERSION == 34
 {   // Book of Control
-    SPELL_ANIMATE_SKELETON
+    SPELL_SKELETAL_UPRISING
 },
 
 {   // Book of Battle

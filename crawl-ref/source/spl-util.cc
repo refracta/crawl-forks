@@ -359,7 +359,7 @@ static void _remove_spell_attributes(spell_type spell)
                                  : "your spell is no longer protecting you");
         }
         break;
-    case SPELL_ANIMATE_SKELETON:
+    case SPELL_SKELETAL_UPRISING:
         if (you.attribute[ATTR_SKELETON])
         {
             you.attribute[ATTR_SKELETON] = 0;
@@ -1414,7 +1414,7 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
             return "you can't move.";
         break;
 
-    case SPELL_ANIMATE_SKELETON:
+    case SPELL_SKELETAL_UPRISING:
         if (temp && you.attribute[ATTR_SKELETON])
             return "skeletons already rise from your steps.";
         // intentional fallthrough

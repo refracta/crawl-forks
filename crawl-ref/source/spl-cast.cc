@@ -2070,7 +2070,7 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
     case SPELL_SUMMON_FOREST:
         return cast_summon_forest(&you, powc, beam.target, god, fail);
 
-    case SPELL_ANIMATE_SKELETON:
+    case SPELL_SKELETAL_UPRISING:
         return pryten(powc, fail);
 
     case SPELL_ANIMATE_DEAD:

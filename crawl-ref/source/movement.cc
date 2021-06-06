@@ -1004,10 +1004,10 @@ void move_player_action(coord_def move)
 
     if (you.attribute[ATTR_SKELETON])
     {
-        bool fail = x_chance_in_y(failure_rate_to_int(raw_spell_fail(SPELL_ANIMATE_SKELETON)), 100);
+        bool fail = x_chance_in_y(failure_rate_to_int(raw_spell_fail(SPELL_SKELETAL_UPRISING)), 100);
         if (cast_animate_skeleton(you.religion, fail, initial_position))
         {
-            int spellpower = calc_spell_power(SPELL_ANIMATE_SKELETON, true);
+            int spellpower = calc_spell_power(SPELL_SKELETAL_UPRISING, true);
             dec_mp(div_rand_round(spellpower, 100));
         }
     }
