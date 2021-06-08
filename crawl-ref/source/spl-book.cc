@@ -900,12 +900,6 @@ static bool _learn_spell_checks(spell_type specspell, bool wizard = false)
         return false;
     }
 
-    if (you.experience_level < spell_difficulty(specspell) && !wizard)
-    {
-        mpr("You're too inexperienced to learn that spell!");
-        return false;
-    }
-
     if (player_spell_levels() < spell_levels_required(specspell) && !wizard)
     {
         mpr("You can't memorise that many levels of magic yet!");
