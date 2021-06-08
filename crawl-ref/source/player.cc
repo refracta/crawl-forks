@@ -7301,7 +7301,7 @@ mon_holy_type player::holiness(bool temp, bool mt) const
     else
         holi = MH_NATURAL;
 
-    if (species == SP_VINE_STALKER && (!temp || you.form == transformation::none))
+    if (species == SP_VINE_STALKER || char_class == JOB_VINE_STALKER && (!temp || you.form == transformation::none))
         holi |= MH_PLANT;
 
     // Petrification takes precedence over base holiness and lich form

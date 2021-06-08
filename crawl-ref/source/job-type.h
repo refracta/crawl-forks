@@ -47,6 +47,7 @@ enum job_type
     JOB_CENTAUR,
     JOB_NAGA,
     JOB_MERFOLK,
+    JOB_VINE_STALKER,
     NUM_JOBS,                          // always after the last job
 
     JOB_UNKNOWN = 100,

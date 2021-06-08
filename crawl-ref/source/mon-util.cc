@@ -2098,7 +2098,7 @@ static mon_attack_def _hepliaklqana_ancestor_attack(const monster &mon,
     {
         if (you.species == SP_OCTOPODE)
             return { AT_CONSTRICT, AF_CRUSH, dam / 2 };
-        else if (you.species == SP_VINE_STALKER)
+        else if (you.species == SP_VINE_STALKER || you.char_class == JOB_VINE_STALKER)
             return { AT_BITE, AF_ANTIMAGIC, dam / 3 };
         else if (you.species == SP_MINOTAUR)
             return { AT_GORE, AF_PLAIN, dam / 2 };

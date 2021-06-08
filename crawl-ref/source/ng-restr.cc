@@ -59,6 +59,7 @@ static bool _banned_combination(job_type job, species_type species)
             return true;
         break;
     case JOB_MUMMY:
+    case JOB_VINE_STALKER:
         if (species == SP_LIGNIFITE)
             return true;
         // fallthrough

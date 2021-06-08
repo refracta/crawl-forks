@@ -146,7 +146,7 @@ stabbers and casters.
 %%%%
 Vine Stalker
 
-Frail symbionts, Vine Stalkers cannot regain health from potions.
+Grafted with a plant symbiont, Vine Stalkers are frailer than others of their species.
 Their magical reserves absorb damage, and they pack a magic-restoring bite.
 %%%%
 Silent Spectre

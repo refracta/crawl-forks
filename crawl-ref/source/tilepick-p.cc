@@ -1270,14 +1270,16 @@ tileidx_t tilep_species_to_base_tile(int sp, int drac_colour)
     if (sp != SP_OCTOPODE && sp != SP_FELID
         && sp != SP_FAIRY)
     {
+        if (you.get_mutation_level(MUT_SLIME) >= 3)
+            return TILEP_BASE_JIYVITE;
         if (you.char_class == JOB_MUMMY)
             return TILEP_BASE_MUMMY;
         if (you.char_class == JOB_DEMIGOD)
             return TILEP_BASE_DEMIGOD;
         if (you.char_class == JOB_DEMONSPAWN)
             return TILEP_BASE_DEMONSPAWN;
-        if (you.get_mutation_level(MUT_SLIME) >= 3)
-            return TILEP_BASE_JIYVITE;
+        if (you.char_class == JOB_VINE_STALKER)
+            return TILEP_BASE_VINE_STALKER;
     }
     switch (sp)
     {

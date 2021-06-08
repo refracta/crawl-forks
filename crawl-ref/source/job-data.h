@@ -38,8 +38,7 @@ static const map<job_type, job_def> job_data =
 { JOB_AIR_ELEMENTALIST, {
     "AE", "Air Elementalist",
     0, 7, 5,
-    { SP_DEEP_ELF, SP_TENGU, SP_DRACONIAN, SP_NAGA, SP_VINE_STALKER, 
-        SP_SILENT_SPECTRE},
+    { SP_DEEP_ELF, SP_TENGU, SP_DRACONIAN, SP_NAGA, SP_SILENT_SPECTRE},
     { "robe", "book of Air" },
     WCHOICE_NONE,
     { { SK_AIR_MAGIC, 3 }, { SK_SPELLCASTING, 2 },
@@ -170,6 +169,16 @@ static const map<job_type, job_def> job_data =
       { SK_WEAPON, 3}, },
 } },
 
+{ JOB_VINE_STALKER, {
+    "VS", "Vine Stalker",
+    5, 3, 4,
+    { SP_DEEP_ELF, SP_FELID, SP_KOBOLD, SP_SPRIGGAN, SP_NAGA, SP_SILENT_SPECTRE, },
+    { "dagger plus:1", "leather armour", "book of maledictions" },
+    WCHOICE_NONE,
+    { { SK_HEXES, 2 }, { SK_SHORT_BLADES, 2 }, { SK_DODGING, 3 },
+      { SK_STEALTH, 4}, { SK_SPELLCASTING, 1}, },
+} },
+
 { JOB_HUNTER, {
     "Hu", "Hunter",
     4, 3, 5,
@@ -223,7 +232,7 @@ static const map<job_type, job_def> job_data =
 { JOB_SUMMONER, {
     "Su", "Summoner",
     0, 7, 5,
-    { SP_DEEP_ELF, SP_HILL_ORC, SP_VINE_STALKER, SP_MERFOLK, SP_TENGU, },
+    { SP_DEEP_ELF, SP_HILL_ORC, SP_MERFOLK, SP_TENGU, },
     { "robe", "book of Callings" },
     WCHOICE_NONE,
     { { SK_SUMMONINGS, 4 }, { SK_SPELLCASTING, 2 }, { SK_DODGING, 2 },
@@ -322,7 +331,7 @@ static const map<job_type, job_def> job_data =
 { JOB_NAGA, {
     "Na", "Naga",
     5, 4, 3,
-    { SP_OCTOPODE, SP_KOBOLD, SP_DEEP_ELF, SP_GNOLL, SP_VINE_STALKER },
+    { SP_OCTOPODE, SP_KOBOLD, SP_DEEP_ELF, SP_GNOLL },
     { "leather armour" , "Young Poisoner's Handbook"},
     WCHOICE_PLAIN,
     { { SK_DODGING, 1 }, { SK_STEALTH, 4 }, { SK_SPELLCASTING, 1}, 

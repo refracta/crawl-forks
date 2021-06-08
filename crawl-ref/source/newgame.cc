@@ -1106,11 +1106,11 @@ static job_group jobs_order[] =
     {
         "Hybrid",
         coord_def(3, 0), 21,
-        { JOB_CENTAUR, JOB_NAGA, JOB_MERFOLK, JOB_DEMIGOD, JOB_DEMONSPAWN, JOB_MUMMY }
+        { JOB_CENTAUR, JOB_NAGA, JOB_MERFOLK, JOB_VINE_STALKER, JOB_DEMIGOD, JOB_DEMONSPAWN, JOB_MUMMY }
     },
     {
         "Custom",
-        coord_def(3, 8), 20,
+        coord_def(3, 9), 20,
         { JOB_PRIEST , JOB_NOBLE }
     },
 };
@@ -1766,7 +1766,8 @@ static void _construct_weapon_menu(const newgame_def& ng,
         hbox->set_main_alignment(Widget::Align::STRETCH);
         string apt_text = "";
         int job_mod =                          ng.job == JOB_MUMMY      ? -2 :
-                      ng.job == JOB_DEMIGOD || ng.job == JOB_DEMONSPAWN ? -1 :
+                 ng.job == JOB_VINE_STALKER || ng.job == JOB_DEMIGOD 
+                                            || ng.job == JOB_DEMONSPAWN ? -1 :
                                                ng.job == JOB_MERFOLK    ?  1 :
                                                ng.job == JOB_CENTAUR    ?  3 : 0; 
 

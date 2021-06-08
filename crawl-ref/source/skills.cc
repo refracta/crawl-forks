@@ -2037,6 +2037,21 @@ int species_apt(skill_type skill, species_type species)
             mod = -2;
     }
 
+    if (you.char_class == JOB_VINE_STALKER)
+    {
+        if (skill == SK_FIGHTING || skill == SK_SHORT_BLADES || skill == SK_LONG_BLADES
+            || skill == SK_AXES_HAMMERS || skill == SK_MACES_STAVES || skill == SK_WHIPS_FLAILS
+            || skill == SK_SLINGS || skill == SK_BOWS || skill == SK_CROSSBOWS
+            || skill == SK_SHIELDS || skill == SK_EVOCATIONS || skill == SK_POLEARMS)
+        {
+            mod = -1;
+        }
+        else if (skill == SK_STEALTH)
+            mod = 3;
+        else if (skill == SK_ARMOUR || skill == SK_DODGING)
+            mod = -2;
+    }
+
     if (you.char_class == JOB_MERFOLK)
     {
         mod = 1;

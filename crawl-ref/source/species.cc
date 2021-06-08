@@ -546,6 +546,15 @@ void give_basic_mutations(species_type species)
     if (you.char_class == JOB_MERFOLK)
         you.mutation[MUT_MERFOLK_TAIL] = you.innate_mutation[MUT_MERFOLK_TAIL] = 1;
 
+    if (you.char_class == JOB_VINE_STALKER)
+    {
+        you.mutation[MUT_FANGS] = you.innate_mutation[MUT_FANGS] = 1;
+        you.mutation[MUT_MANA_SHIELD] = you.innate_mutation[MUT_MANA_SHIELD] = 1;
+        you.mutation[MUT_ANTIMAGIC_BITE] = you.innate_mutation[MUT_ANTIMAGIC_BITE] = 1;
+        you.mutation[MUT_NO_POTION_HEAL] = you.innate_mutation[MUT_NO_POTION_HEAL] = 1;
+        you.mutation[MUT_ROT_IMMUNITY] = you.innate_mutation[MUT_ROT_IMMUNITY] = 1;
+    }
+
     if ((you.char_class == JOB_CENTAUR || you.char_class == JOB_NAGA) && you_can_wear(EQ_BODY_ARMOUR))
     {
         const int deformed = min(you.innate_mutation[MUT_DEFORMED] + 1, mutation_max_levels(MUT_DEFORMED));
@@ -618,20 +627,29 @@ int species_exp_modifier(species_type species)
 // your current character's stats, so the use of you is fine.
 int species_hp_modifier(species_type species)
 {
+    int mod = 0;
+
+    if (you.char_class == JOB_VINE_STALKER)
+        mod = -3;
     if (you.char_class == JOB_MERFOLK)
-        return get_species_def(species).hp_mod - 1;
+        mod = -1;
     if (you.char_class == JOB_DEMIGOD || you.char_class == JOB_CENTAUR)
-        return get_species_def(species).hp_mod + 1;
+        mod = 1;
     if (you.char_class == JOB_NAGA)
-        return get_species_def(species).hp_mod + 2;
+        mod = 2;
+
     if (you.species == SP_LIGNIFITE)
-        return (-2 + div_round_up(you.experience_level, 5));
-    return get_species_def(species).hp_mod;
+        return (-2 + mod + div_round_up(you.experience_level, 5));
+
+    return max(get_species_def(species).hp_mod + mod, -6); // -6 min.
 }
 
 int species_mp_modifier(species_type species)
 {
-    return get_species_def(species).mp_mod;
+    int mod = 0;
+    if (you.char_class == JOB_VINE_STALKER)
+        mod = 2;
+    return get_species_def(species).mp_mod + mod;
 }
 
 int species_mr_modifier(species_type species)
