@@ -548,7 +548,8 @@ void give_basic_mutations(species_type species)
 
     if (you.char_class == JOB_VINE_STALKER)
     {
-        you.mutation[MUT_FANGS] = you.innate_mutation[MUT_FANGS] = 1;
+        if (!you.mutation[MUT_BEAK])
+            you.mutation[MUT_FANGS] = you.innate_mutation[MUT_FANGS] = 1;
         you.mutation[MUT_MANA_SHIELD] = you.innate_mutation[MUT_MANA_SHIELD] = 1;
         you.mutation[MUT_ANTIMAGIC_BITE] = you.innate_mutation[MUT_ANTIMAGIC_BITE] = 1;
         you.mutation[MUT_NO_POTION_HEAL] = you.innate_mutation[MUT_NO_POTION_HEAL] = 1;
@@ -589,6 +590,13 @@ void give_level_mutations(species_type species, int xp_level)
 
         if (xp_level == 13)
             perma_mutate(MUT_NECRO_ENHANCER, 2, "mummy growth");
+    }
+    if (you.char_class == JOB_VINE_STALKER)
+    {
+        if (xp_level == 4)
+            perma_mutate(MUT_REGENERATION, 1, "symbiont growth");
+        if (xp_level == 12)
+            perma_mutate(MUT_REGENERATION, 1, "symbiont growth");
     }
 
     // Ineligant, make something more refined if losing mutations with level becomes more common.
