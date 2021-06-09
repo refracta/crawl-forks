@@ -1393,6 +1393,11 @@ class AuxTentacleSpike: public AuxAttackType
 public:
     AuxTentacleSpike()
     : AuxAttackType(8, "pierce") { };
+
+    string get_name() const override
+    {
+        return "tentacle spike";
+    }
 };
 
 class AuxHeadbutt: public AuxAttackType
@@ -1400,13 +1405,6 @@ class AuxHeadbutt: public AuxAttackType
 public:
     AuxHeadbutt()
     : AuxAttackType(12, "headbutt") { };
-};
-
-class AuxPeck: public AuxAttackType
-{
-public:
-    AuxPeck()
-    : AuxAttackType(6, "peck") { };
 };
 
 class AuxTailslap: public AuxAttackType
@@ -1426,14 +1424,6 @@ public:
     }
 };
 
-// BCADDO: Remove this unused Aux type.
-class AuxPunch: public AuxAttackType
-{
-public:
-    AuxPunch()
-    : AuxAttackType(5, "bug") { };
-};
-
 class AuxBite: public AuxAttackType
 {
 public:
@@ -1442,16 +1432,14 @@ public:
 
     int get_damage() const override
     {
-        const int fang_damage = you.has_fangs() * 6;
+        int base_dam = (you.get_mutation_level(MUT_FANGS) || you.get_mutation_level(MUT_BEAK)) ? 6 : 0;
+
         if (you.get_mutation_level(MUT_ANTIMAGIC_BITE))
-            return fang_damage + div_rand_round(you.get_hit_dice(), 3);
+            return base_dam + div_rand_round(you.get_hit_dice(), 3);
 
         const int str_damage = div_rand_round(max(you.strength()-10, 0), 5);
 
-        if (you.get_mutation_level(MUT_ACIDIC_BITE))
-            return fang_damage + str_damage;
-
-        return fang_damage + str_damage;
+        return base_dam + str_damage;
     }
 
     int get_brand() const override
@@ -1463,6 +1451,13 @@ public:
             return SPWPN_ACID;
 
         return SPWPN_NORMAL;
+    }
+
+    string get_name() const override
+    {
+        if (you.get_mutation_level(MUT_BEAK))
+            return "peck";
+        return name;
     }
 };
 
@@ -1530,11 +1525,9 @@ static const AuxConstrict       AUX_CONSTRICT = AuxConstrict();
 static const AuxStaff           AUX_STAFF = AuxStaff();
 static const AuxStaffSlap       AUX_STAFFSLAP = AuxStaffSlap();
 static const AuxKick            AUX_KICK = AuxKick();
-static const AuxPeck            AUX_PECK = AuxPeck();
 static const AuxTentacleSpike   AUX_TENTACLE_SPIKE = AuxTentacleSpike();
 static const AuxHeadbutt        AUX_HEADBUTT = AuxHeadbutt();
 static const AuxTailslap        AUX_TAILSLAP = AuxTailslap();
-static const AuxPunch           AUX_PUNCH = AuxPunch();
 static const AuxBite            AUX_BITE = AuxBite();
 static const AuxPseudopods      AUX_PSEUDOPODS = AuxPseudopods();
 static const AuxTentacles       AUX_TENTACLES = AuxTentacles();
@@ -1552,9 +1545,7 @@ static const AuxAttackType* const aux_attack_types[] =
     &AUX_KICK,
     &AUX_TENTACLE_SPIKE,
     &AUX_HEADBUTT,
-    &AUX_PECK,
     &AUX_TAILSLAP,
-    &AUX_PUNCH,
     &AUX_BITE,
     &AUX_PSEUDOPODS,
     &AUX_TENTACLES,
@@ -4578,9 +4569,6 @@ bool melee_attack::_extra_aux_attack(unarmed_attack_type atk)
     case UNAT_TENTACLE_SPIKE:
         return you.get_mutation_level(MUT_TENTACLE_SPIKE) && x_chance_in_y(you.usable_tentacles(), 4);
 
-    case UNAT_PECK:
-        return you.get_mutation_level(MUT_BEAK) && !one_chance_in(3);
-
     case UNAT_HEADBUTT:
         return you.get_mutation_level(MUT_HORNS) && !you.wearing(EQ_HELMET, ARM_SKULL, true, false) && !one_chance_in(3);
 
@@ -4613,13 +4601,11 @@ bool melee_attack::_extra_aux_attack(unarmed_attack_type atk)
         return you.staff() && you.staff()->sub_type == STAFF_TRANSMUTATION && staff_damage(SK_TRANSMUTATIONS);
 
     case UNAT_BITE:
-        return you.get_mutation_level(MUT_ANTIMAGIC_BITE)
+        return you.get_mutation_level(MUT_BEAK) && !one_chance_in(3) 
+               || you.get_mutation_level(MUT_ANTIMAGIC_BITE)
                || (you.has_fangs()
                    || you.get_mutation_level(MUT_ACIDIC_BITE))
                    && x_chance_in_y(2, 5);
-
-    case UNAT_PUNCH:
-        return false;
 
     default:
         return false;
