@@ -580,7 +580,7 @@ item_def* place_monster_corpse(const monster& mons, bool silent, bool force)
         int x = max_corpse_chunks(mons.type);
         slimify_position(1 + x / 3 + random2(x / 2), mons.pos());
         if (!you_foodless())
-            lessen_hunger(CHUNK_BASE_NUTRITION / 3 * (1 + random2(x)), false);
+            lessen_hunger(CHUNK_BASE_NUTRITION / 15 * (1 + random2(x)), false);
         return nullptr;
     }
     // Don't attempt to place corpses within walls, either.
