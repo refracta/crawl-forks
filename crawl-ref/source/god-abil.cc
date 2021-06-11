@@ -90,6 +90,7 @@
  #include "rltiles/tiledef-main.h"
 #endif
 #include "timed-effects.h"
+#include "transform.h"
 #include "traps.h"
 #include "viewchar.h"
 #include "view.h"
@@ -4137,6 +4138,36 @@ bool dithmenos_shadow_step()
     return true;
 }
 
+static potion_type _amazing_potion_list[][4] =
+{
+    { POT_EXPERIENCE, NUM_POTIONS, NUM_POTIONS, NUM_POTIONS },
+    { POT_BENEFICIAL_MUTATION, NUM_POTIONS, NUM_POTIONS, NUM_POTIONS },
+    { POT_GAIN_STRENGTH, NUM_POTIONS, NUM_POTIONS, NUM_POTIONS },
+    { POT_GAIN_INTELLIGENCE, NUM_POTIONS, NUM_POTIONS, NUM_POTIONS },
+    { POT_GAIN_DEXTERITY, NUM_POTIONS, NUM_POTIONS, NUM_POTIONS },
+    { POT_EXPERIENCE, POT_BENEFICIAL_MUTATION, NUM_POTIONS, NUM_POTIONS },
+    { POT_GAIN_DEXTERITY, POT_GAIN_INTELLIGENCE, NUM_POTIONS, NUM_POTIONS },
+    { POT_GAIN_DEXTERITY, POT_GAIN_STRENGTH, NUM_POTIONS, NUM_POTIONS },
+    { POT_GAIN_INTELLIGENCE, POT_GAIN_STRENGTH, NUM_POTIONS, NUM_POTIONS },
+};
+
+static potion_type _bad_potion_list[][4] =
+{
+    { POT_LIGNIFY, NUM_POTIONS, NUM_POTIONS, NUM_POTIONS },
+    { POT_MUTATION, NUM_POTIONS, NUM_POTIONS, NUM_POTIONS },
+    { POT_DEGENERATION, NUM_POTIONS, NUM_POTIONS, NUM_POTIONS },
+    { POT_DECAY, NUM_POTIONS, NUM_POTIONS, NUM_POTIONS },
+    { POT_POISON, NUM_POTIONS, NUM_POTIONS, NUM_POTIONS },
+    { POT_AMBROSIA, NUM_POTIONS, NUM_POTIONS, NUM_POTIONS },
+    { POT_DEGENERATION, POT_POISON, NUM_POTIONS, NUM_POTIONS },
+    { POT_MUTATION, POT_DECAY, NUM_POTIONS, NUM_POTIONS },
+    { POT_MUTATION, POT_DEGENERATION, NUM_POTIONS, NUM_POTIONS },
+    { POT_AMBROSIA, POT_LIGNIFY, NUM_POTIONS, NUM_POTIONS },
+    { POT_AMBROSIA, POT_DEGENERATION, NUM_POTIONS, NUM_POTIONS },
+    { POT_DECAY, POT_SLOWING, NUM_POTIONS, NUM_POTIONS },
+    { POT_DEGENERATION, POT_SLOWING, NUM_POTIONS, NUM_POTIONS },
+};
+
 static potion_type _gozag_potion_list[][4] =
 {
     { POT_HEAL_WOUNDS, NUM_POTIONS, NUM_POTIONS, NUM_POTIONS },
@@ -4175,6 +4206,18 @@ static void _gozag_add_potions(CrawlVector &vec, potion_type *which)
             continue;
         }
         if (*which == POT_HASTE && you.stasis())
+            continue;
+        if (*which == POT_SLOWING && you.stasis())
+            continue;
+        if (*which == POT_LIGNIFY && !transform(40, transformation::tree, true, true))
+            continue;
+        if (*which == POT_BENEFICIAL_MUTATION && undead_mutation_rot(false))
+            continue;
+        if (*which == POT_AMBROSIA && you.clarity())
+            continue;
+        if (*which == POT_DECAY && you.res_rotting())
+            continue;
+        if (*which == POT_POISON && you.res_poison() >= 3)
             continue;
         // Don't add potions which are already in the list
         bool dup = false;
@@ -4225,6 +4268,7 @@ static int _gozag_potion_amount()
 bool gozag_potion_petition()
 {
     const int amt = _gozag_potion_amount();
+    const int bad = random2(amt);
     CrawlVector *pots[GOZAG_MAX_POTIONS];
     int prices[GOZAG_MAX_POTIONS];
 
@@ -4255,13 +4299,21 @@ bool gozag_potion_petition()
                 pots[i] = &you.props[key].get_vector();
 
                 ADD_POTIONS(*pots[i], _gozag_potion_list);
-                if (coinflip())
+                if (you.attribute[ATTR_GOZAG_FIRST_POTION] && i == bad && coinflip())
+                    ADD_POTIONS(*pots[i], _bad_potion_list);
+                else if (coinflip())
                     ADD_POTIONS(*pots[i], _gozag_potion_list);
+                else if (one_chance_in(200))
+                    ADD_POTIONS(*pots[i], _amazing_potion_list);
 
                 for (const CrawlStoreValue& store : *pots[i])
                 {
                     dummy.sub_type = store.get_int();
-                    prices[i] += item_value(dummy, true);
+                    if (is_bad_item(dummy) || is_dangerous_item(dummy))
+                        prices[i] -= item_value(dummy, true) * 2;
+                    else
+                        prices[i] += item_value(dummy, true);
+                    prices[i] = max(50, prices[i]);
                     dprf("%d", item_value(dummy, true));
                 }
                 dprf("pre: %d", prices[i]);

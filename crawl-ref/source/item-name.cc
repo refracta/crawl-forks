@@ -3490,7 +3490,7 @@ bool is_bad_item(const item_def &item, bool temp)
         }
     case OBJ_POTIONS:
         // Can't be bad if you can't use them.
-        if (you.undead_state(false) == US_UNDEAD)
+        if (temp && you.undead_state(temp) == US_UNDEAD)
             return false;
 
         switch (item.sub_type)
@@ -3585,6 +3585,10 @@ bool is_dangerous_item(const item_def &item, bool temp)
         }
 
     case OBJ_POTIONS:
+        // Can't be dangerous if you can't use them.
+        if (temp && you.undead_state(temp) == US_UNDEAD)
+            return false;
+
         switch (item.sub_type)
         {
         case POT_MUTATION:

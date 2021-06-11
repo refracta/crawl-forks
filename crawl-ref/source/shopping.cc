@@ -456,11 +456,9 @@ unsigned int item_value(item_def item, bool ident)
                 valued += 500;
                 break;
 
-#if TAG_MAJOR_VERSION == 34
             case POT_GAIN_DEXTERITY:
             case POT_GAIN_INTELLIGENCE:
             case POT_GAIN_STRENGTH:
-#endif
             case POT_BENEFICIAL_MUTATION:
                 valued += 350;
                 break;
@@ -504,26 +502,19 @@ unsigned int item_value(item_def item, bool ident)
                 valued += 25;
                 break;
 
-#if TAG_MAJOR_VERSION == 34
             case POT_POISON:
-            case POT_STRONG_POISON:
-            case POT_PORRIDGE:
             case POT_SLOWING:
             case POT_DECAY:
-            case POT_FLIGHT:
-#endif
             case POT_BLOOD:
 #if TAG_MAJOR_VERSION == 34
             case POT_DEGENERATION:
+            case POT_STRONG_POISON:
+            case POT_PORRIDGE:
+            case POT_FLIGHT:
+            case POT_BLOOD_COAGULATED:
 #endif
                 valued += 10;
                 break;
-
-#if TAG_MAJOR_VERSION == 34
-            case POT_BLOOD_COAGULATED:
-                valued += 5;
-                break;
-#endif
             }
         }
         break;

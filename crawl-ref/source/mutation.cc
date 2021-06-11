@@ -1523,6 +1523,21 @@ static void _unmutate_stats()
     _stat_mut_gain(false, orig_STR, orig_INT, orig_DEX);
 }
 
+static void _stat_potion(mutation_type type)
+{
+    const int gain = 3 + random2(4);
+    const int orig_STR = you.mutated_stats[STAT_STR];
+    const int orig_INT = you.mutated_stats[STAT_INT];
+    const int orig_DEX = you.mutated_stats[STAT_DEX];
+    const stat_type stat = type == MUT_STRONG ? STAT_STR :
+                           type == MUT_AGILE  ? STAT_DEX
+                                              : STAT_INT;
+
+    you.mutated_stats[stat] += gain;
+
+    _stat_mut_gain(true, orig_STR, orig_INT, orig_DEX);
+}
+
 static void _mutate_stats(mutation_type type)
 {
     int positive = 0;
@@ -2349,6 +2364,12 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
         break;
     }
 
+    if (mutat == MUT_STRONG || mutat == MUT_CLEVER || mutat == MUT_AGILE)
+    {
+        _stat_potion(mutat);
+        return true; // short-circuit due to not true mut.
+    }
+
     if (!is_valid_mutation(mutat))
         return false;
 
@@ -2417,6 +2438,7 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
         // no fail condition past this point, so it is safe to do bookkeeping
         if (mutat != MUT_STATS)
             you.mutation[mutat]++;
+
         if (mutclass == MUTCLASS_TEMPORARY)
         {
             // do book-keeping for temporary mutations

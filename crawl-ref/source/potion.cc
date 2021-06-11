@@ -931,9 +931,10 @@ public:
         static PotionDegeneration inst; return inst;
     }
 
-    bool effect(bool=true, int=40, bool=true) const override
+    bool effect(bool=true, int=40, bool is_potion =true) const override
     {
-        mpr("There was something very wrong with that liquid.");
+        if (is_potion)
+            mpr("There was something very wrong with that liquid.");
         bool success = false;
         for (int i = 0; i < NUM_STATS; ++i)
             if (lose_stat(static_cast<stat_type>(i), 1 + random2(3)))
@@ -949,8 +950,6 @@ public:
     }
 };
 
-// Removed potions
-#if TAG_MAJOR_VERSION == 34
 class PotionDecay : public PotionEffect
 {
 private:
@@ -975,6 +974,7 @@ public:
     }
 };
 
+#if TAG_MAJOR_VERSION == 34
 class PotionBloodCoagulated : public PotionEffect
 {
 private:
@@ -1018,6 +1018,7 @@ public:
         return true;
     }
 };
+#endif
 
 class PotionGainStrength : public PotionEffect
 {
@@ -1030,10 +1031,10 @@ public:
         static PotionGainStrength inst; return inst;
     }
 
-    bool effect(bool=true, int=40, bool=true) const override
+    bool effect(bool=true, int=40, bool is_potion = true) const override
     {
         return mutate(MUT_STRONG, "potion of gain strength",
-                      true, false, false, true);
+                      true, !is_potion, !is_potion, true);
     }
 
     bool quaff(bool was_known) const override
@@ -1058,10 +1059,10 @@ public:
         static PotionGainDexterity inst; return inst;
     }
 
-    bool effect(bool=true, int=40, bool=true) const override
+    bool effect(bool=true, int=40, bool is_potion = true) const override
     {
         return mutate(MUT_AGILE, "potion of gain dexterity",
-                      true, false, false, true);
+                      true, !is_potion, !is_potion, true);
     }
 
     bool quaff(bool was_known) const override
@@ -1086,10 +1087,10 @@ public:
         static PotionGainIntelligence inst; return inst;
     }
 
-    bool effect(bool=true, int=40, bool=true) const override
+    bool effect(bool=true, int=40, bool is_potion = true) const override
     {
-        return mutate(MUT_STRONG, "potion of gain intelligence",
-                      true, false, false, true);
+        return mutate(MUT_CLEVER, "potion of gain intelligence",
+                      true, !is_potion, !is_potion, true);
     }
 
     bool quaff(bool was_known) const override
@@ -1103,6 +1104,7 @@ public:
     }
 };
 
+#if TAG_MAJOR_VERSION == 34
 class PotionPorridge : public PotionEffect
 {
 private:
@@ -1140,6 +1142,7 @@ public:
         return true;
     }
 };
+#endif
 
 class PotionWater : public PotionEffect
 {
@@ -1186,6 +1189,7 @@ public:
     }
 };
 
+#if TAG_MAJOR_VERSION == 34
 class PotionRestoreAbilities : public PotionEffect
 {
 private:
@@ -1241,16 +1245,12 @@ static const PotionEffect* potion_effects[] =
     &PotionMight::instance(),
     &PotionBrilliance::instance(),
     &PotionAgility::instance(),
-#if TAG_MAJOR_VERSION == 34
     &PotionGainStrength::instance(),
     &PotionGainDexterity::instance(),
     &PotionGainIntelligence::instance(),
-#endif
     &PotionFlight::instance(),
-#if TAG_MAJOR_VERSION == 34
     &PotionPoison::instance(),
     &PotionSlowing::instance(),
-#endif
     &PotionCancellation::instance(),
     &PotionAmbrosia::instance(),
     &PotionInvisibility::instance(),
@@ -1258,10 +1258,8 @@ static const PotionEffect* potion_effects[] =
     &PotionPorridge::instance(),
 #endif
     &PotionDegeneration::instance(),
-#if TAG_MAJOR_VERSION == 34
     &PotionDecay::instance(),
     &PotionWater::instance(),
-#endif
     &PotionExperience::instance(),
     &PotionMagic::instance(),
 #if TAG_MAJOR_VERSION == 34
