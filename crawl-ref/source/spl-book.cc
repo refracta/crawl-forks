@@ -345,11 +345,8 @@ bool player_can_memorise(const item_def &book)
     for (spell_type stype : spells_in_book(book))
     {
         // Easiest spell already too difficult?
-        if (spell_difficulty(stype) > you.experience_level
-            || player_spell_levels() < spell_levels_required(stype))
-        {
+        if (player_spell_levels() < spell_levels_required(stype))
             return false;
-        }
 
         if (!you.has_spell(stype))
             return true;
@@ -383,8 +380,7 @@ bool player_has_available_spells()
     for (const spell_type spell : available_spells)
     {
         if (!you.has_spell(spell) && you_can_memorise(spell)
-            && spell_difficulty(spell) <= avail_slots
-            && spell_difficulty(spell) <= you.experience_level)
+            && spell_difficulty(spell) <= avail_slots)
         {
             return true;
         }
@@ -409,7 +405,6 @@ static spell_list _get_spell_list(bool just_check = false,
     int num_known      = 0;
     int num_misc       = 0;
     int num_restricted = 0;
-    int num_low_xl     = 0;
     int num_low_levels = 0;
     int num_memable    = 0;
 
@@ -436,21 +431,19 @@ static spell_list _get_spell_list(bool just_check = false,
             // don't filter out spells that are too high-level for us; we
             // probably still want to see them. (since that's temporary.)
 
-            if (mem_spells.back().difficulty > you.experience_level)
-                num_low_xl++;
-            else if (avail_slots < mem_spells.back().level)
+            if (avail_slots < mem_spells.back().level)
                 num_low_levels++;
             else
                 num_memable++;
         }
     }
 
-    const int total = num_known + num_misc + num_low_xl + num_low_levels
+    const int total = num_known + num_misc + num_low_levels
                       + num_restricted;
 
     const char* unavail_reason;
 
-    if (num_memable || num_low_levels > 0 || num_low_xl > 0)
+    if (num_memable || num_low_levels)
         unavail_reason = "";
     else if (num_known == total)
         unavail_reason = "You already know all available spells.";

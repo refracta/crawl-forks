@@ -1192,6 +1192,14 @@ static const mutation_def mut_data[] =
   {"Your mouth feels dry.", "", ""},
 },
 
+{ MUT_ANCIENT_WISDOM, 0, 1, mutflag::good, true,
+  "ancient wisdom",
+
+  { "You can memorise 50% more levels worth of spells.\nYou gain random stats at level up more slowly, but gain an extra +1 intelligence each time.", "", "" },
+  { "", "", "" },
+  { "", "", "" },
+},
+
 { MUT_ANTIMAGIC_BITE, 0, 1, mutflag::good, true,
   "antimagic bite",
 

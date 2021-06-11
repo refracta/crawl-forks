@@ -525,6 +525,7 @@ void give_basic_mutations(species_type species)
         mummify();
         you.mutation[MUT_NECRO_ENHANCER] = you.innate_mutation[MUT_NECRO_ENHANCER] = 1;
         you.mutation[MUT_HEAT_VULNERABILITY] = you.innate_mutation[MUT_HEAT_VULNERABILITY] = 1;
+        you.mutation[MUT_ANCIENT_WISDOM] = you.innate_mutation[MUT_ANCIENT_WISDOM] = 1;
     }
 
     if (you.char_class == JOB_CENTAUR)
@@ -690,7 +691,10 @@ void species_stat_gain(species_type species)
     if (you.char_class == JOB_MUMMY)
     {
         if (you.experience_level % (sd.how_often + 1) == 0)
+        {
             modify_stat(*random_iterator(sd.level_stats), 1, false);
+            modify_stat(STAT_INT, 1, false);
+        }
     }
     else if (sd.level_stats.size() > 0 && you.experience_level % sd.how_often == 0)
         modify_stat(*random_iterator(sd.level_stats), 1, false);

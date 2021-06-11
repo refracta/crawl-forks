@@ -3067,6 +3067,34 @@ static void tag_read_you(reader &th)
         you.mutation[MUT_STATS] = 0;
     }
 
+    // And this:
+    if (you.char_class == JOB_MUMMY && !you.mutation[MUT_ANCIENT_WISDOM])
+    {
+        you.mutation[MUT_ANCIENT_WISDOM] = you.innate_mutation[MUT_ANCIENT_WISDOM] = 1;
+
+        const species_def& sd = get_species_def(you.species);
+
+        modify_stat(STAT_STR, 1, true);
+
+        int minimize = 5;
+
+        for (int i = 0; i <= 5; ++i)
+        {
+            if (you.base_stats[STAT_DEX] > 1)
+            {
+                modify_stat(STAT_DEX, -1, true);
+                minimize--;
+            }
+        }
+
+        for (int i = 0; i <= (4 - minimize); i++)
+            modify_stat(STAT_INT, 1, true);
+
+        int num_points = you.experience_level / (sd.how_often + 1);
+        for (int i = 0; i < num_points; ++i)
+            modify_stat(STAT_INT, 1, true);
+    }
+
     // No minor version needed: all old felids should get MUT_PAWS.
     if (you.species == SP_FELID && you.innate_mutation[MUT_PAWS] < 1)
         you.mutation[MUT_PAWS] = you.innate_mutation[MUT_PAWS] = 1;

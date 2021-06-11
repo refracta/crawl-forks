@@ -2031,25 +2031,23 @@ int species_apt(skill_type skill, species_type species)
     // BCADDO: This is getting to the point it should be data-ified O_O;
     if (you.char_class == JOB_MUMMY)
     {
-        if (skill == SK_NECROMANCY || skill == SK_SPELLCASTING)
+        if (skill == SK_SPELLCASTING || skill == SK_INVOCATIONS)
             mod = 2;
-        else if (skill != SK_FIGHTING)
+        else if (skill == SK_NECROMANCY)
+            mod = 3;
+        else if (!is_magic_skill(skill) && skill != SK_EVOCATIONS)
             mod = -2;
+
     }
 
     if (you.char_class == JOB_VINE_STALKER)
     {
-        if (skill == SK_FIGHTING || skill == SK_SHORT_BLADES || skill == SK_LONG_BLADES
-            || skill == SK_AXES_HAMMERS || skill == SK_MACES_STAVES || skill == SK_WHIPS_FLAILS
-            || skill == SK_SLINGS || skill == SK_BOWS || skill == SK_CROSSBOWS
-            || skill == SK_SHIELDS || skill == SK_EVOCATIONS || skill == SK_POLEARMS)
-        {
-            mod = -1;
-        }
-        else if (skill == SK_STEALTH)
+        if (skill == SK_STEALTH)
             mod = 3;
         else if (skill == SK_ARMOUR || skill == SK_DODGING)
             mod = -2;
+        else if (!is_magic_skill(skill) && skill != SK_EVOCATIONS)
+            mod = -1;
     }
 
     if (you.char_class == JOB_MERFOLK)

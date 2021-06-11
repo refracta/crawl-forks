@@ -311,8 +311,8 @@ static const map<job_type, job_def> job_data =
 
 { JOB_MUMMY,{
     "Mu", "Mummy",
-    2, 7, 4,
-    { SP_GNOLL, SP_SPRIGGAN, SP_DRACONIAN },
+    3, 11, -1,
+    { SP_GNOLL, SP_SPRIGGAN, SP_DRACONIAN, SP_DEEP_ELF, SP_TENGU },
     { "leather armour" , "book of necromancy"},
     WCHOICE_PLAIN,
     { { SK_DODGING, 3 } ,{ SK_STEALTH, 2 } ,{ SK_WEAPON,2 } , {SK_SPELLCASTING, 2} , {SK_NECROMANCY,3} },

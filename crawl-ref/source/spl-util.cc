@@ -1484,11 +1484,9 @@ int spell_highlight_by_utility(spell_type spell, int default_colour,
         return COL_FORBIDDEN;
     }
     // Grey out spells for which you lack experience or spell levels.
-    if (memcheck && (spell_difficulty(spell) > you.experience_level
-        || player_spell_levels() < spell_levels_required(spell)))
-    {
+    if (memcheck && player_spell_levels() < spell_levels_required(spell))
         return COL_INAPPLICABLE;
-    }
+
     // Check if the spell is considered useless based on your current status
     if (spell_is_useless(spell, transient))
         return COL_USELESS;

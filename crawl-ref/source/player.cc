@@ -1578,7 +1578,12 @@ int player_hunger_rate()
  */
 int player_total_spell_levels()
 {
-    return you.experience_level - 1 + you.skill(SK_SPELLCASTING, 2, true);
+    int levels = you.experience_level - 1 + you.skill(SK_SPELLCASTING, 2, true);
+
+    if (you.get_mutation_level(MUT_ANCIENT_WISDOM))
+        levels = div_round_up(levels * 3, 2);
+
+    return levels;
 }
 
 /**
@@ -1587,7 +1592,7 @@ int player_total_spell_levels()
  */
 int player_spell_levels()
 {
-    int sl = min(player_total_spell_levels(), 99);
+    int sl = player_total_spell_levels();
 
     bool LRD = false;
     bool SMD = false;

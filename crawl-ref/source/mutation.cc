@@ -1868,6 +1868,8 @@ static bool _is_suppressable_mutation(mutation_type mut)
 {
     switch (mut)
     {
+    // If mummy becomes semi-living it's +Int shouldn't be killed.
+    case MUT_ANCIENT_WISDOM:
     // Not making a fairy solid
     case MUT_INSUBSTANTIAL:
     // Not getting rid of the racial gimmick
