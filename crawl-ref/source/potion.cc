@@ -28,6 +28,7 @@
 #include "prompt.h"
 #include "religion.h"
 #include "skill-menu.h"
+#include "spl-selfench.h"
 #include "spl-goditem.h"
 #include "stringutil.h"
 #include "transform.h"
@@ -379,27 +380,56 @@ public:
     }
 };
 
-#if TAG_MAJOR_VERSION == 34
-class PotionFlight : public PotionEffect
+class PotionAmnesia : public PotionEffect
 {
 private:
-    PotionFlight() : PotionEffect(POT_FLIGHT) { }
-    DISALLOW_COPY_AND_ASSIGN(PotionFlight);
+    PotionAmnesia() : PotionEffect(POT_AMNESIA) { }
+    DISALLOW_COPY_AND_ASSIGN(PotionAmnesia);
 public:
-    static const PotionFlight &instance()
+    static const PotionAmnesia &instance()
     {
-        static PotionFlight inst; return inst;
+        static PotionAmnesia inst; return inst;
     }
 
-    bool can_quaff(string */*reason*/) const override
+    bool can_quaff(string *reason = nullptr) const override
     {
-        return false;
+        if (you.spell_no == 0)
+        {
+            if (reason)
+                *reason = "You have no spells to forget!";
+            return false;
+        }
+        return true;
+    }
+
+    bool quaff(bool = true) const override
+    {
+        if (!check_known_quaff())
+            return false;
+
+        if (effect())
+            return true;
+        else
+        {
+            canned_msg(MSG_OK);
+            return false;
+        }
     }
 
     bool effect(bool=true, int=40, bool=true) const override
     {
-        mpr("The removed item fails to make you fly anymore");
-        return false;
+        bool done;
+        bool aborted;
+
+        do
+        {
+            aborted = cast_selective_amnesia("The tainted water feels like an acid dripping down your brainstem.") == -1;
+            done = !aborted
+                || crawl_state.seen_hups
+                || yesno("Really abort?", true, 0);
+        } while (!done);
+
+        return !aborted;
     }
 };
 
@@ -414,9 +444,10 @@ public:
         static PotionPoison inst; return inst;
     }
 
-    bool effect(bool=true, int=40, bool=true) const override
+    bool effect(bool=true, int=40, bool is_potion=true) const override
     {
-        mprf(MSGCH_WARN, "That liquid tasted very nasty...");
+        if (is_potion)
+            mprf(MSGCH_WARN, "That liquid tasted very nasty...");
         return poison_player(10 + random2avg(15, 2), "", "a potion of poison");
     }
 
@@ -429,7 +460,6 @@ public:
         return true;
     }
 };
-#endif
 
 class PotionCancellation : public PotionEffect
 {
@@ -1248,7 +1278,7 @@ static const PotionEffect* potion_effects[] =
     &PotionGainStrength::instance(),
     &PotionGainDexterity::instance(),
     &PotionGainIntelligence::instance(),
-    &PotionFlight::instance(),
+    &PotionAmnesia::instance(),
     &PotionPoison::instance(),
     &PotionSlowing::instance(),
     &PotionCancellation::instance(),

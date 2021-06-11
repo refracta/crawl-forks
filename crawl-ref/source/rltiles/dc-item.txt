@@ -945,12 +945,10 @@ i-haste POT_HASTE
 i-might POT_MIGHT
 i-brilliance POT_BRILLIANCE
 i-agility POT_AGILITY
-# please remove these 3 when TAG_MAJOR_VERSION is bumped
-i-gain-strength POT_REMOVEME2
-i-gain-dexterity POT_REMOVEME3
-i-gain-intelligence POT_REMOVEME4
-i-flight POT_FLIGHT
-# please remove POT_POISON when TAG_MAJOR_VERSION is bumped
+i-gain-strength POT_GAIN_STRENGTH
+i-gain-dexterity POT_GAIN_DEXTERITY
+i-gain-intelligence POT_GAIN_INTELLIGENCE
+i-amnesia POT_AMNESIA
 i-poison POT_POISON
 i-slowing POT_SLOWING
 i-cancel POT_CANCELLATION
@@ -959,8 +957,8 @@ i-invisibility POT_INVISIBILITY
 # Remove porridge when TAG_MAJOR_VERSION > 34
 i-porridge POT_PORRIDGE
 i-degeneration POT_DEGENERATION
-# please remove these 2 when TAG_MAJOR_VERSION is bumped
-i-decay POT_REMOVEME5
+i-decay POT_DECAY
+# please remove when TAG_MAJOR_VERSION is bumped
 i-confusion POT_REMOVE_ME
 i-experience POT_EXPERIENCE
 i-magic POT_MAGIC

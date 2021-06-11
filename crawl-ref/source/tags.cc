@@ -5034,6 +5034,12 @@ void unmarshallItem(reader &th, item_def &item)
     if (item.is_type(OBJ_JEWELLERY, RING_CHAOS))
         item.sub_type = AMU_CHAOS;
 
+    if (item.is_type(OBJ_SCROLLS, SCR_AMNESIA))
+    {
+        item.base_type = OBJ_POTIONS;
+        item.sub_type  = POT_AMNESIA;
+    }
+
     if (th.getMinorVersion() < TAG_MINOR_CONSUM_APPEARANCE)
     {
         if (item.base_type == OBJ_POTIONS)

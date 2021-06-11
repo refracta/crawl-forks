@@ -3756,8 +3756,8 @@ static bool _is_cancellable_scroll(scroll_type scroll)
 {
     return    scroll == SCR_BLINKING
            || scroll == SCR_ENCHANT
-           || scroll == SCR_AMNESIA
 #if TAG_MAJOR_VERSION == 34
+           || scroll == SCR_AMNESIA
            || scroll == SCR_REMOVE_CURSE
            || scroll == SCR_IDENTIFY
            || scroll == SCR_CURSE_ARMOUR
@@ -3857,15 +3857,15 @@ string cannot_read_item_reason(const item_def &item)
         case SCR_TELEPORTATION:
             return you.no_tele_reason(false, item.sub_type == SCR_BLINKING);
 
+        case SCR_ENCHANT:
+            return _no_items_reason(OSEL_ENCHANTABLE_ITEM, true);
+
+#if TAG_MAJOR_VERSION == 34
         case SCR_AMNESIA:
             if (you.spell_no == 0)
                 return "You have no spells to forget!";
             return "";
 
-        case SCR_ENCHANT:
-            return _no_items_reason(OSEL_ENCHANTABLE_ITEM, true);
-
-#if TAG_MAJOR_VERSION == 34
         case SCR_REMOVE_CURSE:
             return _no_items_reason(OSEL_CURSED_WORN);
 
@@ -4317,8 +4317,8 @@ void read_scroll(item_def& scroll)
         && which_scroll != SCR_ENCHANT_WEAPON
         && which_scroll != SCR_RECHARGING
         && which_scroll != SCR_IDENTIFY
-#endif
         && which_scroll != SCR_AMNESIA)
+#endif
     {
         mprf("It %s a %s.",
              scroll.quantity < prev_quantity ? "was" : "is",

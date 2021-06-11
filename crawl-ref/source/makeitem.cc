@@ -1711,14 +1711,13 @@ static void _generate_scroll_item(item_def& item, int force_type,
         // _is_boring_item). Otherwise just weighted-choose a scroll.
         do
         {
-            // total weight:    574
-            //                  474  in sprint
+            // total weight:    550
+            //                  450  in sprint
             item.sub_type = random_choose_weighted(
-                112, SCR_RANDOM_USELESSNESS,
+                143, SCR_RANDOM_USELESSNESS,
                  // [Cha] don't generate teleportation scrolls if in sprint
                 100, (crawl_state.game_is_sprint() ? NUM_SCROLLS
                                                    : SCR_TELEPORTATION),
-                 45, SCR_AMNESIA,
                  70, SCR_ENCHANT,
                  40, SCR_MAGIC_MAPPING,
                  32, SCR_FEAR,

@@ -730,23 +730,21 @@ const char* potion_type_name(int potiontype)
     case POT_MIGHT:             return "might";
     case POT_AGILITY:           return "agility";
     case POT_BRILLIANCE:        return "brilliance";
-#if TAG_MAJOR_VERSION == 34
     case POT_GAIN_STRENGTH:     return "gain strength";
     case POT_GAIN_DEXTERITY:    return "gain dexterity";
     case POT_GAIN_INTELLIGENCE: return "gain intelligence";
+#if TAG_MAJOR_VERSION == 34
     case POT_STRONG_POISON:     return "strong poison";
     case POT_PORRIDGE:          return "porridge";
-    case POT_SLOWING:           return "slowing";
-    case POT_FLIGHT:            return "flight";
-    case POT_POISON:            return "poison";
 #endif
+    case POT_SLOWING:           return "slowing";
+    case POT_AMNESIA:           return "amnesia";
+    case POT_POISON:            return "poison";
     case POT_CANCELLATION:      return "cancellation";
     case POT_AMBROSIA:          return "ambrosia";
     case POT_INVISIBILITY:      return "invisibility";
-#if TAG_MAJOR_VERSION == 34
     case POT_DEGENERATION:      return "degeneration";
     case POT_DECAY:             return "decay";
-#endif
     case POT_EXPERIENCE:        return "experience";
     case POT_MAGIC:             return "magic";
 #if TAG_MAJOR_VERSION == 34
@@ -781,13 +779,13 @@ static const char* scroll_type_name(int scrolltype)
     case SCR_MAGIC_MAPPING:      return "magic mapping";
     case SCR_FOG:                return "fog";
     case SCR_ACQUIREMENT:        return "acquirement";
-    case SCR_BLESS_ITEM:       return "bless item";
+    case SCR_BLESS_ITEM:         return "bless item";
     case SCR_HOLY_WORD:          return "holy word";
     case SCR_VULNERABILITY:      return "vulnerability";
     case SCR_SILENCE:            return "silence";
-    case SCR_AMNESIA:            return "amnesia";
     case SCR_RANDOM_USELESSNESS: return "random uselessness";
 #if TAG_MAJOR_VERSION == 34
+    case SCR_AMNESIA:            return "amnesia";
     case SCR_IDENTIFY:           return "identify";
     case SCR_REMOVE_CURSE:       return "old remove curse";
     case SCR_ENCHANT_WEAPON:     return "old enchant weapon";
@@ -3698,8 +3696,6 @@ bool is_useless_item(const item_def &item, bool temp)
                    || player_in_branch(BRANCH_GAUNTLET);
         case SCR_BLINKING:
             return you.get_mutation_level(MUT_STASIS);
-        case SCR_AMNESIA:
-            return you_worship(GOD_TROG);
         case SCR_ENCHANT:
             return ((you.species == SP_FELID || you.species == SP_FAIRY) && you.get_mutation_level(MUT_NO_ARTIFICE));
         case SCR_SUMMONING:
@@ -3757,12 +3753,10 @@ bool is_useless_item(const item_def &item, bool temp)
         case POT_GAIN_INTELLIGENCE:
         case POT_GAIN_DEXTERITY:
             return !you.can_safely_mutate();
+        case POT_AMNESIA:
+            return you_worship(GOD_TROG);
 
 #if TAG_MAJOR_VERSION == 34
-        case POT_FLIGHT:
-            return you.permanent_flight()
-                   || you.racial_permanent_flight(); // BCADDO: These are redundant . . . 
-
         case POT_PORRIDGE:
             return you.get_mutation_level(MUT_CARNIVOROUS) > 0;
         case POT_BLOOD_COAGULATED:

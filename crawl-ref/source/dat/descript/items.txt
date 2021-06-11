@@ -985,10 +985,11 @@ reader choosing the type of item to be created. The item produced will be
 heavily biased towards something fitting the reader's skills, and also towards
 gear that hasn't been seen yet, but, alas, nothing is guaranteed.
 %%%%
-scroll of amnesia
+potion of amnesia
 
-A scroll that allows its reader to selectively erase one spell from memory to
-recapture the magical energy bound up with it.
+Potion of water from the River Lethe deep within the underworld. It embues a 
+deep forgetfulness upon the drinker, which can be channeled to unweave the memory 
+of a single spell to open one's mind to learning new spells.
 %%%%
 scroll of bless item
 

@@ -103,7 +103,7 @@ ORIENT:  encompass
 KFEAT:   ABCDE = .
 COLOUR:  dABCDEe = lightblue
 FTILE:   dABCDEe = tutorial_pad
-ITEM:    scroll of amnesia ident:type
+ITEM:    potion of amnesia ident:type
 ITEM:    randbook numspells:1 spells:animate_dead title:Necromancy_for_Newbies owner:player
 ITEM:    never_decay bat skeleton / never_decay goblin; nothing skeleton
 ITEM:    never_decay ball python skeleton / never_decay jackal skeleton

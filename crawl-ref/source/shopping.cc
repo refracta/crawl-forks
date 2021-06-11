@@ -479,6 +479,7 @@ unsigned int item_value(item_def item, bool ident)
                 valued += 80;
                 break;
 
+            case POT_AMNESIA:
             case POT_BERSERK_RAGE:
             case POT_HEAL_WOUNDS:
 #if TAG_MAJOR_VERSION == 34
@@ -506,11 +507,10 @@ unsigned int item_value(item_def item, bool ident)
             case POT_SLOWING:
             case POT_DECAY:
             case POT_BLOOD:
-#if TAG_MAJOR_VERSION == 34
             case POT_DEGENERATION:
+#if TAG_MAJOR_VERSION == 34
             case POT_STRONG_POISON:
             case POT_PORRIDGE:
-            case POT_FLIGHT:
             case POT_BLOOD_COAGULATED:
 #endif
                 valued += 10;
@@ -563,7 +563,6 @@ unsigned int item_value(item_def item, bool ident)
                 valued += 75;
                 break;
 
-            case SCR_AMNESIA:
             case SCR_FEAR:
             case SCR_IMMOLATION:
             case SCR_NOISE:
@@ -577,6 +576,7 @@ unsigned int item_value(item_def item, bool ident)
 
             case SCR_FOG:
 #if TAG_MAJOR_VERSION == 34
+            case SCR_AMNESIA:
             case SCR_IDENTIFY:
             case SCR_CURSE_ARMOUR:
             case SCR_CURSE_WEAPON:
@@ -585,9 +585,7 @@ unsigned int item_value(item_def item, bool ident)
                 valued += 20;
                 break;
 
-#if TAG_MAJOR_VERSION == 34
             case SCR_RANDOM_USELESSNESS:
-#endif
                 valued += 10;
                 break;
             }
