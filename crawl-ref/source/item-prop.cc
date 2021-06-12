@@ -906,6 +906,7 @@ const set<pair<object_class_type, int> > removed_items =
     { OBJ_SCROLLS,   SCR_ENCHANT_WEAPON_III },
     { OBJ_SCROLLS,   SCR_RECHARGING},
     { OBJ_SCROLLS,   SCR_REMOVE_CURSE},
+    { OBJ_SCROLLS,   SCR_AMNESIA},
     { OBJ_WANDS,     WAND_MAGIC_DARTS_REMOVED },
     { OBJ_WANDS,     WAND_FROST_REMOVED },
     { OBJ_WANDS,     WAND_FIRE_REMOVED },

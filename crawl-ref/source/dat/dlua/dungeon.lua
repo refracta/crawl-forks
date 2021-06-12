@@ -653,8 +653,8 @@ dgn.good_scrolls = [[
     w:22  scroll of enchantment no_pickup q:2 /
     w:33  scroll of magic mapping no_pickup /
     w:22  scroll of magic mapping no_pickup q:2 /
-    w:33  scroll of amnesia no_pickup /
-    w:18  scroll of amnesia no_pickup q:2 /
+    w:33  potion of amnesia no_pickup /
+    w:18  potion of amnesia no_pickup q:2 /
     w:33  scroll of holy word no_pickup q:1 /
     w:22  scroll of holy word no_pickup q:2 /
     w:33  scroll of silence no_pickup q:1 /

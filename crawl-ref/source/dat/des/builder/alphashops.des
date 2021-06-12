@@ -60,7 +60,7 @@
       if s == "A" then i = { "arbalest", "book of alchemy", "book of air",
        "manual of air magic", "book of annihilations",
        "potion of agility", "potion of ambrosia", "scroll of acquirement q:1",
-       "scroll of amnesia", "staff of air", "ring of attention",
+       "potion of amnesia", "staff of air", "ring of attention",
        "manual of axes & hammers", "manual of armour", "wand of acid",
        "acid dragon scales", "scroll of attention" }
 

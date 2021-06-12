@@ -623,7 +623,7 @@ SUBVAULT: U : equipment_1
 # Initial consumables
 KITEM: a = ration q:8
 KITEM: b = scroll of summoning ident:all q:1, \
-       scroll of amnesia q:5 ident:all, \
+       potion of amnesia q:5 ident:all, \
        scroll of bless item ident:all, \
        scroll of vulnerability q:2 ident:all
 KITEM: c = crystal ball of energy ident:all
