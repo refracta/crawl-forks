@@ -30,7 +30,7 @@ mutations as they grow.
 %%%%
 Draconian
 
-Draconians are harsh inflexible warriors. When reaching level 7 and develop a colour. 
+Draconians are harsh inflexible warriors. When reaching level 7, they develop a colour. 
 They have difficulty learning skills other than those they are bred to specialize in
 and these specialties are a mystery until a few levels into their maturity.
 %%%%
