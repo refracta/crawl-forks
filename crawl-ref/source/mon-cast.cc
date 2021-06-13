@@ -3582,9 +3582,11 @@ static void _order(monster *mons)
         else
         {
             temp_change_terrain(it, DNGN_FLOOR, INFINITE_DURATION, TERRAIN_CHANGE_IMPRISON, mons);
+#ifdef USE_TILE
             env.tile_flv(it).floor_idx =
                 store_tilename_get_index("floor_limestone");
             env.tile_flv(it).floor = TILE_FLOOR_LIMESTONE;
+#endif // USE_TILE
         }
     }
 
