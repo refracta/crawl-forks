@@ -3101,6 +3101,7 @@ static void tag_read_you(reader &th)
         if (you.suppressed_mutation[i] && you.temp_mutation[i])
         {
             you.suppressed_mutation[i] = you.temp_mutation[i] = 0;
+            you.mutation[i]--;
             you.attribute[ATTR_TEMP_MUTATIONS]--;
         }
     }
