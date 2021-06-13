@@ -48,6 +48,7 @@
 
 using namespace ui;
 
+static void _skill_rescale();
 static bool _delete_single_mutation_level(mutation_type mutat, const string &reason, bool transient, bool innate = false);
 static bool _post_loss_effects(mutation_type mutat, bool temp = false);
 static void _transpose_gear();
@@ -210,6 +211,8 @@ static int _mut_weight(const mutation_def &mut, mutflag use, bool temp = false)
         case mutflag::bad:
             if (mut.mutation == MUT_SUPPRESSION)
                 return _suppress_weight(temp);
+            if (mut.mutation == MUT_DEFORMED && you.get_mutation_level(MUT_DEFORMED))
+                return 3;
             // fallthrough
         case mutflag::good:
         default:
@@ -1038,12 +1041,18 @@ static bool _accept_mutation(mutation_type mutat, bool ignore_weight, bool temp)
     if (temp && mutat == MUT_STATS)
         return false;
 
+    if (temp && you.suppressed_mutation[mutat])
+        return false;
+
     if (physiology_mutation_conflict(mutat))
         return false;
 
     const mutation_def& mdef = _get_mutation_def(mutat);
 
     if (you.get_base_mutation_level(mutat) >= mdef.levels)
+        return false;
+
+    if (you.get_base_mutation_level(mutat) >= you.get_base_mutation_level(mutat, true, false, false))
         return false;
 
     if (ignore_weight)
@@ -1879,6 +1888,27 @@ static string _drac_enhancer_msg(int type)
     return ostr.str();
 }
 
+static void _skill_rescale()
+{
+    uint8_t saved_skills[NUM_SKILLS];
+    for (skill_type sk = SK_FIRST_SKILL; sk < NUM_SKILLS; ++sk)
+    {
+        saved_skills[sk] = you.skills[sk];
+        check_skill_level_change(sk, false);
+    }
+
+    // Produce messages about skill increases/decreases. We
+    // restore one skill level at a time so that at most the
+    // skill being checked is at the wrong level.
+    for (skill_type sk = SK_FIRST_SKILL; sk < NUM_SKILLS; ++sk)
+    {
+        you.skills[sk] = saved_skills[sk];
+        check_skill_level_change(sk);
+    }
+
+    redraw_screen();
+}
+
 static bool _is_suppressable_mutation(mutation_type mut)
 {
     switch (mut)
@@ -1941,6 +1971,10 @@ static void _post_gain_effects(mutation_type mutat)
     // Do post-mutation effects.
     switch (mutat)
     {
+    case MUT_UNSKILLED:
+        _skill_rescale();
+        break;
+
     case MUT_FRAIL:
     case MUT_ROBUST:
     case MUT_RUGGED_BROWN_SCALES:
@@ -2191,6 +2225,9 @@ bool suppress_mutation(bool temp, bool zin)
         const mutation_type m = static_cast<mutation_type>(i);
         if (you.mutation[i] && !you.sacrifices[i] && !you.suppressed_mutation[i] && _is_suppressable_mutation(m))
         {
+            if (you.temp_mutation[i])
+                continue;
+
             if (you.innate_mutation[i])
             {
                 if (!zin)
@@ -2597,6 +2634,10 @@ static bool _post_loss_effects(mutation_type mutat, bool temp)
         break;
     }
 
+    case MUT_UNSKILLED:
+        _skill_rescale();
+        break;
+
     default:
         break;
     }
@@ -2865,21 +2906,6 @@ bool delete_temp_mutation()
         for (int i = 0; i < NUM_MUTATIONS; i++)
             if (you.has_temporary_mutation(static_cast<mutation_type>(i)) && one_chance_in(++count))
                 mutat = static_cast<mutation_type>(i);
-
-#if TAG_MAJOR_VERSION == 34
-        // We had a brief period (between 0.14-a0-1589-g48c4fed and
-        // 0.14-a0-1604-g40af2d8) where we corrupted attributes in transferred
-        // games.
-        if (mutat == NUM_MUTATIONS)
-        {
-            mprf(MSGCH_ERROR, "Found no temp mutations, clearing.");
-            you.attribute[ATTR_TEMP_MUTATIONS] = 0;
-            return false;
-        }
-#else
-        ASSERTM(mutat != NUM_MUTATIONS, "Found no temp mutations, expected %d",
-                                        you.attribute[ATTR_TEMP_MUTATIONS]);
-#endif
 
         if (_delete_single_mutation_level(mutat, "temp mutation expiry", true))
             return true;

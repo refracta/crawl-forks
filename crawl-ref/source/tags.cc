@@ -3095,6 +3095,16 @@ static void tag_read_you(reader &th)
             modify_stat(STAT_INT, 1, true);
     }
 
+    // And this:
+    for (int i = 0; i < NUM_MUTATIONS; i++)
+    {
+        if (you.suppressed_mutation[i] && you.temp_mutation[i])
+        {
+            you.suppressed_mutation[i] = you.temp_mutation[i] = 0;
+            you.attribute[ATTR_TEMP_MUTATIONS]--;
+        }
+    }
+
     // No minor version needed: all old felids should get MUT_PAWS.
     if (you.species == SP_FELID && you.innate_mutation[MUT_PAWS] < 1)
         you.mutation[MUT_PAWS] = you.innate_mutation[MUT_PAWS] = 1;

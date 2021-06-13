@@ -2128,6 +2128,7 @@ int species_apt(skill_type skill, species_type species)
             return -1;
         return UNUSABLE_SKILL;
     }
+
     return _spec_skills[species][skill] - you.get_mutation_level(MUT_UNSKILLED) + mod;
 }
 

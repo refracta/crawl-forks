@@ -6003,26 +6003,6 @@ static void _extra_sacrifice_code(ability_type sac)
     }
     else if (sac_def.sacrifice == ABIL_RU_SACRIFICE_EXPERIENCE)
         adjust_level(-RU_SAC_XP_LEVELS);
-    else if (sac_def.sacrifice == ABIL_RU_SACRIFICE_SKILL)
-    {
-        uint8_t saved_skills[NUM_SKILLS];
-        for (skill_type sk = SK_FIRST_SKILL; sk < NUM_SKILLS; ++sk)
-        {
-            saved_skills[sk] = you.skills[sk];
-            check_skill_level_change(sk, false);
-        }
-
-        // Produce messages about skill increases/decreases. We
-        // restore one skill level at a time so that at most the
-        // skill being checked is at the wrong level.
-        for (skill_type sk = SK_FIRST_SKILL; sk < NUM_SKILLS; ++sk)
-        {
-            you.skills[sk] = saved_skills[sk];
-            check_skill_level_change(sk);
-        }
-
-        redraw_screen();
-    }
 }
 
 /**
