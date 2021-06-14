@@ -2216,7 +2216,7 @@ static bool _unsuppress_mutation(bool temp)
     return true;
 }
 
-bool suppress_mutation(bool temp, bool zin)
+bool suppress_mutation(bool temp, bool zin, bool check)
 {
     vector<mutation_type> targets;
 
@@ -2230,7 +2230,7 @@ bool suppress_mutation(bool temp, bool zin)
 
             if (you.innate_mutation[i])
             {
-                if (!zin)
+                if (!zin || _mut_has_use(mut_data[i], mutflag::jiyva))
                     targets.emplace_back(m);
             }
             else if (temp)
@@ -2252,8 +2252,11 @@ bool suppress_mutation(bool temp, bool zin)
         }
     }
 
-    if (!targets.size())
+    if (targets.empty())
         return false;
+
+    if (check)
+        return true;
 
     const mutation_type target = targets[random2(targets.size())];
 
@@ -2267,13 +2270,13 @@ bool suppress_mutation(bool temp, bool zin)
     {
         mprf(MSGCH_MUTATION, "You feel your %s being suppressed.", mdef.short_desc);
         if (loss_msg)
-            mprf(MSGCH_MUTATION, "%s", mdef.lose[you.mutation[target]]);
+            mprf(MSGCH_MUTATION, "%s", mdef.lose[you.mutation[target] - 1]);
     }
     else
     {
         mprf(MSGCH_MUTATION, "You feel your %s being suppressed.", msg.short_desc);
         if (loss_msg)
-            mprf(MSGCH_MUTATION, "%s", msg.lose[you.mutation[target]]);
+            mprf(MSGCH_MUTATION, "%s", msg.lose[you.mutation[target] - 1]);
     }
 
     return true;

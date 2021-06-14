@@ -3555,7 +3555,9 @@ static void _suppression(monster *mons)
         {
             int num_mutations = 1 + coinflip();
             for (int i = 0; i < num_mutations; ++i)
+            {
                 suppress_mutation(true, true);
+            }
         }
     }
 }
@@ -3685,7 +3687,7 @@ static bool _suppression_vulnerable(actor* victim)
 {
     // BCADDO: Monster version?
 
-    return (victim->is_player() && you.how_mutated(false, false, false, true, true));
+    return (victim->is_player() && suppress_mutation(true, true, true));
 }
 
 static void _cast_black_mark(monster* agent)
