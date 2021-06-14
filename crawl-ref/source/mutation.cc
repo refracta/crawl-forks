@@ -1052,7 +1052,7 @@ static bool _accept_mutation(mutation_type mutat, bool ignore_weight, bool temp)
     if (you.get_base_mutation_level(mutat) >= mdef.levels)
         return false;
 
-    if (you.get_base_mutation_level(mutat) >= you.get_base_mutation_level(mutat, true, false, false))
+    if (you.get_base_mutation_level(mutat, true, temp, !temp) > you.get_base_mutation_level(mutat, true, temp, !temp))
         return false;
 
     if (ignore_weight)
@@ -1163,7 +1163,7 @@ static mutation_type _get_random_mutation(mutation_type mutclass, bool temp)
             die("invalid mutation class: %d", mutclass);
     }
 
-    for (int attempt = 0; attempt < 100; ++attempt)
+    for (int attempt = 0; attempt < 1000; ++attempt)
     {
         mutation_type mut = _get_mut_with_use(mt);
         if (_accept_mutation(mut, true, temp))
