@@ -956,6 +956,13 @@ static void _get_randart_properties(const item_def &item,
     // small chance of >4 properties.
     int max_properties = 4 + one_chance_in(20);
     max_properties += one_chance_in(40);
+
+    if (basic_hands_reqd(item, SIZE_MEDIUM) > HANDS_ONE)
+    {
+        good = div_rand_round(good * 3, 2);
+        max_properties += 1;
+    }
+
     int enhance = 0;
     if (good + bad > max_properties)
     {
@@ -966,7 +973,7 @@ static void _get_randart_properties(const item_def &item,
     if (curse)
     {
         good = 0;
-        bad = 1 + one_chance_in(5);
+        bad = 1 + one_chance_in(20);
     }
 
     // initialize a vector of weighted artefact properties to pick from
