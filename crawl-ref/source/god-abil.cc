@@ -1902,7 +1902,7 @@ void slimify_position(int iterations, coord_def pos, bool boost_slime_rate)
         if (feat_is_critical(feat))
             break; // Failed to find a non-critical target; unlikely but could happen.
 
-        bool deep = (feat == DNGN_DEEP_WATER || feat == DNGN_SLIMY_WATER);
+        bool deep = feat == DNGN_DEEP_WATER;
         bool wall = (feat_is_wall(feat));
 
         temp_change_terrain(target, deep ? DNGN_DEEP_SLIMY_WATER : wall ? DNGN_SLIMY_WALL : DNGN_SLIMY_WATER, dur * 10, TERRAIN_CHANGE_SLIME);

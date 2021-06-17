@@ -2034,8 +2034,11 @@ static void _slimify_feat(coord_def pos)
 
     dungeon_feature_type new_feat = DNGN_FLOOR;
 
-    if (feat == DNGN_SLIMY_WATER || feat == DNGN_DEEP_SLIMY_WATER || feat == DNGN_DEEP_WATER)
+    if (feat == DNGN_SLIMY_WATER && one_chance_in(3)
+        || feat == DNGN_DEEP_SLIMY_WATER || feat == DNGN_DEEP_WATER)
+    {
         new_feat = DNGN_DEEP_SLIMY_WATER;
+    }
     else if (feat_has_solid_floor(feat))
         new_feat = DNGN_SLIMY_WATER;
     else if (feat_is_tree(feat))
