@@ -640,7 +640,7 @@ static spret _cast_los_attack_spell(spell_type spell, int pow,
                 mons_invis_msg = "The ambient heat is drained!";
                 verb = "frozen";
             }
-            if (you.staff() && get_staff_facet(*you.staff()) && staff_enhances_spell(you.staff(), SPELL_OZOCUBUS_REFRIGERATION) || you.wearing(EQ_AMULET, AMU_CHAOS))
+            if (determine_chaos(&you, SPELL_OZOCUBUS_REFRIGERATION, false))
             {
                 prompt_verb = "refrigerate or chaotically strike";
                 vulnerable = [](const actor *caster, const actor *act) {

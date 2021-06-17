@@ -603,22 +603,7 @@ static const char *_spell_title(spell_type spell, const actor * caster)
     if (!chaosTitle.size())
         return _seekspell(spell)->title; // No need for chaos check on spells without a chaos name.
 
-    const item_def * staff = caster->staff();
-    bool chaos = staff && staff_enhances_spell(staff, spell) && get_staff_facet(*staff) == SPSTF_CHAOS;
-    // Check for Chaos Staff.
-
-    if (!chaos)
-    {
-        // Check for chaos rings.
-        if (caster->is_player() && you.wearing(EQ_AMULET, AMU_CHAOS))
-            chaos = true;
-        else if (caster->is_monster())
-        {
-            const item_def * ring = caster->as_monster()->mslot_item(MSLOT_JEWELLERY);
-            if (ring && ring->is_type(OBJ_JEWELLERY, AMU_CHAOS))
-                chaos = true;
-        }
-    }
+    const bool chaos = determine_chaos(caster, spell, false);
 
     if (chaos)
         return _seekspell(spell)->chaosTitle;
