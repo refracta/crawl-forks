@@ -3121,16 +3121,6 @@ static void tag_read_you(reader &th)
     if (you.species == SP_FELID && you.innate_mutation[MUT_PAWS] < 1)
         you.mutation[MUT_PAWS] = you.innate_mutation[MUT_PAWS] = 1;
 
-    // Give nagas constrict, tengu flight, and mummies restoration/enhancers.
-    if (th.getMinorVersion() < TAG_MINOR_REAL_MUTS
-        && (you.species == SP_NAGA
-            || you.species == SP_TENGU
-            || you.species == SP_MUMMY))
-    {
-        for (int xl = 2; xl <= you.experience_level; ++xl)
-            give_level_mutations(you.species, xl);
-    }
-
     if (th.getMinorVersion() < TAG_MINOR_MP_WANDS)
     {
         if (you.mutation[MUT_MP_WANDS] > 1)
