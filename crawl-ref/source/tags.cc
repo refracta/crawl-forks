@@ -3098,13 +3098,23 @@ static void tag_read_you(reader &th)
     // And this:
     for (int i = 0; i < NUM_MUTATIONS; i++)
     {
-        if (you.suppressed_mutation[i] && you.temp_mutation[i])
+        int num_suppressed = 0;
+        int num_transsuppressed = 0;
+        if (you.suppressed_mutation[i])
         {
-            you.suppressed_mutation[i] = you.temp_mutation[i] = 0;
-            you.mutation[i]--;
-            you.attribute[ATTR_TEMP_MUTATIONS]--;
-            you.mutation[MUT_SUPPRESSION]--;
+            num_suppressed++;
+            if (you.suppressed_mutation[i] > 1)
+                num_transsuppressed++;
+            if (you.temp_mutation[i])
+            {
+                you.suppressed_mutation[i] = you.temp_mutation[i] = 0;
+                you.mutation[i]--;
+                you.attribute[ATTR_TEMP_MUTATIONS]--;
+                you.mutation[MUT_SUPPRESSION]--;
+            }
         }
+        you.mutation[MUT_SUPPRESSION] = num_suppressed;
+        you.temp_mutation[MUT_SUPPRESSION] = num_transsuppressed;
     }
 
     // No minor version needed: all old felids should get MUT_PAWS.
