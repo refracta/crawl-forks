@@ -3367,7 +3367,7 @@ string mutation_desc(mutation_type mut, int level, bool colour,
             const bool extra = you.get_base_mutation_level(mut, false, true, true, false) > 0;
 
             if (fully_inactive || (mut == MUT_COLD_BLOODED && player_res_cold(false) > 0)
-                || (mut == MUT_DEFORMED && you.get_mutation_level(MUT_CORE_MELDING) || you.get_mutation_level(MUT_AMORPHOUS_BODY)))
+                || (mut == MUT_DEFORMED && (you.get_mutation_level(MUT_CORE_MELDING) || you.get_mutation_level(MUT_AMORPHOUS_BODY))))
             {
                 colourname = "darkgrey";
             }
