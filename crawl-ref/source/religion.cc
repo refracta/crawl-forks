@@ -1154,10 +1154,7 @@ static mutation_type _choose_gift()
         const int current = you.get_mutation_level(mut, false);
 
         // The <= -> < should prevent this but stopgap incase of mutation removal.
-        if (!is_valid_mutation(mut))
-            continue;
-
-        if (current >= max)
+        if (!is_valid_mutation(mut) || current >= max)
             continue;
 
         if (you.get_mutation_level(MUT_SLIME, false) < 3
@@ -1189,7 +1186,7 @@ static bool _jiyva_mutate()
         const mutation_type gift = _choose_gift();
 
         if (gift != MUT_NON_MUTATION)
-            return mutate(_choose_gift(), "Jiyva's grace", true, false, true, true, MUTCLASS_INNATE);
+            return mutate(gift, "Jiyva's grace", true, false, true, true, MUTCLASS_INNATE);
         // else fallthrough.
     }
     case 3:
@@ -3794,12 +3791,14 @@ void jiyva_setup()
 
         // BCADNOTE: I was trying to avoid directly checking felidness, but there wasn't anything else to check that lined up right.
         // Not REALLY weighted; just using weights add in booleans.
-    set.push_back(random_choose_weighted(1, MUT_CYTOPLASMIC_SUSPENSION,
-                                         1, MUT_CORE_MELDING,
-                    wear_count < 4 ? 0 : 1, MUT_AMORPHOUS_BODY,
-           you.species == SP_FELID ? 0 : 1, MUT_ARM_MORPH, 
-        you.species == SP_OCTOPODE ? 0 : 1, MUT_TENDRILS, 
-          you_can_wear(EQ_BARDING) ? 0 : 1, MUT_GELATINOUS_TAIL));
+    set.push_back( random_choose_weighted(
+                  you.has_mutation(MUT_CYTOPLASMIC_SUSPENSION) ? 0 : 1, MUT_CYTOPLASMIC_SUSPENSION,
+                            you.has_mutation(MUT_CORE_MELDING) ? 0 : 1, MUT_CORE_MELDING,
+        you.has_mutation(MUT_AMORPHOUS_BODY) || wear_count < 4 ? 0 : 1, MUT_AMORPHOUS_BODY,
+                                       you.species == SP_FELID ? 0 : 1, MUT_ARM_MORPH, 
+                                    you.species == SP_OCTOPODE ? 0 : 1, MUT_TENDRILS, 
+                                      you_can_wear(EQ_BARDING) ? 0 : 1, MUT_GELATINOUS_TAIL)
+    );
 
     shuffle_array(set);
     you.jiyva_mut_set = set;

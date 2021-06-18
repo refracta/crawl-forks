@@ -1658,7 +1658,7 @@ string skill_title_by_rank(skill_type best_skill, uint8_t skill_rank,
             break;
 
         case SK_FIGHTING:
-            if (you.get_mutation_level(MUT_SLIME) >= 2)
+            if (you.get_mutation_level(MUT_SLIME) >= 2 || you.get_mutation_level(MUT_OOZOMORPH))
                 result = slimy_fight_titles[skill_rank];
             break;
 
@@ -2124,7 +2124,7 @@ int species_apt(skill_type skill, species_type species)
 
     if (_spec_skills[species][skill] == UNUSABLE_SKILL)
     {
-        if (skill == SK_ARMOUR && (you.get_mutation_level(MUT_CORE_MELDING) || you.get_mutation_level(MUT_AMORPHOUS_BODY)))
+        if (skill == SK_ARMOUR && ((you.get_mutation_level(MUT_CORE_MELDING) == 1) || you.get_mutation_level(MUT_AMORPHOUS_BODY)))
             return -1;
         return UNUSABLE_SKILL;
     }

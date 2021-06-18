@@ -334,23 +334,18 @@ static const mutation_def mut_data[] =
    "Your venom becomes weaker.", ""},
 },
 
-#if TAG_MAJOR_VERSION == 34
-{ MUT_BREATHE_FLAMES, 0, 3, mutflag::good, false,
-  "breathe flames",
+{ MUT_BREATHE_MAGMA, 0, 2, mutflag::good, false,
+  "breathe magma",
 
-  {"You can breathe flames.",
-   "You can breathe fire.",
-   "You can breathe blasts of fire."},
+  {"You can breathe lava.",
+   "You can breathe bursts of magma.", ""},
 
   {"Your throat feels hot.",
-   "Your throat feels hot.",
-   "Your throat feels hot."},
+   "Your throat feels hot.", ""},
 
   {"A chill runs up and down your throat.",
-   "A chill runs up and down your throat.",
-   "A chill runs up and down your throat."},
+   "A chill runs up and down your throat.", ""},
 },
-#endif
 
 { MUT_BLINK, 15, 1, mutflag::good, false,
   "blink",
@@ -919,6 +914,14 @@ static const mutation_def mut_data[] =
   {"You no longer link your magic regeneration to your health regeneration.", "", ""},
 },
 
+{ MUT_OOZOMORPH, 0, 3, mutflag::good, true,
+  "gelatinous body",
+
+  {"Your gelatinous form is immune to acid, constriction and sticky flames. (rCorr+, Slime)", "", ""},
+  {"", "", ""},
+  {"", "", ""},
+},
+
 // Jiyva only mutations
 { MUT_SLIME, 0, 3, mutflag::good | mutflag::jiyva, true,
   "slime",
@@ -1176,10 +1179,11 @@ static const mutation_def mut_data[] =
    "Your connection to magical radiation recedes."},
 },
 
-{ MUT_CORE_MELDING, 0, 1, mutflag::good | mutflag:: jiyva, true,
+{ MUT_CORE_MELDING, 0, 2, mutflag::good | mutflag:: jiyva, true,
   "core melding",
 
-   { "The liquid core of your body molds to fit into any body armour near perfectly. (Reduced Encumberance from Armour).", "", "" },
+   { "The liquid core of your body molds to fit into any body armour near perfectly. (Reduced Encumberance from Armour).", 
+     "The molten core of your body molds to fit into any body armour perfectly. (2x Base AC and No Encumberance from Armour).", "" },
    { "The core of your form feels very pliable.", "", "" },
    { "Your core feels rigid.", "", "" },
 },

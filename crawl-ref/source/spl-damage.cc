@@ -1575,7 +1575,7 @@ static int _shatter_player_dice()
         retval -= 2;
     if (you.mounted())
         retval--;
-    if (you.get_mutation_level(MUT_SLIME) >= 3)
+    if (you.get_mutation_level(MUT_SLIME) >= 3 || you.get_mutation_level(MUT_OOZOMORPH))
         retval -= 2;
 
     return max(1, retval);
@@ -3038,6 +3038,14 @@ bool setup_fragmentation_beam(bolt &beam, int pow, const actor *caster,
             beam.name       = "blast of rock fragments";
             beam.colour     = BROWN;
             beam.damage.num = you.form == transformation::statue ? 3 : 2;
+            return _finish_LRD_setup(beam, caster);
+        }
+        else if (you.species == SP_MOLTEN_GARGOYLE)
+        {
+            beam.name = "blast of molten rock fragments";
+            beam.colour = RED;
+            beam.damage.num = you.form == transformation::statue ? 3 : 2;
+            beam.flavour = BEAM_LAVA;
             return _finish_LRD_setup(beam, caster);
         }
         else if (petrified)

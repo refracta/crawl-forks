@@ -268,7 +268,8 @@ void chaotic_debuff(actor* act, int dur, actor * attacker)
         act->banish(attacker);
         break;
     case CD_BARBS:
-        if (player && !you.get_mutation_level(MUT_INSUBSTANTIAL) && !(you.get_mutation_level(MUT_SLIME) >= 3))
+        if (player && !you.get_mutation_level(MUT_INSUBSTANTIAL) 
+            && !(you.get_mutation_level(MUT_SLIME) >= 3) && !you.get_mutation_level(MUT_OOZOMORPH))
         {
             mprf(MSGCH_WARN, "The chaotic magic splinters into barbs that impale your flesh.");
             you.increase_duration(DUR_BARBS, dur);

@@ -298,7 +298,6 @@ bool player_tracer(zap_type ztype, int power, bolt &pbolt, int range)
     pbolt.attitude      = ATT_FRIENDLY;
     pbolt.thrower       = KILL_YOU_MISSILE;
 
-
     // Init tracer variables.
     pbolt.friend_info.reset();
     pbolt.foe_info.reset();
@@ -4569,7 +4568,7 @@ void impale_player_with_barbs(bool mt)
     {
         if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
             mpr("The barbed spikes sting slightly as they fall through your immaterial body.");
-        else if (you.get_mutation_level(MUT_SLIME) >= 3)
+        else if (you.get_mutation_level(MUT_SLIME) >= 3 || you.get_mutation_level(MUT_OOZOMORPH))
             mpr("The barbed spikes fail to stick to your viscuous form.");
         else
         {

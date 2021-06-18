@@ -775,7 +775,7 @@ void trap_def::trigger(actor& triggerer)
                 }
                 else if (you.is_insubstantial())
                     mpr("You pass through a web.");
-                else if (you.get_mutation_level(MUT_SLIME) >= 3)
+                else if (you.get_mutation_level(MUT_SLIME) >= 3 || you.get_mutation_level(MUT_OOZOMORPH))
                     mpr("You ooze through a web.");
                 break;
             }

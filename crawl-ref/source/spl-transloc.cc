@@ -503,14 +503,7 @@ bool dangerous_terrain_seen()
     {
         if (you.see_cell_no_trans(*ri))
         {
-            const dungeon_feature_type feat = grd(*ri);
-            if (feat == DNGN_LAVA)
-                return true;
-            if (!you.can_swim() && feat == DNGN_DEEP_WATER)
-                return true;
-            if (!you.can_swim() && !you_worship(GOD_JIYVA) && feat == DNGN_DEEP_SLIMY_WATER)
-                return true;
-            if (!you_worship(GOD_JIYVA) && feat == DNGN_DEEP_SLIMY_WATER)
+            if (is_feat_dangerous(grd(*ri), false, true))
                 return true;
         }
     }

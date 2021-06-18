@@ -1742,7 +1742,7 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
                     hurted < original ? " It resists." : "");
                 damage_mount(actual);
             }
-            else
+            else if (you.species != SP_MOLTEN_GARGOYLE)
             {
                 if (hurted > original)
                     mprf("The lava burns you terribly%s", attack_strength_punctuation(actual).c_str());

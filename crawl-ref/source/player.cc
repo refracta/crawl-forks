@@ -635,7 +635,7 @@ bool is_feat_dangerous(dungeon_feature_type grid, bool permanently,
     {
         return false;
     }
-    if (grid == DNGN_LAVA)
+    if (grid == DNGN_LAVA && you.species != SP_MOLTEN_GARGOYLE)
         return true;
     if ((grid == DNGN_SLIMY_WATER || grid == DNGN_DEEP_SLIMY_WATER) && !you_worship(GOD_JIYVA))
         return true;
@@ -2145,7 +2145,8 @@ int player_res_sticky_flame(bool calc_unid, bool temp, bool items)
     if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
         rsf++;
 
-    if (you.get_mutation_level(MUT_SLIME) >= 3)
+    if (you.get_mutation_level(MUT_SLIME) >= 3
+        || you.get_mutation_level(MUT_OOZOMORPH))
         rsf++;
 
     if (get_form()->res_sticky_flame())
@@ -6691,6 +6692,9 @@ void player::ablate_deflection()
  */
 int player::unadjusted_body_armour_penalty() const
 {
+    if (get_mutation_level(MUT_CORE_MELDING) > 1)
+        return 0;
+
     int malus = 0;
 
     const item_def *body_armour = slot_item(EQ_BODY_ARMOUR, false);
@@ -6888,6 +6892,9 @@ int player::base_ac_from(const item_def &armour, int scale) const
     // Penalty from being strengthless.
     if (you.duration[DUR_COLLAPSE])
         return base / 2;
+
+    if (you.get_mutation_level(MUT_CORE_MELDING) > 1)
+        return base * 2;
 
     // [ds] effectively: ac_value * (22 + Arm) / 22, where Arm = Armour Skill.
     const int AC = base * (440 + skill(SK_ARMOUR, 20)) / 440;
@@ -7299,7 +7306,7 @@ mon_holy_type player::holiness(bool temp, bool mt) const
     // Lich form takes precedence over a species' base holiness
     if (undead_state(temp))
         holi = MH_UNDEAD;
-    else if (species == SP_GARGOYLE)
+    else if (species == SP_GARGOYLE || species == SP_MOLTEN_GARGOYLE)
         holi = MH_NONLIVING;
     else if (species == SP_LIGNIFITE && (!temp || you.form == transformation::none))
         holi = MH_PLANT;
@@ -7416,7 +7423,7 @@ int player::res_acid(bool calc_unid, bool items, bool mt) const
         }
     }
 
-    if (get_mutation_level(MUT_SLIME) > 2)
+    if (get_mutation_level(MUT_SLIME) > 2 || get_mutation_level(MUT_OOZOMORPH))
         return 3;
 
     int ra = 0;
@@ -7470,6 +7477,7 @@ int player::res_acid(bool calc_unid, bool items, bool mt) const
 
     ra += actor::res_acid(calc_unid, items);
     ra += get_mutation_level(MUT_SLIME, true);
+    ra += get_mutation_level(MUT_OOZOMORPH, true) * 3;
 
     return _clamp(ra, -3, 2);
 }
@@ -7681,7 +7689,8 @@ int player::res_constrict(bool mt) const
 
     if (is_insubstantial()
         || get_mutation_level(MUT_SLIME) >= 3
-        || get_mutation_level(MUT_SPINY))
+        || get_mutation_level(MUT_SPINY)
+        || get_mutation_level(MUT_OOZOMORPH))
         return 3;
 
     return 0;

@@ -901,6 +901,42 @@ _mon_hex_zap(ZAP_BANISHMENT, BEAM_BANISH, 150),
 },
 
 {
+    ZAP_BREATHE_MAGMA,
+    "lava breath",
+    200,
+    new dicedef_calculator<3, 3, 1, 3>,
+    new tohit_calculator<8, 1, 6>,
+    nullptr,
+    nullptr,
+    RED,
+    false,
+    BEAM_LAVA,
+    DCHAR_FIRED_ZAP,
+    true,
+    false,
+    false,
+    7
+},
+
+{
+    ZAP_BREATHE_MAGMA_II,
+    "magma breath",
+    200,
+    new dicedef_calculator<3, 5, 1, 3>,
+    new tohit_calculator<10, 1, 6>,
+    nullptr,
+    nullptr,
+    RED,
+    false,
+    BEAM_LAVA,
+    DCHAR_FIRED_ZAP,
+    true,
+    true,
+    false,
+    7
+},
+
+{
     ZAP_BREATHE_TRIPLE,
     "freezing flame",
     200,

@@ -5490,6 +5490,7 @@ mon_body_shape get_mon_shape(const monster_type mc)
                 return static_cast<mon_body_shape>(MON_SHAPE_MISC);
             case SP_TENGU:
             case SP_GARGOYLE:
+            case SP_MOLTEN_GARGOYLE:
                 return static_cast<mon_body_shape>(MON_SHAPE_HUMANOID_WINGED);
             case SP_CENTAUR:
                 return static_cast<mon_body_shape>(MON_SHAPE_CENTAUR);

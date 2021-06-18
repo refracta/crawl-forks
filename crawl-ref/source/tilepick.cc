@@ -3641,6 +3641,8 @@ tileidx_t tileidx_ability(const ability_type ability)
         return TILEG_ABILITY_SPIT_POISON;
     case ABIL_BREATHE_FIRE:
         return TILEG_ABILITY_BREATHE_FIRE;
+    case ABIL_BREATHE_MAGMA:
+        return TILEG_ABILITY_BREATHE_MAGMA;
     case ABIL_BREATHE_FROST:
         return TILEG_ABILITY_BREATHE_FROST;
     case ABIL_BREATHE_POISON:
@@ -4242,6 +4244,10 @@ static tileidx_t _tileidx_player_species_base(const species_type species)
             return TILEG_SP_OCTOPODE;
         case SP_GARGOYLE:
             return TILEG_SP_GARGOYLE;
+        case SP_MOLTEN_GARGOYLE:
+            return TILEG_SP_MOLTEN_GARGOYLE;
+        case SP_OOZOMORPH:
+            return TILEG_SP_OOZOMORPH;
         case SP_FORMICID:
             return TILEG_SP_FORMICID;
         case SP_VINE_STALKER:

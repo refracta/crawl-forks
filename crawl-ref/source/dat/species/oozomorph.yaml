@@ -1,0 +1,29 @@
+enum: SP_OOZOMORPH
+monster: MONS_SLIME_CREATURE
+name: Oozomorph
+difficulty: Advanced
+difficulty_priority: 100
+aptitudes:
+  xp: -1
+  hp: -1
+  mp_mod: 0
+  mr: 4
+  transmutations: 5
+  stealth: 2
+  spellcasting: -1
+mutations:
+  1:
+    MUT_AMORPHOUS_BODY: 1
+    MUT_CYTOPLASMIC_SUSPENSION: 1
+    MUT_OOZOMORPH: 1
+str: 8
+int: 8
+dex: 8
+levelup_stat_frequency: 4
+recommended_jobs:
+  - JOB_TRANSMUTER
+  - JOB_BERSERKER
+  - JOB_NECROMANCER
+  - JOB_FIRE_ELEMENTALIST
+  - JOB_ICE_ELEMENTALIST
+create_enum: False

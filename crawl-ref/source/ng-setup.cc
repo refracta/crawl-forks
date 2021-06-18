@@ -185,7 +185,18 @@ item_def* newgame_make_item(object_class_type base,
         || item.base_type == OBJ_ARMOURS && can_wear_armour(item, false, false))
         && you.equip[get_item_slot(item)] == -1)
     {
-        you.equip[get_item_slot(item)] = slot;
+        if (you.species == SP_OOZOMORPH && item.base_type == OBJ_ARMOURS)
+        {
+            for (int i = EQ_FIRST_MORPH; i <= EQ_LAST_MORPH; i++)
+            {
+                equipment_type eq = static_cast<equipment_type>(i);
+                if (you.equip[eq] == -1)
+                    you.equip[eq] = slot;
+                i += 1000;
+            }
+        }
+        else
+            you.equip[get_item_slot(item)] = slot;
     }
 
     if (item.base_type == OBJ_SHIELDS && can_wield(&item, false, false))

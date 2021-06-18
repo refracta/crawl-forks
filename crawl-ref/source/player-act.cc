@@ -969,12 +969,13 @@ bool player::antimagic_susceptible() const
 bool player::is_web_immune() const
 {
     // Spider mount
-    if (you.mounted() && you.mount == mount_type::spider)
+    if (you.mounted() && you.mount == mount_type::spider
+        || you.get_mutation_level(MUT_INSUBSTANTIAL)
+        || you.get_mutation_level(MUT_SLIME) >= 3
+        || you.get_mutation_level(MUT_OOZOMORPH))
+    {
         return true;
-    else if (you.get_mutation_level(MUT_INSUBSTANTIAL) == 1)
-        return true;
-    else if (you.get_mutation_level(MUT_SLIME) >= 3)
-        return true;
+    }
     else
         return false;
 }

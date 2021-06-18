@@ -1330,6 +1330,10 @@ tileidx_t tilep_species_to_base_tile(int sp, int drac_colour)
         return TILEP_BASE_DEEP_DWARF;
     case SP_GARGOYLE:
         return TILEP_BASE_GARGOYLE;
+    case SP_MOLTEN_GARGOYLE:
+        return TILEP_BASE_MOLTEN_GARGOYLE;
+    case SP_OOZOMORPH:
+        return TILEP_BASE_OOZOMORPH;
     case SP_FELID:
         return TILEP_BASE_FELID;
     case SP_LIGNIFITE:
@@ -1429,7 +1433,9 @@ void tilep_race_default(int sp, int colour, dolls_data *doll)
         case SP_BARACHI:
         case SP_GNOLL:
         case SP_GARGOYLE:
+        case SP_MOLTEN_GARGOYLE:
         case SP_VINE_STALKER:
+        case SP_OOZOMORPH:
             hair = 0;
             break;
         default:

@@ -55,6 +55,9 @@ enum ability_type
     // Naga
     ABIL_SPIT_POISON = 110,
 
+    // Molten Gargoyle
+    ABIL_BREATHE_MAGMA = 120,
+
     // Mount actives
     ABIL_SPIDER_JUMP = 150,
     ABIL_SPIDER_WEB,

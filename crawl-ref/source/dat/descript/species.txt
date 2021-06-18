@@ -107,6 +107,13 @@ Minotaur
 Minotaurs are large muscular humans with bovine heads. They excel at all forms
 of close and ranged combat.
 %%%%
+Molten Gargoyle
+
+Made of living magma, Molten Gargoyles have a preternatural affinity for fire 
+and earth. They have very low health; but their liquid bodies mold to fit 
+into any armour perfectly and they can breathe blasts of liquid rock at their 
+foes.
+%%%%
 Mummy
 
 Ancient preserved royals and priests. Time has only increased their wisdom and intellect; 
@@ -128,6 +135,12 @@ Ogre
 
 Large, strong, and extremely robust, Ogres are competent at all forms of melee.
 They are not merely brutes, as they are comfortable with spellcasting.
+%%%%
+Oozomorph
+
+Semi-humanoid intelligent masses of slime, Oozomorphs can reshape their bodies to 
+use any combination of equipment. Extremely adaptable, they are equally capable in 
+melee combat and magic.
 %%%%
 Spriggan
 

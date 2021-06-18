@@ -279,6 +279,16 @@ base/fairy SP_RECOMMENDED_FAIRY
 %compose body/animal_skin
 %finish SP_RECOMMENDED_GARGOYLE
 %start
+%compose bottom/molten_gargoyle_m
+%compose base/molten_gargoyle_m
+%compose body/animal_skin
+%finish SP_RECOMMENDED_MOLTEN_GARGOYLE
+%start
+%compose bottom/oozomorph
+%compose base/oozomorph
+%compose body/animal_skin
+%finish SP_RECOMMENDED_OOZOMORPH
+%start
 %compose bottom/ghoul_m
 %compose base/ghoul_m
 %compose body/animal_skin
@@ -380,6 +390,8 @@ enum:SP_RECOMMENDED_BASE_DRACONIAN SP_DRACONIAN
 enum:SP_RECOMMENDED_FORMICID SP_FORMICID
 enum:SP_RECOMMENDED_BARACHI SP_BARACHI
 enum:SP_RECOMMENDED_GARGOYLE SP_GARGOYLE
+enum:SP_RECOMMENDED_MOLTEN_GARGOYLE SP_MOLTEN_GARGOYLE
+enum:SP_RECOMMENDED_OOZOMORPH SP_OOZOMORPH
 enum:SP_RECOMMENDED_GHOUL SP_GHOUL
 enum:SP_RECOMMENDED_GNOLL SP_GNOLL
 enum:SP_RECOMMENDED_HUMAN SP_HUMAN

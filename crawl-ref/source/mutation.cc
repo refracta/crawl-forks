@@ -359,6 +359,7 @@ mutation_activity_type mutation_activity_level(mutation_type mut)
         // by other changes in body material or speed.
         switch (mut)
         {
+        case MUT_OOZOMORPH:
         case MUT_SLIME:
         case MUT_FAST:
         case MUT_SLOW:
@@ -1115,6 +1116,13 @@ static mutation_type _delete_random_slime_mutation()
 
 bool is_slime_mutation(mutation_type mut)
 {
+    if (you.species == SP_OOZOMORPH
+        && (mut == MUT_CYTOPLASMIC_SUSPENSION || mut == MUT_AMORPHOUS_BODY)
+        || you.species == SP_MOLTEN_GARGOYLE && mut == MUT_CORE_MELDING)
+    {
+        return false;
+    }
+
     return _mut_has_use(mut_data[mut_index[mut]], mutflag::jiyva);
 }
 
@@ -2863,7 +2871,8 @@ bool remove_slime_mutations()
     for (int i = 0; i < NUM_MUTATIONS; ++i)
     {
         const mutation_type mut = static_cast<mutation_type>(i);
-        if (is_slime_mutation(mut) && you.has_mutation(mut))
+        if (is_slime_mutation(mut) && you.has_mutation(mut)
+            && !(mut == MUT_CORE_MELDING && you.get_mutation_level(mut) > 1))
         {
             ret = true;
             you.innate_mutation[i] = 0;

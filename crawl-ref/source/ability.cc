@@ -270,6 +270,8 @@ static const ability_def Ability_List[] =
 
     { ABIL_BREATHE_FIRE, "Breathe Fire",
       0, 0, 125, 0, {fail_basis::xl, 30, 1}, abflag::breath },
+    { ABIL_BREATHE_MAGMA, "Breathe Magma",
+      0, 0, 125, 0, {fail_basis::xl, 30, 1}, abflag::breath },
     { ABIL_BREATHE_FROST, "Breathe Frost",
       0, 0, 125, 0, {fail_basis::xl, 30, 1}, abflag::breath },
     { ABIL_BREATHE_POISON, "Breathe Poison Gas",
@@ -317,7 +319,6 @@ static const ability_def Ability_List[] =
 
     { ABIL_TRAN_BAT, "Bat Form",
       2, 0, 0, 0, {fail_basis::xl, 45, 2}, abflag::starve_ok },
-
 
     { ABIL_FLY, "Fly", 3, 0, 100, 0, {fail_basis::xl, 42, 3}, abflag::none },
     { ABIL_STOP_FLYING, "Stop Flying", 0, 0, 0, 0, {}, abflag::starve_ok },
@@ -1675,6 +1676,7 @@ static bool _check_ability_possible(const ability_def& abil, bool quiet = false)
         }
         return true;
 
+    case ABIL_BREATHE_MAGMA:
     case ABIL_SPIT_POISON:
     case ABIL_BREATHE_DART:
     case ABIL_BREATHE_FIRE:
@@ -1935,6 +1937,7 @@ static int _calc_breath_ability_range(ability_type ability)
     case ABIL_BREATHE_DART:
     case ABIL_BREATHE_MEPHITIC:
     case ABIL_BREATHE_POISON:
+    case ABIL_BREATHE_MAGMA:
         range = 4;
         break;
     case ABIL_BREATHE_BUTTERFLIES:
@@ -2426,6 +2429,7 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
     case ABIL_BREATHE_CHAOS:
     case ABIL_BREATHE_RADIATION:
     case ABIL_BREATHE_TRIPLE:
+    case ABIL_BREATHE_MAGMA:
     {
         beam.range = _calc_breath_ability_range(abil.ability);
         
@@ -2467,6 +2471,14 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         case ABIL_BREATHE_TRIPLE:
             zap = ZAP_BREATHE_TRIPLE;
             m   = "You expend all your breath powers at once!";
+            break;
+
+        case ABIL_BREATHE_MAGMA:
+            if (you.get_mutation_level(MUT_BREATHE_MAGMA) > 1)
+                zap = ZAP_BREATHE_MAGMA_II;
+            else
+                zap = ZAP_BREATHE_MAGMA;
+            m   = make_stringf("You breathe a %s of molten rock.", you.get_mutation_level(MUT_BREATHE_MAGMA) > 1 ? "torrent" : "surge");
             break;
 
         default:
@@ -4032,6 +4044,9 @@ vector<talent> your_talents(bool check_confused, bool include_unusable)
         _add_talent(talents, ABIL_BREATHE_POISON, check_confused);
     else if (you.get_mutation_level(MUT_SPIT_POISON))
         _add_talent(talents, ABIL_SPIT_POISON, check_confused);
+
+    if (you.get_mutation_level(MUT_BREATHE_MAGMA))
+        _add_talent(talents, ABIL_BREATHE_MAGMA, check_confused);
 
     if ((!form_changed_physiology() || you.form == transformation::dragon)
         && draconian_breath() != ABIL_NON_ABILITY)
