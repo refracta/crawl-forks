@@ -1800,7 +1800,7 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
                     }
                     else if (coinflip())
                     {
-                        if (!silenced(you.pos()))
+                        if (!silenced(you.pos()) && !you.is_stationary())
                         {
                             mpr("Your struggles to swim create loud splashing noises!");
                             noisy(25, you.position);
