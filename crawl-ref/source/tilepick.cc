@@ -4199,6 +4199,8 @@ static tileidx_t _tileidx_player_job_base(const job_type job)
             return TILEG_JOB_ASSASSIN;
         case JOB_MERFOLK:
             return TILEG_JOB_MERFOLK;
+        case JOB_VINE_STALKER:
+            return TILEG_JOB_VINE_STALKER;
         default:
             return TILEG_ERROR;
     }
