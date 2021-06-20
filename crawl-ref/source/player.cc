@@ -1036,13 +1036,13 @@ int player::wearing(equipment_type slot, int sub_type, bool calc_unid, bool coun
             {
                 ret++;
             }
+        }
 
-            if ((item = slot_item(EQ_CYTOPLASM))
-                && item->is_type(OBJ_JEWELLERY, sub_type)
-                && (calc_unid || item_type_known(*item)))
-            {
-                ret++;
-            }
+        if ((item = slot_item(EQ_CYTOPLASM))
+            && item->is_type(OBJ_JEWELLERY, sub_type)
+            && (calc_unid || item_type_known(*item)))
+        {
+            ret++;
         }
         break;
 
