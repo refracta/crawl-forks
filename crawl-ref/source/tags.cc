@@ -3059,7 +3059,7 @@ static void tag_read_you(reader &th)
         remove_one_equip(EQ_BODY_ARMOUR, false, true);
     }
 
-    if (abs(you.mutated_stats[STAT_STR]) + abs(you.mutated_stats[STAT_INT]) + abs(you.mutated_stats[STAT_DEX]) > (you.get_mutation_level(MUT_STATS) - 1) / 10)
+    if (abs(you.mutated_stats[STAT_STR]) + abs(you.mutated_stats[STAT_INT]) + abs(you.mutated_stats[STAT_DEX]) > (you.get_mutation_level(MUT_STATS) + 1) * 10)
     {
         you.mutated_stats[STAT_STR] = 0;
         you.mutated_stats[STAT_INT] = 0;
