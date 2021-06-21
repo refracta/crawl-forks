@@ -1177,6 +1177,8 @@ static bool _jiyva_mutate()
 {
     simple_god_message(" alters your body.");
 
+    flash_view_delay(UA_PLAYER, LIGHTGREEN, 300);
+
     const int rand = !(you.num_current_gifts[you.religion] % 6) ? 0 : random2(4);
 
     switch (rand)
@@ -1196,8 +1198,6 @@ static bool _jiyva_mutate()
     default: // 1, 2 and fallthroughs.
         return mutate(one_chance_in(3) ? RANDOM_MUTATION : RANDOM_GOOD_MUTATION, "Jiyva's grace", true, false, true);
     }
-    
-    flash_view(UA_PLAYER, GREEN);
 }
 
 static set<spell_type> _vehumet_eligible_gift_spells(set<spell_type> excluded_spells)

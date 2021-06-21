@@ -30,6 +30,7 @@
 #include "tilepick.h"
 #endif
 #include "transform.h"
+#include "view.h"
 
 int player::stat(stat_type s, bool nonneg) const
 {
@@ -312,7 +313,7 @@ void jiyva_stat_action()
         simple_god_message("'s power touches on your attributes.");
         modify_stat(static_cast<stat_type>(stat_up_choice), 1, false);
         modify_stat(static_cast<stat_type>(stat_down_choice), -1, false);
-        flash_view(UA_PLAYER, GREEN);
+        flash_view_delay(UA_PLAYER, GREEN, 300);
     }
     else
         mpr("Nothing seems to change.");
