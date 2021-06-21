@@ -1196,6 +1196,8 @@ static bool _jiyva_mutate()
     default: // 1, 2 and fallthroughs.
         return mutate(one_chance_in(3) ? RANDOM_MUTATION : RANDOM_GOOD_MUTATION, "Jiyva's grace", true, false, true);
     }
+    
+    flash_view(UA_PLAYER, GREEN);
 }
 
 static set<spell_type> _vehumet_eligible_gift_spells(set<spell_type> excluded_spells)
