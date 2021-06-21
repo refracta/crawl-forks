@@ -1501,11 +1501,11 @@ static bool _gift_jiyva_gift(bool forced)
         {
             mut = _jiyva_mutate();
             if (mut)
-                inc_gift_timeout(18 + roll_dice(3, 4));
+                inc_gift_timeout(38 + roll_dice(3, 4) - you.get_experience_level());
         }
         if (!mut)
         {
-            inc_gift_timeout(6 + random2(3));
+            inc_gift_timeout(11 + random2(3) - (you.get_experience_level() + 1) / 4);
             jiyva_stat_action();
         }
         you.num_current_gifts[you.religion]++;
