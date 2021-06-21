@@ -284,6 +284,7 @@ void jiyva_stat_action()
     }
 
     calc_jiyva_stat_targets(target_stat);
+
     // Add a little fuzz to the target.
     for (int x = 0; x < NUM_STATS; ++x)
         target_stat[x] += random2(5) - 2;
@@ -299,8 +300,7 @@ void jiyva_stat_action()
                 && target_stat[gain] - cur_stat[gain] > target_stat[lose] - cur_stat[lose]
                 && cur_stat[gain] < MAX_STAT_VALUE && you.base_stats[lose] > 1)
             {
-                choices++;
-                if (one_chance_in(choices))
+                if (one_chance_in(choices++))
                 {
                     stat_up_choice = gain;
                     stat_down_choice = lose;

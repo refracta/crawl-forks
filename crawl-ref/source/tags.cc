@@ -2519,10 +2519,10 @@ static void tag_read_you(reader &th)
 #if TAG_MAJOR_VERSION == 34
     for (int i = 0; i < NUM_STATS; ++i)
     {
-        if (th.getMinorVersion() >= TAG_MINOR_JIYVA_REWORK)
-            you.jiyva_stat_targets = unmarshallByte(th);
+        if (th.getMinorVersion() < TAG_MINOR_JIYVA_REWORK)
+            you.jiyva_stat_targets[i] = JSTAT_UNSET;
         else
-            you.jiyva_stat_targets = JSTAT_UNSET;
+            you.jiyva_stat_targets[i] = unmarshallByte(th);
     }
     if (th.getMinorVersion() < TAG_MINOR_STAT_ZERO_DURATION)
     {
