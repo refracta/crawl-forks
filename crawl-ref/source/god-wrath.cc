@@ -1183,6 +1183,7 @@ static void _jiyva_mutate_player()
     for (int i = 0; i < mutations; ++i)
         mutate(RANDOM_BAD_MUTATION, _god_wrath_name(god), true, false, true);
 }
+    flash_view(UA_PLAYER, MAGENTA);
 
 static void _jiyva_remove_slime_mutation()
 {
