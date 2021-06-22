@@ -789,7 +789,7 @@ bool dgn_square_travel_ok(const coord_def &c)
     {
         const trap_def * const trap = trap_at(c);
         return !(trap && (trap->type == TRAP_TELEPORT_PERMANENT
-                          || trap->type == TRAP_DISPERSAL));
+                          || trap->type == TRAP_CONGREGATION));
     }
     else
         return feat_is_traversable(feat);
@@ -1053,7 +1053,7 @@ static void _veto_deadly_dispersal(int depth)
 
     for (rectangle_iterator ri(1); ri; ++ri)
     {
-        if (grd(*ri) == DNGN_TRAP_DISPERSAL)
+        if (grd(*ri) == DNGN_TRAP_CONGREGATION)
         {
             for (rectangle_iterator si(*ri, LOS_RADIUS); si; ++si)
             {

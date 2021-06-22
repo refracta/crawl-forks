@@ -1723,8 +1723,8 @@ ENDMAP
 
 NAME:   gammafunk_ghost_tricky_traps
 DEPTH:  D:$, Shoals, Spider, Elf, Depths, Zot
-KFEAT:  ^ = zot trap / dispersal trap w:5 / alarm trap w:1 / floor w:16
-KFEAT:  ' = zot trap / dispersal trap w:5 / alarm trap w:1 / floor w:8
+KFEAT:  ^ = zot trap / congregation trap w:5 / alarm trap w:1 / floor w:16
+KFEAT:  ' = zot trap / congregation trap w:5 / alarm trap w:1 / floor w:8
 : kitem("O = " .. dgn.randart_aux_armour)
 KMONS:  O = player ghost
 : ghost_good_loot(_G)
@@ -2102,7 +2102,7 @@ KITEM:  N = scroll of teleportation q:3 ident:all w:20 \
             / manual of translocations w:2 / rift w:2 / ring of phasing w:2
 KMONS:  O = player ghost
 KFEAT:  O = enter_abyss
-KFEAT:  ^ = dispersal trap
+KFEAT:  ^ = congregation trap
 COLOUR: -apQ = magenta
 RTILE:  x = wall_abyss
 FTILE:  -apQ = floor_nerves
@@ -2111,7 +2111,7 @@ FTILE:  -apQ = floor_nerves
 NSUBST: P = P / S, Q = Q / R, R = R / k, S = S / .
 NSUBST: k = d / e / f / g / h / i / j / -
 NSUBST: q = yyyyq
-# Place some rocks and dispersal traps in the inner area and along the inner
+# Place some rocks and congregation traps in the inner area and along the inner
 # wall, but with lower density along wall to make fewer choke points.
 SUBST:  a = x -:7 ^:1, p = x -:37 ^:1
 # Place ghost and translocation loot, remaining instances of '-' will be used

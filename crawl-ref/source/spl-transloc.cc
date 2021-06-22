@@ -175,7 +175,7 @@ void uncontrolled_blink(bool override_stasis, coord_def disp_center)
         return;
 
     if (needs_msg)
-        mpr("Yoink! You're pulled towards a dispersal trap!");
+        mpr("Yoink! You're pulled towards a congregation trap!");
     else
         canned_msg(MSG_YOU_BLINK);
     const coord_def origin = you.pos();

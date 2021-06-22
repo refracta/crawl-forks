@@ -426,7 +426,7 @@ ENDMAP
 
 NAME:  ziggurat_pillar_centre_dispersal
 TAGS:  ziggurat_pillar centered generate_awake unrand no_exits
-KFEAT: ^ = dispersal trap
+KFEAT: ^ = congregation trap
 MAP
 ^G.G^
 GG.GG

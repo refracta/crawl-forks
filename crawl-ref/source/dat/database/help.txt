@@ -135,7 +135,7 @@ Use <w>armour && !!body</w> to list all armour pieces except for body armour.
 
 You can search for dungeon features by name: all shops will be found by a search
 for <w>shop</w> (including shops that do not have "shop" in their name); other
-dungeon features can also be found by name: <w>dispersal trap</w>, <w>altar</w>,
+dungeon features can also be found by name: <w>congregation trap</w>, <w>altar</w>,
 etc. You can also search for altars by deity name: <w>Zin</w>.
 
 <h>Non-regex operators:</h>

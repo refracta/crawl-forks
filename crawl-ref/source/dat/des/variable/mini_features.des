@@ -2657,7 +2657,7 @@ ENDMAP
 
 NAME: ebering_dispersal_statue_hall
 TAGS: decor extra
-KFEAT: ^ = dispersal trap
+KFEAT: ^ = congregation trap
 MAP
 xxxxx
 .^G^.

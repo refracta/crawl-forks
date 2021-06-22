@@ -142,7 +142,7 @@ string trap_def::name(description_level_type desc) const
 bool trap_def::is_bad_for_player() const
 {
     return type == TRAP_ALARM
-           || type == TRAP_DISPERSAL
+           || type == TRAP_CONGREGATION
            || type == TRAP_ZOT;
 }
 
@@ -515,7 +515,7 @@ void trap_def::trigger(actor& triggerer)
             }
             break;
         }
-        case TRAP_DISPERSAL:
+        case TRAP_CONGREGATION:
         {
             dprf("Triggered dispersal.");
             if (you_trigger)
@@ -1342,8 +1342,8 @@ dungeon_feature_type trap_category(trap_type type)
         return DNGN_TRAP_WEB;
     case TRAP_SHAFT:
         return DNGN_TRAP_SHAFT;
-    case TRAP_DISPERSAL:
-        return DNGN_TRAP_DISPERSAL;
+    case TRAP_CONGREGATION:
+        return DNGN_TRAP_CONGREGATION;
     case TRAP_TELEPORT:
     case TRAP_TELEPORT_PERMANENT:
         return DNGN_TRAP_TELEPORT;
@@ -1540,7 +1540,7 @@ trap_type random_trap_for_place()
 
     const pair<trap_type, int> trap_weights[] =
     {
-        { TRAP_DISPERSAL, tele_ok  ? 1 : 0},
+        { TRAP_CONGREGATION, tele_ok  ? 1 : 0},
         { TRAP_TELEPORT,  tele_ok  ? 1 : 0},
         { TRAP_SHAFT,    shaft_ok  ? 1 : 0},
         { TRAP_ALARM,    alarm_ok  ? 1 : 0},
@@ -1700,7 +1700,7 @@ bool ensnare(actor *fly, int pow)
 bool is_regular_trap(trap_type trap)
 {
 #if TAG_MAJOR_VERSION == 34
-    return trap <= TRAP_MAX_REGULAR || trap == TRAP_DISPERSAL;
+    return trap <= TRAP_MAX_REGULAR || trap == TRAP_CONGREGATION;
 #else
     return trap <= TRAP_MAX_REGULAR;
 #endif

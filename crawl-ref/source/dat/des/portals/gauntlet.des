@@ -143,7 +143,7 @@ default-depth: Gauntlet
 # Terrain Glyphs:
 #
 # '^' : Vaults should have some '^' glyphs to let the vault have a chance of
-#       placing dispersal traps. These should be placed at interesting
+#       placing congregation traps. These should be placed at interesting
 #       locations that make the vault more challenging. All instances of '^'
 #       become a trap, so any location randomization must be handled in the
 #       vault before gauntlet_arena_setup() is called.
@@ -791,7 +791,7 @@ ENDMAP
 
 NAME:   minmay_gauntlet_arena_77_mess
 TAGS:   gauntlet_arena_77_first gauntlet_arena_77_second
-# there is one 3 on the map because a dispersal trap should not be on that
+# there is one 3 on the map because a congregation trap should not be on that
 # square
 NSUBST: ' = 9=3 / 6=2 / 1 / ^ / .
 : gauntlet_arena_setup(_G)

@@ -164,7 +164,7 @@ NAME:   enter_ossuary_1
 TAGS:   transparent extra uniq_miniossuary
 NSUBST: . = 1:1 / 4:2 / *:p
 SUBST:  ' = ~..
-KFEAT:  ~ = alarm trap / dispersal trap / net trap
+KFEAT:  ~ = alarm trap / congregation trap / net trap
 CLEAR:  p
 : ossuary_setup_features(_G)
 MAP
@@ -182,7 +182,7 @@ SUBST:   r = ...z
 NSUBST:  ' = 2:~ / 1:1 / *:p
 SUBST:   p = 234..
 CLEAR:   z
-KFEAT:   ~ = alarm trap / dispersal trap
+KFEAT:   ~ = alarm trap / congregation trap
 : ossuary_setup_features(_G)
 MAP
   rrrrr
@@ -202,7 +202,7 @@ SUBST:  . = .3ppp
 SUBST:  ' = .$$
 NSUBST: ~ = 1:~ / 1:^
 KFEAT:  ~ = alarm trap
-KFEAT:  ^ = dispersal trap
+KFEAT:  ^ = congregation trap
 CLEAR:  p
 : ossuary_setup_features(_G)
 MAP
@@ -225,7 +225,7 @@ NSUBST:  ' = 2:1 / 1:~ / |
 SUBST: . = 334.pppp
 NSUBST: p = 1:0 / *:p
 CLEAR: p
-KFEAT: ~ = dispersal trap
+KFEAT: ~ = congregation trap
 : ossuary_setup_features(_G)
 MAP
      .
@@ -266,7 +266,7 @@ TAGS:  extra uniq_miniossuary
 SUBST: . = 33..ppppp
 NSUBST: A = + / c, B = + / c, C = + / c, s = 1:| / 2:2 / 2:4 / *:4*ddd
 NSUBST: ` = 1:1 / 2:2 / 3:34 / *:...
-KFEAT: ~ = alarm trap / dispersal trap
+KFEAT: ~ = alarm trap / congregation trap
 CLEAR: p
 : ossuary_setup_features(_G)
 MAP
@@ -407,7 +407,7 @@ ORIENT: north
 NSUBST: ' = 2:~ / 3:4 / *:$
 NSUBST: ~ = 1:^ / 1:~
 KFEAT: ~ = alarm trap / floor
-KFEAT: ^ = dispersal trap / floor
+KFEAT: ^ = congregation trap / floor
 : ossuary_setup_features(_G)
 MAP
  ccccccc
@@ -641,7 +641,7 @@ NSUBST:   f = 2:g / *:f
 SUBST:   ' = 44~...
 SUBST:   4 = 23444
 NSUBST:  ~ = 4:~ / *:.
-KFEAT:   ~ = dispersal trap
+KFEAT:   ~ = congregation trap
 NSUBST:  . = 6:^ / *:.
 KFEAT:   ^ = alarm trap / floor w:20
 : ossuary_setup_features(_G)
@@ -907,8 +907,8 @@ ITEM:    potion of curing / potion of heal wounds / potion of haste / \
          scroll of blinking w:5 / scroll of holy word / \
          scroll of random uselessness
 SUBST:   M = 111.
-KFEAT:   ~ = net trap / alarm trap / dispersal trap w:5 / floor w:100
-KFEAT:   ^ = net trap w:20 / dispersal trap w:5 / floor w:25
+KFEAT:   ~ = net trap / alarm trap / congregation trap w:5 / floor w:100
+KFEAT:   ^ = net trap w:20 / congregation trap w:5 / floor w:25
 : ossuary_setup_features(_G)
 MAP
            ccccccccccccccccccccc
@@ -926,7 +926,7 @@ TAGS:   uniq_ossuary
 NSUBST:  = = 1:+ / *:c
 SUBST:  . = ~3....
 SUBST:  ' = .''''
-KFEAT:  ~ = net trap / alarm trap / dispersal trap w:5
+KFEAT:  ~ = net trap / alarm trap / congregation trap w:5
 CLEAR:  '
 ITEM:    any scroll / any potion
 : ossuary_setup_features(_G)
@@ -1199,7 +1199,7 @@ SUBST: TUV = c
 SUBST: A = 2
 SUBST: B = 6
 SUBST: C = 7
-KFEAT: ~ = alarm trap / dispersal trap
+KFEAT: ~ = alarm trap / congregation trap
 CLEAR: '
 ITEM:   any scroll / any potion / any scroll q:2 w:2 / any potion q:2 w:2
 : ossuary_setup_features(_G)
@@ -1235,7 +1235,7 @@ NAME:   ossuary_minmay_chase
 ORIENT: east
 TAGS:   uniq_ossuary no_rotate
 ITEM:   any scroll / any potion / gold w:4
-KFEAT:  ~ = arrow trap / needle trap / dispersal trap w:4
+KFEAT:  ~ = arrow trap / needle trap / congregation trap w:4
 KITEM: D = scroll of acquirement
 SUBST: ' = 3..pppp
 SUBST: 2 = 24
@@ -1284,7 +1284,7 @@ NSUBST: E  = 1:+ / *:c , F = 1:+ / *:c , G = 1:+ / *:c , H = 1:+ / *:c
 NSUBST: I  = 1:+ / *:c , J = 1:+ / *:c , K = 1:+ / *:c , L = 1:+ / *:c
 NSUBST: M  = 1:+ / *:c , } = 3:} / *:.
 SUBST: l = ~...
-KFEAT: ~ = alarm trap / dispersal trap
+KFEAT: ~ = alarm trap / congregation trap
 TILE: ab = wall_tomb
 {{
 lua_marker("'", Triggerable.synchronized_markers(
@@ -1441,7 +1441,7 @@ TAGS:   uniq_miniossuary no_hmirror no_rotate
 ORIENT: south
 NSUBST: ' = 4:5 / 2:~ / 5:3 2:1 / 2:* / *:.
 SUBST:  3 = 367
-KFEAT:  ~ = dispersal trap
+KFEAT:  ~ = congregation trap
 : ossuary_setup_features(_G)
 MAP
           qq===qq

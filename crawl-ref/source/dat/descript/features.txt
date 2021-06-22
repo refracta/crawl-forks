@@ -706,10 +706,10 @@ A bolt trap
 A well-concealed hole containing a crossbow-like contraption with a
 self-loading mechanism.
 %%%%
-A dispersal trap
+A congregation trap
 
-Anyone stepping on this trap will translocate themself and anyone else in view
-to a new location nearby. Hostile monsters may trigger this trap, but your
+Anyone stepping on this trap will pull creatures from up to two screens away into 
+random locations near the trap. Hostile monsters may trigger this trap, but your
 allies will avoid stepping on it.
 %%%%
 A mechanical trap
