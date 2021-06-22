@@ -100,9 +100,8 @@ static bool _handle_player_attack(actor * defender, bool simu, int atk_num,
     if (attk.cancel_remaining)
         return true;
 
-    // BCADNOTE: Should the Spectral Weapon trigger on attacks other than those with the cloned weapon?
     // A spectral weapon attacks whenever the player does
-    if (!simu && you.props.exists("spectral_weapon"))
+    if (!simu && you.props.exists("spectral_weapon") && (eff_atk_num == 0 || eff_atk_num == 2))
         trigger_spectral_weapon(&you, defender);
 
     // BCADNOTE: Should Dithmenos copy mount's attacks?
