@@ -44,6 +44,7 @@
 #include "level-state-type.h"
 #include "libutil.h"
 #include "macro.h"
+#include "mapmark.h"
 #include "maps.h"
 #include "menu.h"
 #include "message.h"
@@ -530,7 +531,7 @@ static const ability_def Ability_List[] =
     { ABIL_JIYVA_SLIME_MOUNT, "Oozing Slime Mount",
       8, 0, 500, 8, { fail_basis::invo, 90, 6, 10 }, abflag::none },
     { ABIL_JIYVA_SLIMIFY, "Slimify",
-      6, 0, 200, 12, {fail_basis::invo, 90, 0, 2}, abflag::none },
+      6, 0, 200, 12, { fail_basis::invo, 108, 6, 10 }, abflag::none },
 
     // Fedhas
     { ABIL_FEDHAS_FUNGAL_BLOOM, "Fungal Bloom",
@@ -971,6 +972,25 @@ static const string _detailed_cost_description(ability_type ability)
     return ret.str();
 }
 
+static int _slime_count(bool clear = false)
+{
+    int count = 0;
+    for (map_marker *mark : env.markers.get_all(MAT_TERRAIN_CHANGE))
+    {
+        map_terrain_change_marker *marker =
+            dynamic_cast<map_terrain_change_marker*>(mark);
+
+        if (marker->change_type == TERRAIN_CHANGE_SLIME
+            && you.see_cell_no_trans(marker->pos))
+        {
+            count++;
+            if (clear)
+                marker->duration = 0;
+        }
+    }
+    return count;
+}
+
 ability_type fixup_ability(ability_type ability)
 {
     switch (ability)
@@ -1135,6 +1155,9 @@ static int _adjusted_failure_chance(ability_type ability, int base_chance)
         if (you.form == transformation::dragon)
             return base_chance - 20;
         return base_chance;
+
+    case ABIL_JIYVA_SLIMIFY:
+        return max(0, base_chance - _slime_count());
 
     case ABIL_BLINK:
         return 48 - (17 * you.get_mutation_level(MUT_BLINK))
@@ -1664,6 +1687,18 @@ static bool _check_ability_possible(const ability_def& abil, bool quiet = false)
             }
             return false;
         }
+        return true;
+    }
+
+    case ABIL_JIYVA_SLIMIFY:
+    {
+        if (_slime_count() < 6)
+        {
+            if (!quiet)
+                mpr("Not enough fresh slime nearby.");
+            return false;
+        }
+
         return true;
     }
 
@@ -3423,6 +3458,8 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
             }
         }
 
+        const int slime = _slime_count(true);
+
         string msg = "";
         if (you.weapon(0) && is_melee_weapon(*you.weapon(0)))
             msg = you.weapon(0)->name(DESC_YOUR);
@@ -3430,9 +3467,9 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
             msg = you.weapon(1)->name(DESC_YOUR);
         else
             msg = "your " + you.hand_name(true);
-        mprf(MSGCH_DURATION, "A thick mucus forms on %s.", msg.c_str());
+        mprf(MSGCH_DURATION, "The slime in your surroundings rushes to %s.", msg.c_str());
         you.increase_duration(DUR_SLIMIFY,
-                              apply_invo_enhancer(random2avg(you.piety / 4, 2) + 3, false), 100);
+                              apply_invo_enhancer(random2avg(you.piety / 4, 2) + random2(slime), false), 100);
         break;
     }
 

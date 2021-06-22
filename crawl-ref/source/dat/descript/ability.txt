@@ -639,7 +639,8 @@ while you're gone.
 # Jiyva
 Slimify ability
 
-Coats a wielded weapon or your fists with slime, turning hit into a neutral slime.
+All slime the player can see rushes to coat a wielded weapon or your fists with slime. 
+The first monster you hit will turn into a neutral slime; ending the effect.
 %%%%
 Oozing Slime Mount ability
 
