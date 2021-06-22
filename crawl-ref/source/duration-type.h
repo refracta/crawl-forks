@@ -27,9 +27,7 @@ enum duration_type
     DUR_LIQUID_FLAMES,
     DUR_ICY_ARMOUR,
     DUR_MOUNT_POISONING,
-#if TAG_MAJOR_VERSION == 34
-    DUR_JELLY_PRAYER,
-#endif
+    DUR_DISSOLUTION,
     DUR_PIETY_POOL,             // distribute piety over time
     DUR_DIVINE_VIGOUR,          // duration of Ely's Divine Vigour
     DUR_DIVINE_STAMINA,         // duration of Zin's Divine Stamina

@@ -1864,28 +1864,12 @@ bool beogh_resurrect()
     return true;
 }
 
-bool jiyva_check_dissolve()
-{
-    for (radius_iterator rad(you.pos(), LOS_NO_TRANS, true); rad;
-        ++rad)
-    {
-        for (stack_iterator stack_it(*rad); stack_it; ++stack_it)
-        {
-            if (stack_it->defined() && !is_artefact(*stack_it))
-            {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
 void slimify_position(int iterations, coord_def pos, bool boost_slime_rate)
 {
     for (int x = iterations; x > 0; x--)
     {
         dungeon_feature_type feat = grd(pos);
-        int dur = 13 + random2(you.skill(SK_INVOCATIONS));
+        int dur = iterations == 1 ? 1 + random2(3) : 3 + random2(you.skill(SK_INVOCATIONS));
         coord_def target = pos;
         if ((feat == DNGN_SLIMY_WATER && !one_chance_in(4)) || feat == DNGN_DEEP_SLIMY_WATER || feat_is_critical(feat))
         {
@@ -1978,7 +1962,7 @@ bool jiyva_set_targets()
 
 bool jiyva_dissolution()
 {
-    mprf(MSGCH_GOD, "You call upon Jiyva %s to melt useless items into sacred ooze!", you.jiyva_second_name.c_str());
+    mprf(MSGCH_GOD, "You call upon Jiyva %s to melt useless items and the corpses of the fallen into sacred ooze!", you.jiyva_second_name.c_str());
 
     int placed_ooze = 0;
 
@@ -2009,7 +1993,9 @@ bool jiyva_dissolution()
                                                             placed_ooze == 1 ? "s" : "");
     }
 
-    return (placed_ooze > 0); // Should always be true; but just in case.
+    you.increase_duration(DUR_DISSOLUTION, random2(6 + 3 * apply_invo_enhancer(you.skill(SK_INVOCATIONS), false)), 100);
+
+    return true;
 }
 
 bool jiyva_remove_bad_mutation()

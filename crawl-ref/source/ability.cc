@@ -1667,15 +1667,6 @@ static bool _check_ability_possible(const ability_def& abil, bool quiet = false)
         return true;
     }
 
-    case ABIL_JIYVA_DISSOLUTION:
-        if (!jiyva_check_dissolve())
-        {
-            if (!quiet)
-                mpr("No dissolvable items are in range.");
-            return false;
-        }
-        return true;
-
     case ABIL_BREATHE_MAGMA:
     case ABIL_SPIT_POISON:
     case ABIL_BREATHE_DART:

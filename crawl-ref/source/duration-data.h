@@ -713,6 +713,11 @@ static const duration_def duration_data[] =
       "noxious spew", "noxious bog",
       "You are spewing a noxious bog.", D_DISPELLABLE,
       {{ "Your noxious spew wanes." }}},
+    { DUR_DISSOLUTION,
+      GREEN, "Melt",
+      "dissolution", "dissolution",
+      "Jiyva is filling the area with slime.", D_DISPELLABLE,
+      {{ "Your deliquescence abates." }}},
     { DUR_STILL_WINDS,
       BROWN, "", "", "", "You are stilling the winds.", D_DISPELLABLE,
       {{ "You release your hold on the winds." , end_still_winds}}},
@@ -720,7 +725,6 @@ static const duration_def duration_data[] =
 
 #if TAG_MAJOR_VERSION == 34
     // And removed ones
-    { DUR_JELLY_PRAYER, 0, "", "", "old jelly prayer", "", D_NO_FLAGS},
     { DUR_INSULATION, 0, "", "", "old insulation", "", D_NO_FLAGS},
     { DUR_BARGAIN, 0, "", "", "old bargain", "", D_NO_FLAGS},
     { DUR_SLAYING, 0, "", "", "old slaying", "", D_NO_FLAGS},

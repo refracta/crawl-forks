@@ -654,7 +654,8 @@ that, each call costs a small amount of piety.
 %%%%
 Dissolution ability
 
-Turn all nearby non-artefact floor items into viscuous, corrosive ooze.
+Turn all nearby non-artefact floor items into viscuous, corrosive ooze and vastly increase 
+the ooze from killing monsters for a time.
 %%%%
 # Jiyva Mutations
 Spawn Eyeballs ability

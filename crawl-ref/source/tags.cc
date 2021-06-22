@@ -2837,8 +2837,6 @@ static void tag_read_you(reader &th)
         you.duration[DUR_CONFUSING_TOUCH] = 0;
     }
     you.duration[DUR_VEHUMET_GIFT] = 0;
-
-    you.duration[DUR_JELLY_PRAYER] = 0;
 #endif
 
     // how many attributes?
