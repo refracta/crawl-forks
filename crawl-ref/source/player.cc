@@ -6963,7 +6963,7 @@ int player::racial_ac(bool temp) const
         else if (species == SP_OCTOPODE)
             sAC = 100;
         else if (species == SP_FELID)
-            sAC = 100 + (experience_level / 6);
+            sAC = 100 + (experience_level / 6) * 100;
     }
 
     return jAC + sAC;
