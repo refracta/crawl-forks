@@ -1965,6 +1965,7 @@ bool jiyva_dissolution()
     mprf(MSGCH_GOD, "You call upon Jiyva %s to melt useless items and the corpses of the fallen into sacred ooze!", you.jiyva_second_name.c_str());
 
     int placed_ooze = 0;
+    const int pow = apply_invo_enhancer(you.skill(SK_INVOCATIONS), true);
 
     for (radius_iterator rad(you.pos(), LOS_NO_TRANS, true); rad;
         ++rad)
@@ -1978,7 +1979,7 @@ bool jiyva_dissolution()
                 destroy_item(stack_it->index());
 
                 coord_def cord = *rad;
-                slimify_position(1 + random2(div_rand_round(apply_invo_enhancer(you.skill(SK_INVOCATIONS), true), 9)), cord, true);
+                slimify_position(1 + random2(div_rand_round(pow, 9)), cord, true);
             }
         }
     }
@@ -1993,7 +1994,7 @@ bool jiyva_dissolution()
                                                             placed_ooze == 1 ? "s" : "");
     }
 
-    you.increase_duration(DUR_DISSOLUTION, random2(6 + 3 * apply_invo_enhancer(you.skill(SK_INVOCATIONS), false)), 100);
+    you.increase_duration(DUR_DISSOLUTION, 6 + pow + random2(pow), 100);
 
     return true;
 }
