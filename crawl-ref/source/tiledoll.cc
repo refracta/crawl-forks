@@ -323,6 +323,8 @@ void fill_doll_equipment(dolls_data &result)
             result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_MERFOLK_WATER_STATUE;
         else if (result.parts[TILEP_PART_BASE] == TILEP_TRAN_STATUE_HUMANOID)
             result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_STATUE;
+        else
+            result.parts[TILEP_PART_BOTTOM] = 0;
 
         result.parts[TILEP_PART_HAIR] = 0;
         result.parts[TILEP_PART_LEG] = 0;
@@ -347,6 +349,8 @@ void fill_doll_equipment(dolls_data &result)
             result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_MERFOLK_WATER_BONE;
         else if (ch == TILEP_TRAN_LICH_HUMANOID)
             result.parts[TILEP_PART_BOTTOM] = TILEP_BOTTOM_LICH;
+        else
+            result.parts[TILEP_PART_BOTTOM] = 0;
 
         result.parts[TILEP_PART_BASE] = ch;
         result.parts[TILEP_PART_DRCHEAD] = 0;
