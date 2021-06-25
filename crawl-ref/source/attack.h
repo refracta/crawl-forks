@@ -206,4 +206,5 @@ protected:
     virtual void player_stab_check();
 };
 
+int player_base_unarmed(bool rand = true);
 string attack_strength_punctuation(int dmg);

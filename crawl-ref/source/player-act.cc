@@ -12,6 +12,7 @@
 #include "act-iter.h"
 #include "areas.h"
 #include "art-enum.h"
+#include "attack.h"
 #include "coordit.h"
 #include "dgn-event.h"
 #include "english.h"
@@ -31,6 +32,7 @@
 #include "religion.h"
 #include "spl-damage.h"
 #include "state.h"
+#include "stringutil.h"
 #include "terrain.h"
 #include "transform.h"
 #include "traps.h"
@@ -766,7 +768,7 @@ string player::arm_name(bool plural, bool *can_plural) const
  */
 string player::unarmed_attack_name() const
 {
-    string default_name = "Nothing wielded";
+    string default_name = "Fists";
 
     if (has_usable_claws(true))
     {
@@ -782,7 +784,7 @@ string player::unarmed_attack_name() const
     else if (has_tentacles(true))
         default_name = "Tentacles";
 
-    return get_form()->get_uc_attack_name(default_name);
+    return make_stringf("%s (%d)", get_form()->get_uc_attack_name(default_name).c_str(), player_base_unarmed(false));
 }
 
 void player::attacking(actor *other, bool ranged)

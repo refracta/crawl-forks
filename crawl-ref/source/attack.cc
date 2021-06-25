@@ -1416,20 +1416,41 @@ int attack::calc_base_unarmed_damage()
     if (attack_number < 0)
         return 8;
 
+    return player_base_unarmed();
+}
+
+int player_base_unarmed(bool rand)
+{
     // BCADDO: It's a little wack that it's just a base damage additive then skill for most forms
     // Consider revising.
     int damage = get_form()->get_base_unarmed_damage();
 
-    // Claw damage only applies for bare hands.
-    if (you.has_usable_claws())
-        damage += div_rand_round(you.has_claws() * 3, 2);
+    if (rand)
+    {
+        // Claw damage only applies for bare hands.
+        if (you.has_usable_claws())
+            damage += div_rand_round(you.has_claws() * 3, 2);
 
-    if (you.form_uses_xl())
-        damage += div_rand_round(you.experience_level, 3);
-    else if (you.form == transformation::scorpion)
-        damage += div_rand_round(you.skill_rdiv(wpn_skill), 3);
+        if (you.form_uses_xl())
+            damage += div_rand_round(you.experience_level, 3);
+        else if (you.form == transformation::scorpion)
+            damage += div_rand_round(you.skill_rdiv(SK_UNARMED_COMBAT), 3);
+        else
+            damage += div_rand_round(2 * you.skill_rdiv(SK_UNARMED_COMBAT), 3);
+    }
     else
-        damage += div_rand_round(2 * you.skill_rdiv(wpn_skill), 3);
+    {
+        // Claw damage only applies for bare hands.
+        if (you.has_usable_claws())
+            damage += div_round_up(you.has_claws() * 3, 2);
+
+        if (you.form_uses_xl())
+            damage += div_round_up(you.experience_level, 3);
+        else if (you.form == transformation::scorpion)
+            damage += div_round_up(you.skill_rdiv(SK_UNARMED_COMBAT), 3);
+        else
+            damage += div_round_up(2 * you.skill_rdiv(SK_UNARMED_COMBAT), 3);
+    }
 
     if (damage < 0)
         damage = 0;
