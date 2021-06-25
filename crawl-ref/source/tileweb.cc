@@ -969,7 +969,7 @@ void TilesFramework::_send_player(bool force_full)
     _update_int(force_full, c.res_pois, you.res_poison(true, false), "rp");
     _update_int(force_full, c.res_elec, you.res_elec(false), "re");
     _update_int(force_full, c.res_acid, you.res_acid(true, true, false), "ra");
-    _update_int(force_full, c.MR, you.res_magic(), "mr");
+    _update_int(force_full, c.mr, you.res_magic(), "mr");
 
     if (you.species == SP_FELID)
     {
