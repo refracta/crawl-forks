@@ -240,7 +240,7 @@ function ($, comm, enums, map_knowledge, messages, options) {
 
     function update_MR()
     {
-        var elem = $("#res_MR");
+        var elem = $("#res_mr");
         elem.text(player[MR]);
         elem.removeClass();
         if (player[MR] >= 200)
@@ -261,7 +261,7 @@ function ($, comm, enums, map_knowledge, messages, options) {
     {
         var elem = $("#res_"+resist);
         elem.removeClass();
-        if (player[resist] == 3 && (resist == "rP" || resist == "rA"))
+        if (player[resist] == 3 && (resist == "rp" || resist == "ra"))
         {
             elem.text(" ∞");
             elem.addClass("fg10"); // Lightgreen
@@ -505,12 +505,12 @@ function ($, comm, enums, map_knowledge, messages, options) {
         update_stat("dex");
         update_bar_noise();
 
-        update_resist("rF");
-        update_resist("rC");
-        update_resist("rN");
-        update_resist("rA");
-        update_resist("rP");
-        update_resist("rE");
+        update_resist("rf", false);
+        update_resist("rc", false);
+        update_resist("rn", false);
+        update_resist("ra", false);
+        update_resist("rp", true);
+        update_resist("re", true);
         update_MR();
 
         if (options.get("show_game_time") === true)
@@ -624,7 +624,7 @@ function ($, comm, enums, map_knowledge, messages, options) {
                 str_max: 0, int_max: 0, dex_max: 0,
                 toggle: false,
                 rf: 0, rc: 0, rn: 0
-                rp: 0, re: 0, ra: 0, MR: 0,
+                rp: 0, re: 0, ra: 0, mr: 0,
                 piety_rank: 0, piety: 0, penance: false,
                 status: [],
                 inv: {}, equip: {}, quiver_item: -1,

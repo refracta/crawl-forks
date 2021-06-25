@@ -72,7 +72,7 @@ struct player_info
     int res_pois;
     int res_elec;
     int res_acid;
-    int MR;
+    int mr;
 
     int experience_level;
     int8_t exp_progress;

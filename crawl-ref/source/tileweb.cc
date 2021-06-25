@@ -963,13 +963,13 @@ void TilesFramework::_send_player(bool force_full)
     _update_int(force_full, c.dex, (int8_t) you.dex(false), "dex");
     _update_int(force_full, c.dex_max, (int8_t) you.max_dex(), "dex_max");
 
-    _update_int(force_full, c.res_fire, you.res_fire(false), "rF");
-    _update_int(force_full, c.res_cold, you.res_cold(false), "rC");
-    _update_int(force_full, c.res_neg, you.res_negative_energy(false, false), "rN");
-    _update_int(force_full, c.res_pois, you.res_poison(true, false), "rP");
-    _update_int(force_full, c.res_elec, you.res_elec(false), "rE");
-    _update_int(force_full, c.res_acid, you.res_acid(true, true, false), "rA");
-    _update_int(force_full, c.MR, you.res_magic(), "MR");
+    _update_int(force_full, c.res_fire, you.res_fire(false), "rf");
+    _update_int(force_full, c.res_cold, you.res_cold(false), "rc");
+    _update_int(force_full, c.res_neg, you.res_negative_energy(false, false), "rn");
+    _update_int(force_full, c.res_pois, you.res_poison(true, false), "rp");
+    _update_int(force_full, c.res_elec, you.res_elec(false), "re");
+    _update_int(force_full, c.res_acid, you.res_acid(true, true, false), "ra");
+    _update_int(force_full, c.MR, you.res_magic(), "mr");
 
     if (you.species == SP_FELID)
     {
