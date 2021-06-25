@@ -954,12 +954,22 @@ void TilesFramework::_send_player(bool force_full)
                 "sh");
     _update_int(force_full, c.gdr, you.gdr_perc(), "gdr");
 
+    _update_int(force_full, c.toggle, (bool)you.sidebar_toggle, "toggle");
+
     _update_int(force_full, c.strength, (int8_t) you.strength(false), "str");
     _update_int(force_full, c.strength_max, (int8_t) you.max_strength(), "str_max");
     _update_int(force_full, c.intel, (int8_t) you.intel(false), "int");
     _update_int(force_full, c.intel_max, (int8_t) you.max_intel(), "int_max");
     _update_int(force_full, c.dex, (int8_t) you.dex(false), "dex");
     _update_int(force_full, c.dex_max, (int8_t) you.max_dex(), "dex_max");
+
+    _update_int(force_full, c.res_fire, you.res_fire(false), "rF");
+    _update_int(force_full, c.res_cold, you.res_cold(false), "rC");
+    _update_int(force_full, c.res_neg, you.res_negative_energy(false, false), "rN");
+    _update_int(force_full, c.res_pois, you.res_poison(true, false), "rP");
+    _update_int(force_full, c.res_elec, you.res_elec(false), "rE");
+    _update_int(force_full, c.res_acid, you.res_acid(true, true, false), "rA");
+    _update_int(force_full, c.MR, you.res_magic(), "MR");
 
     if (you.species == SP_FELID)
     {

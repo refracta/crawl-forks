@@ -1,4 +1,4 @@
-define(["jquery", "comm", "./enums", "./map_knowledge", "./messages",
+﻿define(["jquery", "comm", "./enums", "./map_knowledge", "./messages",
         "./options"],
 function ($, comm, enums, map_knowledge, messages, options) {
     "use strict";
@@ -238,6 +238,86 @@ function ($, comm, enums, map_knowledge, messages, options) {
                || player.has_status("held", 4);
     }
 
+    function update_MR()
+    {
+        var elem = $("#res_MR");
+        elem.text(player[MR]);
+        elem.removeClass();
+        if (player[MR] >= 200)
+            elem.addClass("fg13"); // lightmagenta
+        else if (player[MR] >= 160)
+            elem.addClass("fg5"); // magenta
+        else if (player[MR] >= 120)
+            elem.addClass("fg9"); // lightblue
+        else if (player[MR] >= 80)
+            elem.addClass("fg1"); // blue
+        else if (player[MR] >= 40)
+            elem.addClass("fg2"); // green
+        else
+            elem.addClass("fg7"); // lightgrey
+    }
+
+    function update_resist(resist, nb)
+    {
+        var elem = $("#res_"+resist);
+        elem.removeClass();
+        if (player[resist] == 3 && (resist == "rP" || resist == "rA"))
+        {
+            elem.text(" ∞");
+            elem.addClass("fg10"); // Lightgreen
+        } 
+        else if (nb)
+        {
+            if (player[resist] > 0)
+            {
+                elem.text(" +");
+                elem.addClass("fg2"); // green
+            }
+            else if (player[resist] < 0)
+            {
+                elem.text(resist + " -");
+                elem.addClass("fg4"); // red
+            }
+            else
+                elem.text(" .");
+        }
+        else
+        {
+            if (player[resist] > 2)
+            {
+                elem.text(" + + +");
+                elem.addClass("fg10"); // lightgreen
+            }
+            else if (player[resist] == 2)
+            {
+                elem.text( " + + .");
+                elem.addClass("fg2"); // green
+            }
+            else if (player[resist] == 1)
+            {
+                elem.text(" + . .");
+                elem.addClass("fg2"); // green
+            }
+            else if (player[resist] == 0)
+                elem.text(" . . .");
+            else if (player[resist] == -1)
+            {
+                elem.text(" x . .");
+                elem.addClass("fg4"); // red
+            }
+            else if (player[resist] == -2)
+            {
+                elem.text(" x x .");
+                elem.addClass("fg12"); // lightred
+            }
+            else if (player[resist] < -2)
+            {
+                elem.text(" x x x");
+                elem.addClass("fg12"); // lightred
+            }
+        }
+    }
+
     function update_defense(type)
     {
         var elem = $("#stats_"+type);
@@ -346,6 +426,12 @@ function ($, comm, enums, map_knowledge, messages, options) {
         if (!player.mounted && $("#stats").attr("data-mounted") != "n")
             $("#stats").attr("data-mounted", "n");
 
+        if (player.toggle && $("#stats").attr("data-toggle") != "y")
+            $("#stats").attr("data-toggle", "y");
+
+        if (!player.toggle && $("#stats").attr("data-toggle") != "n")
+            $("#stats").attr("data-toggle", "n");
+
         var species_god = player.species;
         if (player.god != "")
             species_god += " of " + player.god;
@@ -418,6 +504,14 @@ function ($, comm, enums, map_knowledge, messages, options) {
         update_stat("int");
         update_stat("dex");
         update_bar_noise();
+
+        update_resist("rF");
+        update_resist("rC");
+        update_resist("rN");
+        update_resist("rA");
+        update_resist("rP");
+        update_resist("rE");
+        update_MR();
 
         if (options.get("show_game_time") === true)
         {
@@ -528,6 +622,9 @@ function ($, comm, enums, map_knowledge, messages, options) {
                 gold: 0,
                 str: 0, int: 0, dex: 0,
                 str_max: 0, int_max: 0, dex_max: 0,
+                toggle: false,
+                rf: 0, rc: 0, rn: 0
+                rp: 0, re: 0, ra: 0, MR: 0,
                 piety_rank: 0, piety: 0, penance: false,
                 status: [],
                 inv: {}, equip: {}, quiver_item: -1,

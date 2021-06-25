@@ -3498,6 +3498,12 @@ static void _draconian_skill_check(mutation_type mut = MUT_NON_MUTATION, draconi
     check_training_targets();
 }
 
+void toggle_sidebar()
+{
+    you.sidebar_toggle = !you.sidebar_toggle;
+    redraw_screen();
+}
+
 void change_drac_colour (draconian_colour new_colour)
 {
     ASSERT(species_is_draconian(you.species));
@@ -6070,6 +6076,8 @@ player::player()
     transform_uncancellable = false;
     fishtail = false;
 
+    sidebar_toggle = false;
+
     pet_target      = MHITNOT;
 
     duration.init(0);
@@ -6221,6 +6229,7 @@ player::player()
     redraw_armour_class  = false;
     redraw_evasion       = false;
     redraw_title         = false;
+    redraw_resists       = false;
 
     flash_colour        = BLACK;
     flash_where         = nullptr;
@@ -8317,6 +8326,7 @@ bool player::fully_petrify(actor */*foe*/, bool /*quiet*/, bool mt)
     duration[mt ? DUR_MOUNT_PETRIFIED : DUR_PETRIFIED] = 60
                         + random2(40);
     redraw_evasion = true;
+    redraw_resists = true;
     
     if (mt)
         mprf("Your %s has turned to stone.", mount_name(true).c_str());

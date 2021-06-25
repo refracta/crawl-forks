@@ -643,6 +643,8 @@ void dec_penance(god_type god, int val)
             // Redraw piety display and, in case the best skill is Invocations,
             // redraw the god title.
             you.redraw_title = true;
+            if (you_worship(GOD_SHINING_ONE))
+                you.redraw_resists = true;
 
             // TSO's halo is once more available.
             if (!had_halo && have_passive(passive_t::halo))
@@ -914,6 +916,9 @@ static void _inc_penance(god_type god, int val)
             // Redraw piety display and, in case the best skill is Invocations,
             // redraw the god title.
             you.redraw_title = true;
+
+            if (you_worship(GOD_SHINING_ONE))
+                you.redraw_resists = true;
         }
     }
     else
@@ -2571,6 +2576,9 @@ static void _gain_piety_point()
         // redraw the god title.
         you.redraw_title = true;
 
+        if (you_worship(GOD_SHINING_ONE))
+            you.redraw_resists = true;
+
         const int rank = piety_rank();
         take_note(Note(NOTE_PIETY_RANK, you.religion, rank));
         for (const auto& power : get_god_powers(you.religion))
@@ -2754,6 +2762,8 @@ void lose_piety(int pgn)
         // Redraw piety display and, in case the best skill is Invocations,
         // redraw the god title.
         you.redraw_title = true;
+        if (you_worship(GOD_SHINING_ONE))
+            you.redraw_resists = true;
 
         const int old_rank = piety_rank(old_piety);
 
@@ -2973,6 +2983,8 @@ void excommunication(bool voluntary, god_type new_god)
     you.religion = GOD_NO_GOD;
 
     you.redraw_title = true;
+    if (you_worship(GOD_SHINING_ONE))
+        you.redraw_resists = true;
 
     // Renouncing may have changed the conducts on our wielded or
     // quivered weapons, so refresh the display.
@@ -4001,6 +4013,8 @@ void join_religion(god_type which_god)
     you.saved_good_god_piety = 0;
 
     you.redraw_title = true;
+    if (you_worship(GOD_SHINING_ONE))
+        you.redraw_resists = true;
 
 #ifdef USE_TILE_LOCAL
     tiles.layout_statcol();

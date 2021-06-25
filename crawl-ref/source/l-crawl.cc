@@ -1542,6 +1542,7 @@ LUAFN(_crawl_redraw_stats)
     you.redraw_armour_class  = true;
     you.redraw_evasion       = true;
     you.redraw_status_lights = true;
+    you.redraw_resists       = true;
 
     print_stats();
     return 0;

@@ -322,6 +322,7 @@ static void _post_init(bool newc)
     you.redraw_experience   = true;
     you.redraw_quiver       = true;
     you.wield_change        = true;
+    you.redraw_resists      = true;
 
     // Start timer on session.
     you.last_keypress_time = chrono::system_clock::now();

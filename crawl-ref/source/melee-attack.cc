@@ -4040,7 +4040,8 @@ void melee_attack::mons_apply_attack_flavour()
             if (defender->is_player())
             {
                 if (!you.duration[DUR_LOWERED_MR])
-                    visible_effect = true;
+                    visible_effect = true; 
+                you.redraw_resists = true;
                 you.increase_duration(DUR_LOWERED_MR, 20 + random2(20), 40);
             }
             else

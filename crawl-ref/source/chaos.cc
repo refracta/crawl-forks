@@ -415,6 +415,7 @@ void chaotic_debuff(actor* act, int dur, actor * attacker)
                     else { vuln_type = DUR_POISON_VULN; mprf(MSGCH_WARN, "You feel more vulnerable to poison."); } break;
             case 4: vuln_type = DUR_PHYS_VULN; mprf(MSGCH_WARN, "You feel more vulnerable to physical attacks."); break;
             }
+            you.redraw_resists = true;
             you.increase_duration(vuln_type, dur);
         }
         else

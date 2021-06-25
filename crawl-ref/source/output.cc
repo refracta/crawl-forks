@@ -281,6 +281,8 @@ static void _nowrap_eol_cprintf_touchui(const char *format, ...)
 #define NOWRAP_EOL_CPRINTF nowrap_eol_cprintf
 #endif
 
+static string _resist_composer(const char * name, int spacing, int value, int max = 1, bool pos_resist = true);
+static string _itosym(int level, int max = 1);
 static string _god_powers();
 static string _god_asterisks();
 static int _god_status_colour(int default_colour);
@@ -818,6 +820,26 @@ static void _print_stats_hp(int x, int y)
     }
 }
 
+static short _get_resist_colour(int stat_value)
+{
+    switch (stat_value)
+    {
+    default:
+    case 3:
+        return LIGHTGREEN;
+    case 2:
+    case 1:
+        return GREEN;
+    case 0:
+        return LIGHTGREY;
+    case -1:
+        return RED;
+    case -2:
+    case -3:
+        return LIGHTRED;
+    }
+}
+
 static short _get_stat_colour(stat_type stat)
 {
     if (you.duration[stat_zero_duration(stat)])
@@ -856,6 +878,80 @@ static void _print_stat(stat_type stat, int x, int y)
         CPRINTF(" (%d)  ", you.max_stat(stat));
     else
         CPRINTF("       ");
+}
+
+static short _MR_colour(int MR)
+{
+    if (MR >= 200)
+        return LIGHTMAGENTA;
+    else if (MR >= 160)
+        return MAGENTA;
+    else if (MR >= 120)
+        return LIGHTBLUE;
+    else if (MR >= 80)
+        return BLUE;
+    else if (MR >= 40)
+        return GREEN;
+    else
+        return LIGHTGRAY;
+}
+
+static void _print_resists(int y)
+{
+    int rF = you.res_fire();
+    int rC = you.res_cold();
+    int rN = you.res_negative_energy();
+    int rA = you.res_acid();
+    int rP = you.res_poison();
+    int rE = you.res_elec();
+    int MR = you.res_magic();
+
+    textcolour(HUD_CAPTION_COLOUR);
+    CGOTOXY(1, y, GOTO_STAT);
+    CPRINTF("rFire:");
+    CGOTOXY(15, y, GOTO_STAT);
+    CPRINTF("rCold:");
+    CGOTOXY(31, y, GOTO_STAT);
+    CPRINTF("rNeg:");
+    CGOTOXY(1, y + 1, GOTO_STAT);
+    CPRINTF("rAcid:");
+    CGOTOXY(15, y + 1, GOTO_STAT);
+    CPRINTF("rPois:");
+    CGOTOXY(25, y + 1, GOTO_STAT);
+    CPRINTF("rElec:");
+    CGOTOXY(35, y + 1, GOTO_STAT);
+    CPRINTF("MR:");
+
+    textcolour(_get_resist_colour(rF));
+    CGOTOXY(8, y, GOTO_STAT);
+    CPRINTF("%s", _itosym(rF, 3).c_str());
+
+    textcolour(_get_resist_colour(rC));
+    CGOTOXY(23, y, GOTO_STAT);
+    CPRINTF("%s", _itosym(rC, 3).c_str());
+
+    textcolour(_get_resist_colour(rN));
+    CGOTOXY(37, y, GOTO_STAT);
+    CPRINTF("%s", _itosym(rN, 3).c_str());
+
+    textcolour(_get_resist_colour(rA));
+    CGOTOXY(8, y + 1, GOTO_STAT);
+    CPRINTF("%s", _itosym(rA, 3).c_str());
+
+    textcolour(_get_resist_colour(rP));
+    CGOTOXY(22, y + 1, GOTO_STAT);
+    if (rP == 3)
+        CPRINTF(" ∞ ");
+    else
+        CPRINTF("%s", _itosym(rP).c_str());
+
+    textcolour(_get_resist_colour(rE));
+    CGOTOXY(32, y + 1, GOTO_STAT);
+    CPRINTF("%s", _itosym(rE).c_str());
+
+    textcolour(_MR_colour(MR));
+    CGOTOXY(40, y + 1, GOTO_STAT);
+    CPRINTF("%d", MR);
 }
 
 static void _print_stats_ac(int x, int y)
@@ -1201,7 +1297,8 @@ static bool _need_stats_printed()
            || you.redraw_stats[STAT_DEX]
            || you.redraw_experience
            || you.wield_change
-           || you.redraw_quiver;
+           || you.redraw_quiver
+           || you.redraw_resists;
 }
 #endif
 
@@ -1356,21 +1453,24 @@ void print_stats()
         _print_stats_mp(1, y - 1);
     }
 
-    if (you.wield_change || you.redraw_armour_class)
+    if (!you.sidebar_toggle)
     {
-        you.redraw_armour_class = false;
-        _print_stats_ac(1, y);
-    }
-    if (you.wield_change || you.redraw_evasion)
-    {
-        you.redraw_evasion = false;
-        _print_stats_ev(1, y);
-    }
+        if (you.wield_change || you.redraw_armour_class)
+            _print_stats_ac(1, y);
+        if (you.wield_change || you.redraw_evasion)
+            _print_stats_ev(1, y);
 
-    _print_stat(STAT_STR, 1, y + 1);
-    _print_stat(STAT_INT, 16, y + 1);
-    _print_stat(STAT_DEX, 31, y + 1);
+        _print_stat(STAT_STR, 1, y + 1);
+        _print_stat(STAT_INT, 16, y + 1);
+        _print_stat(STAT_DEX, 31, y + 1);
+    }
+    else if (you.redraw_resists || you.wield_change)
+         _print_resists(y);
+
+    you.redraw_armour_class = false;
+    you.redraw_evasion = false;
     you.redraw_stats.init(false);
+    you.redraw_resists = false;
 
     if (you.redraw_experience)
     {
@@ -1501,13 +1601,16 @@ void draw_border()
 
     //CGOTOXY(1, 3, GOTO_STAT); CPRINTF("Hp:");
     CGOTOXY(1, mp_pos, GOTO_STAT);
-    CGOTOXY(1, line1, GOTO_STAT); CPRINTF("AC:");
-    CGOTOXY(16, line1, GOTO_STAT); CPRINTF("EV:");
-    CGOTOXY(31, line1, GOTO_STAT); CPRINTF("SH:");
+    if (!you.sidebar_toggle)
+    {
+        CGOTOXY(1, line1, GOTO_STAT); CPRINTF("AC:");
+        CGOTOXY(16, line1, GOTO_STAT); CPRINTF("EV:");
+        CGOTOXY(31, line1, GOTO_STAT); CPRINTF("SH:");
 
-    CGOTOXY(1, line2, GOTO_STAT); CPRINTF("Str:");
-    CGOTOXY(16, line2, GOTO_STAT); CPRINTF("Int:");
-    CGOTOXY(31, line2, GOTO_STAT); CPRINTF("Dex:");
+        CGOTOXY(1, line2, GOTO_STAT); CPRINTF("Str:");
+        CGOTOXY(16, line2, GOTO_STAT); CPRINTF("Int:");
+        CGOTOXY(31, line2, GOTO_STAT); CPRINTF("Dex:");
+    }
 
     CGOTOXY(19, time, GOTO_STAT);
     CPRINTF(Options.show_game_time ? "Time:" : "Turn:");
@@ -1532,6 +1635,7 @@ void redraw_console_sidebar()
     you.wield_change         = true;
     you.redraw_quiver        = true;
     you.redraw_status_lights = true;
+    you.redraw_resists       = true;
 
     print_stats();
 
@@ -1574,6 +1678,7 @@ void redraw_screen(bool show_updates)
     you.wield_change         = true;
     you.redraw_quiver        = true;
     you.redraw_status_lights = true;
+    you.redraw_resists       = true;
 
     print_stats();
 
@@ -1839,7 +1944,7 @@ int update_monster_pane()
 // params:
 //  level : actual resistance level
 //  max : maximum number of levels of the resistance
-static string _itosym(int level, int max = 1)
+static string _itosym(int level, int max)
 {
     if (max < 1)
         return "";
@@ -2456,8 +2561,7 @@ static vector<formatted_string> _get_overview_stats()
 //          default is the most common case (1)
 //      pos_resist : false for "bad" resistances (no tele, random tele, *Rage),
 //          inverts the value for the colour choice
-static string _resist_composer(
-    const char * name, int spacing, int value, int max = 1, bool pos_resist = true)
+static string _resist_composer( const char * name, int spacing, int value, int max, bool pos_resist)
 {
     string out;
     out += _determine_colour_string(pos_resist ? value : -value, max);
@@ -2485,6 +2589,9 @@ static vector<formatted_string> _get_overview_resistances(
     const int rlife = player_prot_life(calc_unid);
     out += _resist_composer("rNeg", cwidth, rlife, 3) + "\n";
 
+    const int racid = you.res_acid(calc_unid);
+    out += _resist_composer("rCorr", cwidth, racid, 3) + "\n";
+
     const int rpois = player_res_poison(calc_unid);
     string rpois_string = _resist_composer("rPois", cwidth, rpois) + "\n";
     //XXX
@@ -2497,9 +2604,6 @@ static vector<formatted_string> _get_overview_resistances(
 
     const int relec = player_res_electricity(calc_unid);
     out += _resist_composer("rElec", cwidth, relec) + "\n";
-
-    const int rcorr = you.res_corr(calc_unid);
-    out += _resist_composer("rCorr", cwidth, rcorr) + "\n";
 
     const int rmuta = (you.rmut_from_item(calc_unid)
                        || you.get_mutation_level(MUT_MUTATION_RESISTANCE) == 3);

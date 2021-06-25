@@ -1287,6 +1287,8 @@ void qazlal_element_adapt(beam_type flavour, int strength)
 
     if (what == BEAM_MISSILE)
         you.redraw_armour_class = true;
+    else
+        you.redraw_resists = true;
 }
 
 /**

@@ -145,6 +145,50 @@ body {
     background-color: #34e2e2; /* lightcyan */
 }
 
+/* default stats, visible normally */
+#normal_stats {
+    display:block;
+    visibility:visible;
+}
+ /* hidden on player toggle */
+#stats[data-toggle="y"] #normal_stats {
+    display:none;
+    visibility:hidden;
+}
+
+/* default stats, visible normally */
+#normal_stats2 {
+    display:block;
+    visibility:visible;
+}
+ /* hidden on player toggle */
+#stats[data-toggle="y"] #normal_stats2 {
+    display:none;
+    visibility:hidden;
+}
+
+/* resists, hidden normally */
+#resists {
+    display:none;
+    visibility:hidden;
+}
+ /* visible on player toggle */
+#stats[data-toggle="y"] #resists {
+    display:block;
+    visibility:visible;
+}
+
+/* resists, hidden normally */
+#resists2 {
+    display:none;
+    visibility:hidden;
+}
+ /* visible on player toggle */
+#stats[data-toggle="y"] #resists2 {
+    display:block;
+    visibility:visible;
+}
+
 /* default color when showing "Silenced" */
 #stats_noise_status {
     color: #FF00FF; /* magenta */

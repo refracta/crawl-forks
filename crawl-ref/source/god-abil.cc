@@ -216,6 +216,7 @@ bool bless_weapon(god_type god, brand_type brand, colour_t colour)
     calc_mp(); // in case the old brand was antimagic,
     you.redraw_armour_class = true; // protection,
     you.redraw_evasion = true;      // or evasion
+    you.redraw_resists = true;
     const string desc = old_name + " " + _god_blessing_description(god);
     take_note(Note(NOTE_ID_ITEM, 0, 0, wpn.name(DESC_A), desc));
     wpn.flags |= ISFLAG_NOTED_ID;
@@ -1353,6 +1354,7 @@ bool zin_vitalisation()
     const int stamina_amt = apply_invo_enhancer(max(1, you.skill_rdiv(SK_INVOCATIONS, 1, 3)), true);
     you.attribute[ATTR_DIVINE_STAMINA] = stamina_amt;
     you.set_duration(DUR_DIVINE_STAMINA, apply_invo_enhancer(60 + roll_dice(2, 10),false));
+    you.redraw_resists = true;
 
     simple_god_message(" grants you divine stamina.");
 
@@ -1370,7 +1372,8 @@ void zin_remove_divine_stamina()
     notify_stat_change(STAT_INT, -you.attribute[ATTR_DIVINE_STAMINA], true);
     notify_stat_change(STAT_DEX, -you.attribute[ATTR_DIVINE_STAMINA], true);
     you.duration[DUR_DIVINE_STAMINA] = 0;
-    you.attribute[ATTR_DIVINE_STAMINA] = 0;
+    you.attribute[ATTR_DIVINE_STAMINA] = 0; 
+    you.redraw_resists = true;
 }
 
 bool zin_remove_all_mutations()
@@ -1588,6 +1591,7 @@ void trog_do_trogs_hand()
                           INFINITE_DURATION + apply_invo_enhancer(0, true), INFINITE_DURATION,
         // Infinite duration; invo enhancer only here for messaging purposes.
                           "Your skin crawls.");
+    you.redraw_resists = true;
     mprf(MSGCH_DURATION, "You feel resistant to hostile enchantments.");
 }
 
@@ -1597,6 +1601,7 @@ void trog_remove_trogs_hand()
         mprf(MSGCH_DURATION, "Your skin stops crawling.");
     mprf(MSGCH_DURATION, "You feel less resistant to hostile enchantments.");
     you.duration[DUR_TROGS_HAND] = 0;
+    you.redraw_resists = true;
 }
 
 /**

@@ -2509,6 +2509,7 @@ bool mutate(mutation_type which_mutation, const string &reason, bool failMsg,
 
         // For all those scale mutations.
         you.redraw_armour_class = true;
+        you.redraw_resists = true;
 
         notify_stat_change();
 
@@ -2663,6 +2664,7 @@ static bool _post_loss_effects(mutation_type mutat, bool temp)
 
     // For all those scale mutations.
     you.redraw_armour_class = true;
+    you.redraw_resists = true;
     notify_stat_change();
 
     return lose_msg;

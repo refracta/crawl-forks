@@ -890,6 +890,7 @@ public:
     {
         mprf(MSGCH_DURATION, "You feel protected.");
         you.increase_duration(DUR_RESISTANCE, random2(pow) + 35);
+        you.redraw_resists = true;
         return true;
     }
 };

@@ -200,6 +200,8 @@ public:
     bool transform_uncancellable;
     bool fishtail; // Merfolk fishtail transformation
 
+    bool sidebar_toggle;
+
     unsigned short pet_target;
 
     durations_t duration;
@@ -452,6 +454,7 @@ public:
     bool redraw_armour_class;
     bool redraw_evasion;
     bool redraw_status_lights;
+    bool redraw_resists;
 
     colour_t flash_colour;
     targeter *flash_where;
@@ -1196,4 +1199,4 @@ bool player_has_orb();
 bool player_on_orb_run();
 
 void change_drac_colour(draconian_colour new_colour);
-
+void toggle_sidebar();

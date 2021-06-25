@@ -3172,6 +3172,7 @@ static void _finish_rebranding(item_def &item, colour_t flash_colour, bool playe
         you.wield_change = true;
         you.redraw_armour_class = true;
         you.redraw_evasion = true;
+        you.redraw_resists = true;
     }
     flash_view_delay(player ? UA_PLAYER : UA_MONSTER, flash_colour, 300);
 }
@@ -3750,6 +3751,7 @@ static void _vulnerability_scroll()
     }
 
     you.set_duration(DUR_LOWERED_MR, 40, 0, "Magic quickly surges around you.");
+    you.redraw_resists = true;
 }
 
 static bool _is_cancellable_scroll(scroll_type scroll)

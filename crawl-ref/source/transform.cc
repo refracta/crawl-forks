@@ -1753,6 +1753,7 @@ bool transform(int pow, transformation which_trans, bool involuntary,
     // All checks done, transformation will take place now.
     you.redraw_quiver       = true;
     you.redraw_evasion      = true;
+    you.redraw_resists      = true;
     you.redraw_armour_class = true;
     you.wield_change        = true;
     if (form_changed_physiology(which_trans))
@@ -1943,6 +1944,7 @@ void untransform(bool skip_move)
     you.redraw_evasion          = true;
     you.redraw_armour_class     = true;
     you.wield_change            = true;
+    you.redraw_resists          = true;
     you.received_weapon_warning = false;
     if (you.props.exists(TRANSFORM_POW_KEY))
         you.props.erase(TRANSFORM_POW_KEY);
@@ -2064,6 +2066,8 @@ void untransform(bool skip_move)
  */
 void merfolk_check_swimming(bool stepped)
 {
+    you.redraw_resists = true;
+
     if (!you.has_mutation(MUT_MERFOLK_TAIL, you.form != transformation::lich && you.form != transformation::statue))
         return;
 
@@ -2093,6 +2097,7 @@ void merfolk_start_swimming(bool stepped)
     you.fishtail = true;
     remove_one_equip(EQ_BOOTS);
     you.redraw_evasion = true;
+    you.redraw_resists = true;
 
 #ifdef USE_TILE
     init_player_doll();
@@ -2106,6 +2111,7 @@ void merfolk_stop_swimming()
     you.fishtail = false;
     unmeld_one_equip(EQ_BOOTS);
     you.redraw_evasion = true;
+    you.redraw_resists = true;
 
 #ifdef USE_TILE
     init_player_doll();

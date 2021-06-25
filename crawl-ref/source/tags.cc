@@ -2435,6 +2435,7 @@ static void tag_read_you(reader &th)
     you.hp = unmarshallShort(th);
     you.hunger = unmarshallShort(th);
     you.fishtail = unmarshallBoolean(th);
+    you.sidebar_toggle = false; // here for the sake of keeping things in order.
     you.form = unmarshall_int_as<transformation>(th);
     ASSERT_RANGE(static_cast<int>(you.form), 0, NUM_TRANSFORMS);
     ASSERT(you.form != transformation::none || !you.transform_uncancellable);

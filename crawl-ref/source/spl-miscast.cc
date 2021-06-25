@@ -1015,7 +1015,10 @@ void MiscastEffect::_hexes(int severity)
                 you_msg        = "You feel susceptible to magic.";
                 mon_msg_seen   = "@The_monster@ looks more susceptible to magic.";
                 if (target->is_player())
+                {
                     you.increase_duration(DUR_LOWERED_MR, 20 + random2(11), 50);
+                    you.redraw_resists = true;
+                }
                 else if (target->is_monster())
                 {
                      target->as_monster()->add_ench(mon_enchant(ENCH_LOWERED_MR,

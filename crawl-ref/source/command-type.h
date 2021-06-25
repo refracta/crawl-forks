@@ -159,6 +159,8 @@ enum command_type
     // Repeat next command a given number of times
     CMD_REPEAT_CMD,
 
+    CMD_TOGGLE_SIDEBAR,
+
     CMD_LUA_CONSOLE,
 
     CMD_MAX_NORMAL = CMD_LUA_CONSOLE,

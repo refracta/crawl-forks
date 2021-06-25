@@ -256,7 +256,9 @@ static const duration_def duration_data[] =
       BLUE, "RoF",
       "immune to fire clouds", "fire shield",
       "", D_DISPELLABLE | D_EXPIRES,
-      {{ "Your ring of flames gutters out." },
+      {{ "Your ring of flames gutters out.", []() {
+          you.redraw_resists = true;
+       }},
        { "Your ring of flames is guttering out.", 2}}, 5},
     { DUR_ICY_ARMOUR,
       0, "",
@@ -271,7 +273,8 @@ static const duration_def duration_data[] =
       RED, "MR/2",
       "vulnerable", "lowered mr",
       "", D_DISPELLABLE,
-      {{ "You feel less vulnerable to hostile enchantments." }}},
+      {{ "You feel less vulnerable to hostile enchantments.", []() {
+       you.redraw_resists = true; } }}},
     { DUR_MIGHT,
       LIGHTBLUE, "Might",
       "mighty", "might",
@@ -297,7 +300,9 @@ static const duration_def duration_data[] =
       "resistant", "resistance",
       "You resist elements.", D_DISPELLABLE | D_EXPIRES,
       {{ "Your resistance to elements expires." },
-          { "You start to feel less resistant.", 1}}, 6},
+          { "You start to feel less resistant.", 1}, []() {
+          you.redraw_resists = true;
+      }},6 },
     { DUR_SLIMIFY,
       GREEN, "Slime",
       "slimy", "slimify",
@@ -473,17 +478,20 @@ static const duration_def duration_data[] =
       RED, "rF-",
       "fire vulnerable", "fire vulnerability",
       "You are more vulnerable to fire.", D_DISPELLABLE,
-      {{ "You feel less vulnerable to fire." }}},
+      {{ "You feel less vulnerable to fire.", []() {
+          you.redraw_resists = true; } }} },
     { DUR_COLD_VULN,
       RED, "rC-",
       "cold vulnerable", "cold vulnerability",
       "You are more vulnerable to cold.", D_DISPELLABLE,
-      {{ "You feel less vulnerable to cold." }}},
+      {{ "You feel less vulnerable to cold.", []() {
+          you.redraw_resists = true; } }} },
     { DUR_ELEC_VULN,
       RED, "rElec-",
       "shock vulnerable", "shock vulnerability",
       "You are more vulnerable to electric shocks.", D_DISPELLABLE,
-      {{ "You feel less vulnerable to electricity." }}},
+      {{ "You feel less vulnerable to electricity.", []() {
+              you.redraw_resists = true;  } }} },
     { DUR_PHYS_VULN,
       RED, "AC-",
       "physically vulnerable", "reduced armour",
@@ -497,7 +505,8 @@ static const duration_def duration_data[] =
       RED, "rP-",
       "poison vulnerable", "poison vulnerability",
       "You are more vulnerable to poison.", D_DISPELLABLE,
-      {{ "You feel less vulnerable to poison." }}},
+      {{ "You feel less vulnerable to poison.", []() {
+                  you.redraw_resists = true; } }} },
     { DUR_FROZEN,
       RED, "Frozen",
       "frozen", "",
@@ -560,19 +569,22 @@ static const duration_def duration_data[] =
       LIGHTBLUE, "rF+",
       "protected from fire", "qazlal fire resistance",
       "Qazlal is protecting you from fire.", D_NO_FLAGS,
-      {{ "You feel less protected from fire." },
+      {{ "You feel less protected from fire.", []() {
+          you.redraw_resists = true; } },
         { "Your protection from fire is fading.", 1}}, 6},
     { DUR_QAZLAL_COLD_RES,
       LIGHTBLUE, "rC+",
       "protected from cold", "qazlal cold resistance",
       "Qazlal is protecting you from cold.", D_NO_FLAGS,
-      {{ "You feel less protected from cold." },
+      {{ "You feel less protected from cold.", []() {
+        you.redraw_resists = true; }},
         { "Your protection from cold is fading.", 1}}, 6},
     { DUR_QAZLAL_ELEC_RES,
       LIGHTBLUE, "rElec+",
       "protected from electricity", "qazlal elec resistance",
       "Qazlal is protecting you from electricity.", D_NO_FLAGS,
-      {{ "You feel less protected from electricity." },
+      {{ "You feel less protected from electricity.", []() {
+            you.redraw_resists = true; } },
         { "Your protection from electricity is fading.", 1}}, 6},
     { DUR_QAZLAL_AC,
       LIGHTBLUE, "",

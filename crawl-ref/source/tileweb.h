@@ -64,6 +64,16 @@ struct player_info
     int8_t intel, intel_max;
     int8_t dex, dex_max;
 
+    bool toggle;
+
+    int res_fire;
+    int res_cold;
+    int res_neg;
+    int res_pois;
+    int res_elec;
+    int res_acid;
+    int MR;
+
     int experience_level;
     int8_t exp_progress;
     int gold;

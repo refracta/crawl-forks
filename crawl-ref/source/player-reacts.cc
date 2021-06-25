@@ -173,6 +173,7 @@ static void _decrement_petrification(int delay)
     if (_decrement_a_duration(DUR_PETRIFIED, delay) && !you.paralysed())
     {
         you.redraw_evasion = true;
+        you.redraw_resists = true;
 
         string flesh_equiv = get_form()->flesh_equivalent.empty() ?
                                         "flesh" :
@@ -243,6 +244,7 @@ static void _decrement_paralysis(int delay)
         {
             mprf(MSGCH_DURATION, "You can move again.");
             you.redraw_evasion = true;
+            you.redraw_resists = true;
             you.duration[DUR_PARALYSIS_IMMUNITY] = roll_dice(1, 3)
             * BASELINE_DELAY;
             if (you.props.exists(PARALYSED_BY_KEY))

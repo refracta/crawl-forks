@@ -236,7 +236,7 @@ void unequip_effect(equipment_type slot, int item_slot, bool meld, bool msg)
 //
 
 static void _equip_artefact_effect(item_def &item, bool *show_msgs, bool unmeld,
-                                   equipment_type slot)
+    equipment_type slot)
 {
     ASSERT(is_artefact(item) || item.cursed());
 
@@ -254,8 +254,8 @@ static void _equip_artefact_effect(item_def &item, bool *show_msgs, bool unmeld,
     }
 
     const bool alreadyknown = item_type_known(item);
-    const bool dangerous    = player_in_a_dangerous_place();
-    const bool msg          = !show_msgs || *show_msgs;
+    const bool dangerous = player_in_a_dangerous_place();
+    const bool msg = !show_msgs || *show_msgs;
 
     artefact_properties_t  proprt;
     artefact_known_props_t known;
@@ -283,6 +283,13 @@ static void _equip_artefact_effect(item_def &item, bool *show_msgs, bool unmeld,
 
     if (proprt[ARTP_IMPROVED_VISION])
         autotoggle_autopickup(false);
+
+    if (proprt[ARTP_FIRE] || proprt[ARTP_COLD] || proprt[ARTP_NEGATIVE_ENERGY]
+        || proprt[ARTP_MAGIC_RESISTANCE] || proprt[ARTP_POISON] || proprt[ARTP_ELECTRICITY]
+        || proprt[ARTP_RCORR])
+    {
+        you.redraw_resists = true;
+    }
 
     if (proprt[ARTP_MAGICAL_POWER] && !known[ARTP_MAGICAL_POWER] && msg)
     {
@@ -403,6 +410,13 @@ static void _unequip_artefact_effect(item_def &item,
 
     if (proprt[ARTP_EVASION])
         you.redraw_evasion = true;
+
+    if (proprt[ARTP_FIRE] || proprt[ARTP_COLD] || proprt[ARTP_NEGATIVE_ENERGY]
+        || proprt[ARTP_MAGIC_RESISTANCE] || proprt[ARTP_POISON] || proprt[ARTP_ELECTRICITY]
+        || proprt[ARTP_RCORR])
+    {
+        you.redraw_resists = true;
+    }
 
     if (proprt[ARTP_HP])
         _calc_hp_artefact();
@@ -1183,6 +1197,7 @@ static void _equip_armour_effect(item_def& arm, bool unmeld,
 
     you.redraw_armour_class = true;
     you.redraw_evasion = true;
+    you.redraw_resists = true;
 }
 
 /**
@@ -1219,6 +1234,7 @@ static void _unequip_armour_effect(item_def& item, bool meld,
 {
     you.redraw_armour_class = true;
     you.redraw_evasion = true;
+    you.redraw_resists = true;
 
     switch (get_armour_ego_type(item))
     {
@@ -1457,10 +1473,17 @@ static void _equip_jewellery_effect(item_def &item, bool unmeld,
     {
     case RING_FIRE:
         mpr("You feel more attuned to fire.");
+        you.redraw_resists = true;
         break;
 
     case RING_ICE:
         mpr("You feel more attuned to ice.");
+        // fallthrough
+    case RING_RESIST_CORROSION:
+    case RING_POISON_RESISTANCE:
+    case RING_LIFE_PROTECTION:
+    case RING_PROTECTION_FROM_MAGIC:
+        you.redraw_resists = true;
         break;
 
     case RING_PROTECTION:
@@ -1584,17 +1607,20 @@ static void _unequip_jewellery_effect(item_def &item, bool mesg, bool meld,
     // The ring/amulet must already be removed from you.equip at this point.
     switch (item.sub_type)
     {
-    case RING_FIRE:
     case RING_ATTENTION:
-    case RING_ICE:
-    case RING_LIFE_PROTECTION:
-    case RING_POISON_RESISTANCE:
-    case RING_PROTECTION_FROM_MAGIC:
     case RING_SLAYING:
     case RING_STEALTH:
     case RING_TELEPORTATION:
     case RING_WIZARDRY:
     case AMU_REGENERATION:
+        break;
+
+    case RING_FIRE:
+    case RING_ICE:
+    case RING_LIFE_PROTECTION:
+    case RING_POISON_RESISTANCE:
+    case RING_PROTECTION_FROM_MAGIC:
+        you.redraw_resists = true;
         break;
 
     case RING_PROTECTION:
