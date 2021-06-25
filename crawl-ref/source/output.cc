@@ -2395,7 +2395,7 @@ static vector<formatted_string> _get_overview_stats()
         entry.cprintf(" ^: ");
 
         entry.textcolour(HUD_VALUE_COLOUR);
-        entry.cprintf("%d", get_exp_progress(false));
+        entry.cprintf("%d", get_exp_progress(true));
     }
 
     cols.add_formatted(3, entry.to_colour_string(), false);
