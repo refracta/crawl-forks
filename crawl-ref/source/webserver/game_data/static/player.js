@@ -495,23 +495,29 @@ function ($, comm, enums, map_knowledge, messages, options) {
         }
         update_bar("mp");
 
-        update_defense("ac");
-        update_defense("ev");
-        update_defense("sh");
-        update_defense("gdr");
+        if (!player.toggle)
+        {
+            update_defense("ac");
+            update_defense("ev");
+            update_defense("sh");
+            update_defense("gdr");
 
-        update_stat("str");
-        update_stat("int");
-        update_stat("dex");
+            update_stat("str");
+            update_stat("int");
+            update_stat("dex");
+        }
+        else
+        {
+            update_resist("rf", false);
+            update_resist("rc", false);
+            update_resist("rn", false);
+            update_resist("ra", false);
+            update_resist("rp", true);
+            update_resist("re", true);
+            update_MR();
+        }
+
         update_bar_noise();
-
-        update_resist("rf", false);
-        update_resist("rc", false);
-        update_resist("rn", false);
-        update_resist("ra", false);
-        update_resist("rp", true);
-        update_resist("re", true);
-        update_MR();
 
         if (options.get("show_game_time") === true)
         {
