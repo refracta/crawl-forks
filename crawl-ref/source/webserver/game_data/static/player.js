@@ -629,7 +629,7 @@ function ($, comm, enums, map_knowledge, messages, options) {
                 str: 0, int: 0, dex: 0,
                 str_max: 0, int_max: 0, dex_max: 0,
                 toggle: false,
-                rf: 0, rc: 0, rn: 0
+                rf: 0, rc: 0, rn: 0,
                 rp: 0, re: 0, ra: 0, mr: 0,
                 piety_rank: 0, piety: 0, penance: false,
                 status: [],
