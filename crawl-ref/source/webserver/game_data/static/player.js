@@ -241,7 +241,7 @@ function ($, comm, enums, map_knowledge, messages, options) {
     function update_MR()
     {
         var elem = $("#res_mr");
-        elem.text(player[MR]);
+        elem.text(player[mr]);
         elem.removeClass();
         if (player[MR] >= 200)
             elem.addClass("fg13"); // lightmagenta
