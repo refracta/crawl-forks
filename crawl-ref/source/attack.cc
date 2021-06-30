@@ -2094,9 +2094,9 @@ void attack::calc_elemental_brand_damage(beam_type flavour,
 
     if (!mount_defend)
     {
-        defender->expose_to_element(BEAM_FIRE, 2);
+        defender->expose_to_element(flavour, 2);
         if (defender->is_player())
-            maybe_melt_player_enchantments(BEAM_FIRE, special_damage);
+            maybe_melt_player_enchantments(flavour, special_damage);
     }
 }
 
