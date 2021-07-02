@@ -8548,7 +8548,7 @@ int player::innate_vision() const
     if (has_mutation(MUT_ACUTE_VISION))
         x++;
 
-    if (get_mutation_level(MUT_ANTENNAE) == 3)
+    if (get_mutation_level(MUT_ANTENNAE))
         x++;
 
     if (get_mutation_level(MUT_GOLDEN_EYEBALLS))
