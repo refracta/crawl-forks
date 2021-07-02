@@ -2905,9 +2905,9 @@ int player_shield_class(bool temp)
     if (you.get_mutation_level(MUT_LARGE_BONE_PLATES))
     {
         if (you.char_class == JOB_DEMONSPAWN)
-            shield += you.experience_level * 200 / 3;
+            shield += you.experience_level * 400 / 3;
         else
-            shield += 600;
+            shield += 1200;
     }
 
     shield += you.branch_SH(true) * 200;
