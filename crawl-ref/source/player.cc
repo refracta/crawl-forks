@@ -1864,7 +1864,7 @@ int player_res_cold(bool calc_unid, bool temp, bool items)
     rc += you.get_mutation_level(MUT_COLD_RESISTANCE, temp);
     rc -= you.get_mutation_level(MUT_COLD_VULNERABILITY, temp);
     rc -= you.get_mutation_level(MUT_TEMPERATURE_SENSITIVITY, temp);
-    rc += you.get_mutation_level(MUT_ICY_BLUE_SCALES, temp) ? 1 : 0;
+    rc += you.get_mutation_level(MUT_ICY_BLUE_SCALES, temp);
     rc += you.get_mutation_level(MUT_PROTOPLASM, temp) ? 1 : 0;
     rc += min(you.get_mutation_level(MUT_FROST_BURST, temp), 2);
 
@@ -1954,7 +1954,7 @@ int player_res_electricity(bool calc_unid, bool temp, bool items)
     }
 
     // mutations:
-    re += you.get_mutation_level(MUT_THIN_METALLIC_SCALES, temp) == 3 ? 1 : 0;
+    re += you.get_mutation_level(MUT_THIN_METALLIC_SCALES, temp);
     re += you.get_mutation_level(MUT_SHOCK_RESISTANCE, temp);
     re += you.get_mutation_level(MUT_ACID_WAVE, temp) >= 2 ? 1 : 0;
     re -= you.get_mutation_level(MUT_SHOCK_VULNERABILITY, temp);
@@ -2084,7 +2084,7 @@ int player_res_poison(bool calc_unid, bool temp, bool items)
 
     // mutations:
     rp += you.get_mutation_level(MUT_POISON_RESISTANCE, temp);
-    rp += you.get_mutation_level(MUT_SLIMY_GREEN_SCALES, temp) == 3 ? 1 : 0;
+    rp += you.get_mutation_level(MUT_SLIMY_GREEN_SCALES, temp);
 
     // draconian scales:
     if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, temp))
