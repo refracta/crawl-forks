@@ -675,8 +675,8 @@ bool player_in_connected_branch()
 bool player_likes_water(bool permanently)
 {
     return !permanently && you.can_water_walk()
-           || species_likes_water(you.species) && !you.mounted() && !player_is_shapechanged()
-           || (!permanently || species_likes_water(you.species)) 
+           || (species_likes_water(you.species) || you.get_mutation_level(MUT_FROG_LEGS)) && !you.mounted() && !player_is_shapechanged()
+           || (!permanently || species_likes_water(you.species) || you.get_mutation_level(MUT_FROG_LEGS))
                 && you.mounted() && you.mount == mount_type::hydra
            || !permanently && form_likes_water();
 }
