@@ -243,18 +243,16 @@ function ($, comm, enums, map_knowledge, messages, options) {
         var elem = $("#res_mr");
         elem.text(player[mr]);
         elem.removeClass();
-        if (player[MR] >= 200)
+        if (player[mr] >= 200)
             elem.addClass("fg13"); // lightmagenta
-        else if (player[MR] >= 160)
+        else if (player[mr] >= 160)
             elem.addClass("fg5"); // magenta
-        else if (player[MR] >= 120)
+        else if (player[mr] >= 120)
             elem.addClass("fg9"); // lightblue
-        else if (player[MR] >= 80)
+        else if (player[mr] >= 80)
             elem.addClass("fg1"); // blue
-        else if (player[MR] >= 40)
+        else if (player[mr] >= 40)
             elem.addClass("fg2"); // green
-        else
-            elem.addClass("fg7"); // lightgrey
     }
 
     function update_resist(resist, nb)
