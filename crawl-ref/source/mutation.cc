@@ -1852,7 +1852,7 @@ static string _drac_enhancer_msg(int type)
     if (type > 0)
         ostr << _get_mutation_def(MUT_DRACONIAN_ENHANCER).gain[0];
     else if (type < 0)
-        ostr << _get_mutation_def(MUT_DRACONIAN_ENHANCER).lose[you.get_mutation_level(MUT_DRACONIAN_ENHANCER, false) - 1];
+        ostr << _get_mutation_def(MUT_DRACONIAN_ENHANCER).lose[you.get_mutation_level(MUT_DRACONIAN_ENHANCER, false)];
     else
         ostr << _get_mutation_def(MUT_DRACONIAN_ENHANCER).have[you.get_mutation_level(MUT_DRACONIAN_ENHANCER, false) - 1];
 
@@ -1888,7 +1888,7 @@ static string _drac_enhancer_msg(int type)
         }
         else if (type < 0)
         {
-            if (you.get_mutation_level(MUT_DRACONIAN_ENHANCER) == 1)
+            if (you.get_mutation_level(MUT_DRACONIAN_ENHANCER) == 0)
                 return "Your magic no longer feels chaotic.";
             else
                 return "The bursts of power while casting are less pronounced.";
@@ -2588,7 +2588,7 @@ static bool _post_loss_effects(mutation_type mutat, bool temp)
         break;
 
     case MUT_HALF_DEATH:
-        if (you.mutation[mutat] == 1)
+        if (!you.mutation[mutat])
         {
             switch (you.undead_state(false))
             {
@@ -2706,15 +2706,15 @@ static bool _delete_single_mutation_level(mutation_type mutat,
         }
     }
 
-    const mutation_def& mdef = _get_mutation_def(mutat);
-    const bool lose_msg = _post_loss_effects(mutat, was_transient);
-
     if (mutat != MUT_STATS)
     {
         if (innate)
             you.innate_mutation[mutat]--;
         you.mutation[mutat]--;
     }
+
+    const mutation_def& mdef = _get_mutation_def(mutat);
+    const bool lose_msg = _post_loss_effects(mutat, was_transient);
 
     if (lose_msg)
     {
