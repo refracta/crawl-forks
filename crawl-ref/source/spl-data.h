@@ -1334,6 +1334,17 @@ static const struct spell_desc spelldata[] =
 },
 
 {
+    SPELL_PROJECTED_NOISE, "Projected Noise", "",
+    spschool::translocation | spschool::hexes,
+    spflag::target | spflag::neutral | spflag::utility,
+    2,
+    100,
+    2, LOS_RADIUS,
+    0, 0, // Noise handled specifically.
+    TILEG_PROJECTED_NOISE,
+},
+
+{
     SPELL_SHADOW_CREATURES, "Shadow Creatures", "",
     spschool::summoning,
     spflag::mons_abjure,

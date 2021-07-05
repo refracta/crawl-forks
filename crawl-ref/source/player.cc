@@ -6470,12 +6470,12 @@ static const string cow_shout_verbs[] = {"moo", "snort", "bellow"};
  * @param directed      Whether you're shouting at anyone in particular.
  * @return              A shouty kind of verb.
  */
-string player::shout_verb(bool directed) const
+string player::shout_verb(bool directed, int forced_screaminess) const
 {
-    if (!get_form()->shout_verb.empty())
+    if (!get_form()->shout_verb.empty() && (forced_screaminess < 0 || forced_screaminess > 1))
         return get_form()->shout_verb;
 
-    const int screaminess = get_mutation_level(MUT_SHOUTITUS) ? 1 + coinflip() : 0;
+    const int screaminess = (forced_screaminess >= 0 ? forced_screaminess : get_mutation_level(MUT_SHOUTITUS) ? 1 + coinflip() : 0);
 
     if (species == SP_GNOLL)
         return dog_shout_verbs[screaminess];
@@ -8557,18 +8557,19 @@ int player::innate_vision() const
     if (get_mutation_level(MUT_BUDDING_EYEBALLS))
         x++;
 
+    if (have_passive(passive_t::sinv))
+        x++;
+
     if (get_mutation_level(MUT_GOLDEN_EYEBALLS) == 3)
         x++;
 
     if (get_mutation_level(MUT_BUDDING_EYEBALLS) == 3)
         x++;
 
-    if (have_passive(passive_t::sinv))
-        x++;
-    else if (has_mutation(MUT_IMPAIRED_VISION))
+    if (has_mutation(MUT_IMPAIRED_VISION))
         x--;
 
-    return x;
+    return max(have_passive(passive_t::sinv) ? -3 : 1, x);
 }
 
 bool player::invisible() const

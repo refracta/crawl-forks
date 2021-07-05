@@ -9,6 +9,7 @@
 #include "spl-other.h"
 
 #include "act-iter.h"
+#include "areas.h"
 #include "delay.h"
 #include "env.h"
 #include "god-companions.h"
@@ -20,10 +21,57 @@
 #include "place.h"
 #include "prompt.h"
 #include "religion.h"
+#include "shout.h"
 #include "spl-util.h"
 #include "state.h"
 #include "terrain.h"
 #include "transform.h"
+
+spret cast_projected_noise(int pow, bool fail, coord_def pos)
+{
+    // Sanity.
+    if (!in_bounds(pos)) 
+        return spret::abort;
+
+    if (cell_is_solid(pos))
+    {
+        mpr("No sound can be made inside a solid wall!");
+        return spret::abort;
+    }
+        
+    if (silenced(pos))
+    {
+        mpr("No sound can be made there!");
+        return spret::abort;
+    }
+
+    fail_check();
+
+    int loudness;
+    switch (pow)
+    {
+    case 0:
+        loudness = 2;
+        break;
+    default:
+    case 1:
+        loudness = 4;
+        break;
+    case 2:
+        loudness = 8;
+        break;
+    case 3:
+        loudness = 16;
+        break;
+    }
+
+    mprf("You magically modulate your %s and send it away from you!", pow == 0 ? "whisper" 
+                                                                    : pow == 1 ? "speech" 
+                                                                    : pow == 2 ? you.shout_verb(false, 0).c_str()
+                                                                               : you.shout_verb(false, 2).c_str());
+    noisy(loudness, pos, MID_PLAYER);
+    return spret::success;
+}
 
 spret cast_sublimation_of_blood(int pow, bool fail)
 {

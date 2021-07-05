@@ -278,6 +278,7 @@ static const vector<spell_type> spellbook_templates[] =
 
 {   // Book of Party Tricks
     SPELL_SUMMON_BUTTERFLIES,
+    SPELL_PROJECTED_NOISE,
     SPELL_TUKIMAS_DANCE,
     SPELL_APPORTATION,
     SPELL_INVISIBILITY,

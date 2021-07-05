@@ -4,6 +4,7 @@
 #include "mount.h"
 #include "spl-cast.h"
 
+spret cast_projected_noise(int pow, bool fail, coord_def pos);
 spret cast_sublimation_of_blood(int pow, bool fail);
 spret cast_death_channel(int pow, god_type god, bool fail);
 

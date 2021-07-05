@@ -1295,7 +1295,7 @@ static void _try_monster_cast(spell_type spell, int /*powc*/,
 #endif // WIZARD
 
 static spret _do_cast(spell_type spell, int powc, const dist& spd,
-                           bolt& beam, god_type god, bool fail, bool warped);
+                           bolt& beam, god_type god, bool fail, bool warped, int intensity);
 
 /**
  * Should this spell be aborted before casting properly starts, either because
@@ -1596,6 +1596,7 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
         powc = calc_spell_power(spell, true);
 
     const int range = calc_spell_range(spell, powc, allow_fail);
+    int intensity = 0;
     beam.range = range;
 
     // XXX: This handles only some of the cases where spells need
@@ -1655,7 +1656,35 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
             additional_desc = bind(desc_pacify_chance, placeholders::_1, average_heal);
         }
 
-        string title = make_stringf("Aiming: <w>%s</w>", spell_title(spell));
+        if (spell == SPELL_PROJECTED_NOISE)
+        {
+            while (true)
+            {
+                if (crawl_state.seen_hups)
+                    return spret::abort;
+
+                clear_messages();
+
+                mpr_nojoin(MSGCH_PLAIN, "[A] - whisper (2)");
+                mpr_nojoin(MSGCH_PLAIN, "[B] - speech (4)");
+                mprf_nojoin(MSGCH_PLAIN, "[C] - %s (8)", you.shout_verb(false, 0).c_str());
+                mprf_nojoin(MSGCH_PLAIN, "[D] - %s (16)", you.shout_verb(false, 2).c_str());
+                mprf(MSGCH_PROMPT, "How loud?");
+
+                intensity = toalower(get_ch()) - 'a';
+
+                if (intensity < 0 || intensity > 3)
+                    continue;
+
+                break;
+            }
+        }
+
+        string title = make_stringf("Aiming: <w>%s</w>", spell == SPELL_PROJECTED_NOISE ? (intensity == 0 ? "whisper" : 
+                                                                                           intensity == 1 ? "speech" : 
+                                                                                           intensity == 2 ? you.shout_verb(false, 0).c_str() 
+                                                                                                          : you.shout_verb(false, 2).c_str()) : spell_title(spell));
+
         if (allow_fail)
         {
             title += make_stringf(" <lightgrey>(%s)</lightgrey>",
@@ -1810,7 +1839,7 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
 
     const bool old_target = actor_at(beam.target);
 
-    spret cast_result = _do_cast(spell, powc, spd, beam, god, fail, warped);
+    spret cast_result = _do_cast(spell, powc, spd, beam, god, fail, warped, intensity);
 
     switch (cast_result)
     {
@@ -1901,7 +1930,7 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
 // Returns spret::success, spret::abort, spret::fail
 // or spret::none (not a player spell).
 static spret _do_cast(spell_type spell, int powc, const dist& spd,
-                           bolt& beam, god_type god, bool fail, bool warped)
+                           bolt& beam, god_type god, bool fail, bool warped, int intensity)
 {
     const coord_def target = spd.isTarget ? beam.target : you.pos() + spd.delta;
     if (spell == SPELL_FREEZE || spell == SPELL_VAMPIRIC_DRAINING)
@@ -1943,6 +1972,9 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
 
     case SPELL_AIRSTRIKE:
         return cast_airstrike(powc, spd, fail);
+
+    case SPELL_PROJECTED_NOISE:
+        return cast_projected_noise(intensity, fail, target);
 
     case SPELL_LRD:
         return cast_fragmentation(powc, &you, spd.target, fail);

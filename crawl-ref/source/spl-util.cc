@@ -1505,6 +1505,7 @@ bool spell_no_hostile_in_range(spell_type spell)
     case SPELL_SUMMON_LIGHTNING_SPIRE:
     case SPELL_SUMMON_FOREST:
     case SPELL_DIG:
+    case SPELL_PROJECTED_NOISE:
     // This can always potentially hit out-of-LOS, although this is conditional
     // on spell-power.
     case SPELL_FIRE_STORM:

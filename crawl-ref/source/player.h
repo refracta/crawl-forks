@@ -591,7 +591,7 @@ public:
 
     bool has_spell(spell_type spell) const override;
 
-    string shout_verb(bool directed = false) const;
+    string shout_verb(bool directed = false, int forced_screaminess = -1) const;
     int shout_volume() const;
 
     item_def *slot_item(equipment_type eq, bool include_melded=false) const
