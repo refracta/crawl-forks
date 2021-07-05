@@ -1320,6 +1320,12 @@ Primal Wave spell
 Conjures a torrent of water that may knock back the target, and creates a
 pool of shallow water for a short duration.
 %%%%
+Projected Noise spell
+
+A simple classic spell; makes it sound like the caster's voice is coming from 
+across the room from where they cast. Popular for stage shows; this trick could 
+make a useful distraction.
+%%%%
 Quicksilver Bolt spell
 
 <Breathe Dispelling Energy ability>
