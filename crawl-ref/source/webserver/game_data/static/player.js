@@ -241,17 +241,18 @@ function ($, comm, enums, map_knowledge, messages, options) {
     function update_MR()
     {
         var elem = $("#res_mr");
-        elem.text(player[mr]);
+        var val = player["mr"];
+        elem.text(val);
         elem.removeClass();
-        if (player[mr] >= 200)
+        if (val >= 200)
             elem.addClass("fg13"); // lightmagenta
-        else if (player[mr] >= 160)
+        else if (val >= 160)
             elem.addClass("fg5"); // magenta
-        else if (player[mr] >= 120)
+        else if (val >= 120)
             elem.addClass("fg9"); // lightblue
-        else if (player[mr] >= 80)
+        else if (val >= 80)
             elem.addClass("fg1"); // blue
-        else if (player[mr] >= 40)
+        else if (val >= 40)
             elem.addClass("fg2"); // green
     }
 
