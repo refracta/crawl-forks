@@ -8537,7 +8537,7 @@ int player::vision(bool calc_unid) const
     x += scan_artefacts(ARTP_IMPROVED_VISION, calc_unid);
     x -= scan_artefacts(ARTP_INACCURACY, calc_unid);
 
-    return max(have_passive(passive_t::sinv) ? 1 : -1, min(x,3));
+    return _clamp(x, have_passive(passive_t::sinv) ? 1 : -1, 3);
 }
 
 /// Can the player see invisible things without needing items' help?
@@ -8569,7 +8569,7 @@ int player::innate_vision() const
     if (has_mutation(MUT_IMPAIRED_VISION))
         x--;
 
-    return max(have_passive(passive_t::sinv) ? -3 : 1, x);
+    return max(have_passive(passive_t::sinv) ? 1 : -3, x);
 }
 
 bool player::invisible() const
