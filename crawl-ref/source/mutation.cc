@@ -211,8 +211,6 @@ static int _mut_weight(const mutation_def &mut, mutflag use, bool temp = false)
         case mutflag::bad:
             if (mut.mutation == MUT_SUPPRESSION)
                 return _suppress_weight(temp);
-            if (mut.mutation == MUT_DEFORMED && you.get_mutation_level(MUT_DEFORMED))
-                return 3;
             // fallthrough
         case mutflag::good:
         default:
@@ -1040,6 +1038,10 @@ static bool _accept_mutation(mutation_type mutat, bool ignore_weight, bool temp)
         return false;
 
     if (temp && mutat == MUT_STATS)
+        return false;
+
+    // Reduce likelihood of losing body armour.
+    if (mutat == MUT_DEFORMED && you.get_mutation_level(MUT_DEFORMED) && !one_chance_in(4))
         return false;
 
     if (temp && you.suppressed_mutation[mutat])
