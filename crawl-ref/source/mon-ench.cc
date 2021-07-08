@@ -1922,7 +1922,7 @@ void monster::apply_enchantment(const mon_enchant &me)
                     dam = dam * 3 / 2;
                 hurt(me.agent(), dam);
             }
-            if (me.agent()->is_player() && you.get_mutation_level(MUT_SKIN_BREATHING) == 3)
+            if (alive() && me.agent()->is_player() && you.get_mutation_level(MUT_SKIN_BREATHING) == 3)
                 splash_with_acid(me.agent(), div_rand_round(dur, 10), true, "is burned by your ooze");
         }
         break;
