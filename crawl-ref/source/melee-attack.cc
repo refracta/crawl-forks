@@ -1777,7 +1777,7 @@ bool melee_attack::player_aux_apply(unarmed_attack_type atk)
                     break;
                 case SPWPN_MOLTEN:
                     if (one_chance_in(3))
-                        napalm_monster(defender->as_monster(), attacker);
+                        napalm_monster(defender->as_monster(), &you);
                     break;
                 case SPWPN_VAMPIRISM:
                     if (one_chance_in(3))
