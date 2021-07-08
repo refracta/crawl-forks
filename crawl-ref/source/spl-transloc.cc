@@ -141,13 +141,19 @@ void uncontrolled_blink(bool override_stasis, coord_def disp_center)
         if (!you.can_pass_through(*ri))
             continue;
 
+        if (*ri == disp_center)
+            continue;
+
         if (actor_at(*ri))
             continue;
 
         if (!disp_center.origin())
         {
-            if ((grid_distance(*ri, disp_center) > you.current_vision) || !(cell_see_cell(*ri, disp_center, LOS_SOLID)))
+            if ((grid_distance(*ri, disp_center) > you.current_vision) || !(cell_see_cell(*ri, disp_center, LOS_SOLID))
+                || grd(*ri) == DNGN_TRAP_CONGREGATION) // no chain dispersal
+            {
                 continue;
+            }
         }
 
         if (!adjacent && (grid_distance(you.pos(), *ri) < 2))

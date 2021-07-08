@@ -523,17 +523,17 @@ void trap_def::trigger(actor& triggerer)
             else if (in_sight)
                 mprf("%s enters %s!", triggerer.name(DESC_THE).c_str(),
                     name(DESC_A).c_str());
+            you.blink(pos);
+            if (you.see_cell(pos))
+            {
+                destroy(); // Immediate destroy to prevent chain trigger.
+                place_cloud(CLOUD_TLOC_ENERGY, pos, roll_dice(3, 8), nullptr, 2);
+            }
             for (monster_iterator mi; mi; ++mi)
             {
                 if (!mi->alive() || mi->no_tele())
                     continue;
                 mi->blink(pos);
-            }
-            you.blink(pos);
-            if (you.see_cell(pos))
-            {
-                destroy();
-                place_cloud(CLOUD_TLOC_ENERGY, pos, roll_dice(3, 8), nullptr, 2);
             }
             break;
         }
