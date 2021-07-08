@@ -1104,7 +1104,7 @@ void attack::drain_defender_speed()
     if (mount_defend)
         slow_mount(5 + random2(7));
     else
-        defender->slow_down(attacker, 5 + random2(7));
+        defender->slow_down(attacker->is_player() ? &you : attacker, 5 + random2(7));
 }
 
 int attack::inflict_damage(int dam, beam_type flavour, bool clean)
