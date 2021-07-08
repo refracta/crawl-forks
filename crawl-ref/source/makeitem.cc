@@ -1748,7 +1748,7 @@ static void _generate_scroll_item(item_def& item, int force_type,
     item.plus = 0;
 }
 
-static bool _is_banned_book(book_type book)
+bool is_banned_book(book_type book)
 {
     switch (book)
     {
@@ -1771,7 +1771,7 @@ static book_type _choose_book_type(int item_level)
         if (item_type_removed(OBJ_BOOKS, book))
             continue;
 
-        if (_is_banned_book(book))
+        if (is_banned_book(book))
             continue;
 
         const int rarity = book_rarity(book);

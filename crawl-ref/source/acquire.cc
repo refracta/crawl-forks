@@ -793,9 +793,12 @@ static int _spell_weight(spell_type spell)
 
 // When randomly picking a book for acquirement, use the sum of the
 // weights of all unknown spells in the book.
-static int _book_weight(book_type book)
+static int _book_weight(book_type book, bool divine)
 {
     ASSERT_RANGE(book, 0, MAX_FIXED_BOOK + 1);
+
+    if (!divine && is_banned_book(book))
+        return 0;
 
     int total_weight = 0;
     for (spell_type stype : spellbook_template(book))
@@ -919,7 +922,7 @@ static bool _do_book_acquirement(item_def &book, int agent)
                 continue;
             }
 
-            weights[bk]    = _book_weight(bkt);
+            weights[bk]    = _book_weight(bkt, agent == GOD_SIF_MUNA);
             total_weights += weights[bk];
         }
 
