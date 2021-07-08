@@ -1411,7 +1411,7 @@ static int _player_bonus_regen()
     rr += you.get_mutation_level(MUT_REGENERATION) * REGEN_PIP;
 
     if (you.get_mutation_level(MUT_RADIOSYNTHESIS) >= 2)
-        rr += div_rand_round(you.magic_contamination * REGEN_PIP, 1000);
+        rr += sqrt(you.magic_contamination);
 
     if (you.get_mutation_level(MUT_SLIME) >= 2)
         rr += REGEN_PIP;

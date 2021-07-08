@@ -238,9 +238,6 @@ static void _handle_magic_contamination()
     if (player_has_orb())
         dissipation = div_rand_round(dissipation, 2);
 
-    if (you.get_mutation_level(MUT_RADIOSYNTHESIS))
-        dissipation = div_rand_round(dissipation, 2);
-
     // Scaling to turn length
     added_contamination = div_rand_round((added_contamination - dissipation) * you.time_taken,
                                          BASELINE_DELAY);
