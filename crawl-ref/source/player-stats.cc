@@ -215,7 +215,7 @@ void calc_jiyva_stat_targets(int * target_stat)
 
     for (int x = 0; x < NUM_STATS; ++x)
     {
-        cur_stat[x] = you.stat(static_cast<stat_type>(x), false);
+        cur_stat[x] = innate_stat(static_cast<stat_type>(x));
         stat_total += cur_stat[x];
     }
 
@@ -292,14 +292,13 @@ void jiyva_stat_action()
     int choices = 0;
     int stat_up_choice = 0;
     int stat_down_choice = 0;
-    // Choose a random stat shuffle that doesn't increase the l^2 distance to
-    // the (fuzzed) target.
+
     for (int gain = 0; gain < NUM_STATS; ++gain)
         for (int lose = 0; lose < NUM_STATS; ++lose)
         {
-            if (gain != lose && cur_stat[lose] > 1
-                && target_stat[gain] - cur_stat[gain] > target_stat[lose] - cur_stat[lose]
-                && cur_stat[gain] < MAX_STAT_VALUE && you.base_stats[lose] > 1)
+            if (gain != lose && cur_stat[lose] > 1 && cur_stat[gain] < MAX_STAT_VALUE
+                && abs(target_stat[gain] + 1 - cur_stat[gain]) > abs(target_stat[gain] - cur_stat[gain]) 
+                && abs(target_stat[lose] - 1 - cur_stat[lose]) > abs(target_stat[lose] - cur_stat[lose]))
             {
                 if (one_chance_in(choices++))
                 {
