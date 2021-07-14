@@ -3999,7 +3999,7 @@ int player_stealth()
     stealth += _jiyva_scan_props(ARMF_STEALTH) * STEALTH_PIP;
 
     if (inside && get_armour_ego_type(*inside) == SPARM_STEALTH)
-        stealth += STEALTH_PIP;
+        stealth += STEALTH_PIP * 2;
 
     stealth += STEALTH_PIP * you.scan_artefacts(ARTP_STEALTH);
 
@@ -4045,20 +4045,28 @@ int player_stealth()
                 stealth /= 2;       // splashy-splashy
         }
 
-        if (!you.in_liquid())
+        if (!you.liquefied_ground() && feat_has_solid_floor(grd(you.pos())))
         {
-            if (boots && get_armour_ego_type(*boots) == SPARM_STEALTH)
+            if ((boots && get_armour_ego_type(*boots) == SPARM_STEALTH)
+                || (bard && get_armour_ego_type(*bard) == SPARM_STEALTH))
             {
                 stealth += STEALTH_PIP;
                 stealth *= 5;
                 stealth /= 4;
             }
 
-            if (bard && get_armour_ego_type(*bard) == SPARM_STEALTH)
+            if (you.get_mutation_level(MUT_AMORPHOUS_BODY))
             {
-                stealth += STEALTH_PIP;
-                stealth *= 5;
-                stealth /= 4;
+                for (int i = EQ_FIRST_MORPH; i <= EQ_LAST_MORPH; i++)
+                {
+                    item_def * item = you.slot_item(static_cast<equipment_type>(i));
+                    if (item && get_armour_ego_type(*item) == SPARM_STEALTH)
+                    {
+                        stealth += STEALTH_PIP;
+                        stealth *= 5;
+                        stealth /= 4;
+                    }
+                }
             }
 
             if (you.has_hooves())
