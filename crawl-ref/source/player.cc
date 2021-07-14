@@ -2710,8 +2710,15 @@ static int _player_evasion_bonuses()
 
     const item_def * inside = you.slot_item(EQ_CYTOPLASM);
 
-    if (inside && get_weapon_brand(*inside) == SPWPN_SPEED)
-        evbonus += 15;
+    if (inside)
+    {
+        if (get_weapon_brand(*inside) == SPWPN_SPEED)
+            evbonus += 5;
+        if (get_weapon_brand(*inside) == SPWPN_DISTORTION)
+            evbonus += 10;
+    }
+
+
 
     // If you have an active amulet of the acrobat and just moved or waited, get massive
     // EV bonus.

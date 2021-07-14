@@ -1545,6 +1545,7 @@ static string _weapon_brand_desc(const item_def &item)
 {
 
     const int damtype = get_vorpal_type(item);
+    const bool subsume = you.get_mutation_level(MUT_CYTOPLASMIC_SUSPENSION);
 
     string description = "\n\n";
 
@@ -1561,6 +1562,12 @@ static string _weapon_brand_desc(const item_def &item)
         {
             description += " Big, acidic blades are also staple "
                 "armaments of hydra-hunters.";
+        }
+
+        if (subsume)
+        {
+            description += "\n\nWhile subsumed; the acidic ooze instead"
+                " protects you from corrosion (rCorr+).";
         }
         break;
     case SPWPN_MOLTEN:
@@ -1583,6 +1590,12 @@ static string _weapon_brand_desc(const item_def &item)
             description += " Big, molten blades are also staple "
                 "armaments of hydra-hunters.";
         }
+
+        if (subsume)
+        {
+            description += "\n\nWhile subsumed, the molten enchantment instead"
+                " protects you from heat (rF+).";
+        }
         break;
     case SPWPN_FREEZING:
         if (is_range_weapon(item))
@@ -1603,6 +1616,12 @@ static string _weapon_brand_desc(const item_def &item)
         else
             description += " It";
         description += " can also slow down cold-blooded creatures.";
+
+        if (subsume)
+        {
+            description += "\n\nWhile subsumed, the frozen enchantment instead"
+                " protects you from cold (rC+).";
+        }
         break;
     case SPWPN_HOLY_WRATH:
         description += "It has been blessed by the Shining One";
@@ -1615,41 +1634,82 @@ static string _weapon_brand_desc(const item_def &item)
         else
             description += " to";
         description += " cause great damage to the undead and demons.";
+        if (subsume)
+        {
+            description += "\n\nWhile subsumed, the sacred blessing instead"
+                " protects you from negative energy (rN+).";
+        }
         break;
     case SPWPN_ELECTROCUTION:
         if (is_range_weapon(item))
         {
             description += "It charges the ammunition it shoots with "
-                "electricity; occasionally upon a hit, such missiles "
-                "may discharge and cause terrible harm.";
+                "electricity; upon a hit, such missiles "
+                "will discharge and cause terrible harm.";
         }
         else
         {
-            description += "Occasionally, upon striking a foe, it will "
+            description += "Upon striking a foe, it will "
                 "discharge some electrical energy and cause terrible "
                 "harm.";
+        }
+
+        if (subsume)
+        {
+            description += "\n\nWhile subsumed, the enchantment instead"
+                " protects you from electric shocks (rF+).";
         }
         break;
     case SPWPN_DRAGON_SLAYING:
         description += "This legendary weapon is deadly to all "
             "dragonkind.";
+
+        if (subsume)
+        {
+            description += "\n\nWhile subsumed, the enchantment instead"
+                " protects you from heat (rF+).";
+        }
         break;
     case SPWPN_VENOM:
         if (is_range_weapon(item))
             description += "It poisons the ammo it fires.";
         else
             description += "It poisons the flesh of those it strikes.";
+
+        if (subsume)
+        {
+            description += "\n\nWhile subsumed, the venonmous enchantment instead"
+                " protects you from poison (rPois+).";
+        }
         break;
     case SPWPN_PROTECTION:
         description += "It protects the one who uses it against "
-            "injury (+AC).";
+            "injury (AC + 3).";
+
+        if (subsume)
+        {
+            description += "\n\nWhile subsumed, the protective enchantment acts"
+                " as normal (AC + 3).";
+        }
         break;
     case SPWPN_DRAINING:
         description += "A truly terrible weapon, it drains the "
             "life of those it strikes.";
+
+        if (subsume)
+        {
+            description += "\n\nWhile subsumed, the sinister enchantment instead"
+                " protects you from negative energy (rN+).";
+        }
         break;
     case SPWPN_SPEED:
         description += "Attacks with this weapon are significantly faster.";
+
+        if (subsume)
+        {
+            description += "\n\nWhile subsumed, the hasty enchantment instead"
+                " improves your reflexes (EV + 5).";
+        }
         break;
     case SPWPN_VORPAL:
         if (is_range_weapon(item))
@@ -1663,6 +1723,11 @@ static string _weapon_brand_desc(const item_def &item)
             description += "It inflicts extra damage upon your "
                 "enemies.";
         }
+        if (subsume)
+        {
+            description += "\n\nWhile subsumed, the damaging enchantment instead"
+                " protects you from damage (AC + 5).";
+        }
         break;
     case SPWPN_CHAOS:
         if (is_range_weapon(item))
@@ -1675,19 +1740,42 @@ static string _weapon_brand_desc(const item_def &item)
             description += "Each time it hits an enemy it has a "
                 "different, random effect.";
         }
+
+        if (subsume)
+        {
+            description += "\n\nWhile subsumed, the chaotic enchantment"
+                " protects you chaotically and infects your magic with chaos.";
+        }
         break;
     case SPWPN_VAMPIRISM:
         description += "It inflicts no extra harm, but heals "
             "its wielder when it wounds a living foe.";
+
+        if (subsume)
+        {
+            description += "\n\nWhile subsumed, the vampiric enchantment instead"
+                " protects you from negative energy (rN+).";
+        }
         break;
     case SPWPN_PAIN:
         description += "In the hands of one skilled in necromantic "
             "magic, it inflicts extra damage on living creatures.";
+
+        if (subsume)
+        {
+            description += "\n\nWhile subsumed, the agonizing enchantment instead"
+                " protects you from negative energy (rN+).";
+        }
         break;
     case SPWPN_DISTORTION:
         description += "It warps and distorts space around it.";
         if (!you.wearing_ego(EQ_GLOVES, SPARM_WIELDING) && !have_passive(passive_t::safe_distortion))
             description += " Unwielding it can cause banishment or high damage.";
+        if (subsume)
+        {
+            description += "\n\nWhile subsumed, the warped enchantment instead"
+                " makes you phase around attacks randomly (EV + 10).";
+        }
         break;
     case SPWPN_PENETRATION:
         description += "Ammo fired by it will pass through the "
@@ -1704,6 +1792,12 @@ static string _weapon_brand_desc(const item_def &item)
             "and disrupts the spells and magical abilities of those "
             "hit. Natural abilities and divine invocations are not "
             "affected.";
+
+        if (subsume)
+        {
+            description += "\n\nWhile subsumed, the antimagic enchantment"
+                " protects you against hostile enchantments (MR+++).";
+        }
         break;
     case SPWPN_NORMAL:
         description += "It has no special brand (it is not molten, "
@@ -1715,6 +1809,12 @@ static string _weapon_brand_desc(const item_def &item)
             "and magically transformed beings. It also inflicts "
             "extra damage against mutated beings, according to "
             "how mutated they are.";
+
+        if (subsume)
+        {
+            description += "\n\nWhile subsumed, the sacred blessing instead"
+                " protects you from unwanted mutation (rMut).";
+        }
         break;
     default:
         description += "This is a buggy removed brand.";
