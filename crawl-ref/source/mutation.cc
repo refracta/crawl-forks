@@ -1454,11 +1454,10 @@ bool physiology_mutation_conflict(mutation_type mutat, bool ds_roll)
     return false;
 }
 
-static void _stat_mut_msg(bool gain, int s, int i, int d, bool terse, string *msg)
+static const char * _stat_mut_msg(bool gain, int s, int i, int d, bool terse)
 {
     string STR = ""; string INT = ""; string DEX = "";
     ostringstream ostr;
-    ostr << " (";
 
     if (s)
     {
@@ -1481,21 +1480,19 @@ static void _stat_mut_msg(bool gain, int s, int i, int d, bool terse, string *ms
             ostr << ", ";
         ostr << "DEX " << ((d > 0) ? "+" : "") << d;
     }
-    ostr << ")";
 
     if (s || i || d)
     {
-        *msg = make_stringf("%s%s%s%s%s%s%s%s%s", terse ? "" : "You ", terse ? "" : gain ? "feel " : "are ", STR.c_str(),
-            s && i ? (d ? ", " : " and ") : "", INT.c_str(), (s || i) && d ? " and " : "", DEX.c_str(), terse ? "" : ".", ostr.str().c_str());
-        return;
+        if (terse)
+            return ostr.str().c_str();
+
+        return make_stringf("You %s%s%s%s%s%s. (%s)", gain ? "feel " : "are ", STR.c_str(),
+            s && i ? (d ? ", " : " and ") : "", INT.c_str(), (s || i) && d ? " and " : "", DEX.c_str(), ostr.str().c_str()).c_str();
     }
 
     if (gain)
-    {
-        *msg = "But nothing happened . . .";
-        return;
-    }
-    *msg = "stats";
+        return "But nothing happened . . .";
+    return "stats";
 }
 
 // Bookkeeps that stat mut's actual level and displays message.
@@ -1507,8 +1504,7 @@ static void _stat_mut_gain(bool gain, int orig_STR, int orig_INT, int orig_DEX)
     int i = you.mutated_stats[STAT_INT] - orig_INT;
     int d = you.mutated_stats[STAT_DEX] - orig_DEX;
 
-    string MSG;
-    _stat_mut_msg(true, s, i, d, false, &MSG);
+    string MSG = _stat_mut_msg(true, s, i, d, false);
 
     mprf(MSGCH_MUTATION, "%s %s", gain ? "You feel your attributes changing!" : 
                                    end ? "Your attributes return to normal." : 
@@ -2952,11 +2948,7 @@ const char* mutation_name(mutation_type mut, bool allow_category, bool for_displ
         return _get_mutation_def(mut).short_desc;
 
     if (mut == MUT_STATS)
-    {
-        string retval;
-        _stat_mut_msg(false, you.mutated_stats[STAT_STR], you.mutated_stats[STAT_INT], you.mutated_stats[STAT_DEX], true, &retval);
-        return retval.c_str();
-    }
+        return _stat_mut_msg(false, you.mutated_stats[STAT_STR], you.mutated_stats[STAT_INT], you.mutated_stats[STAT_DEX], true);
 
     if (mut == MUT_MINOR_MARTIAL_APT_BOOST || mut == MUT_MAJOR_MARTIAL_APT_BOOST || mut == MUT_DEFENSIVE_APT_BOOST)
     {
@@ -3214,7 +3206,7 @@ string mutation_desc(mutation_type mut, int level, bool colour,
     const species_mutation_message msg = _spmut_msg(mut);
 
     if (mut == MUT_STATS)
-        _stat_mut_msg(false, you.mutated_stats[STAT_STR], you.mutated_stats[STAT_INT], you.mutated_stats[STAT_DEX], false, &result);
+        result = _stat_mut_msg(false, you.mutated_stats[STAT_STR], you.mutated_stats[STAT_INT], you.mutated_stats[STAT_DEX], false);
     else if (mut == MUT_HALF_DEATH)
     {
         string base_msg;

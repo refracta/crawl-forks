@@ -2821,7 +2821,6 @@ string mutation_overview()
     if (have_passive(passive_t::frail) || player_under_penance(GOD_HEPLIAKLQANA))
         mutations.emplace_back("reduced essence");
 
-    string current;
     for (unsigned i = 0; i < NUM_MUTATIONS; ++i)
     {
         const mutation_type mut = static_cast<mutation_type>(i);
@@ -2840,7 +2839,7 @@ string mutation_overview()
 
         const int max_levels = mutation_max_levels(mut);
 
-        current = mutation_name(mut, false, true);
+        string current = mutation_name(mut, false, true);
 
         if (mut == MUT_DRACONIAN_DEFENSE && you.drac_colour == DR_TEAL)
             continue;
