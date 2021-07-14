@@ -2718,8 +2718,6 @@ static int _player_evasion_bonuses()
             evbonus += 10;
     }
 
-
-
     // If you have an active amulet of the acrobat and just moved or waited, get massive
     // EV bonus.
     if (acrobat_boost_active())
