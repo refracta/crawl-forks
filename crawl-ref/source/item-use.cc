@@ -2714,6 +2714,21 @@ bool subsume_item(int slot)
         }
     }
 
+    bool lopen = false;
+    if (needs_handle_warning(item, OPER_SUBSUME, lopen))
+    {
+        string prompt =
+            "Really subsume " + item.name(DESC_INVENTORY) + "?";
+        if (lopen)
+            prompt += " This could place you under penance!";
+
+        if (!yesno(prompt.c_str(), false, 'n'))
+        {
+            canned_msg(MSG_OK);
+            return false;
+        }
+    }
+
     if (you.equip[EQ_CYTOPLASM] != -1)
         eject_item();
 
@@ -2741,6 +2756,23 @@ bool eject_item()
     {
         canned_msg(MSG_TOO_BERSERK);
         return false;
+    }
+
+    item_def * remove = you.slot_item(EQ_CYTOPLASM);
+    bool lopen = false;
+
+    if (needs_handle_warning(*remove, OPER_EJECT, lopen))
+    {
+        string prompt =
+            "Really eject " + remove->name(DESC_INVENTORY) + "?";
+        if (lopen)
+            prompt += " This could place you under penance!";
+
+        if (!yesno(prompt.c_str(), false, 'n'))
+        {
+            canned_msg(MSG_OK);
+            return false;
+        }
     }
 
     item_def &item = *you.slot_item(EQ_CYTOPLASM);

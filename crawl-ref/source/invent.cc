@@ -1614,6 +1614,8 @@ static string _operation_verb(operation_types oper)
     case OPER_EVOKE:          return "evoke";
     case OPER_DESTROY:        return "destroy";
     case OPER_QUIVER:         return "quiver";
+    case OPER_SUBSUME:        return "subsume";
+    case OPER_EJECT:          return "eject";
     case OPER_ANY:
     default:
         return "choose";
@@ -1666,6 +1668,18 @@ bool needs_handle_warning(const item_def &item, operation_types oper,
     // Everything else depends on knowing the item subtype/brand.
     if (!item_type_known(item))
         return false;
+
+    if (oper == OPER_SUBSUME)
+    {
+        return needs_handle_warning(item, OPER_WIELD, penance, wielding_pass) || needs_handle_warning(item, OPER_WEAR, penance, wielding_pass)
+            || needs_handle_warning(item, OPER_PUTON, penance, wielding_pass);
+    }
+
+    if (oper == OPER_EJECT)
+    {
+        return needs_handle_warning(item, OPER_WIELD, penance, wielding_pass) || needs_handle_warning(item, OPER_TAKEOFF, penance, wielding_pass)
+            || needs_handle_warning(item, OPER_REMOVE, penance, wielding_pass);
+    }
 
     if (oper == OPER_REMOVE
         && item.is_type(OBJ_JEWELLERY, AMU_FAITH)
