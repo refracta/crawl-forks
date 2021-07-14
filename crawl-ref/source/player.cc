@@ -6929,6 +6929,26 @@ int player::base_ac_from(const item_def &armour, int scale) const
     return AC;
 }
 
+bool player::evokable_berserk(bool calc_unid) const
+{
+    item_def * armour = you.slot_item(EQ_BODY_ARMOUR, false);
+    if (armour && armour_type_prop(armour->sub_type, ARMF_BERSERK))
+        return true;
+    if (_jiyva_scan_props(ARMF_BERSERK))
+        return true;
+    return actor::evokable_berserk(calc_unid);
+}
+
+int player::evokable_invis(bool calc_unid) const
+{
+    int ret = 0;
+    item_def * armour = you.slot_item(EQ_BODY_ARMOUR, false);
+    if (armour && armour_type_prop(armour->sub_type, ARMF_INVIS))
+        ret++;
+    ret += _jiyva_scan_props(ARMF_INVIS);
+    return ret + actor::evokable_invis(calc_unid);
+}
+
 /**
  * What bonus AC are you getting from your species?
  *

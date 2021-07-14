@@ -1670,6 +1670,14 @@ bool wear_armour(int item)
     int swapping = 0;
     const equipment_type slot = get_armour_slot(invitem);
 
+    if (item == you.equip[EQ_CYTOPLASM])
+    {
+        if (!yesno("You need to eject it from your cytoplasm first. Continue?", true, 'n'))
+            return false;
+        if (!eject_item())
+            return false;
+    }
+
     if (you.get_mutation_level(MUT_AMORPHOUS_BODY))
     {
         int free_slots = 0;
@@ -2425,6 +2433,14 @@ static bool _puton_item(int item_slot, bool prompt_slot,
             }
         }
 
+    if (item_slot == you.equip[EQ_CYTOPLASM])
+    {
+        if (!yesno("You need to eject it from your cytoplasm first. Continue?", true, 'n'))
+            return false;
+        if (!eject_item())
+            return false;
+    }
+
     if (!_can_puton_jewellery(item_slot))
         return false;
 
@@ -2648,7 +2664,10 @@ bool subsume_item(int slot)
 
     if (!item_is_subsumable(item))
     {
-        mpr("You can't subsume that!");
+        if (item.link == you.equip[EQ_CYTOPLASM])
+            mpr("You've already subsumed that!");
+        else
+            mpr("You can't subsume that!");
         return false;
     }
 
@@ -2725,7 +2744,7 @@ bool eject_item()
     }
 
     item_def &item = *you.slot_item(EQ_CYTOPLASM);
-    int delay = (_subsumption_delay(item) / 2);
+    int delay = (div_round_up(_subsumption_delay(item), 2));
 
     start_delay<EjectionDelay>(delay, item);
 
