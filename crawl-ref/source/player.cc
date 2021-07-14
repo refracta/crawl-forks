@@ -1244,6 +1244,19 @@ bool player_equip_unrand(int unrand_index)
     if (inside && is_unrandom_artefact(*inside, unrand_index))
         return true;
 
+    if (you.get_mutation_level(MUT_AMORPHOUS_BODY))
+    {
+        for (int i = EQ_FIRST_MORPH; i <= EQ_LAST_MORPH; i++)
+        {
+            if ((item = you.slot_item(static_cast<equipment_type>(i)))
+                && is_unrandom_artefact(*item)
+                && item->unrand_idx == unrand_index)
+            {
+                return true;
+            }
+        }
+    }
+
     switch (slot)
     {
     case EQ_WEAPON0:
