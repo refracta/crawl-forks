@@ -1742,6 +1742,7 @@ static string _pseudopod_message(bool gain)
     default:
         break;
     }
+
     ostringstream ostr;
     const mutation_def& mdef = _get_mutation_def(MUT_PSEUDOPODS);
     // Assumes no species has a unique message for this.
@@ -2946,6 +2947,25 @@ const char* mutation_name(mutation_type mut, bool allow_category, bool for_displ
 
     if (!for_display)
         return _get_mutation_def(mut).short_desc;
+
+    if (mut == MUT_PSEUDOPODS)
+    {
+        switch (you.pseudopod_brand)
+        {
+            case SPWPN_MOLTEN:
+                return "scorching pseudopods";
+            case SPWPN_ACID:
+                return "corrosive pseudopods";
+            case SPWPN_ELECTROCUTION:
+                return "electric pseudopods";
+            case SPWPN_VENOM:
+                return "noxious pseudopods";
+            case SPWPN_VAMPIRISM:
+                return "vampiric pseudopods";
+            default:
+                return "buggy pseudopods";
+        }
+    }
 
     if (mut == MUT_STATS)
         return _stat_mut_msg(false, you.mutated_stats[STAT_STR], you.mutated_stats[STAT_INT], you.mutated_stats[STAT_DEX], true);
