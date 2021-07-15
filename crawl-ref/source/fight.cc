@@ -76,8 +76,15 @@ static bool _handle_player_attack(actor * defender, bool simu, int atk_num,
     if (simu)
         attk.simu = true;
 
-    // Check if the player is fighting with something unsuitable,
-    // or someone unsuitable.
+    // Check if the player is fighting someone unsuitable
+    if (!defender || !defender->alive())
+    {
+        if (eff_atk_num != 1)
+            you.turn_is_over = false;
+        return false;
+    }
+
+    // or with something unsuitable.
     if (you.can_see(*defender) && !simu
         && !wielded_weapons_check())
     {
