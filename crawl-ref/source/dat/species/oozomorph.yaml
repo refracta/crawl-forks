@@ -8,9 +8,19 @@ aptitudes:
   hp: -1
   mp_mod: 0
   mr: 4
-  transmutations: 5
-  stealth: 2
+  fighting: 1
+  whips_and_flails: -1
+  crossbows: -1
+  bows: -2
+  slings: -1
+  armour: -1
+  dodging: -2
+  transmutations: 3
+  stealth: 3
   spellcasting: -1
+  earth_magic: -2
+  ice_magic: -1
+  necromancy: -1
 mutations:
   1:
     MUT_AMORPHOUS_BODY: 1
