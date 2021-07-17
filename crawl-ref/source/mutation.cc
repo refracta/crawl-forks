@@ -1486,8 +1486,10 @@ static const char * _stat_mut_msg(bool gain, int s, int i, int d, bool terse)
         if (terse)
             return ostr.str().c_str();
 
-        return make_stringf("You %s%s%s%s%s%s. (%s)", gain ? "feel " : "are ", STR.c_str(),
-            s && i ? (d ? ", " : " and ") : "", INT.c_str(), (s || i) && d ? " and " : "", DEX.c_str(), ostr.str().c_str()).c_str();
+        ostringstream retval;
+        retval << make_stringf("You %s%s%s%s%s%s. (%s)", gain ? "feel " : "are ", STR.c_str(),
+            s && i ? (d ? ", " : " and ") : "", INT.c_str(), (s || i) && d ? " and " : "", DEX.c_str(), ostr.str().c_str());
+        return retval.str().c_str();
     }
 
     if (gain)
