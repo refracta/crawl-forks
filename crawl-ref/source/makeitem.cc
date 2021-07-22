@@ -1262,11 +1262,7 @@ bool is_armour_brand_ok(int type, int brand, bool strict)
         return slot == EQ_BODY_ARMOUR || slot == EQ_CLOAK || !strict;
 
     case SPARM_SPIRIT_SHIELD:
-        return
-#if TAG_MAJOR_VERSION == 34
-               type == ARM_HAT ||
-#endif
-               type == ARM_SCARF || !strict;
+        return type == ARM_SCARF || !strict;
 
     case SPARM_REPULSION:
     case SPARM_CLOUD_IMMUNE:

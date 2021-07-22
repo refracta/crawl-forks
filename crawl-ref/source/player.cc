@@ -1115,17 +1115,7 @@ int player::wearing_ego(equipment_type slot, int special, bool calc_unid) const
     if ((slot > EQ_MIN_ARMOUR && slot < EQ_MAX_ARMOUR) || slot == EQ_ALL_ARMOUR)
     {
         // Weird Jiyva Slots work regardless of which armour's ego you're after.
-
-        if ((item = slot_item(static_cast<equipment_type>(EQ_CYTOPLASM)))
-            && (item->base_type == OBJ_ARMOURS 
-                || item->base_type == OBJ_SHIELDS && is_hybrid(item->sub_type))
-            && get_armour_ego_type(*item) == special
-            && (calc_unid || item_type_known(*item)))
-        {
-            ret++;
-        }
-
-        for (int i = EQ_FIRST_MORPH; i <= EQ_LAST_MORPH; i++)
+        for (int i = EQ_CYTOPLASM; i <= EQ_LAST_MORPH; i++)
         {
             if ((item = slot_item(static_cast<equipment_type>(i)))
                 && get_armour_ego_type(*item) == special
