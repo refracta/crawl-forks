@@ -152,6 +152,10 @@ bool Form::slot_available(int slot) const
  */
 bool Form::can_wear_item(const item_def& item) const
 {
+
+    if (item.link == you.equip[EQ_CYTOPLASM])
+        return true;
+
     if (item.base_type == OBJ_JEWELLERY)
     {
         if (jewellery_is_amulet(item))
