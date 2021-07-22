@@ -2091,8 +2091,7 @@ static bool _pregain_effects(mutation_type mutat, bool temp = false, mutation_ty
         break;
 
     case MUT_SUPPRESSION:
-        if (!suppress_mutation(temp))
-            return false;
+        ASSERT(suppress_mutation(temp));
         gain_msg = false;
         break;
 

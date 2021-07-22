@@ -3556,7 +3556,13 @@ static void _suppression(monster *mons)
             int num_mutations = 1 + coinflip();
             for (int i = 0; i < num_mutations; ++i)
             {
-                suppress_mutation(true, true);
+                if (suppress_mutation(true, true))
+                {
+                    you.mutation[MUT_SUPPRESSION]++;
+                    you.temp_mutation[MUT_SUPPRESSION]++;
+                }
+                else // (No targets)
+                    break;
             }
         }
     }
