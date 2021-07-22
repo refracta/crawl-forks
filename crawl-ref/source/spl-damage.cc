@@ -1618,7 +1618,8 @@ static void _shatter_chaos(actor * agent, int pow)
             bolt beam;
             beam.set_agent(agent);
             beam.apply_beam_conducts();
-            beam.target = *ri;
+            beam.origin_spell = SPELL_SHATTER;
+            beam.source = beam.target = *ri;
             beam.ex_size = 1;
             shatter_event_type happening = random_choose_weighted(10, SE_ERUPTION,
                 4, SE_ICEFALL,
