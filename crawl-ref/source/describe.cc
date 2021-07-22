@@ -1378,8 +1378,21 @@ static void _append_weapon_stats(string &description, const item_def &item)
     {
         if (dual)
         {
-            _append_skill_target_desc(description, item_attack_skill(*you.weapon(0)), skill_level, true);
-            _append_skill_target_desc(description, item_attack_skill(*you.weapon(1)), skill_level1, true);
+            if (_dual_wield_target(*you.weapon(0), skill_level))
+                _append_skill_target_desc(description, item_attack_skill(*you.weapon(0)), skill_level, true);
+            else
+            {
+                description += "\n    You require no further training in ";
+                description += skill_name(item_attack_skill(*you.weapon(0)));
+            }
+
+            if (_dual_wield_target(*you.weapon(1), skill_level1))
+                _append_skill_target_desc(description, item_attack_skill(*you.weapon(1)), skill_level1, true);
+            else
+            {
+                description += "\n    You require no further training in ";
+                description += skill_name(item_attack_skill(*you.weapon(1)));
+            }
         }
         else
             _append_skill_target_desc(description, skill, skill_level, false);
