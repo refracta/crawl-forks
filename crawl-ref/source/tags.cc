@@ -934,22 +934,9 @@ static spell_type unmarshallSpellType(reader &th
 #endif
                                       )
 {
+    UNUSED(mons);
     spell_type x = SPELL_NO_SPELL;
-#if TAG_MAJOR_VERSION == 34
-    if (!mons && th.getMinorVersion() < TAG_MINOR_SHORT_SPELL_TYPE)
-        x = static_cast<spell_type>(unmarshallUByte(th));
-    else
-#endif
-        x = static_cast<spell_type>(unmarshallShort(th));
-
-#if TAG_MAJOR_VERSION == 34
-    if (th.getMinorVersion() == TAG_MINOR_0_11)
-    {
-        AXED(SPELL_DEBUGGING_RAY); // projected noise
-        AXED(SPELL_HEAL_OTHER);    // summon greater holy
-    }
-#endif
-
+    x = static_cast<spell_type>(unmarshallShort(th));
     return x;
 }
 
@@ -2343,7 +2330,7 @@ static void _cap_mutation_at(mutation_type mut, int cap)
         you.innate_mutation[mut] = cap;
 }
 
-static spell_type _fixup_player_spell(spell_type s)
+static spell_type _fixup_player_spell(spell_type s, int version)
 {
     switch (s)
     {
@@ -2353,16 +2340,21 @@ static spell_type _fixup_player_spell(spell_type s)
     case SPELL_SUMMON_HYDRA:
         return SPELL_SUMMON_HYDRA_MOUNT;
 
+    case SPELL_ICICLE_CASCADE:
+        if (version < TAG_MINOR_ICICLE_CASCADE)
+            return SPELL_UNSTABLE_FIERY_DASH;
+        return s;
+
     default:
         return s;
     }
 }
 
-static void _fixup_library_spells(FixedBitVector<NUM_SPELLS>& lib)
+static void _fixup_library_spells(FixedBitVector<NUM_SPELLS>& lib, int version)
 {
     for (int i = 0; i < NUM_SPELLS; ++i)
     {
-        spell_type newspell = _fixup_player_spell((spell_type)i);
+        spell_type newspell = _fixup_player_spell((spell_type)i, version);
 
         if (newspell == SPELL_NO_SPELL)
             lib.set(i, false);
@@ -2370,6 +2362,12 @@ static void _fixup_library_spells(FixedBitVector<NUM_SPELLS>& lib)
         {
             lib.set(newspell, lib[i]);
             lib.set(i, false);
+        }
+
+        if (version < TAG_MINOR_ICICLE_CASCADE 
+            && newspell == SPELL_UNSTABLE_FIERY_DASH && lib[i])
+        {
+            lib.set(SPELL_STARBURST, true);
         }
     }
 }
@@ -2595,42 +2593,24 @@ static void tag_read_you(reader &th)
     ASSERT(!x && !y || in_bounds(x, y));
     you.moveto(coord_def(x, y));
 
-#if TAG_MAJOR_VERSION == 34
-    if (th.getMinorVersion() < TAG_MINOR_WEIGHTLESS)
-        unmarshallShort(th);
-#endif
+    unmarshallFixedBitVector<NUM_SPELLS>(th, you.spell_library);
+    unmarshallFixedBitVector<NUM_SPELLS>(th, you.hidden_spells);
 
-#if TAG_MAJOR_VERSION == 34
-    if (th.getMinorVersion() >= TAG_MINOR_GOLDIFY_BOOKS)
-    {
-#endif
-        unmarshallFixedBitVector<NUM_SPELLS>(th, you.spell_library);
-        unmarshallFixedBitVector<NUM_SPELLS>(th, you.hidden_spells);
+    _fixup_library_spells(you.spell_library, th.getMinorVersion());
+    _fixup_library_spells(you.hidden_spells, th.getMinorVersion());
 
-#if TAG_MAJOR_VERSION == 34
-        _fixup_library_spells(you.spell_library);
-        _fixup_library_spells(you.hidden_spells);
-    }
-#endif
     // how many spells?
     you.spell_no = 0;
     count = unmarshallUByte(th);
     ASSERT(count >= 0);
     for (int i = 0; i < count && i < MAX_KNOWN_SPELLS; ++i)
     {
-        you.spells[i] = unmarshallSpellType(th);
+        you.spells[i] = _fixup_player_spell(unmarshallSpellType(th), th.getMinorVersion());
         if (you.spells[i] != SPELL_NO_SPELL)
             you.spell_no++;
     }
     for (int i = MAX_KNOWN_SPELLS; i < count; ++i)
-    {
-#if TAG_MAJOR_VERSION == 34
-        if (th.getMinorVersion() < TAG_MINOR_SHORT_SPELL_TYPE)
-            unmarshallUByte(th);
-        else
-#endif
-            unmarshallShort(th);
-    }
+        unmarshallShort(th);
 
     count = unmarshallByte(th);
     ASSERT(count == (int)you.spell_letter_table.size());
@@ -2733,9 +2713,7 @@ static void tag_read_you(reader &th)
 #endif
         count = unmarshallUByte(th);
         for (int i = 0; i < count; ++i)
-        {
             you.spell_library.set(unmarshallSpellType(th), true);
-        }
 
 #if TAG_MAJOR_VERSION == 34
         if (th.getMinorVersion() < TAG_MINOR_VEHUMET_MULTI_GIFTS)
@@ -3051,145 +3029,69 @@ static void tag_read_you(reader &th)
             you.mutation[MUT_SILENCE_AURA] = you.innate_mutation[MUT_SILENCE_AURA] = 2;
     }
 
-    // BCADDO: Add minor version in the future:
-    if (species_is_draconian(you.species))
+    if (th.getMinorVersion() < TAG_MINOR_ICICLE_CASCADE)
     {
-        you.mutation[MUT_DEFORMED] = you.innate_mutation[MUT_DEFORMED] = 2;
-        remove_one_equip(EQ_BODY_ARMOUR, false, true);
-    }
-
-    if (abs(you.mutated_stats[STAT_STR]) + abs(you.mutated_stats[STAT_INT]) + abs(you.mutated_stats[STAT_DEX]) > (you.get_mutation_level(MUT_STATS) + 1) * 10)
-    {
-        you.mutated_stats[STAT_STR] = 0;
-        you.mutated_stats[STAT_INT] = 0;
-        you.mutated_stats[STAT_DEX] = 0;
-        you.mutation[MUT_STATS] = 0;
-    }
-
-    // And this:
-    if (you.char_class == JOB_MUMMY && !you.mutation[MUT_ANCIENT_WISDOM])
-    {
-        you.mutation[MUT_ANCIENT_WISDOM] = you.innate_mutation[MUT_ANCIENT_WISDOM] = 1;
-
-        const species_def& sd = get_species_def(you.species);
-
-        modify_stat(STAT_STR, 1, true);
-
-        int minimize = 5;
-
-        for (int i = 0; i <= 5; ++i)
+        if (species_is_draconian(you.species))
         {
-            if (you.base_stats[STAT_DEX] > 1)
+            you.mutation[MUT_DEFORMED] = you.innate_mutation[MUT_DEFORMED] = 2;
+            remove_one_equip(EQ_BODY_ARMOUR, false, true);
+        }
+
+        if (abs(you.mutated_stats[STAT_STR]) + abs(you.mutated_stats[STAT_INT]) + abs(you.mutated_stats[STAT_DEX]) > (you.get_mutation_level(MUT_STATS) + 1) * 10)
+        {
+            you.mutated_stats[STAT_STR] = 0;
+            you.mutated_stats[STAT_INT] = 0;
+            you.mutated_stats[STAT_DEX] = 0;
+            you.mutation[MUT_STATS] = 0;
+        }
+
+        if (you.char_class == JOB_MUMMY && !you.mutation[MUT_ANCIENT_WISDOM])
+        {
+            you.mutation[MUT_ANCIENT_WISDOM] = you.innate_mutation[MUT_ANCIENT_WISDOM] = 1;
+
+            const species_def& sd = get_species_def(you.species);
+
+            modify_stat(STAT_STR, 1, true);
+
+            int minimize = 5;
+
+            for (int i = 0; i <= 5; ++i)
             {
-                modify_stat(STAT_DEX, -1, true);
-                minimize--;
+                if (you.base_stats[STAT_DEX] > 1)
+                {
+                    modify_stat(STAT_DEX, -1, true);
+                    minimize--;
+                }
             }
+
+            for (int i = 0; i <= (4 - minimize); i++)
+                modify_stat(STAT_INT, 1, true);
+
+            int num_points = you.experience_level / (sd.how_often + 1);
+            for (int i = 0; i < num_points; ++i)
+                modify_stat(STAT_INT, 1, true);
         }
 
-        for (int i = 0; i <= (4 - minimize); i++)
-            modify_stat(STAT_INT, 1, true);
-
-        int num_points = you.experience_level / (sd.how_often + 1);
-        for (int i = 0; i < num_points; ++i)
-            modify_stat(STAT_INT, 1, true);
-    }
-
-    // And this:
-    for (int i = 0; i < NUM_MUTATIONS; i++)
-    {
-        int num_suppressed = 0;
-        int num_transsuppressed = 0;
-        if (you.suppressed_mutation[i])
+        for (int i = 0; i < NUM_MUTATIONS; i++)
         {
-            num_suppressed++;
-            if (you.suppressed_mutation[i] > 1)
-                num_transsuppressed++;
-            if (you.temp_mutation[i])
+            int num_suppressed = 0;
+            int num_transsuppressed = 0;
+            if (you.suppressed_mutation[i])
             {
-                you.suppressed_mutation[i] = you.temp_mutation[i] = 0;
-                you.mutation[i]--;
-                you.attribute[ATTR_TEMP_MUTATIONS]--;
-                you.mutation[MUT_SUPPRESSION]--;
+                num_suppressed++;
+                if (you.suppressed_mutation[i] > 1)
+                    num_transsuppressed++;
+                if (you.temp_mutation[i])
+                {
+                    you.suppressed_mutation[i] = you.temp_mutation[i] = 0;
+                    you.mutation[i]--;
+                    you.attribute[ATTR_TEMP_MUTATIONS]--;
+                    you.mutation[MUT_SUPPRESSION]--;
+                }
             }
+            you.mutation[MUT_SUPPRESSION] = num_suppressed;
+            you.temp_mutation[MUT_SUPPRESSION] = num_transsuppressed;
         }
-        you.mutation[MUT_SUPPRESSION] = num_suppressed;
-        you.temp_mutation[MUT_SUPPRESSION] = num_transsuppressed;
-    }
-
-    // No minor version needed: all old felids should get MUT_PAWS.
-    if (you.species == SP_FELID && you.innate_mutation[MUT_PAWS] < 1)
-        you.mutation[MUT_PAWS] = you.innate_mutation[MUT_PAWS] = 1;
-
-    if (th.getMinorVersion() < TAG_MINOR_MP_WANDS)
-    {
-        if (you.mutation[MUT_MP_WANDS] > 1)
-            you.mutation[MUT_MP_WANDS] = 1;
-    }
-
-    if (th.getMinorVersion() < TAG_MINOR_BLINK_MUT)
-    {
-        if (you.mutation[MUT_BLINK] > 1)
-            you.mutation[MUT_BLINK] = 1;
-    }
-
-    if (th.getMinorVersion() < TAG_MINOR_SPIT_POISON_AGAIN)
-    {
-        if (you.mutation[MUT_SPIT_POISON] > 1)
-            you.mutation[MUT_SPIT_POISON] -= 1;
-        // Before TAG_MINOR_SPIT_POISON_AGAIN_AGAIN this second if was missing.
-        if (you.innate_mutation[MUT_SPIT_POISON] > 1)
-            you.innate_mutation[MUT_SPIT_POISON] -= 1;
-    }
-    else if (th.getMinorVersion() < TAG_MINOR_SPIT_POISON_AGAIN_AGAIN)
-    {
-        // Between these two tags the value for you.innate_mutation could get
-        // corrupted. No valid save after TAG_MINOR_SPIT_POISON_AGAIN should
-        // have innate set to 2 for this for this mutation.
-
-        // this doesn't correct you.mutation, because the 2,2 configuration
-        // can result from two cases: (i) a save was upgraded across
-        // TAG_MINOR_SPIT_POISON_AGAIN, had its mutations corrupted, and
-        // then was fixed up to 2,2 on load, or (ii) a save-pre-
-        // TAG_MINOR_SPIT_POISON_AGAIN had exhale poison, had 1 subtracted
-        // from mutation, and ends up as 2,2. So, some lucky upgrades will get
-        // exhale poison.
-
-        if (you.innate_mutation[MUT_SPIT_POISON] == 2)
-            you.innate_mutation[MUT_SPIT_POISON] = 1;
-    }
-
-    // Carnivore and herbivore used to be 3-level mutations.
-    _cap_mutation_at(MUT_HERBIVOROUS, 1);
-    _cap_mutation_at(MUT_CARNIVOROUS, 1);
-
-    // Slow regeneration split into two single-level muts:
-    // * Inhibited regeneration (no regen in los of monsters, what Gh get)
-    // * No regeneration (what DDs get)
-    {
-        if (you.species == SP_DEEP_DWARF
-            && (you.mutation[MUT_INHIBITED_REGENERATION] > 0
-                || you.mutation[MUT_NO_REGENERATION] != 1))
-        {
-            you.innate_mutation[MUT_INHIBITED_REGENERATION] = 0;
-            you.mutation[MUT_INHIBITED_REGENERATION] = 0;
-            you.innate_mutation[MUT_NO_REGENERATION] = 1;
-            you.mutation[MUT_NO_REGENERATION] = 1;
-        }
-        else if (you.species == SP_GHOUL
-                 && you.mutation[MUT_INHIBITED_REGENERATION] > 1)
-        {
-            you.innate_mutation[MUT_INHIBITED_REGENERATION] = 1;
-            you.mutation[MUT_INHIBITED_REGENERATION] = 1;
-        }
-        else if (you.mutation[MUT_INHIBITED_REGENERATION] > 1)
-            you.mutation[MUT_INHIBITED_REGENERATION] = 1;
-    }
-
-    if (th.getMinorVersion() < TAG_MINOR_YELLOW_DRACONIAN_RACID
-        && you.species == SP_YELLOW_DRACONIAN)
-    {
-        you.mutation[MUT_ACID_RESISTANCE] = 1;
-        you.innate_mutation[MUT_ACID_RESISTANCE] = 1;
     }
 
     // Fixup for Sacrifice XP from XL 27 (#9895). No minor tag, but this

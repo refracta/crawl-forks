@@ -1536,7 +1536,8 @@ bool vehumet_supports_spell(spell_type spell)
         || spell == SPELL_VIOLENT_UNRAVELLING
         || spell == SPELL_AGONY
         || spell == SPELL_INNER_FLAME
-        || spell == SPELL_IGNITION
+        || spell == SPELL_ICICLE_CASCADE
+        || spell == SPELL_UNSTABLE_FIERY_DASH
         || spell == SPELL_FIREBALL
         || spell == SPELL_BOLT_OF_FIRE
         || spell == SPELL_BOLT_OF_COLD

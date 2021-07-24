@@ -52,7 +52,7 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_BOLT_OF_FIRE,
     SPELL_STARBURST,
     SPELL_RING_OF_FLAMES,
-    SPELL_IGNITION,
+    SPELL_UNSTABLE_FIERY_DASH,
 },
 
 {   // Book of Ice
@@ -61,6 +61,7 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_BOLT_OF_COLD,
     SPELL_FREEZING_CLOUD,
     SPELL_SIMULACRUM,
+    SPELL_ICICLE_CASCADE,
 },
 
 {   // Book of Spatial Translocations
@@ -91,7 +92,7 @@ static const vector<spell_type> spellbook_templates[] =
 {   // Book of the Tempests
     SPELL_DISCHARGE,
     SPELL_LIGHTNING_BOLT,
-    SPELL_IGNITION,
+    SPELL_ICICLE_CASCADE,
     SPELL_TORNADO,
     SPELL_SHATTER,
 },
@@ -201,6 +202,7 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_MUSE_OAMS_AIR_BLAST,
     SPELL_DISPERSAL,
     SPELL_CONTROLLED_BLINK,
+    SPELL_UNSTABLE_FIERY_DASH,
     SPELL_DISJUNCTION,
 },
 

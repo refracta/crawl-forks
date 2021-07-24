@@ -2031,8 +2031,11 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
     case SPELL_CLOUD_CONE:
         return cast_cloud_cone(&you, powc, target, fail);
 
-    case SPELL_IGNITION:
-        return cast_ignition(&you, powc, fail);
+    case SPELL_ICICLE_CASCADE:
+        return cast_cascade(&you, powc, fail);
+
+    case SPELL_UNSTABLE_FIERY_DASH:
+        return cast_dash(powc, fail);
 
     case SPELL_BORGNJORS_VILE_CLUTCH:
         return cast_borgnjors_vile_clutch(powc, beam, fail);

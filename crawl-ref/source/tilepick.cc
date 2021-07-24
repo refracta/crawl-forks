@@ -3254,8 +3254,12 @@ tileidx_t tileidx_cloud(const cloud_info &cl)
 
 tileidx_t tileidx_bolt(const bolt &bolt)
 {
-    const int col = bolt.colour;
     const coord_def diff = bolt.target - bolt.source;
+
+    if (bolt.item)
+        return tileidx_item_throw(*bolt.item, diff.x, diff.y);
+
+    const int col = bolt.colour;
     const int dir = _tile_bolt_dir(diff.x, diff.y);
 
     // BCADDO: Chaos Shard variations here.
@@ -3269,6 +3273,8 @@ tileidx_t tileidx_bolt(const bolt &bolt)
             return TILE_BOLT_FROST;
         else if (bolt.name == "shard of ice")
             return TILE_BOLT_ICICLE + dir;
+        else if (bolt.name == "icicle")
+            return TILE_BOLT_ICICLE + 4;
         else if (bolt.name == "searing ray")
             return TILE_BOLT_SEARING_RAY_III;
         break;

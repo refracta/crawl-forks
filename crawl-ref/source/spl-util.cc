@@ -1137,7 +1137,7 @@ int spell_effect_noise(spell_type spell)
     case SPELL_MEPHITIC_CLOUD:
     case SPELL_FIREBALL:
     case SPELL_VIOLENT_UNRAVELLING:
-    case SPELL_IGNITION:
+    case SPELL_ICICLE_CASCADE:
         expl_size = 1;
         break;
 
@@ -1515,7 +1515,7 @@ bool spell_no_hostile_in_range(spell_type spell)
     case SPELL_OZOCUBUS_REFRIGERATION:
     case SPELL_OLGREBS_TOXIC_RADIANCE:
     case SPELL_INTOXICATE:
-    case SPELL_IGNITION:
+    case SPELL_ICICLE_CASCADE:
         return minRange > you.current_vision;
 
     // Special handling for cloud spells.

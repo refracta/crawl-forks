@@ -6416,7 +6416,6 @@ bool player::in_lava() const
     return ground_level() && feat_is_lava(grd(pos()));
 }
 
-
 bool player::in_liquid() const
 {
     return in_water() || liquefied_ground() || in_lava();

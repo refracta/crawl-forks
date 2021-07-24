@@ -77,7 +77,8 @@ spret cast_scattershot(const actor *caster, int pow, const coord_def &pos,
                             bool fail = false, zap_type zap = ZAP_SCATTERSHOT,
                             bool empowered = false);
 
-spret cast_ignition(const actor *caster, int pow, bool fail);
+spret cast_cascade(const actor *caster, int pow, bool fail);
+spret cast_dash(int pow, bool fail);
 
 spret cast_borgnjors_vile_clutch(int pow, bolt &beam, bool fail);
 

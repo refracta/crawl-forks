@@ -2533,14 +2533,16 @@ int silver_damages_victim(actor* victim, int damage, string &dmg_msg, bool mount
 //
 //  Note that beam properties must be set, as the tracer will take them
 //  into account, as well as the monster's intelligence.
-void fire_tracer(const monster* mons, bolt &pbolt, bool explode_only,
+void fire_tracer(const actor* act, bolt &pbolt, bool explode_only,
                  bool explosion_hole)
 {
+    const monster* mons = act->as_monster();
+
     // Don't fiddle with any input parameters other than tracer stuff!
     pbolt.is_tracer     = true;
-    pbolt.source        = mons->pos();
-    pbolt.source_id     = mons->mid;
-    pbolt.attitude      = mons_attitude(*mons);
+    pbolt.source        = act->pos();
+    pbolt.source_id     = act->mid;
+    pbolt.attitude      = act->is_player() ? ATT_FRIENDLY : mons_attitude(*mons);
 
     // Init tracer variables.
     pbolt.foe_info.reset();
@@ -2555,15 +2557,20 @@ void fire_tracer(const monster* mons, bolt &pbolt, bool explode_only,
     {
         pbolt.foe_ratio     = 80;        // default - see mons_should_fire()
 
-        if (mons_is_hepliaklqana_ancestor(mons->type))
-            pbolt.foe_ratio = 100; // do not harm the player!
-        // Foe ratio for summoning greater demons & undead -- they may be
-        // summoned, but they're hostile and would love nothing better
-        // than to nuke the player and his minions.
-        else if (mons_att_wont_attack(pbolt.attitude)
-            && !mons_att_wont_attack(mons->attitude))
+        if (act->is_player())
+            pbolt.foe_ratio = 100;
+        else
         {
-            pbolt.foe_ratio = 25;
+            if (mons_is_hepliaklqana_ancestor(mons->type))
+                pbolt.foe_ratio = 100; // do not harm the player!
+            // Foe ratio for summoning greater demons & undead -- they may be
+            // summoned, but they're hostile and would love nothing better
+            // than to nuke the player and his minions.
+            else if (mons_att_wont_attack(pbolt.attitude)
+                && !mons_att_wont_attack(mons->attitude))
+            {
+                pbolt.foe_ratio = 25;
+            }
         }
     }
 
@@ -3445,6 +3452,9 @@ void bolt::affect_place_clouds()
 
     if (flavour == BEAM_PARADOXICAL)
         place_cloud(grid_distance(coord_def(1, 1), p) % 2 ? CLOUD_COLD : CLOUD_FIRE, p, random2(5) + 2, agent());
+
+    if (origin_spell == SPELL_UNSTABLE_FIERY_DASH)
+        place_cloud(flavour == BEAM_LAVA ? CLOUD_FIRE : chaos_cloud(), pos(), 5 + random2(5), agent());
 
     if (flavour == BEAM_BUTTERFLY && !actor_at(p))
     {
@@ -5218,6 +5228,14 @@ void bolt::handle_stop_attack_prompt(monster* mon)
 
 void bolt::tracer_nonenchantment_affect_monster(monster* mon)
 {
+    // Dash only counts new targets to prevent being OP by being a lot of B.Magma at single target.
+    if (origin_spell == SPELL_UNSTABLE_FIERY_DASH
+        && mon->props.exists(DASH_KEY)
+        && mon->props[DASH_KEY].get_bool())
+    {
+        return;
+    }
+
     int preac, post, final;
 
     if (!determine_damage(mon, preac, post, final))
@@ -5941,6 +5959,9 @@ void bolt::affect_monster(monster* mon)
         behaviour_event(mon, ME_DISTURB, agent(), source);
         return;
     }
+
+    if (origin_spell == SPELL_UNSTABLE_FIERY_DASH)
+        mon->props[DASH_KEY] = true;
 
     if (flavour == BEAM_MISSILE && item)
     {

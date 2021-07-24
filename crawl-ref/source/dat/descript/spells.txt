@@ -906,17 +906,15 @@ Converts all nearby poison into a random substance, acid, liquid flames,
 freezing fluid, a volatile explosive, etc. It also turns clouds of poison and
 mephitic gases into the same substances. The caster won't be directly affected.
 %%%%
-Ignition spell
+Icicle Cascade spell
 
-All foes in the caster's surroundings are engulfed in balls of fire. The caster
-and their allies are protected from the fire and will never be harmed by this
-spell.
+The caster summons icicles to rain down from the sky upon their enemies. The caster
+and their allies will never be harmed by this spell.
 %%%%
-Tumultous Bombardment spell
+Resonance Cascade spell
 
-All foes in the caster's surroundings are engulfed in random explosions. The caster
-and their allies are protected from these blasts and will never be harmed by this
-spell.
+A cascade of the fabric of reality crashes down on the caster's foes. The caster
+and their allies will never be harmed by this spell.
 %%%%
 Infestation spell
 
@@ -1961,6 +1959,20 @@ Twisted Resurrection spell
 Causes nearby corpses to begin crawling together, merging into horrible
 agglomerations of flesh. More and larger corpses result in more powerful
 creations.
+%%%%
+Unstable Fiery Dash spell
+
+Infuses the caster with extremely strong, but uncontrollable speed.  
+The caster dashes through random enemies they can see repeatedly until this 
+energy runs out; dealing physical and fire damage to those they pass through 
+and leaving trails of fire in their wake.
+%%%%
+Chaos Dash spell
+
+Infuses the caster with extremely strong, but uncontrollable speed.  
+The caster dashes through random enemies they can see repeatedly until this 
+energy runs out; dealing randomized elemental damage to those they pass through 
+and leaving trails of chaos clouds behind in their wake.
 %%%%
 Upheaval spell
 

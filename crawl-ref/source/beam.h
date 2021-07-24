@@ -20,6 +20,7 @@
 
 #define KNOCKBACK_KEY   "knocked back by" // if knockback sends into water/lava; credit the correct thing with the kill.
 #define PULLED_KEY      "pulled by"
+#define DASH_KEY        "hit by dash"
 
 class monster;
 
@@ -326,7 +327,7 @@ bool napalm_monster(monster* mons, const actor* who, int levels = 1,
 bool curare_actor(actor* source, actor* target, int levels, string name,
                   string source_name, bool mount = false);
 int silver_damages_victim(actor* victim, int damage, string &dmg_msg, bool mount = false);
-void fire_tracer(const monster* mons, bolt &pbolt,
+void fire_tracer(const actor* act, bolt &pbolt,
                   bool explode_only = false, bool explosion_hole = false);
 bool imb_can_splash(coord_def origin, coord_def center,
                     vector<coord_def> path_taken, coord_def target);

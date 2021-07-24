@@ -44,6 +44,7 @@
 #include "mon-place.h"
 #include "mutation.h"
 #include "ouch.h"
+#include "output.h"
 #include "prompt.h"
 #include "random.h"
 #include "religion.h"
@@ -2613,25 +2614,99 @@ spret cast_ignite_poison(actor* agent, int pow, bool fail, bool tracer, bool olg
     return spret::success;
 }
 
-static void _ignition_square(const actor */*agent*/, bolt beam, coord_def square, bool center)
+static coord_def _pick_target(bolt beam, int max_dist)
 {
-    // HACK: bypass visual effect
-    beam.target = square;
-    beam.in_explosion_phase = true;
-    beam.explosion_affect_cell(square);
-    if (center)
-        noisy(spell_effect_noise(SPELL_IGNITION),square);
+    coord_def retval = coord_def(0, 0);
+    int possibilities = 0;
+    int distance = 0;
+    int max_foes = 0;
+
+    for (rectangle_iterator ri(you.pos(), min(max_dist, (int)you.current_vision)); ri; ++ri)
+    {
+        const int cur_dist = grid_distance(you.pos(), *ri);
+
+        if (!in_bounds(*ri) || !cell_see_cell(you.pos(), *ri, LOS_SOLID)
+            || is_feat_dangerous(grd(*ri)) || actor_at(*ri) || you.can_pass_through(*ri))
+        {
+            continue;
+        }
+
+        beam.target = *ri;
+        fire_tracer(&you, beam);
+
+        if (beam.friend_info.count)
+            continue;
+
+        if (beam.foe_info.count > max_foes)
+        {
+            retval = *ri;
+            max_foes = beam.foe_info.count;
+            distance = cur_dist;
+            possibilities = 1;
+        }
+
+        else if (beam.foe_info.count == max_foes)
+        {
+            if (cur_dist > distance)
+            {
+                retval = *ri;
+                distance = cur_dist;
+                possibilities = 1;
+            }
+            else if (cur_dist == distance && one_chance_in(possibilities++))
+                retval = *ri;
+        }
+    }
+
+    return retval;
 }
 
-spret cast_ignition(const actor *agent, int pow, bool fail)
+static int _single_dash(bolt beam, int dash_range)
+{
+    beam.source = you.pos();
+    beam.target = _pick_target(beam, min(dash_range, 4 + random2(4)));
+
+    if (beam.target.origin())
+        return 0;
+
+    const int retval = grid_distance(you.pos(), beam.target);
+    beam.fire();
+    scaled_delay(30);
+    you.move_to_pos(beam.target);
+    redraw_screen();
+    more();
+    return retval;
+}
+
+spret cast_dash(int pow, bool fail)
+{
+    fail_check();
+
+    bolt beam;
+
+    beam.origin_spell = SPELL_UNSTABLE_FIERY_DASH;
+    zappy(ZAP_DASH, pow, false, beam);
+    beam.set_agent(&you);
+    beam.range = you.current_vision;
+
+    int dash_range = 20 + random2avg(pow / 2, 3);
+    while (dash_range > 2)
+        dash_range -= _single_dash(beam, dash_range);
+
+    for (monster_iterator mi; mi; ++mi)
+        mi->props[DASH_KEY] = false;
+
+    return spret::success;
+}
+
+spret cast_cascade(const actor *agent, int pow, bool fail)
 {
     ASSERT(agent->is_player());
 
     fail_check();
 
-    bool chaos = determine_chaos(agent, SPELL_IGNITION);
+    bool chaos = determine_chaos(agent, SPELL_ICICLE_CASCADE);
     bool evil = (you.staff() && is_unrandom_artefact(*you.staff(), UNRAND_MAJIN));
-    bool menacing = _is_menacing(agent, SPELL_IGNITION);
     //targeter_radius hitfunc(agent, LOS_NO_TRANS);
 
     // Ignition affects squares that had hostile monsters on them at the time
@@ -2644,8 +2719,7 @@ spret cast_ignition(const actor *agent, int pow, bool fail)
     {
         if (ai->is_monster()
             && !ai->as_monster()->wont_attack()
-            && !mons_is_firewood(*ai->as_monster())
-            && !mons_is_tentacle_segment(ai->as_monster()->type))
+            && !mons_is_firewood(*ai->as_monster()))
         {
             blast_sources.push_back(ai->position);
         }
@@ -2655,61 +2729,38 @@ spret cast_ignition(const actor *agent, int pow, bool fail)
         canned_msg(MSG_NOTHING_HAPPENS);
     else
     {
-        if (!chaos)
-            mpr("The air bursts into flame!");
-        else
-            mpr("Entropy unravels around your enemies!");
+        mprf("%s cascade%s down from the ceiling!", chaos ? "Resonance" : "Icicles", chaos ? "s" : "");
 
-        vector<coord_def> blast_adjacents;
-
-        // Used to draw explosion cells
-        bolt beam_visual;
-        beam_visual.set_agent(agent);
-        beam_visual.flavour       = BEAM_VISUAL;
-        beam_visual.glyph         = dchar_glyph(DCHAR_FIRED_BURST);
-        beam_visual.ex_size       = 1;
-        beam_visual.is_explosion  = true;
-
-        // Used to deal damage; invisible
         bolt beam_actual;
-        beam_actual.set_agent(agent);
-        beam_actual.glyph         = 0;
-        beam_actual.damage        = calc_dice(menacing ? 4 
-                                                       : 3, chaos ? 25 / 2 + pow * 5 / 12 
-                                                                  : 10 + pow/3); // less than fireball
-        beam_actual.ex_size       = 0;
-        beam_actual.is_explosion  = true;
-        beam_actual.loudness      = 0;
+        zappy(ZAP_THROW_ICICLE, pow, false, beam_actual);
+        beam_actual.loudness = 8;
 
-        beam_type flavour = BEAM_FIRE;
+        beam_type flavour = BEAM_ICE;
 
         if (chaos)
         {
             if (evil)
             {
-                beam_visual.colour = ETC_UNHOLY;
                 flavour = BEAM_ELDRITCH;
                 beam_actual.colour = ETC_UNHOLY;
                 beam_actual.name = "eldritch blast";
             }
             else
             {
-                beam_visual.colour = ETC_CHAOS;
                 flavour = BEAM_CHAOTIC;
                 beam_actual.colour = ETC_CHAOS;
-                beam_actual.name = "entropic burst";
+                beam_actual.name = "resonance cascade";
             }
         }
         else
         {
-            beam_visual.colour = RED;
-            beam_actual.colour = RED;
-            beam_actual.name = "fireball";
+            beam_actual.colour = WHITE;
+            beam_actual.name = "icicle";
         }
 
+        beam_actual.use_target_as_pos = true;
         beam_actual.flavour = flavour;
         beam_actual.real_flavour = flavour;
-
         beam_actual.apply_beam_conducts();
 
 #ifdef DEBUG_DIAGNOSTICS
@@ -2717,62 +2768,17 @@ spret cast_ignition(const actor *agent, int pow, bool fail)
              beam_actual.damage.num, beam_actual.damage.size);
 #endif
 
-        // Fake "shaped" radius 1 explosions (skipping squares with friends).
+        // Icicle smites on each individual square.
         for (coord_def pos : blast_sources)
-        {
-            for (adjacent_iterator ai(pos); ai; ++ai)
-            {
-                if (cell_is_solid(*ai))
-                {
-                    if (flavour == BEAM_FIRE && (feat_is_tree(grd(*ai)) || feat_is_door(grd(*ai))))
-                    {
-                        if (feat_is_tree(grd(*ai)) && agent->is_player())
-                            did_god_conduct(DID_KILL_PLANT, 1, true);
-                        // Destroy the wall.
-                        destroy_wall(*ai);
-                        if (you.see_cell(*ai))
-                        {
-                            if (feat_is_door(grd(*ai)))
-                                mpr("The door bursts into flame!");
-                            else if (player_in_branch(BRANCH_SWAMP))
-                                mpr("The tree smoulders and burns.");
-                            else
-                                mpr("The tree burns like a torch!");
-                        }
-                        else if (you.can_smell())
-                            mpr("You smell burning wood.");
-
-                        // Trees do not burn so readily in a wet environment.
-                        if (player_in_branch(BRANCH_SWAMP))
-                            place_cloud(CLOUD_FIRE, *ai, random2(12) + 5, agent);
-                        else
-                            place_cloud(CLOUD_FOREST_FIRE, *ai, random2(30) + 25, agent);
-                    }
-                    continue;
-                }
-                actor *act = actor_at(*ai);
-
-                // Friendly creature, don't blast this square.
-                if (act && (act == agent
-                            || (act->is_monster()
-                                && act->as_monster()->wont_attack())))
-                {
-                    continue;
-                }
-
-                blast_adjacents.push_back(*ai);
-                beam_visual.explosion_draw_cell(*ai);
-            }
-            beam_visual.explosion_draw_cell(pos);
-        }
+            beam_actual.explosion_draw_cell(pos);
         update_screen();
         scaled_delay(50);
 
-        // Real explosions on each individual square.
         for (coord_def pos : blast_sources)
-            _ignition_square(agent, beam_actual, pos, true);
-        for (coord_def pos : blast_adjacents)
-            _ignition_square(agent, beam_actual, pos, false);
+        {
+            beam_actual.target = pos;
+            beam_actual.affect_cell();
+        }
     }
 
     return spret::success;

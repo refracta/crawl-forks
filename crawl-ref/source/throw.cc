@@ -827,6 +827,8 @@ bool throw_it(bolt &pbolt, int throw_2, dist *target)
     {
         // Violating encapsulation somewhat...oh well.
         pbolt.use_target_as_pos = true;
+        pbolt.explosion_draw_cell(pbolt.target);
+        scaled_delay(50);
         pbolt.affect_cell();
         pbolt.affect_endpoint();
         if (!did_return)

@@ -1426,6 +1426,24 @@ _mon_hex_zap(ZAP_HIBERNATION, BEAM_HIBERNATION),
 },
 
 {
+    ZAP_DASH,
+    "unstable dash",
+    200,
+    new calcdice_calculator<5, 11, 2, 3>,
+    new tohit_calculator<4, 1, 25>,
+    new dicedef_calculator<5, 12, 1, 11>,
+    new tohit_calculator<17, 1, 25>,
+    RED,
+    false,
+    BEAM_LAVA,
+    DCHAR_FIRED_ZAP,
+    true,
+    true,
+    false,
+    8
+},
+
+{
     ZAP_POISON_ARROW,
     "poison arrow",
     200,

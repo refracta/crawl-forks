@@ -4227,14 +4227,25 @@ TILEG_ERROR,
 },
 
 {
-    SPELL_IGNITION, "Ignition", "Tumultous Bombardment",
-    spschool::fire,
+    SPELL_ICICLE_CASCADE, "Icicle Cascade", "Resonance Cascade",
+    spschool::ice,
     spflag::area,
     8,
     200,
     -1, -1,
     8, 0,
-    TILEG_IGNITION,
+    TILEG_ICICLE_CASCADE,
+},
+
+{
+    SPELL_UNSTABLE_FIERY_DASH, "Unstable Fiery Dash", "Chaos Dash",
+    spschool::fire | spschool::translocation,
+    spflag::area | spflag::chaotic,
+    8,
+    200,
+    -1, -1,
+    8, 0,
+    TILEG_FIERY_DASH,
 },
 
 {

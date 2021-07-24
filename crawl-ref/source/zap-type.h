@@ -124,5 +124,6 @@ enum zap_type
     ZAP_SILVER_SHOT,
     ZAP_BREATHE_MAGMA,
     ZAP_BREATHE_MAGMA_II,
+    ZAP_DASH,
     NUM_ZAPS
 };
