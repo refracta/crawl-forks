@@ -1439,17 +1439,14 @@ special_missile_type get_ammo_brand(const item_def &item)
 special_armour_type get_armour_ego_type(const item_def &item)
 {
     // Armour ego types are "brands", so we do the randart lookup here.
-    if (item.base_type != OBJ_ARMOURS && !(item.base_type == OBJ_SHIELDS && !is_hybrid(item.sub_type)))
+    if (item.base_type != OBJ_ARMOURS && !(item.base_type == OBJ_SHIELDS && !is_hybrid(item.sub_type))
+        || item.is_type(OBJ_ARMOURS, ARM_CLAW))
+    {
         return SPARM_NORMAL;
-
-    if (item.sub_type == ARM_CLAW)
-        return SPARM_NORMAL;
+    }
 
     if (is_artefact(item))
-    {
-        return static_cast<special_armour_type>(
-                   artefact_property(item, ARTP_BRAND));
-    }
+        return static_cast<special_armour_type>(artefact_property(item, ARTP_BRAND));
 
     return static_cast<special_armour_type>(item.brand);
 }
