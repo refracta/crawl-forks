@@ -2626,7 +2626,7 @@ static coord_def _pick_target(bolt beam, int max_dist)
         const int cur_dist = grid_distance(you.pos(), *ri);
 
         if (!in_bounds(*ri) || !cell_see_cell(you.pos(), *ri, LOS_SOLID)
-            || is_feat_dangerous(grd(*ri)) || actor_at(*ri) || you.can_pass_through(*ri))
+            || is_feat_dangerous(grd(*ri)) || actor_at(*ri) || !you.can_pass_through(*ri))
         {
             continue;
         }
