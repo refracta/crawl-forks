@@ -2823,56 +2823,12 @@ static void tag_read_you(reader &th)
     COMPILE_CHECK(NUM_ATTRIBUTES < 256);
     for (int j = 0; j < count && j < NUM_ATTRIBUTES; ++j)
     {
-#if TAG_MAJOR_VERSION == 34
-        if (j == ATTR_BANISHMENT_IMMUNITY && th.getMinorVersion() == TAG_MINOR_0_11)
-        {
-            unmarshallInt(th); // ATTR_UNUSED_1
-            count--;
-        }
-        if (j == ATTR_NOISES && th.getMinorVersion() == TAG_MINOR_CLASS_HP_0
-            && count == 40)
-        {
-            dprf("recovering ATTR_NOISES");
-            j++, count++;
-        }
-#endif
         you.attribute[j] = unmarshallInt(th);
     }
-#if TAG_MAJOR_VERSION == 34
-    if (count == ATTR_PAKELLAS_EXTRA_MP && you_worship(GOD_PAKELLAS))
-        you.attribute[ATTR_PAKELLAS_EXTRA_MP] = POT_MAGIC_MP;
-#endif
     for (int j = count; j < NUM_ATTRIBUTES; ++j)
         you.attribute[j] = 0;
     for (int j = NUM_ATTRIBUTES; j < count; ++j)
         unmarshallInt(th);
-
-#if TAG_MAJOR_VERSION == 34
-    if (you.attribute[ATTR_DIVINE_REGENERATION])
-    {
-        you.attribute[ATTR_DIVINE_REGENERATION] = 0;
-        you.duration[DUR_TROGS_HAND] = max(you.duration[DUR_TROGS_HAND],
-            you.duration[DUR_REGENERATION]);
-        you.duration[DUR_REGENERATION] = 0;
-    }
-    if (you.attribute[ATTR_SEARING_RAY] > 3)
-        you.attribute[ATTR_SEARING_RAY] = 0;
-
-    if (you.attribute[ATTR_DELAYED_FIREBALL])
-        you.attribute[ATTR_DELAYED_FIREBALL] = 0;
-
-    if (th.getMinorVersion() < TAG_MINOR_STAT_LOSS_XP)
-    {
-        for (int i = 0; i < NUM_STATS; ++i)
-        {
-            if (you.stat_loss[i] > 0)
-            {
-                you.attribute[ATTR_STAT_LOSS_XP] = stat_loss_roll();
-                break;
-            }
-        }
-    }
-#endif
 
     int timer_count = unmarshallByte(th);
     ASSERT(timer_count <= NUM_TIMERS);
@@ -3093,6 +3049,15 @@ static void tag_read_you(reader &th)
             you.temp_mutation[MUT_SUPPRESSION] = num_transsuppressed;
         }
     }
+
+    // BCADDO: Minor version tag for this.
+    int num_temp = 0;
+    for (int i = 0; i < NUM_MUTATIONS; ++i)
+    {
+        if (you.temp_mutation[i])
+            num_temp++;
+    }
+    you.attribute[ATTR_TEMP_MUTATIONS] = num_temp;
 
     // Fixup for Sacrifice XP from XL 27 (#9895). No minor tag, but this
     // should still be removed on a major bump.

@@ -3558,6 +3558,7 @@ static void _suppression(monster *mons)
             {
                 if (suppress_mutation(true, true))
                 {
+                    you.attribute[ATTR_TEMP_MUTATIONS]++;
                     you.mutation[MUT_SUPPRESSION]++;
                     you.temp_mutation[MUT_SUPPRESSION]++;
                 }
