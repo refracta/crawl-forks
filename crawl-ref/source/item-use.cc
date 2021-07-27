@@ -525,18 +525,10 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
 
     int item_slot = 0;          // default is 'a'
 
-    if (auto_wield)
-    {
-        if (item_slot == you.equip[EQ_WEAPON0] || item_slot == you.equip[EQ_WEAPON1]
-            || ((you.equip[EQ_WEAPON0] == -1 || you.equip[EQ_WEAPON1] == -1)
-            && !item_is_wieldable(you.inv[item_slot])))
-        {
-            item_slot = 1;      // backup is 'b'
-        }
-
-        if (slot != -1)         // allow external override
-            item_slot = slot;
-    }
+    // Now that quickswap is moved to its own function; auto-wield is
+    // only used to equip items from their inventory description.
+    if (auto_wield && slot != -1)
+        item_slot = slot;
 
     // If the swap slot has a bad (but valid) item in it,
     // the swap will be to bare hands.
@@ -1101,6 +1093,13 @@ bool armour_prompt(const string & mesg, int *index, operation_types oper)
     return false;
 }
 
+// Rework of the quick_swap command to be more dual-wield friendly. Newly finicky 
+// to prevent unexpected behaviors.
+bool quick_swap()
+{
+    return true;
+}
+
 // Double Swap. Intentionally a bit finicky because is it'd be hard to logic out
 // both "what the player wants this to do" and "should this be able to work"
 // if it wasn't finicky. It 'errors' to tell the player why they can't double
@@ -1110,7 +1109,7 @@ bool double_swap()
     if ((you.weapon(0) && you.weapon(0)->soul_bound()) ||
         (you.weapon(1) && you.weapon(1)->soul_bound()))
     {
-        mpr("You can't dualswap while would bound to a weapon!");
+        mpr("You can't dualswap while soul bound to a weapon!");
         return false;
     }
 

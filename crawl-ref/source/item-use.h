@@ -53,6 +53,7 @@ bool wield_weapon(bool auto_wield, int slot = -1,
                   bool show_wield_msg = true,
                   bool adjust_time_taken = true);
 
+bool quick_swap();
 bool double_swap();
 
 void brand_weapon(item_def &wpn, bool player = true);
