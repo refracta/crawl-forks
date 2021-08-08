@@ -3248,7 +3248,7 @@ static bool _do_action(item_def &item, const vector<command_type>& actions, int 
 
     switch (action)
     {
-    case CMD_WIELD_WEAPON:     wield_weapontrue, slot);            break;
+    case CMD_WIELD_WEAPON:     wield_weapon(true, slot);            break;
     case CMD_UNWIELD_WEAPON:   
     {
         const bool handedness = (slot == you.equip[EQ_WEAPON0]);

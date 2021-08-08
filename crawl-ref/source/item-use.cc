@@ -1097,6 +1097,97 @@ bool armour_prompt(const string & mesg, int *index, operation_types oper)
 // to prevent unexpected behaviors.
 bool quick_swap()
 {
+    const item_def wpn0 = you.inv[0]; // a
+    const item_def wpn1 = you.inv[1]; // b
+
+    if (!wpn0.defined() || !wpn1.defined())
+    {
+        mprf(MSGCH_ERROR, "One of your quick swap slots is empty. Adjust and try again.");
+        return false;
+    }
+
+    if (!you.could_wield(wpn0))
+    {
+        mprf(MSGCH_ERROR, "You cannot wield what you have in slot 'a'. Adjust and try again.");
+        return false;
+    }
+
+    if (!you.could_wield(wpn1))
+    {
+        mprf(MSGCH_ERROR, "You cannot wield what you have in slot 'b'. Adjust and try again.");
+        return false;
+    }
+
+    if (wpn0.soul_bound() || wpn1.soul_bound())
+    {
+        mprf(MSGCH_ERROR, "You cannot swap items while one is bound to your soul.");
+        return false;
+    }
+
+    if (!can_wield(&wpn0, true, false, false, false))
+        return false;
+
+    if (!can_wield(&wpn1, true, false, false, false))
+        return false;
+
+    int swapto = -1;
+    int swapfrom = -1;
+
+    if (you.equip[EQ_WEAPON0] == 0)
+    {
+        swapto = EQ_WEAPON0;
+        swapfrom = 1;
+    }
+    else if (you.equip[EQ_WEAPON0] == 1)
+    {
+        swapto = EQ_WEAPON0;
+        swapfrom = 0;
+    }
+    else if (you.equip[EQ_WEAPON1] == 0)
+    {
+        swapto = EQ_WEAPON1;
+        swapfrom = 1;
+    }
+    else if (you.equip[EQ_WEAPON1] == 1)
+    {
+        swapto = EQ_WEAPON1;
+        swapfrom = 0;
+    }
+
+    if (swapto < 0)
+    {
+        mprf("Can only swap items when wielding one of the items you intend to swap.");
+        return false;
+    }
+
+    if (swapto == EQ_WEAPON1 && is_range_weapon(you.inv[swapfrom]))
+    {
+        mprf(MSGCH_ERROR, "Can't swap a ranged weapon into the left hand slot.");
+        return false;
+    }
+
+    if (you.staff() && you.inv[swapto].base_type == OBJ_STAVES
+        && !(wpn0.base_type == OBJ_STAVES && wpn1.base_type == OBJ_STAVES))
+    {
+        mprf(MSGCH_ERROR, "This swap would lead to wielding two staves at once. You can't do this.");
+        return false;
+    }
+
+    if (you.hands_reqd(you.inv[swapto]) > HANDS_ONE && you.weapon(0) && you.weapon(1))
+    {
+        mprf(MSGCH_ERROR, "Can't quickswap to a two-handed item while wielding two items.");
+        return false;
+    }
+
+    if (!unwield_item(!swapto))
+        return false;
+
+    equip_item(static_cast<equipment_type>(swapto), swapfrom, true);
+
+    you.wield_change = true;
+    you.m_quiver.on_weapon_changed();
+    you.turn_is_over = true;
+
     return true;
 }
 

@@ -78,7 +78,7 @@ static void _restore_shield()
     }
 
     mprf(MSGCH_DURATION, "%s exudes a %s, shielding you from harm.",
-        you.staff()->name(DESC_YOUR).c_str(), shtype.c_str());
+        you.staff(true)->name(DESC_YOUR).c_str(), shtype.c_str());
 }
 
 // properties of the duration.

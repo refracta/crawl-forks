@@ -2104,7 +2104,7 @@ item_def *monster::shield() const
     return mslot_item(MSLOT_SHIELD);
 }
 
-item_def *monster::staff() const
+item_def *monster::staff(bool /*ignore_cooldown*/) const
 {
     if (!alive() || invalid_monster(this))
         return nullptr;

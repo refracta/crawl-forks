@@ -2295,7 +2295,7 @@ missile_type fires_ammo_type(const item_def &item)
 
 bool is_range_weapon(const item_def &item)
 {
-    return is_weapon(item) && is_ranged_weapon_type(item.sub_type);
+    return (item.base_type == OBJ_WEAPONS) && is_ranged_weapon_type(item.sub_type);
 }
 
 const char *ammo_name(missile_type ammo)

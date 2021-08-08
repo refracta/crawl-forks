@@ -682,7 +682,7 @@ public:
 
     item_def *weapon(int which_attack = -1) const override;
     item_def *shield() const override;
-    item_def *staff() const override;
+    item_def *staff(bool ignore_cooldown = false) const override;
 
     hands_reqd_type hands_reqd(const item_def &item,
                                bool base = false) const override;

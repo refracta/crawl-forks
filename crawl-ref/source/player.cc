@@ -7013,9 +7013,9 @@ int player::racial_ac(bool temp) const
     return jAC + sAC;
 }
 
-item_def * player::staff() const
+item_def * player::staff(bool ignore_cooldown) const
 {
-    if (you.duration[DUR_STAFF])
+    if (!ignore_cooldown && you.duration[DUR_STAFF])
         return nullptr;
 
     item_def * item = you.slot_item(static_cast<equipment_type>(EQ_CYTOPLASM));
