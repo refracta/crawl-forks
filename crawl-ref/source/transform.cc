@@ -125,6 +125,12 @@ Form::Form(transformation tran)
  */
 bool Form::slot_available(int slot) const
 {
+    if (you.get_mutation_level(MUT_AMORPHOUS_BODY) && ((slot >= EQ_CLOAK
+        && slot <= EQ_BODY_ARMOUR) || slot >= EQ_FIRST_MORPH))
+    {
+        return !(blocked_slots & SLOTF(EQ_BODY_ARMOUR));
+    }
+
     if (slot == EQ_ALL_ARMOUR)
         return !all_blocked(EQF_WEAR);
     if (slot == EQ_RINGS)
@@ -138,6 +144,7 @@ bool Form::slot_available(int slot) const
             return true;
         slot = EQ_WEAPON0;
     }
+
     return !(blocked_slots & SLOTF(slot));
 }
 
@@ -152,7 +159,6 @@ bool Form::slot_available(int slot) const
  */
 bool Form::can_wear_item(const item_def& item) const
 {
-
     if (item.link == you.equip[EQ_CYTOPLASM])
         return true;
 
@@ -163,7 +169,7 @@ bool Form::can_wear_item(const item_def& item) const
         return !all_blocked(EQF_RINGS);
     }
 
-    if (is_unrandom_artefact(item, UNRAND_LEAR))
+    if (!you.get_mutation_level(MUT_AMORPHOUS_BODY) && is_unrandom_artefact(item, UNRAND_LEAR))
         return !(blocked_slots & EQF_LEAR); // ok if no body slots blocked
 
     return slot_available(get_armour_slot(item));
@@ -1146,16 +1152,18 @@ _init_equipment_removal(transformation form)
     {
         if (i == EQ_WEAPON0 || i == EQ_WEAPON1)
             continue;
+
         const equipment_type eq = static_cast<equipment_type>(i);
         const item_def *pitem = you.slot_item(eq, true);
 
         if (pitem && (get_form(form)->blocked_slots & SLOTF(i)
-                      || (i != EQ_RING_AMULET
-                          && !get_form(form)->can_wear_item(*pitem))))
+            || (i != EQ_RING_AMULET
+                && !get_form(form)->can_wear_item(*pitem))))
         {
             result.insert(eq);
         }
     }
+
     return result;
 }
 

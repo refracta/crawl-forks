@@ -3711,6 +3711,14 @@ static void tag_read_you_items(reader &th)
             continue;
         }
 
+        // BCADDO: Minor version this.
+        // Unmeld erroneously melded amorph slots.
+        if (item && you.get_mutation_level(MUT_AMORPHOUS_BODY) && get_form()->slot_available(EQ_BODY_ARMOUR)
+            && i >= EQ_FIRST_MORPH)
+        {
+            you.melded.set(i, false);
+        }
+
         // If wearing non-armour in armour slot, unwear.
         if (item && i >= EQ_MIN_ARMOUR && i <= EQ_MAX_ARMOUR && item->base_type != OBJ_ARMOURS)
         {
