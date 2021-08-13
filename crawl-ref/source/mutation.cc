@@ -2936,42 +2936,34 @@ bool delete_temp_mutation()
     return false;
 }
 
-// If for_display is false ignores species-specific messaging to give a neat version for use in wizmode etc.
-const char* mutation_name(mutation_type mut, bool allow_category, bool for_display)
+void display_mutation_name(mutation_type mut, string &name)
 {
-    if (allow_category && mut >= CATEGORY_MUTATIONS && mut < MUT_NON_MUTATION)
-        return _get_category_mutation_def(mut).short_desc;
-
-    // note -- this can produce crashes if fed invalid mutations, e.g. if allow_category is false and mut is a category mutation
     if (!is_valid_mutation(mut))
-        return nullptr;
-
-    if (!for_display)
-        return _get_mutation_def(mut).short_desc;
+        return;
 
     if (mut == MUT_PSEUDOPODS)
     {
         switch (you.pseudopod_brand)
         {
-            case SPWPN_MOLTEN:
-                return "scorching pseudopods";
-            case SPWPN_ACID:
-                return "corrosive pseudopods";
-            case SPWPN_ELECTROCUTION:
-                return "electric pseudopods";
-            case SPWPN_VENOM:
-                return "noxious pseudopods";
-            case SPWPN_VAMPIRISM:
-                return "vampiric pseudopods";
-            default:
-                return "buggy pseudopods";
+        case SPWPN_MOLTEN:
+            name = "scorching pseudopods";  break;
+        case SPWPN_ACID:
+            name = "corrosive pseudopods";  break;
+        case SPWPN_ELECTROCUTION:
+            name = "electric pseudopods";   break;
+        case SPWPN_VENOM:
+            name = "noxious pseudopods";    break;
+        case SPWPN_VAMPIRISM:
+            name = "vampiric pseudopods";   break;
+        default:
+            name = "buggy pseudopods";      break;
         }
     }
 
-    if (mut == MUT_STATS)
-        return _stat_mut_msg(false, you.mutated_stats[STAT_STR], you.mutated_stats[STAT_INT], you.mutated_stats[STAT_DEX], true);
+    else if (mut == MUT_STATS)
+        name = _stat_mut_msg(false, you.mutated_stats[STAT_STR], you.mutated_stats[STAT_INT], you.mutated_stats[STAT_DEX], true);
 
-    if (mut == MUT_MINOR_MARTIAL_APT_BOOST || mut == MUT_MAJOR_MARTIAL_APT_BOOST || mut == MUT_DEFENSIVE_APT_BOOST)
+    else if (mut == MUT_MINOR_MARTIAL_APT_BOOST || mut == MUT_MAJOR_MARTIAL_APT_BOOST || mut == MUT_DEFENSIVE_APT_BOOST)
     {
         // BCADNOTE: Brute force fix.
         skill_type skill = you.defence_skill;
@@ -2984,89 +2976,106 @@ const char* mutation_name(mutation_type mut, bool allow_category, bool for_displ
 
         switch (skill)
         {
-        case SK_ARMOUR:             return "boosted armour aptitude";
-        case SK_AXES_HAMMERS:       return "boosted axes & hammers aptitude";
-        case SK_BOWS:               return "boosted bows aptitude";
-        case SK_CROSSBOWS:          return "boosted crossbows aptitude";
-        case SK_DODGING:            return "boosted dodging aptitude";
-        case SK_LONG_BLADES:        return "boosted long blades aptitude";
-        case SK_MACES_STAVES:       return "boosted maces & staves aptitude";
-        case SK_POLEARMS:           return "boosted polearms aptitude";
-        case SK_SHIELDS:            return "boosted shields aptitude";
-        case SK_SHORT_BLADES:       return "boosted short blades aptitude";
-        case SK_SLINGS:             return "boosted slings aptitude";
-        case SK_STEALTH:            return "boosted stealth aptitude";
-        case SK_UNARMED_COMBAT:     return "boosted unarmed combat aptitude";
-        case SK_WHIPS_FLAILS:       return "boosted whips and flails aptitude";
-        default:                    return "bad aptitude boost (bug)";
+        case SK_ARMOUR:             name = "boosted armour aptitude";           break;
+        case SK_AXES_HAMMERS:       name = "boosted axes & hammers aptitude";   break;
+        case SK_BOWS:               name = "boosted bows aptitude";             break;
+        case SK_CROSSBOWS:          name = "boosted crossbows aptitude";        break;
+        case SK_DODGING:            name = "boosted dodging aptitude";          break;
+        case SK_LONG_BLADES:        name = "boosted long blades aptitude";      break;
+        case SK_MACES_STAVES:       name = "boosted maces & staves aptitude";   break;
+        case SK_POLEARMS:           name = "boosted polearms aptitude";         break;
+        case SK_SHIELDS:            name = "boosted shields aptitude";          break;
+        case SK_SHORT_BLADES:       name = "boosted short blades aptitude";     break;
+        case SK_SLINGS:             name = "boosted slings aptitude";           break;
+        case SK_STEALTH:            name = "boosted stealth aptitude";          break;
+        case SK_UNARMED_COMBAT:     name = "boosted unarmed combat aptitude";   break;
+        case SK_WHIPS_FLAILS:       name = "boosted whips and flails aptitude"; break;
+        default:                    name = "bad aptitude boost (bug)";          break;
         }
     }
 
-    if (mut == MUT_DRACONIAN_DEFENSE)
+    else if (mut == MUT_DRACONIAN_DEFENSE)
     {
         switch (you.drac_colour)
         {
-        case DR_BLACK:              return "Stlth+++";
-        case DR_BLOOD:              return "rTorm, rHellfire";
-        case DR_BLUE:               return "rElec";
-        case DR_BONE:               return "AC+++, rShatter-";
+        case DR_BLACK:              name = "Stlth+++";          break;
+        case DR_BLOOD:              name = "rTorm, rHellfire";  break;
+        case DR_BLUE:               name = "rElec";             break;
+        case DR_BONE:               name = "AC+++, rShatter-";  break;
         default:
-        case DR_BROWN:              return "buggy mutation!";
-        case DR_CYAN:               return "rCloud, rAir";
-        case DR_GOLDEN:             return "rF+, rC+, rPois";
-        case DR_GREEN:              return "rPois";
-        case DR_LIME:               return "rCorr";
-        case DR_MAGENTA:            return "rMsl";
-        case DR_OLIVE:              return "rMut";
-        case DR_PEARL:              if (you.char_class == JOB_DEMONSPAWN)
-                                        return "AC++, rHoly, rN+";
-                                    return "AC++, rN+++";
-        case DR_PINK:               return "clarity";
-        case DR_PLATINUM:           return "fast, rMut";
-        case DR_PURPLE:             return "MR++";
-        case DR_RED:                return "rF+";
-        case DR_SCINTILLATING:      return "AC+, Chaos+";
-        case DR_SILVER:             return "AC++, rMut";
-        case DR_TEAL:               return "spectral";
-        case DR_WHITE:              return "rC+";
+        case DR_BROWN:              name = "buggy mutation!";   break;
+        case DR_CYAN:               name = "rCloud, rAir";      break;
+        case DR_GOLDEN:             name = "rF+, rC+, rPois";   break;
+        case DR_GREEN:              name = "rPois";             break;
+        case DR_LIME:               name = "rCorr";             break;
+        case DR_MAGENTA:            name = "rMsl";              break;
+        case DR_OLIVE:              name = "rMut";              break;
+        case DR_PEARL:            if (you.char_class == JOB_DEMONSPAWN)
+                                        { name = "AC++, rHoly, rN+";  break; }
+                                    name = "AC++, rN+++";       break;
+        case DR_PINK:               name = "clarity";           break;
+        case DR_PLATINUM:           name = "fast, rMut";        break;
+        case DR_PURPLE:             name = "MR++";              break;
+        case DR_RED:                name = "rF+";               break;
+        case DR_SCINTILLATING:      name = "AC+, Chaos+";       break;
+        case DR_SILVER:             name = "AC++, rMut";        break;
+        case DR_TEAL:               name = "spectral";          break;
+        case DR_WHITE:              name = "rC+";               break;
         }
     }
 
-    if (mut == MUT_DRACONIAN_ENHANCER)
+    else if (mut == MUT_DRACONIAN_ENHANCER)
     {
         switch (you.drac_colour)
         {
-        case DR_BLACK:              return "necromancy enhancer";
-        case DR_BLOOD:              return "necromancy, hexes and air enhancers";
-        case DR_BLUE:               return "air enhancer";
-        case DR_BONE:               return "charms and earth enhancers";
-        case DR_CYAN:               return "translocations enhancer";
-        case DR_GOLDEN:             return "fire, ice and poison enhancers";
-        case DR_GREEN:              return "poison enhancer";
-        case DR_LIME:               return "transmutation enhancer";
-        case DR_MAGENTA:            return "charms enhancer";
-        case DR_OLIVE:              return "poison and air enhancers";
-        case DR_PEARL:              return "charms, summoning and earth enhancers";
-        case DR_PINK:               return "summoning enhancer";
-        case DR_PLATINUM:           return "translocation, transmutation and hexes enhancers";
-        case DR_PURPLE:             return "hexes enhancer";
-        case DR_RED:                return "fire enhancer";
-        case DR_SILVER:             return "earth enhancer";
-        case DR_TEAL:               return "translocation and transmutation enhancers";
-        case DR_WHITE:              return "ice enhancer";
-        case DR_SCINTILLATING:      return "chaos magic, random archmage";
+        case DR_BLACK:              name = "necromancy enhancer";                               break;
+        case DR_BLOOD:              name = "necromancy, hexes and air enhancers";               break;
+        case DR_BLUE:               name = "air enhancer";                                      break;
+        case DR_BONE:               name = "charms and earth enhancers";                        break;
+        case DR_CYAN:               name = "translocations enhancer";                           break;
+        case DR_GOLDEN:             name = "fire, ice and poison enhancers";                    break;
+        case DR_GREEN:              name = "poison enhancer";                                   break;
+        case DR_LIME:               name = "transmutation enhancer";                            break;
+        case DR_MAGENTA:            name = "charms enhancer";                                   break;
+        case DR_OLIVE:              name = "poison and air enhancers";                          break;
+        case DR_PEARL:              name = "charms, summoning and earth enhancers";             break;
+        case DR_PINK:               name = "summoning enhancer";                                break;
+        case DR_PLATINUM:           name = "translocation, transmutation and hexes enhancers";  break;
+        case DR_PURPLE:             name = "hexes enhancer";                                    break;
+        case DR_RED:                name = "fire enhancer";                                     break;
+        case DR_SILVER:             name = "earth enhancer";                                    break;
+        case DR_TEAL:               name = "translocation and transmutation enhancers";         break;
+        case DR_WHITE:              name = "ice enhancer";                                      break;
+        case DR_SCINTILLATING:      name = "chaos magic, random archmage";                      break;
         default:    // Shouldn't display ever; hopefully.
-        case DR_BROWN:              return "bugginess.";
+        case DR_BROWN:              name = "bugginess.";                                        break;
         }
     }
 
-    if (mut == MUT_HORNS && you.get_mutation_level(MUT_HORNS) > 1)
-        return "horns, retaliatory headbutt";
+    else if (mut == MUT_HORNS && you.get_mutation_level(MUT_HORNS) > 1)
+        name = "horns, retaliatory headbutt";
 
-    species_mutation_message msg = _spmut_msg(mut);
-    if (msg.mutation == MUT_NON_MUTATION)
-        return _get_mutation_def(mut).short_desc;
-    return msg.short_desc;
+    else
+    {
+        species_mutation_message msg = _spmut_msg(mut);
+        if (msg.mutation == MUT_NON_MUTATION)
+            name = _get_mutation_def(mut).short_desc;
+        else
+            name = msg.short_desc;
+    }
+}
+
+// If for_display is false ignores species-specific messaging to give a neat version for use in wizmode etc.
+const char* mutation_name(mutation_type mut, bool allow_category)
+{
+    if (allow_category && mut >= CATEGORY_MUTATIONS && mut < MUT_NON_MUTATION)
+        return _get_category_mutation_def(mut).short_desc;
+
+    // note -- this can produce crashes if fed invalid mutations, e.g. if allow_category is false and mut is a category mutation
+    if (!is_valid_mutation(mut))
+        return nullptr;
+
+    return _get_mutation_def(mut).short_desc;
 }
 
 const char* category_mutation_name(mutation_type mut)
@@ -3172,11 +3181,13 @@ static string _suppress_msg(bool colour)
         if (you.suppressed_mutation[i])
         {
             const mutation_type mut = static_cast<mutation_type>(i);
+            string name;
+            display_mutation_name(mut, name);
 
             if (you.suppressed_mutation[i] > 1)
-                temp_mut_names.emplace_back(mutation_name(mut, false, true));
+                temp_mut_names.emplace_back(name);
             else
-                mut_names.emplace_back(mutation_name(mut, false, true));
+                mut_names.emplace_back(name);
         }
     }
     if (mut_names.size())

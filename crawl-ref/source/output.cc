@@ -2839,7 +2839,8 @@ string mutation_overview()
 
         const int max_levels = mutation_max_levels(mut);
 
-        string current = mutation_name(mut, false, true);
+        string current;
+        display_mutation_name(mut, current);
 
         if (mut == MUT_DRACONIAN_DEFENSE && you.drac_colour == DR_TEAL)
             continue;
