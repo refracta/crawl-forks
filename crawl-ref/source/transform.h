@@ -258,8 +258,7 @@ enum undead_form_reason
     UFR_TOO_ALIVE = 1,
     UFR_TOO_SOLID = 2,
 };
-undead_form_reason lifeless_prevents_form(transformation form = you.form,
-                                          bool involuntary = false);
+undead_form_reason lifeless_prevents_form(transformation form = you.form);
 
 bool form_can_wield(transformation form = you.form);
 bool form_can_wear(transformation form = you.form);

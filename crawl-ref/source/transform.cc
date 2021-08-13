@@ -1523,15 +1523,12 @@ static void _print_head_change_message(int old_heads, int new_heads)
  *
  * @param which_trans   The tranformation which the player is undergoing
  *                      (default you.form).
- * @param involuntary   Whether the transformation is involuntary or not.
  * @return              UFR_GOOD if the player is not blocked from entering the
  *                      given form by their undead race; UFR_TOO_ALIVE if the
  *                      player is too satiated as a vampire; UFR_TOO_DEAD if
  *                      the player is too dead (or too thirsty as a vampire).
  */
-// BCADDO: Involuntary no longer does anything; remove.
-undead_form_reason lifeless_prevents_form(transformation which_trans,
-                                          bool involuntary)
+undead_form_reason lifeless_prevents_form(transformation which_trans)
 {
     if (!you.undead_state(false) || you.undead_state(false) == US_SEMI_ALIVE)
         return UFR_GOOD; // not undead!
@@ -1681,12 +1678,12 @@ bool transform(int pow, transformation which_trans, bool involuntary,
     }
 
     // the undead cannot enter most forms.
-    if (lifeless_prevents_form(which_trans, involuntary) == UFR_TOO_DEAD)
+    if (lifeless_prevents_form(which_trans) == UFR_TOO_DEAD)
     {
         msg = "Your unliving flesh cannot be transformed in this way.";
         success = false;
     }
-    else if (lifeless_prevents_form(which_trans, involuntary) == UFR_TOO_SOLID)
+    else if (lifeless_prevents_form(which_trans) == UFR_TOO_SOLID)
     {
         if (which_trans == transformation::statue)
             msg = "You're ghostly form cannot become solid enough.";
