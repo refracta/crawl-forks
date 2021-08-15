@@ -978,18 +978,8 @@ string hunger_cost_string(const int hunger)
     if (you_foodless())
         return "N/A";
 
-#ifdef WIZARD
-    if (you.wizard)
-        return to_string(hunger);
-#endif
+    const int min = hunger * 4 / 5;
+    const int max = div_round_up(hunger * 6, 5);
 
-    const int numbars = hunger_bars(hunger);
-
-    if (numbars > 0)
-    {
-        return string(numbars, '#')
-               + string(ARRAYSZ(hunger_breakpoints) - numbars, '.');
-    }
-    else
-        return "None";
+    return make_stringf("%d-%d", min, max);
 }
