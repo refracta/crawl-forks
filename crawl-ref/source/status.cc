@@ -957,10 +957,14 @@ static void _describe_hunger(status_info& inf)
         inf.light_text   = "Fainting";
         inf.short_text   = "fainting";
         break;
-    case HS_SATIATED: // no status light
+    case HS_SATIATED:
+        inf.light_colour = BLUE;
+        inf.light_text   = "Sated";
     default:
         break;
     }
+
+    inf.light_text += make_stringf(" (%d)", you.hunger);
 
     if (you_foodless(true))
         inf.light_colour = LIGHTGRAY;
