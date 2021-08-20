@@ -408,7 +408,7 @@ else
 return del_spell_from_memory_by_slot(i);
 }
 
-int spell_hunger(spell_type which_spell)
+int spell_hunger(spell_type which_spell, bool base)
 {
     if (player_energy())
         return 0;
@@ -423,6 +423,12 @@ int spell_hunger(spell_type which_spell)
         hunger = basehunger[level - 1];
     else
         hunger = (basehunger[0] * level * level) / 4;
+
+    if (base)
+        return hunger;
+
+    hunger *= 80 + random2(41);
+    hunger /= 100;
 
     hunger -= you.skill(SK_SPELLCASTING, you.intel());
 

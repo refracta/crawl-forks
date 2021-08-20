@@ -153,7 +153,7 @@ static string _spell_extra_description(spell_type spell, bool viewing)
 
     desc << chop_string(spell_power_string(spell), 13)
          << chop_string(rangestring, 9)
-         << chop_string(spell_hunger_string(spell), 8)
+         << chop_string(spell_hunger_string(spell, true), 8)
          << chop_string(spell_noise_string(spell, 10), 14);
 
     desc << "</" << colour_to_str(highlight) <<">";
@@ -2452,9 +2452,28 @@ string failure_rate_to_string(int fail)
     return make_stringf("%d%%", failure_rate_to_int(fail));
 }
 
-string spell_hunger_string(spell_type spell)
+string spell_hunger_string(spell_type spell, bool terse)
 {
-    return hunger_cost_string(spell_hunger(spell));
+    if (you_foodless())
+        return "N/A";
+
+    const int hunger = spell_hunger(spell, true);
+    int min = hunger * 4 / 5;
+    int max = div_round_up(hunger * 6, 5);
+
+    min -= you.skill(SK_SPELLCASTING, you.intel());
+    max -= you.skill(SK_SPELLCASTING, you.intel());
+
+    if (max <= 0)
+        return "0";
+
+    if (min < 0)
+        min = 0;
+
+    if (terse)
+        return make_stringf("%d", div_round_up((min + max), 2));
+
+    return make_stringf("%d-%d", min, max);
 }
 
 string spell_failure_rate_string(spell_type spell)
