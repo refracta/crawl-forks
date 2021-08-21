@@ -308,10 +308,10 @@ Open Crypts ability
 Beseeches Kikubaaqudgha to create additional reanimatable monster corpses nearby 
 when you cast spells that require them to use.
 
-When trying to cast Simulacrum, without a corpse; Animate Dead, when below a threshold 
-of nearby corpses that scales with piety; or Corpse Rot, when it is possible to place 
-a corpse below a vulnerable foe to force them into miasma; you will spend three piety 
-and place these corpses as part of the cast. 
+Whenever you cast Simulacrum without a corpse, Animate Dead with insufficient corpses 
+(based on a threshold that scales with piety) or Corpse Rot when a corpse could miasma 
+a vulnerable enemy you will spend three piety and place these corpses in appropriate 
+places as part of the spell cast.
 
 The quality of corpses scales with necromancy skill; the amount for non-simulacrum 
 casts scales similarly. Simulacrum is heavy weighted for stronger monsters at high 
