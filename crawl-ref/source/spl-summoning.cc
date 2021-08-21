@@ -26,6 +26,7 @@
 #include "fight.h"
 #include "fprop.h"
 #include "food.h"
+#include "god-abil.h"
 #include "god-companions.h"
 #include "god-conduct.h"
 #include "god-item.h"
@@ -2210,10 +2211,25 @@ bool cast_animate_skeleton(god_type god, bool fail, coord_def pos)
 
 spret cast_animate_dead(int pow, god_type god, bool fail)
 {
-    if (!animate_dead(&you, pow, BEH_FRIENDLY, MHITYOU, &you, "", god, false))
+    const int corpses = animate_dead(&you, pow, BEH_FRIENDLY, MHITYOU, &you, "", god, false);
+
+    if (!corpses && !you.attribute[ATTR_KIKU_CORPSE])
     {
         mpr("There is nothing nearby to animate!");
         return spret::abort;
+    }
+
+    if (you.attribute[ATTR_KIKU_CORPSE])
+    {
+        const int piety = div_rand_round(you.piety, 20);
+        const int threshold = 11 - random2(piety);
+        if (corpses < threshold)
+        {
+            if (kiku_receive_corpses(apply_invo_enhancer(you.skill(SK_NECROMANCY), true)))
+                lose_piety(3);
+            else if (!corpses)
+                return spret::abort;
+        }
     }
     
     fail_check();
@@ -2248,13 +2264,57 @@ spret cast_simulacrum(int pow, god_type god, bool fail)
         }
     }
 
+    fail_check();
+
     if (!found)
     {
-        mpr("There is nothing here that can be animated!");
-        return spret::abort;
+        if (!you.attribute[ATTR_KIKU_CORPSE])
+        {
+            mpr("There is nothing here that can be animated!");
+            return spret::abort;
+        }
+
+        if (feat_destroys_items(grd(you.pos())))
+        {
+            mpr("Any corpse summoned here would be destroyed before you could use it!");
+            return spret::abort;
+        }
+
+        const int kiku_pow = apply_invo_enhancer(you.skill(SK_NECROMANCY), true);
+        const int tries = div_rand_round(kiku_pow, 3);
+        monster_type mons = MONS_RAT; // Arbitrary very low value monster if for some reason player uses at almost no Necro.
+        int value = 0;
+
+        for (int i = 0; i < tries; i++)
+        {
+            const monster_type test_mons = random_kiku_monster(kiku_pow);
+            const monster_info test_info = monster_info(MONS_SIMULACRUM, test_mons);
+            const int test_value = max_corpse_chunks(test_mons) * (test_info.hd + test_info.mbase_speed);
+            if (test_value > value)
+            {
+                mons  = test_mons;
+                value = test_value;
+            }
+        }
+
+        item_def * corpse = place_kiku_corpse(mons, you.pos());
+
+        if (!corpse)
+        {
+            // Shouldn't happen?
+            mprf(MSGCH_GOD, "Kikubaaqudha failed to find a corpse for you!");
+            return spret::abort;
+        }
+        else
+        {
+            const monster_info name_info = monster_info(mons_genus(mons));
+            mprf(MSGCH_GOD, "Kikubaaqudha delivers you %s corpse!", name_info.common_name(DESC_A).c_str());
+            lose_piety(3);
+        }
+        
+        co = corpse->index();
     }
 
-    fail_check();
     canned_msg(MSG_ANIMATE_REMAINS);
 
     item_def& corpse = mitm[co];

@@ -116,7 +116,8 @@ void yred_respawn_enslaved_soul();
 void yred_make_enslaved_soul(monster* mon, bool force_hostile = false);
 
 bool kiku_receive_corpses(int pow);
-bool kiku_take_corpse();
+monster_type random_kiku_monster(int pow);
+item_def * place_kiku_corpse(monster_type mon_type, coord_def pos);
 bool final_book_gift(god_type god);
 
 bool fedhas_passthrough_class(const monster_type mc);

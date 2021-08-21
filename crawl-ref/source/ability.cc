@@ -417,10 +417,10 @@ static const ability_def Ability_List[] =
       {fail_basis::invo}, abflag::none },
 
     // Kikubaaqudgha
-    { ABIL_KIKU_RECEIVE_CORPSES, "Receive Corpses",
-      3, 0, 400, 3, {fail_basis::invo, 40, 5, 20}, abflag::none },
-    { ABIL_KIKU_TORMENT, "Torment",
-      4, 0, 0, 12, {fail_basis::invo, 60, 5, 20}, abflag::none },
+    { ABIL_KIKU_RECEIVE_CORPSES, "Open Crypts",
+        0, 0, 0, 0, {fail_basis::invo}, abflag::instant | abflag::starve_ok },
+    { ABIL_KIKU_STOP_CORPSES, "Close Crypts",
+        0, 0, 0, 0, {fail_basis::invo}, abflag::instant | abflag::starve_ok },
     { ABIL_KIKU_GIFT_NECRONOMICON, "Receive Necronomicon", 0, 0, 0, 0,
       {fail_basis::invo}, abflag::none },
     { ABIL_KIKU_BLESS_WEAPON, "Brand Weapon With Pain", 0, 0, 0, 0,
@@ -1046,6 +1046,11 @@ ability_type fixup_ability(ability_type ability)
     case ABIL_QAZLAL_ELEMENTAL_FORCE:
         if (you.get_mutation_level(MUT_NO_LOVE))
             return ABIL_NON_ABILITY;
+        return ability;
+
+    case ABIL_KIKU_RECEIVE_CORPSES:
+        if (you.attribute[ATTR_KIKU_CORPSE])
+            return ABIL_KIKU_STOP_CORPSES;
         return ability;
 
     case ABIL_SIF_MUNA_DIVINE_ENERGY:
@@ -2939,19 +2944,11 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
         break;
 
     case ABIL_KIKU_RECEIVE_CORPSES:
-        fail_check();
-        kiku_receive_corpses(you.skill(SK_NECROMANCY, 4));
+        you.attribute[ATTR_KIKU_CORPSE] = 1;
         break;
 
-    case ABIL_KIKU_TORMENT:
-        fail_check();
-        if (!kiku_take_corpse())
-        {
-            mpr("There are no corpses to sacrifice!");
-            return spret::abort;
-        }
-        simple_god_message(" torments the living!");
-        torment(&you, TORMENT_KIKUBAAQUDGHA, you.pos());
+    case ABIL_KIKU_STOP_CORPSES:
+        you.attribute[ATTR_KIKU_CORPSE] = 0;
         break;
 
     case ABIL_KIKU_BLESS_WEAPON:

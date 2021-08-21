@@ -18,6 +18,7 @@
 #include "env.h"
 #include "fprop.h"
 #include "fight.h"
+#include "god-abil.h"
 #include "items.h"
 #include "level-state-type.h"
 #include "message.h"
@@ -355,7 +356,7 @@ void manage_fire_shield()
 
 spret cast_corpse_rot(bool fail)
 {
-    if (!you.res_rotting())
+    if (!you.res_rotting() && !you.cloud_immune())
     {
         for (stack_iterator si(you.pos()); si; ++si)
         {
@@ -370,7 +371,101 @@ spret cast_corpse_rot(bool fail)
             }
         }
     }
+
     fail_check();
+    if (you.attribute[ATTR_KIKU_CORPSE])
+    {
+        // Drop a fair amount of low quality corpses for rotting.
+        const int pow = apply_invo_enhancer(you.skill(SK_NECROMANCY), false);
+        int count = div_rand_round(pow, 3);
+        count += div_rand_round(count, 3);
+        count += 1 + random2avg(count, 3);
+
+        vector<coord_def> targets;
+
+        for (radius_iterator ri(you.pos(), LOS_NO_TRANS, true); ri; ++ri)
+        {
+            monster * mons = monster_at(*ri);
+            if (mons && !mons->wont_attack() && !mons->res_rotting()
+                && !cell_is_solid(*ri) && !feat_destroys_items(grd(*ri))
+                && !mons->cloud_immune() && !cloud_at(*ri))
+            {
+                bool include = true;
+                for (stack_iterator si(*ri); si; ++si)
+                {
+                    if (si->is_type(OBJ_CORPSES, CORPSE_BODY))
+                    {
+                        include = false;
+                        break;
+                    }
+                }
+
+                if (include)
+                    targets.emplace_back(mons->pos());
+            }
+        }
+        
+        if (targets.size())
+        {
+            apply_invo_enhancer(10, true); // For the message.
+            mprf(MSGCH_GOD, "Kikubaaqudgha casts corpses upon the feet of your enemies!");
+            lose_piety(3);
+
+            // More possible targets than alloted corpses; clear extras at random.
+            while ((int)targets.size() > count)
+                targets.erase(targets.begin() + random2((int)targets.size()));
+            // Corpse slap valid targets
+            for (int i = 0; i < (int)targets.size(); i++)
+                place_kiku_corpse(random_kiku_monster(random2(pow)), targets[i]);
+
+            count -= (int)targets.size();
+
+            // Infinite loop protection for small areas, etc.
+            int tries = 100;
+            // Place additional corpses adjacent to targets.
+            while (tries--)
+            {
+                coord_def t = coord_def (0, 0);
+                for (adjacent_iterator ai(targets[random2(targets.size())]); ai; ++ai)
+                {
+                    if (cell_is_solid(*ai) || feat_destroys_items(grd(*ai))
+                        || cloud_at(*ai))
+                    {
+                        continue;
+                    }
+
+                    actor * act = actor_at(*ai);
+                    if (act && (act->wont_attack() || act->is_player()))
+                        continue;
+
+                    bool inc = true;
+                    for (stack_iterator si(*ai); si; ++si)
+                    {
+                        if (si->is_type(OBJ_CORPSES, CORPSE_BODY))
+                        {
+                            inc = false;
+                            break;
+                        }
+                    }
+
+                    if (inc)
+                    {
+                        if (t.origin() || grid_distance(you.pos(), t) > grid_distance(you.pos(), *ai))
+                            t = *ai;
+                    }
+                }
+
+                if (!t.origin())
+                {
+                    count--;
+                    place_kiku_corpse(random_kiku_monster(random2(pow)), t);
+                    if (count <= 0)
+                        tries = 0;
+                }
+            }
+        }
+    }
+
     return corpse_rot(&you);
 }
 

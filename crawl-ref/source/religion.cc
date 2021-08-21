@@ -120,14 +120,13 @@ const vector<god_power> god_powers[NUM_GODS] =
     },
 
     // Kikubaaqudgha
-    { { 1, ABIL_KIKU_RECEIVE_CORPSES, "receive cadavers from Kikubaaqudgha" },
+    { { 1, ABIL_KIKU_RECEIVE_CORPSES, "receive supplemental cadavers from Kikubaaqudgha on cast" },
       { 2, "Kikubaaqudgha is now protecting you from necromantic miscasts and death curses.",
            "Kikubaaqudgha will no longer protect you from necromantic miscasts or death curses.",
            "Kikubaaqudgha protects you from necromantic miscasts and death curses." },
       { 4, "Kikubaaqudgha is now protecting you from unholy torment.",
            "Kikubaaqudgha will no longer protect you from unholy torment.",
            "Kikubaaqudgha protects you from unholy torment." },
-      { 5, ABIL_KIKU_TORMENT, "invoke torment by sacrificing a corpse" },
       { 7, ABIL_KIKU_BLESS_WEAPON,
            "Kikubaaqudgha will grant you a Necronomicon or bloody your weapon with pain... once.",
            "Kikubaaqudgha is no longer ready to enhance your necromancy." },
@@ -897,6 +896,11 @@ static void _inc_penance(god_type god, int val)
                 you.duration[DUR_CHANNEL_ENERGY] = 0;
             if (you.attribute[ATTR_DIVINE_ENERGY])
                 you.attribute[ATTR_DIVINE_ENERGY] = 0;
+        }
+        else if (god == GOD_KIKUBAAQUDGHA)
+        {
+            if (you.attribute[ATTR_KIKU_CORPSE])
+                you.attribute[ATTR_KIKU_CORPSE] = 0;
         }
 
         else if (god == GOD_BAHAMUT_TIAMAT)

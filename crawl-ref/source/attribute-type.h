@@ -99,5 +99,6 @@ enum attribute_type
     ATTR_SCRYING,              // Do we have X-Ray Vision?
     ATTR_STAFF_SHIELD,         // SH from a wielded enhancer staff. 
     ATTR_STRIPPED_COLOUR,      // Lost draconian colour.
+    ATTR_KIKU_CORPSE,          // Recieve corpses from kiku on spellcast.
     NUM_ATTRIBUTES
 };

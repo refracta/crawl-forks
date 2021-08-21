@@ -216,6 +216,17 @@ bool fill_status_info(int status, status_info& inf)
         }
         break;
 
+    case STATUS_RECEIVE_CORPSES:
+        if (you.attribute[ATTR_KIKU_CORPSE])
+        {
+            inf.light_colour = god_colour(GOD_KIKUBAAQUDGHA);
+            inf.light_text   = "+Corpse";
+            inf.short_text   = "open crypt";
+            inf.long_text    = "You are calling on Kikubaaqudgha for supplemental "
+                               "corpses.";
+        }
+        break;
+
     case DUR_CORROSION:
         inf.light_text = make_stringf("Corr (%d)",
                           (-4 * you.props["corrosion_amount"].get_int()));

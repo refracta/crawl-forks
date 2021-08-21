@@ -2667,6 +2667,9 @@ static void tag_read_you(reader &th)
         if (a == ABIL_YRED_ANIMATE_DEAD)
             a = ABIL_YRED_ANIMATE_REMAINS;
 
+        if (a == ABIL_KIKU_TORMENT)
+            a = ABIL_NON_ABILITY;
+
         if (th.getMinorVersion() < TAG_MINOR_NO_JUMP)
         {
             // ABIL_JUMP deleted (ABIL_DIG has its old spot), map it

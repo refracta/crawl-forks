@@ -2200,11 +2200,42 @@ void yred_make_enslaved_soul(monster* mon, bool force_hostile)
          !force_hostile ? "is now yours" : "fights you");
 }
 
+monster_type random_kiku_monster(int pow)
+{
+    const int adjusted_power = div_rand_round(pow + 2, 4);
+    const int bonus_depth = -2 + random2(adjusted_power);
+    const level_id lev(you.where_are_you, you.depth + bonus_depth);
+    return pick_local_corpsey_monster(lev);
+}
+
+item_def * place_kiku_corpse(monster_type mon_type, coord_def pos)
+{
+    ASSERT(mons_class_can_be_zombified(mons_species(mon_type)));
+
+    // Create corpse object.
+    monster dummy;
+    dummy.type = mon_type;
+    define_monster(dummy);
+    dummy.position = pos;
+
+    item_def* corpse = place_monster_corpse(dummy, true, true);
+    
+    if (!corpse)
+        return nullptr;
+
+    // Higher piety means fresher corpses.
+    int rottedness = 200 -
+        ((!one_chance_in(10) && you_worship(GOD_KIKUBAAQUDGHA))
+            ? random2(200 - you.piety)
+            : random2(100 + random2(75)));
+
+    corpse->freshness = rottedness;
+    return corpse;
+}
+
 bool kiku_receive_corpses(int pow)
 {
     // pow = necromancy * 4, ranges from 0 to 108
-
-    pow = apply_invo_enhancer(pow, true);
 
     dprf("kiku_receive_corpses() power: %d", pow);
 
@@ -2243,32 +2274,10 @@ bool kiku_receive_corpses(int pow)
         if (!square_is_walkable || !square_gets_corpse)
             continue;
 
-        corpses_created++;
-
         // Find an appropriate monster corpse for level and power.
-        const int adjusted_power = min(pow / 4, random2(random2(pow)));
-        // Pick a place based on the power. This may be below the branch's
-        // start, that's ok.
-        const level_id lev(you.where_are_you, adjusted_power
-                           - absdungeon_depth(you.where_are_you, 0));
-        const monster_type mon_type = pick_local_corpsey_monster(lev);
-        ASSERT(mons_class_can_be_zombified(mons_species(mon_type)));
-
-        // Create corpse object.
-        monster dummy;
-        dummy.type = mon_type;
-        define_monster(dummy);
-        dummy.position = *ri;
-
-        item_def* corpse = place_monster_corpse(dummy, true, true);
-        if (!corpse)
-            continue;
-
-        // Higher piety means fresher corpses.
-        int rottedness = 200 -
-            (!one_chance_in(10) ? random2(200 - you.piety)
-                                : random2(100 + random2(75)));
-        corpse->freshness = rottedness;
+        const monster_type mon_type = random_kiku_monster(pow);
+        if (place_kiku_corpse(mon_type, (coord_def)*ri))
+            corpses_created++;
     }
 
     if (corpses_created)
@@ -2287,27 +2296,6 @@ bool kiku_receive_corpses(int pow)
             simple_god_message(" can find no cadavers for you!");
         return false;
     }
-}
-
-/**
- * Destroy a corpse at the player's location
- *
- * @return  True if a corpse was destroyed, false otherwise.
-*/
-bool kiku_take_corpse()
-{
-    for (int i = you.visible_igrd(you.pos()); i != NON_ITEM; i = mitm[i].link)
-    {
-        item_def &item(mitm[i]);
-
-        if (item.base_type != OBJ_CORPSES || item.sub_type != CORPSE_BODY)
-            continue;
-        item_was_destroyed(item);
-        destroy_item(i);
-        return true;
-    }
-
-    return false;
 }
 
 bool final_book_gift(god_type god)

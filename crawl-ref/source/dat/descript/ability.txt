@@ -303,10 +303,23 @@ One. Demon weapons will be converted into a more powerful sacred weapon. This
 blessing may only be used once, and it cannot be used on artefact weapons.
 %%%%
 # Kikubaaqudgha
-Receive Corpses ability
+Open Crypts ability
 
-Creates one or more reanimatable monster corpses nearby. The number and
-freshness of these are dependent on Necromancy skill.
+Beseeches Kikubaaqudgha to create additional reanimatable monster corpses nearby 
+when you cast spells that require them to use.
+
+When trying to cast Simulacrum, without a corpse; Animate Dead, when below a threshold 
+of nearby corpses that scales with piety; or Corpse Rot, when it is possible to place 
+a corpse below a vulnerable foe to force them into miasma; you will spend three piety 
+and place these corpses as part of the cast. 
+
+The quality of corpses scales with necromancy skill; the amount for non-simulacrum 
+casts scales similarly. Simulacrum is heavy weighted for stronger monsters at high 
+skill to offset the lack of multiple corpses.
+%%%%
+Close Crypts ability
+
+Stops requesting additional corpses on suitable spellcasts. 
 %%%%
 Torment ability
 
