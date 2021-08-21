@@ -177,8 +177,11 @@ static const vector<god_passive> god_passives[] =
     // Kikubaaqudgha
     {
         { -1, passive_t::extend_undead, 
-              "GOD now extends the duration of your undead creations" },
-        {  2, passive_t::miscast_protection_necromancy,
+              "GOD NOW extends the duration of your undead creations" },
+        {  1, passive_t::power_of_blood,
+              "GOD will NOW allow you to cast with insufficient mana, "
+              "by casting sublimation of blood for one piety."},
+        {  3, passive_t::miscast_protection_necromancy,
               "GOD NOW protects you from necromancy miscasts"
               " and mummy death curses"
         },
@@ -421,8 +424,26 @@ static const vector<god_passive> god_passives[] =
 };
 COMPILE_CHECK(ARRAYSZ(god_passives) == NUM_GODS);
 
+// Only one right now, but could be more in the future.
+static bool _passive_exceptions(passive_t passive)
+{
+    switch (passive)
+    {
+    case passive_t::power_of_blood:
+        if (!you.can_bleed(false) || you.is_fairy())
+            return true;
+        break;
+    default:
+        break;
+    }
+    return false;
+}
+
 bool have_passive(passive_t passive)
 {
+    if (_passive_exceptions(passive))
+        return false;
+
     const auto &pasvec = god_passives[you.religion];
     return any_of(begin(pasvec), end(pasvec),
                   [passive] (const god_passive &p) -> bool
@@ -435,6 +456,9 @@ bool have_passive(passive_t passive)
 
 bool will_have_passive(passive_t passive)
 {
+    if (_passive_exceptions(passive))
+        return false;
+
     const auto &pasvec = god_passives[you.religion];
     return any_of(begin(pasvec), end(pasvec),
                   [passive] (const god_passive &p) -> bool

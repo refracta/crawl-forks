@@ -120,8 +120,11 @@ const vector<god_power> god_powers[NUM_GODS] =
     },
 
     // Kikubaaqudgha
-    { { 1, ABIL_KIKU_RECEIVE_CORPSES, "receive supplemental cadavers from Kikubaaqudgha on cast" },
-      { 2, "Kikubaaqudgha is now protecting you from necromantic miscasts and death curses.",
+    { { 1, "You can now sublimate your blood to cast from HP when out of mana at the cost of one piety per cast.",
+           "You can no longer sublimate your blood to cast from HP when out of mana.",
+           "You can now sublimate your blood to cast from HP when out of mana at the cost of one piety per cast." },
+      { 2, ABIL_KIKU_RECEIVE_CORPSES, "receive supplemental cadavers from Kikubaaqudgha on cast" },
+      { 3, "Kikubaaqudgha is now protecting you from necromantic miscasts and death curses.",
            "Kikubaaqudgha will no longer protect you from necromantic miscasts or death curses.",
            "Kikubaaqudgha protects you from necromantic miscasts and death curses." },
       { 4, "Kikubaaqudgha is now protecting you from unholy torment.",

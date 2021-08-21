@@ -249,6 +249,9 @@ enum class passive_t
 
     // Bahamut's Protection or Tiamat's retribution (checks this and an prop)
     bahamut_tiamat_passive,
+
+    // Kiku's Instant sublimation of blood casts.
+    power_of_blood,
 };
 
 enum ru_interference

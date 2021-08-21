@@ -1015,6 +1015,25 @@ bool cast_a_spell(bool check_range, spell_type spell)
             sifcast_amount = cost - you.magic_points;
             cost = you.magic_points;
         }
+        else if (have_passive(passive_t::power_of_blood) && !you.is_fairy()
+            && you.can_bleed() && you.hp > ((cost - you.magic_points) * 2)
+            && !you.duration[DUR_DEATHS_DOOR])
+        {
+            mprf(MSGCH_GOD, "Kikubaaqudgha frees the power of your blood!");
+            spret loop = spret::success;
+            while (!enough_mp(cost, true) && loop == spret::success)
+            {
+                lose_piety(1);
+                loop = cast_sublimation_of_blood(calc_spell_power(SPELL_SUBLIMATION_OF_BLOOD, true), false);
+            }
+            if (!enough_mp(cost, true))
+            {
+                // Shouldn't happen, but just in case.
+                mpr("Unfortunately your blood wasn't enough.");
+                crawl_state.zero_turns_taken();
+                return false;
+            }
+        }
         else
         {
             mpr("You don't have enough magic to cast that spell.");

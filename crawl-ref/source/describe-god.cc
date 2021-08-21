@@ -1074,6 +1074,10 @@ static formatted_string _describe_god_powers(god_type which_god)
             continue;
         }
 
+        // BCADNOTE: This will need to be reconsidered if allowing multiple god worship.
+        if (power.rank == 1 && you_worship(GOD_KIKUBAAQUDGHA) && (!you.can_bleed(false) || you.is_fairy()))
+            continue;
+
         have_any = true;
 
         bool tia = false;
