@@ -985,6 +985,31 @@ void make_book_roxanne_special(item_def *book)
                       forced_book_theme(disc), 5, "Roxanne");
 }
 
+static spell_type _kiku_extra_spell(spell_type ch[RANDBOOK_SIZE])
+{
+    spell_type extra_spell;
+    do
+    {
+        extra_spell = random_choose(SPELL_BORGNJORS_VILE_CLUTCH,
+                                    SPELL_EXCRUCIATING_WOUNDS,
+                                    SPELL_BOLT_OF_DRAINING,
+                                    SPELL_CIGOTUVIS_DEGENERATION,
+                                    SPELL_DEATH_CHANNEL);
+
+        if (you.species == SP_FELID
+            && extra_spell == SPELL_EXCRUCIATING_WOUNDS)
+        {
+            extra_spell = SPELL_NO_SPELL;
+        }
+
+        for (int i = 0; i < RANDBOOK_SIZE; i++)
+            if (extra_spell == ch[i])
+                extra_spell = SPELL_NO_SPELL;
+    } while (extra_spell == SPELL_NO_SPELL);
+
+    return extra_spell;
+}
+
 void make_book_kiku_gift(item_def &book, bool first)
 {
     book.sub_type = BOOK_RANDART_THEME;
@@ -1004,44 +1029,22 @@ void make_book_kiku_gift(item_def &book, bool first)
         chosen_spells[0] = SPELL_PAIN;
         chosen_spells[1] = SPELL_CORPSE_ROT;
         chosen_spells[2] = SPELL_SKELETAL_UPRISING;
-        if (can_bleed) // Replace one of the corpse-using spells
-            chosen_spells[random_range(1, 2)] = SPELL_SUBLIMATION_OF_BLOOD;
+        if (can_bleed)
+            chosen_spells[4] = SPELL_SUBLIMATION_OF_BLOOD;
 
         chosen_spells[3] = (!can_regen || coinflip())
             ? SPELL_VAMPIRIC_DRAINING : SPELL_REGENERATION;
     }
     else
     {
-        chosen_spells[0] = coinflip() ? SPELL_ANIMATE_DEAD : SPELL_SIMULACRUM;
-        chosen_spells[1] = (you.species == SP_FELID || coinflip())
+        chosen_spells[0] = SPELL_ANIMATE_DEAD;
+        chosen_spells[1] = SPELL_SIMULACRUM;
+        chosen_spells[2] = (you.species == SP_FELID || coinflip())
             ? SPELL_BORGNJORS_VILE_CLUTCH : SPELL_EXCRUCIATING_WOUNDS;
-        chosen_spells[2] = coinflip() ? SPELL_BOLT_OF_DRAINING :
+        chosen_spells[3] = coinflip() ? SPELL_BOLT_OF_DRAINING :
                                          SPELL_DEATH_CHANNEL;
-
-        spell_type extra_spell;
-        do
-        {
-            extra_spell = random_choose(SPELL_ANIMATE_DEAD,
-                                        SPELL_BORGNJORS_VILE_CLUTCH,
-                                        SPELL_EXCRUCIATING_WOUNDS,
-                                        SPELL_BOLT_OF_DRAINING,
-                                        SPELL_CIGOTUVIS_DEGENERATION,
-                                        SPELL_SIMULACRUM,
-                                        SPELL_DEATH_CHANNEL);
-            if (you.species == SP_FELID
-                && extra_spell == SPELL_EXCRUCIATING_WOUNDS)
-            {
-                extra_spell = SPELL_NO_SPELL;
-            }
-
-            for (int i = 0; i < 3; i++)
-                if (extra_spell == chosen_spells[i])
-                    extra_spell = SPELL_NO_SPELL;
-        }
-        while (extra_spell == SPELL_NO_SPELL);
-
-        chosen_spells[3] = extra_spell;
-        chosen_spells[4] = SPELL_AGONY;
+        chosen_spells[4] = _kiku_extra_spell(chosen_spells);
+        chosen_spells[5] = _kiku_extra_spell(chosen_spells);
     }
 
     sort(chosen_spells, chosen_spells + RANDBOOK_SIZE, _compare_spells);
