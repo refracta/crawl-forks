@@ -50,6 +50,7 @@
 #include "religion.h"
 #include "shout.h"
 #include "spl-clouds.h"
+#include "spl-goditem.h"
 #include "spl-summoning.h"
 #include "spl-util.h"
 #include "spl-zap.h"
@@ -2696,6 +2697,23 @@ spret cast_dash(int pow, bool fail)
     for (monster_iterator mi; mi; ++mi)
         mi->props[DASH_KEY] = false;
 
+    return spret::success;
+}
+
+spret cast_torment(bool fail)
+{
+    fail_check();
+    targeter_radius hitfunc(&you, LOS_NO_TRANS);
+
+    if (stop_attack_prompt(hitfunc, "invoke torment",
+        [](const actor* m) { return !m->res_torment(); },
+        nullptr, nullptr))
+    {
+        return spret::abort;
+    }
+
+    mprf(MSGCH_GOD, "You invoke a symbol of unholy torment!");
+    torment(&you, TORMENT_KIKUBAAQUDGHA, you.pos());
     return spret::success;
 }
 

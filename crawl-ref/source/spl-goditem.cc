@@ -1122,9 +1122,11 @@ void torment_player(actor *attacker, torment_source_type taux)
                 hploss = 0;
                 simple_god_message(" shields you from torment!");
             }
-            else if (random2(250) < you.piety) // 24% to 80% chance
+            else if (random2(250) < you.piety || taux == TORMENT_KIKUBAAQUDGHA) // 24% to 80% chance
             {
                 hploss -= random2(hploss - 1);
+                if (taux == TORMENT_KIKUBAAQUDGHA)
+                    hploss = div_round_up(2 * hploss, 3);
                 simple_god_message(" partially shields you from torment!");
             }
         }
@@ -1150,6 +1152,7 @@ void torment_player(actor *attacker, torment_source_type taux)
     {
     case TORMENT_CARDS:
     case TORMENT_SPELL:
+    case TORMENT_KIKUBAAQUDGHA:
         aux = "Symbol of Torment";
         break;
 
@@ -1168,10 +1171,6 @@ void torment_player(actor *attacker, torment_source_type taux)
     case TORMENT_XOM:
         type = KILLED_BY_XOM;
         aux = "Xom's torment";
-        break;
-
-    case TORMENT_KIKUBAAQUDGHA:
-        aux = "Kikubaaqudgha's torment";
         break;
 
     case TORMENT_LURKING_HORROR:

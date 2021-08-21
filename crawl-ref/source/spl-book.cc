@@ -225,7 +225,8 @@ int book_rarity(book_type which_book)
     case BOOK_ANNIHILATIONS:
     case BOOK_GRAND_GRIMOIRE:
     case BOOK_NECRONOMICON:  // Kikubaaqudgha special
-    case BOOK_DRAGON:
+    case BOOK_KIKU_RITUALS:  // Second Kiku Special
+    case BOOK_DRAGON:        // Tiamat special
         return 92;
 
     default:

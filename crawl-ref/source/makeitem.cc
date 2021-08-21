@@ -1744,12 +1744,17 @@ static void _generate_scroll_item(item_def& item, int force_type,
     item.plus = 0;
 }
 
-bool is_banned_book(book_type book)
+// Divine here used for Sif (and rarely Xom) Gifts.
+bool is_banned_book(book_type book, bool divine)
 {
     switch (book)
     {
+    case BOOK_KIKU_RITUALS:
+        return true;
     case BOOK_DRAGON:
     case BOOK_NECRONOMICON:
+        if (divine)
+            return false;
         return true;
     default:
         return false;

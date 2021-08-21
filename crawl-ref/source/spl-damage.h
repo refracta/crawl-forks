@@ -13,6 +13,7 @@ spret cast_fire_storm(int pow, bolt &beam, bool fail);
 bool cast_smitey_damnation(int pow, bolt &beam);
 spret cast_chain_spell(spell_type spell_cast, int pow,
                             const actor *caster, bool fail = false);
+spret cast_torment(bool fail);
 
 spret trace_los_attack_spell(spell_type spell, int pow,
                                   const actor* agent);

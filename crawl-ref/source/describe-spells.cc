@@ -393,32 +393,6 @@ static int _spell_colour(spell_type spell, const item_def* const source_item)
 }
 
 /**
- * List the name(s) of the school(s) the given spell is in.
- *
- * XXX: This is almost certainly duplicating something somewhere. Also, it's
- * pretty ugly.
- *
- * @param spell     The spell in question.
- * @return          A '/'-separated list of spellschool names.
- */
-static string _spell_schools(spell_type spell)
-{
-    string schools;
-
-    for (const auto school_flag : spschools_type::range())
-    {
-        if (!spell_typematch(spell, school_flag))
-            continue;
-
-        if (!schools.empty())
-            schools += "/";
-        schools += spelltype_long_name(school_flag);
-    }
-
-    return schools;
-}
-
-/**
  * Should spells from the given source be listed in two columns instead of
  * one?
  *
@@ -572,12 +546,7 @@ static void _describe_book(const spellbook_contents &book,
             continue;
         }
 
-        string schools =
-#if TAG_MAJOR_VERSION == 34
-            source_item->base_type == OBJ_RODS ? "Evocations"
-                                               :
-#endif
-                         _spell_schools(spell);
+        string schools = spell_schools_string(spell);
 
         string known = "";
         if (!mon_owner) {
@@ -658,8 +627,7 @@ static void _write_book(const spellbook_contents &book,
                         make_stringf("%d%%", hex_chance(spell, hd)));
         }
 
-        string schools = (source_item && source_item->base_type == OBJ_RODS) ?
-                "Evocations" : _spell_schools(spell);
+        string schools = spell_schools_string(spell);
         tiles.json_write_string("schools", schools);
         tiles.json_write_int("level", spell_difficulty(spell));
         tiles.json_close_object();

@@ -797,7 +797,7 @@ static int _book_weight(book_type book, bool divine)
 {
     ASSERT_RANGE(book, 0, MAX_FIXED_BOOK + 1);
 
-    if (!divine && is_banned_book(book))
+    if (is_banned_book(book, divine))
         return 0;
 
     int total_weight = 0;

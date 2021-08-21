@@ -36,7 +36,7 @@ brand_type determine_weapon_brand(const item_def& item, int item_level);
 bool got_curare_roll(const int item_level);
 void reroll_brand(item_def &item, int item_level);
 
-bool is_banned_book(book_type book);
+bool is_banned_book(book_type book, bool divine = false);
 bool is_high_tier_wand(int type);
 
 void squash_plusses(int item_slot);

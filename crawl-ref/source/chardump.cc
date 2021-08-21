@@ -841,7 +841,7 @@ static string spell_type_shortname(spschool spell_class, bool slash)
 {
     string ret;
 
-    if (slash)
+    if (slash && spell_class != spschool::ritual)
         ret = "/";
 
     ret += spelltype_short_name(spell_class);

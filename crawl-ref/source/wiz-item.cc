@@ -1243,6 +1243,7 @@ static void _debug_acquirement_stats(FILE *ostat)
                 "earth magic",
                 "air magic",
                 "evocation",
+                "ritual",
             };
             COMPILE_CHECK(ARRAYSZ(names) == SPSCHOOL_LAST_EXPONENT + 1);
 

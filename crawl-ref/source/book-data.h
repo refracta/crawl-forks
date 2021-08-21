@@ -102,7 +102,6 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_SUBLIMATION_OF_BLOOD,
     SPELL_EXCRUCIATING_WOUNDS,
     SPELL_BOLT_OF_DRAINING,
-    SPELL_AGONY,
 },
 
 {   // Book of Misfortune
@@ -222,11 +221,11 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_SIMULACRUM,
 },
 
-#if TAG_MAJOR_VERSION == 34
-{   // Book of Control
-    SPELL_SKELETAL_UPRISING
+{   // Book of Necromantic Rituals
+    SPELL_SYMBOL_OF_TORMENT,
 },
 
+#if TAG_MAJOR_VERSION == 34
 {   // Book of Battle
     SPELL_INFUSION,
     SPELL_SHROUD_OF_GOLUBRIA,
@@ -257,7 +256,6 @@ static const vector<spell_type> spellbook_templates[] =
 #if TAG_MAJOR_VERSION == 34
 {   // Book of Wizardry
     SPELL_FORCE_LANCE,
-    SPELL_AGONY,
     SPELL_INVISIBILITY,
     SPELL_SPELLFORGED_SERVITOR,
 },

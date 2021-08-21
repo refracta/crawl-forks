@@ -42,6 +42,9 @@ void practise_casting(spell_type spell, bool success)
 
         skill_type skill = spell_type2skill(bit);
 
+        if (skill == SK_EVOCATIONS)
+            continue;
+
         disc.push_back(skill);
     }
 

@@ -2831,6 +2831,8 @@ void lose_piety(int pgn)
         // Piety change affects halo / umbra radius.
         invalidate_agrid(true);
     }
+
+    you.redraw_title = true;
 }
 
 // Fedhas worshipers are on the hook for most plants and fungi

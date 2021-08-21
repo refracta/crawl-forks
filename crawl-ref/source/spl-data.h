@@ -1288,11 +1288,10 @@ static const struct spell_desc spelldata[] =
     TILEG_DEATH_CHANNEL,
 },
 
-// Monster-only, players can use Kiku's ability
 {
     SPELL_SYMBOL_OF_TORMENT, "Symbol of Torment", "",
-    spschool::necromancy,
-    spflag::area | spflag::monster,
+    spschool::necromancy | spschool::ritual | spschool::summoning,
+    spflag::area,
     6,
     0,
     -1, -1,

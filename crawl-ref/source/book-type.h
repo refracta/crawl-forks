@@ -34,8 +34,8 @@ enum book_type
     BOOK_ENVENOMATIONS,
 #endif
     BOOK_UNLIFE,
+    BOOK_KIKU_RITUALS,
 #if TAG_MAJOR_VERSION == 34
-    BOOK_CONTROL,
     BOOK_BATTLE, // was BOOK_MUTATIONS
 #endif
     BOOK_GEOMANCY,

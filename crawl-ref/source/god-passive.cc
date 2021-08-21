@@ -180,11 +180,10 @@ static const vector<god_passive> god_passives[] =
               "GOD NOW extends the duration of your undead creations" },
         {  1, passive_t::power_of_blood,
               "GOD will NOW allow you to cast with insufficient mana, "
-              "by casting sublimation of blood for one piety."},
+              "by casting sublimation of blood for one piety." },
         {  3, passive_t::miscast_protection_necromancy,
               "GOD NOW protects you from necromancy miscasts"
-              " and mummy death curses"
-        },
+              " and mummy death curses" },
         {  4, passive_t::resist_torment,
               "GOD NOW protects you from torment" },
     },

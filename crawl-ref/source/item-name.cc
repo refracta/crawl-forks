@@ -1145,9 +1145,7 @@ static const char* _book_type_name(int booktype)
 #endif
     case BOOK_ANNIHILATIONS:          return "Annihilations";
     case BOOK_UNLIFE:                 return "Unlife";
-#if TAG_MAJOR_VERSION == 34
-    case BOOK_CONTROL:                return "Control";
-#endif
+    case BOOK_KIKU_RITUALS:           return "Necromantic Rituals";
     case BOOK_GEOMANCY:               return "Geomancy";
     case BOOK_EARTH:                  return "the Earth";
 #if TAG_MAJOR_VERSION == 34

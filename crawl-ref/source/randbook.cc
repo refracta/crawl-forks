@@ -1101,6 +1101,10 @@ static int _randbook_spell_weight(spell_type spell, int agent)
         if (disciplines & disc)
         {
             const skill_type sk = spell_type2skill(disc);
+
+            if (sk == SK_EVOCATIONS)
+                continue;
+
             total_skill += div_rand_round(you.skill(sk, 256, true), 256);
             num_skills++;
         }

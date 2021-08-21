@@ -437,8 +437,16 @@ int calc_spell_power(spell_type spell, bool apply_intel, bool fail_rate_check,
     if (skillcount)
     {
         for (const auto bit : spschools_type::range())
+        {
             if (disciplines & bit)
-                power += you.skill(spell_type2skill(bit), 200);
+            {
+                const skill_type sk = spell_type2skill(bit);
+                if (sk == SK_EVOCATIONS)
+                    skillcount--;
+                else
+                    power += you.skill(sk, 200);
+            }
+        }
         power /= skillcount;
     }
 
@@ -1218,6 +1226,9 @@ static void _spellcasting_side_effects(spell_type spell, god_type god,
                                        bool fake_spell)
 {
     _spellcasting_god_conduct(spell);
+
+    if (spell_typematch(spell, spschool::ritual))
+        lose_piety(spell_difficulty(spell));
 
     if (god == GOD_NO_GOD)
     {
@@ -2023,6 +2034,9 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
     case SPELL_LEDAS_LIQUEFACTION:
         return cast_liquefaction(powc, fail);
 
+    case SPELL_SYMBOL_OF_TORMENT:
+        return cast_torment(fail);
+
     case SPELL_OZOCUBUS_REFRIGERATION:
         return fire_los_attack_spell(spell, powc, &you, nullptr, fail);
 
@@ -2499,8 +2513,8 @@ string spell_failure_rate_string(spell_type spell)
 {
     const string failure = failure_rate_to_string(raw_spell_fail(spell));
     const string colour = colour_to_str(failure_rate_colour(spell));
-    return make_stringf("<%s>%s</%s>",
-            colour.c_str(), failure.c_str(), colour.c_str());
+    return make_stringf("  <%s>%s</%s>", colour.c_str(), 
+                            failure.c_str(), colour.c_str());
 }
 
 static string _spell_failure_rate_description(spell_type spell)
@@ -2639,12 +2653,23 @@ string spell_schools_string(spell_type spell)
     {
         if (spell_typematch(spell, bit))
         {
+            const bool rit = bool(bit & spschool::ritual);
+
             if (bool(bit & spschool::evocation))
                 continue;
+            
+            if (rit)
+            {
+                desc += colour_string(spelltype_long_name(bit), god_colour(you.religion));
+                desc += " ";
+            }
+            else
+            {
+                if (already)
+                    desc += "/";
+                desc += spelltype_long_name(bit);
+            }
 
-            if (already)
-                desc += "/";
-            desc += spelltype_long_name(bit);
             already = true;
         }
     }
@@ -2659,8 +2684,14 @@ void spell_skills(spell_type spell, set<skill_type> &skills)
 {
     const spschools_type disciplines = get_spell_disciplines(spell);
     for (const auto bit : spschools_type::range())
+    {
         if (disciplines & bit)
-            skills.insert(spell_type2skill(bit));
+        {
+            const skill_type sk = spell_type2skill(bit);
+            if (sk != SK_EVOCATIONS)
+                skills.insert(sk);
+        }
+    }
 }
 
 const set<spell_type> removed_spells =

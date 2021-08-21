@@ -930,6 +930,8 @@ const char* spelltype_short_name(spschool which_spelltype)
         return "Air";
     case spschool::random:
         return "Rndm";
+    case spschool::ritual:
+        return " (Rit)";
     default:
         return "Bug";
     }
@@ -963,6 +965,8 @@ const char* spelltype_long_name(spschool which_spelltype)
         return "Air";
     case spschool::random:
         return "Random";
+    case spschool::ritual:
+        return " (Ritual)";
     default:
         return "Bug";
     }
@@ -983,6 +987,7 @@ skill_type spell_type2skill(spschool spelltype)
     case spschool::poison:         return SK_POISON_MAGIC;
     case spschool::earth:          return SK_EARTH_MAGIC;
     case spschool::air:            return SK_AIR_MAGIC;
+    case spschool::ritual:         return SK_INVOCATIONS; // Special cased elsewhere.
     case spschool::evocation:      return SK_EVOCATIONS; // Shouldn't do anything practically but this prevents a crash.
 
     default:
@@ -1517,6 +1522,7 @@ bool spell_no_hostile_in_range(spell_type spell)
     case SPELL_FIRE_STORM:
         return false;
 
+    case SPELL_SYMBOL_OF_TORMENT:
     case SPELL_CHAIN_LIGHTNING:
     case SPELL_OZOCUBUS_REFRIGERATION:
     case SPELL_OLGREBS_TOXIC_RADIANCE:
@@ -1674,6 +1680,7 @@ static const mutation_type arcana_sacrifice_map [] = {
     MUT_NO_POISON_MAGIC,
     MUT_NO_EARTH_MAGIC,
     MUT_NO_AIR_MAGIC,
+    MUT_NO_ARTIFICE,
     MUT_NO_ARTIFICE,
 };
 
