@@ -2792,6 +2792,8 @@ void lose_piety(int pgn)
                 // Deactivate the toggle
                 if (power.abil == ABIL_SIF_MUNA_DIVINE_ENERGY)
                     you.attribute[ATTR_DIVINE_ENERGY] = 0;
+                if (power.abil == ABIL_KIKU_RECEIVE_CORPSES)
+                    you.attribute[ATTR_KIKU_CORPSE] = 0;
             }
         }
 #ifdef USE_TILE_LOCAL
@@ -3045,8 +3047,29 @@ void excommunication(bool voluntary, god_type new_god)
     switch (old_god)
     {
     case GOD_KIKUBAAQUDGHA:
+    {
         mprf(MSGCH_GOD, old_god, "You sense decay."); // in the state of Denmark
         add_daction(DACT_ROT_CORPSES);
+
+        if (you.attribute[ATTR_KIKU_CORPSE])
+            you.attribute[ATTR_KIKU_CORPSE] = 0;
+
+        bool forgotten = false;
+
+        for (int i = 0; i < MAX_KNOWN_SPELLS; i++)
+        {
+            spell_type spell = you.spells[i];
+
+            if (spell_is_kiku_ritual(spell))
+            {
+                if (!forgotten)
+                    mprf("Your knowledge of necromantic rituals fades away.");
+
+                forgotten = true;
+                del_spell_from_memory(spell);
+            }
+        }
+    }
         break;
 
     case GOD_YREDELEMNUL:

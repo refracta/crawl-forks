@@ -1215,6 +1215,11 @@ bool spell_is_useless(spell_type spell, bool temp, bool prevent,
     return !spell_uselessness_reason(spell, temp, prevent, fake_spell).empty();
 }
 
+bool spell_is_kiku_ritual(spell_type spell)
+{
+    return spell_found_in_book(BOOK_KIKU_RITUALS, spell);
+}
+
 /**
  * This function gives the reason that a spell is currently useless to the
  * player, if it is.
@@ -1250,6 +1255,9 @@ string spell_uselessness_reason(spell_type spell, bool temp, bool prevent,
     // Check for banned schools (Currently just Ru sacrifices)
     if (!fake_spell && cannot_use_schools(get_spell_disciplines(spell)))
         return "you cannot use spells of this school.";
+
+    if (spell_is_kiku_ritual(spell) && !you_worship(GOD_KIKUBAAQUDGHA))
+        return "you cannot complete the ritual without Kikubaaqudgha.";
 
     switch (spell)
     {

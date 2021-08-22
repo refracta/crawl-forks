@@ -125,6 +125,7 @@ spschool skill2spell_type(skill_type spell_skill);
 skill_type arcane_mutation_to_skill(mutation_type mutation);
 bool cannot_use_schools(spschools_type schools);
 
+bool spell_is_kiku_ritual(spell_type spell) PURE;
 bool spell_is_form(spell_type spell) PURE;
 
 bool spell_is_useless(spell_type spell, bool temp = true,

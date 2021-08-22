@@ -140,14 +140,14 @@ vector<spell_type> spells_in_book(const item_def &book)
 // Currently only used for Tiamat's "Wizardry for Book of the Dragon spells".
 bool spell_found_in_book(const book_type book, const spell_type spell)
 {
-    vector<spell_type> spells = spellbook_template(book);
-    int x = spells.size();
+    const vector<spell_type> spells = spellbook_template(book);
 
-    for (int i = 0; i < x; i++)
+    for (int i = 0; i < (int)spells.size(); i++)
     {
-        if (spells[i] = spell)
+        if (spells[i] == spell)
             return true;
     }
+
     return false;
 }
 
