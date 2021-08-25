@@ -1561,14 +1561,19 @@ static bool _gift_sif_kiku_gift(bool forced)
     if (you_worship(GOD_KIKUBAAQUDGHA))
     {
         if (you.piety >= piety_breakpoint(0)
-            && you.num_total_gifts[you.religion] == 0)
+            && you.num_total_gifts[GOD_KIKUBAAQUDGHA] == 0)
         {
             gift = BOOK_NECROMANCY;
         }
         else if (you.piety >= piety_breakpoint(2)
-                 && you.num_total_gifts[you.religion] == 1)
+                 && you.num_total_gifts[GOD_KIKUBAAQUDGHA] == 1)
         {
             gift = BOOK_DEATH;
+        }
+        else if (you.piety >= piety_breakpoint(5)
+                 && you.num_total_gifts[GOD_KIKUBAAQUDGHA] == 2)
+        {
+            gift = BOOK_KIKU_RITUALS;
         }
     }
     else if (forced || you.piety >= piety_breakpoint(4)
@@ -1593,7 +1598,7 @@ static bool _gift_sif_kiku_gift(bool forced)
         int thing_created = items(true, OBJ_BOOKS, gift, 1, 0,
                                   you.religion);
         // Replace a Kiku gift by a custom-random book.
-        if (you_worship(GOD_KIKUBAAQUDGHA))
+        if (you_worship(GOD_KIKUBAAQUDGHA) && gift != BOOK_KIKU_RITUALS)
         {
             make_book_kiku_gift(mitm[thing_created],
                                 gift == BOOK_NECROMANCY);

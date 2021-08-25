@@ -157,6 +157,19 @@ spret cast_summon_small_mammal(int pow, god_type god, bool fail)
     return spret::success;
 }
 
+spret cast_call_lost_souls(int pow, god_type god, bool fail)
+{
+    fail_check();
+
+    int count = 1 + div_rand_round(pow, 50);
+    count += random2(div_round_up(pow, 25));
+
+    for (int i = 0; i < count; ++i)
+        create_monster(_pal_data(MONS_LOST_SOUL, 3, god, SPELL_CALL_LOST_SOUL));
+
+    return spret::success;
+}
+
 spret cast_sticks_to_snakes(int pow, god_type god, bool fail)
 {
     if (otr_stop_summoning_prompt("create snakes"))
@@ -2731,6 +2744,7 @@ static spell_type servitor_spells[] =
     SPELL_POISON_ARROW,
     SPELL_LIGHTNING_BOLT,
     SPELL_BOLT_OF_MAGMA,
+    SPELL_GHOSTLY_FIREBALL,
     SPELL_BOLT_OF_DRAINING,
     SPELL_VENOM_BOLT,
     SPELL_THROW_ICICLE,
@@ -3768,7 +3782,7 @@ static const map<spell_type, summon_cap> summonsdata =
     { SPELL_SUMMON_SPECTRAL_ORCS,       { 3, 2 } },
     { SPELL_FIRE_SUMMON,                { 4, 2 } },
     { SPELL_SUMMON_MINOR_DEMON,         { 3, 3 } },
-    { SPELL_CALL_LOST_SOUL,             { 3, 2 } },
+    { SPELL_CALL_LOST_SOUL,             { 8, 2 } },
     { SPELL_SUMMON_VERMIN,              { 5, 2 } },
     { SPELL_FORCEFUL_INVITATION,        { 3, 1 } },
     { SPELL_PLANEREND,                  { 6, 1 } },

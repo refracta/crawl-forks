@@ -137,7 +137,7 @@ vector<spell_type> spells_in_book(const item_def &book)
 
 // I almost named this spell_in_book but that was too similar to the above.
 // Returns if a particular spell is in the associated book.
-// Currently only used for Tiamat's "Wizardry for Book of the Dragon spells".
+// Currently only used for checking rituals for Kiku.
 bool spell_found_in_book(const book_type book, const spell_type spell)
 {
     const vector<spell_type> spells = spellbook_template(book);

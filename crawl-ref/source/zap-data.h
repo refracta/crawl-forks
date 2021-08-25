@@ -477,6 +477,42 @@ _mon_hex_zap(ZAP_CONFUSE, BEAM_CONFUSION),
 },
 
 {
+    ZAP_GHOSTLY_FIREBALL,
+    "ghostly fireball",
+    200,
+    new calcdice_calculator<3, 8, 1, 2>,
+    new tohit_calculator<40>,
+    new dicedef_calculator<3, 6, 1, 13>,
+    new tohit_calculator<40>,
+    CYAN,
+    false,
+    BEAM_NEG,
+    DCHAR_FIRED_ZAP,
+    false,
+    false,
+    true,
+    0 // Noise comes from explosion
+},
+
+{
+    ZAP_MALIGN_OFFERING,
+    "malignant energy",
+    200,
+    new calcdice_calculator<2, 5, 1, 2>,
+    new tohit_calculator<AUTOMATIC_HIT>,
+    new dicedef_calculator<2, 7, 1, 13>,
+    new tohit_calculator<AUTOMATIC_HIT>,
+    RED,
+    true,
+    BEAM_MALIGN_OFFERING,
+    DCHAR_FIRED_ZAP,
+    false,
+    false,
+    false,
+    0 // Noise comes from explosion
+},
+
+{
     ZAP_CHAOS_ERUPTION,
     "eruption",
     200,

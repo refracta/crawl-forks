@@ -222,7 +222,10 @@ static const vector<spell_type> spellbook_templates[] =
 },
 
 {   // Book of Necromantic Rituals
+    SPELL_CALL_LOST_SOUL,
     SPELL_SYMBOL_OF_TORMENT,
+    SPELL_GHOSTLY_FIREBALL,
+    SPELL_MALIGN_OFFERING,
 },
 
 #if TAG_MAJOR_VERSION == 34

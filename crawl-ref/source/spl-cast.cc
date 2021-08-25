@@ -119,10 +119,11 @@ static string _spell_base_description(spell_type spell, bool viewing)
     // spell name
     desc << chop_string(spell_title(spell), 30);
 
+    int* x = new int;
     // spell schools
-    desc << spell_schools_string(spell);
+    desc << spell_schools_string(spell, x);
 
-    const int so_far = strwidth(desc.str()) - (strwidth(colour_to_str(highlight))+2);
+    const int so_far = strwidth(desc.str()) - (strwidth(colour_to_str(highlight))+2) - *x;
     if (so_far < 60)
         desc << string(60 - so_far, ' ');
     desc << "</" << colour_to_str(highlight) <<">";
@@ -1415,12 +1416,17 @@ static bool _spellcasting_aborted(spell_type spell, bool fake_spell)
 static unique_ptr<targeter> _spell_targeter(spell_type spell, int pow,
                                               int range, bool warped)
 {
+    const bool fireball = (spell == SPELL_FIREBALL || spell == SPELL_GHOSTLY_FIREBALL);
+
     if (warped)
-        return make_unique<targeter_smite>(&you, range, spell == SPELL_FIREBALL ? 1 : 0,
-                                                        spell == SPELL_FIREBALL ? 1 : 0, false);
+        return make_unique<targeter_smite>(&you, range, fireball ? 1 : 0,
+                                                        fireball ? 1 : 0, false);
 
     switch (spell)
     {
+    case SPELL_GHOSTLY_FIREBALL:
+        return make_unique<targeter_beam>(&you, range, ZAP_GHOSTLY_FIREBALL, pow,
+                                          1, 1);
     case SPELL_FIREBALL:
         return make_unique<targeter_beam>(&you, range, ZAP_FIREBALL, pow,
                                           1, 1);
@@ -1450,6 +1456,8 @@ static unique_ptr<targeter> _spell_targeter(spell_type spell, int pow,
         return make_unique<targeter_fragment>(&you, pow, range);
     case SPELL_SMD:
         return make_unique<targeter_smite>(&you, 1, 0, 0, true);
+    case SPELL_MALIGN_OFFERING:
+        return make_unique<targeter_smite>(&you, range, 0, 0);
     case SPELL_FULMINANT_PRISM:
         return make_unique<targeter_smite>(&you, range, 0, 2);
     case SPELL_BLINDING_SPRAY:
@@ -2003,6 +2011,9 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
     case SPELL_AIRSTRIKE:
         return cast_airstrike(powc, spd, fail);
 
+    case SPELL_MALIGN_OFFERING:
+        return cast_malign_offering(powc, spd, fail);
+
     case SPELL_PROJECTED_NOISE:
         return cast_projected_noise(intensity, fail, target);
 
@@ -2078,6 +2089,9 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
     // produced will count as god gifts.
     case SPELL_SUMMON_BUTTERFLIES:
         return cast_summon_butterflies(powc, god, fail);
+
+    case SPELL_CALL_LOST_SOUL:
+        return cast_call_lost_souls(powc, god, fail);
 
     case SPELL_SUMMON_SMALL_MAMMAL:
         return cast_summon_small_mammal(powc, god, fail);
@@ -2644,7 +2658,7 @@ string range_string(int range, int maxrange, char32_t caster_char)
            + string(">") + string(maxrange - range, '.');
 }
 
-string spell_schools_string(spell_type spell)
+string spell_schools_string(spell_type spell, int * buffer)
 {
     string desc;
 
@@ -2660,14 +2674,21 @@ string spell_schools_string(spell_type spell)
             
             if (rit)
             {
-                desc += colour_string(spelltype_long_name(bit), god_colour(you.religion));
-                desc += " ";
+                if (buffer)
+                {
+                    desc += colour_string(spelltype_long_name(bit), god_colour(you.religion));
+                    *buffer = strwidth(colour_string(".", god_colour(you.religion))) - 1;
+                }
+                else 
+                    desc += spelltype_long_name(bit);
             }
             else
             {
                 if (already)
                     desc += "/";
                 desc += spelltype_long_name(bit);
+                if (buffer)
+                    *buffer = 0;
             }
 
             already = true;

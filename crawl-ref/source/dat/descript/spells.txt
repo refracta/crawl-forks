@@ -276,11 +276,13 @@ Call Imp spell
 
 Calls forth a minor demon from the pits of Hell.
 %%%%
-Call Lost Soul spell
+Call Lost Souls spell
 
-Summons a necromantic spectre. These lost souls can enter the bodies of more
+Summon frail necromantic spectres. These lost souls can enter the bodies of more
 powerful undead to bring them back from brink of demise, or turn dying living
-creatures into spectral versions of themselves.
+creatures into spectral versions of themselves. As reviving the creature means 
+replacing its soul with that of the spectre, if it were to revive your body upon 
+your death, you'd still die.
 %%%%
 Call of Chaos spell
 

@@ -1299,6 +1299,40 @@ spret warped_cast(zap_type zap, int pow, bolt target, actor * caster)
     return spret::success;
 }
 
+spret cast_malign_offering(int pow, const dist &beam, bool fail)
+{
+    monster* mons = monster_at(beam.target);
+
+    if (!mons)
+    {
+        fail_check();
+        canned_msg(MSG_SPELL_FIZZLES);
+        return spret::success; // still losing a turn
+    }
+
+    if (you.can_see(*mons) && mons->res_negative_energy() > 2)
+    {
+        mprf("Life force cannot be drained from %s", mons->name(DESC_THE).c_str());
+        return spret::abort;
+    }
+
+    if (stop_attack_prompt(mons, false, you.pos()))
+        return spret::abort;
+    fail_check();
+
+    noisy(spell_effect_noise(SPELL_MALIGN_OFFERING), beam.target);
+
+    bolt zap;
+    zappy(ZAP_MALIGN_OFFERING, pow, false, zap);
+    zap.thrower = KILL_YOU;
+    zap.use_target_as_pos = true;
+    zap.source = zap.target = beam.target;
+
+    zap.fire();
+
+    return spret::success;
+}
+
 spret cast_airstrike(int pow, const dist &beam, bool fail)
 {
     if (cell_is_solid(beam.target))

@@ -140,7 +140,6 @@ static void _setup_fake_beam(bolt& beam, const monster&, int = -1);
 static void _branch_summon(monster &caster, mon_spell_slot slot, bolt&);
 static void _branch_summon_helper(monster* mons, spell_type spell_cast);
 static bool _prepare_ghostly_sacrifice(monster &caster, bolt &beam);
-static void _setup_ghostly_beam(bolt &beam, int power, int dice);
 static void _setup_ghostly_sacrifice_beam(bolt& beam, const monster& caster,
                                           int power);
 static function<bool(const monster&)> _setup_hex_check(spell_type spell);
@@ -1367,6 +1366,7 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
     case SPELL_SHOCK:
     case SPELL_LIGHTNING_BOLT:
     case SPELL_FIREBALL:
+    case SPELL_GHOSTLY_FIREBALL:
     case SPELL_LEHUDIBS_CRYSTAL_SPEAR:
     case SPELL_BOLT_OF_DRAINING:
     case SPELL_STICKY_FLAME:
@@ -1734,10 +1734,6 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
         beam.pierce   = true;
         break;
 
-    case SPELL_GHOSTLY_FIREBALL:
-        _setup_ghostly_beam(beam, power, 3);
-        break;
-
     case SPELL_DIMENSION_ANCHOR:
         beam.flavour    = BEAM_DIMENSION_ANCHOR;
         break;
@@ -1754,11 +1750,6 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
     //      damage is done via another means
     case SPELL_FREEZE:
         beam.flavour    = BEAM_COLD;
-        break;
-
-    case SPELL_MALIGN_OFFERING:
-        beam.flavour    = BEAM_MALIGN_OFFERING;
-        beam.damage     = dice_def(2, 7 + (power / 13));
         break;
 
     case SPELL_FLASH_FREEZE:
@@ -4050,22 +4041,12 @@ static bool _prepare_ghostly_sacrifice(monster &caster, bolt &beam)
     return true;
 }
 
-/// Setup a negative energy explosion.
-static void _setup_ghostly_beam(bolt &beam, int power, int dice)
-{
-    beam.colour   = CYAN;
-    beam.name     = "ghostly fireball";
-    beam.damage   = dice_def(dice, 6 + power / 13);
-    beam.hit      = 40;
-    beam.flavour  = BEAM_NEG;
-    beam.is_explosion = true;
-}
-
 /// Setup and target a ghostly sacrifice explosion.
 static void _setup_ghostly_sacrifice_beam(bolt& beam, const monster& caster,
                                           int power)
 {
-    _setup_ghostly_beam(beam, power, 5);
+    zappy(ZAP_GHOSTLY_FIREBALL, power, true, beam);
+    beam.damage.num = 5;
     // Future-proofing: your shadow keeps your targetting.
     if (_caster_is_player_shadow(caster))
         return;
@@ -7241,9 +7222,17 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
     }
 
     case SPELL_CALL_LOST_SOUL:
-        create_monster(mgen_data(MONS_LOST_SOUL, SAME_ATTITUDE(mons),
-                                 mons->pos(), mons->foe)
-                       .set_summoned(mons, 2, spell_cast, god));
+    {
+        const int pow = (mons->spell_hd(spell_cast) * 15) / 10;
+        const int cnt = 1 + random2(1 + pow / 4);
+        for (int i = 0; i < cnt; i++)
+        {
+            monster * soul = create_monster(mgen_data(MONS_LOST_SOUL, SAME_ATTITUDE(mons),
+                mons->pos(), mons->foe)
+                .set_summoned(mons, 2 + one_chance_in(3), spell_cast, god));
+            soul->scale_hp(10 + pow, 10);
+        }
+    }
         return;
 
     case SPELL_BLINK_ALLIES_ENCIRCLE:

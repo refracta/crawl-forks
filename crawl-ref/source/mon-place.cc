@@ -1051,6 +1051,7 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
     // Is it a god gift?
     if (mg.god != GOD_NO_GOD)
         mons_make_god_gift(*mon, mg.god);
+    // BCADDO: Dataify.
     // Not a god gift, give priestly monsters a god.
     else if (mon->is_priest())
     {
@@ -1058,7 +1059,7 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
         if (mg.cls == MONS_SPRIGGAN_BERSERKER)
             mon->god = GOD_TROG;
         // Death knights belong to Yredelemnul.
-        else if (mg.cls == MONS_DEATH_KNIGHT)
+        else if (mg.cls == MONS_DEATH_KNIGHT || mg.cls == MONS_DEEP_ELF_DEATH_MAGE)
             mon->god = GOD_YREDELEMNUL;
         // Asterion belongs to Mahkleb.
         else if (mg.cls == MONS_ASTERION)
@@ -1070,9 +1071,9 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
         else if (mg.cls == MONS_DRACONIAN_STORMCALLER)
             mon->god = GOD_QAZLAL;
         // Classed demonspawn.
-        else if (mg.cls == MONS_BLOOD_SAINT)
+        else if (mg.cls == MONS_BLOOD_SAINT || mg.cls == MONS_DEEP_ELF_DEMONOLOGIST || mg.cls == MONS_DEEP_ELF_SORCERER)
             mon->god = GOD_MAKHLEB;
-        else if (mg.cls == MONS_BLACK_SUN)
+        else if (mg.cls == MONS_BLACK_SUN || mg.cls == MONS_DEEP_ELF_HIGH_PRIEST)
             mon->god = GOD_KIKUBAAQUDGHA;
         else if (mg.cls == MONS_CORRUPTER)
             mon->god = GOD_LUGONU;

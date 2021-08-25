@@ -2973,24 +2973,23 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_GHOSTLY_FIREBALL, "Ghostly Fireball", "",
-    spschool::fire | spschool::necromancy,
-    spflag::dir_or_target | spflag::monster | spflag::unholy
-        | spflag::needs_tracer,
-    5,
+    spschool::fire | spschool::necromancy | spschool::ritual,
+    spflag::dir_or_target | spflag::unholy | spflag::needs_tracer,
+    6,
     200,
     5, 5,
-    5, 0,
+    6, 0,
     TILEG_GHOSTLY_FIREBALL,
 },
 
 {
-    SPELL_CALL_LOST_SOUL, "Call Lost Soul", "",
-    spschool::summoning | spschool::necromancy,
-    spflag::unholy | spflag::monster,
-    5,
-    200,
+    SPELL_CALL_LOST_SOUL, "Call Lost Souls", "",
+    spschool::summoning | spschool::necromancy | spschool::ritual,
+    spflag::unholy,
+    4,
+    100,
     -1, -1,
-    4, 0,
+    3, 0,
     TILEG_GENERIC_MONSTER_SPELL,
 },
 
@@ -3180,12 +3179,12 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_MALIGN_OFFERING, "Malign Offering", "",
-    spschool::necromancy,
+    spschool::necromancy | spschool::ritual,
     spflag::dir_or_target | spflag::not_self | spflag::needs_tracer,
-    5,
+    7,
     200,
     LOS_RADIUS, LOS_RADIUS,
-    4, 10,
+    5, 10,
     TILEG_GENERIC_MONSTER_SPELL,
 },
 

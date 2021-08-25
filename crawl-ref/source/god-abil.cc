@@ -1539,6 +1539,7 @@ bool vehumet_supports_spell(spell_type spell)
         || spell == SPELL_ICICLE_CASCADE
         || spell == SPELL_UNSTABLE_FIERY_DASH
         || spell == SPELL_FIREBALL
+        || spell == SPELL_GHOSTLY_FIREBALL
         || spell == SPELL_BOLT_OF_FIRE
         || spell == SPELL_BOLT_OF_COLD
         || spell == SPELL_BOLT_OF_DRAINING

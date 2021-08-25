@@ -819,14 +819,6 @@ static bool _will_starcursed_scream(monster* mon)
  */
 static bool _lost_soul_affectable(const monster &mons)
 {
-    // zombies are boring
-    if (mons_is_zombified(mons))
-        return false;
-
-    // undead can be reknit, naturals ghosted, everyone else is out of luck
-    if (!(mons.holiness() & (MH_UNDEAD | MH_NATURAL)))
-        return false;
-
     // already been revived once
     if (testbits(mons.flags, MF_SPECTRALISED))
         return false;
@@ -839,10 +831,22 @@ static bool _lost_soul_affectable(const monster &mons)
     if (is_good_god(mons.god))
         return false;
 
-    if (mons.is_summoned())
+    // undead can be reknit, naturals ghosted, everyone else is out of luck
+    if (!(mons.holiness() & (MH_UNDEAD | MH_NATURAL)))
         return false;
 
     if (!mons_class_gives_xp(mons.type))
+        return false;
+
+    // Short circuit for friendly lost souls since most player allies are summoned or zombies.
+    if (mons.friendly())
+        return true;
+
+    // zombies are boring
+    if (mons_is_zombified(mons))
+        return false;
+
+    if (mons.is_summoned())
         return false;
 
     return true;
@@ -862,10 +866,11 @@ static bool _worthy_sacrifice(monster* soul, const monster* target)
         else if (mi->type == MONS_LOST_SOUL)
             --count;
     }
+    const bool allied = soul->friendly();
 
     const int target_hd = target->get_experience_level();
     return count <= -1 || target_hd > 9
-           || x_chance_in_y(target_hd * target_hd * target_hd, 1200);
+           || x_chance_in_y(target_hd * target_hd * target_hd, allied ? 800 : 1200);
 }
 
 /**
@@ -914,9 +919,18 @@ bool lost_soul_revive(monster& mons, killer_type killer)
 
         mons.heal(mons.max_hit_points);
         mons.del_ench(ENCH_CONFUSION, true);
+
+        const bool was_summoned = mons.is_summoned();
+        mons.del_ench(ENCH_ABJ);
+        mons.del_ench(ENCH_FAKE_ABJURATION);
+
         mons.timeout_enchantments(10);
 
+        if (was_summoned)
+            mons.add_ench(mon_enchant(ENCH_ABJ, 3));
+
         coord_def newpos = mi->pos();
+
         if (was_alive)
         {
             mons.move_to_pos(newpos);
@@ -937,7 +951,7 @@ bool lost_soul_revive(monster& mons, killer_type killer)
                 mprf("%s assumes the form of %s%s!",
                      mi->name(DESC_THE).c_str(),
                      revivee_name.c_str(),
-                     (mi->is_summoned() ? " and becomes anchored to this"
+                     (mi->is_summoned() && !was_summoned ? " and becomes anchored to this"
                       " world" : ""));
             }
         }

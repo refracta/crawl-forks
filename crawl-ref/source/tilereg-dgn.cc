@@ -518,6 +518,7 @@ static bool _spell_in_range(spell_type spell, actor* target)
     {
     case SPELL_MEPHITIC_CLOUD:
     case SPELL_FIREBALL:
+    case SPELL_GHOSTLY_FIREBALL:
     case SPELL_FREEZING_CLOUD:
     case SPELL_POISONOUS_CLOUD:
         // Increase range by one due to cloud radius.

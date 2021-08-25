@@ -3533,6 +3533,9 @@ void bolt::affect_place_explosion_clouds()
         }
     }
 
+    if (origin_spell == SPELL_GHOSTLY_FIREBALL)
+        place_cloud(CLOUD_SPECTRAL, p, roll_dice(2, 3 + ench_power / 20), agent());
+
     if (origin_spell == SPELL_FIRE_STORM)
     {
         bool chaos = real_flavour == BEAM_CHAOTIC;
