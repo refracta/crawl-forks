@@ -773,7 +773,8 @@ void place_cloud(cloud_type cl_type, const coord_def& ctarget, int cl_range,
         return;
     }
 
-    ASSERT(!cell_is_solid(ctarget));
+    if (cell_is_solid(ctarget))
+        return;
 
     god_conduct_trigger conducts[3];
     kill_category whose = KC_OTHER;
