@@ -1454,7 +1454,7 @@ bool physiology_mutation_conflict(mutation_type mutat, bool ds_roll)
     return false;
 }
 
-static const char * _stat_mut_msg(bool gain, int s, int i, int d, bool terse)
+static void _stat_mut_msg(string &result, bool gain, int s, int i, int d, bool terse)
 {
     string STR = ""; string INT = ""; string DEX = "";
     ostringstream ostr;
@@ -1484,17 +1484,26 @@ static const char * _stat_mut_msg(bool gain, int s, int i, int d, bool terse)
     if (s || i || d)
     {
         if (terse)
-            return ostr.str().c_str();
+        {
+            result = ostr.str().c_str();
+            return;
+        }
 
         ostringstream retval;
         retval << make_stringf("You %s%s%s%s%s%s. (%s)", gain ? "feel " : "are ", STR.c_str(),
             s && i ? (d ? ", " : " and ") : "", INT.c_str(), (s || i) && d ? " and " : "", DEX.c_str(), ostr.str().c_str());
-        return retval.str().c_str();
+        result = retval.str().c_str();
+        return;
     }
 
     if (gain)
-        return "But nothing happened . . .";
-    return "stats";
+    {
+        result = "But nothing happened . . .";
+        return;
+    }
+
+    result = "stats";
+    return;
 }
 
 // Bookkeeps that stat mut's actual level and displays message.
@@ -1506,7 +1515,8 @@ static void _stat_mut_gain(bool gain, int orig_STR, int orig_INT, int orig_DEX)
     int i = you.mutated_stats[STAT_INT] - orig_INT;
     int d = you.mutated_stats[STAT_DEX] - orig_DEX;
 
-    string MSG = _stat_mut_msg(true, s, i, d, false);
+    string MSG;
+    _stat_mut_msg(MSG, true, s, i, d, false);
 
     mprf(MSGCH_MUTATION, "%s %s", gain ? "You feel your attributes changing!" : 
                                    end ? "Your attributes return to normal." : 
@@ -2939,7 +2949,10 @@ bool delete_temp_mutation()
 void display_mutation_name(mutation_type mut, string &name)
 {
     if (!is_valid_mutation(mut))
+    {
+        name = "invalid mutation";
         return;
+    }
 
     if (mut == MUT_PSEUDOPODS)
     {
@@ -2961,7 +2974,7 @@ void display_mutation_name(mutation_type mut, string &name)
     }
 
     else if (mut == MUT_STATS)
-        name = _stat_mut_msg(false, you.mutated_stats[STAT_STR], you.mutated_stats[STAT_INT], you.mutated_stats[STAT_DEX], true);
+        _stat_mut_msg(name, false, you.mutated_stats[STAT_STR], you.mutated_stats[STAT_INT], you.mutated_stats[STAT_DEX], true);
 
     else if (mut == MUT_MINOR_MARTIAL_APT_BOOST || mut == MUT_MAJOR_MARTIAL_APT_BOOST || mut == MUT_DEFENSIVE_APT_BOOST)
     {
@@ -3238,7 +3251,7 @@ string mutation_desc(mutation_type mut, int level, bool colour,
     const species_mutation_message msg = _spmut_msg(mut);
 
     if (mut == MUT_STATS)
-        result = _stat_mut_msg(false, you.mutated_stats[STAT_STR], you.mutated_stats[STAT_INT], you.mutated_stats[STAT_DEX], false);
+        _stat_mut_msg(result, false, you.mutated_stats[STAT_STR], you.mutated_stats[STAT_INT], you.mutated_stats[STAT_DEX], false);
     else if (mut == MUT_HALF_DEATH)
     {
         string base_msg;
