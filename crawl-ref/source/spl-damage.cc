@@ -2723,6 +2723,18 @@ spret cast_dash(int pow, bool fail)
     zappy(ZAP_DASH, pow, false, beam);
     beam.set_agent(&you);
     beam.range = you.current_vision;
+    beam.aimed_at_spot = true;
+
+    if (determine_chaos(&you, SPELL_UNSTABLE_FIERY_DASH))
+    {
+        beam.real_flavour = BEAM_CHAOTIC;
+        beam.colour = ETC_CHAOS;
+        beam.name = "relativistic burst";
+        beam.damage.size = div_rand_round(5 * beam.damage.size, 4);
+    }
+    
+    if (_is_menacing(&you, SPELL_UNSTABLE_FIERY_DASH))
+        beam.damage.num++;
 
     int dash_range = 20 + random2avg(pow / 2, 3);
     while (dash_range > 2)
@@ -2791,6 +2803,7 @@ spret cast_cascade(const actor *agent, int pow, bool fail)
 
         if (chaos)
         {
+            beam_actual.damage.size = div_rand_round(beam_actual.damage.size * 5, 4);
             if (evil)
             {
                 flavour = BEAM_ELDRITCH;
@@ -2809,6 +2822,9 @@ spret cast_cascade(const actor *agent, int pow, bool fail)
             beam_actual.colour = WHITE;
             beam_actual.name = "icicle";
         }
+
+        if (_is_menacing(&you, SPELL_ICICLE_CASCADE))
+            beam_actual.damage.num++;
 
         beam_actual.use_target_as_pos = true;
         beam_actual.flavour = flavour;
