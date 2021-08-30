@@ -16,9 +16,7 @@ enum enchant_type
     ENCH_CONFUSION,
     ENCH_INVIS,
     ENCH_POISON,
-#if TAG_MAJOR_VERSION == 34
-    ENCH_ROT,
-#endif
+    ENCH_SEAL,
     ENCH_SUMMON,
     ENCH_ABJ,
     ENCH_MAGIC_CANDLE,

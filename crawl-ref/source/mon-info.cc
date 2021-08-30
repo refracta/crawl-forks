@@ -59,6 +59,7 @@ static map<enchant_type, monster_info_flags> trivial_ench_mb_mappings = {
     { ENCH_INVIS,           MB_INVISIBLE },
     { ENCH_CHARM,           MB_CHARMED },
     { ENCH_STICKY_FLAME,    MB_BURNING },
+    { ENCH_SEAL,            MB_DOOR_SEAL },
     { ENCH_PETRIFIED,       MB_PETRIFIED },
     { ENCH_PETRIFYING,      MB_PETRIFYING },
     { ENCH_CIGOTUVI,        MB_CIGOTUVI },

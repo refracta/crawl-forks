@@ -55,6 +55,7 @@ song_of_slaying SONG_OF_SLAYING
 spectral_weapon SPECTRAL_WEAPON
 tukimas_dance TUKIMAS_DANCE
 violent_unravelling VIOLENT_UNRAVELLING
+sealing_rune SEALING_RUNE
 
 %sdir gui/spells/fire
 bolt_of_fire BOLT_OF_FIRE
@@ -212,7 +213,6 @@ phantom_mirror PHANTOM_MIRROR
 polymorph POLYMORPH
 porkalator PORKALATOR
 quicksilver_bolt QUICKSILVER_BOLT
-seal_doors SEAL_DOORS
 sentinel_mark SENTINEL_MARK
 sleep SLEEP
 spectral_cloud SPECTRAL_CLOUD

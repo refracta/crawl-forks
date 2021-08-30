@@ -38,9 +38,7 @@ enum monster_info_flags
     MB_SICK,
     MB_CAUGHT,
     MB_WEBBED,
-#if TAG_MAJOR_VERSION == 34
-    MB_OLD_FRENZIED,
-#endif
+    MB_DOOR_SEAL,
     MB_PETRIFYING,
     MB_PETRIFIED,
     MB_VULN_MAGIC,

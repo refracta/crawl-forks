@@ -2624,8 +2624,7 @@ static bool _should_force_door_shut(const coord_def& door)
     return ((cur_tension - new_tension) * 3) <= cur_tension;
 }
 
-static bool _seal_doors_and_stairs(const monster* warden,
-                                   bool check_only = false)
+static bool _seal_doors_and_stairs(monster* warden, bool check_only = false)
 {
     ASSERT(warden);
 
@@ -2760,8 +2759,8 @@ static bool _seal_doors_and_stairs(const monster* warden,
     {
         ASSERT(!check_only);
         mprf(MSGCH_MONSTER_SPELL, "%s activates a sealing rune.",
-                (warden->visible_to(&you) ? warden->name(DESC_THE, true).c_str()
-                                          : "Someone"));
+            (warden->visible_to(&you) ? warden->name(DESC_THE, true).c_str()
+                : "Someone"));
         if (num_closed > 1)
             mpr("The doors slam shut!");
         else if (num_closed == 1)
@@ -2769,6 +2768,19 @@ static bool _seal_doors_and_stairs(const monster* warden,
 
         if (player_pushed)
             mpr("You are pushed out of the doorway!");
+
+        mon_enchant old_seal = warden->get_ench(ENCH_SEAL);
+
+        if (old_seal.degree < 1)
+        {
+            const mon_enchant new_seal = mon_enchant(ENCH_SEAL, 1, warden, max(seal_duration, old_seal.duration));
+            warden->add_ench(new_seal);
+        }
+        else
+        {
+            old_seal.duration = max(seal_duration, old_seal.duration);
+            warden->update_ench(old_seal);
+        }
 
         return true;
     }

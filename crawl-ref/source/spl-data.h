@@ -3785,14 +3785,14 @@ TILEG_ERROR,
 },
 
 {
-    SPELL_SEAL_DOORS, "Seal Doors", "",
+    SPELL_SEAL_DOORS, "Sealing Rune", "",
     spschool::hexes,
     spflag::area | spflag::monster | spflag::selfench,
     6,
     0,
     -1, -1,
     5, 0,
-    TILEG_SEAL_DOORS,
+    TILEG_SEALING_RUNE,
 },
 
 {

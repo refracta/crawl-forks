@@ -2045,6 +2045,8 @@ tileidx_t tileidx_monster(const monster_info& mons)
         ch |= TILE_FLAG_CONSTRICTED;
     if (mons.is(MB_BERSERK))
         ch |= TILE_FLAG_BERSERK;
+    if (mons.is(MB_DOOR_SEAL))
+        ch |= TILE_FLAG_SEALING_RUNE;
     if (mons.is(MB_GLOWING))
         ch |= TILE_FLAG_GLOWING;
     if (mons.is(MB_SLOWED))

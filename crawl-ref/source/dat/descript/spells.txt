@@ -1408,7 +1408,7 @@ Scattershot spell
 Blasts a cone-shaped area in front of the caster with metallic fragments. Its
 damage is strongly reduced by armour.
 %%%%
-Seal Doors spell
+Sealing Rune spell
 
 Imparts seals on nearby doors and stairs, preventing those not allied with
 the caster from traversing them.

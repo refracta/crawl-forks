@@ -66,6 +66,7 @@ possessable POSSESSABLE
 dazed DAZED
 confused CONFUSED
 black_mark BLACK_MARK
+sealing_rune SEALING_RUNE
 
 something_under SOMETHING_UNDER
 new_stair NEW_STAIR
