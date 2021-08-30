@@ -101,6 +101,7 @@ dispel_undead DISPEL_UNDEAD
 excruciating_wounds EXCRUCIATING_WOUNDS
 haunt HAUNT
 necromutation NECROMUTATION
+malign_offering MALIGN_OFFERING
 pain PAIN
 regeneration REGENERATION
 simulacrum SIMULACRUM

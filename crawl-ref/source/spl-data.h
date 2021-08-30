@@ -3185,7 +3185,7 @@ static const struct spell_desc spelldata[] =
     200,
     LOS_RADIUS, LOS_RADIUS,
     5, 10,
-    TILEG_GENERIC_MONSTER_SPELL,
+    TILEG_MALIGN_OFFERING,
 },
 
 {
