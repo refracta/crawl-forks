@@ -1369,6 +1369,7 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
     case SPELL_GHOSTLY_FIREBALL:
     case SPELL_LEHUDIBS_CRYSTAL_SPEAR:
     case SPELL_BOLT_OF_DRAINING:
+    case SPELL_MALIGN_OFFERING:
     case SPELL_STICKY_FLAME:
     case SPELL_STICKY_FLAME_RANGE:
     case SPELL_STING:
@@ -8508,8 +8509,8 @@ static bool _ms_waste_of_time(monster* mon, mon_spell_slot slot)
     case SPELL_BRAIN_FEED:
         return !foe || !foe->is_player();
 
-    case SPELL_BOLT_OF_DRAINING:
     case SPELL_MALIGN_OFFERING:
+    case SPELL_BOLT_OF_DRAINING:
     case SPELL_GHOSTLY_FIREBALL:
         return !foe || _foe_should_res_negative_energy(foe);
 

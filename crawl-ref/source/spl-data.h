@@ -3180,7 +3180,7 @@ static const struct spell_desc spelldata[] =
 {
     SPELL_MALIGN_OFFERING, "Malign Offering", "",
     spschool::necromancy | spschool::ritual,
-    spflag::dir_or_target | spflag::not_self | spflag::needs_tracer,
+    spflag::target | spflag::not_self,
     7,
     200,
     LOS_RADIUS, LOS_RADIUS,

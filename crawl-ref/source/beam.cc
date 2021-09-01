@@ -2763,7 +2763,7 @@ static void _malign_offering_effect(actor* victim, const actor* agent, int damag
     // The victim may die.
     coord_def c = victim->pos();
 
-    mprf("%s life force is offered up.", victim->name(DESC_ITS).c_str());
+    mprf("%s life force is offered up%s", victim->name(DESC_ITS).c_str(), attack_strength_punctuation(damage).c_str());
     damage = victim->hurt(agent, damage, BEAM_MALIGN_OFFERING, KILLED_BY_BEAM,
                           "", "by a malign offering");
 
@@ -2772,13 +2772,16 @@ static void _malign_offering_effect(actor* victim, const actor* agent, int damag
     // or invisibility.
     for (actor_near_iterator ai(c, LOS_NO_TRANS); ai; ++ai)
     {
-        if (mons_aligned(agent, *ai) && !(ai->holiness() & MH_NONLIVING)
-            && *ai != victim)
+        if ((ai->is_player() && (agent->is_player() || agent->as_monster()->friendly()))
+            || (mons_aligned(agent, *ai)
+            && !(ai->holiness() & MH_NONLIVING) && *ai != victim))
         {
-            if (ai->heal(max(1, damage * 2 / 3)) && you.can_see(**ai))
+            const int healz = max(1, random2(damage * 2 / 3));
+            if (ai->heal(healz) && you.can_see(**ai))
             {
-                mprf("%s %s healed.", ai->name(DESC_THE).c_str(),
-                                      ai->conj_verb("are").c_str());
+                mprf("%s %s healed%s", ai->name(DESC_THE).c_str(),
+                                      ai->conj_verb("are").c_str(),
+                                      attack_strength_punctuation(healz).c_str());
             }
         }
     }
