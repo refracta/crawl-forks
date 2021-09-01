@@ -143,6 +143,7 @@ summon_small_mammal SUMMON_SMALL_MAMMAL
 summon_lightning_spire SUMMON_LIGHTNING_SPIRE
 summon_guardian_golem SUMMON_GUARDIAN_GOLEM
 summon_forest SUMMON_FOREST
+summon_jungle SUMMON_JUNGLE
 monstrous_menagerie MONSTROUS_MENAGERIE
 summon_mana_viper SUMMON_MANA_VIPER
 spellforged_servitor SPELLFORGED_SERVITOR

@@ -650,7 +650,7 @@ static const struct spell_desc spelldata[] =
     200,
     -1, -1,
     8, 0,
-    TILEG_GENERIC_MONSTER_SPELL, // BCADDO: Tile.
+    TILEG_SUMMON_JUNGLE,
 },
 
 {
