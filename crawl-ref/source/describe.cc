@@ -1556,7 +1556,6 @@ static string _armour_brand_desc(const item_def item)
 
 static string _weapon_brand_desc(const item_def &item)
 {
-
     const int damtype = get_vorpal_type(item);
     const bool subsume = you.get_mutation_level(MUT_CYTOPLASMIC_SUSPENSION);
 
@@ -2507,7 +2506,7 @@ string get_item_description(const item_def &item, bool verbose,
             const string desc = getLongDescription(get_artefact_name(item));
             if (!desc.empty())
             {
-                description << desc;
+                description << desc.c_str();
                 need_base_desc = false;
                 description.seekp((streamoff)-1, ios_base::cur);
                 description << " ";
@@ -3423,6 +3422,7 @@ bool describe_item(item_def &item, function<void (string&)> fixup_desc)
 #endif
 
     auto title = make_shared<Text>(name);
+    title->set_wrap_text(true);
     title->set_margin_for_sdl(0, 0, 0, 10);
     title_hbox->add_child(move(title));
 
