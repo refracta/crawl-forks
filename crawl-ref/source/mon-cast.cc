@@ -7236,14 +7236,14 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
 
     case SPELL_CALL_LOST_SOUL:
     {
-        const int pow = (mons->spell_hd(spell_cast) * 15) / 10;
+        const int pow = mons->spell_hd(spell_cast);
         const int cnt = 1 + random2(1 + pow / 4);
         for (int i = 0; i < cnt; i++)
         {
             monster * soul = create_monster(mgen_data(MONS_LOST_SOUL, SAME_ATTITUDE(mons),
                 mons->pos(), mons->foe)
                 .set_summoned(mons, 2 + one_chance_in(3), spell_cast, god));
-            soul->scale_hp(10 + pow, 10);
+            soul->max_hit_points = soul->hit_points = div_rand_round(soul->max_hit_points * pow, 10);
         }
     }
         return;
