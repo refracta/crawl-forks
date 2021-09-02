@@ -1456,20 +1456,22 @@ bool physiology_mutation_conflict(mutation_type mutat, bool ds_roll)
 
 static void _stat_mut_msg(string &result, bool gain, int s, int i, int d, bool terse)
 {
-    ostringstream ostr;
-
-    const string STR = s ? make_stringf("%s%s", abs(s) > 4 ? "extremely " : abs(s) > 2 ? "very " : "", stat_desc(STAT_STR, s > 0 ? SD_INCREASE : SD_DECREASE)) : "";
-    const string INT = i ? make_stringf("%s%s", abs(i) > 4 ? "extremely " : abs(i) > 2 ? "very " : "", stat_desc(STAT_INT, i > 0 ? SD_INCREASE : SD_DECREASE)) : "";
-    const string DEX = d ? make_stringf("%s%s", abs(d) > 5 ? "extremely " : abs(d) > 2 ? "very " : "", stat_desc(STAT_DEX, d > 0 ? SD_INCREASE : SD_DECREASE)) : "";
+    ostringstream ostr; ostringstream STR; ostringstream INT; ostringstream DEX;
 
     if (s)
+    {
         ostr << "STR " << ((s > 0) ? "+" : "") << s;
+        STR << (abs(s) > 4 ? "extremely " : abs(s) > 2 ? "very " : "");
+        STR << stat_desc(STAT_STR, s > 0 ? SD_INCREASE : SD_DECREASE);
+    }
 
     if (i)
     {
         if (s)
             ostr << ", ";
         ostr << "INT " << ((i > 0) ? "+" : "") << i;
+        INT << (abs(i) > 4 ? "extremely " : abs(i) > 2 ? "very " : "");
+        INT << stat_desc(STAT_INT, i > 0 ? SD_INCREASE : SD_DECREASE);
     }
 
     if (d)
@@ -1477,6 +1479,8 @@ static void _stat_mut_msg(string &result, bool gain, int s, int i, int d, bool t
         if (s || i)
             ostr << ", ";
         ostr << "DEX " << ((d > 0) ? "+" : "") << d;
+        DEX << (abs(d) > 4 ? "extremely " : abs(d) > 2 ? "very " : "");
+        DEX << stat_desc(STAT_DEX, d > 0 ? SD_INCREASE : SD_DECREASE);
     }
 
     if (s || i || d)
@@ -1487,8 +1491,13 @@ static void _stat_mut_msg(string &result, bool gain, int s, int i, int d, bool t
             return;
         }
 
-        result = make_stringf("You %s%s%s%s%s%s. (%s)", gain ? "feel " : "are ", STR.c_str(),
-            s && i ? (d ? ", " : " and ") : "", INT.c_str(), (s || i) && d ? " and " : "", DEX.c_str(), ostr.str().c_str());
+        ostringstream retval;
+        retval << "You " << (gain ? "feel " : "are ") << STR.str().c_str();
+        retval << (s && i ? (d ? ", " : " and ") : "") << INT.str().c_str();
+        retval << ((s || i) && d ? " and " : "") << DEX.str().c_str();
+        retval << ". (" << ostr.str().c_str() << ")";
+
+        result = retval.str().c_str();
         return;
     }
 
