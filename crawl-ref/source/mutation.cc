@@ -1456,7 +1456,7 @@ bool physiology_mutation_conflict(mutation_type mutat, bool ds_roll)
 
 static void _stat_mut_msg(string &result, bool gain, int s, int i, int d, bool terse)
 {
-    ostringstream ostr; ostringstream STR; ostringstream INT; ostringstream DEX;
+    ostringstream ostr, STR, INT, DEX;
 
     if (s)
     {
@@ -1487,17 +1487,17 @@ static void _stat_mut_msg(string &result, bool gain, int s, int i, int d, bool t
     {
         if (terse)
         {
-            result = ostr.str().c_str();
+            result = ostr.str();
             return;
         }
 
         ostringstream retval;
-        retval << "You " << (gain ? "feel " : "are ") << STR.str().c_str();
-        retval << (s && i ? (d ? ", " : " and ") : "") << INT.str().c_str();
-        retval << ((s || i) && d ? " and " : "") << DEX.str().c_str();
-        retval << ". (" << ostr.str().c_str() << ")";
+        retval << "You " << (gain ? "feel " : "are ") << STR.str();
+        retval << (s && i ? (d ? ", " : " and ") : "") << INT.str();
+        retval << ((s || i) && d ? " and " : "") << DEX.str();
+        retval << ". (" << ostr.str() << ")";
 
-        result = retval.str().c_str();
+        result = retval.str();
         return;
     }
 
@@ -1520,7 +1520,7 @@ static void _stat_mut_gain(bool gain, int orig_STR, int orig_INT, int orig_DEX)
     int i = you.mutated_stats[STAT_INT] - orig_INT;
     int d = you.mutated_stats[STAT_DEX] - orig_DEX;
 
-    string MSG;
+    string MSG = "";
     _stat_mut_msg(MSG, true, s, i, d, false);
 
     mprf(MSGCH_MUTATION, "%s %s", gain ? "You feel your attributes changing!" : 
@@ -2953,6 +2953,8 @@ bool delete_temp_mutation()
 
 void display_mutation_name(mutation_type mut, string &name)
 {
+    name = "";
+
     if (!is_valid_mutation(mut))
     {
         name = "invalid mutation";
@@ -3250,7 +3252,7 @@ string mutation_desc(mutation_type mut, int level, bool colour,
             level = you.get_base_mutation_level(mut, true, true, true, false);
     }
 
-    string result;
+    string result = "";
 
     const mutation_def& mdef = _get_mutation_def(mut);
     const species_mutation_message msg = _spmut_msg(mut);
