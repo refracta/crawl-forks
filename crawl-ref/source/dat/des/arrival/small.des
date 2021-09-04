@@ -2747,19 +2747,27 @@ SUBST:  " : +, ' : . , - : ccc.
 : else
 SUBST:  "'- : c
 : end
+KPROP:  abdet = no_tele_into
+NSUBST: a = 1:1 / *:t
+NSUBST: b = 1:1 / *:t
+NSUBST: d = 1:1 / *:t
+NSUBST: e = 1:1 / *:t
+SUBST:  t = tWWs
+KFEAT:  s = mangrove
+COLOUR: W = green
 MONS:   bullfrog / spiny frog / yak / death yak w:1 / elephant
 MAP
           ccccccccc
        cccctccccctcccc
-      cctt1tc...ct1ttcc
-    ccctttttc.{.ctttttccc
-    ccccccccn...ncccccccc
+      ccttaac...cbbttcc
+    ccctttaac.{.cbbtttccc
+    ccccccccq...qcccccccc
     WWcc..+.......+..ccWW
    @WWz..."'-----'"...zWW@
     WWcc..+.......+..ccWW
-    ccccccccn...ncccccccc
-    ccctttttc.{.ctttttccc
-      cctt1tc...ct1ttcc
+    ccccccccq...qcccccccc
+    cccttteec.{.cddtttccc
+      cctteec...cddttcc
        cccctccccctcccc
           ccccccccc
 ENDMAP
@@ -2779,7 +2787,7 @@ SUBST:   w : wwwwwwtt.
 : end
 SUBST:   r : x
 NSUBST:  y = { / .....> / .
-KMASK:   W = no_monster_gen
+KPROP:   1 = no_tele_into
 MONS:    anaconda / death yak / black mamba / elephant / hydra
 MAP
   xxxxxx
