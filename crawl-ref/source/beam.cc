@@ -7058,7 +7058,7 @@ const map<spell_type, explosion_sfx> spell_explosions = {
         "The hellfire blast explodes!",
         "an accursed explosion",
     } },
-    { SPELL_CALL_DOWN_DAMNATION, {
+    { SPELL_HELLFIRE_BLAST, {
         "The pillar hellfire denotates!",
         "an accursed explosion",
     } },

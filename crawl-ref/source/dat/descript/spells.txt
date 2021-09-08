@@ -838,7 +838,7 @@ Heal Other spell
 
 Heals a nearby ally.
 %%%%
-Hellfire Smite spell
+Hellfire Blast spell
 
 Blasts a targeted enemy with hellfire, with no direct line of fire required.
 These unholy forces harm the victim and anyone adjacent, and are not affected
@@ -848,7 +848,7 @@ unscathed by its unholy flames.
 %%%%
 Hurl Hellfire spell
 
-<Hurl Damnation ability>
+<Hurl Hellfire ability>
 %%%%
 Holy Breath spell
 

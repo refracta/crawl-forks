@@ -2659,7 +2659,7 @@ static int _exper_value(const monster_type mc, const int hd, int maxhp, const in
             case SPELL_PARALYSE:
             case SPELL_SMITING:
             case SPELL_SUMMON_EYEBALLS:
-            case SPELL_CALL_DOWN_DAMNATION:
+            case SPELL_HELLFIRE_BLAST:
             case SPELL_HURL_HELLFIRE:
             case SPELL_SYMBOL_OF_TORMENT:
             case SPELL_GLACIATE:
@@ -4681,7 +4681,7 @@ static const spell_type smitey_spells[] = {
     SPELL_SMITING,
     SPELL_AIRSTRIKE,
     SPELL_SYMBOL_OF_TORMENT,
-    SPELL_CALL_DOWN_DAMNATION,
+    SPELL_HELLFIRE_BLAST,
     SPELL_FIRE_STORM,
     SPELL_SHATTER,
     SPELL_TORNADO,          // dubious

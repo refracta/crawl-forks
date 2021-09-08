@@ -127,6 +127,7 @@ noxious_bog NOXIOUS_BOG
 mass_abjuration MASS_ABJURATION
 call_canine_familiar CALL_CANINE_FAMILIAR
 call_imp CALL_IMP
+call_lost_souls CALL_LOST_SOULS
 malign_gateway MALIGN_GATEWAY
 recall RECALL
 sticks_to_snakes STICKS_TO_SNAKES
@@ -191,7 +192,7 @@ air_elementals AIR_ELEMENTALS
 awaken_vines AWAKEN_VINES
 blink_other BLINK_OTHER
 brain_feed BRAIN_FEED
-call_down_damnation CALL_DOWN_DAMNATION
+call_down_damnation HELLFIRE_SMITE
 cantrip CANTRIP
 cold_breath COLD_BREATH
 create_tentacles CREATE_TENTACLES
@@ -242,7 +243,7 @@ water_elementals WATER_ELEMENTALS
 
 # spells mimicking natural abilities
 %sdir gui/abilities
-hurl_damnation HURL_DAMNATION
+hurl_damnation HURL_HELLFIRE
 
 # spells mimicking divine abilities
 %sdir gui/invocations

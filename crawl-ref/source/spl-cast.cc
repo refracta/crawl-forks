@@ -1998,7 +1998,7 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
         return cast_fire_storm(powc, beam, fail);
 
     // Demonspawn ability, no failure.
-    case SPELL_CALL_DOWN_DAMNATION:
+    case SPELL_HELLFIRE_BLAST:
         return cast_smitey_damnation(powc, beam) ? spret::success : spret::abort;
 
     // LOS spells
@@ -2090,7 +2090,7 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
     case SPELL_SUMMON_BUTTERFLIES:
         return cast_summon_butterflies(powc, god, fail);
 
-    case SPELL_CALL_LOST_SOUL:
+    case SPELL_CALL_LOST_SOULS:
         return cast_call_lost_souls(powc, god, fail);
 
     case SPELL_SUMMON_SMALL_MAMMAL:

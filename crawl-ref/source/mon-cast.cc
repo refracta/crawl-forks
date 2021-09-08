@@ -1431,7 +1431,7 @@ bolt mons_spell_beam(const monster* mons, spell_type spell_cast, int power,
         beam.foe_ratio = random_range(40, 55);
         break;
 
-    case SPELL_CALL_DOWN_DAMNATION:
+    case SPELL_HELLFIRE_BLAST:
         beam.aux_source   = "hellfire";
         beam.name         = "hellfire blast";
         beam.ex_size      = 1;
@@ -2031,7 +2031,7 @@ bool setup_mons_cast(const monster* mons, bolt &pbolt, spell_type spell_cast,
     case SPELL_SPECTRAL_WEAPON:
     case SPELL_WORD_OF_RECALL:
     case SPELL_INJURY_BOND:
-    case SPELL_CALL_LOST_SOUL:
+    case SPELL_CALL_LOST_SOULS:
     case SPELL_BLINK_ALLIES_ENCIRCLE:
     case SPELL_MASS_CONFUSION:
     case SPELL_ENGLACIATION:
@@ -7234,7 +7234,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         return;
     }
 
-    case SPELL_CALL_LOST_SOUL:
+    case SPELL_CALL_LOST_SOULS:
     {
         const int pow = mons->spell_hd(spell_cast);
         const int cnt = 1 + random2(1 + pow / 4);

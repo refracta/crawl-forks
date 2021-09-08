@@ -565,7 +565,7 @@ static const struct spell_desc spelldata[] =
 },
 
 {
-    SPELL_CALL_DOWN_DAMNATION, "Hellfire Smite", "",
+    SPELL_HELLFIRE_BLAST, "Hellfire Blast", "",
     spschool::fire | spschool::evocation,
     spflag::target | spflag::area | spflag::unholy | spflag::needs_tracer
     | spflag::monster,
@@ -573,7 +573,7 @@ static const struct spell_desc spelldata[] =
     200,
     LOS_RADIUS, LOS_RADIUS,
     9, 0,
-    TILEG_CALL_DOWN_DAMNATION,
+    TILEG_HELLFIRE_SMITE,
 },
 
 {
@@ -1800,7 +1800,7 @@ static const struct spell_desc spelldata[] =
 },
 
 {
-    SPELL_HURL_HELLFIRE, "Hellfire Blast", "",
+    SPELL_HURL_HELLFIRE, "Hurl Hellfire", "",
     spschool::fire | spschool::evocation,
     spflag::dir_or_target | spflag::unholy | spflag::monster
         | spflag::needs_tracer,
@@ -1809,7 +1809,7 @@ static const struct spell_desc spelldata[] =
     200,
     6, 6,
     9, 0,
-    TILEG_HURL_DAMNATION,
+    TILEG_HURL_HELLFIRE,
 },
 
 #if TAG_MAJOR_VERSION == 34
@@ -2983,14 +2983,14 @@ static const struct spell_desc spelldata[] =
 },
 
 {
-    SPELL_CALL_LOST_SOUL, "Call Lost Souls", "",
+    SPELL_CALL_LOST_SOULS, "Call Lost Souls", "",
     spschool::summoning | spschool::necromancy | spschool::ritual,
     spflag::unholy,
     4,
     100,
     -1, -1,
     3, 0,
-    TILEG_GENERIC_MONSTER_SPELL,
+    TILEG_CALL_LOST_SOULS,
 },
 
 {
