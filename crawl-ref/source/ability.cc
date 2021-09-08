@@ -417,9 +417,9 @@ static const ability_def Ability_List[] =
       {fail_basis::invo}, abflag::none },
 
     // Kikubaaqudgha
-    { ABIL_KIKU_RECEIVE_CORPSES, "Open Crypts",
+    { ABIL_KIKU_OPEN_CRYPTS, "Open Crypts",
         0, 0, 0, 0, {fail_basis::invo}, abflag::instant | abflag::starve_ok },
-    { ABIL_KIKU_STOP_CORPSES, "Close Crypts",
+    { ABIL_KIKU_CLOSE_CRYPTS, "Close Crypts",
         0, 0, 0, 0, {fail_basis::invo}, abflag::instant | abflag::starve_ok },
     { ABIL_KIKU_GIFT_NECRONOMICON, "Receive Necronomicon", 0, 0, 0, 0,
       {fail_basis::invo}, abflag::none },
@@ -1048,9 +1048,9 @@ ability_type fixup_ability(ability_type ability)
             return ABIL_NON_ABILITY;
         return ability;
 
-    case ABIL_KIKU_RECEIVE_CORPSES:
+    case ABIL_KIKU_OPEN_CRYPTS:
         if (you.attribute[ATTR_KIKU_CORPSE])
-            return ABIL_KIKU_STOP_CORPSES;
+            return ABIL_KIKU_CLOSE_CRYPTS;
         return ability;
 
     case ABIL_SIF_MUNA_DIVINE_ENERGY:
@@ -2943,11 +2943,11 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
             return spret::abort;
         break;
 
-    case ABIL_KIKU_RECEIVE_CORPSES:
+    case ABIL_KIKU_OPEN_CRYPTS:
         you.attribute[ATTR_KIKU_CORPSE] = 1;
         break;
 
-    case ABIL_KIKU_STOP_CORPSES:
+    case ABIL_KIKU_CLOSE_CRYPTS:
         you.attribute[ATTR_KIKU_CORPSE] = 0;
         break;
 

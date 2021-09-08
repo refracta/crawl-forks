@@ -123,7 +123,7 @@ const vector<god_power> god_powers[NUM_GODS] =
     { { 1, "You can now sublimate your blood to cast from HP when out of mana at the cost of one piety per cast.",
            "You can no longer sublimate your blood to cast from HP when out of mana.",
            "You can now sublimate your blood to cast from HP when out of mana at the cost of one piety per cast." },
-      { 2, ABIL_KIKU_RECEIVE_CORPSES, "receive supplemental cadavers from Kikubaaqudgha on cast" },
+      { 2, ABIL_KIKU_OPEN_CRYPTS, "receive supplemental cadavers from Kikubaaqudgha on cast" },
       { 3, "Kikubaaqudgha is now protecting you from necromantic miscasts and death curses.",
            "Kikubaaqudgha will no longer protect you from necromantic miscasts or death curses.",
            "Kikubaaqudgha protects you from necromantic miscasts and death curses." },
@@ -2797,7 +2797,7 @@ void lose_piety(int pgn)
                 // Deactivate the toggle
                 if (power.abil == ABIL_SIF_MUNA_DIVINE_ENERGY)
                     you.attribute[ATTR_DIVINE_ENERGY] = 0;
-                if (power.abil == ABIL_KIKU_RECEIVE_CORPSES)
+                if (power.abil == ABIL_KIKU_OPEN_CRYPTS)
                     you.attribute[ATTR_KIKU_CORPSE] = 0;
             }
         }
