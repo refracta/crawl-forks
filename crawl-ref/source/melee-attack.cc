@@ -2644,7 +2644,13 @@ void melee_attack::attacker_sustain_passive_damage()
     if (!adjacent(attacker->pos(), defender->pos()) || is_riposte)
         return;
 
-    int acid_strength = resist_adjust_damage(attacker, BEAM_ACID, 5, mount_attack);
+    if (attacker->is_player() && (effective_attack_number == 1 || effective_attack_number > 2)
+        || attacker->is_monster() && effective_attack_number != 0)
+    {
+        return;
+    }
+
+    int acid_strength = max(1, resist_adjust_damage(attacker, BEAM_ACID, div_round_up(defender->get_hit_dice(), 3), mount_attack));
 
     // Spectral weapons can't be corroded (but can take acid damage).
     // Mounts can't be corroded either (at least for now).
@@ -2653,11 +2659,11 @@ void melee_attack::attacker_sustain_passive_damage()
 
     if (!avatar)
     {
-        if (x_chance_in_y(acid_strength + 1, 30))
+        if (x_chance_in_y(acid_strength + 1, 24))
             attacker->corrode_equipment("the acid", 1, mount_attack);
     }
 
-    acid_strength = roll_dice(1, acid_strength);
+    acid_strength = roll_dice(acid_strength, 4);
 
     if (mount_attack)
     {
@@ -4134,6 +4140,7 @@ void melee_attack::do_passive_freeze()
 void melee_attack::mons_do_eyeball_confusion()
 {
     if (you.has_mutation(MUT_GOLDEN_EYEBALLS) || you.has_mutation(MUT_BUDDING_EYEBALLS)
+        && effective_attack_number == 0
         && attacker->alive()
         && adjacent(you.pos(), attacker->as_monster()->pos())
         && x_chance_in_y(3 + you.skill(SK_INVOCATIONS), 90))
@@ -4169,6 +4176,7 @@ void melee_attack::mons_do_tendril_disarm()
     const int lvl = you.get_mutation_level(MUT_CYTOPLASM_TRAP);
 
     if (lvl >= 2
+        && effective_attack_number == 0
         && one_chance_in(3)
         && (random2(you.experience_level) > adj_mon_hd))
     {
@@ -4199,15 +4207,21 @@ void melee_attack::mons_do_tendril_disarm()
 
 void melee_attack::do_spines()
 {
+    if (attacker->is_player() && (effective_attack_number == 1 || effective_attack_number > 2)
+        || attacker->is_monster() && effective_attack_number != 0)
+    {
+        return;
+    }
+
     if (defender->is_player())
     {
         const int mut = you.get_mutation_level(MUT_SPINY) + (you.get_mutation_level(MUT_FROST_BURST) ? 1 : 0);
 
         if (mut && attacker->alive() && coinflip())
         {
-            const int maxdmg = max(div_rand_round(you.experience_level * mut, 3), mut);
-            const int dmg    = random_range(mut, maxdmg);
-            const int hurt   = attacker->apply_ac(dmg, you.experience_level + mut);
+            const int maxdmg = max(div_rand_round(you.experience_level * (1 + mut), 3), 1 + mut);
+            const int dmg    = random_range(1 + mut, maxdmg);
+            const int hurt   = attacker->apply_ac(dmg, maxdmg, ac_type::half);
 
             dprf(DIAG_COMBAT, "Spiny: dmg = %d hurt = %d", dmg, hurt);
 
@@ -4221,7 +4235,7 @@ void melee_attack::do_spines()
 
             if (you.get_mutation_level(MUT_FROST_BURST))
             {
-                const int dice_size = div_rand_round(you.experience_level + you.skill(SK_INVOCATIONS), 6);
+                const int dice_size = div_rand_round(you.experience_level + you.skill(SK_INVOCATIONS), 5);
                 const int ice_dmg   = roll_dice(you.get_mutation_level(MUT_FROST_BURST), dice_size);
                 const int ice_hurt  = resist_adjust_damage(attacker, BEAM_COLD, ice_dmg);
 
@@ -4248,7 +4262,7 @@ void melee_attack::do_spines()
 
         if (attacker->alive())
         {
-            const int maxdmg = defender->get_hit_dice();
+            const int maxdmg = div_rand_round(defender->get_hit_dice() * 5, 3);
             const int dmg = random2(maxdmg);
             const int hurt = attacker->apply_ac(dmg, maxdmg, ac_type::half, 0, true, mount_attack);
             dprf(DIAG_COMBAT, "Spiny: dmg = %d hurt = %d", dmg, hurt);
@@ -4276,7 +4290,7 @@ void melee_attack::do_spines()
             {
                 damtype = BEAM_POISON_ARROW;
 
-                int pois = random_range(defender->get_hit_dice() * 2 / 3, defender->get_hit_dice());
+                int pois = random_range(defender->get_hit_dice(), defender->get_hit_dice() * 5 / 3);
 
                 const int resist = attacker->res_poison();
                 if (attacker->is_player())
@@ -4318,8 +4332,11 @@ void melee_attack::emit_foul_stench()
 
 void melee_attack::do_minotaur_retaliation()
 {
-    if (attacker->is_monster() && mons_wall_shielded(*attacker->as_monster()))
+    if ((attacker->is_monster() && mons_wall_shielded(*attacker->as_monster()) || effective_attack_number != 0)
+        || attacker->is_player() && (effective_attack_number == 1 || effective_attack_number > 2))
+    {
         return;
+    }
     if (!defender->is_player())
     {
         if (you.wearing(EQ_HELMET, ARM_SKULL, true, false))
@@ -4327,7 +4344,7 @@ void melee_attack::do_minotaur_retaliation()
         // monsters have no STR or DEX
         if (x_chance_in_y(2, 5))
         {
-            int hurt = attacker->apply_ac(random2(21), 21);
+            int hurt = attacker->apply_ac(random2(32), 32);
             if (you.see_cell(defender->pos()))
             {
                 const string defname = defender->name(DESC_THE);
@@ -4358,8 +4375,8 @@ void melee_attack::do_minotaur_retaliation()
 
     if (5 * you.strength() + 7 * you.dex() > random2(600))
     {
-        // Use the same damage formula as a regular headbutt.
-        int dmg = 12;
+        // Use the same damage formula as a regular headbutt with 50% higher base damage.
+        int dmg = 18;
         dmg = player_stat_modify_damage(dmg);
         dmg = random2(dmg);
         dmg = player_apply_fighting_skill(dmg, true);
