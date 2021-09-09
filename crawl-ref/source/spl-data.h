@@ -1290,7 +1290,7 @@ static const struct spell_desc spelldata[] =
 
 {
     SPELL_SYMBOL_OF_TORMENT, "Symbol of Torment", "",
-    spschool::necromancy | spschool::ritual | spschool::summoning,
+    spschool::necromancy | spschool::ritual,
     spflag::area,
     6,
     0,
