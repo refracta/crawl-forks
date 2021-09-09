@@ -26,6 +26,7 @@
 #include "invent.h"
 #include "item-prop.h"
 #include "libutil.h"
+#include "makeitem.h" // BCADNOTE: Should move is_banned_book() over?
 #include "message.h"
 #include "output.h"
 #include "prompt.h"
@@ -255,7 +256,7 @@ void init_spell_rarities()
     {
         const book_type book = static_cast<book_type>(i);
         // Manuals and books of destruction are not even part of this loop.
-        if (is_rare_book(book))
+        if (is_rare_book(book) || is_banned_book(book))
             continue;
 
 #ifdef DEBUG

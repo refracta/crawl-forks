@@ -16,6 +16,7 @@
 #include "item-status-flag-type.h"
 #include "items.h"
 #include "religion.h"
+#include "makeitem.h"
 #include "spl-book.h"
 #include "stringutil.h"
 
@@ -404,12 +405,12 @@ static void _get_spell_list(vector<spell_type> &spells, int level,
     // be checked for each spell with a rarity -1 (i.e. not normally
     // appearing randomly).
     vector<spell_type> special_spells;
-    if (god == GOD_SIF_MUNA)
+    if (god == GOD_SIF_MUNA || god == GOD_XOM)
     {
         for (int i = 0; i < NUM_FIXED_BOOKS; ++i)
         {
             const book_type book = static_cast<book_type>(i);
-            if (is_rare_book(book))
+            if (is_rare_book(book) || (god == GOD_XOM && is_banned_book(book)))
             {
                 for (spell_type spell : spellbook_template(book))
                 {
