@@ -21,6 +21,9 @@ COMPILE_CHECK(sizeof(feature_property_type) <= sizeof(terrain_property_t));
 #define SEWER_COLUMNS_KEY "sewer_columns_key"
 #define SEWER_ROW_POSITION_KEY "sewer_row_position_key"
 
+#define OSSUARY_DEPTH_KEY "ossuary_depth_key"
+#define MINIOSSUARY_DEPTH_KEY "miniossuary_depth_key"
+
 // See _build_overflow_temples() in dungeon.cc for details on overflow
 // temples.
 #define TEMPLE_GODS_KEY      "temple_gods_key"

@@ -95,6 +95,7 @@ static void _place_specific_trap(const coord_def& where, trap_spec* spec,
                                  int charges = 0);
 static void _place_branch_entrances(bool use_vaults);
 static void _place_extra_vaults();
+static void _place_ossuary(bool mini);
 static void _place_sewer_vault();
 static void _place_chance_vaults();
 static void _place_minivaults();
@@ -2851,6 +2852,8 @@ static void _build_dungeon_level()
             // Moved branch entries to place first so there's a good
             // chance of having room for a vault
             _place_branch_entrances(true);
+            _place_ossuary(false);
+            _place_ossuary(true);
             _place_chance_vaults();
             _place_minivaults();
             _place_extra_vaults();
@@ -4081,6 +4084,70 @@ static bool _place_vault_by_tag(const string &tag)
     if (!vault)
         return false;
     return _build_secondary_vault(vault);
+}
+
+static void _ploss(bool mini, int depth)
+{
+    if (!_place_vault_by_tag(mini ? "uniq_miniossuary" : "uniq_ossuary"))
+        you.props[mini ? MINIOSSUARY_DEPTH_KEY : OSSUARY_DEPTH_KEY] = (depth + 1);
+    else
+        you.props[mini ? MINIOSSUARY_DEPTH_KEY : OSSUARY_DEPTH_KEY] = -1;
+    return;
+}
+
+static void _place_ossuary(bool mini)
+{
+    if (you.where_are_you != BRANCH_DUNGEON && you.where_are_you != BRANCH_LAIR
+        && you.where_are_you != BRANCH_SPIDER && you.where_are_you != BRANCH_SWAMP
+        && you.where_are_you != BRANCH_SHOALS)
+    {
+        return;
+    }
+
+    if (!you.props.exists(mini ? MINIOSSUARY_DEPTH_KEY : OSSUARY_DEPTH_KEY))
+        you.props[mini ? MINIOSSUARY_DEPTH_KEY : OSSUARY_DEPTH_KEY] = random2(16);
+
+    const int depth = you.props[mini ? MINIOSSUARY_DEPTH_KEY : OSSUARY_DEPTH_KEY].get_int();
+
+    if (depth < 0)
+        return;
+
+    switch (depth)
+    {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+        if (you.where_are_you == BRANCH_DUNGEON && (you.depth - depth == 3))
+            _ploss(mini, depth);
+        return;
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+    case 9:
+        if (you.where_are_you == BRANCH_LAIR && (you.depth + 4 == depth))
+            _ploss(mini, depth);
+        return;
+    case 10:
+    case 11:
+    case 12:
+        if (you.where_are_you == BRANCH_SPIDER && (you.depth + 9 == depth))
+            _ploss(mini, depth);
+        return;
+    case 13:
+    case 14:
+    case 15:
+        if ((you.where_are_you == BRANCH_SWAMP || you.where_are_you == BRANCH_SHOALS)
+            && (you.depth + 12 == depth))
+        {
+            _ploss(mini, depth);
+        }
+        return;
+    default:
+        you.props[mini ? MINIOSSUARY_DEPTH_KEY : OSSUARY_DEPTH_KEY] = -1;
+    }
 }
 
 static void _place_branch_entrances(bool use_vaults)
