@@ -7601,35 +7601,45 @@ bool bahamut_tiamat_make_choice(ability_type abil)
     case ABIL_BAHAMUT_PROTECTION:
         you.props[BAHAMUT_TIAMAT_CHOICE0_KEY] = true;
         mprf(MSGCH_GOD, "Bahamut will now protect you.");
+        mark_milestone("bt.choice", "Bahamut's Protection");
         break;
     case ABIL_TIAMAT_RETRIBUTION:
         you.props[BAHAMUT_TIAMAT_CHOICE0_KEY] = false;
         mprf(MSGCH_GOD, "Tiamat will now quicken your movements in response to powerful hits.");
+        mark_milestone("bt.choice", "Tiamat's Retribution");
         break;
     case ABIL_CHOOSE_BAHAMUT_BREATH:
         you.props[BAHAMUT_TIAMAT_CHOICE1_KEY] = true;
         mprf(MSGCH_GOD, "You may now call upon Bahamut to empower your breath power.");
+        mark_milestone("bt.choice", "Bahamut's Empowered Breath");
         break;
     case ABIL_CHOOSE_TIAMAT_BREATH:
         you.props[BAHAMUT_TIAMAT_CHOICE1_KEY] = false;
         mprf(MSGCH_GOD, "You may new call upon Tiamat to allow you to choose a variety of breath "
             "abilties to use in place of your own.");
+        mark_milestone("bt.choice", "Tiamat's Adaptive Breath");
         break;
     case ABIL_CHOOSE_BAHAMUT_DRAKE:
         you.props[BAHAMUT_TIAMAT_CHOICE2_KEY] = true;
         mprf(MSGCH_GOD, "You may now call upon Bahamut to summon a rime drake mount for you.");
+        mark_milestone("bt.choice", "Bahamut's Drake Mount");
         break;
     case ABIL_CHOOSE_TIAMAT_DRAKE:
         you.props[BAHAMUT_TIAMAT_CHOICE2_KEY] = false;
         mprf(MSGCH_GOD, "You may now call upon Tiamat to summon a horde of drakes into battle.");
+        mark_milestone("bt.choice", "Tiamat's Summon Drakes");
         break;
     case ABIL_BAHAMUT_TRANSFORM:
         if (bahamut_tiamat_transform(true) == spret::success)
+        {
             you.props[BAHAMUT_TIAMAT_CHOICE3_KEY] = true;
+            mark_milestone("bt.choice", "Bahamut's Promotion");
+        }
         break;
     case ABIL_CHOOSE_TIAMAT_TRANSFORM:
         you.props[BAHAMUT_TIAMAT_CHOICE3_KEY] = false;
         mprf(MSGCH_GOD, "You may now call upon Tiamat to change your current draconian colour.");
+        mark_milestone("bt.choice", "Tiamat's Transformation");
         break;
     default:
         mprf(MSGCH_ERROR, "BUG: Bad ability passed to Bahamut & Tiamat Choice function.");
