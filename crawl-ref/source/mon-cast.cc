@@ -7243,7 +7243,8 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
             monster * soul = create_monster(mgen_data(MONS_LOST_SOUL, SAME_ATTITUDE(mons),
                 mons->pos(), mons->foe)
                 .set_summoned(mons, 2 + one_chance_in(3), spell_cast, god));
-            soul->max_hit_points = soul->hit_points = div_rand_round(soul->max_hit_points * pow, 10);
+            if (soul)
+                soul->max_hit_points = soul->hit_points = div_rand_round(soul->max_hit_points * pow, 10);
         }
     }
         return;

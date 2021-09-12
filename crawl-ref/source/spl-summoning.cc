@@ -163,11 +163,22 @@ spret cast_call_lost_souls(int pow, god_type god, bool fail)
 
     int count = 1 + div_rand_round(pow, 50);
     count += random2(div_round_up(pow, 25));
+    bool any_summoned = false;
 
     for (int i = 0; i < count; ++i)
     {
         monster * soul = create_monster(_pal_data(MONS_LOST_SOUL, 3, god, SPELL_CALL_LOST_SOULS));
-        soul->max_hit_points = soul->hit_points = div_rand_round(soul->max_hit_points * pow, 80);
+        if (soul)
+        {
+            any_summoned = true;
+            soul->max_hit_points = soul->hit_points = div_rand_round(soul->max_hit_points * pow, 80);
+        }
+    }
+
+    if (!any_summoned)
+    {
+        mprf(MSGCH_WARN, "There was no room to summon the spirits!");
+        return spret::fail;
     }
 
     return spret::success;

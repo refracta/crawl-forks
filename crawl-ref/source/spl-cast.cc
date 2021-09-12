@@ -1879,6 +1879,9 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
 
     spret cast_result = _do_cast(spell, powc, spd, beam, god, fail, warped, intensity);
 
+    if (cast_result == spret::fail && !fail)
+        antimagic = true;
+
     switch (cast_result)
     {
     case spret::success:
