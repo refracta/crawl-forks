@@ -3947,7 +3947,7 @@ void check_demonic_guardian()
             break;
         case 3:
             mt = random_choose(MONS_EXECUTIONER, MONS_BALRUG, MONS_REAPER,
-                               MONS_CACODEMON, MONS_LOROCYPROCA);
+                               MONS_TITIVILUS, MONS_LOROCYPROCA);
             break;
         default:
             die("Invalid demonic guardian level: %d", mutlevel);

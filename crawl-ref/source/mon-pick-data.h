@@ -533,7 +533,7 @@ static const pop_entry pop_hell[] =
   {  1,  1,   52, FLAT, MONS_GREEN_DEATH },
   {  1,  1,   52, FLAT, MONS_BLIZZARD_DEMON },
   {  1,  1,   52, FLAT, MONS_BALRUG },
-  {  1,  1,   52, FLAT, MONS_CACODEMON },
+  {  1,  1,   52, FLAT, MONS_TITIVILUS },
   { 0,0,0,FLAT,MONS_0 }
 };
 
@@ -812,7 +812,7 @@ static const pop_entry pop_abyss[] =
   {  1,  5,   22, FLAT, MONS_GREEN_DEATH },
   {  1,  5,   22, FLAT, MONS_BLIZZARD_DEMON },
   {  1,  5,   22, FLAT, MONS_BALRUG },
-  {  1,  5,   25, FLAT, MONS_CACODEMON },
+  {  1,  5,   25, FLAT, MONS_TITIVILUS },
   {  1, 10,   16, SEMI, MONS_SHADOW_DEMON },
   {  1,  5,   25, FLAT, MONS_EXECUTIONER },
   {  1,  5,   10, FLAT, MONS_HELL_SENTINEL },
@@ -949,7 +949,7 @@ static const pop_entry pop_pan[] =
   {  1,  1, 1000, FLAT, MONS_BALRUG },
   {  1,  1, 1000, FLAT, MONS_BLIZZARD_DEMON },
   {  1,  1, 1000, FLAT, MONS_GREEN_DEATH },
-  {  1,  1, 1000, FLAT, MONS_CACODEMON },
+  {  1,  1, 1000, FLAT, MONS_TITIVILUS },
   {  1,  1,  335, FLAT, MONS_GIBBERING_MOUND },
   {  1,  1,  335, FLAT, MONS_HELLION },
   {  1,  1,  335, FLAT, MONS_TORMENTOR },

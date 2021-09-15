@@ -68,7 +68,7 @@ void init_pandemonium()
                   4, MONS_GREEN_DEATH,
                   4, MONS_BLIZZARD_DEMON,
                   4, MONS_BALRUG,
-                  4, MONS_CACODEMON,
+                  4, MONS_TITIVILUS,
                   2, MONS_BLOOD_SAINT,
                   2, MONS_WARMONGER,
                   2, MONS_CORRUPTER,

@@ -7608,7 +7608,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
     {
         const monster_type servants[] = { MONS_EXECUTIONER, MONS_GREEN_DEATH,
                                           MONS_BLIZZARD_DEMON, MONS_BALRUG,
-                                          MONS_CACODEMON };
+                                          MONS_TITIVILUS };
         _summon(*mons, RANDOM_ELEMENT(servants), 5, slot);
         return;
     }

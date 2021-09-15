@@ -580,7 +580,7 @@ static bool _makhleb_summon_servants()
                                                    MONS_GREEN_DEATH,
                                                    MONS_BLIZZARD_DEMON,
                                                    MONS_BALRUG,
-                                                   MONS_CACODEMON);
+                                                   MONS_TITIVILUS);
         if (_makhleb_summon_servant(servant))
             summoned++;
     }

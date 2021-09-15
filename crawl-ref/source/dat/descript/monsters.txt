@@ -727,11 +727,6 @@ butterfly
 A large, brightly coloured butterfly with beautifully patterned wings,
 fluttering incongruously through the darkness of the cave.
 %%%%
-cacodemon
-
-A hideously ugly demon of rage and legendary power, it disables its foes before
-blasting them to pieces.
-%%%%
 catoblepas
 
 A sluggish black buffalo, its hide encrusted with dull scales. It carries its
@@ -2484,6 +2479,11 @@ titan
 
 A huge, bolt-hurling, lightning-limned humanoid. It is unusually large and
 powerful, even among giants.
+%%%%
+titivilus
+
+A hideously ugly demon of rage and legendary power; it has a penchant for 
+mutating errors into its foe's genetic makeup, before erasing them completely.
 %%%%
 thorn hunter
 

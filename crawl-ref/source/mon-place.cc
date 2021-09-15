@@ -1910,7 +1910,7 @@ static const map<monster_type, band_set> bands_by_leader = {
     { MONS_INSUBSTANTIAL_WISP, { {}, {{ BAND_INSUBSTANTIAL_WISPS, {2, 6} }}}},
     { MONS_OGRE_MAGE,       { {}, {{ BAND_OGRE_MAGE, {4, 8} }}}},
     { MONS_BALRUG,          { {}, {{ BAND_BALRUG, {2, 5}, true }}}},
-    { MONS_CACODEMON,       { {}, {{ BAND_CACODEMON, {1, 4}, true }}}},
+    { MONS_TITIVILUS,       { {}, {{ BAND_CACODEMON, {1, 4}, true }}}},
     { MONS_EXECUTIONER,     { {2}, {{ BAND_EXECUTIONER, {1, 4}, true }}}},
     { MONS_PANDEMONIUM_LORD, { {}, {{ BAND_PANDEMONIUM_LORD, {1, 4}, true }}}},
     { MONS_HELLWING,        { {2}, {{ BAND_HELLWING, {1, 5} }}}},
@@ -2444,7 +2444,7 @@ static const map<band_type, vector<member_possibilites>> band_membership = {
     { BAND_MNOLEG,              {{{MONS_TENTACLED_MONSTROSITY, 1}},
 
                                  {{MONS_TENTACLED_MONSTROSITY, 1},
-                                  {MONS_CACODEMON, 2},
+                                  {MONS_TITIVILUS, 2},
                                   {MONS_ABOMINATION_LARGE, 3},
                                   {MONS_VERY_UGLY_THING, 3},
                                   {MONS_NEQOXEC, 3}}}},
@@ -2634,7 +2634,7 @@ static monster_type _band_member(band_type band, int which,
         if (which == 1 || which == 2 && one_chance_in(3))
         {
             if (x_chance_in_y(2, 3))
-                return one_chance_in(4) ? MONS_CACODEMON : MONS_SHADOW_DEMON;
+                return one_chance_in(4) ? MONS_TITIVILUS : MONS_SHADOW_DEMON;
             else
                 return random_demonspawn_job();
         }
@@ -3189,7 +3189,7 @@ monster_type random_demon_by_tier(int tier)
         return random_choose(MONS_GREEN_DEATH,
                              MONS_BLIZZARD_DEMON,
                              MONS_BALRUG,
-                             MONS_CACODEMON,
+                             MONS_TITIVILUS,
                              MONS_HELL_BEAST,
                              MONS_HELLION,
                              MONS_REAPER,

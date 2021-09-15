@@ -3164,7 +3164,7 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
     case ABIL_MAKHLEB_GREATER_SERVANT_OF_MAKHLEB:
         summon_demon_type(random_choose(MONS_EXECUTIONER, MONS_GREEN_DEATH,
                                         MONS_BLIZZARD_DEMON, MONS_BALRUG,
-                                        MONS_CACODEMON),
+                                        MONS_TITIVILUS),
                           apply_invo_enhancer(20 + you.skill(SK_INVOCATIONS, 3),true),
                           GOD_MAKHLEB, 0, !fail);
         break;

@@ -595,7 +595,7 @@ enum monster_type                      // menv[].type
     MONS_GREEN_DEATH,
     MONS_BLIZZARD_DEMON,
     MONS_BALRUG,
-    MONS_CACODEMON,
+    MONS_TITIVILUS,
     MONS_SUN_DEMON,
     MONS_SHADOW_DEMON,
     MONS_HELL_SENTINEL,
