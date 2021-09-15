@@ -368,7 +368,7 @@ ITEM:   hat randart / robe randart / gloves randart / boots randart / \
 KITEM:  O = potion of cancellation q:2 ident:type
 KMONS:  O = player ghost
 MONS:   shapeshifter, glowing orange brain, very ugly thing
-MONS:   glowing shapeshifter, cacodemon, tentacled monstrosity
+MONS:   glowing shapeshifter, titivilus, tentacled monstrosity
 NSUBST: - = 2=P / 2=P; / ;, ' = 2=P` / `
 NSUBST: ; = d / d. / 4=e / 4=3 / 4=3. / 2 / 2. / 2=6 / 2=6. / .
 NSUBST: " = 3=d / d. / e / f / ", ` = 4=1 / 4=1. / 4 / 3=4. / 5 / 2=5. / .

@@ -2548,7 +2548,7 @@ DEPTH:  D:6-, Depths
 WEIGHT: 5
 MONS:   obsidian statue, lesser demon, common demon
 MONS:   efreet / large abomination / rakshasa
-MONS:   shadow demon / green death / blizzard demon / balrug / cacodemon / \
+MONS:   shadow demon / green death / blizzard demon / balrug / titivilus / \
         hell beast / hellion / reaper / lorocyproca / tormentor
 KITEM:  | = superb_item / any good_item / any w:5
 : if you.in_branch("Depths") then

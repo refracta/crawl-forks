@@ -1214,7 +1214,7 @@ DEPTH: D:2-
 KFEAT: _ = altar_makhleb
 KPROP: 12 = no_tele_into
 KMASK: 12 = no_trap_gen
-MONS:  executioner / balrug / green death / cacodemon / blizzard demon
+MONS:  executioner / balrug / green death / titivilus / blizzard demon
 MONS:  orange demon / ynoxinul / neqoxec / hellwing / smoke demon
 : interest_check(_G)
 MAP
@@ -3106,7 +3106,7 @@ TAGS:   temple_overflow_2 temple_overflow_makhleb temple_overflow_zin
 TAGS:   transparent
 KFEAT:  A = altar_makhleb
 KFEAT:  B = altar_zin
-MONS:   executioner / balrug / green death / cacodemon / blizzard demon
+MONS:   executioner / balrug / green death / titivilus / blizzard demon
 MONS:   angel god:zin dbname:zin_angel
 SUBST:  ; = -_
 KPROP:  - = bloody / nothing

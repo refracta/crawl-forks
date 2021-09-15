@@ -542,7 +542,7 @@ function arena_sprint_get_monster_set(round, boss)
                 "hellephant w:15 / w:1 nellie",
                 -- Elements/hells, Holy
                 "hell sentinel / iron dragon / quicksilver dragon /\
-                    iron elemental / stone giant / cacodemon",
+                    iron elemental / stone giant / titivilus",
                 "orb of fire / brimstone fiend / balrug / hellion /\
                     fire giant / sun demon",
                 "place:Coc:$ w:20 / ice fiend / blizzard demon / ice devil /\
@@ -612,7 +612,7 @@ function arena_sprint_get_monster_set(round, boss)
                 "sphinx w:20 / greater mummy",
                 "hellephant w:15 / w:1 nellie",
                 -- Elements/hells, Holy
-                "hell sentinel / quicksilver dragon w:20 / iron elemental / cacodemon",
+                "hell sentinel / quicksilver dragon w:20 / iron elemental / titivilus",
                 "orb of fire w:20 / brimstone fiend / balrug / hellion w:20 /\
                     fire giant",
                 "ice fiend / blizzard demon / ice devil /\
@@ -747,7 +747,7 @@ function arena_sprint_init_boss_table()
     bs[8] = {"place:Geh:$", "asmodeus", "obsidian rune of zot"}
     bs[9] = {"place:Coc:$", "antaeus", "icy rune of zot"}
     -- Pan sets are based on those in pan.des
-    bs[10] = {"neqoxec / cacodemon / tormentor / tentacled monstrosity / " ..
+    bs[10] = {"neqoxec / titivilus / tormentor / tentacled monstrosity / " ..
               "floating eye / golden eye / eye of devastation / " ..
               "eye of draining / shining eye", "mnoleg", "glowing rune of zot"}
     bs[11] = {"smoke demon / blizzard demon / green death / rakshasa / " ..

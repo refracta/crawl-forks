@@ -9133,7 +9133,7 @@ COLOUR: q = lightblue
 COLOUR: c = blue
 TILE:   q = DNGN_TRANSPARENT_RUNED_STONE_BLUE
 : else
-KMONS: 1HK = cacodemon
+KMONS: 1HK = titivilus
 :   if you.in_branch("Crypt") then
 KMONS: 2 = ancient lich
 NSUBST: 8 = 2 / 8

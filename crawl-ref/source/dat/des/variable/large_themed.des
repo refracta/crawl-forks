@@ -1012,7 +1012,7 @@ SUBST:  b = v, B = .
 MONS:   hell knight
 MONS:   kobold demonologist, deep elf demonologist
 # these demons are the same ones you get from greater/lesser servant
-MONS:   blizzard demon / green death / patrolling executioner / balrug / cacodemon
+MONS:   blizzard demon / green death / patrolling executioner / balrug / titivilus
 MONS:   orange demon / ynoxinul / w:4 neqoxec / hellwing / smoke demon
 # depth controls the number of greater servants... amount ranges from 1 to 3
 : if you.absdepth() < 21 then
@@ -1485,7 +1485,7 @@ ORIENT: north
 TAGS:   no_monster_gen
 DEPTH:  Depths:2-
 MONS:   common demon, hell knight
-MONS:   shadow demon / green death / blizzard demon / balrug / cacodemon / \
+MONS:   shadow demon / green death / blizzard demon / balrug / titivilus / \
         hell beast / hellion / reaper / lorocyproca / tormentor
 NSUBST: . = 7:1 / 7:2 / *:.
 FTILE:  .|#+G123 = floor_pebble_darkgray

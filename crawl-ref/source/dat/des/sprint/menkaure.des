@@ -476,7 +476,7 @@ TAGS:   sprint2_second_timed_cluster no_item_gen no_trap_gen no_monster_gen no_p
     } }}
 KITEM:  $ = gold q:81
 SHUFFLE: 123, 456
-MONS:   golden dragon, Cacodemon, storm dragon, skeletal warrior, kobold demonologist, yaktaur captain
+MONS:   golden dragon, titivilus, storm dragon, skeletal warrior, kobold demonologist, yaktaur captain
 KMONS:  d = elephant
 KMONS:  e = centaur warrior
 KMONS:  f = Circe

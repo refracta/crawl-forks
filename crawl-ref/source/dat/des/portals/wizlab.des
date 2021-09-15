@@ -720,7 +720,7 @@ KMONS:      | = electric golem
 KMONS:      0% = smoke demon / ynoxinul / neqoxec w:6 / ice devil /\
                  soul eater / sun demon
 KMONS:      * = lorocyproca / reaper / shadow demon / tormentor / hellion /\
-                blizzard demon / green death / balrug / cacodemon
+                blizzard demon / green death / balrug / titivilus
 KMONS:      | = hell sentinel / brimstone fiend / tzitzimitl /\
                 ice fiend / executioner
 :           set_random_mon_list(
@@ -1342,7 +1342,7 @@ KMONS:   95 = ynoxinul / smoke demon / sixfirhy / sun demon w:5 / efreet w:5 / \
               ugly thing / base draconian / guardian serpent / \
               eidolon w:5 / shadow wraith / anaconda skeleton w:5 / \
               great orb of eyes w:5 / glowing orange brain
-KMONS:   6 = executioner w:5 / balrug w:5 / cacodemon / shadow demon / hellion w:5 / \
+KMONS:   6 = executioner w:5 / balrug w:5 / titivilus / shadow demon / hellion w:5 / \
              tormentor w:5 / lorocyproca w:5 / blizzard demon / \
              reaper / lich w:5 / angel / profane servitor w:5 / \
              death drake w:5 / tentacled monstrosity w:20 / olive draconian shifter w:20 / \
@@ -1667,7 +1667,7 @@ MARKER:     h = lua:fog_machine { \
                 size_buildup_time = 25, cloud_type = "flame", \
                 excl_rad = 0 }
 KMONS:      1 = any common demon
-KMONS:      2 = balrug / blizzard demon / cacodemon / green death \
+KMONS:      2 = balrug / blizzard demon / titivilus / green death \
             / hell beast / hellion / lorocyproca / shadow demon / tormentor
 KMONS:      3 = blood saint / black sun
 {{
@@ -1690,7 +1690,7 @@ NSUBST:     ` = 2:1 / 2:2 / 3=12...., ; = 2:1 / 2:2 / 3=12....
 NSUBST:     3 = 1:3 / 1, ~ = 2:1 / 3:2 / 4 / 9=12.... / ., f = 1:g / f
 {{
 set_random_mon_list("common demon w:200 / balrug / blizzard demon / \
-                     cacodemon / green death / hell beast / hellion / \
+                     titivilus / green death / hell beast / hellion / \
                      lorocyproca / shadow demon / tormentor \
                      / blood saint w:5 / black sun w:5")
 wizlab_setup(_G)
@@ -1783,7 +1783,7 @@ MONS:       eye of devastation / stone giant / w:15 tentacled starspawn
 MONS:       w:20 glowing orange brain / w:12 great orb of eyes / w:5 neqoxec \
             / w:3 golden eye band
 MONS:       starcursed mass / brown very ugly thing band
-MONS:       cacodemon
+MONS:       titivilus
 MONS:       quicksilver dragon / war gargoyle / crystal guardian \
             / wretched star
 MONS:       orange crystal statue name:lunar_statue n_rpl n_des \
@@ -1796,7 +1796,7 @@ mons("patrolling moon troll ; moon troll leather")
 set_random_mon_list ("rust devil w:20 / eye of devastation / stone giant " ..
                      "/ tentacled starspawn / great orb of eyes " ..
                      "/ neqoxec w:5 / golden eye w:5 / very ugly thing w:5 " ..
-                     "/ starcursed mass w:5 / cacodemon w:5")
+                     "/ starcursed mass w:5 / titivilus w:5")
 }}
 ITEM:       potion of cure mutation / potion of beneficial mutation
 ITEM:       acquire any

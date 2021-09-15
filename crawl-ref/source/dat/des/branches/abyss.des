@@ -495,7 +495,7 @@ ENDMAP
 NAME:    hangedman_abyss_lost_library
 TAGS:    patrolling no_monster_gen no_item_gen
 MONS:    guardian serpent, great orb of eyes, glowing orange brain
-MONS:    boggart, rakshasa, cacodemon, shadow demon
+MONS:    boggart, rakshasa, titivilus, shadow demon
 KMONS:   0 = wizard
 KMONS:   8 = orc sorcerer
 KMONS:   9 = sphinx
@@ -1149,7 +1149,7 @@ KMONS:  1 = glowing orange brain
 KMONS:  2 = golden eye / eye of draining w:4 / floating eye w:2
 KMONS:  3O = flying skull
 KMONS:  4 = large abomination / small abomination w:6 / macabre mass w:2
-KMONS:  5 = cacodemon
+KMONS:  5 = titivilus
 KMONS:  6 = executioner
 KMONS:  7 = shining eye
 KMONS:  8 = titanic slime creature
@@ -1601,7 +1601,7 @@ TAGS:    abyss_rune unrand
 MONS:    draconian, nonbase draconian
 MONS:    wretched star / starcursed mass / apocalypse crab / lurking horror \
          / very ugly thing / quicksilver dragon / shadow dragon
-MONS:    balrug / hellion / lorocyproca / tormentor / cacodemon / reaper \
+MONS:    balrug / hellion / lorocyproca / tormentor / titivilus / reaper \
          / blizzard demon / executioner / angel / daeva
 KMONS:   R = hellephant / ancient lich / hell sentinel / profane servitor
 KITEM:   O = abyssal rune of Zot
