@@ -2661,7 +2661,7 @@ static coord_def _pick_target(bolt beam, int max_dist)
         const int cur_dist = grid_distance(you.pos(), *ri);
 
         if (!in_bounds(*ri) || !cell_see_cell(you.pos(), *ri, LOS_SOLID)
-            || is_feat_dangerous(grd(*ri)) || actor_at(*ri) || !you.can_pass_through(*ri))
+            || actor_at(*ri) || is_feat_dangerous(grd(*ri)) || !you.can_pass_through(*ri))
         {
             continue;
         }
@@ -2696,13 +2696,16 @@ static coord_def _pick_target(bolt beam, int max_dist)
     return retval;
 }
 
-static int _single_dash(bolt beam, int dash_range)
+static int _single_dash(bolt beam, int dash_range, bool just_check = false)
 {
     beam.source = you.pos();
     beam.target = _pick_target(beam, min(dash_range, 4 + random2(4)));
 
     if (beam.target.origin())
         return 0;
+
+    if (just_check)
+        return 1;
 
     const int retval = grid_distance(you.pos(), beam.target);
     beam.fire();
@@ -2715,8 +2718,6 @@ static int _single_dash(bolt beam, int dash_range)
 
 spret cast_dash(int pow, bool fail)
 {
-    fail_check();
-
     bolt beam;
 
     beam.origin_spell = SPELL_UNSTABLE_FIERY_DASH;
@@ -2737,8 +2738,23 @@ spret cast_dash(int pow, bool fail)
         beam.damage.num++;
 
     int dash_range = 20 + random2avg(pow / 2, 3);
+    if (!_single_dash(beam, dash_range, true))
+    {
+        mprf(MSGCH_WARN, "There's nowhere to dash to.");
+        return spret::abort;
+    }
+    fail_check();
+
     while (dash_range > 2)
-        dash_range -= _single_dash(beam, dash_range);
+    {
+        const int dec = _single_dash(beam, dash_range);
+        if (dec == 0)
+        {
+            mprf(MSGCH_WARN, "You ran out of space to dash.");
+            dash_range -= 1000;
+        }
+        dash_range -= dec;
+    }
 
     for (monster_iterator mi; mi; ++mi)
         mi->props[DASH_KEY] = false;
