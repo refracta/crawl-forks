@@ -109,7 +109,7 @@ Ossuary portals removed and their vaults placed randomly (one small and one larg
 
 ![Octopode](https://github.com/Bcadren/crawl/blob/bCrawl/crawl-ref/source/rltiles/player/base/octopode1.png) Octopodes are now allowed to use 2Hers one-handed, like Formacids; but they sacrifice how many arms they have left to move with; the heavier equipment you have wielded, the lower your evasion and the slower your move.
 
-![Scintillating Draconian](https://github.com/Bcadren/crawl/blob/bCrawl/crawl-ref/source/rltiles/player/drchead/drchead_scintillating.png) Draconians majorly reworked to add a massive variety of new colours. They now poor apts, excluding those buffed by their ancestry to enforce the 'randomized character' intention of the design more heavily; but this ancestry will also buff two random weapon skills and a random defensive skill (dodging/stealth/shields).
+![Scintillating Draconian](https://github.com/Bcadren/crawl/blob/bCrawl/crawl-ref/source/rltiles/player/drchead/drchead_scintillating.png) Draconians majorly reworked to add a massive variety of new colours. They now have poor apts, excluding those buffed by their ancestry to enforce the 'randomized character' intention of the design more heavily; but this ancestry will also buff two random weapon skills and a random defensive skill (dodging/stealth/shields).
 
 ### Hybrid Backgrounds
 
