@@ -3075,10 +3075,14 @@ NAME: nicolae_arrival_washed_ashore
 ORIENT: northwest
 TAGS: arrival no_monster_gen no_pool_fixup
 SUBST: B = bb., S = bWW, Z = WWw
+NSUBST: w = 3:1 / *:w
 COLOUR: b : brown
+COLOUR: 1Ww = cyan
 FTILE: b{ = floor_sand
 KFEAT: O = open_sea
 KFEAT: b = .
+KFEAT: 1 = w
+KMONS: 1 = jellyfish
 MAP
 OOOOOOOOOOOOOOOOOOOOOx
 Owwwwwwwwwwwwwwwwxxxxx
