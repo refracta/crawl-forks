@@ -57,6 +57,7 @@
 #include "stepdown.h"
 #include "stringutil.h"
 #include "target.h"
+#include "teleport.h"
 #include "terrain.h"
 #include "transform.h"
 #include "traps.h"
@@ -2661,7 +2662,7 @@ static coord_def _pick_target(bolt beam, int max_dist)
         const int cur_dist = grid_distance(you.pos(), *ri);
 
         if (!in_bounds(*ri) || !cell_see_cell(you.pos(), *ri, LOS_SOLID)
-            || actor_at(*ri) || is_feat_dangerous(grd(*ri)) || !you.can_pass_through(*ri))
+            || *ri == you.pos() || is_feat_dangerous(grd(*ri)) || !you.can_pass_through(*ri))
         {
             continue;
         }
@@ -2670,6 +2671,19 @@ static coord_def _pick_target(bolt beam, int max_dist)
         fire_tracer(&you, beam);
 
         if (beam.friend_info.count)
+            continue;
+
+        bool abort = false;
+        for (int i = 0; i <= (int)beam.path_taken.size(); i++)
+        {
+            if (monster * mons = monster_at(beam.path_taken[i]))
+            {
+                if (mons->is_stationary() || mons_is_tentacle_head(mons->type))
+                    abort = true;
+            }
+        }
+
+        if (abort)
             continue;
 
         if (beam.foe_info.count > max_foes)
@@ -2710,7 +2724,26 @@ static int _single_dash(bolt beam, int dash_range, bool just_check = false)
     const int retval = grid_distance(you.pos(), beam.target);
     beam.fire();
     scaled_delay(30);
-    you.move_to_pos(beam.target);
+
+    int moved = 0;
+
+    for (int i = 0; i < (int)beam.path_taken.size(); i++)
+    {
+        if (monster * mons = monster_at(beam.path_taken[i]))
+        {
+            const coord_def pos = (i == 0) ? you.pos() : beam.path_taken[i - 1];
+
+            mons->move_to_pos(pos, true, true);
+            mons_relocated(mons);
+            moved++;
+        }
+    }
+
+    if (moved)
+        mprf("The monster%s are pulled backwards by the vacuum left in your wake!", moved > 1 ? "s" : "");
+
+    move_player_to_grid(beam.target, false);
+
     redraw_screen();
     more();
     return retval;

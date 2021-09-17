@@ -605,9 +605,12 @@ void move_player_to_grid(const coord_def& p, bool stepped)
     ASSERT(you.can_pass_through_feat(grd(p)));
 
     // Better not be an unsubmerged monster either.
+    // BCADNOTE: Had to kill this ASSERT for Unstable Fiery Dash.
+    /*
     ASSERT(!monster_at(p)
            || fedhas_passthrough(monster_at(p))
            || mons_is_player_shadow(*monster_at(p)));
+    */
 
     // Move the player to new location.
     you.moveto(p, true);

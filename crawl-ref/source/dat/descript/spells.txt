@@ -1964,17 +1964,23 @@ creations.
 %%%%
 Unstable Fiery Dash spell
 
-Infuses the caster with extremely strong, but uncontrollable speed.  
+Infuses the caster with extremely strong, but uncontrollable energy.  
 The caster dashes through random enemies they can see repeatedly until this 
-energy runs out; dealing physical and fire damage to those they pass through 
-and leaving trails of fire in their wake.
+energy runs out; this deals physical and fire damage to those they pass through 
+and leaves trails of fire in their wake. Certain hefty monsters, such as 
+statues and those with tentacles that extend beyond their base tile cannot 
+be dashed through; all others will be pulled back by the vacuum left in 
+your wake.
 %%%%
 Chaos Dash spell
 
-Infuses the caster with extremely strong, but uncontrollable speed.  
+Infuses the caster with extremely strong, but uncontrollable energy.  
 The caster dashes through random enemies they can see repeatedly until this 
-energy runs out; dealing randomized elemental damage to those they pass through 
-and leaving trails of chaos clouds behind in their wake.
+energy runs out; this deals randomized elemental damage to those they pass through 
+and leaves trails of chaos clouds behind in their wake. Certain hefty monsters, 
+such as statues and those with tentacles that extend beyond their base tile 
+cannot be dashed through; all others will be pulled back by the vacuum left in 
+your wake.
 %%%%
 Upheaval spell
 
