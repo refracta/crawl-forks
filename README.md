@@ -168,7 +168,7 @@ If you like the game and you want to help make it better, there are a number
 of ways to do so. 
 
 ### Financial Contributions
-The fork has a [Patreon] for those so inclined. I won't active solicit donations too much; but more time consuming feature requests are more likely to taken seriously or given priority when they come from a patron.
+The fork has a [Patreon](https://www.patreon.com/Bcadren) for those so inclined. I won't active solicit donations too much; but more time consuming feature requests are more likely to taken seriously or given priority when they come from a patron.
 
 ### Reporting bugs
 
