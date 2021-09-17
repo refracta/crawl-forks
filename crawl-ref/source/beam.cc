@@ -5966,6 +5966,9 @@ void bolt::affect_monster(monster* mon)
         return;
     }
 
+    if (origin_spell == SPELL_UNSTABLE_FIERY_DASH)
+        mon->props[DASH_KEY] = true;
+
     if (flavour == BEAM_MISSILE && item)
     {
         ranged_attack attk(agent(true), mon, item, use_target_as_pos, agent());
