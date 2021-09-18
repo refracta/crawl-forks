@@ -55,7 +55,7 @@ Ranged combat was reworked to be most effective against enemies 3-5 spaces away 
 
 #### Pits of Slime
 ![Slime Pits](https://github.com/Bcadren/crawl/blob/bCrawl/crawl-ref/source/rltiles/dngn/gateways/enter_slime.png)
-Slime Pits reworked to have actual caustic pools of ooze and unique mushroom trees in the slime with a much larger variety of slime monsters throughout. The climatic battle with the Royal Jelly also got an overhaul.
+Slime Pits reworked to have actual caustic pools of ooze and unique mushroom trees in the slime with a much larger variety of slime monsters throughout. The climactic battle with the Royal Jelly also got an overhaul.
 
 #### Sewer
 ![Sewer](https://github.com/Bcadren/crawl/blob/bCrawl/crawl-ref/source/rltiles/dngn/gateways/sewer_portal.png)
@@ -107,7 +107,7 @@ Ossuary portals removed and their vaults placed randomly (one small and one larg
 
 ### Reworked Vanilla Races
 
-![Octopode](https://github.com/Bcadren/crawl/blob/bCrawl/crawl-ref/source/rltiles/player/base/octopode1.png) Octopodes are now allowed to use 2Hers one-handed, like Formacids; but they sacrifice how many arms they have left to move with; the heavier equipment you have wielded, the lower your evasion and the slower your move.
+![Octopode](https://github.com/Bcadren/crawl/blob/bCrawl/crawl-ref/source/rltiles/player/base/octopode1.png) Octopodes are now allowed to use 2Hers one-handed, like Formicids; but they sacrifice how many arms they have left to move with; the heavier equipment you have wielded, the lower your evasion and the slower your move.
 
 ![Scintillating Draconian](https://github.com/Bcadren/crawl/blob/bCrawl/crawl-ref/source/rltiles/player/drchead/drchead_scintillating.png) Draconians majorly reworked to add a massive variety of new colours. They now have poor apts, excluding those buffed by their ancestry to enforce the 'randomized character' intention of the design more heavily; but this ancestry will also buff two random weapon skills and a random defensive skill (dodging/stealth/shields).
 
