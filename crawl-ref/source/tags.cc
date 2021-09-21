@@ -2988,6 +2988,13 @@ static void tag_read_you(reader &th)
             you.mutation[MUT_SILENCE_AURA] = you.innate_mutation[MUT_SILENCE_AURA] = 2;
     }
 
+    // BCADDO: Minor version for this:
+    if (you.char_class == JOB_NAGA && you.innate_mutation[MUT_FAST])
+    {
+        you.mutation[MUT_FAST] -= you.innate_mutation[MUT_FAST];
+        you.innate_mutation[MUT_FAST] = 0;
+    }
+
     if (th.getMinorVersion() < TAG_MINOR_ICICLE_CASCADE)
     {
         if (species_is_draconian(you.species))
