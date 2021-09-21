@@ -533,7 +533,7 @@ tier2_gauntlet_arenas = {
     weight = 5
   },
   {
-    first  = {mons = "cacodemon", min = 1, max = 1},
+    first  = {mons = "titivilus", min = 1, max = 1},
     second = {mons = "neqoxec", min = 0, max = 3},
     loot   = "potion of mutation ident:type",
     plant  = "demonic",
