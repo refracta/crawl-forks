@@ -160,10 +160,20 @@ spret cast_poisonous_vapours(int pow, const dist &beam, bool fail)
         return spret::success; // still losing a turn
     }
 
-    if (actor_cloud_immune(*mons, CLOUD_POISON) && mons->observable())
+    const bool possible_chaos = determine_chaos(&you, SPELL_POISONOUS_VAPOURS, false);
+    const bool chaos = determine_chaos(&you, SPELL_POISONOUS_VAPOURS);
+
+    if ((!possible_chaos && actor_cloud_immune(*mons, CLOUD_POISON)) && mons->observable())
     {
         mprf("But poisonous vapours would do no harm to %s!",
              mons->name(DESC_THE).c_str());
+        return spret::abort;
+    }
+
+    if (possible_chaos && mons->cloud_immune() && mons->observable())
+    {
+        mprf("Clouds can do no harm to %s!",
+            mons->name(DESC_THE).c_str());
         return spret::abort;
     }
 
@@ -171,9 +181,8 @@ spret cast_poisonous_vapours(int pow, const dist &beam, bool fail)
         return spret::abort;
 
     cloud_struct* cloud = cloud_at(beam.target);
-    if (cloud && cloud->type != CLOUD_POISON)
+    if (cloud && cloud->type != CLOUD_POISON && cloud->type != CLOUD_MEPHITIC)
     {
-        // XXX: consider replacing the cloud instead?
         mpr("There's already a cloud there!");
         return spret::abort;
     }
@@ -184,14 +193,20 @@ spret cast_poisonous_vapours(int pow, const dist &beam, bool fail)
     if (cloud)
     {
         // Reinforce the cloud.
-        mpr("The poisonous vapours increase!");
+        mprf("The poisonous vapours %s!", chaos ? "aberrate" : "increase");
         cloud->decay += cloud_duration * 10; // in this case, we're using auts
         cloud->set_whose(KC_YOU);
+        cloud->type = CLOUD_POISON;
+        if (chaos)
+        {
+            cloud_type cl = CLOUD_POISON;
+            while (cl == CLOUD_POISON || cl == CLOUD_MEPHITIC)
+                cl = chaos_cloud(true);
+            cloud->type = cl;
+        }
     }
     else
     {
-        bool chaos = determine_chaos(&you, SPELL_POISONOUS_VAPOURS);
-
         place_cloud(chaos ? chaos_cloud(true) : CLOUD_POISON, beam.target, cloud_duration, &you);
         mprf("%s vapours surround %s!", chaos ? "Random" : "Poisonous", mons->name(DESC_THE).c_str());
     }
