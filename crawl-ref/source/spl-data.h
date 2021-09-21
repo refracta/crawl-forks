@@ -206,10 +206,10 @@ static const struct spell_desc spelldata[] =
     SPELL_SLOW, "Slow", "",
     spschool::hexes,
     spflag::dir_or_target | spflag::needs_tracer | spflag::MR_check,
-    2,
+    1,
     200,
     LOS_RADIUS, LOS_RADIUS,
-    2, 0,
+    0, 0,
     TILEG_SLOW,
 },
 
