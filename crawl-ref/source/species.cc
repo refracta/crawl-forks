@@ -537,6 +537,7 @@ void give_basic_mutations(species_type species)
     if (you.char_class == JOB_NAGA)
     {
         you.mutation[MUT_ACUTE_VISION] = you.innate_mutation[MUT_ACUTE_VISION] = 1;
+        you.mutation[MUT_FAST] = you.innate_mutation[MUT_FAST] = 0;
         you.mutation[MUT_SLOW] = you.innate_mutation[MUT_SLOW] = 2;
         you.mutation[MUT_SPIT_POISON] = you.innate_mutation[MUT_SPIT_POISON] = 1;
         you.mutation[MUT_POISON_RESISTANCE] = you.innate_mutation[MUT_POISON_RESISTANCE] = 1;
