@@ -815,14 +815,11 @@ const string make_cost_description(ability_type ability)
     if (ability_mp_cost(abil.ability))
         ret += make_stringf(", %d MP", ability_mp_cost(abil.ability));
 
-    if (ability == ABIL_HEAL_WOUNDS)
-        ret += make_stringf(", Permanent MP (%d left)", get_real_mp(false));
-
     if (abil.hp_cost)
         ret += make_stringf(", %d HP", abil.hp_cost.cost(you.hp_max));
 
     if (abil.food_cost && !you_foodless())
-        ret += make_stringf(", %d Nutrition", abil.food_cost);
+        ret += make_stringf(", %d Nutr", abil.food_cost);
 
     if (abil.piety_cost)
         ret += make_stringf(", %d Piety", abil.piety_cost);
@@ -842,7 +839,7 @@ const string make_cost_description(ability_type ability)
     if (abil.flags & abflag::exhaustion)
         ret += ", Exhaustion";
 
-    if (abil.flags & abflag::instant)
+    if (bool(abil.flags & abflag::instant) && (abil.ability != ABIL_CHEIBRIADOS_DISTORTION))
         ret += ", Instant"; // not really a cost, more of a bonus - bwr
 
     if (abil.flags & abflag::skill_drain)
@@ -921,9 +918,7 @@ static const string _detailed_cost_description(ability_type ability)
         if (abil.flags & abflag::piety)
             ret << "variable";
         else
-        {
             ret << abil.piety_cost;
-        }
     }
 
     if (abil.flags & abflag::gold)
