@@ -410,9 +410,8 @@ const vector<god_power> god_powers[NUM_GODS] =
       { 6, ABIL_CHOOSE_TIAMAT_TRANSFORM, "This should never show.", "This should never show.", "repeatedly transform into other common draconian colours"},
       { 6, ABIL_TIAMAT_TRANSFORM, "transform into a different draconian colour" },
       { 7, ABIL_BAHAMUT_DRAGONSLAYING, "You are offered one final gift. Bahamut offers to brand your weapon with Dragonslaying and Tiamat offers a"
-                " Book of the Dragon, along with a permanent Wizardry bonus for spells therein.", "Bahamut & Tiamat are no longer ready to give you your"
-                " final gift.", "brand one of your weapons with Dragonslaying"},
-      { 7, ABIL_TIAMAT_DRAGON_BOOK, "receive the book of the dragon and a wizardry bonus for the spells it contains" },
+                " Book of the Dragon", "Bahamut & Tiamat are no longer ready to give you your final gift.", "brand one of your weapons with Dragonslaying"},
+      { 7, ABIL_TIAMAT_DRAGON_BOOK, "receive the book of the dragon" },
     },
 };
 

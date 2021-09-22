@@ -2319,10 +2319,7 @@ bool final_book_gift(god_type god)
     }
     set_ident_type(mitm[thing_created], true);
     if (god == GOD_BAHAMUT_TIAMAT)
-    {
         mprf(MSGCH_GOD, "<lightgreen>Tiamat grants you a gift!</lightgreen>");
-        you.props[TIAMAT_BOOK_KEY] = true;
-    }
     else
         simple_god_message(" grants you a gift!");
     flash_view(UA_PLAYER, god == GOD_KIKUBAAQUDGHA ? RED : LIGHTGREEN);
