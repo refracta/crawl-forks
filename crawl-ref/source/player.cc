@@ -560,7 +560,12 @@ void moveto_location_effects(dungeon_feature_type old_feat,
             {
                 if (!you.petrified())
                     mprf(MSGCH_WARN, "You %s the boiling magma.", stepped ? "enter" : "fall into");
-                mprf(MSGCH_WARN, "This stuff is boiling hot and burns your %s!", you.mounted() ? "mount" : "body");
+
+                if (you.species == SP_MOLTEN_GARGOYLE & !you.mounted())
+                    mpr("This stuff feels comfortably warm against your molten body.");
+                else
+                    mprf(MSGCH_WARN, "This stuff is boiling hot and burns your %s!", you.mounted() ? "mount" : "body");
+
                 if (!you.petrified())
                     mprf(MSGCH_WARN, "The liquefied rock is difficult to stand upon; moving through it is going to be slow.");
             }

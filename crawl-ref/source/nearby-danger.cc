@@ -299,7 +299,7 @@ bool i_feel_safe(bool announce, bool want_move, bool just_monsters,
                 {
                     if (you.airborne())
                         mprf(MSGCH_WARN, "The terrain you're above will be dangerous once your flight expires!");
-                    else
+                    else if (you.species != SP_MOLTEN_GARGOYLE)
                         mprf(MSGCH_WARN, "You're standing in boiling hot magma!");
                 }
                 return false;
