@@ -905,6 +905,20 @@ static formatted_string _describe_god_powers(god_type which_god)
         break;
     }
 
+    case GOD_VEHUMET:
+    {
+        have_any = true;
+        if (you.penance[GOD_VEHUMET] || !you_worship(GOD_VEHUMET))
+            desc.textcolour(DARKGREY);
+        else
+            desc.textcolour(god_colour(which_god));
+        const bool spells = (you.num_total_gifts[GOD_VEHUMET] < 14);
+        desc.cprintf("%s grants you gifts of magicals staves%s as you gain piety.\n",
+            uppercase_first(god_name(which_god)).c_str(),
+            spells ? " and the knowledge of destructive spells" : "");
+        break;
+    }
+
     case GOD_SHINING_ONE:
     {
         have_any = true;
