@@ -2875,6 +2875,8 @@ spret cast_cascade(const actor *agent, int pow, bool fail)
         if (_is_menacing(&you, SPELL_ICICLE_CASCADE))
             beam_actual.damage.num++;
 
+        beam_actual.set_agent(&you);
+        beam_actual.origin_spell = SPELL_ICICLE_CASCADE;
         beam_actual.use_target_as_pos = true;
         beam_actual.flavour = flavour;
         beam_actual.real_flavour = flavour;
@@ -2893,8 +2895,9 @@ spret cast_cascade(const actor *agent, int pow, bool fail)
 
         for (coord_def pos : blast_sources)
         {
-            beam_actual.target = pos;
-            beam_actual.affect_cell();
+            beam_actual.use_target_as_pos = true;
+            beam_actual.target = beam_actual.source = pos;
+            beam_actual.fire();
         }
     }
 
