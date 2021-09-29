@@ -4796,6 +4796,9 @@ spret cast_imb(int pow, bool fail)
 
 void actor_apply_toxic_bog(actor * act)
 {
+    if (!act->alive())
+        return;
+
     if (grd(act->pos()) != DNGN_TOXIC_BOG && grd(act->pos()) != DNGN_QUAGMIRE)
         return;
 
@@ -4881,7 +4884,7 @@ void actor_apply_toxic_bog(actor * act)
         else if (final_damage > 0)
             act->poison(oppressor, 21, true);
     }
-    else if (final_damage)
+    else if (final_damage && act->alive())
     {
         if (one_chance_in(3))
             chaotic_status(act, final_damage, oppressor);
@@ -4890,7 +4893,6 @@ void actor_apply_toxic_bog(actor * act)
 
     if (final_damage)
     {
-
         const string oppr_name =
             oppressor ? " "+apostrophise(oppressor->name(DESC_THE))
                       : "";
