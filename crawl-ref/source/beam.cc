@@ -5660,7 +5660,7 @@ void bolt::monster_post_hit(monster* mon, int dmg)
             switch (random2(3))
             {
             case 0:
-                if (mon->check_res_magic(drac_breath_power(true) * 3))
+                if (mon->check_res_magic(drac_breath_power(true) * 3) <= 0)
                 {
                     if (_cigotuvi(mon, &you))
                         break;
