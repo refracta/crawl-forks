@@ -1726,7 +1726,7 @@ static void _generate_scroll_item(item_def& item, int force_type,
                  27, SCR_VULNERABILITY,
                  17, SCR_SUMMONING,
                  15, SCR_ACQUIREMENT,
-                 15, SCR_NOISE,
+                 15, SCR_ATTENTION,
                  15, SCR_SILENCE,
                  15, SCR_TORMENT,
                  15, SCR_HOLY_WORD);

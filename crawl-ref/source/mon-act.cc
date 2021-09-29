@@ -1164,13 +1164,17 @@ static bool _handle_scroll(monster& mons)
         }
         break;
 
-    case SCR_NOISE:
+    case SCR_ATTENTION:
         if (!mons.wont_attack())
         {
             simple_monster_message(mons, " reads a scroll.");
             mpr("You hear a loud clanging noise!");
             noisy(30, mons.pos(), mons.mid);
-            you.sentinel_mark();
+            const int res_margin = you.check_res_magic(100);
+            if (res_margin > 0)
+                mprf("You%s", you.resist_margin_phrase(res_margin).c_str());
+            else
+                you.sentinel_mark();
             read = true;
         }
         break;

@@ -770,7 +770,7 @@ static const char* scroll_type_name(int scrolltype)
     {
     case SCR_TELEPORTATION:      return "teleportation";
     case SCR_FEAR:               return "fear";
-    case SCR_NOISE:              return "attention";
+    case SCR_ATTENTION:              return "attention";
     case SCR_SUMMONING:          return "summoning";
     case SCR_ENCHANT:            return "enchantment";
     case SCR_TORMENT:            return "torment";
@@ -3568,7 +3568,7 @@ bool is_dangerous_item(const item_def &item, bool temp)
         switch (item.sub_type)
         {
         case SCR_IMMOLATION:
-        case SCR_NOISE:
+        case SCR_ATTENTION:
         case SCR_VULNERABILITY:
         case SCR_SILENCE:
             return true;

@@ -4282,7 +4282,7 @@ void read_scroll(item_def& scroll)
         mass_enchantment(ENCH_FEAR, 1000);
         break;
 
-    case SCR_NOISE:
+    case SCR_ATTENTION:
         you.increase_duration(DUR_SENTINEL_MARK, 40 + random2(40), 80);
         noisy(25, you.pos(), "You hear a loud clanging noise!");
         break;

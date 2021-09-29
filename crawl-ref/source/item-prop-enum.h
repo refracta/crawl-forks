@@ -464,7 +464,7 @@ enum scroll_type
 #endif
     SCR_TELEPORTATION,
     SCR_FEAR,
-    SCR_NOISE,
+    SCR_ATTENTION,
 #if TAG_MAJOR_VERSION == 34
     SCR_REMOVE_CURSE,
 #endif

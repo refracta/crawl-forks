@@ -717,7 +717,7 @@ i-teleportation SCR_TELEPORTATION
 %back scroll-blue
 i-fear SCR_FEAR
 %back scroll-grey
-i-noise SCR_NOISE
+i-noise SCR_ATTENTION
 %back scroll-yellow
 i-remove_curse SCR_REMOVE_CURSE
 # aka scroll of summoning
