@@ -103,6 +103,8 @@ function ossuary_setup_features(e)
 	e.subst(": = tw")
 	e.ftile("r = FLOOR_SWAMP")
 	e.subst("X = t")
+	e.kfeat("= = floor")
+	e.kfeat("+ = floor")
 	e.kfeat("t = mangrove")
   end
   if you.in_branch("Spider") then
@@ -113,6 +115,7 @@ function ossuary_setup_features(e)
   end
   e.tags("no_monster_gen water_ok")
   e.ftile(".'abcdefghijklmnopqstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12345<>67890!@#$%^&*()|~{}+- = floor_sandstone")
+  e.ftile("= = floor_sandstone")
   e.tile("c = wall_tomb")
   e.kmons("2 = zombie")
   e.kmons("3 = skeleton")
