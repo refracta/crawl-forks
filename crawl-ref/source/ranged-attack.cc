@@ -99,7 +99,7 @@ int ranged_attack::calc_to_hit(bool random, bool player_aux)
     if (lrange > 9)
         return 0;
 
-    hit *= (10 - lrange);
+    hit *= (20 - lrange);
     hit /= 10;
 
     const int defl = defender->missile_deflection();
@@ -166,7 +166,7 @@ bool ranged_attack::attack()
     }
 
     const int ev = defender->evasion(ev_ignore::none, attacker);
-    ev_margin = test_hit(to_hit, ev, !attacker->is_player());
+    ev_margin = test_hit(to_hit, ev);
     bool shield_blocked = attack_shield_blocked(false);
 
     god_conduct_trigger conducts[3];
@@ -362,10 +362,7 @@ bool ranged_attack::handle_phase_dodged()
 {
     did_hit = false;
 
-    const int ev = defender->evasion(ev_ignore::none, attacker);
-
-    const int orig_ev_margin =
-        test_hit(orig_to_hit, ev, !attacker->is_player());
+    const int orig_ev_margin = ev_margin;
 
     if (defender->missile_deflection() && orig_ev_margin >= 0
         && (!blocker.compare("") || coinflip()))
@@ -565,8 +562,8 @@ int ranged_attack::calc_base_unarmed_damage()
 int ranged_attack::calc_mon_to_hit_base()
 {
     ASSERT(attacker->is_monster());
-    const int hd_mult = attacker->as_monster()->is_archer() ? 15 : 9;
-    return (5 + attacker->get_hit_dice()) * hd_mult / 6;
+    const int hd_mult = attacker->as_monster()->is_archer() ? 4 : 2;
+    return (5 + attacker->get_hit_dice()) * hd_mult;
 }
 
 int ranged_attack::apply_damage_modifiers(int damage)

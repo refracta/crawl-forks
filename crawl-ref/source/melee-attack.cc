@@ -1136,7 +1136,7 @@ bool melee_attack::attack()
     // Calculate various ev values and begin to check them to determine the
     // correct handle_phase_ handler.
     const int ev = defender->evasion(ev_ignore::none, attacker);
-    ev_margin = test_hit(to_hit, ev, !attacker->is_player());
+    ev_margin = test_hit(to_hit, ev);
     bool shield_blocked = attack_shield_blocked(true);
 
     // Stuff for god conduct, this has to remain here for scope reasons.
@@ -4647,8 +4647,8 @@ int melee_attack::calc_mon_to_hit_base()
 {
     const bool fighter = attacker->is_monster()
                          && attacker->as_monster()->is_fighter();
-    const int hd_mult = fighter ? 15 : 9;
-    return (5 + attacker->get_hit_dice()) * hd_mult / 6;
+    const int hd_mult = fighter ? 4 : 2;
+    return (5 + attacker->get_hit_dice()) * hd_mult;
 }
 
 /**

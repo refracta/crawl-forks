@@ -226,8 +226,15 @@ bool attack::handle_phase_end()
  */
 int attack::calc_to_hit(bool random, bool player_aux)
 {
+    if (using_weapon()
+        && (is_unrandom_artefact(*weapon, UNRAND_WOE)
+            || is_unrandom_artefact(*weapon, UNRAND_SNIPER)))
+    {
+        return AUTOMATIC_HIT;
+    }
+
     float mhit = attacker->is_player() ?
-                4 + you.dex() * 0.85
+                6 + max(2 * you.dex() / 3, -1)
               : calc_mon_to_hit_base();
 
 #ifdef DEBUG_DIAGNOSTICS
@@ -240,10 +247,6 @@ int attack::calc_to_hit(bool random, bool player_aux)
     // player_to_hit methods.
     if (attacker->is_player())
     {
-        // fighting contribution
-        mhit *= (2700 + you.skill(SK_FIGHTING, 100));
-        mhit /= 2700;
-
         // weapon skill contribution
         if (player_aux) {}
         else if (using_weapon())
@@ -253,34 +256,33 @@ int attack::calc_to_hit(bool random, bool player_aux)
                 if (you.skill(wpn_skill) < 1 && player_in_a_dangerous_place())
                     xom_is_stimulated(10); // Xom thinks that is mildly amusing.
 
-                mhit *= (2700 + you.skill(wpn_skill, 100));
-                mhit /= 2700;
+                mhit *= (300 + you.skill(wpn_skill, 100));
+                mhit /= 800;
             }
         }
         else if (you.form_uses_xl())
         {
-            mhit *= (27 + you.experience_level);
-            mhit /= 27;
+            mhit *= (9 + you.experience_level);
+            mhit /= 9;
         }
         else
         {
             // Claws give a slight bonus to accuracy when active
-            mhit *= (you.get_mutation_level(MUT_CLAWS)
-                     && wpn_skill == SK_UNARMED_COMBAT) ? 1.1 : 1;
+            mhit *= (wpn_skill == SK_UNARMED_COMBAT) ? 1 + 0.2 * you.has_usable_claws() : 1;
 
-            mhit *= (2700 + you.skill(wpn_skill, 100));
-            mhit /= 2700;
+            mhit *= (900 + you.skill(wpn_skill, 100));
+            mhit /= 900;
         }
 
         // slaying bonus
-        mhit *= (50 + slaying_bonus(weapon && is_range_weapon(*weapon)
+        mhit *= (16 + slaying_bonus(weapon && is_range_weapon(*weapon)
                                            && using_weapon(),
                                               using_weapon()));
-        mhit /= 50;
+        mhit /= 16;
 
         // hunger penalty
         if (apply_starvation_penalties())
-            mhit *= 0.85;
+            mhit *= 0.7;
 
         // armour penalty
         mhit *= max((20 - attacker_armour_tohit_penalty - attacker_shield_tohit_penalty), 5);
@@ -293,14 +295,14 @@ int attack::calc_to_hit(bool random, bool player_aux)
         // mutation
         if (you.get_mutation_level(MUT_GOLDEN_EYEBALLS))
         {
-            mhit *= (20 + you.get_mutation_level(MUT_GOLDEN_EYEBALLS));
-            mhit /= 20;
+            mhit *= (10 + you.get_mutation_level(MUT_GOLDEN_EYEBALLS));
+            mhit /= 10;
         }
 
         if (you.get_mutation_level(MUT_BUDDING_EYEBALLS))
         {
-            mhit *= (20 + you.get_mutation_level(MUT_GOLDEN_EYEBALLS));
-            mhit /= 20;
+            mhit *= (10 + you.get_mutation_level(MUT_BUDDING_EYEBALLS));
+            mhit /= 10;
         }
 
         // +0 for normal vision, +10% for Supernaturally Acute Vision, -10% For Impaired Vision
@@ -313,14 +315,15 @@ int attack::calc_to_hit(bool random, bool player_aux)
         mhit /= 10;
 
         const int jewellery = attacker->as_monster()->inv[MSLOT_JEWELLERY];
+        int slay = attacker->scan_artefacts(ARTP_SLAYING);
         if (jewellery != NON_ITEM
             && mitm[jewellery].is_type(OBJ_JEWELLERY, RING_SLAYING))
         {
-            mhit *= 1.25;
+            slay += 5;
         }
 
-        if (attacker->scan_artefacts(ARTP_SLAYING))
-            mhit *= 1.25;
+        mhit *= (16 + slay);
+        mhit /= 16;
     }
 
     // weapon bonus contribution
@@ -328,28 +331,21 @@ int attack::calc_to_hit(bool random, bool player_aux)
     {
         if (weapon->base_type == OBJ_WEAPONS || weapon->base_type == OBJ_SHIELDS)
         {
-            mhit *= (20 + weapon->plus);
-            mhit *= (20 + property(*weapon, PWPN_HIT));
-            mhit /= 400;
+            mhit *= (18 + weapon->plus);
+            mhit *= (10 + property(*weapon, PWPN_HIT));
+            mhit /= 180;
         }
         else if (weapon->base_type == OBJ_STAVES)
         {
-            mhit *= (20 + property(*weapon, PWPN_HIT));
-            mhit /= 20;
+            mhit *= (10 + property(*weapon, PWPN_HIT));
+            mhit /= 10;
         }
     }
 
     // Penalties and Buffs for both players and monsters:
 
     if (attacker->confused())
-        mhit *= 0.75;
-
-    if (using_weapon()
-        && (is_unrandom_artefact(*weapon, UNRAND_WOE)
-            || is_unrandom_artefact(*weapon, UNRAND_SNIPER)))
-    {
-        return AUTOMATIC_HIT;
-    }
+        mhit *= 0.7;
 
     // If no defender, we're calculating to-hit for debug-display
     // purposes, so don't drop down to defender code below
@@ -357,7 +353,7 @@ int attack::calc_to_hit(bool random, bool player_aux)
         return mhit;
 
     if (!defender->visible_to(attacker))
-            mhit *= 0.75;
+            mhit *= 0.5;
     else
     {
         // This can only help if you're visible!
@@ -370,19 +366,19 @@ int attack::calc_to_hit(bool random, bool player_aux)
 
         if (defender->backlit(false))
         {
-            mhit *= (20 + 1 + random2(9));
-            mhit /= 20;
+            mhit *= 1.6;
+            mhit /= 10;
         }
         else if (!attacker->nightvision()
             && defender->umbra())
         {
-            mhit *= (20 - 1 - random2(4));
-            mhit /= 20;
+            mhit *= 7;
+            mhit /= 10;
         }
     }
 
     // Don't delay doing this roll until test_hit().
-    mhit = maybe_random2(mhit, random) + maybe_random2(mhit, random);
+    mhit = maybe_random2(mhit, random);
 
     dprf(DIAG_COMBAT, "%s: Base to-hit: %d, Final to-hit: %d",
          attacker->name(DESC_PLAIN).c_str(),
@@ -1583,11 +1579,10 @@ int attack::apply_damage_modifiers(int damage)
     return damage;
 }
 
-int attack::test_hit(int to_land, int ev, bool randomise_ev)
+int attack::test_hit(int to_land, int ev)
 {
     int margin = AUTOMATIC_HIT;
-    if (randomise_ev)
-        ev = random2avg(2*ev, 2);
+    ev = random2(ev);
     if (to_land >= AUTOMATIC_HIT)
         return true;
     

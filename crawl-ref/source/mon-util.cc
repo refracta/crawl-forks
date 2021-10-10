@@ -3425,6 +3425,8 @@ bool init_abomination(monster& mon, int hd, bool player)
     mon.max_hit_points = hp;
     mon.hit_points = hp;
 
+    new_def.EV *= 2;
+    new_def.EV += -1 + random2(3);
     new_def.facets[0] = _gen_new_facet(new_def);
 
     if (player)

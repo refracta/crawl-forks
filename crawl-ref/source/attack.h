@@ -142,7 +142,7 @@ protected:
     virtual int calc_mon_to_hit_base() = 0;
     virtual int apply_damage_modifiers(int damage);
     virtual int calc_damage();
-    int test_hit(int to_hit, int ev, bool randomise_ev);
+    int test_hit(int to_hit, int ev);
     int apply_defender_ac(int damage, int damage_max = 0) const;
     // Determine if we're blocking (partially or entirely)
     virtual bool attack_shield_blocked(bool verbose);

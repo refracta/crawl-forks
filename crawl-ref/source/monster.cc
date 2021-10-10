@@ -3385,7 +3385,7 @@ int monster::base_evasion() const
 {
     // ghost demon struct overrides the monster values.
     if (mons_is_ghost_demon(type))
-        return ghost->ev;
+        return ghost->ev * 1.5;
 
     if (mons_genus(type) == MONS_ABOMINATION_SMALL)
         return read_def(*this).EV;
