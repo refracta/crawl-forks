@@ -1285,14 +1285,28 @@ static void _append_weapon_stats(string &description, const item_def &item)
     const bool could_set_target = _could_set_training_target(item, true);
     bool could_set_dual_target = false;
 
+    const double base_acc = property(item, (item.base_type == OBJ_SHIELDS) ? PSHD_HIT : PWPN_HIT);
+    double current_acc = base_acc;
+    if (current_acc < 0)
+        current_acc = min(0.0, current_acc + you.strength() * 0.25);
+    else if (you.strength() < 0)
+        current_acc = max(-5.0, current_acc + you.strength() * 0.25);
+
+    string acc_string = "";
+
+    if (current_acc != base_acc)
+        acc_string = make_stringf("\nBase accuracy adjusted by strength: %+.2f", current_acc);
+
     if (item.base_type == OBJ_SHIELDS)
     {
         description += make_stringf(
             "\nBase accuracy: %+d  Base damage: %d  Base attack delay: %.1f"
+            "%s"
             "\nThis weapon's minimum attack delay (%.1f) is reached at skill level %d.",
             property(item, PSHD_HIT),
             base_dam,
             (float)property(item, PSHD_SPEED) / 10,
+            acc_string.c_str(),
             (float)weapon_min_delay(item, item_brand_known(item)) / 10,
             mindelay_skill / 10);
     }
@@ -1306,10 +1320,12 @@ static void _append_weapon_stats(string &description, const item_def &item)
             damsubstring = make_stringf("%d", base_dam + ammo_dam);
         description += make_stringf(
             "\nBase accuracy: %+d  Base damage: %s  Base attack delay: %.1f"
+            "%s"
             "\nThis weapon's minimum attack delay (%.1f) is reached at skill level %d.",
             property(item, PWPN_HIT),
             damsubstring.c_str(),
             (float)property(item, PWPN_SPEED) / 10,
+            acc_string.c_str(),
             (float)weapon_min_delay(item, item_brand_known(item)) / 10,
             mindelay_skill / 10);
     }

@@ -236,6 +236,7 @@ int attack::calc_to_hit(bool random, bool player_aux)
     float mhit = attacker->is_player() ?
                 6 + max(2 * you.dex() / 3, -1)
               : calc_mon_to_hit_base();
+    int slay = 0;
 
 #ifdef DEBUG_DIAGNOSTICS
     const int base_hit = mhit;
@@ -256,8 +257,8 @@ int attack::calc_to_hit(bool random, bool player_aux)
                 if (you.skill(wpn_skill) < 1 && player_in_a_dangerous_place())
                     xom_is_stimulated(10); // Xom thinks that is mildly amusing.
 
-                mhit *= (300 + you.skill(wpn_skill, 100));
-                mhit /= 800;
+                mhit *= (2700 + you.skill(wpn_skill, 300) + you.skill(SK_FIGHTING, 100));
+                mhit /= 2700;
             }
         }
         else if (you.form_uses_xl())
@@ -275,10 +276,7 @@ int attack::calc_to_hit(bool random, bool player_aux)
         }
 
         // slaying bonus
-        mhit *= (16 + slaying_bonus(weapon && is_range_weapon(*weapon)
-                                           && using_weapon(),
-                                              using_weapon()));
-        mhit /= 16;
+        slay += slaying_bonus(weapon && is_range_weapon(*weapon) && using_weapon(), using_weapon());
 
         // hunger penalty
         if (apply_starvation_penalties())
@@ -314,33 +312,35 @@ int attack::calc_to_hit(bool random, bool player_aux)
         mhit *= 10 - attacker->inaccuracy();
         mhit /= 10;
 
-        const int jewellery = attacker->as_monster()->inv[MSLOT_JEWELLERY];
-        int slay = attacker->scan_artefacts(ARTP_SLAYING);
+        const int jewellery = attacker->as_monster()->inv[MSLOT_JEWELLERY]; 
+        slay += attacker->scan_artefacts(ARTP_SLAYING);
         if (jewellery != NON_ITEM
             && mitm[jewellery].is_type(OBJ_JEWELLERY, RING_SLAYING))
         {
             slay += 5;
         }
-
-        mhit *= (16 + slay);
-        mhit /= 16;
     }
 
     // weapon bonus contribution
     if (using_weapon())
     {
-        if (weapon->base_type == OBJ_WEAPONS || weapon->base_type == OBJ_SHIELDS)
-        {
-            mhit *= (18 + weapon->plus);
-            mhit *= (10 + property(*weapon, PWPN_HIT));
-            mhit /= 180;
-        }
-        else if (weapon->base_type == OBJ_STAVES)
-        {
-            mhit *= (10 + property(*weapon, PWPN_HIT));
-            mhit /= 10;
-        }
+        int wpn_base = property(*weapon, (weapon->base_type == OBJ_SHIELDS) ? PSHD_HIT : PWPN_HIT);
+        int strength = attacker->is_player() ? you.strength() : attacker->get_hit_dice();
+        if (weapon->base_type != OBJ_STAVES)
+            slay += weapon->plus;
+
+        strength = random ? div_rand_round(strength, 4) : strength / 4;
+
+        if (wpn_base < 0)
+            wpn_base = min(0, wpn_base + strength);
+        else if (you.strength() < 0)
+            wpn_base += (strength);
+
+        mhit *= max(5, 10 + wpn_base);
     }
+
+    mhit *= (40 + slay);
+    mhit /= 400;
 
     // Penalties and Buffs for both players and monsters:
 
