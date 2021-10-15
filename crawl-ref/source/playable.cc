@@ -15,6 +15,7 @@
 #include "playable.h"
 #include "jobs.h"
 #include "ng-restr.h"
+#include "season.h"
 #include "species.h"
 #include "skills.h"
 #include "stringutil.h" // to_string on Cygwin
@@ -31,8 +32,11 @@ static inline vector<job_type> all_jobs()
     for (int i = 0; i < NUM_JOBS; ++i)
     {
         const auto job = static_cast<job_type>(i);
-        if (!job_is_removed(job))
+        if (!job_is_removed(job)
+            && (job != JOB_JESTER || is_april_fools()))
+        {
             jobs.push_back(job);
+        }
     }
     return jobs;
 }

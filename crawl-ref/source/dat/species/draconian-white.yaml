@@ -1,3 +1,4 @@
+TAG_MAJOR_VERSION: 34
 enum: SP_WHITE_DRACONIAN
 monster: MONS_WHITE_DRACONIAN
 name: "White Draconian"

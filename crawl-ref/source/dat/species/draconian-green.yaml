@@ -1,3 +1,4 @@
+TAG_MAJOR_VERSION: 34
 enum: SP_GREEN_DRACONIAN
 monster: MONS_GREEN_DRACONIAN
 name: "Green Draconian"

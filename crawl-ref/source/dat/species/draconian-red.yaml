@@ -1,3 +1,4 @@
+TAG_MAJOR_VERSION: 34
 enum: SP_RED_DRACONIAN
 monster: MONS_RED_DRACONIAN
 name: "Red Draconian"

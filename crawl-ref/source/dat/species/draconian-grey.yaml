@@ -1,3 +1,4 @@
+TAG_MAJOR_VERSION: 34
 enum: SP_GREY_DRACONIAN
 monster: MONS_SILVER_DRACONIAN
 name: "Grey Draconian"

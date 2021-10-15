@@ -1,3 +1,4 @@
+TAG_MAJOR_VERSION: 34
 enum: SP_YELLOW_DRACONIAN
 monster: MONS_LIME_DRACONIAN
 name: "Yellow Draconian"

@@ -59,19 +59,11 @@ static bool _banned_combination(job_type job, species_type species)
             return true;
         break;
     case JOB_MUMMY:
-        if (species == SP_GARGOYLE || species == SP_MOLTEN_GARGOYLE || species == SP_OOZOMORPH)
+        if (species == SP_GARGOYLE || species == SP_MOLTEN_GARGOYLE || species == SP_OOZOMORPH || species == SP_LIGNIFITE)
             return true;
-        // fallthrough
     case JOB_VINE_STALKER:
-        if (species == SP_HUMAN
-            || species == SP_CENTAUR
-            || species == SP_NAGA
-            || species == SP_MERFOLK
-            || species == SP_LIGNIFITE
-            || species == SP_VINE_STALKER)
-        {
+        if (species == SP_LIGNIFITE)
             return true;
-        }
         // fallthrough
     case JOB_DEMONSPAWN:
         if (species_undead_type(species) == US_GHOST)

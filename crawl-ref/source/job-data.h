@@ -38,7 +38,7 @@ static const map<job_type, job_def> job_data =
 { JOB_AIR_ELEMENTALIST, {
     "AE", "Air Elementalist",
     0, 7, 5,
-    { SP_DEEP_ELF, SP_TENGU, SP_DRACONIAN, SP_NAGA, SP_SILENT_SPECTRE},
+    { SP_DEEP_ELF, SP_TENGU, SP_DRACONIAN, SP_NAGA, SP_SILENT_SPECTRE, },
     { "robe", "book of Air" },
     WCHOICE_NONE,
     { { SK_AIR_MAGIC, 3 }, { SK_SPELLCASTING, 2 },
@@ -157,7 +157,6 @@ static const map<job_type, job_def> job_data =
       { SK_WEAPON, 3}, },
 } },
 
-
 { JOB_MERFOLK, {
     "Mf", "Merfolk",
     6, -1, 7,
@@ -172,7 +171,7 @@ static const map<job_type, job_def> job_data =
 { JOB_VINE_STALKER, {
     "VS", "Vine Stalker",
     5, 3, 4,
-    { SP_DEEP_ELF, SP_FELID, SP_KOBOLD, SP_SPRIGGAN, SP_NAGA, SP_SILENT_SPECTRE, },
+    { SP_DEEP_ELF, SP_FELID, SP_KOBOLD, SP_SPRIGGAN, SP_NAGA, },
     { "dagger plus:1", "leather armour", "book of maledictions" },
     WCHOICE_NONE,
     { { SK_HEXES, 2 }, { SK_SHORT_BLADES, 2 }, { SK_DODGING, 3 },
@@ -252,7 +251,7 @@ static const map<job_type, job_def> job_data =
 { JOB_VENOM_MAGE, {
     "VM", "Venom Mage",
     0, 7, 5,
-    { SP_DEEP_ELF, SP_SPRIGGAN, SP_NAGA, SP_MERFOLK, SP_TENGU, SP_FELID, },
+    { SP_DEEP_ELF, SP_SPRIGGAN, SP_MERFOLK, SP_TENGU, SP_FELID, },
     { "robe", "Young Poisoner's Handbook" },
     WCHOICE_NONE,
     { { SK_POISON_MAGIC, 3 }, { SK_AIR_MAGIC, 1 },  { SK_SPELLCASTING, 2 },
@@ -263,7 +262,7 @@ static const map<job_type, job_def> job_data =
     "Wn", "Wanderer",
     0, 0, 0, // Randomised
     { SP_HILL_ORC, SP_SPRIGGAN, SP_CENTAUR, SP_MERFOLK, SP_DRACONIAN,
-      SP_HUMAN, SP_LIGNIFITE},
+      SP_HUMAN, SP_LIGNIFITE, },
     { }, // Randomised
     WCHOICE_NONE,
     { }, // Randomised
@@ -303,7 +302,7 @@ static const map<job_type, job_def> job_data =
 { JOB_DEMIGOD,{
     "Dg", "Demigod",
     7, 7, 7,
-    { SP_GNOLL, SP_SPRIGGAN, SP_TROLL, SP_MINOTAUR, SP_DRACONIAN },
+    { SP_GNOLL, SP_SPRIGGAN, SP_TROLL, SP_MINOTAUR, SP_DRACONIAN, },
     { "leather armour" , "book of Minor Magic" },
     WCHOICE_GOOD,
     { { SK_DODGING, 3 } ,{ SK_STEALTH, 2 } ,{ SK_WEAPON,2 } ,{ SK_FIGHTING, 1 } , {SK_SPELLCASTING, 1}, { SK_FIRE_MAGIC, 2 } },
@@ -312,7 +311,7 @@ static const map<job_type, job_def> job_data =
 { JOB_MUMMY,{
     "Mu", "Mummy",
     3, 11, -1,
-    { SP_GNOLL, SP_SPRIGGAN, SP_DRACONIAN, SP_DEEP_ELF, SP_TENGU },
+    { SP_GNOLL, SP_SPRIGGAN, SP_DRACONIAN, SP_DEEP_ELF, SP_TENGU, },
     { "leather armour" , "book of necromancy"},
     WCHOICE_PLAIN,
     { { SK_DODGING, 3 } ,{ SK_STEALTH, 2 } ,{ SK_WEAPON,2 } , {SK_SPELLCASTING, 2} , {SK_NECROMANCY,3} },
@@ -321,7 +320,7 @@ static const map<job_type, job_def> job_data =
 { JOB_CENTAUR, {
     "Ce", "Centaur",
     8, 4, 0,
-    { SP_OCTOPODE, SP_KOBOLD, SP_OGRE, SP_TROLL, SP_GOBLIN },
+    { SP_OCTOPODE, SP_KOBOLD, SP_OGRE, SP_TROLL, SP_GOBLIN, },
     { "short sword", "leather armour" },
     WCHOICE_RANGED,
     { { SK_FIGHTING, 2 }, { SK_DODGING, 2 }, { SK_STEALTH, 1 },
@@ -331,7 +330,7 @@ static const map<job_type, job_def> job_data =
 { JOB_NAGA, {
     "Na", "Naga",
     5, 4, 3,
-    { SP_OCTOPODE, SP_KOBOLD, SP_DEEP_ELF, SP_GNOLL },
+    { SP_OCTOPODE, SP_KOBOLD, SP_DEEP_ELF, SP_GNOLL, },
     { "leather armour" , "Young Poisoner's Handbook"},
     WCHOICE_PLAIN,
     { { SK_DODGING, 1 }, { SK_STEALTH, 4 }, { SK_SPELLCASTING, 1}, 
@@ -341,7 +340,7 @@ static const map<job_type, job_def> job_data =
 { JOB_DEMONSPAWN,{
     "Ds", "Demonspawn",
     6, 4, 4,
-    { SP_HILL_ORC, SP_TROLL, SP_FELID, SP_LIGNIFITE, SP_DRACONIAN },
+    { SP_HILL_ORC, SP_TROLL, SP_FELID, SP_LIGNIFITE, SP_DRACONIAN, },
     { "leather armour" , "book of Minor Magic" },
     WCHOICE_GOOD,
     { { SK_DODGING, 3 } ,{ SK_STEALTH, 2 } ,{ SK_WEAPON,2 } ,{ SK_FIGHTING, 1 } ,{ SK_INVOCATIONS,3 } ,{ SK_SPELLCASTING, 1 }, { SK_FIRE_MAGIC, 2} },
@@ -350,7 +349,7 @@ static const map<job_type, job_def> job_data =
 { JOB_JESTER, {
     "Jr", "Jester",
     0, 6, 6,
-    { SP_HUMAN, SP_DEEP_ELF, SP_KOBOLD },
+    { SP_HUMAN, SP_DEEP_ELF, SP_KOBOLD, },
     {"robe"},
     WCHOICE_NONE,
     { { SK_DODGING, 4}, {SK_SLINGS, 4}, {SK_INVOCATIONS, 4}, {SK_FIRE_MAGIC, 4} },
