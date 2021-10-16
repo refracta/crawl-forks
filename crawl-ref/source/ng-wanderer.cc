@@ -116,10 +116,14 @@ static skill_type _wanderer_role_skill_select(stat_type selected_role,
     {
     case STAT_DEX:
         // Duplicates are intentional.
-        selected_skill = random_choose(SK_FIGHTING, SK_FIGHTING,
-                                       SK_DODGING,
-                                       SK_STEALTH,
-                                       sk_1, sk_1);
+        do
+        {
+            selected_skill = random_choose(SK_FIGHTING, SK_FIGHTING,
+                                           SK_DODGING,
+                                           SK_STEALTH,
+                                           sk_1, sk_1);
+        } 
+        while (is_useless_skill(selected_skill));
         break;
 
     case STAT_STR:
@@ -141,6 +145,7 @@ static skill_type _wanderer_role_skill_select(stat_type selected_role,
     if (selected_skill == NUM_SKILLS)
     {
         ASSERT(you.species == SP_FELID || you.species == SP_FAIRY);
+
         if (you.species == SP_FELID)
             selected_skill = SK_UNARMED_COMBAT;
         else
