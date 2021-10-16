@@ -3004,6 +3004,8 @@ void bolt::affect_endpoint()
                     random_range(dur * 2, dur * 3), TERRAIN_CHANGE_FLOOD);
             for (rectangle_iterator ri(pos(), lava ? 1 : 2); ri; ++ri)
             {
+                if (!in_bounds(*ri))
+                    continue;
                 if ((grd(*ri) == DNGN_FLOOR) && ((lava && one_chance_in(4)) || !lava && !one_chance_in(3)))
                     temp_change_terrain(*ri, lava ? DNGN_LAVA : DNGN_SHALLOW_WATER,
                         random_range(dur * 2, dur * 3), TERRAIN_CHANGE_FLOOD);
@@ -3065,6 +3067,8 @@ void bolt::affect_endpoint()
         {
             for (adjacent_iterator ai(pos(), false); ai; ++ai)
             {
+                if (!in_bounds(*ai))
+                    continue;
                 if (!cell_is_solid(*ai) && (*ai == pos() || !one_chance_in(3)))
                     place_cloud(CLOUD_FIRE, *ai, 5 + random2(5), agent(), 2);
             }
@@ -3081,6 +3085,8 @@ void bolt::affect_endpoint()
             place_cloud(chaos_cloud(), pos(), 10 + random2(5), agent(), 3);
         for (adjacent_iterator ai(pos()); ai; ++ai)
         {
+            if (!in_bounds(*ai))
+                continue;
             if (!cell_is_solid(*ai) && !one_chance_in(3))
                 place_cloud(chaos_cloud(), *ai, 5 + random2(5), agent(), 3);
         }
