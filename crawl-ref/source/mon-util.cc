@@ -5682,7 +5682,8 @@ actor *find_agent(mid_t m, kill_category kc)
         return 0;
     case KC_NCATEGORIES:
     default:
-        die("invalid kill category");
+        mprf(MSGCH_ERROR, "ERROR: Invalid Agent. Defaulting to environmental. (Please report)");
+        return 0;
     }
 }
 
