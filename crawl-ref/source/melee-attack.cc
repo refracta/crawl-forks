@@ -2701,6 +2701,11 @@ int melee_attack::staff_damage(skill_type skill, bool max)
 
 bool melee_attack::apply_staff_damage()
 {
+    // No Staff raises the dead. (Not a bad fixedArt idea though).
+    // BCADNOTE: FixedArt?
+    if (!defender->alive())
+        return false;
+
     if (!weapon)
         return false;
 
