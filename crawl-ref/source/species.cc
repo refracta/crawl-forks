@@ -546,7 +546,14 @@ void give_basic_mutations(species_type species)
     }
 
     if (you.char_class == JOB_MERFOLK)
+    {
         you.mutation[MUT_MERFOLK_TAIL] = you.innate_mutation[MUT_MERFOLK_TAIL] = 1;
+
+        if (you.mutation[MUT_COLD_VULNERABILITY])
+            you.mutation[MUT_COLD_VULNERABILITY] = --you.innate_mutation[MUT_COLD_VULNERABILITY];
+        else
+            you.mutation[MUT_COLD_RESISTANCE] = ++you.innate_mutation[MUT_COLD_RESISTANCE];
+    }
 
     if (you.char_class == JOB_VINE_STALKER)
     {
