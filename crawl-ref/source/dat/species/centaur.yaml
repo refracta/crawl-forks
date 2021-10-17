@@ -1,8 +1,8 @@
+TAG_MAJOR_VERSION: 34
 enum: SP_CENTAUR
 monster: MONS_CENTAUR
 name: "Centaur"
-difficulty: Intermediate
-difficulty_priority: 70
+difficulty: False
 species_flags:
   - small_torso
 aptitudes:
@@ -52,10 +52,4 @@ mutations:
     MUT_FAST: 2
     MUT_DEFORMED: 1
     MUT_HOOVES: 1
-recommended_jobs:
-  - JOB_FIGHTER
-  - JOB_GLADIATOR
-  - JOB_HUNTER
-  - JOB_WARPER
-  - JOB_ARCANE_MARKSMAN
 create_enum: False

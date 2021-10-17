@@ -1,10 +1,10 @@
+TAG_MAJOR_VERSION: 34
 enum: SP_MERFOLK
 monster: MONS_MERFOLK
 name: Merfolk
 short_name: Mf
 adjective: Merfolkian
-difficulty: Simple
-difficulty_priority: 80
+difficulty: False
 aptitudes:
   xp: 0
   hp: -1
@@ -46,14 +46,6 @@ mutations:
   1:
     MUT_MERFOLK_TAIL: 1
     MUT_COLD_RESISTANCE: 1
-recommended_jobs:
-  - JOB_GLADIATOR
-  - JOB_BERSERKER
-  - JOB_SKALD
-  - JOB_TRANSMUTER
-  - JOB_SUMMONER
-  - JOB_ICE_ELEMENTALIST
-  - JOB_VENOM_MAGE
 recommended_weapons:
   - SK_POLEARMS
   - SK_LONG_BLADES

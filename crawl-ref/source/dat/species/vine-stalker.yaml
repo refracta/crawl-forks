@@ -4,7 +4,6 @@ monster: MONS_VINE_STALKER
 name: Vine Stalker
 short_name: VS
 difficulty: False
-difficulty_priority: 100
 aptitudes:
   xp: 0
   hp: -3

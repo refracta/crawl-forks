@@ -1,8 +1,8 @@
+TAG_MAJOR_VERSION: 34
 enum: SP_NAGA
 monster: MONS_NAGA
 name: Naga
-difficulty: Intermediate
-difficulty_priority: 60
+difficulty: False
 species_flags:
   - small_torso
 aptitudes:
@@ -34,15 +34,6 @@ mutations:
     MUT_POISON_RESISTANCE: 1
     MUT_SLOW_METABOLISM: 1
     MUT_CONSTRICTING_TAIL: 1
-recommended_jobs:
-  - JOB_BERSERKER
-  - JOB_TRANSMUTER
-  - JOB_ENCHANTER
-  - JOB_FIRE_ELEMENTALIST
-  - JOB_ICE_ELEMENTALIST
-  - JOB_WARPER
-  - JOB_WIZARD
-  - JOB_VENOM_MAGE
 walking_verb: Slid
 altar_action: coil in front of
 create_enum: False
