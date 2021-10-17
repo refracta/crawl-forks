@@ -127,5 +127,7 @@ enum zap_type
     ZAP_DASH,
     ZAP_GHOSTLY_FIREBALL,
     ZAP_MALIGN_OFFERING,
+    ZAP_CASCADE,
+    ZAP_CASCADE_II,
     NUM_ZAPS
 };

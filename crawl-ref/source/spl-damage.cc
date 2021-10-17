@@ -2826,6 +2826,8 @@ spret cast_cascade(const actor *agent, int pow, bool fail)
     // of casting. This way nothing bad happens when monsters die halfway
     // through the spell.
     vector<coord_def> blast_sources;
+    vector<coord_def> blast_areas;
+    vector<int> blast_intensities;
 
     for (actor_near_iterator ai(agent->pos(), LOS_NO_TRANS);
          ai; ++ai)
@@ -2844,60 +2846,104 @@ spret cast_cascade(const actor *agent, int pow, bool fail)
     {
         mprf("%s cascade%s down from the ceiling!", chaos ? "Resonance" : "Icicles", chaos ? "s" : "");
 
-        bolt beam_actual;
-        zappy(ZAP_THROW_ICICLE, pow, false, beam_actual);
-        beam_actual.loudness = 8;
-
-        beam_type flavour = BEAM_ICE;
+        bolt beam_primary;
+        bolt beam_secondary;
+        zappy(ZAP_CASCADE, pow, false, beam_primary);
+        zappy(ZAP_CASCADE_II, pow, false, beam_secondary);
 
         if (chaos)
         {
-            beam_actual.damage.size = div_rand_round(beam_actual.damage.size * 5, 4);
+            beam_primary.damage.size = div_rand_round(beam_primary.damage.size * 5, 4);
+            beam_secondary.damage.size = div_rand_round(beam_secondary.damage.size * 5, 4);
             if (evil)
             {
-                flavour = BEAM_ELDRITCH;
-                beam_actual.colour = ETC_UNHOLY;
-                beam_actual.name = "eldritch blast";
+                beam_primary.flavour = beam_primary.real_flavour = BEAM_ELDRITCH;
+                beam_secondary.flavour = beam_secondary.real_flavour = BEAM_ELDRITCH;
+                beam_primary.colour = beam_secondary.colour = ETC_UNHOLY;
+                beam_primary.name = "forbidden fragment";
+                beam_secondary.name = "eldritch blast";
             }
             else
             {
-                flavour = BEAM_CHAOTIC;
-                beam_actual.colour = ETC_CHAOS;
-                beam_actual.name = "resonance cascade";
+                beam_primary.flavour = beam_primary.real_flavour = BEAM_CHAOTIC;
+                beam_secondary.flavour = beam_secondary.real_flavour = BEAM_CHAOTIC;
+                beam_primary.colour = beam_secondary.colour = ETC_CHAOS;
+                beam_primary.name = "chaotic shard";
+                beam_secondary.name = "resonance cascade";
             }
-        }
-        else
-        {
-            beam_actual.colour = WHITE;
-            beam_actual.name = "icicle";
         }
 
         if (_is_menacing(&you, SPELL_ICICLE_CASCADE))
-            beam_actual.damage.num++;
+        {
+            beam_primary.damage.num++;
+            beam_secondary.damage.num++;
+        }
 
-        beam_actual.set_agent(&you);
-        beam_actual.origin_spell = SPELL_ICICLE_CASCADE;
-        beam_actual.use_target_as_pos = true;
-        beam_actual.flavour = flavour;
-        beam_actual.real_flavour = flavour;
-        beam_actual.apply_beam_conducts();
+        beam_primary.set_agent(&you);
+        beam_secondary.set_agent(&you);
+        beam_primary.origin_spell = beam_secondary.origin_spell = SPELL_ICICLE_CASCADE;
+        beam_primary.use_target_as_pos = beam_secondary.use_target_as_pos = true;
+        beam_primary.apply_beam_conducts();
+        beam_secondary.in_explosion_phase = true;
+        beam_secondary.apply_beam_conducts();
 
 #ifdef DEBUG_DIAGNOSTICS
         dprf(DIAG_BEAM, "ignition dam=%dd%d",
-             beam_actual.damage.num, beam_actual.damage.size);
+             beam_primary.damage.num, beam_primary.damage.size);
 #endif
 
         // Icicle smites on each individual square.
         for (coord_def pos : blast_sources)
-            beam_actual.explosion_draw_cell(pos);
+            beam_primary.explosion_draw_cell(pos);
         update_screen();
         scaled_delay(50);
 
         for (coord_def pos : blast_sources)
         {
-            beam_actual.use_target_as_pos = true;
-            beam_actual.target = beam_actual.source = pos;
-            beam_actual.fire();
+            beam_primary.target = beam_primary.source = pos;
+            beam_primary.fire();
+
+            for (adjacent_iterator ai(pos); ai; ++ai)
+            {
+                if (!in_bounds(*ai))
+                    continue; 
+
+                actor * act = actor_at(*ai);
+
+                if (act && (act->is_player() || act->as_monster()->friendly()))
+                    continue;
+
+                bool add = true;
+
+                for (int i = 0; i < (int)blast_areas.size(); i++)
+                {
+                    if (*ai == blast_areas[i])
+                    {
+                        blast_intensities[i]++;
+                        add = false;
+                        break;
+                    }
+                }
+
+                if (add)
+                {
+                    blast_areas.emplace_back(*ai);
+                    blast_intensities.emplace_back(0);
+                }
+            }
+        }
+
+        // Explosions on each individual square.
+        for (coord_def pos : blast_areas)
+            beam_secondary.explosion_draw_cell(pos);
+        update_screen();
+        scaled_delay(50);
+
+        for (int i = 0; i < (int)blast_areas.size(); i++)
+        {
+            beam_secondary.damage.num += blast_intensities[i];
+            beam_secondary.explosion_affect_cell(blast_areas[i]);
+            beam_secondary.damage.num -= blast_intensities[i];
         }
     }
 
