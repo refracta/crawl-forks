@@ -552,7 +552,7 @@ void give_basic_mutations(species_type species)
         if (you.mutation[MUT_COLD_VULNERABILITY])
             you.mutation[MUT_COLD_VULNERABILITY] = --you.innate_mutation[MUT_COLD_VULNERABILITY];
         else
-            you.mutation[MUT_COLD_RESISTANCE] = ++you.innate_mutation[MUT_COLD_RESISTANCE];
+            you.mutation[MUT_COLD_RESISTANCE] = you.innate_mutation[MUT_COLD_RESISTANCE] = min(3, you.innate_mutation[MUT_COLD_RESISTANCE] + 1);
     }
 
     if (you.char_class == JOB_VINE_STALKER)
