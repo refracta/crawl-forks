@@ -871,9 +871,11 @@ amulet of chaos
 
 An amulet, which infuses the wearer with chaos. While wearing two out of three spells 
 cast will be chaos versions of the spell, with higher maximum damage and randomized 
-damage type or more unique effects for certain spells. Additionally has a one in 
-three chance to add additional protection against any elemental attack against the 
-wearer, including completely preventing torment one out of three times.
+damage type and chaotic effects. 
+
+Additionally randomly increases or decreases the resistances of the wearer to various 
+elemental hits (extra resist on half of hits, debuffed resist on one sixth of hits)
+and prevents torment completely a third of the time.
 %%%%
 ring of dexterity
 

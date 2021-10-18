@@ -783,14 +783,32 @@ int resist_adjust_damage(const actor* defender, beam_type flavour, int rawdamage
         item_def * cloak = defender->as_monster()->mslot_item(MSLOT_ARMOUR);
 
         if (cloak && is_unrandom_artefact(*cloak, UNRAND_DRAGONSKIN)
-                && coinflip() && _dragonskin_affected(flavour))
+            && coinflip() && _dragonskin_affected(flavour))
+        {
             res++;
+        }
 
         item_def * ring = defender->as_monster()->mslot_item(MSLOT_JEWELLERY);
 
-        if (ring && ring->is_type(OBJ_JEWELLERY, AMU_CHAOS) && one_chance_in(3) 
-                && _dragonskin_affected(flavour))
-            res++;
+        if (ring && ring->is_type(OBJ_JEWELLERY, AMU_CHAOS)
+            && _dragonskin_affected(flavour))
+        {
+            int x = random2(6);
+
+            switch (x)
+            {
+            case 0:
+            case 1:
+            case 2:
+                res++;
+                break;
+            case 3:
+                res--;
+                break;
+            default:
+                break;
+            }
+        }
     }
 
     is_mon |= mount; // Mounts act like monsters in this way.

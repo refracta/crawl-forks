@@ -1694,6 +1694,24 @@ static int _rf_globals()
     return rf;
 }
 
+static int _chaos_roll()
+{
+    int x = random2(6);
+
+    switch (x)
+    {
+    case 0:
+    case 1:
+    case 2:
+        return 1;
+    case 3:
+        return -1;
+    default:
+        break;
+    }
+    return 0;
+}
+
 // If temp is set to false, temporary sources or resistance won't be counted.
 int player_res_fire(bool calc_unid, bool temp, bool items)
 {
@@ -1726,8 +1744,8 @@ int player_res_fire(bool calc_unid, bool temp, bool items)
         rf += you.scan_artefacts(ARTP_FIRE, calc_unid);
 
         // amulet of chaos
-        if (calc_unid && you.wearing(EQ_AMULET, AMU_CHAOS) && one_chance_in(3))
-            rf++;
+        if (calc_unid && you.wearing(EQ_AMULET, AMU_CHAOS))
+            rf += _chaos_roll();
 
         // Subsumption effects not handled elsewhere.
         const item_def * inside = you.slot_item(EQ_CYTOPLASM);
@@ -1858,8 +1876,8 @@ int player_res_cold(bool calc_unid, bool temp, bool items)
         rc += you.scan_artefacts(ARTP_COLD, calc_unid);
 
         // amulet of chaos
-        if (calc_unid && you.wearing(EQ_AMULET, AMU_CHAOS) && one_chance_in(3))
-            rc++;
+        if (calc_unid && you.wearing(EQ_AMULET, AMU_CHAOS))
+            rc += _chaos_roll();
 
         // Subsumption
         const item_def * inside = you.slot_item(EQ_CYTOPLASM);
@@ -1955,8 +1973,8 @@ int player_res_electricity(bool calc_unid, bool temp, bool items)
         if (calc_unid)
         {
             // amulet of chaos
-            if (you.wearing(EQ_AMULET, AMU_CHAOS) && one_chance_in(3))
-                re++;
+            if (you.wearing(EQ_AMULET, AMU_CHAOS))
+                re += _chaos_roll();
 
             // dragonskin cloak: 0.5 to draconic resistances
             if (player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
@@ -2012,17 +2030,21 @@ bool player_res_torment(bool random)
     if (random)
     {
         if (you.get_mutation_level(MUT_STOCHASTIC_TORMENT_RESISTANCE)
-          && coinflip())
+            && coinflip())
+        {
             return true;
+        }
 
         // amulet of chaos
         if (you.wearing(EQ_AMULET, AMU_CHAOS) && one_chance_in(3))
             return true;
 
         // draconian scales:
-        if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, true) 
+        if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, true)
             && you.drac_colour == DR_SCINTILLATING && one_chance_in(3))
+        {
             return true;
+        }
     }
 
     return get_form()->res_neg() == 3
@@ -2084,12 +2106,12 @@ int player_res_poison(bool calc_unid, bool temp, bool items)
         if (calc_unid)
         {
             // amulet of chaos
-            if (you.wearing(EQ_AMULET, AMU_CHAOS) && one_chance_in(3))
-                return true;
+            if (you.wearing(EQ_AMULET, AMU_CHAOS))
+                rp += _chaos_roll();
 
             // dragonskin cloak: 0.5 to draconic resistances
             if (player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
-                return true;
+                rp++;
         }
     }
 
@@ -2143,8 +2165,8 @@ int player_res_sticky_flame(bool calc_unid, bool temp, bool items)
     int rsf = 0;
 
     // rings of chaos
-    if (items && calc_unid && you.wearing(EQ_AMULET, AMU_CHAOS) && one_chance_in(3))
-        rsf++;
+    if (items && calc_unid && you.wearing(EQ_AMULET, AMU_CHAOS))
+        rsf += max(0, _chaos_roll());
 
     // draconian scales:
     if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, temp) 
@@ -2158,13 +2180,14 @@ int player_res_sticky_flame(bool calc_unid, bool temp, bool items)
 
     if (you.get_mutation_level(MUT_SLIME) >= 3
         || you.get_mutation_level(MUT_OOZOMORPH))
+    {
         rsf++;
+    }
 
     if (get_form()->res_sticky_flame())
         rsf++;
 
-    if (rsf > 1)
-        rsf = 1;
+    return _clamp(rsf, 0, 1);
 
     return rsf;
 }
@@ -2328,8 +2351,8 @@ int player_prot_life(bool calc_unid, bool temp, bool items)
         if (calc_unid)
         {
             // amulet of chaos
-            if (you.wearing(EQ_AMULET, AMU_CHAOS) && one_chance_in(3))
-                pl++;
+            if (you.wearing(EQ_AMULET, AMU_CHAOS))
+                pl += _chaos_roll();
 
             // dragonskin cloak: 0.5 to draconic resistances
             if (player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
@@ -7506,8 +7529,8 @@ int player::res_acid(bool calc_unid, bool items, bool mt) const
         if (calc_unid)
         {
             // amulet of chaos
-            if (wearing(EQ_AMULET, AMU_CHAOS) && one_chance_in(3))
-                ra++;
+            if (wearing(EQ_AMULET, AMU_CHAOS))
+                ra += _chaos_roll();
 
             // dragonskin cloak: 0.5 to draconic resistances
             if (player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())

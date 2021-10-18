@@ -841,7 +841,7 @@ const char* jewellery_effect_name(int jeweltype, bool terse)
         case RING_MAGICAL_POWER:         return "magical power";
 #if TAG_MAJOR_VERSION == 34
         case RING_FLIGHT:                return "flight";
-        case RING_CHAOS:                 return "chaos";
+        case RING_CHAOS:                 return "removedness";
 #endif
         case RING_LIFE_PROTECTION:       return "positive energy";
         case RING_PROTECTION_FROM_MAGIC: return "protection from magic";
@@ -896,7 +896,7 @@ const char* jewellery_effect_name(int jeweltype, bool terse)
         case RING_MAGICAL_POWER:         return "MP+9";
 #if TAG_MAJOR_VERSION == 34
         case RING_FLIGHT:                return "+Fly";
-        case RING_CHAOS:                 return "chaos";
+        case RING_CHAOS:                 return "Removedness";
 #endif
         case RING_LIFE_PROTECTION:       return "rN+";
         case RING_PROTECTION_FROM_MAGIC: return "MR+";
