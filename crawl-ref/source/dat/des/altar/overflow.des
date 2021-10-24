@@ -1039,7 +1039,11 @@ DEPTH:  D:2-, Crypt
 TAGS:   no_pool_fixup uniq_zombie_altar no_monster_gen temple_overflow_1
 TAGS:   temple_overflow_kikubaaqudgha
 KFEAT:  _ = altar_kikubaaqudgha
-MONS:   rat zombie / bat zombie / nothing w:90
+NSUBST: w = 2:r / *:w
+NSUBST: y = 2:r / *:w
+KFEAT:  r = w
+KMONS:  r = puffer fish skeleton att:good_neutral / slimehead skeleton att:good_neutral
+MONS:   zombie / skeleton / simulacrum w:5 / nothing w:90
 : interest_check(_G)
 MAP
 xxxxxxxxxxxxxxxx
@@ -1047,7 +1051,7 @@ xxxxwwwwwwwwxxxx
 xxxx11111111xxxx
 @............._x
 xxxx11111111xxxx
-xxxxwwwwwwwwxxxx
+xxxxyyyyyyyyxxxx
 xxxxxxxxxxxxxxxx
 ENDMAP
 
@@ -1055,28 +1059,27 @@ NAME:   lemuel_mausoleum_altar_kikubaaqudgha
 TAGS:   uniq_altar_kikubaaqudgha temple_overflow_1
 TAGS:   temple_overflow_kikubaaqudgha uniq_mausoleum_altar
 DEPTH:  D:3-, Crypt
-MONS:   w:50 human zombie/orc zombie/elf zombie/w:5 ogre zombie/w:5 troll zombie
-MONS:   w:50 human skeleton/orc skeleton/elf skeleton/w:5 ogre skeleton/\
-        w:5 troll skeleton
-MONS:   mummy, vampire, wraith, necrophage
+MONS:   zombie / skeleton
+MONS:   simulacrum
+MONS:   wraith, necrophage
 TILE:   c = wall_catacombs
 NSUBST: ? = 1:_ / *:1
-SUBST:  1 = 1:25 2 3 4:8 5:7 6:5
+SUBST:  1 = 1:25 2 3
 KFEAT:  _ = altar_kikubaaqudgha
-KMONS:  _ = human zombie
+KMONS:  _ = simulacrum
 : interest_check(_G)
 MAP
 ccccccccccccccc.
 c?c?c?c?c?c?ccG.
 c+c+c+c+c+c+ccc.
-c............+@
+c............=@
 c+c+c+c+c+c+ccc.
 c?c?c?c?c?c?ccG.
 ccccccccccccccc.
 ENDMAP
 
 NAME:   kiku_gazebo_garden_becter
-TAGS:   temple_overflow_1 temple_overflow_kikubaaqudgha transparent
+TAGS:   temple_overflow_1 temple_overflow_kikubaaqudgha transparent no_pool_fixup
 DEPTH:  D:2-5
 KMONS:  f = withered plant
 KFEAT:  _ = altar_kikubaaqudgha
@@ -1085,17 +1088,19 @@ COLOUR: c = magenta
 COLOUR: i' = brown
 COLOUR: " = yellow
 TILE:   c = dngn_stone_wall_magenta
+KFEAT:  w = w
+KMONS:  w = slimehead skeleton / puffer fish skeleton
 FTILE:  '"_ = floor_pebble_yellow
 MAP
 ..````
 .ccc`````
-.c'c"`````
-.c''""````
+.cwc"`````
+.cWW""````
 .c'''"c````
 .c'_''cc```
 .c'''"c````
-.c''""````
-.c'c"`````
+.cWW""````
+.cwc"`````
 .ccc`````
 ..````
 ENDMAP
@@ -1105,11 +1110,14 @@ TAGS:   temple_overflow_1 temple_overflow_kikubaaqudgha transparent
 DEPTH:  D:2-5
 KFEAT:  _ = altar_kikubaaqudgha
 KMASK:  Ww = no_monster_gen
+NSUBST: w = 2:a / *:w
+KFEAT:  a = w 
+KMONS:  a = patrolling puffer fish skeleton att:good_neutral / patrolling slimehead skeleton att:good_neutral
 SUBST:  M = W..
 COLOUR: c = magenta
 COLOUR: i' = brown
 COLOUR: " = yellow
-COLOUR: w = green
+COLOUR: aw = green
 COLOUR: W = lightgreen
 TILE:   c = dngn_stone_wall_magenta
 FTILE:  '"_ = floor_pebble_yellow
@@ -2552,38 +2560,39 @@ DEPTH:  D:2-, Crypt
 TAGS:   no_pool_fixup uniq_zombie_altar no_monster_gen temple_overflow_1
 TAGS:   temple_overflow_yredelemnul
 KFEAT:  _ = altar_yredelemnul
-MONS:   patrolling gnoll zombie
-NSUBST: A = 2:1 / *:.
+NSUBST: w = 3:r / *:w
+NSUBST: y = 2:r / *:w
+KFEAT:  r = w
+KMONS:  r = puffer fish skeleton att:good_neutral / slimehead skeleton att:good_neutral
+MONS:   patrolling spectral thing / nothing w:100
 MAP
 xxxxxxxxxxxxxxxx
-xxxxAAAAAAAAxxxx
-xxxx........xxxx
+xxxxwwwwwwwwxxxx
+xxxx11111111xxxx
 @............._x
-xxxx........xxxx
-xxxxAAAAAAAAxxxx
+xxxx11111111xxxx
+xxxxyyyyyyyyxxxx
 xxxxxxxxxxxxxxxx
 ENDMAP
 
-# BCADDO: Make this more different than the Kiku version after Yred rework.
 NAME:   lemuel_mausoleum_altar_yredelemnul
 TAGS:   uniq_altar_yredelemnul temple_overflow_1 temple_overflow_yredelemnul
 TAGS:   uniq_mausoleum_altar decor
 DEPTH:  D:7-, Crypt
-MONS:   w:50 human zombie/orc zombie/elf zombie/w:5 ogre zombie/w:5 troll zombie
-MONS:   w:50 human skeleton/orc skeleton/elf skeleton/w:5 ogre skeleton/\
-        w:5 troll skeleton
-MONS:   mummy, wight, vampire, necrophage
+MONS:   crawling corpse / macabre mass
+MONS:   small abomination w:30 / large abomination
+MONS:   spectral thing
 TILE:   c = wall_catacombs
 NSUBST: ? = 1:_ / *:1
-SUBST:  1 = 1:25 2 3 4:8 5:7 6:5
+SUBST:  1 = 1:25 2 3
 KFEAT:  _ = altar_yredelemnul
-KMONS:  _ = human zombie
+KMONS:  _ = spectral vault warden
 : interest_check(_G)
 MAP
 ccccccccccccccc.
 c?c?c?c?c?c?ccG.
 c+c+c+c+c+c+ccc.
-c............+@
+c............=@
 c+c+c+c+c+c+ccc.
 c?c?c?c?c?c?ccG.
 ccccccccccccccc.
@@ -2591,10 +2600,10 @@ ENDMAP
 
 NAME:   yredelemnul_forgotten_temple_becter
 TAGS:   temple_overflow_1 temple_overflow_yredelemnul no_monster_gen no_item_gen
-DEPTH:  D:2-9
+DEPTH:  D:2-7
 KFEAT:  _ = altar_yredelemnul
 KFEAT:  . = known web trap / .
-KMONS:  _ = spectral orc
+KMONS:  _ = spectral thing
 MAP
 xxxxxxxxx
 xcccccccx

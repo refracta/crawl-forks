@@ -93,6 +93,7 @@ skeleton_turtle MONS_SKELETON_TURTLE
 skeleton_bat MONS_SKELETON_BAT
 skeleton_bird MONS_SKELETON_BIRD
 skeleton_fish MONS_SKELETON_FISH
+skeleton_pufferfish MONS_SKELETON_PUFFERFISH
 skeleton_centaur MONS_SKELETON_CENTAUR
 skeleton_naga MONS_SKELETON_NAGA
 skeleton_snake MONS_SKELETON_SNAKE
