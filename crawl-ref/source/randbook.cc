@@ -333,9 +333,9 @@ void build_themed_book(item_def &book, themed_spell_filter filter,
         discipline_2 = get_discipline();
         // Substitutions are arbitrary this is to prevent a crash on trying
         // to create a spellbook of non-player spells.
-        if (discipline_1 == spschool::evocation)
+        if (spell_type2skill(discipline_1) == SK_EVOCATIONS)
             discipline_1 = spschool::air;
-        if (discipline_2 == spschool::evocation)
+        if (spell_type2skill(discipline_2) == SK_EVOCATIONS)
             discipline_2 = spschool::fire;
 
         theme_book_spells(discipline_1, discipline_2, filter, agent, num_spells,

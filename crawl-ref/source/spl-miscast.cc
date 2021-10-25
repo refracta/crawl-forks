@@ -221,6 +221,12 @@ bool MiscastEffect::neither_end_silenced()
     return !silenced(you.pos()) && !silenced(target->pos());
 }
 
+// BCADNOTE: If there are any other schools as flags add them here.
+static bool _spschool_fake(spschool school)
+{
+    return (spell_type2skill(school) == SK_EVOCATIONS);
+}
+
 void MiscastEffect::do_miscast()
 {
     ASSERT_RANGE(recursion_depth, 0, MAX_RECURSE);
@@ -250,17 +256,30 @@ void MiscastEffect::do_miscast()
             if (spell_typematch(spell, bit))
                 school_list.push_back(bit);
 
-        sp_type = school_list[random2(school_list.size())];
+        do
+        {
+            sp_type = school_list[random2(school_list.size())];
+        } 
+        while (_spschool_fake(sp_type));
     }
     else
     {
         sp_type = school;
         if (sp_type == spschool::random)
-            sp_type = spschools_type::exponent(random2(SPSCHOOL_LAST_EXPONENT));
+        {
+            do
+            {
+                sp_type = spschools_type::exponent(random2(SPSCHOOL_LAST_EXPONENT));
+            } 
+            while (_spschool_fake(sp_type));
+        }
     }
 
     if (sp_type == spschool::evocation)
-        sp_type = spschool::charms; // Should never happen, but just in case.
+        sp_type = spschool::charms;
+
+    if (sp_type == spschool::ritual)
+        sp_type = spschool::hexes;
 
     if (level != -1)
         severity = level;
