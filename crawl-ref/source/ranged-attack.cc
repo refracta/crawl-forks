@@ -563,7 +563,7 @@ int ranged_attack::calc_mon_to_hit_base()
 {
     ASSERT(attacker->is_monster());
     const int hd_mult = attacker->as_monster()->is_archer() ? 4 : 2;
-    return (5 + attacker->get_hit_dice()) * hd_mult;
+    return (8 + attacker->get_hit_dice()) * hd_mult * (using_weapon() ? 1 : 2);
 }
 
 int ranged_attack::apply_damage_modifiers(int damage)

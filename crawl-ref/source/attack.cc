@@ -269,7 +269,7 @@ int attack::calc_to_hit(bool random, bool player_aux)
         else
         {
             // Claws give a slight bonus to accuracy when active
-            mhit *= (wpn_skill == SK_UNARMED_COMBAT) ? 1.5 + 0.3 * you.has_usable_claws() : 1;
+            mhit *= (wpn_skill == SK_UNARMED_COMBAT) ? 2 + 0.4 * you.has_usable_claws() : 1;
 
             mhit *= (900 + you.skill(wpn_skill, 100));
             mhit /= 900;
