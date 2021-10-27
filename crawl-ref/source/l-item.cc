@@ -772,6 +772,16 @@ IDEF(hands)
     return 1;
 }
 
+IDEF(shield)
+{
+    if (!item || !item->defined())
+        return 0;
+    
+    lua_pushboolean(ls, is_shield(*item) && !is_hybrid(item->sub_type));
+
+    return 1;
+}
+
 /*** Is this a god gift?
  * @field god_gift boolean
  */
@@ -1535,6 +1545,7 @@ static ItemAccessor item_attrs[] =
 {
     { "artefact",          l_item_artefact },
     { "branded",           l_item_branded },
+    { "shield",            l_item_shield },
     { "god_gift",          l_item_god_gift },
     { "fully_identified",  l_item_fully_identified },
     { "plus",              l_item_plus },
