@@ -239,6 +239,13 @@ book of necromancy
 
 A macabre book containing basic Necromancy spells.
 %%%%
+book of necromantic rituals
+
+A special tome containing spells that may only be completed with the favour of 
+Kikubaaqudgha. Gifted by the god to champions of suitable favour, the spells 
+within grant unique powerful effects a mere mortal cannot hope to wield on 
+their own.
+%%%%
 book of party tricks
 
 A book containing a variety of fun spells guaranteed to liven up any wizarding
