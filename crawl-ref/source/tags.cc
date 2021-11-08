@@ -4438,15 +4438,6 @@ void marshallItem(writer &th, const item_def &item, bool iinfo)
 }
 
 #if TAG_MAJOR_VERSION == 34
-static void _trim_god_gift_inscrip(item_def& item)
-{
-    item.inscription = replace_all(item.inscription, "god gift, ", "");
-    item.inscription = replace_all(item.inscription, "god gift", "");
-    item.inscription = replace_all(item.inscription, "Psyche", "");
-    item.inscription = replace_all(item.inscription, "Sonja", "");
-    item.inscription = replace_all(item.inscription, "Donald", "");
-}
-
 /// Replace "dragon armour" with "dragon scales" in an artefact's name.
 static void _fixup_dragon_artefact_name(item_def &item, string name_key)
 {
@@ -4672,45 +4663,10 @@ void unmarshallItem(reader &th, item_def &item)
         }
     }
 
-    if (th.getMinorVersion() < TAG_MINOR_GOD_GIFT)
-    {
-        _trim_god_gift_inscrip(item);
-        if (is_stackable_item(item))
-            origin_reset(item);
-    }
-
-    if (th.getMinorVersion() < TAG_MINOR_NO_SPLINT
-        && item.base_type == OBJ_ARMOURS && item.sub_type > ARM_CHAIN_MAIL)
-    {
-        --item.sub_type;
-    }
-
-    if (th.getMinorVersion() < TAG_MINOR_BOX_OF_BEASTS_CHARGES
-        && item.is_type(OBJ_MISCELLANY, MISC_BOX_OF_BEASTS))
-    {
-        // Give charges to box of beasts. If the player used it
-        // already then, well, they got some freebies.
-        item.plus = random_range(5, 15, 2);
-    }
-
-    if (item.is_type(OBJ_MISCELLANY, MISC_BUGGY_EBONY_CASKET))
-    {
-        item.sub_type = MISC_BOX_OF_BEASTS;
-        item.plus = 1;
-    }
-
-    // was spiked flail
-    if (item.is_type(OBJ_WEAPONS, WPN_SPIKED_FLAIL)
-        && th.getMinorVersion() <= TAG_MINOR_FORGOTTEN_MAP)
-    {
-        item.sub_type = WPN_FLAIL;
-    }
-
     if (item.base_type == OBJ_WEAPONS
         && (item.brand == SPWPN_RETURNING
             || item.brand == SPWPN_REACHING
-            || item.brand == SPWPN_ORC_SLAYING
-            || item.brand == SPWPN_EVASION))
+            || item.brand == SPWPN_ORC_SLAYING))
     {
         item.brand = SPWPN_NORMAL;
     }

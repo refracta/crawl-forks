@@ -3183,6 +3183,27 @@ void drink(item_def* potion)
     }
     else
         dec_mitm_item_quantity(potion->index(), 1);
+
+    item_def * bottles = nullptr;
+
+    for (auto &item : you.inv)
+    {
+        if (item.defined() && item.is_type(OBJ_MISCELLANY, MISC_EMPTY_BOTTLE))
+            bottles = &item;
+    }
+
+    if (bottles)
+        bottles->quantity++;
+    else
+    {
+        int bint = items(false, OBJ_MISCELLANY, MISC_EMPTY_BOTTLE, 1);
+        if (bint != NON_ITEM)
+        {
+            mpr("You drop the empty bottle.");
+            move_item_to_grid(&bint, you.pos());
+        }
+    }
+    
     count_action(CACT_USE, OBJ_POTIONS);
     you.turn_is_over = true;
 

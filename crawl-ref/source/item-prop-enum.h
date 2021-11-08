@@ -313,9 +313,7 @@ enum misc_item_type
     MISC_HORN_OF_GERYON,
     MISC_BOX_OF_BEASTS,
     MISC_CRYSTAL_BALL_OF_ENERGY,
-#if TAG_MAJOR_VERSION == 34
-    MISC_BUGGY_EBONY_CASKET,
-#endif
+    MISC_EMPTY_BOTTLE,
     MISC_LIGHTNING_ROD,
 
     MISC_DECK_OF_ESCAPE,
@@ -385,8 +383,9 @@ const vector<misc_item_type> misc_types =
 #endif
     MISC_ZIGGURAT,
 #if TAG_MAJOR_VERSION == 34
-    MISC_BOTTLED_EFREET, MISC_BUGGY_EBONY_CASKET
+    MISC_BOTTLED_EFREET, 
 #endif
+    MISC_EMPTY_BOTTLE
 };
 
 enum missile_type

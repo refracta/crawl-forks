@@ -417,6 +417,11 @@ eggplant
 A rotten eggplant which you can throw at the Crawl developers. It's a bug if
 you ever see this message.
 %%%%
+empty bottle
+
+A glass bottle with a cork stopper. You have the feeling this may have some use 
+in the future . . .
+%%%%
 encyclopedia
 
 A valuable collection of tomes with exhaustive knowledge on a specialized topic. 

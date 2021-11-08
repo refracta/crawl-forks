@@ -2814,6 +2814,9 @@ static tileidx_t _tileidx_misc(const item_def &item)
 
     case MISC_QUAD_DAMAGE:
         return TILE_MISC_QUAD_DAMAGE;
+
+    case MISC_EMPTY_BOTTLE:
+        return TILE_MISC_EMPTY_BOTTLE;
     }
 
     return TILE_ERROR;

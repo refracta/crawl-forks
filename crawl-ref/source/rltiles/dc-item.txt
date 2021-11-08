@@ -1244,6 +1244,8 @@ misc_deck_legendary MISC_DECK_LEGENDARY
 %compose i-deck_defense
 %finish
 misc_quad MISC_QUAD_DAMAGE
+%sdir item/potion
+empty MISC_EMPTY_BOTTLE
 %sdir item/misc/runes
 generic MISC_RUNE_OF_ZOT
 rune_tartarus RUNE_TARTARUS

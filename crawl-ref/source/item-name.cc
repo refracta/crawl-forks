@@ -1058,9 +1058,7 @@ static string misc_type_name(int type)
     {
     case MISC_CRYSTAL_BALL_OF_ENERGY:    return "crystal ball of energy";
     case MISC_BOX_OF_BEASTS:             return "box of beasts";
-#if TAG_MAJOR_VERSION == 34
-    case MISC_BUGGY_EBONY_CASKET:        return "removed ebony casket";
-#endif
+    case MISC_EMPTY_BOTTLE:              return "empty bottle";
     case MISC_FAN_OF_GALES:              return "fan of gales";
     case MISC_LAMP_OF_FIRE:              return "lamp of fire";
     case MISC_LANTERN_OF_SHADOWS:        return "lantern of shadows";
@@ -2793,7 +2791,7 @@ void check_item_knowledge(bool unknown_items)
             if (i == MISC_HORN_OF_GERYON
 #if TAG_MAJOR_VERSION == 34
                 || is_deck_type(i)
-                || i == MISC_BUGGY_EBONY_CASKET
+                || i == MISC_EMPTY_BOTTLE
                 || i == MISC_BOTTLED_EFREET
                 || i == MISC_RUNE_OF_ZOT
                 || i == MISC_STONE_OF_TREMORS
@@ -3903,10 +3901,9 @@ bool is_useless_item(const item_def &item, bool temp)
     case OBJ_MISCELLANY:
         switch (item.sub_type)
         {
-#if TAG_MAJOR_VERSION == 34
-        case MISC_BUGGY_EBONY_CASKET:
-            return item_type_known(item);
-#endif
+        case MISC_EMPTY_BOTTLE:
+            return true;
+
         // These can always be used.
         case MISC_LANTERN_OF_SHADOWS:
         case MISC_ZIGGURAT:
