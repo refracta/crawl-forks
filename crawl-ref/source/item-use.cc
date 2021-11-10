@@ -4300,7 +4300,7 @@ void read_scroll(item_def& scroll)
 
     case SCR_FEAR:
         mpr("You assume a fearsome visage.");
-        mass_enchantment(ENCH_FEAR, 1000);
+        mass_enchantment(ENCH_FEAR, 100);
         break;
 
     case SCR_ATTENTION:

@@ -2113,43 +2113,15 @@ static bool _monster_resists_mass_enchantment(monster* mons,
                                               int pow,
                                               bool* did_msg)
 {
-    // Assuming that the only mass charm is control undead.
-    if (wh_enchant == ENCH_CHARM)
+    if (mons->wont_attack())
+        return true;
+
+    // Only Cause Fear and Discord come through here as of now.
+    if (wh_enchant == ENCH_INSANE || mons->holiness() & MH_NATURAL 
+        || mons->holiness() & MH_DEMONIC)
     {
-        if (you.get_mutation_level(MUT_NO_LOVE))
+        if (wh_enchant == ENCH_INSANE && !mons->can_go_frenzy())
             return true;
-
-        if (mons->friendly())
-            return true;
-
-        if (!(mons->holiness() & MH_UNDEAD))
-            return true;
-
-        int res_margin = mons->check_res_magic(pow);
-        if (res_margin > 0)
-        {
-            if (simple_monster_message(*mons,
-                    mons->resist_margin_phrase(res_margin).c_str()))
-            {
-                *did_msg = true;
-            }
-            return true;
-        }
-    }
-    else if (wh_enchant == ENCH_INSANE
-             || mons->holiness() & MH_NATURAL)
-    {
-        if (wh_enchant == ENCH_FEAR
-            && mons->friendly())
-        {
-            return true;
-        }
-
-        if (wh_enchant == ENCH_INSANE
-            && !mons->can_go_frenzy())
-        {
-            return true;
-        }
 
         int res_margin = mons->check_res_magic(pow);
         if (res_margin > 0)
@@ -2186,10 +2158,6 @@ spret mass_enchantment(enchant_type wh_enchant, int pow, bool fail)
 {
     fail_check();
     bool did_msg = false;
-
-    // Give mass enchantments a power multiplier.
-    pow *= 3;
-    pow /= 2;
 
     pow = min(pow, 200);
 
