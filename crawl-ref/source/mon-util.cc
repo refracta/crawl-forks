@@ -6768,7 +6768,9 @@ bool is_skeletal_type(monster_type mc)
         || mc == MONS_REVENANT
         || mc == MONS_FLYING_SKULL
         || mc == MONS_CURSE_SKULL
-        || mc == MONS_MURRAY;
+        || mc == MONS_MURRAY
+        || mc == MONS_BONE_SCORPION
+        || mc == MONS_BONE_DRACONIAN;
 }
 
 bool is_icy_type(monster_type mc)

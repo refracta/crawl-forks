@@ -29,11 +29,11 @@ function ossuary_setup_features(e)
   elseif you.in_branch("Lair") or you.in_branch("Orc") then
     e.kmons("0 = guardian mummy")
     e.kmons("1 = mummy priest / guardian mummy")
-    e.kmons("4 = redback / wolf spider")
+    e.kmons("4 = bone scorpion")
 	e.kmons("5 = eidolon / freezing wraith")
 	e.kmons(") = guardian mummy / mummy")
 	e.kmons("% = wraith / phantom")
-	e.kmons("# = scorpion / redback / nothing w:30")
+	e.kmons("# = scorpion / bone scorpion / nothing w:30")
   else
     e.kmons("0 = guardian mummy")
     e.kmons("1 = mummy priest")

@@ -1165,6 +1165,7 @@ ancient_champion MONS_ANCIENT_CHAMPION
 %sdir mon/undead
 curse_skull MONS_CURSE_SKULL
 %rim 0
+bone_scorpion MONS_BONE_SCORPION
 curse_toe MONS_CURSE_TOE
 flying_skull MONS_FLYING_SKULL
 %rim 1
