@@ -3738,7 +3738,19 @@ static void tag_read_you_items(reader &th)
         }
 
         // Unwield anything in weapon1 slot if you have a missing hand.
-        if (item && you.get_mutation_level(MUT_MISSING_HAND) && i == EQ_WEAPON1)
+        if (item && i == EQ_WEAPON1 && you.get_mutation_level(MUT_MISSING_HAND))
+        {
+            you.equip[i] = -1;
+            you.melded.set(i, false);
+            continue;
+        }
+
+        // Unwield a second lantern of shadows if you have two.
+        // Assumes possible slots are WEAPON0, WEAPON1, CYTOPLASM only.
+        if (item && i > EQ_WEAPON0 
+            && (you.slot_item(EQ_WEAPON0) && you.slot_item(EQ_WEAPON0)->is_type(OBJ_MISCELLANY, MISC_LANTERN_OF_SHADOWS)
+            || i > EQ_WEAPON1 && you.slot_item(EQ_WEAPON1) && you.slot_item(EQ_WEAPON1)->is_type(OBJ_MISCELLANY, MISC_LANTERN_OF_SHADOWS))
+            && item->is_type(OBJ_MISCELLANY, MISC_LANTERN_OF_SHADOWS))
         {
             you.equip[i] = -1;
             you.melded.set(i, false);

@@ -698,9 +698,7 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
         }
 
         else if (you.weapon(1) && !you.weapon(0))
-        {
             wpn = you.weapon(1);
-        }
         
         else
         {
@@ -794,6 +792,15 @@ bool wield_weapon(bool auto_wield, int slot, bool show_weff_messages,
             canned_msg(MSG_OK);
             return false;
         }
+    }
+
+    if (new_wpn.is_type(OBJ_MISCELLANY, MISC_LANTERN_OF_SHADOWS) && you.attribute[ATTR_SHADOWS])
+    {
+        string local = "S";
+        if (!you.get_mutation_level(MUT_MISSING_HAND))
+            local = "You cannot wield two lanterns of shadows at the same time and s";
+        mprf("%swapping identical lanterns serves no purpose.", local.c_str());
+        return false;
     }
 
     if (new_wpn.base_type == OBJ_STAVES && you.slot_item(EQ_CYTOPLASM) && you.slot_item(EQ_CYTOPLASM)->base_type == OBJ_STAVES)
@@ -2758,6 +2765,13 @@ bool subsume_item(int slot)
             mpr("You've already subsumed that!");
         else
             mpr("You can't subsume that!");
+        return false;
+    }
+
+    if (item.is_type(OBJ_MISCELLANY, MISC_LANTERN_OF_SHADOWS) 
+        && you.attribute[ATTR_SHADOWS] && !item_is_equipped(item))
+    {
+        mpr("Subsuming an additional lantern of shadows while wielding one will have no additional effect!");
         return false;
     }
 
