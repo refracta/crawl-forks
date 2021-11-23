@@ -4725,7 +4725,7 @@ void bolt::affect_player()
         }
     }
 
-    if (origin_spell == SPELL_BECKONING && you.alive())
+    if (origin_spell == SPELL_FORCE_LASSO && you.alive())
         beckon(source, you, *this, damage.size, *agent());
 
     // Apply resistances to damage, but don't print "You resist" messages yet
@@ -5481,7 +5481,7 @@ void bolt::monster_post_hit(monster* mon, int dmg)
         if (item && item->base_type == OBJ_MISSILES)
             m_brand = get_ammo_brand(*item);
 
-        if (origin_spell == SPELL_BECKONING && mon->alive())
+        if (origin_spell == SPELL_FORCE_LASSO && mon->alive())
         {
             actor &ma = *mon;
             beckon(source, ma, *this, damage.size, *agent());

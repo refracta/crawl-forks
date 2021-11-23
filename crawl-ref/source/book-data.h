@@ -68,7 +68,7 @@ static const vector<spell_type> spellbook_templates[] =
     SPELL_BLINK,
     SPELL_SHROUD_OF_GOLUBRIA,
     SPELL_TELEPORT_OTHER,
-    SPELL_BECKONING,
+    SPELL_FORCE_LASSO,
     SPELL_FORCE_LANCE,
     SPELL_GOLUBRIAS_PASSAGE,
 },

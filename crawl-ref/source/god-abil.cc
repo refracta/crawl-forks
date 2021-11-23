@@ -1529,7 +1529,7 @@ bool vehumet_supports_spell(spell_type spell)
         || spell == SPELL_TORNADO
         || spell == SPELL_FREEZE
         || spell == SPELL_FORCE_LANCE
-        || spell == SPELL_BECKONING
+        || spell == SPELL_FORCE_LASSO
         || spell == SPELL_IGNITE_POISON
         || spell == SPELL_OZOCUBUS_REFRIGERATION
         || spell == SPELL_OLGREBS_TOXIC_RADIANCE

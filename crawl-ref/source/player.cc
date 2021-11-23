@@ -1632,7 +1632,7 @@ int player_spell_levels()
             S2S = true;
         if (spell == SPELL_FORCE_LANCE)
             lance = true;
-        if (spell == SPELL_BECKONING)
+        if (spell == SPELL_FORCE_LASSO)
             lasso = true;
         if (spell == SPELL_STARBURST)
             burst = true;
