@@ -79,7 +79,7 @@
 #include "view.h"
 #include "viewchar.h" // stringize_glyph
 
-static int _spell_enhancement(spell_type spell);
+static int _spell_enhancement(spell_type spell, bool random = true);
 static int _additive_power(spell_type spell);
 static string _spell_failure_rate_description(spell_type spell);
 
@@ -424,11 +424,13 @@ int stepdown_spellpower(int power, int scale)
  *                      function has higher internal resolution than the default
  *                      argument, so use this rather than dividing. This must be
  *                      between 1 and 1000.
+ * @param random        whether to apply random enhancers (currently only 
+ *                      scintillating draconians)
  *
  * @return the resulting spell power.
  */
 int calc_spell_power(spell_type spell, bool apply_intel, bool fail_rate_check,
-                     bool cap_power, int scale)
+                     bool cap_power, int scale, bool random)
 {
     int power = 0;
 
@@ -472,7 +474,7 @@ int calc_spell_power(spell_type spell, bool apply_intel, bool fail_rate_check,
 
         // [dshaligram] Enhancers don't affect fail rates any more, only spell
         // power. Note that this does not affect Vehumet's boost in castability.
-        power = apply_enhancement(power, _spell_enhancement(spell));
+        power = apply_enhancement(power, _spell_enhancement(spell, random));
 
         // Wild magic boosts spell power but decreases success rate.
         power *= (10 + 9 * you.get_mutation_level(MUT_WILD_MAGIC));
@@ -615,6 +617,16 @@ bool staff_enhances_spell(const item_def * staff, spell_type spell)
     return false;
 }
 
+static int _random_enhancement(bool random)
+{
+    if (you.species == SP_DRACONIAN && you.drac_colour == DR_SCINTILLATING
+        && (one_chance_in(3) || !random))
+    {
+        return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
+    }
+    return 0;
+}
+
 static int _draconian_spell_enhancement(spschools_type typeflags)
 {
     if (you.species != SP_DRACONIAN)
@@ -678,10 +690,6 @@ static int _draconian_spell_enhancement(spschools_type typeflags)
         if (typeflags & spschool::hexes)
             return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
         return 0;
-    case DR_SCINTILLATING:
-        if (one_chance_in(3))
-            return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
-        return 0;
     case DR_SILVER:
         if (typeflags & spschool::earth)
             return you.get_mutation_level(MUT_DRACONIAN_ENHANCER);
@@ -700,7 +708,7 @@ static int _draconian_spell_enhancement(spschools_type typeflags)
     }
 }
 
-static int _spell_enhancement(spell_type spell)
+static int _spell_enhancement(spell_type spell, bool random)
 {
     const spschools_type typeflags = get_spell_disciplines(spell);
     int enhanced = 0;
@@ -750,6 +758,8 @@ static int _spell_enhancement(spell_type spell)
     enhanced += you.archmagi();
 
     enhanced += _draconian_spell_enhancement(typeflags);
+
+    enhanced += _random_enhancement(random);
 
     // These are used in an exponential way, so we'll limit them a bit. -- bwr
     if (enhanced > 3)
@@ -1629,11 +1639,18 @@ spret your_spells(spell_type spell, int powc, bool allow_fail,
         return spret::abort;
 
     ASSERT(wiz_cast || !(flags & spflag::testing));
+    
+    int rpwr = 0;
+
+    if (powc)
+        rpwr = powc;
+    else
+        rpwr = calc_spell_power(spell, true, false, true, 1, false);
 
     if (!powc)
         powc = calc_spell_power(spell, true);
 
-    const int range = calc_spell_range(spell, powc, allow_fail);
+    const int range = calc_spell_range(spell, rpwr, allow_fail);
     int intensity = 0;
     beam.range = range;
 
@@ -2608,14 +2625,14 @@ string spell_power_string(spell_type spell)
     const int cap = spell_power_cap(spell);
     if (cap == 0)
         return "N/A";
-    const int power = min(calc_spell_power(spell, true, false, false), cap);
+    const int power = min(calc_spell_power(spell, true, false, false, 1, false), cap);
     return make_stringf("%d (%d)", power, cap);
 }
 
 int calc_spell_range(spell_type spell, int power, bool allow_bonus)
 {
     if (power == 0)
-        power = calc_spell_power(spell, true, false, false);
+        power = calc_spell_power(spell, true, false, false, 1, false);
     const int range = spell_range(spell, power, allow_bonus);
 
     return range;
