@@ -559,11 +559,9 @@ int ranged_attack::calc_base_unarmed_damage()
     return 2;
 }
 
-int ranged_attack::calc_mon_to_hit_base()
+int ranged_attack::calc_mon_to_hit_base(bool random)
 {
-    ASSERT(attacker->is_monster());
-    const int hd_mult = attacker->as_monster()->is_archer() ? 4 : 2;
-    return (8 + attacker->get_hit_dice()) * hd_mult * (using_weapon() ? 1 : 2);
+    return calc_mon_to_hit(attacker->as_monster(), true, attack_number, random);
 }
 
 int ranged_attack::apply_damage_modifiers(int damage)

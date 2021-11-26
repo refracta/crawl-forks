@@ -139,7 +139,7 @@ protected:
     virtual int weapon_damage() = 0;
     virtual int get_weapon_plus();
     virtual int calc_base_unarmed_damage();
-    virtual int calc_mon_to_hit_base() = 0;
+    virtual int calc_mon_to_hit_base(bool random) = 0;
     virtual int apply_damage_modifiers(int damage);
     virtual int calc_damage();
     int test_hit(int to_hit, int ev);
@@ -206,5 +206,7 @@ protected:
     virtual void player_stab_check();
 };
 
+float calc_mon_to_hit(monster * mon, bool is_ranged, int attack_slot, bool random);
+float weapon_bonus(float mhit, actor * attacker, int extra_slay, item_def * weapon, bool random);
 int player_base_unarmed(bool rand = true);
 string attack_strength_punctuation(int dmg);

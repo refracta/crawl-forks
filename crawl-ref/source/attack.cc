@@ -217,6 +217,61 @@ bool attack::handle_phase_end()
     return true;
 }
 
+float calc_mon_to_hit(monster * mon, bool is_ranged, int attack_slot, bool random)
+{
+    float mhit = 16 + mon->get_hit_dice() * 2;
+    int slay = 0;
+
+    if (is_ranged && mon->is_archer() || !is_ranged && mon->is_fighter())
+        mhit *= 2;
+
+    if (!is_ranged && attack_slot < 3 && !mon->weapon(attack_slot))
+        mhit *= 2;
+
+    mhit *= 10 - mon->inaccuracy();
+    mhit /= 10;
+
+    const int jewellery = mon->inv[MSLOT_JEWELLERY];
+    slay += mon->scan_artefacts(ARTP_SLAYING);
+    if (jewellery != NON_ITEM
+        && mitm[jewellery].is_type(OBJ_JEWELLERY, RING_SLAYING))
+    {
+        slay += 5;
+    }
+
+    mhit = weapon_bonus(mhit, mon, slay, mon->weapon(attack_slot), random);
+
+    return mhit;
+}
+
+float weapon_bonus(float mhit, actor * attacker, int extra_slay, item_def * weapon, bool random)
+{
+    int slay = extra_slay;
+
+    if (weapon)
+    {
+        int wpn_base = property(*weapon, (weapon->base_type == OBJ_SHIELDS) ? PSHD_HIT : PWPN_HIT);
+        int strength = attacker->is_player() ? you.strength() : attacker->get_hit_dice();
+        if (weapon->base_type != OBJ_STAVES)
+            slay += weapon->plus;
+
+        strength = random ? div_rand_round(strength, 4) : strength / 4;
+
+        if (wpn_base < 0)
+            wpn_base = min(0, wpn_base + strength);
+        else if (attacker->is_player() && you.strength() < 0)
+            wpn_base += (strength);
+
+        mhit *= max(5, 10 + wpn_base);
+        mhit /= 10;
+    }
+
+    mhit *= (40 + slay);
+    mhit /= 40;
+
+    return mhit;
+}
+
 /**
  * Calculate the to-hit for an attacker
  *
@@ -235,7 +290,7 @@ int attack::calc_to_hit(bool random, bool player_aux)
 
     float mhit = attacker->is_player() ?
                 6 + max(2 * you.dex() / 3, -1)
-              : calc_mon_to_hit_base();
+              : calc_mon_to_hit_base(random);
     int slay = 0;
 
 #ifdef DEBUG_DIAGNOSTICS
@@ -306,41 +361,9 @@ int attack::calc_to_hit(bool random, bool player_aux)
         // +0 for normal vision, +10% for Supernaturally Acute Vision, -10% For Impaired Vision
         mhit *= 10 + you.vision();
         mhit /= 10;
+
+        mhit = weapon_bonus(mhit, &you, slay, weapon, random);
     }
-    else    // Monster to-hit.
-    {
-        mhit *= 10 - attacker->inaccuracy();
-        mhit /= 10;
-
-        const int jewellery = attacker->as_monster()->inv[MSLOT_JEWELLERY]; 
-        slay += attacker->scan_artefacts(ARTP_SLAYING);
-        if (jewellery != NON_ITEM
-            && mitm[jewellery].is_type(OBJ_JEWELLERY, RING_SLAYING))
-        {
-            slay += 5;
-        }
-    }
-
-    // weapon bonus contribution
-    if (using_weapon())
-    {
-        int wpn_base = property(*weapon, (weapon->base_type == OBJ_SHIELDS) ? PSHD_HIT : PWPN_HIT);
-        int strength = attacker->is_player() ? you.strength() : attacker->get_hit_dice();
-        if (weapon->base_type != OBJ_STAVES)
-            slay += weapon->plus;
-
-        strength = random ? div_rand_round(strength, 4) : strength / 4;
-
-        if (wpn_base < 0)
-            wpn_base = min(0, wpn_base + strength);
-        else if (you.strength() < 0)
-            wpn_base += (strength);
-
-        mhit *= max(5, 10 + wpn_base);
-    }
-
-    mhit *= (40 + slay);
-    mhit /= 400;
 
     // Penalties and Buffs for both players and monsters:
 

@@ -4648,12 +4648,9 @@ int melee_attack::weapon_damage()
     return property(*weapon, PWPN_DAMAGE);
 }
 
-int melee_attack::calc_mon_to_hit_base()
+int melee_attack::calc_mon_to_hit_base(bool random)
 {
-    const bool fighter = attacker->is_monster()
-                         && attacker->as_monster()->is_fighter();
-    const int hd_mult = fighter ? 4 : 2;
-    return (8 + attacker->get_hit_dice()) * hd_mult * (using_weapon() ? 1 : 2);
+    return calc_mon_to_hit(attacker->as_monster(), false, attack_number, random);
 }
 
 /**

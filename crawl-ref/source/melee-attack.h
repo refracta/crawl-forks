@@ -87,7 +87,7 @@ private:
     /* Combat Calculations */
     bool using_weapon() const override;
     int weapon_damage() override;
-    int calc_mon_to_hit_base() override;
+    int calc_mon_to_hit_base(bool random) override;
     int apply_damage_modifiers(int damage) override;
     int calc_damage() override;
     bool apply_damage_brand(const char *what = nullptr) override;
