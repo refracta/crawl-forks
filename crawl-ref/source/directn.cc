@@ -1526,7 +1526,9 @@ vector<string> direction_chooser::monster_description_suffixes(
 {
     vector<string> suffixes;
 
+    _push_back_if_nonempty(mi.ev_description(true), &suffixes);
     _push_back_if_nonempty(mi.wounds_description(true), &suffixes);
+    _push_back_if_nonempty(mi.tohit_description(true), &suffixes);
     _push_back_if_nonempty(mi.constriction_description(), &suffixes);
     _append_container(suffixes, mi.attributes());
     _append_container(suffixes, _get_monster_desc_vector(mi));

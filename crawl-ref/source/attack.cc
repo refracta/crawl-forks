@@ -217,15 +217,85 @@ bool attack::handle_phase_end()
     return true;
 }
 
-float calc_mon_to_hit(monster * mon, bool is_ranged, int attack_slot, bool random)
+float calc_player_to_hit(const item_def * weapon, bool player_aux, int armour_malus, bool random)
+{
+    float mhit = 6 + max(2 * you.dex() / 3, -1);
+    skill_type wpn_skill = weapon ? item_attack_skill(*weapon) : SK_UNARMED_COMBAT;
+
+    if (you.form_uses_xl())
+        wpn_skill = SK_FIGHTING; // for stabbing, mostly
+
+    // weapon skill contribution
+    if (player_aux) {}
+    else if (weapon)
+    {
+        if (wpn_skill != SK_FIGHTING)
+        {
+            if (you.skill(wpn_skill) < 1 && player_in_a_dangerous_place())
+                xom_is_stimulated(10); // Xom thinks that is mildly amusing.
+
+            mhit *= (2700 + you.skill(wpn_skill, 300) + you.skill(SK_FIGHTING, 100));
+            mhit /= 2700;
+        }
+    }
+    else if (you.form_uses_xl())
+    {
+        mhit *= (9 + you.experience_level);
+        mhit /= 9;
+    }
+    else
+    {
+        // Claws give a slight bonus to accuracy when active
+        mhit *= (wpn_skill == SK_UNARMED_COMBAT) ? 2 + 0.4 * you.has_usable_claws() : 1;
+
+        mhit *= (900 + you.skill(wpn_skill, 100));
+        mhit /= 900;
+    }
+
+    // slaying bonus
+    const int slay = slaying_bonus(weapon && is_range_weapon(*weapon), weapon);
+
+    // hunger penalty
+    if (apply_starvation_penalties())
+        mhit *= 0.7;
+
+    // armour penalty
+    mhit *= max((20 - armour_malus), 5);
+    mhit /= 20;
+
+    // vertigo penalty
+    if (you.duration[DUR_VERTIGO])
+        mhit *= 0.85;
+
+    // mutation
+    if (you.get_mutation_level(MUT_GOLDEN_EYEBALLS))
+    {
+        mhit *= (10 + you.get_mutation_level(MUT_GOLDEN_EYEBALLS));
+        mhit /= 10;
+    }
+
+    if (you.get_mutation_level(MUT_BUDDING_EYEBALLS))
+    {
+        mhit *= (10 + you.get_mutation_level(MUT_BUDDING_EYEBALLS));
+        mhit /= 10;
+    }
+
+    // +0 for normal vision, +10% for Supernaturally Acute Vision, -10% For Impaired Vision
+    mhit *= 10 + you.vision();
+    mhit /= 10;
+
+    mhit = weapon_bonus(mhit, 0, slay, weapon, random);
+
+    return mhit;
+}
+
+// Note use slot -1 to calc base with no weapon.
+float calc_mon_to_hit(const monster * mon, bool is_ranged, int attack_slot, bool random)
 {
     float mhit = 16 + mon->get_hit_dice() * 2;
     int slay = 0;
 
     if (is_ranged && mon->is_archer() || !is_ranged && mon->is_fighter())
-        mhit *= 2;
-
-    if (!is_ranged && attack_slot < 3 && !mon->weapon(attack_slot))
         mhit *= 2;
 
     mhit *= 10 - mon->inaccuracy();
@@ -239,19 +309,31 @@ float calc_mon_to_hit(monster * mon, bool is_ranged, int attack_slot, bool rando
         slay += 5;
     }
 
-    mhit = weapon_bonus(mhit, mon, slay, mon->weapon(attack_slot), random);
+    mhit = weapon_bonus(mhit, mon->get_hit_dice(), slay, mon->weapon(attack_slot), random);
 
     return mhit;
 }
 
-float weapon_bonus(float mhit, actor * attacker, int extra_slay, item_def * weapon, bool random)
+int tohit_percent(const int ev, const int to_hit)
+{
+    float perc;
+
+    if (ev > to_hit)
+        perc = ((to_hit * 1.0 + 1) / 2 / (ev * 1.0)) * 100;
+    else
+        perc = 100 - (ev * 1.0 - 1) / 2 / (to_hit * 1.0) * 100;
+    return int(perc);
+}
+
+// Note: HD of 0 is override to be player.
+float weapon_bonus(float mhit, int HD, int extra_slay, const item_def * weapon, bool random)
 {
     int slay = extra_slay;
 
     if (weapon)
     {
         int wpn_base = property(*weapon, (weapon->base_type == OBJ_SHIELDS) ? PSHD_HIT : PWPN_HIT);
-        int strength = attacker->is_player() ? you.strength() : attacker->get_hit_dice();
+        int strength = (HD < 1) ? you.strength() : HD;
         if (weapon->base_type != OBJ_STAVES)
             slay += weapon->plus;
 
@@ -259,7 +341,7 @@ float weapon_bonus(float mhit, actor * attacker, int extra_slay, item_def * weap
 
         if (wpn_base < 0)
             wpn_base = min(0, wpn_base + strength);
-        else if (attacker->is_player() && you.strength() < 0)
+        else if (HD < 1 && you.strength() < 0)
             wpn_base += (strength);
 
         mhit *= max(5, 10 + wpn_base);
@@ -289,84 +371,15 @@ int attack::calc_to_hit(bool random, bool player_aux)
     }
 
     float mhit = attacker->is_player() ?
-                6 + max(2 * you.dex() / 3, -1)
+                calc_player_to_hit(using_weapon() ? weapon : nullptr, 
+                    player_aux, attacker_armour_tohit_penalty + attacker_shield_tohit_penalty, true)
               : calc_mon_to_hit_base(random);
-    int slay = 0;
 
 #ifdef DEBUG_DIAGNOSTICS
     const int base_hit = mhit;
 #endif
 
-    // This if statement is temporary, it should be removed when the
-    // implementation of a more universal (and elegant) to-hit calculation
-    // is designed. The actual code is copied from the old mons_to_hit and
-    // player_to_hit methods.
-    if (attacker->is_player())
-    {
-        // weapon skill contribution
-        if (player_aux) {}
-        else if (using_weapon())
-        {
-            if (wpn_skill != SK_FIGHTING)
-            {
-                if (you.skill(wpn_skill) < 1 && player_in_a_dangerous_place())
-                    xom_is_stimulated(10); // Xom thinks that is mildly amusing.
-
-                mhit *= (2700 + you.skill(wpn_skill, 300) + you.skill(SK_FIGHTING, 100));
-                mhit /= 2700;
-            }
-        }
-        else if (you.form_uses_xl())
-        {
-            mhit *= (9 + you.experience_level);
-            mhit /= 9;
-        }
-        else
-        {
-            // Claws give a slight bonus to accuracy when active
-            mhit *= (wpn_skill == SK_UNARMED_COMBAT) ? 2 + 0.4 * you.has_usable_claws() : 1;
-
-            mhit *= (900 + you.skill(wpn_skill, 100));
-            mhit /= 900;
-        }
-
-        // slaying bonus
-        slay += slaying_bonus(weapon && is_range_weapon(*weapon) && using_weapon(), using_weapon());
-
-        // hunger penalty
-        if (apply_starvation_penalties())
-            mhit *= 0.7;
-
-        // armour penalty
-        mhit *= max((20 - attacker_armour_tohit_penalty - attacker_shield_tohit_penalty), 5);
-        mhit /= 20;
-
-        // vertigo penalty
-        if (you.duration[DUR_VERTIGO])
-            mhit *= 0.85;
-
-        // mutation
-        if (you.get_mutation_level(MUT_GOLDEN_EYEBALLS))
-        {
-            mhit *= (10 + you.get_mutation_level(MUT_GOLDEN_EYEBALLS));
-            mhit /= 10;
-        }
-
-        if (you.get_mutation_level(MUT_BUDDING_EYEBALLS))
-        {
-            mhit *= (10 + you.get_mutation_level(MUT_BUDDING_EYEBALLS));
-            mhit /= 10;
-        }
-
-        // +0 for normal vision, +10% for Supernaturally Acute Vision, -10% For Impaired Vision
-        mhit *= 10 + you.vision();
-        mhit /= 10;
-
-        mhit = weapon_bonus(mhit, &you, slay, weapon, random);
-    }
-
     // Penalties and Buffs for both players and monsters:
-
     if (attacker->confused())
         mhit *= 0.7;
 

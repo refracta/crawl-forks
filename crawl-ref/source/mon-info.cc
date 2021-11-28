@@ -14,6 +14,7 @@
 
 #include "act-iter.h"
 #include "artefact.h"
+#include "attack.h" // to-hit description
 #include "colour.h"
 #include "coordit.h"
 #include "english.h"
@@ -296,7 +297,9 @@ monster_info::monster_info(monster_type p_type, monster_type p_base_type)
     current_hp = mons_avg_hp(type);
     ac = get_mons_class_ac(type);
     ev = base_ev = get_mons_class_ev(type);
-    sh = 0; // Monster without items is always 0 sh.
+    sh = 0; // Monster without items is always 0 sh. BCADDO: Is this still true?
+    tohit = get_mons_class_base_to_hit(type, false);
+    ranged_tohit = get_mons_class_base_to_hit(type, true);
     mresists = get_mons_class_resists(type);
     mr = mons_class_res_magic(type, base_type);
     can_see_invis = mons_class_sees_invis(type, base_type);
@@ -525,6 +528,8 @@ monster_info::monster_info(const monster* m, int milev)
     current_hp = m->hit_points;
     ac = m->armour_class(false);
     ev = m->evasion(ev_ignore::unided);
+    tohit = calc_mon_to_hit(m, false, -1, false);
+    ranged_tohit = calc_mon_to_hit(m, true, -1, false);
     base_ev = m->base_evasion();
     sh = max(0, m->shield_bonus(false));
     mr = m->res_magic(false);
@@ -1545,6 +1550,85 @@ vector<string> monster_info::attributes() const
     if (is(MB_VILE_CLUTCH))
         v.emplace_back("constricted by zombie hands");
     return v;
+}
+
+string monster_info::ev_description(bool terse) const
+{
+    if (ev <= 0)
+        return "Helpless.";
+
+    const item_def * weap0 = you.weapon(0);
+    const item_def * weap1 = you.weapon(1);
+
+    const int penalty = div_round_up(you.armour_tohit_penalty(true, 20), 20)
+                      + div_round_up(you.shield_tohit_penalty(true, 20), 20);
+
+    int hit0 = -1;
+    int hit1 = -1;
+
+    if (!weap0 || is_weapon(*weap0))
+    {
+        hit0 = calc_player_to_hit(weap0, false, penalty, false);
+        hit0 = tohit_percent(ev, hit0);
+    }
+
+    if (!weap1 || is_weapon(*weap1))
+    {
+        hit1 = calc_player_to_hit(weap1, false, penalty, false);
+        hit1 = tohit_percent(ev, hit1);
+    }
+
+    if (hit0 < 1)
+    {
+        if (hit1 < 1)
+            return "Can't hit.";
+        else
+            return make_stringf("%d%% to-hit", hit1);
+    }
+    else if (hit1 < 1)
+        return make_stringf("%d%% to-hit", hit0);
+
+    return make_stringf("%d%%, %d%% to-hit", hit0, hit1);
+}
+
+string monster_info::tohit_description(bool terse) const
+{
+    if (you.evasion() <= 0)
+        return "100% (All)";
+
+    float mhit = tohit;
+    float rhit = ranged_tohit;
+
+    const item_def *weapon0 = inv[MSLOT_WEAPON].get();
+    const item_def *weapon1 = inv[MSLOT_ALT_WEAPON].get();
+
+    // This overestimates by a little, but is close enough.
+    if (weapon0 && is_weapon(*weapon0))
+    {
+        if (is_range_weapon(*weapon0))
+            rhit = weapon_bonus(rhit, hd, 0, weapon0, false);
+        else
+            mhit = weapon_bonus(mhit, hd, 0, weapon0, false);
+    }
+
+    if (weapon1 && is_weapon(*weapon1))
+    {
+        if (is_range_weapon(*weapon1) && (int)rhit == ranged_tohit)
+            rhit = weapon_bonus(rhit, hd, 0, weapon1, false);
+        else if ((int)mhit == tohit)
+            mhit = weapon_bonus(mhit, hd, 0, weapon1, false);
+    }
+
+    const int melee = tohit_percent(you.evasion(), (int)mhit);
+    const int ranged = tohit_percent(you.evasion(), (int)rhit);
+
+    if (!is(MB_RANGED_ATTACK))
+        return make_stringf("%d%% (Melee)", melee);
+
+    if (melee == ranged)
+        return make_stringf("%d%% (All)", melee);
+
+    return make_stringf("%d%% (Melee), %d%% (Ranged)", melee, ranged);
 }
 
 string monster_info::wounds_description_sentence() const

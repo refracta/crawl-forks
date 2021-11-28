@@ -206,7 +206,9 @@ protected:
     virtual void player_stab_check();
 };
 
-float calc_mon_to_hit(monster * mon, bool is_ranged, int attack_slot, bool random);
-float weapon_bonus(float mhit, actor * attacker, int extra_slay, item_def * weapon, bool random);
+float calc_player_to_hit(const item_def * weapon, bool player_aux, int armour_malus, bool random);
+float calc_mon_to_hit(const monster * mon, bool is_ranged, int attack_slot, bool random);
+int tohit_percent(const int ev, const int to_hit);
+float weapon_bonus(float mhit, int HD, int extra_slay, const item_def * weapon, bool random);
 int player_base_unarmed(bool rand = true);
 string attack_strength_punctuation(int dmg);

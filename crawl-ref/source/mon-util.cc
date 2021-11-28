@@ -318,6 +318,21 @@ void set_resist(resists_t &all, mon_resist_flags res, int lev)
     all = (all & ~(res * 7)) | (res * (lev & 7));
 }
 
+int get_mons_class_base_to_hit(monster_type mc, bool ranged)
+{
+    const monsterentry *me = get_monster_data(mc);
+
+    int mhit = 16 + me->HD * 2;
+
+    if (ranged && mons_class_flag(mc, M_ARCHER)
+        || !ranged && mons_class_flag(mc, M_FIGHTER))
+    {
+        mhit *= 2;
+    }
+
+    return mhit;
+}
+
 int get_mons_class_ac(monster_type mc)
 {
     const monsterentry *me = get_monster_data(mc);

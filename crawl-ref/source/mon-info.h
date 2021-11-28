@@ -218,6 +218,8 @@ struct monster_info_base
     int base_ev;
     int sh;
     int mr;
+    int tohit;
+    int ranged_tohit;
     int dur;
     int xp_val;
     resists_t mresists;
@@ -321,6 +323,8 @@ struct monster_info : public monster_info_base
 
     string wounds_description_sentence() const;
     string wounds_description(bool colour = false) const;
+    string tohit_description(bool terse = false) const;
+    string ev_description(bool terse = false) const;
 
     string constriction_description() const;
 
