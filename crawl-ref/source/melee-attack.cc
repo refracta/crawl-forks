@@ -2770,11 +2770,13 @@ bool melee_attack::apply_staff_damage()
 
         if (flay_resist)
         {
-            if (defender->is_player() && !you.duration[DUR_ELEC_VULN])
+            if (defender->is_player())
             {
-                special_damage_message +=
-                    " A harsh wind strips away your insulation.";
-                you.increase_duration(DUR_ELEC_VULN, flay_dur, 50);
+                if (!you.duration[DUR_ELEC_VULN])
+                {
+                    special_damage_message += " A harsh wind strips away your insulation.";
+                    you.increase_duration(DUR_ELEC_VULN, flay_dur, 50);
+                }
             }
             else if (!defender->as_monster()->has_ench(ENCH_ELEC_VULN))
             {
@@ -2810,11 +2812,14 @@ bool melee_attack::apply_staff_damage()
 
         if (flay_resist)
         {
-            if (defender->is_player() && !you.duration[DUR_COLD_VULN])
+            if (defender->is_player())
             {
-                special_damage_message +=
-                    " An accursed chill freezes away your cold resistance.";
-                you.increase_duration(DUR_COLD_VULN, flay_dur, 50);
+                if (!you.duration[DUR_COLD_VULN])
+                {
+                    special_damage_message +=
+                        " An accursed chill freezes away your cold resistance.";
+                    you.increase_duration(DUR_COLD_VULN, flay_dur, 50);
+                }
             }
             else if (!defender->as_monster()->has_ench(ENCH_COLD_VULN))
             {
@@ -2852,11 +2857,14 @@ bool melee_attack::apply_staff_damage()
 
         if (flay_resist)
         {
-            if (defender->is_player() && !you.duration[DUR_PHYS_VULN])
+            if (defender->is_player())
             {
-                special_damage_message +=
-                    " A vexing blast shreds away your protection.";
-                you.increase_duration(DUR_PHYS_VULN, flay_dur, 50);
+                if (!you.duration[DUR_PHYS_VULN])
+                {
+                    special_damage_message +=
+                        " A vexing blast shreds away your protection.";
+                    you.increase_duration(DUR_PHYS_VULN, flay_dur, 50);
+                }
             }
             else if (!defender->as_monster()->has_ench(ENCH_PHYS_VULN))
             {
@@ -2895,11 +2903,13 @@ bool melee_attack::apply_staff_damage()
 
         if (flay_resist)
         {
-            if (defender->is_player() && !you.duration[DUR_FIRE_VULN])
+            if (defender->is_player())
             {
-                special_damage_message +=
-                    " A demonic flame burns away your fire resistance.";
-                you.increase_duration(DUR_FIRE_VULN, flay_dur, 50);
+                if (!you.duration[DUR_FIRE_VULN])
+                {
+                    special_damage_message += " A demonic flame burns away your fire resistance!";
+                    you.increase_duration(DUR_FIRE_VULN, flay_dur, 50);
+                }
             }
             else if (!defender->as_monster()->has_ench(ENCH_FIRE_VULN))
             {
@@ -2929,11 +2939,14 @@ bool melee_attack::apply_staff_damage()
 
             if (flay_resist)
             {
-                if (defender->is_player() && !you.duration[DUR_POISON_VULN])
+                if (defender->is_player())
                 {
-                    special_damage_message +=
-                        " A hellish bile dissolves your poison resistance.";
-                    you.increase_duration(DUR_POISON_VULN, flay_dur, 50);
+                    if (!you.duration[DUR_POISON_VULN])
+                    {
+                        special_damage_message +=
+                            " A hellish bile dissolves your poison resistance.";
+                        you.increase_duration(DUR_POISON_VULN, flay_dur, 50);
+                    }
                 }
                 else if (!defender->as_monster()->has_ench(ENCH_POISON_VULN))
                 {

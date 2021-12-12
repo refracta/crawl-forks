@@ -1992,9 +1992,9 @@ int player_res_electricity(bool calc_unid, bool temp, bool items)
     if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, temp))
     {
         if (you.drac_colour == DR_SCINTILLATING && one_chance_in(3) && calc_unid)
-            return true;
+            re++;
         if (you.drac_colour == DR_BLUE)
-            return true;
+            re++;
     }
 
     if (temp)
@@ -2009,10 +2009,7 @@ int player_res_electricity(bool calc_unid, bool temp, bool items)
             re++;
     }
 
-    if (re > 1)
-        re = 1;
-
-    return re;
+    return _clamp(re, -1, 1);
 }
 
 /**

@@ -228,6 +228,16 @@ int check_your_resists(int hurted, beam_type flavour, string source,
 
         if (hurted < original && doEffects)
             _mount_resists(mount);
+        else if (hurted > original && doEffects)
+        {
+            if (mount)
+                mprf("Your %s is electrified terribly!", you.mount_name(true).c_str());
+            else
+            {
+                mpr("You feel an arresting jolt!");
+                xom_is_stimulated(200);
+            }
+        }
         break;
 
     case BEAM_IRRADIATE:
