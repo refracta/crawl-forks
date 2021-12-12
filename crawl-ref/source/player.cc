@@ -5259,6 +5259,8 @@ void handle_player_poison(int delay, bool mount)
     // but doesn't let your body get rid of it.
     if (!mount && (you.is_nonliving() || you.undead_state()))
     {
+        if (you.undead_state(false) || you.is_nonliving(false))
+            reduce_player_poison(you.duration[DUR_POISONING]);
         return;
     }
 
