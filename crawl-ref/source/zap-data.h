@@ -1906,7 +1906,7 @@ _mon_hex_zap(ZAP_SAP_MAGIC, BEAM_SAP_MAGIC),
 _mon_hex_zap(ZAP_DRAIN_MAGIC, BEAM_DRAIN_MAGIC),
 
 {
-    ZAP_BECKONING,
+    ZAP_FORCE_LASSO,
     "lasso of force",
     200,
     new dicedef_calculator<2, 6, 1, 6>,
