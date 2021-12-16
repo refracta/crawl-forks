@@ -2358,11 +2358,6 @@ static spret _do_cast(spell_type spell, int powc, const dist& spd,
     case SPELL_MUSE_OAMS_AIR_BLAST:
         return cast_imb(powc, fail);
 
-    // non-player spells that have a zap, but that shouldn't be called (e.g
-    // because they will crash as a player zap).
-    case SPELL_DRAIN_LIFE:
-        return spret::none;
-
     default:
         if (spell_removed(spell))
         {
