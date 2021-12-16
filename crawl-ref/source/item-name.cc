@@ -3640,11 +3640,8 @@ bool is_useless_item(const item_def &item, bool temp)
         if (you.species == SP_LIGNIFITE && you.experience_level < 20)
             return false;
 
-        if (!you.could_wield(item, false, !temp)
-            && !is_throwable(&you, item))
-        {
+        if (!you.could_wield(item, !fully_identified(item), !temp))
             return true;
-        }
 
         return false;
 
@@ -3852,7 +3849,7 @@ bool is_useless_item(const item_def &item, bool temp)
     case OBJ_STAVES:
         if (you.species == SP_FELID || you.species == SP_FAIRY)
             return true;
-        if (!you.could_wield(item, false, !temp))
+        if (!you.could_wield(item, !fully_identified(item), !temp))
             return true;
         if (!item_type_known(item))
             return false;
