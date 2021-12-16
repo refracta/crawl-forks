@@ -509,7 +509,7 @@ _mon_hex_zap(ZAP_CONFUSE, BEAM_CONFUSION),
     false,
     false,
     false,
-    0 // Noise comes from explosion
+    0
 },
 
 {

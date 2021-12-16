@@ -518,7 +518,7 @@ static void _equip_weapon_effect(item_def& item, bool showMsgs, bool unmeld, equ
         update_vision_range();
     }
 
-    if (item.base_type == OBJ_STAVES)
+    if (item.base_type == OBJ_STAVES && !unmeld)
     {
         set_ident_flags(item, ISFLAG_IDENT_MASK);
         set_ident_type(OBJ_STAVES, item.sub_type, true);
