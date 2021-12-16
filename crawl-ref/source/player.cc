@@ -2309,6 +2309,17 @@ int player_prot_life(bool calc_unid, bool temp, bool items)
 {
     int pl = 0;
 
+    switch (you.undead_state(temp))
+    {
+    case US_ALIVE:
+        break;
+    case US_SEMI_ALIVE:
+        pl++;
+        break;
+    default:
+        return 3;
+    }
+
     if (temp)
     {
         pl += get_form()->res_neg();

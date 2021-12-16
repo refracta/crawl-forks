@@ -3266,7 +3266,7 @@ string mutation_desc(mutation_type mut, int level, bool colour,
         {
         default:
         case US_SEMI_ALIVE:
-            base_msg = "You require no food and take half damage from torment. You may still use Necromantic secrets and transmutations forms.";
+            base_msg = "You require no food and take half damage from torment. You may still use Necromantic secrets and transmutations forms. (rN+)";
             break;
         case US_SEMI_UNDEAD:
             base_msg = "You are able to benefit from potions like a living creature and may once more use transmutations magic. "
