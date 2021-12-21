@@ -7491,9 +7491,12 @@ bool player::is_insubstantial() const
 
 int player::res_acid(bool calc_unid, bool items, bool mt) const
 {
+    const dungeon_feature_type grid = grd(pos());
+    const bool slimy = (grid == DNGN_SLIMY_WATER || grid == DNGN_DEEP_SLIMY_WATER);
+
     if (mt)
     {
-        const int sub = submerged(true) ? 1 : 0;
+        const int sub = (submerged(true) && !slimy) ? 1 : 0;
         switch (mount)
         {
         case mount_type::slime:
@@ -7510,7 +7513,7 @@ int player::res_acid(bool calc_unid, bool items, bool mt) const
 
     int ra = 0;
 
-    if (submerged())
+    if (submerged() && !slimy)
         ra++;
 
     if (get_mutation_level(MUT_ACID_VULNERABILITY))

@@ -4581,6 +4581,7 @@ static void _describe_monster_ev(const monster_info& mi, ostringstream &result)
     string msg = "";
     if (mi.ev < mi.base_ev)
         msg = " (incap)";
+    // BCADDO: This assumption is questionable. Add an actual MB_SWIMMING flag if feasible.
     if (mi.ev > mi.base_ev && mi.is(MB_SUBMERGED))
         msg = " (swimming)";
     result << "EV: " << mi.ev << msg << "\n";
@@ -4785,12 +4786,19 @@ static string _monster_stat_description(const monster_info& mi)
 
     if (mi.is(MB_SUBMERGED))
     {
+        const dungeon_feature_type feat = grd(mi.pos);
+        const bool slimy = (feat == DNGN_SLIMY_WATER || feat == DNGN_DEEP_SLIMY_WATER);
+
         result << uppercase_first(pronoun) << " "
             << conjugate_verb("are", plural)
-            << " submerged underwater, boosting general protection,"
-            << " insulating against acids and extremes of temperature and making"
-            << " it immune to the clouds above the water, but inflicting a"
-            << " weakness to electricity (rF+ rC+ AC+4 rCorr+ rElec-).\n";
+            << " submerged in " << feat_type_name(feat)
+            << ", boosting general protection, insulating against"
+            << (slimy ? "" : " acids and")
+            << " extremes of temperature and making " << pronoun
+            << " immune to the clouds above the water, but inflicting a"
+            << " weakness to electricity (rF+ rC+ AC+4 "
+            << (slimy ? "" : "rCorr+ ")
+            << "rElec-).\n";
     }
 
     if (mi.is(MB_CHAOTIC))

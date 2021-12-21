@@ -254,6 +254,11 @@ bool monster::swimming() const
         return false;
 
     const dungeon_feature_type grid = grd(pos());
+
+    // If not slime safe, can't swim in ooze.
+    if ((grid == DNGN_SLIMY_WATER || grid == DNGN_DEEP_SLIMY_WATER) && mons_primary_habitat(*this) != HT_SLIME)
+        return false;
+
     return feat_is_watery(grid) && mons_secondary_habitat(*this) == HT_WATER;
 }
 
@@ -4157,7 +4162,9 @@ int monster::res_acid(bool calc_unid, bool items, bool /*mount*/) const
 {
     int u = get_mons_resist(*this, MR_RES_ACID);
 
-    if (submerged())
+    const dungeon_feature_type feat = grd(pos());
+
+    if (submerged() && feat != DNGN_SLIMY_WATER && feat != DNGN_DEEP_SLIMY_WATER)
         u++;
 
     if (inv[MSLOT_ARMOUR] != NON_ITEM && u < 2)
