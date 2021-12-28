@@ -1710,6 +1710,12 @@ bool transform(int pow, transformation which_trans, bool involuntary,
             success = false;
         }
     }
+    else if ((you.species == SP_GARGOYLE || you.species == SP_MOLTEN_GARGOYLE)
+        && which_trans == transformation::statue)
+    {
+        msg = "You're already a statue.";
+        success = false;
+    }
 
     if (!just_check && previous_trans != transformation::none)
         untransform(true);

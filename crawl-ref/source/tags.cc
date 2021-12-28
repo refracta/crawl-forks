@@ -2340,6 +2340,11 @@ static spell_type _fixup_player_spell(spell_type s, int version)
     case SPELL_SUMMON_HYDRA:
         return SPELL_SUMMON_HYDRA_MOUNT;
 
+    case SPELL_STATUE_FORM:
+        if (you.species == SP_GARGOYLE || you.species == SP_MOLTEN_GARGOYLE)
+            return SPELL_NO_SPELL;
+        return s;
+
     case SPELL_ICICLE_CASCADE:
         if (version < TAG_MINOR_ICICLE_CASCADE)
             return SPELL_UNSTABLE_FIERY_DASH;
