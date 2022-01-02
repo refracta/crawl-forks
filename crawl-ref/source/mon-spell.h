@@ -1558,7 +1558,7 @@ static const mon_spellbook mspell_list[] =
       }
     },
 
-    {  MST_CACODEMON,
+    {  MST_TITIVILUS,
       {
        { SPELL_ENERGY_BOLT, 13, MON_SPELL_MAGICAL },
        { SPELL_SLOW, 13, MON_SPELL_MAGICAL },
@@ -1600,6 +1600,13 @@ static const mon_spellbook mspell_list[] =
       {
        { SPELL_BOLT_OF_COLD, 46, MON_SPELL_MAGICAL },
        { SPELL_SYMBOL_OF_TORMENT, 23, MON_SPELL_MAGICAL },
+      }
+    },
+
+    {  MST_CACODEMON,
+      {
+       { SPELL_ORB_OF_ELECTRICITY, 46, MON_SPELL_NATURAL },
+       { SPELL_LIGHTNING_BOLT, 46, MON_SPELL_NATURAL },
       }
     },
 

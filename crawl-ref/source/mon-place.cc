@@ -2452,6 +2452,7 @@ static const map<band_type, vector<member_possibilites>> band_membership = {
     { BAND_LOM_LOBON,           {{{MONS_SPRIGGAN_AIR_MAGE, 1},
                                   {MONS_TITAN, 1},
                                   {MONS_LICH, 1},
+                                  {MONS_CACODEMON, 2},
                                   {MONS_DRACONIAN_ANNIHILATOR, 2},
                                   {MONS_DEEP_ELF_ANNIHILATOR, 2},
                                   {MONS_GLOWING_ORANGE_BRAIN, 2},
@@ -3201,7 +3202,8 @@ monster_type random_demon_by_tier(int tier)
                              MONS_ICE_FIEND,
                              MONS_TZITZIMITL,
                              MONS_HELL_SENTINEL,
-                             MONS_EXECUTIONER);
+                             MONS_EXECUTIONER,
+                             MONS_CACODEMON);
     default:
         die("invalid demon tier");
     }

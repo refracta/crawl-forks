@@ -734,6 +734,12 @@ butterfly
 A large, brightly coloured butterfly with beautifully patterned wings,
 fluttering incongruously through the darkness of the cave.
 %%%%
+cacodemon
+
+A sadistic floating head from the depths of Pandemonium; cacodemon's massive 
+maw can inflict quite a bite and electricity naturally arcs between its teeth 
+giving it the natural ability to shock those it bites and fling lightning around.
+%%%%
 catoblepas
 
 A sluggish black buffalo, its hide encrusted with dull scales. It carries its
