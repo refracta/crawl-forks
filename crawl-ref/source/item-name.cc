@@ -1193,7 +1193,7 @@ static const char* staff_type_name(int stafftype, bool terse = false)
     case STAFF_DEATH:          return "death";
     case STAFF_AIR:            return "air";
     case STAFF_EARTH:          return "earth";
-    case STAFF_SUMMONING:      return "life";
+    case STAFF_LIFE:           return "life";
     case STAFF_TRANSMUTATION:  return terse ? "tMut" : "transmutation";
     case STAFF_NOTHING:        return ""; // Used by fixedArts with unique types.
 #if TAG_MAJOR_VERSION == 34

@@ -1495,7 +1495,7 @@ bool monster::wants_weapon(const item_def &weap) const
     // BCADDO: Clerics or very focused summoners could want it; 
     // just making it impossible because it's bad in normal AI, since
     // they'll just heal their enemy with it.
-    if (weap.is_type(OBJ_STAVES, STAFF_SUMMONING))
+    if (weap.is_type(OBJ_STAVES, STAFF_LIFE))
         return false;
 
     // Blademasters and master archers like their starting weapon and

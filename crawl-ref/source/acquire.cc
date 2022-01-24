@@ -568,7 +568,7 @@ static int _acquirement_staff_subtype(bool /*divine*/, int & /*quantity*/,
     case SK_EARTH_MAGIC:  TRY_GIVE(STAFF_EARTH);       break;
     case SK_POISON_MAGIC: TRY_GIVE(STAFF_POISON);      break;
     case SK_NECROMANCY:   TRY_GIVE(STAFF_DEATH);       break;
-    case SK_SUMMONINGS:   TRY_GIVE(STAFF_SUMMONING);   break;
+    case SK_SUMMONINGS:   TRY_GIVE(STAFF_LIFE);        break;
 #undef TRY_GIVE
     default:                                           break;
     }
@@ -584,7 +584,7 @@ static int _acquirement_staff_subtype(bool /*divine*/, int & /*quantity*/,
     case 3: result = STAFF_EARTH;      break;
     case 4: result = STAFF_POISON;     break;
     case 5: result = STAFF_DEATH;      break;
-    case 6: result = STAFF_SUMMONING;  break;
+    case 6: result = STAFF_LIFE;       break;
     }
     return result;
 }

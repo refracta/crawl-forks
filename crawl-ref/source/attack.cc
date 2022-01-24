@@ -1208,7 +1208,7 @@ void attack::stab_message()
     defender->props["helpless"] = true;
 
     if (weapon && weapon->base_type == OBJ_STAVES 
-               && weapon->sub_type == STAFF_SUMMONING)
+               && weapon->sub_type == STAFF_LIFE)
         return;
 
     switch (stab_bonus)

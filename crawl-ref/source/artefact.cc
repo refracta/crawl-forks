@@ -438,7 +438,7 @@ static void _populate_staff_intrinsic_artps(stave_type staff, artefact_propertie
     case STAFF_EARTH: proprt[ARTP_AC] += 5; break;
     case STAFF_FIRE: proprt[ARTP_FIRE]++; break;
     case STAFF_POISON: proprt[ARTP_POISON]++; break;
-    case STAFF_SUMMONING:
+    case STAFF_LIFE:
     case STAFF_TRANSMUTATION:
     default: // removed staff types.
         break;

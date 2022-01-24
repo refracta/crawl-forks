@@ -819,7 +819,7 @@ bool is_staff_brand_ok(int type, int brand, bool /*strict*/)
     case SPSTF_SCOPED:
     case SPSTF_ACCURACY:
     case SPSTF_WARP:
-        if (type == STAFF_SUMMONING)
+        if (type == STAFF_LIFE)
             return false;
         if (brand == SPSTF_SHIELD)
             return true;

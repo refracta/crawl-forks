@@ -4675,7 +4675,7 @@ void unmarshallItem(reader &th, item_def &item)
         case 2: item.sub_type = STAFF_AIR;
         case 3: item.sub_type = STAFF_EARTH;
         case 4: item.sub_type = STAFF_DEATH;
-        case 5: item.sub_type = STAFF_SUMMONING;
+        case 5: item.sub_type = STAFF_LIFE;
         case 6: item.sub_type = STAFF_POISON;
         }
     }

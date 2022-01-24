@@ -2127,7 +2127,7 @@ skill_type staff_magic_skill(const item_def &item)
         return SK_EARTH_MAGIC;
     case STAFF_POISON:
         return SK_POISON_MAGIC;
-    case STAFF_SUMMONING:
+    case STAFF_LIFE:
         return SK_SUMMONINGS;
     case STAFF_TRANSMUTATION:
         return SK_TRANSMUTATIONS;

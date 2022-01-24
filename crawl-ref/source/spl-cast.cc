@@ -607,7 +607,7 @@ bool staff_enhances_spell(const item_def * staff, spell_type spell)
     if (bool(typeflags & spschool::necromancy) && staff->sub_type == STAFF_DEATH)
         return true;
 
-    if (bool(typeflags & spschool::summoning) && staff->sub_type == STAFF_SUMMONING)
+    if (bool(typeflags & spschool::summoning) && staff->sub_type == STAFF_LIFE)
         return true;
 
     if (bool(typeflags & spschool::transmutation) && 

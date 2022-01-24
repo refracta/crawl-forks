@@ -1226,12 +1226,12 @@ bool bad_attack(const monster *mon, string& adj, string& suffix,
         return false;
 
     if (you.weapon(0) && you.weapon(0)->base_type == OBJ_STAVES
-                      && you.weapon(0)->sub_type == STAFF_SUMMONING)
+                      && you.weapon(0)->sub_type == STAFF_LIFE)
         return false;
 
     if (you.weapon(0) && is_range_weapon(*you.weapon(0)) && 
         you.weapon(1) && you.weapon(1)->base_type == OBJ_STAVES
-                      && you.weapon(1)->sub_type == STAFF_SUMMONING)
+                      && you.weapon(1)->sub_type == STAFF_LIFE)
         return false;
 
     if (attack_pos == coord_def(0, 0))
