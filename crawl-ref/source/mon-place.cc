@@ -1591,6 +1591,9 @@ static bool _good_zombie(monster_type base, monster_type cs,
     if (in_bounds(pos) && !monster_habitable_grid(base, grd(pos)))
         return false;
 
+    if (cs == MONS_NO_MONSTER)
+        return true;
+
     // Veto fast zombies on D:1,3,4.
     if (you.where_are_you == BRANCH_DUNGEON && you.depth < 5 && you.depth != 2)
     {
@@ -1598,9 +1601,6 @@ static bool _good_zombie(monster_type base, monster_type cs,
         if (mi.menergy.move < 10)
             return false;
     }
-
-    if (cs == MONS_NO_MONSTER)
-        return true;
 
     // If skeleton, monster must have a skeleton.
     if (cs == MONS_SKELETON && !mons_skeleton(base))
