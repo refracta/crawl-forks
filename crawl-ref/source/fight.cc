@@ -261,6 +261,9 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
         bool attacked = false;
         coord_def pos = defender->pos();
 
+        const bool skip_one = you.weapon(1) && you.weapon(1)->is_type(OBJ_STAVES, STAFF_LIFE);
+        const bool skip_two = you.weapon(0) && you.weapon(0)->is_type(OBJ_STAVES, STAFF_LIFE);
+
         bool xtra_atk = (you.form == transformation::scorpion || you.get_mutation_level(MUT_JIBBERING_MAWS));
         bool mount_atk = false;
 
@@ -283,7 +286,7 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
         
         xtra_atk |= mount_atk;
 
-        if (!you.weapon(0) || is_melee_weapon(*you.weapon(0)))
+        if ((!you.weapon(0) || is_melee_weapon(*you.weapon(0))) && !skip_one)
         {
             attacked = true;
             if ((!you.weapon(1) || is_melee_weapon(*you.weapon(1))) && !you.get_mutation_level(MUT_MISSING_HAND))
@@ -298,7 +301,8 @@ bool fight_melee(actor *attacker, actor *defender, bool *did_hit,
                     if (!defender->alive()
                         || defender->pos() != pos
                         || defender->is_banished()
-                        || defender->temp_attitude()) // If it's not hostile the melee attack charmed or pacified it.
+                        || defender->temp_attitude() // If it's not hostile the melee attack charmed or pacified it.
+                        || skip_two) 
                     {
                         local_time |= _handle_maws_attack(defender, simu, did_hit, wu, wu_num);
                         local_time |= _handle_hydra_attack(defender, simu, did_hit, wu, wu_num);
@@ -1225,13 +1229,10 @@ bool bad_attack(const monster *mon, string& adj, string& suffix,
     if (!you.can_see(*mon))
         return false;
 
-    if (you.weapon(0) && you.weapon(0)->base_type == OBJ_STAVES
-                      && you.weapon(0)->sub_type == STAFF_LIFE)
+    if (you.weapon(0) && you.weapon(0)->is_type(OBJ_STAVES, STAFF_LIFE))
         return false;
 
-    if (you.weapon(0) && is_range_weapon(*you.weapon(0)) && 
-        you.weapon(1) && you.weapon(1)->base_type == OBJ_STAVES
-                      && you.weapon(1)->sub_type == STAFF_LIFE)
+    if (you.weapon(1) && you.weapon(1)->is_type(OBJ_STAVES, STAFF_LIFE))
         return false;
 
     if (attack_pos == coord_def(0, 0))
