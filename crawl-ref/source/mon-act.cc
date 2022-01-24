@@ -174,8 +174,11 @@ static void _escape_water_hold(monster& mons)
 {
     if (mons.has_ench(ENCH_WATER_HOLD))
     {
-        if (mons.get_ench(ENCH_WATER_HOLD).agent()->is_player())
+        if (mons.get_ench(ENCH_WATER_HOLD).agent() &&
+            mons.get_ench(ENCH_WATER_HOLD).agent()->is_player())
+        {
             simple_monster_message(mons, " slips free of your ooze.");
+        }
         else
             simple_monster_message(mons, " slips free of the water.");
         mons.del_ench(ENCH_WATER_HOLD);
