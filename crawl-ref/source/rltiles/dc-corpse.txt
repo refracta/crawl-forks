@@ -9,6 +9,94 @@
 %corpse 1
 %back_sdir misc/blood
 
+### Holies
+%sdir mon/holy
+
+## Angelic Beings ('A')
+%back blood_ichor blood_ichor1 blood_ichor2 blood_ichor3 blood_ichor4
+angel CORPSE_ANGEL
+cherub CORPSE_CHERUB
+seraph CORPSE_SERAPH
+daeva CORPSE_DAEVA
+%sdir mon/undead
+profane_servitor CORPSE_PROFANE_SERVITOR
+
+## Eyes ('G')
+%sdir mon/holy
+ophan CORPSE_OPHAN
+
+### Spiritual Beings ('R')
+%sdir mon/demons
+efreet CORPSE_EFREET
+rakshasa CORPSE_RAKSHASA
+
+### Demons
+%sdir mon/demons
+
+## First Tier ('1')
+cacodemon CORPSE_CACODEMON
+brimstone_fiend CORPSE_BRIMSTONE_FIEND
+ice_fiend CORPSE_ICE_FIEND
+tzitzimitl CORPSE_TZITZIMITL
+hell_sentinel CORPSE_HELL_SENTINEL
+executioner CORPSE_EXECUTIONER
+mon/unique/ignacio CORPSE_IGNACIO
+
+## Second Tier ('2')
+shadow_demon CORPSE_SHADOW_DEMON
+green_death CORPSE_GREEN_DEATH
+blizzard_demon CORPSE_BLIZZARD_DEMON
+balrug CORPSE_BALRUG
+titivilus CORPSE_TITIVILUS
+hell_beast CORPSE_HELL_BEAST
+hellion CORPSE_HELLION
+reaper CORPSE_REAPER
+lorocyproca CORPSE_LOROCYPROCA
+tormentor CORPSE_TORMENTOR
+
+## Third Tier ('3')
+sun_demon CORPSE_SUN_DEMON
+soul_eater CORPSE_SOUL_EATER
+smoke_demon CORPSE_SMOKE_DEMON
+neqoxec CORPSE_NEQOXEC
+ynoxinul CORPSE_YNOXINUL
+sixfirhy CORPSE_SIXFIRHY
+
+## Fourth Tier ('4')
+rust_devil CORPSE_RUST_DEVIL
+orange_demon CORPSE_ORANGE_DEMON
+red_devil CORPSE_RED_DEVIL
+hellwing CORPSE_HELLWING
+ice_devil CORPSE_ICE_DEVIL
+
+## Fifth Tier ('5')
+crimson_imp CORPSE_CRIMSON_IMP
+quasit CORPSE_QUASIT
+white_imp CORPSE_WHITE_IMP
+ufetubus CORPSE_UFETUBUS
+iron_imp CORPSE_IRON_IMP
+shadow_imp CORPSE_SHADOW_IMP
+
+# Abominations ('X')
+%sdir mon/aberrations
+tentacled_monstrosity CORPSE_TENTACLED_MONSTROSITY
+orb_guardian CORPSE_ORB_GUARDIAN
+gammafunk CORPSE_GAMMAFUNK
+
+# Demon Lords ('&')
+%sdir mon/panlord
+pandemonium_lord CORPSE_PANDEMONIUM_LORD
+%sdir mon/unique
+antaeus CORPSE_ANTAEUS
+mnoleg CORPSE_MNOLEG
+lom_lobon CORPSE_LOM_LOBON
+cerebov_swordless CORPSE_CEREBOV
+gloorx_vloq CORPSE_GLOORX_VLOQ
+geryon CORPSE_GERYON
+dispater CORPSE_DISPATER
+asmodeus CORPSE_ASMODEUS
+ereshkigal CORPSE_ERESHKIGAL
+
 ### Animals
 %sdir mon/animals
 
@@ -25,6 +113,8 @@ bat CORPSE_BAT
 caustic_shrike CORPSE_CAUSTIC_SHRIKE
 shard_shrike CORPSE_SHARD_SHRIKE
 swooping_magpie CORPSE_SWOOPING_MAGPIE
+%back blood_ichor blood_ichor1 blood_ichor2 blood_ichor3 blood_ichor4
+bennu CORPSE_BENNU
 
 ## Beetles ('B')
 %sdir mon/undead
@@ -51,6 +141,9 @@ raiju CORPSE_RAIJU
 hell_hog CORPSE_HELL_HOG
 black_bear CORPSE_BLACK_BEAR
 polar_bear CORPSE_POLAR_BEAR
+%back blood_ichor blood_ichor1 blood_ichor2 blood_ichor3 blood_ichor4
+holy_swine CORPSE_HOLY_SWINE
+%back blood_puddle_red blood_puddle_red1 blood_puddle_red2 blood_puddle_red3 blood_puddle_red4
 %sdir player/felids
 cat1 CORPSE_FELID
 %sdir mon/animals
@@ -285,6 +378,12 @@ storm_dragon CORPSE_STORM_DRAGON
 golden_dragon CORPSE_GOLDEN_DRAGON
 shadow_dragon CORPSE_SHADOW_DRAGON
 mon/holy/pearl_dragon CORPSE_PEARL_DRAGON
+%sdir mon/unique
+%back blood_ichor blood_ichor1 blood_ichor2 blood_ichor3 blood_ichor4
+serpent_of_hell-geh CORPSE_SERPENT_OF_HELL_GEH
+serpent_of_hell-coc CORPSE_SERPENT_OF_HELL_COC
+serpent_of_hell-dis CORPSE_SERPENT_OF_HELL_DIS
+serpent_of_hell-tar CORPSE_SERPENT_OF_HELL_TAR
 
 ## Hybrids ('H')
 %sdir mon/animals

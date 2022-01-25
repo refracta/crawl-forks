@@ -814,6 +814,9 @@ corpse_effect_type determine_chunk_effect(corpse_effect_type chunktype)
         if (you.get_mutation_level(MUT_ROTTING_BODY))
             chunktype = CE_CLEAN;
         break;
+    case CE_DIVINE:
+        chunktype = CE_NOXIOUS;
+        break;
 
     default:
         break;

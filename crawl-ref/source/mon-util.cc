@@ -1851,6 +1851,7 @@ bool mons_class_can_be_zombified(monster_type mc)
 {
     monster_type ms = mons_species(mc);
     return !invalid_monster_type(ms)
+           && (mons_corpse_effect(ms) != CE_DIVINE)
            && mons_class_can_leave_corpse(ms);
 }
 
