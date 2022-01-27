@@ -63,7 +63,7 @@ string pluralise(const string &name, const char * const qualifiers[],
             return name.substr(0, name.length() - 2) + "i";
     }
     else if (ends_with(name, "larva") || ends_with(name, "antenna")
-             || ends_with(name, "hypha"))
+        || ends_with(name, "hypha"))
     {
         return name + "e";
     }
@@ -106,6 +106,34 @@ string pluralise(const string &name, const char * const qualifiers[],
         // staff -> staves
         return name.substr(0, name.length() - 2) + "ves";
     }
+    // Welsh plurization rules for Demon names.
+    else if (ends_with(name, "wr"))
+        return name.substr(0, name.length() - 1) + "ys";
+    else if (ends_with(name, "och") || ends_with(name, "ol")
+        || ends_with(name, "darth") || ends_with(name, "dd")
+        || ends_with(name, "dod") || ends_with(name, "lrug"))
+    {
+        return name.substr(0, name.length()) + "ion";
+    }
+    else if (ends_with(name, "dio") || ends_with(name, "sit"))
+        return name.substr(0, name.length() - 1) + "au";
+    else if (ends_with(name, "raul"))
+        return name.substr(0, name.length() - 3) + "euliaid";
+    else if (ends_with(name, "wca") || ends_with(name, "rhy"))
+        return name.substr(0, name.length() - 1) + "od";
+    else if (ends_with(name, "ringu"))
+        return name.substr(0, name.length() - 1) + "ar";
+    else if (ends_with(name, "fl") || ends_with(name, "ordth")
+        || ends_with(name, "xec"))
+    {
+        return name.substr(0, name.length()) + "ar";
+    }
+    else if (ends_with(name, "vlerk"))
+        return name.substr(0, name.length()) + "e";
+    else if (ends_with(name, "us"))
+        return name.substr(0, name.length() - 2) + "ae";
+    else if (ends_with(name, "tyr"))
+        return name.substr(0, name.length());
     else if (ends_with(name, "f") && !ends_with(name, "ff"))
     {
         // elf -> elves, but not hippogriff -> hippogrives.

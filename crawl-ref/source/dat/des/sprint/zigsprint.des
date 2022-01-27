@@ -158,7 +158,7 @@ function choose_mset_1(e)
     e.kmons("1 = fire vortex / hell hound / fire elemental w:15")
 -- Ice
   elseif rnd < 85 then
-    e.kmons("1 = ice beast / polar bear / white imp / simulacrum")
+    e.kmons("1 = ice beast / polar bear / gwybwca / simulacrum")
 -- Air
   elseif rnd < 87 then
     e.kmons("1 = insubstantial wisp / air elemental w:5")
@@ -251,8 +251,8 @@ function choose_mset_2(e)
                efreet")
 -- Ice
   elseif rnd < 86 then
-    e.kmons("1 = ice beast / polar bear / white imp / simulacrum /\
-               rime drake / freezing wraith / ice devil")
+    e.kmons("1 = ice beast / polar bear / gwybwca / simulacrum /\
+               rime drake / freezing wraith / rypuiwel")
 -- Air
   elseif rnd < 88 then
     e.kmons("1 = insubstantial wisp / air elemental / wind drake w:5")
@@ -348,7 +348,7 @@ function choose_mset_3(e)
     e.kmons("1 = place:Geh:1")
 -- Tartarus
   elseif rnd < 64 then
-    e.kmons("1 = zombie / skeleton / soul eater / shadow dragon w:3 /\
+    e.kmons("1 = zombie / skeleton / saelneytandi / shadow dragon w:3 /\
                  spectral thing / ghoul w:2")
 -- Dis
   elseif rnd < 69 then
@@ -363,9 +363,9 @@ function choose_mset_3(e)
                efreet / fire dragon / fire giant")
 -- Ice
   elseif rnd < 75 then
-    e.kmons("1 = ice beast / polar bear / white imp / simulacrum / rime drake/\
-               freezing wraith / ice devil / ice dragon / frost giant /\
-               blizzard demon")
+    e.kmons("1 = ice beast / polar bear / gwybwca / simulacrum / rime drake/\
+               freezing wraith / rypuiwel / ice dragon / frost giant /\
+               cenysus")
 -- Air
   elseif rnd < 77 then
     e.kmons("1 = insubstantial wisp / air elemental / wind drake / spriggan air mage /\
@@ -475,17 +475,17 @@ local rnd = crawl.random2(142)
     e.kfeat("1 = shallow_water")
 -- Cocytus
   elseif rnd < 57 then
-    e.kmons("1 = place:Coc:$ w:500 / ice fiend")
+    e.kmons("1 = place:Coc:$ w:500 / Vetrifl")
 -- Gehenna
   elseif rnd < 62 then
     e.kmons("1 = place:Geh:$")
 -- Tartarus
   elseif rnd < 67 then
-    e.kmons("1 = zombie / skeleton / soul eater / shadow dragon w:5 /\
+    e.kmons("1 = zombie / skeleton / saelneytandi / shadow dragon w:5 /\
                  tzitzimitl w:1 / spectral thing place:Tar:$ / ghoul w:5")
 -- Dis
   elseif rnd < 72 then
-    e.kmons("1 = place:Dis:$ w:500 / hell sentinel")
+    e.kmons("1 = place:Dis:$ w:500 / gwarchodwr")
 -- Giant
   elseif rnd < 75 then
     e.kmons("1 = cyclops / stone giant / fire giant /\
@@ -496,9 +496,9 @@ local rnd = crawl.random2(142)
                efreet / fire dragon / fire giant / orb of fire w:5 / balrug")
 -- Ice
   elseif rnd < 81 then
-    e.kmons("1 = ice beast / polar bear / white imp / simulacrum / rime drake/\
-               freezing wraith / ice devil / ice dragon / frost giant /\
-               ice fiend w:5 / blizzard demon")
+    e.kmons("1 = ice beast / polar bear / gwybwca / simulacrum / rime drake/\
+               freezing wraith / rypuiwel / ice dragon / frost giant /\
+               Vetrifl w:5 / cenysus")
 -- Air
   elseif rnd < 84 then
     e.kmons("1 = insubstantial wisp / air elemental / wind drake / spriggan air mage /\

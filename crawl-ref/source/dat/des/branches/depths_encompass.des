@@ -28,7 +28,7 @@
         e.weight("5")
         e.mons("raiju band / spriggan air mage band / titan w:5 / " ..
                "storm dragon w:5 / shock serpent w:5 / " ..
-               "blizzard demon w:15")
+               "cenysus w:15")
         e.mons("w:20 obsidian statue / w:1 orange crystal statue")
         e.mons("glowing shapeshifter")
         e.mons("very ugly thing / ugly thing w:5")
@@ -115,7 +115,7 @@ MONS:    spectral spriggan / spectral centaur / spectral naga / \
          spectral minotaur w:1 / spriggan simulacrum w:2 / centaur simulacrum w:1 / \
          naga simulacrum w:2 / troll simulacrum w:2 / minotaur simulacrum w:1 / \
          merfolk simulacrum w:2 / vampire / wraith / wight
-MONS:    mana viper / eidolon w:5 / soul eater w:5 / \
+MONS:    mana viper / eidolon w:5 / saelneytandi w:5 / \
          death drake w:5 / flayed ghost / shadow dragon w:2
 MONS:    ancient lich w:20 / tzitzimitl
 KMONS:   89 = patrolling glowing orange brain
@@ -451,8 +451,8 @@ NAME: grunt_profane_temple_geh
 TAGS: grunt_profane_temple no_monster_gen
 : grunt_profane_halls_setup(_G)
 NSUBST: 4 = 8:4 / *:., 5 = 1:6 / *:5
-KMONS: 4 = red devil / hell hound / efreet w:5
-KMONS: 5 = sun demon
+KMONS: 4 = cythraul / hell hound / efreet w:5
+KMONS: 5 = sturnulos
 KMONS: 6 = balrug
 KFEAT: A = stone_arch
 MARKER: A = lua:props_marker { portal=1 }
@@ -484,9 +484,9 @@ NAME: grunt_profane_temple_coc
 TAGS: grunt_profane_temple no_monster_gen
 : grunt_profane_halls_setup(_G)
 NSUBST: 4 = 8:4 / *:., 5 = 1:6 / *:5
-KMONS: 4 = ice devil / ettin simulacrum w:20 / freezing wraith
+KMONS: 4 = rypuiwel / ettin simulacrum w:20 / freezing wraith
 KMONS: 5 = quicksilver dragon simulacrum
-KMONS: 6 = blizzard demon
+KMONS: 6 = cenysus
 KMONS: 8 = ice statue
 KFEAT: A = stone_arch
 MARKER: A = lua:props_marker { portal=1 }
@@ -519,7 +519,7 @@ TAGS: grunt_profane_temple no_monster_gen
 : grunt_profane_halls_setup(_G)
 NSUBST: 4 = 8:4 / *:., 5 = 1:6 / *:5
 KMONS: 4 = shadow / wraith / flying skull
-KMONS: 5 = soul eater
+KMONS: 5 = saelneytandi
 KMONS: 6 = reaper w:18 / lich w:5 / bone dragon w:4
 KFEAT: A = stone_arch
 MARKER: A = lua:props_marker { portal=1 }
@@ -551,7 +551,7 @@ NAME: grunt_profane_temple_dis
 TAGS: grunt_profane_temple no_monster_gen
 : grunt_profane_halls_setup(_G)
 NSUBST: 4 = 8:4 / *:., 5 = 1:6 / *:5
-KMONS: 4 = rust devil
+KMONS: 4 = taeringu
 KMONS: 5 = skeletal warrior / iron troll w:1
 KMONS: 6 = iron dragon / war gargoyle
 KFEAT: A = stone_arch

@@ -225,7 +225,7 @@ mset(spec_fn(function ()
   local g = math.max(1, you.depth() + you.zigs_completed() - 9)
   return "place:Swamp:$ w:" .. d .. " / hydra w:" .. e .. " / " ..
          "swamp dragon w:" .. e .. "  / tentacled monstrosity w:" .. f .. " / " ..
-         "shambling mangrove w:" .. f .. " / green death w:" .. g + 3 .. " / " ..
+         "shambling mangrove w:" .. f .. " / gwyrdd w:" .. g + 3 .. " / " ..
          "death drake w:" .. g .. " / golden dragon w:" .. g
 end))
 
@@ -307,9 +307,9 @@ mset(with_props(spec_fn(function ()
   local d = math.max(20, 455 - you.zigs_completed() * 3)
   local e = 5 + you.zigs_completed() * 2
   local f = 10 + you.zigs_completed() * 4
-  return "place:Coc:$ w:" .. d .. " / tormentor w:" .. e .. " / " ..
-         "shard shrike w:" .. e .. " / blizzard demon w:" .. f + 15 .. " / " ..
-         "ice fiend w:" .. f
+  return "place:Coc:$ w:" .. d .. " / poenydio w:" .. e .. " / " ..
+         "shard shrike w:" .. e .. " / cenysus w:" .. f + 15 .. " / " ..
+         "Vetrifl w:" .. f
 end), { weight = 5 }))
 
 mset(with_props(spec_fn(function ()
@@ -318,7 +318,7 @@ mset(with_props(spec_fn(function ()
   local f = 10 + you.zigs_completed() * 4
   return "place:Geh:$ w:" .. d .. " / hellion w:" .. e .. " / " ..
          "hell knight w:" .. e .. " / balrug w:" .. f + 15 .. " / " ..
-         "brimstone fiend w:" .. f
+         "rhuddgoch w:" .. f
 end), { weight = 5 }))
 
 mset(with_props(spec_fn(function ()
@@ -327,7 +327,7 @@ mset(with_props(spec_fn(function ()
   local f = 10 + you.zigs_completed() * 4
   return "place:Dis:$ w:" .. d .. " / iron dragon w:" .. e .. " / " ..
          "iron giant w:" .. e .. " / war gargoyle w:" .. f + 15 .. " / " ..
-         "hell sentinel w:" .. f
+         "gwarchodwr w:" .. f
 end), { weight = 5 }))
 
 mset(with_props(spec_fn(function ()
@@ -335,7 +335,7 @@ mset(with_props(spec_fn(function ()
   local e = 5 + you.zigs_completed() * 2
   local f = 10 + you.zigs_completed() * 4
   local g = 0 + you.zigs_completed()
-  return "place:Tar:$ w:" .. d .. " / shadow demon w:" .. e .. " / " ..
+  return "place:Tar:$ w:" .. d .. " / cysgodol w:" .. e .. " / " ..
          "curse toe w:" .. e .. " / reaper w:" .. f + 15 .. " / " ..
          "tzitzimitl w:" .. f .. " / silent spectre w:" .. g
 end), { weight = 2 }))
@@ -351,10 +351,10 @@ end), { weight = 2 }))
 mset(with_props(spec_fn(function ()
   local d = 10 + you.zigs_completed() * 2
   local e = 10 + you.zigs_completed() * 3
-  return "ice beast / ice devil / simulacrum / rime drake / " ..
+  return "ice beast / rypuiwel / simulacrum / rime drake / " ..
          "ice dragon w:" .. d .. " / frost giant w:" .. d .. " / " ..
-         "blizzard demon w:" .. d .. " / white draconian knight w:" .. e .. " / " ..
-         "shard shrike w:" .. e .. " / ice fiend w:" .. e
+         "cenysus w:" .. d .. " / white draconian knight w:" .. e .. " / " ..
+         "shard shrike w:" .. e .. " / Vetrifl w:" .. e
 end), { weight = 2 }))
 
 mset(with_props(spec_fn(function ()
@@ -375,7 +375,7 @@ mset(with_props(spec_fn(function ()
          "war gargoyle w:" .. d .. " / stone giant w:" .. d .. " / " ..
          "caustic shrike w:" .. d .. " / entropy weaver w:" .. d .. " / " ..
          "crystal guardian w:" .. e .. " / iron dragon w:" .. e .. " / " ..
-         "iron giant w:" .. f .. " / hell sentinel w:" .. f
+         "iron giant w:" .. f .. " / gwarchodwr w:" .. f
 end), { weight = 2 }))
 
 mset(with_props(spec_fn(function ()
@@ -384,7 +384,7 @@ mset(with_props(spec_fn(function ()
   local f = 20 + you.zigs_completed() * 4
   return "spectral thing w:20 / shadow wraith w:20 / " ..
          "eidolon w:" .. d - 10 .. " / deep elf death mage w:" .. d - 10 .. " / " ..
-         "soul eater w:" .. d .. " / death knight w:" .. d - 10 .. " / " ..
+         "saelneytandi w:" .. d .. " / death knight w:" .. d - 10 .. " / " ..
          "shadow dragon w:" .. e .. " / revenant w:" .. e - 10 .. " / " ..
          "black sun w:" .. e .. " / profane servitor w:" .. e - 10 .. " / " ..
          "tzitzimitl w:" .. f

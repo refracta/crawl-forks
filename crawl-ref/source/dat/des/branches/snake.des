@@ -1001,7 +1001,7 @@ NAME: cheibrodos_toxic_ritual
 DEPTH: Snake
 TAGS: no_item_gen no_monster_gen transparent
 ORIENT: float
-MONS: green death, naga ritualist, naga mage, naga
+MONS: gwyrdd, naga ritualist, naga mage, naga
 NSUBST: - = 2:2 / *:.
 NSUBST: _ = 2:2 / *:.
 NSUBST: ' = 1:3 / 2:4 / 3=34 / *:.

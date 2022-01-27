@@ -325,27 +325,27 @@ tier1_gauntlet_arenas = {
     plant  = "demonic",
   },
   {
-    first  = {mons = "ice devil", min = 1, max = 1},
-    second = {mons = "white imp", min = 2, max = 4},
+    first  = {mons = "rypuiwel", min = 1, max = 1},
+    second = {mons = "gwybwca", min = 2, max = 4},
     liquid = "water",
     plant  = "demonic",
   },
   {
-    first  = {mons = "soul eater", min = 1, max = 1},
-    second = {mons = "shadow imp", min = 2, max = 4},
+    first  = {mons = "saelneytandi", min = 1, max = 1},
+    second = {mons = "cysgobwca", min = 2, max = 4},
     liquid = "water",
     plant  = "withered",
   },
   {
     first  = {mons = "ynoxinul", min = 1, max = 1},
-    second = {mons = "rust devil", min = 0, max = 1},
-    third  = {mons = "iron imp", min = 2, max = 4},
+    second = {mons = "taeringu", min = 0, max = 1},
+    third  = {mons = "haearbwca", min = 2, max = 4},
     plant  = "demonic",
   },
   {
-    first  = {mons = "smoke demon", min = 1, max = 1},
-    second = {mons = "red devil", min = 0, max = 1},
-    third  = {mons = "crimson imp", min = 2, max = 4},
+    first  = {mons = "mygdarth", min = 1, max = 1},
+    second = {mons = "cythraul", min = 0, max = 1},
+    third  = {mons = "llaibwca", min = 2, max = 4},
     liquid = "lava",
     plant  = "demonic",
   },
@@ -424,7 +424,7 @@ tier1_gauntlet_arenas = {
   },
   {
     first  = {mons = "wizard", min = 1, max = 1},
-    second = {mons = "white imp / shadow imp", min = 1, max = 3},
+    second = {mons = "gwybwca / cysgobwca", min = 1, max = 3},
   },
   {
     second = {mons = "large abomination", min = 0, max = 2},
@@ -506,19 +506,19 @@ tier2_gauntlet_arenas = {
     plant  = "demonic",
   },
   {
-    first  = {mons = "hell beast", min = 1, max = 1},
+    first  = {mons = "helvityr", min = 1, max = 1},
     second = {mons = "hell hound", min = 0, max = 2},
     liquid = "lava",
     plant  = "demonic",
   },
   {
-    first  = {mons = "green death", min = 1, max = 1},
-    second = {mons = "orange demon", min = 0, max = 2},
+    first  = {mons = "gwyrdd", min = 1, max = 1},
+    second = {mons = "nychdod", min = 0, max = 2},
     plant  = "demonic",
   },
   {
     first  = {mons = "hellion", min = 1, max = 1},
-    second = {mons = "sun demon / smoke demon / red devil", min = 0, max = 1},
+    second = {mons = "sturnulos / mygdarth / cythraul", min = 0, max = 1},
     third  = {mons = "hell hound", min = 0, max = 2},
     liquid = "lava",
     plant  = "demonic",
@@ -526,7 +526,7 @@ tier2_gauntlet_arenas = {
   },
   {
     first  = {mons = "balrug", min = 1, max = 1},
-    third  = {mons = "sun demon", min = 0, max = 1},
+    third  = {mons = "sturnulos", min = 0, max = 1},
     third  = {mons = "hell hound", min = 0, max = 2},
     liquid = "lava",
     plant  = "demonic",
@@ -540,13 +540,13 @@ tier2_gauntlet_arenas = {
     weight = 5
   },
   {
-    first  = {mons = "blizzard demon", min = 1, max = 1},
-    second = {mons = "white imp / ice devil", min = 0, max = 3},
+    first  = {mons = "cenysus", min = 1, max = 1},
+    second = {mons = "gwybwca / rypuiwel", min = 0, max = 3},
     liquid = "water",
   },
   {
     first  = {mons = "reaper", min = 1, max = 1},
-    second = {mons = "hellwing / shadow imp", min = 1, max = 3},
+    second = {mons = "vlerk / cysgobwca", min = 1, max = 3},
     liquid = "water",
     plant  = "withered",
   },
@@ -621,7 +621,7 @@ tier2_gauntlet_arenas = {
   },
   {
     second = {mons = "wizard", min = 2, max = 2},
-    third  = {mons = "white imp / shadow imp", min = 3, max = 6},
+    third  = {mons = "gwybwca / cysgobwca", min = 3, max = 6},
   },
   {
     first  = {mons = "necromancer", min = 1, max = 1},

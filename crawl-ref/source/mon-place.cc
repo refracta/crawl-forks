@@ -1911,9 +1911,9 @@ static const map<monster_type, band_set> bands_by_leader = {
     { MONS_OGRE_MAGE,       { {}, {{ BAND_OGRE_MAGE, {4, 8} }}}},
     { MONS_BALRUG,          { {}, {{ BAND_BALRUG, {2, 5}, true }}}},
     { MONS_TITIVILUS,       { {}, {{ BAND_CACODEMON, {1, 4}, true }}}},
-    { MONS_EXECUTIONER,     { {2}, {{ BAND_EXECUTIONER, {1, 4}, true }}}},
+    { MONS_OXARMORDTH,      { {2}, {{ BAND_EXECUTIONER, {1, 4}, true }}}},
     { MONS_PANDEMONIUM_LORD, { {}, {{ BAND_PANDEMONIUM_LORD, {1, 4}, true }}}},
-    { MONS_HELLWING,        { {2}, {{ BAND_HELLWING, {1, 5} }}}},
+    { MONS_VLERK,        { {2}, {{ BAND_vlerk, {1, 5} }}}},
     { MONS_DEEP_ELF_KNIGHT, { {2}, {{ BAND_DEEP_ELF_KNIGHT, {3, 5} }}}},
     { MONS_DEEP_ELF_ARCHER, { {2}, {{ BAND_DEEP_ELF_KNIGHT, {3, 5} }}}},
     { MONS_DEEP_ELF_HIGH_PRIEST, { {2}, {{ BAND_DEEP_ELF_HIGH_PRIEST, {3, 7},
@@ -2267,12 +2267,12 @@ static const map<band_type, vector<member_possibilites>> band_membership = {
                                    {MONS_DEEP_ELF_ANNIHILATOR, 1},
                                    {MONS_DEEP_ELF_SORCERER, 1},
                                    {MONS_DEEP_ELF_DEATH_MAGE, 1}}}},
-    { BAND_BALRUG,              {{{MONS_SUN_DEMON, 1},
-                                  {MONS_RED_DEVIL, 1}}}},
-    { BAND_HELLWING,            {{{MONS_HELLWING, 1},
-                                  {MONS_SMOKE_DEMON, 1}}}},
+    { BAND_BALRUG,              {{{MONS_STURNULOS, 1},
+                                  {MONS_CYTHRAUL, 1}}}},
+    { BAND_vlerk,            {{{MONS_VLERK, 1},
+                                  {MONS_MYGDARTH, 1}}}},
     { BAND_CACODEMON,           {{{MONS_SIXFIRHY, 1},
-                                  {MONS_ORANGE_DEMON, 1}}}},
+                                  {MONS_NYCHDOD, 1}}}},
     { BAND_NECROMANCER,         {{{MONS_ZOMBIE, 2},
                                   {MONS_SKELETON, 2},
                                   {MONS_SIMULACRUM, 1}}}},
@@ -2427,17 +2427,17 @@ static const map<band_type, vector<member_possibilites>> band_membership = {
     { BAND_ROBIN,               {{{MONS_GOBLIN, 3},
                                   {MONS_HOBGOBLIN, 1}}}},
 
-    { BAND_CEREBOV,             {{{MONS_BRIMSTONE_FIEND, 1}},
+    { BAND_CEREBOV,             {{{MONS_RHUDDGOCH, 1}},
 
                                  {{MONS_BALRUG, 1},
-                                  {MONS_SUN_DEMON, 3},
+                                  {MONS_STURNULOS, 3},
                                   {MONS_EFREET, 3}}}},
 
     { BAND_GLOORX_VLOQ,         {{{MONS_CURSE_SKULL, 1}},
 
-                                 {{MONS_EXECUTIONER, 1}},
+                                 {{MONS_OXARMORDTH, 1}},
 
-                                 {{MONS_SHADOW_DEMON, 1},
+                                 {{MONS_CYSGODOL, 1},
                                   {MONS_DEMONIC_CRAWLER, 3},
                                   {MONS_SHADOW_WRAITH, 3}}}},
 
@@ -2456,8 +2456,8 @@ static const map<band_type, vector<member_possibilites>> band_membership = {
                                   {MONS_DRACONIAN_ANNIHILATOR, 2},
                                   {MONS_DEEP_ELF_ANNIHILATOR, 2},
                                   {MONS_GLOWING_ORANGE_BRAIN, 2},
-                                  {MONS_BLIZZARD_DEMON, 2},
-                                  {MONS_GREEN_DEATH, 2},
+                                  {MONS_CENYSUS, 2},
+                                  {MONS_GWYRDD, 2},
                                   {MONS_RAKSHASA, 4},
                                   {MONS_WIZARD, 4}}}},
 
@@ -2588,7 +2588,7 @@ static monster_type _band_member(band_type band, int which,
     case BAND_GELID_DEMONSPAWN:
         if (which == 1 || x_chance_in_y(2, 3))
         {
-            return random_choose_weighted( 4, MONS_ICE_DEVIL,
+            return random_choose_weighted( 4, MONS_RYPUIWEL,
                                            3, MONS_GELID_DEMONSPAWN);
         }
         return random_demonspawn_monster_species();
@@ -2596,8 +2596,8 @@ static monster_type _band_member(band_type band, int which,
     case BAND_INFERNAL_DEMONSPAWN:
         if (which == 1 || x_chance_in_y(2, 3))
         {
-            return random_choose_weighted( 2, MONS_RED_DEVIL,
-                                           2, MONS_SUN_DEMON,
+            return random_choose_weighted( 2, MONS_CYTHRAUL,
+                                           2, MONS_STURNULOS,
                                            3, MONS_INFERNAL_DEMONSPAWN);
         }
         return random_demonspawn_monster_species();
@@ -2605,7 +2605,7 @@ static monster_type _band_member(band_type band, int which,
     case BAND_TORTUROUS_DEMONSPAWN:
         if (which == 1 || x_chance_in_y(2, 3))
         {
-            return random_choose_weighted( 2, MONS_ORANGE_DEMON,
+            return random_choose_weighted( 2, MONS_NYCHDOD,
                                            2, MONS_SIXFIRHY,
                                            3, MONS_TORTUROUS_DEMONSPAWN);
         }
@@ -2615,7 +2615,7 @@ static monster_type _band_member(band_type band, int which,
         if (which == 1 || which == 2 && one_chance_in(3))
         {
             if (x_chance_in_y(2, 3))
-                return random_choose(MONS_BALRUG, MONS_BLIZZARD_DEMON);
+                return random_choose(MONS_BALRUG, MONS_CENYSUS);
             else
                 return random_demonspawn_job();
         }
@@ -2625,7 +2625,7 @@ static monster_type _band_member(band_type band, int which,
         if (which == 1 || which == 2 && one_chance_in(3))
         {
             if (x_chance_in_y(2, 3))
-                return one_chance_in(4) ? MONS_EXECUTIONER : MONS_REAPER;
+                return one_chance_in(4) ? MONS_OXARMORDTH : MONS_REAPER;
             else
                 return random_demonspawn_job();
         }
@@ -2635,7 +2635,7 @@ static monster_type _band_member(band_type band, int which,
         if (which == 1 || which == 2 && one_chance_in(3))
         {
             if (x_chance_in_y(2, 3))
-                return one_chance_in(4) ? MONS_TITIVILUS : MONS_SHADOW_DEMON;
+                return one_chance_in(4) ? MONS_TITIVILUS : MONS_CYSGODOL;
             else
                 return random_demonspawn_job();
         }
@@ -2645,7 +2645,7 @@ static monster_type _band_member(band_type band, int which,
         if (which == 1 || which == 2 && one_chance_in(3))
         {
             if (x_chance_in_y(2, 3))
-                return one_chance_in(3) ? MONS_LOROCYPROCA : MONS_SOUL_EATER;
+                return one_chance_in(3) ? MONS_LOROCYPROCA : MONS_SAELNEYTANDI;
             else
                 return random_demonspawn_job();
         }
@@ -3167,42 +3167,42 @@ monster_type random_demon_by_tier(int tier)
     switch (tier)
     {
     case 5:
-        return random_choose(MONS_CRIMSON_IMP,
+        return random_choose(MONS_LLAIBWCA,
                              MONS_QUASIT,
-                             MONS_WHITE_IMP,
+                             MONS_GWYBWCA,
                              MONS_UFETUBUS,
-                             MONS_IRON_IMP,
-                             MONS_SHADOW_IMP);
+                             MONS_HAEARBWCA,
+                             MONS_CYSGOBWCA);
     case 4:
-        return random_choose(MONS_ICE_DEVIL,
-                             MONS_RUST_DEVIL,
-                             MONS_ORANGE_DEMON,
-                             MONS_RED_DEVIL,
-                             MONS_HELLWING);
+        return random_choose(MONS_RYPUIWEL,
+                             MONS_TAERINGU,
+                             MONS_NYCHDOD,
+                             MONS_CYTHRAUL,
+                             MONS_VLERK);
     case 3:
-        return random_choose(MONS_SUN_DEMON,
-                             MONS_SOUL_EATER,
-                             MONS_SMOKE_DEMON,
+        return random_choose(MONS_STURNULOS,
+                             MONS_SAELNEYTANDI,
+                             MONS_MYGDARTH,
                              MONS_NEQOXEC,
                              MONS_YNOXINUL,
                              MONS_SIXFIRHY);
     case 2:
-        return random_choose(MONS_GREEN_DEATH,
-                             MONS_BLIZZARD_DEMON,
+        return random_choose(MONS_GWYRDD,
+                             MONS_CENYSUS,
                              MONS_BALRUG,
                              MONS_TITIVILUS,
-                             MONS_HELL_BEAST,
+                             MONS_HELVITYR,
                              MONS_HELLION,
                              MONS_REAPER,
                              MONS_LOROCYPROCA,
-                             MONS_TORMENTOR,
-                             MONS_SHADOW_DEMON);
+                             MONS_POENYDIO,
+                             MONS_CYSGODOL);
     case 1:
-        return random_choose(MONS_BRIMSTONE_FIEND,
-                             MONS_ICE_FIEND,
+        return random_choose(MONS_RHUDDGOCH,
+                             MONS_VETRIFL,
                              MONS_TZITZIMITL,
-                             MONS_HELL_SENTINEL,
-                             MONS_EXECUTIONER,
+                             MONS_GWARCHODWR,
+                             MONS_OXARMORDTH,
                              MONS_CACODEMON);
     default:
         die("invalid demon tier");

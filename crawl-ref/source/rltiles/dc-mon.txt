@@ -343,14 +343,14 @@ geryon MONS_GERYON
 
 # type '1' demons
 balrug MONS_BALRUG
-blizzard_demon MONS_BLIZZARD_DEMON
+blizzard_demon MONS_CENYSUS
 cacodemon MONS_CACODEMON
 titivilus MONS_TITIVILUS
-executioner MONS_EXECUTIONER
-brimstone_fiend MONS_BRIMSTONE_FIEND
-green_death MONS_GREEN_DEATH
-ice_fiend MONS_ICE_FIEND
-hell_sentinel MONS_HELL_SENTINEL
+executioner MONS_OXARMORDTH
+brimstone_fiend MONS_RHUDDGOCH
+green_death MONS_GWYRDD
+ice_fiend MONS_VETRIFL
+hell_sentinel MONS_GWARCHODWR
 tzitzimitl MONS_TZITZIMITL
 tzitzimitl_new MONS_SHADOW_FIEND
 %sdir mon/unique
@@ -358,12 +358,12 @@ ignacio MONS_IGNACIO
 %sdir mon/demons
 
 # type '2' demons
-hell_beast MONS_HELL_BEAST
-ice_devil MONS_ICE_DEVIL
+hell_beast MONS_HELVITYR
+ice_devil MONS_RYPUIWEL
 lorocyproca MONS_LOROCYPROCA
 reaper MONS_REAPER
-soul_eater MONS_SOUL_EATER
-sun_demon MONS_SUN_DEMON
+soul_eater MONS_SAELNEYTANDI
+sun_demon MONS_STURNULOS
 
 # type '3' demons
 chaos_spawn1 MONS_CHAOS_ELEMENTAL
@@ -372,34 +372,34 @@ chaos_spawn3
 chaos_spawn4
 chaos_spawn5
 hellion MONS_HELLION
-rust_devil MONS_RUST_DEVIL
+rust_devil MONS_TAERINGU
 neqoxec MONS_NEQOXEC
-orange_demon MONS_ORANGE_DEMON
-shadow_demon MONS_SHADOW_DEMON
-tormentor MONS_TORMENTOR
+orange_demon MONS_NYCHDOD
+shadow_demon MONS_CYSGODOL
+tormentor MONS_POENYDIO
 ynoxinul MONS_YNOXINUL
 
 # type '4' demons
-red_devil MONS_RED_DEVIL
-red_devil_no_trident MONS_RED_DEVIL_DISARMED
-smoke_demon MONS_SMOKE_DEMON
+red_devil MONS_CYTHRAUL
+red_devil_no_trident MONS_CYTHRAUL_DISARMED
+smoke_demon MONS_MYGDARTH
 %rim 0
 sixfirhy MONS_SIXFIRHY
 %rim 1
-hellwing MONS_HELLWING
+hellwing MONS_VLERK
 
 # type '5' demons
-crimson_imp MONS_CRIMSON_IMP
+crimson_imp MONS_LLAIBWCA
 %rim 0
 quasit MONS_QUASIT
 %rim 1
-iron_imp MONS_IRON_IMP
+iron_imp MONS_HAEARBWCA
 %rim 0
-shadow_imp MONS_SHADOW_IMP
+shadow_imp MONS_CYSGOBWCA
 mon/unique/grinder MONS_GRINDER
 %rim 1
 ufetubus MONS_UFETUBUS
-white_imp MONS_WHITE_IMP
+white_imp MONS_GWYBWCA
 
 # demonspawn ('6')
 %sdir mon/humanoids/demonspawn

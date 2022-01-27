@@ -204,7 +204,7 @@ static bool _dithmenos_random_shadow(const int count, const int tier)
     if (tier >= 2 && count == 0 && coinflip())
         mon_type = MONS_TZITZIMITL;
     else if (tier >= 1 && count < 3 && coinflip())
-        mon_type = MONS_SHADOW_DEMON;
+        mon_type = MONS_CYSGODOL;
 
     return create_monster(_wrath_mon_data(mon_type, GOD_DITHMENOS), false);
 }
@@ -576,9 +576,9 @@ static bool _makhleb_summon_servants()
 
     for (int i = 0; i < greater_servants; i++)
     {
-        const monster_type servant = random_choose(MONS_EXECUTIONER,
-                                                   MONS_GREEN_DEATH,
-                                                   MONS_BLIZZARD_DEMON,
+        const monster_type servant = random_choose(MONS_OXARMORDTH,
+                                                   MONS_GWYRDD,
+                                                   MONS_CENYSUS,
                                                    MONS_BALRUG,
                                                    MONS_TITIVILUS);
         if (_makhleb_summon_servant(servant))
@@ -587,10 +587,10 @@ static bool _makhleb_summon_servants()
 
     for (int i = 0; i < lesser_servants; i++)
     {
-        const monster_type servant = random_choose(MONS_HELLWING,
+        const monster_type servant = random_choose(MONS_VLERK,
                                                    MONS_NEQOXEC,
-                                                   MONS_ORANGE_DEMON,
-                                                   MONS_SMOKE_DEMON,
+                                                   MONS_NYCHDOD,
+                                                   MONS_MYGDARTH,
                                                    MONS_YNOXINUL);
         if (_makhleb_summon_servant(servant))
             summoned++;

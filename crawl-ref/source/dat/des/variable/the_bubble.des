@@ -46,8 +46,8 @@ function gammafunk_the_bubble_setup(e, entry_glyph, exit_glyph)
     elseif you.in_branch("Pandemonium") then
        -- 8 and 9 spawns both aren't a thing in Pan, so make these ourself.
        e.kmons("2 = greater demon / nonbase demonspawn")
-       e.kmons("3 = executioner / brimstone fiend / ice fiend / tzitzimitl" ..
-               "    / hell sentinel")
+       e.kmons("3 = oxarmordth / rhuddgoch / Vetrifl / tzitzimitl" ..
+               "    / gwarchodwr")
        e.subst("8 = 39")
        e.subst("9 = 02")
     end

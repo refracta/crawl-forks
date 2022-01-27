@@ -1884,7 +1884,7 @@ static const struct spell_desc spelldata[] =
 },
 
 {
-    SPELL_SUMMON_HELL_BEAST, "Summon Hell Beast", "",
+    SPELL_SUMMON_HELL_BEAST, "Summon helvityr", "",
     spschool::summoning | spschool::evocation,
     spflag::unholy | spflag::monster | spflag::selfench,
     4,
@@ -4026,7 +4026,7 @@ TILEG_ERROR,
 },
 
 {
-    SPELL_SUMMON_EXECUTIONERS, "Summon Executioners", "",
+    SPELL_SUMMON_EXECUTIONERS, "Summon Oxarmordthar", "",
     spschool::summoning,
     spflag::unholy | spflag::selfench | spflag::mons_abjure,
     9,

@@ -293,11 +293,11 @@ static bool _evoke_horn_of_geryon()
     {
         monster* mon;
         beh_type beh = BEH_HOSTILE;
-        bool will_anger = player_will_anger_monster(MONS_HELL_BEAST);
+        bool will_anger = player_will_anger_monster(MONS_HELVITYR);
 
         if (!will_anger && random2(adjusted_power) > 7)
             beh = BEH_FRIENDLY;
-        mgen_data mg(MONS_HELL_BEAST, beh, you.pos(), MHITYOU, MG_FORCE_BEH);
+        mgen_data mg(MONS_HELVITYR, beh, you.pos(), MHITYOU, MG_FORCE_BEH);
         mg.set_summoned(&you, 3, SPELL_NO_SPELL);
         mg.set_prox(PROX_CLOSE_TO_PLAYER);
         mon = create_monster(mg);

@@ -45,17 +45,17 @@ void init_pandemonium()
 {
     for (int pc = 0; pc < PAN_MONS_ALLOC; ++pc)
     {
-        env.mons_alloc[pc] = random_choose_weighted(5, MONS_SMOKE_DEMON,
+        env.mons_alloc[pc] = random_choose_weighted(5, MONS_MYGDARTH,
                                                     5, MONS_YNOXINUL,
                                                     5, MONS_ABOMINATION_LARGE,
-                                                    5, MONS_SOUL_EATER,
+                                                    5, MONS_SAELNEYTANDI,
                                                     5, MONS_DEMONIC_CRAWLER,
-                                                    5, MONS_SUN_DEMON,
+                                                    5, MONS_STURNULOS,
                                                     2, MONS_NEQOXEC,
-                                                    1, MONS_SHADOW_DEMON,
+                                                    1, MONS_CYSGODOL,
                                                     1, MONS_LOROCYPROCA,
                                                     1, MONS_HELLION,
-                                                    1, MONS_TORMENTOR,
+                                                    1, MONS_POENYDIO,
                                                     1, MONS_REAPER);
 
         // The last three slots have a good chance of big badasses.
@@ -64,9 +64,9 @@ void init_pandemonium()
          || pc == 9 && one_chance_in(3))
         {
             env.mons_alloc[pc] = random_choose_weighted(
-                  4, MONS_EXECUTIONER,
-                  4, MONS_GREEN_DEATH,
-                  4, MONS_BLIZZARD_DEMON,
+                  4, MONS_OXARMORDTH,
+                  4, MONS_GWYRDD,
+                  4, MONS_CENYSUS,
                   4, MONS_BALRUG,
                   4, MONS_TITIVILUS,
                   2, MONS_BLOOD_SAINT,
@@ -77,16 +77,16 @@ void init_pandemonium()
     }
 
     if (one_chance_in(10))
-        env.mons_alloc[7 + random2(3)] = MONS_BRIMSTONE_FIEND;
+        env.mons_alloc[7 + random2(3)] = MONS_RHUDDGOCH;
 
     if (one_chance_in(10))
-        env.mons_alloc[7 + random2(3)] = MONS_ICE_FIEND;
+        env.mons_alloc[7 + random2(3)] = MONS_VETRIFL;
 
     if (one_chance_in(10))
         env.mons_alloc[7 + random2(3)] = MONS_TZITZIMITL;
 
     if (one_chance_in(10))
-        env.mons_alloc[7 + random2(3)] = MONS_HELL_SENTINEL;
+        env.mons_alloc[7 + random2(3)] = MONS_GWARCHODWR;
 
     if (one_chance_in(10))
         env.mons_alloc[7 + random2(3)] = MONS_CACODEMON;

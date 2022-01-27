@@ -1539,7 +1539,7 @@ static bool _shout_fits_monster(monster_type mc, int shout)
 
     // For Pandemonium lords, almost everything is fair game. It's only
     // used for the shouting verb ("say", "bellow", "roar", etc.) anyway.
-    if (mc != MONS_HELL_BEAST && mc != MONS_MUTANT_BEAST)
+    if (mc != MONS_HELVITYR && mc != MONS_MUTANT_BEAST)
         return true;
 
     switch (shout)
@@ -3992,7 +3992,7 @@ int mons_class_zombie_base_speed(monster_type zombie_base_mc)
  * @param mon       The monster in question.
  * @param known     Whether to include only information the player knows about,
  *                  i.e. not the speed of certain monsters with varying speeds
- *                  (abominations, hell beasts)
+ *                  (abominations, helvityrs)
  * @return          The speed of the monster.
  */
 int mons_base_speed(const monster& mon, bool known)
@@ -4757,7 +4757,7 @@ bool monster_shover(const monster& m)
     if (!mons_can_use_stairs(m) && !m.is_summoned())
         return false;
 
-    // Geryon really profits from *not* pushing past hell beasts.
+    // Geryon really profits from *not* pushing past helvityrs.
     if (m.type == MONS_GERYON)
         return false;
     // Likewise, Robin and her mob.

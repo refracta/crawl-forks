@@ -128,7 +128,7 @@ function sroom_morgue(e)
     local mons = {}
 
     mons[1] = "zombie w:9 / skeleton w:5 / spectral thing w:1"
-    mons[2] = "shadow wraith w:3 / soul eater w:4 / vampire mage w:3 / "
+    mons[2] = "shadow wraith w:3 / saelneytandi w:4 / vampire mage w:3 / "
               .. "flayed ghost w:4 / death knight w:1"
     mons[3] = "skeletal warrior w:15 ; great mace" .. weap
               .. " | glaive" .. weap .. " | battleaxe" .. weap
@@ -267,9 +267,9 @@ function sroom_mythical_zoo(e)
     end
 
     if Z >= 21 then
-       lord_mon = "catoblepas / sphinx w:60 / hell beast w:20"
+       lord_mon = "catoblepas / sphinx w:60 / helvityr w:20"
     elseif Z >= 16 then
-       lord_mon = "catoblepas / hydra w:40 / hell beast w:40"
+       lord_mon = "catoblepas / hydra w:40 / helvityr w:40"
     else
        lord_mon = "catoblepas / manticore w:40 / hydra w:40"
     end
@@ -336,7 +336,7 @@ function sroom_demon_pit(e)
         {"balrug", weight_c},
         {"blizzard_demon", weight_c},
         {"hellion", weight_d},
-        {"tormentor", weight_d},
+        {"poenydio", weight_d},
         {"titivilus", 5},
     }
 
@@ -349,8 +349,8 @@ function sroom_demon_pit(e)
         tier_twos[chosen][2] = 0
     end
 
-    lord_mon = "brimstone fiend / ice fiend / tzitzimitl / " ..
-               "hell sentinel / nonbase demonspawn w:20"
+    lord_mon = "rhuddgoch / Vetrifl / tzitzimitl / " ..
+               "gwarchodwr / nonbase demonspawn w:20"
 
     fill_special_room(e, mons, lord_mon, true)
 

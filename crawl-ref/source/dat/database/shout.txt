@@ -332,7 +332,7 @@ glowing orange brain
 
 VISUAL:@The_monster@ turns @possessive@ attention towards you.
 %%%%
-# Iron imps, shadow imps and white imps copy imps.
+# haearbwcas, cysgobwcas and gwybwcas copy imps.
 imp
 
 # Shout one half the time, taunt the other half.
@@ -344,15 +344,15 @@ moth of wrath
 
 VISUAL:@The_monster@'s fur bristles in rage as it notices you.
 %%%%
-iron imp
+haearbwca
 
 @imp@
 %%%%
-shadow imp
+cysgobwca
 
 @imp@
 %%%%
-white imp
+gwybwca
 
 @imp@
 ####################################

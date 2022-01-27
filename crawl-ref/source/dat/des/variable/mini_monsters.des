@@ -1782,7 +1782,7 @@ NAME:    hangedman_summoners_spam
 TAGS:    no_monster_gen patrolling
 DEPTH:   Depths, Elf, Crypt, Abyss
 MONS:    boggart, orc high priest, kobold demonologist, deep elf mage
-MONS:    shadow demon, deep elf demonologist, vampire mage
+MONS:    cysgodol, deep elf demonologist, vampire mage
 KMONS:   8 = mummy priest
 ITEM:    book of callings w:5 / book of summonings / grand grimoire w:5 / \
          book of beasts / randbook disc:summoning numspells:6
@@ -1821,7 +1821,7 @@ ENDMAP
 NAME:    hangedman_minor_magic
 TAGS:    no_monster_gen transparent
 DEPTH:   D:4-6, Orc
-MONS:    crimson imp, white imp, shadow imp, iron imp
+MONS:    llaibwca, gwybwca, cysgobwca, haearbwca
 MONS:    orc, orc wizard w:39 / Blork the orc w:1, swamp drake
 KMONS:   0 = orc ; robe . wand of enslavement | wand of flame . \
                    potion of invisibility | potion of haste | nothing w:980
@@ -2133,7 +2133,7 @@ ENDMAP
 NAME:  lightli_wizard_tower
 TAGS:  no_monster_gen patrolling
 DEPTH: D:4-
-MONS:  patrolling wizard, patrolling crimson imp
+MONS:  patrolling wizard, patrolling llaibwca
 ITEM:  any book, any scroll
 MAP
    bbbb
@@ -2174,8 +2174,8 @@ ENDMAP
 
 NAME:  minmay_nine_imps
 DEPTH: D:3-4
-MONS:  crimson imp / white imp w:3 / shadow imp w:1
-MONS:  crimson imp ; any good_item
+MONS:  llaibwca / gwybwca w:3 / cysgobwca w:1
+MONS:  llaibwca ; any good_item
 MAP
 xxxxx
 x121x
@@ -2217,7 +2217,7 @@ ENDMAP
 
 NAME:   minmay_metal_thing
 DEPTH:  Depths
-MONS:   iron dragon, rust devil
+MONS:   iron dragon, taeringu
 KPROP:  .1$| = no_tele_into
 NSUBST: ? = 1:+ / *:v
 MAP
@@ -2237,7 +2237,7 @@ ENDMAP
 NAME:   minmay_beelzebubs_servants
 TAGS:   transparent
 DEPTH:  D:5-
-MONS:   orange demon, red devil
+MONS:   nychdod, cythraul
 NSUBST: 1 = 1:1 / * = 1., 2 = 1:2 / * = 2.
 MAP
 ........................
@@ -2280,14 +2280,14 @@ ENDMAP
 # The difficulty of most low-tier demons is lost by the time the player gets to
 # meet them. Here they aspire to be both challenging and flavourful.
 
-##### Red devils (4) can use weapons and armour.
+##### cythrauls (4) can use weapons and armour.
 NAME:    einodemon_armed_red_devil_minivault
 TAGS:    patrolling transparent
 DEPTH:   D:6-, Elf, !Elf:$
-MONS:    red devil ; spear | trident . ring mail | scale mail
-MONS:    red devil ; spear | trident . buckler
-MONS:    red devil ; spear good_item | trident good_item
-MONS:    red devil spells:throw_tomahawk.80.natural ; spear | trident
+MONS:    cythraul ; spear | trident . ring mail | scale mail
+MONS:    cythraul ; spear | trident . buckler
+MONS:    cythraul ; spear good_item | trident good_item
+MONS:    cythraul spells:throw_tomahawk.80.natural ; spear | trident
 SHUFFLE: 1234
 KMASK:   l = no_monster_gen
 MAP
@@ -2323,11 +2323,11 @@ MAP
 ..........
 ENDMAP
 
-##### Orange demons (4), manticores, scorpions.
+##### nychdods (4), manticores, scorpions.
 NAME:  einodemon_barbed_minivault
 DEPTH: D:6-, Elf
 TAGS:  patrolling transparent
-MONS:  orange demon, scorpion, manticore
+MONS:  nychdod, scorpion, manticore
 NSUBST: 1 = 2:1 / * = 1.., 2 = 2:2 / * = 2..
 MAP
 xxxxxxxxxxxxx
@@ -2373,7 +2373,7 @@ NAME:   nrook_kobold_shadow_demons
 TAGS:   patrolling transparent
 DEPTH:  Depths
 KMONS:  1 = kobold demonologist
-KMONS:  2 = w:5 shadow demon / lorocyproca
+KMONS:  2 = w:5 cysgodol / lorocyproca
 KITEM:  1 = | / *, * / %
 FTILE:  12" = floor_pebble_darkgray
 FTILE:  ' = floor_pebble_lightgray
@@ -2400,25 +2400,25 @@ NAME:   minmay_fire_ice_demons
 TAGS:   no_monster_gen transparent
 DEPTH:  D:6-, Depths, Coc, Geh
 : if you.absdepth() > 24 then
-MONS:   brimstone fiend
-MONS:   ice fiend
+MONS:   rhuddgoch
+MONS:   Vetrifl
 MONS:   balrug / hellion
-MONS:   blizzard demon
-MONS:   crimson imp
-MONS:   white imp
+MONS:   cenysus
+MONS:   llaibwca
+MONS:   gwybwca
 SUBST:  " = |
 SUBST:  ' = |
 : elseif you.absdepth() > 18 then
 MONS:   balrug / hellion w:5
-MONS:   blizzard demon
-MONS:   sun demon / smoke demon w:5
-MONS:   ice devil
-MONS:   crimson imp
-MONS:   white imp
+MONS:   cenysus
+MONS:   sturnulos / mygdarth w:5
+MONS:   rypuiwel
+MONS:   llaibwca
+MONS:   gwybwca
 SUBST:  " = |
 SUBST:  ' = *
 : else
-MONS:   sun demon / smoke demon w:5, ice devil, crimson imp, white imp
+MONS:   sturnulos / mygdarth w:5, rypuiwel, llaibwca, gwybwca
 SUBST:  " = *
 SUBST:  ' = %
 SUBST:  5 = .
@@ -2548,8 +2548,8 @@ DEPTH:  D:6-, Depths
 WEIGHT: 5
 MONS:   obsidian statue, lesser demon, common demon
 MONS:   efreet / large abomination / rakshasa
-MONS:   shadow demon / green death / blizzard demon / balrug / titivilus / \
-        hell beast / hellion / reaper / lorocyproca / tormentor
+MONS:   cysgodol / gwyrdd / cenysus / balrug / titivilus / \
+        helvityr / hellion / reaper / lorocyproca / poenydio
 KITEM:  | = superb_item / any good_item / any w:5
 : if you.in_branch("Depths") then
 SUBST:  2 = 23, 4 = 5
@@ -2700,9 +2700,9 @@ NAME:  ice2_lemuel
 TAGS:  no_pool_fixup no_monster_gen
 DEPTH: D:6-, Depths, !Depths:$, Lair:2-, Coc, !Coc:$
 KMONS: 1 = ice statue
-KMONS: 2 = white imp / ice beast w:30 / polar bear / nothing w:50
-KMONS: 3 = ice devil / ice dragon / freezing wraith
-KMONS: 4 = ice fiend / blizzard demon
+KMONS: 2 = gwybwca / ice beast w:30 / polar bear / nothing w:50
+KMONS: 3 = rypuiwel / ice dragon / freezing wraith
+KMONS: 4 = Vetrifl / cenysus
 KMONS: 5 = shard shrike
 KFEAT: 1 = >
 : if you.absdepth() > 20 then
@@ -3532,9 +3532,9 @@ MARKER:  a = lua:fog_machine { \
                  size_buildup_time = 25, cloud_type = "black smoke" \
              }
 KMONS:   a = vampire mosquito
-KMONS:   b = green death
+KMONS:   b = gwyrdd
 KMONS:   c = reaper
-KMONS:   d = soul eater
+KMONS:   d = saelneytandi
 KMONS:   e = chaos elemental
 KMONS:   f = demonic crawler
 KMONS:   g = glowing shapeshifter
@@ -5630,10 +5630,10 @@ KITEM:   * = battleaxe no_pickup / great mace no_pickup / \
 : dgn.delayed_decay(_G, 'd', 'human skeleton')
 KFEAT:   ^ = known zot trap
 : if you.in_branch("Geh") then
-KMONS:   9 = sun demon / smoke demon / hell knight / \
-             red devil w:5 / efreet w:5
+KMONS:   9 = sturnulos / mygdarth / hell knight / \
+             cythraul w:5 / efreet w:5
 KMONS:   8 = hellion / balrug
-KMONS:   7 = brimstone fiend
+KMONS:   7 = rhuddgoch
 MARKER:  F = lua:fog_machine {cloud_type = "flame", \
              pow_min = 8, pow_max = 10, delay = 100, \
              size_min = 1, size_max = 1, start_clouds = 1, excl_rad = 0 }
@@ -5641,12 +5641,12 @@ SUBST:   ~ = l
 FTILE:   F = floor_volcanic
 COLOUR:  F = lightred
 : elseif you.in_branch("Coc") then
-KMONS:   9 = ice devil w:15 / ice dragon / simulacrum w:5 / \
+KMONS:   9 = rypuiwel w:15 / ice dragon / simulacrum w:5 / \
              skeletal warrior ; hunting sling ego:freezing ident:type . \
              mace ego:freezing ident:type
-KMONS:   8 = blizzard demon / lich / shard shrike / \
+KMONS:   8 = cenysus / lich / shard shrike / \
              reaper ; scythe ego:freezing ident:type
-KMONS:   7 = ice fiend
+KMONS:   7 = Vetrifl
 MARKER:  F = lua:fog_machine {cloud_type = "freezing vapour", \
              pow_min = 8, pow_max = 10, delay = 100, \
              size_min = 1, size_max = 1, start_clouds = 1, excl_rad = 0 }
@@ -5654,8 +5654,8 @@ SUBST:   ~ = w
 FTILE:   F = floor_nerves_blue
 COLOUR:  F = lightblue
 : elseif you.in_branch("Tar") then
-KMONS:   9 = soul eater / shadow demon / vampire mage / flayed ghost
-KMONS:   8 = tormentor / revenant / mummy priest
+KMONS:   9 = saelneytandi / cysgodol / vampire mage / flayed ghost
+KMONS:   8 = poenydio / revenant / mummy priest
 KMONS:   7 = tzitzimitl
 MARKER:  F = lua:fog_machine {cloud_type = "foul pestilence", \
              pow_min = 8, pow_max = 10, delay = 100, \
@@ -5664,13 +5664,13 @@ SUBST:   ~ = G
 FTILE:   F = floor_crystal_squares
 COLOUR:  F = lightmagenta
 : elseif you.in_branch("Dis") then
-KMONS:   9 = ynoxinul / rust devil w:5 / vampire knight w:5 / \
+KMONS:   9 = ynoxinul / taeringu w:5 / vampire knight w:5 / \
              phantasmal warrior / skeletal warrior ; mundane arbalest . \
              mace good_item
 KMONS:   8 = war gargoyle / iron dragon /  \
              dancing weapon ; great sword good_item | great mace good_item | \
                               glaive good_item | battleaxe good_item
-KMONS:   7 = hell sentinel
+KMONS:   7 = gwarchodwr
 SUBST:   xc = v, F~ = G
 COLOUR:  G = cyan
 TILE:    G = dngn_statue_iron
@@ -6706,9 +6706,9 @@ DEPTH:  D:$, Depths
 WEIGHT: 3
 MONS:   obsidian statue
 MONS:   patrolling hell knight
-MONS:   sun demon / soul eater / smoke demon / neqoxec / \
+MONS:   sturnulos / saelneytandi / mygdarth / neqoxec / \
         ynoxinul
-MONS:   ice devil / rust devil / orange demon / red devil / hellwing / \
+MONS:   rypuiwel / taeringu / nychdod / cythraul / vlerk / \
         sixfirhy
 KPROP:  ._-cGO12345 = bloody / nothing w:20
 KFEAT:  _ = altar_makhleb
@@ -7070,8 +7070,8 @@ NAME:   brannock_guarded_unrand_thermic_engine
 DEPTH:  Depths
 TAGS:   no_monster_gen no_item_gen transparent
 ITEM:   maxwell's_thermic_engine no_pickup
-MONS:   ice devil, blizzard demon, ice fiend
-MONS:   sun demon, balrug, brimstone fiend
+MONS:   rypuiwel, cenysus, Vetrifl
+MONS:   sturnulos, balrug, rhuddgoch
 # 6-2-1, 9 total demons for each side
 NSUBST: 1 = 6:1 / *:., 2 = 2:2 / *:., 3 = 1:3 / *:.
 NSUBST: 4 = 6:4 / *:., 5 = 2:5 / *:., 6 = 1:6 / *:.
@@ -7410,18 +7410,18 @@ KMONS:  8 = deep elf annihilator / deep elf blademaster / deep elf master archer
             deep elf high priest / w:20 place:Elf:$
 : elseif you.in_branch("Crypt") then
 KMONS:  8 = bone dragon / lich / ancient lich / vampire knight / w:5 revenant / \
-            ancient champion / w:5 eidolon / w:20 reaper / soul eater / w:30 place:Crypt:$
+            ancient champion / w:5 eidolon / w:20 reaper / saelneytandi / w:30 place:Crypt:$
 : elseif you.in_branch("Dis") then
-KMONS:  8 = w:5 tzitzimitl / w:5 ice fiend / w:5 brimstone fiend / hell sentinel / \
-            iron dragon / tormentor / iron golem / place:Dis
+KMONS:  8 = w:5 tzitzimitl / w:5 Vetrifl / w:5 rhuddgoch / gwarchodwr / \
+            iron dragon / poenydio / iron golem / place:Dis
 : elseif you.in_branch("Geh") then
-KMONS:  8 = brimstone fiend / w:5 hell sentinel / hellion / balrug / \
+KMONS:  8 = rhuddgoch / w:5 gwarchodwr / hellion / balrug / \
             fire giant / place:Geh
 : elseif you.in_branch("Tar") then
-KMONS:  8 = w:15 tzitzimitl / reaper / w:5 soul eater / shadow dragon / lich / \
+KMONS:  8 = w:15 tzitzimitl / reaper / w:5 saelneytandi / shadow dragon / lich / \
             ancient lich / w:5 revenant / w:15 place:Tar
 : elseif you.in_branch("Coc") then
-KMONS:  8 = w:15 blizzard demon / frost giant / w:5 titan / w:15 ice fiend / \
+KMONS:  8 = w:15 cenysus / frost giant / w:5 titan / w:15 Vetrifl / \
             w:5 simulacrum / place:Coc
 : elseif you.in_branch("Zot") then
 KMONS:  8 = w:35 nonbase draconian / orb of fire / electric golem / killer klown band / \

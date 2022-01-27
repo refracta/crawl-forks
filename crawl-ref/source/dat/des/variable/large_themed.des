@@ -943,7 +943,7 @@ ORIENT: southeast
 KPROP:  -47 = no_tele_into
 ITEM:   any jewellery randart, scroll of acquirement
 : item(dgn.randart_aux_armour)
-MONS:   human att:neutral, silent spectre, patrolling soul eater
+MONS:   human att:neutral, silent spectre, patrolling saelneytandi
 MONS:   ogre mage / deep elf mage / wizard / necromancer / merfolk aquamancer / \
         spriggan air mage / orc sorcerer / kobold demonologist / deep elf mage
 MONS:   draconian shifter / draconian annihilator / lich / deep elf sorcerer / \
@@ -1012,8 +1012,8 @@ SUBST:  b = v, B = .
 MONS:   hell knight
 MONS:   kobold demonologist, deep elf demonologist
 # these demons are the same ones you get from greater/lesser servant
-MONS:   blizzard demon / green death / patrolling executioner / balrug / titivilus
-MONS:   orange demon / ynoxinul / w:4 neqoxec / hellwing / smoke demon
+MONS:   cenysus / gwyrdd / patrolling oxarmordth / balrug / titivilus
+MONS:   nychdod / ynoxinul / w:4 neqoxec / vlerk / mygdarth
 # depth controls the number of greater servants... amount ranges from 1 to 3
 : if you.absdepth() < 21 then
 NSUBST: 4 = 1:4 / 2:5
@@ -1278,17 +1278,17 @@ KFEAT:  _ = altar_kikubaaqudgha
 MONS:   zombie / skeleton / w:5 simulacrum
 MONS:   necromancer, deep elf death mage, \
         w:5 deep elf death mage / nothing
-MONS:   w:4 soul eater / w:1 reaper, reaper, reaper / nothing
+MONS:   w:4 saelneytandi / w:1 reaper, reaper, reaper / nothing
 : elseif you.absdepth() < 24 then
 MONS:   zombie / skeleton / w:5 simulacrum
 MONS:   necromancer w:15 / w:5 deep elf death mage, lich, \
         lich / deep elf death mage / nothing
-MONS:   soul eater / w:5 reaper, reaper, tzitzimitl / w:5 reaper
+MONS:   saelneytandi / w:5 reaper, reaper, tzitzimitl / w:5 reaper
 : else
 MONS:   zombie / skeleton / w:5 simulacrum
 MONS:   necromancer / deep elf death mage, \
         w:15 lich / w:5 ancient lich / deep elf death mage, lich / ancient lich
-MONS:   reaper / soul eater, reaper, tzitzimitl
+MONS:   reaper / saelneytandi, reaper, tzitzimitl
 : end
 MARKER: V = lua:fog_machine { cloud_type = "foul pestilence", \
             pow_min = 8, pow_max = 12, delay_min = 20, delay_max = 30, \
@@ -1485,8 +1485,8 @@ ORIENT: north
 TAGS:   no_monster_gen
 DEPTH:  Depths:2-
 MONS:   common demon, hell knight
-MONS:   shadow demon / green death / blizzard demon / balrug / titivilus / \
-        hell beast / hellion / reaper / lorocyproca / tormentor
+MONS:   cysgodol / gwyrdd / cenysus / balrug / titivilus / \
+        helvityr / hellion / reaper / lorocyproca / poenydio
 NSUBST: . = 7:1 / 7:2 / *:.
 FTILE:  .|#+G123 = floor_pebble_darkgray
 KPROP:  1Y = no_tele_into
@@ -1667,8 +1667,8 @@ WEIGHT: 5
 FTILE:  *|c.12${} = floor_infernal_blank
 TILE:   c = dngn_stone_dark
 SUBST:  *=*|
-MONS:   ice devil w:1 / hellwing w:3 / rust devil w:1 / orange demon w:1 /\
-        red devil w:1 / demonic crawler / sixfirhy w:1
+MONS:   rypuiwel w:1 / vlerk w:3 / taeringu w:1 / nychdod w:1 /\
+        cythraul w:1 / demonic crawler / sixfirhy w:1
 MONS:   lesser demon, sewer rat / giant cockroach
 NSUBST: . = 6:3 / 6:! / 56:' / .
 KPROP:  !' = bloody
@@ -2135,7 +2135,7 @@ TAGS:    no_monster_gen no_item_gen no_rotate patrolling
 DEPTH:   Depths, !Depths:$, Tar, !Tar:$
 ORIENT:  south
 MONS:    shadow, boggart, rakshasa, shadow wraith
-MONS:    vampire knight, shadow demon, shadow dragon
+MONS:    vampire knight, cysgodol, shadow dragon
 KMONS:   9 = glowing shapeshifter / spriggan defender / deep elf annihilator
 KMONS:   8 = bone dragon / reaper / doom hound
 KMONS:   _ = tzitzimitl
@@ -2249,7 +2249,7 @@ DEPTH:   Vaults, !Vaults:$, Depths
 KFEAT: r = runed_door
 KMONS: L = dancing weapon ; long sword good_item
 KMONS: a = air elemental
-KMONS: s = smoke demon
+KMONS: s = mygdarth
 NSUBST: A = 1:L / 1:a / 2:as / *:.
 KMONS: d = dancing weapon ; double sword good_item
 KMONS: W = war gargoyle
@@ -2292,10 +2292,10 @@ NAME: cheibrodos_cascadia
 TAGS: no_item_gen no_monster_gen no_pool_fixup
 DEPTH: Depths
 ORIENT: northwest
-MONS: wizard, ice devil, ice dragon , frost giant, blizzard demon, lich
+MONS: wizard, rypuiwel, ice dragon , frost giant, cenysus, lich
 KMONS: I = ice statue
 KMONS: " = ancient lich
-KMONS: B = blizzard demon
+KMONS: B = cenysus
 KMONS: C = lich
 KITEM: " = %
 KITEM: B = %

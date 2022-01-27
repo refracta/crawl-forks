@@ -203,7 +203,7 @@ A shadowy figure clothed in profound darkness.
 %%%%
 Grinder
 
-An inefficient shadow imp previously employed as a torturer in one of the lower
+An inefficient cysgobwca previously employed as a torturer in one of the lower
 circles of Hell. She has a tendency to complain and make inane statements.
 %%%%
 Grum
@@ -666,7 +666,7 @@ A species of frog that possesses the ability to blink at will. It can blink
 itself close to its intended prey, or blink away to escape harm. It is commonly
 found in packs.
 %%%%
-blizzard demon
+cenysus
 
 A greater demon, wreathed in snow and lightning.
 %%%%
@@ -707,7 +707,7 @@ A tangled cluster of thorny briars, sharp enough to pierce thick hide and
 armour. Though the gaps in the copse are plentiful enough to fire missiles
 through, walking through it looks like a painful prospect.
 %%%%
-Brimstone Fiend
+Rhuddgoch
 
 A huge and powerful demon wreathed in hellfire, with great scaly wings. It is
 one of the most fearsome denizens of any of the Hells.
@@ -788,7 +788,7 @@ crawling corpse
 A corpse weakly animated by necromancy. It is easily destroyed, but capable of
 merging with others to form more potent horrors.
 %%%%
-crimson imp
+llaibwca
 
 A small, ugly minor demon. Its fanged maw seems locked in a permanent malign
 grin, and its horns protrude obscenely from its scaly pate.
@@ -1095,7 +1095,7 @@ ettin
 A two-headed giant, stronger than most, and able to land devastating blows left
 and right with its two huge weapons.
 %%%%
-Executioner
+oxarmordth
 
 A horribly powerful and swift demon, its shape obscured by a cloud of swirling
 scythe-like blades.
@@ -1320,7 +1320,7 @@ greater mummy
 An ancient pharaoh, embalmed and cursed to undeath, now capable of great and
 terrifying feats of magic.
 %%%%
-green death
+gwyrdd
 
 A bloated form covered in oozing sores and exhaling clouds of lethal poison.
 %%%%
@@ -1363,7 +1363,7 @@ harpy
 A bird-like creature with a human face that roams the coasts endlessly, feared
 for her sharp claws and harrying strikes.
 %%%%
-hell beast
+helvityr
 
 An abominable crossbreed of beast and man that makes horrible barking noises.
 %%%%
@@ -1387,7 +1387,7 @@ hell rat
 A unusually large rat. Its weird, knobbly orange skin glows with the infernal
 energies that spawned it.
 %%%%
-Hell Sentinel
+gwarchodwr
 
 A towering monolith constructed and possessed by demonic forces. A thousand
 eyes leer through slits in its jagged, spiked armour.
@@ -1401,7 +1401,7 @@ hellion
 
 A hateful demon, desirous to see all life destroyed by its hellfire.
 %%%%
-hellwing
+vlerk
 
 A hideous skeletal demon. It swoops through the air on powerful wings of
 ancient withered skin, taking sadistic joy from harrying those who would try to
@@ -1480,7 +1480,7 @@ ice beast
 A terrible creature, formed of snow and crystalline ice. Its feet leave puddles
 of icy water on the floor.
 %%%%
-ice devil
+rypuiwel
 
 A man-sized demon covered in glittering ice.
 %%%%
@@ -1488,7 +1488,7 @@ ice dragon
 
 A white, frost-coated dragon. Snowflakes trickle from its nostrils.
 %%%%
-Ice Fiend
+Vetrifl
 
 A huge frigid demon covered in frost and wreathed in freezing air. It is one of
 the most terrible denizens of the many Hells.
@@ -1538,7 +1538,7 @@ iron golem
 A large, ponderous and very solid statue of metal, given the power of
 locomotion through some esoteric means.
 %%%%
-iron imp
+haearbwca
 
 An ugly, twisted little minor demon with metal skin.
 %%%%
@@ -1856,7 +1856,7 @@ crystal. Its lifeless eyes seem to glitter uncannily with a wicked
 intelligence. It is capable of unleashing a powerful psychic assault upon the
 minds of any who approach it.
 %%%%
-orange demon
+nychdod
 
 An amber-coloured demon with a barbed tail not unlike that of a scorpion.
 %%%%
@@ -2065,7 +2065,7 @@ reaper
 A skeletal form wielding a giant scythe, ceaselessly harvesting the souls of
 the living.
 %%%%
-red devil
+cythraul
 
 A larger cousin of the common imp, with a fiendish grin and two short wings
 sprouting from its shoulders. It favours barbed tridents, and taunts its
@@ -2109,7 +2109,7 @@ the Royal Jelly
 A particularly rich and golden gelatinous thing. Smaller jellies swim and pulse
 just below its surface, ready to burst forth at the slightest touch.
 %%%%
-rust devil
+taeringu
 
 A hideous humanoid figure with rust-spotted metal skin, spreading corrosion
 and decay to all it touches.
@@ -2163,7 +2163,7 @@ A wisp of unliving shadow, slipping in and out of the darkness of the dungeon.
 It moves swiftly and silently from one pool of shade to another, striking
 unerringly from the blind spots of those who cannot see it.
 %%%%
-shadow demon
+cysgodol
 
 A mysterious demonic figure, difficult to distinguish from the darkness around
 it. It weaves the shadows into powerful minions.
@@ -2172,7 +2172,7 @@ shadow dragon
 
 A great umbral dragon, radiating evil and death. Its breath reeks of the grave.
 %%%%
-shadow imp
+cysgobwca
 
 A shadowy minor demon, with an affinity for the necromantic arts.
 %%%%
@@ -2270,7 +2270,7 @@ small abomination
 A hideous mass of body parts. Each varies in speed and durability by the nature
 of whatever unfortunates were used to make it.
 %%%%
-smoke demon
+mygdarth
 
 An infernal demon that manifests itself as a writhing cloud of smoke. Having
 considerable pyrokinetic powers, it can very effectively attack its enemies
@@ -2299,7 +2299,7 @@ A tough ant with a disproportionately large head, strong mandibles, and a
 vicious sting capable of injecting painful venom. It is a soldier, and thus
 tasked with protecting the colony from invaders.
 %%%%
-soul eater
+saelneytandi
 
 A demon that manifests as a malignantly shifting shadow gliding through the
 air. It radiates an intense aura of negative force.
@@ -2419,7 +2419,7 @@ storm dragon
 A powerful dragon with a hide of thick matte scales almost like blue rubber,
 and enormous scaly wings crackling with sparks.
 %%%%
-sun demon
+sturnulos
 
 A demonic figure shining with the heat and fury of a fallen star.
 %%%%
@@ -2514,7 +2514,7 @@ toenail golem
 A huge animated statue made entirely from toenail clippings. Some people just
 have too much time on their hands.
 %%%%
-tormentor
+POENYDIO
 
 A malign devil covered in all manner of claws, spines, and cruel hooks. It is
 able to inflict torturous agony on those foolish enough to gaze upon it.
@@ -2681,7 +2681,7 @@ white draconian
 
 A muscular white-scaled humanoid with a reptilian tail and small wings.
 %%%%
-white imp
+gwybwca
 
 A small and mischievous minor demon covered in frost.
 %%%%

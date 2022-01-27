@@ -208,7 +208,7 @@ static const char *divine_title[][8] =
 
     // Fedhas Madash -- nature theme.
     {"@Walking@ Fertiliser", "Fungal",              "Green @Genus@",            "Cultivator",
-        "Fruitful",           "Photosynthesist",       "Green Death",              "Force of Nature"},
+        "Fruitful",           "Photosynthesist",       "gwyrdd",              "Force of Nature"},
 
     // Cheibriados -- slow theme
     {"Hasty",              "Sluggish @Genus@",      "Deliberate",               "Unhurried",

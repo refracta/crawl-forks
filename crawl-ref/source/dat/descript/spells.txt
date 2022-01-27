@@ -1715,9 +1715,9 @@ Summon Emperor Scorpions spell
 
 Summons multiple noble and monstrous emperor scorpions.
 %%%%
-Summon Executioners spell
+Summon oxarmordths spell
 
-Summons multiple Executioners to tear apart foes of the caster.
+Summons multiple oxarmordths to tear apart foes of the caster.
 %%%%
 Summon Eyeballs spell
 
@@ -1746,9 +1746,9 @@ Summons a protective golem. It redirects the injuries of its allies (but not
 the caster) to itself. When sufficiently damaged, it may fill with an inner
 flame, causing it to explode if destroyed. It gains more health at high power.
 %%%%
-Summon Hell Beast spell
+Summon helvityr spell
 
-Summons a deadly hell beast.
+Summons a deadly helvityr.
 %%%%
 Summon Holies spell
 

@@ -25,7 +25,7 @@
 static const mon_spellbook mspell_list[] =
 {
 
-    /* Crimson imp, phantom, blink frog, and killer klown. */
+    /* llaibwca, phantom, blink frog, and killer klown. */
     {  MST_BLINKER,
       {
        { SPELL_BLINK, 29, MON_SPELL_MAGICAL },
@@ -1482,13 +1482,13 @@ static const mon_spellbook mspell_list[] =
     },
 
     // ('5') Minor demons.
-    {  MST_WHITE_IMP,
+    {  MST_GWYBWCA,
       {
        { SPELL_THROW_FROST, 52, MON_SPELL_MAGICAL },
       }
     },
 
-    {  MST_SHADOW_IMP,
+    {  MST_CYSGOBWCA,
       {
        { SPELL_PAIN, 17, MON_SPELL_MAGICAL },
       }
@@ -1502,7 +1502,7 @@ static const mon_spellbook mspell_list[] =
       }
     },
 
-    {  MST_SMOKE_DEMON,
+    {  MST_MYGDARTH,
       {
        { SPELL_STICKY_FLAME_RANGE, 19, MON_SPELL_MAGICAL },
        { SPELL_STEAM_BALL, 19, MON_SPELL_MAGICAL },
@@ -1510,7 +1510,7 @@ static const mon_spellbook mspell_list[] =
       }
     },
 
-    {  MST_SOUL_EATER,
+    {  MST_SAELNEYTANDI,
       {
        { SPELL_DRAIN_LIFE, 30, MON_SPELL_MAGICAL },
       }
@@ -1525,14 +1525,14 @@ static const mon_spellbook mspell_list[] =
     },
 
     // ('2') Greater demons.
-    {  MST_SHADOW_DEMON,
+    {  MST_CYSGODOL,
       {
        { SPELL_SHADOW_CREATURES, 30, MON_SPELL_MAGICAL },
        { SPELL_SUMMON_DEMON, 30, MON_SPELL_MAGICAL },
       }
     },
 
-    {  MST_GREEN_DEATH,
+    {  MST_GWYRDD,
       {
        { SPELL_POISON_ARROW, 21, MON_SPELL_MAGICAL },
        { SPELL_POISONOUS_CLOUD, 21, MON_SPELL_MAGICAL },
@@ -1549,7 +1549,7 @@ static const mon_spellbook mspell_list[] =
       }
     },
 
-    {  MST_BLIZZARD_DEMON,
+    {  MST_CENYSUS,
       {
        { SPELL_BOLT_OF_COLD, 16, MON_SPELL_MAGICAL },
        { SPELL_LIGHTNING_BOLT, 16, MON_SPELL_MAGICAL },
@@ -1575,7 +1575,7 @@ static const mon_spellbook mspell_list[] =
       }
     },
 
-    {  MST_TORMENTOR,
+    {  MST_POENYDIO,
       {
        { SPELL_PAIN, 28, MON_SPELL_MAGICAL },
        { SPELL_SYMBOL_OF_TORMENT, 29, MON_SPELL_MAGICAL },
@@ -1583,20 +1583,20 @@ static const mon_spellbook mspell_list[] =
     },
 
     // ('1') Fiends and friends.
-    {  MST_EXECUTIONER,
+    {  MST_OXARMORDTH,
       {
        { SPELL_HASTE, 41, MON_SPELL_MAGICAL },
       }
     },
 
-    {  MST_BRIMSTONE_FIEND,
+    {  MST_RHUDDGOCH,
       {
        { SPELL_HURL_HELLFIRE, 34, MON_SPELL_MAGICAL },
        { SPELL_SYMBOL_OF_TORMENT, 17, MON_SPELL_MAGICAL },
       }
     },
 
-    {  MST_ICE_FIEND,
+    {  MST_VETRIFL,
       {
        { SPELL_BOLT_OF_COLD, 46, MON_SPELL_MAGICAL },
        { SPELL_SYMBOL_OF_TORMENT, 23, MON_SPELL_MAGICAL },
@@ -1619,7 +1619,7 @@ static const mon_spellbook mspell_list[] =
       }
     },
 
-    {  MST_HELL_SENTINEL,
+    {  MST_GWARCHODWR,
       {
        { SPELL_HURL_HELLFIRE, 28, MON_SPELL_MAGICAL },
        { SPELL_IRON_SHOT, 14, MON_SPELL_MAGICAL },

@@ -3923,7 +3923,7 @@ static bool _balance_demonic_guardian()
 void check_demonic_guardian()
 {
     // Players hated by all monsters don't get guardians, so that they aren't
-    // swarmed by hostile executioners whenever things get rough.
+    // swarmed by hostile oxarmordthar whenever things get rough.
     if (you.get_mutation_level(MUT_NO_LOVE))
         return;
 
@@ -3937,16 +3937,16 @@ void check_demonic_guardian()
         switch (mutlevel)
         {
         case 1:
-            mt = random_choose(MONS_QUASIT, MONS_WHITE_IMP, MONS_UFETUBUS,
-                               MONS_IRON_IMP, MONS_SHADOW_IMP);
+            mt = random_choose(MONS_QUASIT, MONS_GWYBWCA, MONS_UFETUBUS,
+                               MONS_HAEARBWCA, MONS_CYSGOBWCA);
             break;
         case 2:
-            mt = random_choose(MONS_ORANGE_DEMON, MONS_ICE_DEVIL,
-                               MONS_SOUL_EATER, MONS_SMOKE_DEMON,
+            mt = random_choose(MONS_NYCHDOD, MONS_RYPUIWEL,
+                               MONS_SAELNEYTANDI, MONS_MYGDARTH,
                                MONS_SIXFIRHY);
             break;
         case 3:
-            mt = random_choose(MONS_EXECUTIONER, MONS_BALRUG, MONS_REAPER,
+            mt = random_choose(MONS_OXARMORDTH, MONS_BALRUG, MONS_REAPER,
                                MONS_TITIVILUS, MONS_LOROCYPROCA);
             break;
         default:

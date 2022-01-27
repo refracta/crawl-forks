@@ -312,7 +312,7 @@ NAME:   hangedman_abyss_monster_moat
 TAGS:   no_monster_gen patrolling
 MONS:   fire bat w:12 / bat simulacrum / spectral bat / bat
 MONS:   vampire, vampire knight / vampire mage w:7
-MONS:   crimson imp w:12 / white imp / shadow imp / iron imp
+MONS:   llaibwca w:12 / gwybwca / cysgobwca / haearbwca
 MONS:   kobold demonologist, deep elf demonologist
 MONS:   worker ant w:40 / vampire mosquito w:20 / hornet
 KMONS:  8 = demonic crawler
@@ -337,9 +337,9 @@ ENDMAP
 
 NAME:   hangedman_abyss_sting
 TAGS:   no_item_gen no_monster_gen uniq_hornetnest
-KMONS:  1 = orange demon
+KMONS:  1 = nychdod
 KMONS:  2 = hornet / killer bee w:2 / nothing w:2
-KMONS:  3 = death drake / green death
+KMONS:  3 = death drake / gwyrdd
 KFEAT:  123 = W
 NSUBST: 3 = 1:3, *:.
 KITEM:  3 = ration
@@ -394,7 +394,7 @@ ENDMAP
 
 NAME:    hangedman_abyss_shoalhut
 TAGS:    no_pool_fixup patrolling
-MONS:    red devil w:30 / smoke demon / eye of devastation w:5 / \
+MONS:    cythraul w:30 / mygdarth / eye of devastation w:5 / \
          unseen horror / ynoxinul / snapping turtle skeleton w:15
 NSUBST:  a = + / xx+ / x
 SUBST:   1 = 1., x = xxxxcccvb, l = wWll
@@ -495,7 +495,7 @@ ENDMAP
 NAME:    hangedman_abyss_lost_library
 TAGS:    patrolling no_monster_gen no_item_gen
 MONS:    guardian serpent, great orb of eyes, glowing orange brain
-MONS:    boggart, rakshasa, titivilus, shadow demon
+MONS:    boggart, rakshasa, titivilus, cysgodol
 KMONS:   0 = wizard
 KMONS:   8 = orc sorcerer
 KMONS:   9 = sphinx
@@ -595,7 +595,7 @@ MONS:    large slime creature w:12 / very large slime creature w:8 / rakshasa w:
 KMONS:   8 = starcursed mass
 KMONS:   9 = floating eye / chaos elemental / anaconda perm_ench:shapeshifter w:2
 KMONS:   0 = tentacled starspawn
-KMONS:   A = patrolling shadow demon
+KMONS:   A = patrolling cysgodol
 KMONS:   B = boggart
 SHUFFLE: 12 / 34 / 56 / 78 / 90, A' / A' / A' / A' / 'B
 SUBST:   x = x:5 c:4 b:2 v:1, X = x:2 c:4 b:3 v:1, ' = ..lw
@@ -624,7 +624,7 @@ ENDMAP
 
 NAME:    hangedman_relentless_pull
 TAGS:    no_monster_gen no_item_gen
-MONS:    ugly thing / large abomination / ynoxinul / unseen horror / smoke demon
+MONS:    ugly thing / large abomination / ynoxinul / unseen horror / mygdarth
 MONS:    tentacled starspawn / starcursed mass
 MONS:    very ugly thing, wretched star, lurking horror, ancient zyme
 SHUFFLE: 2d, 34eAB / 34eAB / '''CD, 34 / 56
@@ -649,9 +649,9 @@ ENDMAP
 NAME:    hangedman_steaming_rock
 TAGS:    transparent
 MONS:    eye of devastation w:9 / nothing w:1
-KMONS:   2 = ynoxinul / smoke demon / thrashing horror / unseen horror / \
+KMONS:   2 = ynoxinul / mygdarth / thrashing horror / unseen horror / \
              ugly thing w:5/ rakshasa w:5 / chaos elemental w:5
-KMONS:   3 = smoke demon / green death / catoblepas w:8 / ophan w:7 / \
+KMONS:   3 = mygdarth / gwyrdd / catoblepas w:8 / ophan w:7 / \
              fire crab w:5
 KMONS:   4 = apocalypse crab / death drake w:5
 KITEM:   2 = % / $, % / *
@@ -693,12 +693,12 @@ ENDMAP
 NAME:    hangedman_classic_abyss_death
 TAGS:    transparent no_monster_gen
 MONS:    large abomination / ynoxinul / unseen horror / \
-         skeleton / sixfirhy / smoke demon / neqoxec / \
+         skeleton / sixfirhy / mygdarth / neqoxec / \
          efreet / rakshasa / glowing orange brain / ugly thing / \
          golden eye / hell hog
 MONS:    lich / hellephant / tentacled monstrosity / profane servitor / \
          death drake / daeva / angel / bone dragon / balrug w:4 / \
-         shadow demon w:4 / executioner w:4 / hellion w:4
+         cysgodol w:4 / oxarmordth w:4 / hellion w:4
 SHUFFLE: lw / ll / ww / ''
 NSUBST:  2 : 2:2 / *:1
 SUBST:   c = ccvbb, x = xxxc, ' = .
@@ -939,12 +939,12 @@ ENDMAP
 NAME:    hangedman_abyss_town
 TAGS:    no_monster_gen patrolling allow_dup
 WEIGHT:  5
-MONS:    rakshasa / efreet / smoke demon / wizard / base draconian w:5 / \
+MONS:    rakshasa / efreet / mygdarth / wizard / base draconian w:5 / \
          guardian serpent w:1 / vampire w:3 / necromancer w:3
 MONS:    thrashing horror / blink frog / ugly thing / \
          large abomination / unseen horror / shapeshifter / \
          wretched star w:5 / air elemental / raiju / worldbinder
-MONS:    draconian shifter w:5 / shadow demon w:5 / lich / \
+MONS:    draconian shifter w:5 / cysgodol w:5 / lich / \
          profane servitor w:5 / lorocyproca / deep elf demonologist / \
          deep elf sorcerer / death knight
 MONS:    bone dragon / tentacled starspawn / starcursed mass / \
@@ -1013,7 +1013,7 @@ ENDMAP
 
 NAME:    hangedman_abyss_river_spirits
 TAGS:    no_monster_gen
-MONS:    smoke demon, efreet, fire elemental, water elemental
+MONS:    mygdarth, efreet, fire elemental, water elemental
 SHUFFLE: ABCDEF / ABCDEF / ABCDEF / ACEBDF / ACEBDF / GGGGGG
 SHUFFLE: 1234 / 1234 / 1234 / 1212 / 1212 / 1212 / 3434 / 3434 / 3434
 SUBST:   ACE = w, BDF = l, G : wl, x = x:50 cb
@@ -1150,7 +1150,7 @@ KMONS:  2 = golden eye / eye of draining w:4 / floating eye w:2
 KMONS:  3O = flying skull
 KMONS:  4 = large abomination / small abomination w:6 / macabre mass w:2
 KMONS:  5 = titivilus
-KMONS:  6 = executioner
+KMONS:  6 = oxarmordth
 KMONS:  7 = shining eye
 KMONS:  8 = titanic slime creature
 KITEM:  O = abyssal rune of Zot
@@ -1296,7 +1296,7 @@ ENDMAP
 # and standardizing difficulty was easier with consolidation.
 NAME:   dshaligram_kb_abyss_rune_zappy_water_cross
 TAGS:   abyss_rune unrand patrolling no_pool_fixup
-MONS:   generate_awake lightning spire, raiju, smoke demon, blizzard demon
+MONS:   generate_awake lightning spire, raiju, mygdarth, cenysus
 KMONS:  O = merfolk impaler
 KITEM:  O = abyssal rune of Zot
 KFEAT:  O = shallow_water
@@ -1421,7 +1421,7 @@ ENDMAP
 NAME:   evilmike_nicolae_abyss_rune_containment_curve
 TAGS:   abyss_rune unrand patrolling no_monster_gen no_item_gen
 MONS:   neqoxec w:4 / raiju / worldbinder / thrashing horror / shapeshifter
-MONS:   tormentor / hellion / shadow demon / \
+MONS:   poenydio / hellion / cysgodol / \
         bone dragon / iron dragon zombie w:4
 KMONS:  3O = spatial maelstrom
 KITEM:  O = abyssal rune of Zot
@@ -1601,9 +1601,9 @@ TAGS:    abyss_rune unrand
 MONS:    draconian, nonbase draconian
 MONS:    wretched star / starcursed mass / apocalypse crab / lurking horror \
          / very ugly thing / quicksilver dragon / shadow dragon
-MONS:    balrug / hellion / lorocyproca / tormentor / titivilus / reaper \
-         / blizzard demon / executioner / angel / daeva
-KMONS:   R = hellephant / ancient lich / hell sentinel / profane servitor
+MONS:    balrug / hellion / lorocyproca / poenydio / titivilus / reaper \
+         / cenysus / oxarmordth / angel / daeva
+KMONS:   R = hellephant / ancient lich / gwarchodwr / profane servitor
 KITEM:   O = abyssal rune of Zot
 MARKER:  P = lua:transp_loc("reverse_zot_entry")
 MARKER:  Q = lua:transp_dest_loc("reverse_zot_entry")
@@ -2038,7 +2038,7 @@ NAME:  evilmike_abyss_exit_smiterflies
 TAGS:  abyss_exit
 KMONS: O = generate_awake statue spells:summon_butterflies.100.magical \
            tile:mons_statue_mage col:lightblue
-MONS:  smoke demon, deep elf mage
+MONS:  mygdarth, deep elf mage
 : init_abyss_exit(_G, "O")
 MAP
        ccc
@@ -2155,7 +2155,7 @@ ENDMAP
 NAME: guppyfry_abyss_exit_imp_island
 TAGS: abyss_exit
 SUBST: - = Wwwww
-MONS: crimson imp / white imp
+MONS: llaibwca / gwybwca
 : init_abyss_exit(_G, "O")
 MAP
 .---------.

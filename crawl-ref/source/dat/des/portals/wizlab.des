@@ -717,16 +717,16 @@ KMONS:      | = electric golem
 :           set_random_mon_list("earth elemental / toenail golem w:1 / " ..
 :                               "gargoyle / crystal guardian / iron golem")
 :           elseif mrnd == 1 then
-KMONS:      0% = smoke demon / ynoxinul / neqoxec w:6 / ice devil /\
-                 soul eater / sun demon
-KMONS:      * = lorocyproca / reaper / shadow demon / tormentor / hellion /\
-                blizzard demon / green death / balrug / titivilus
-KMONS:      | = hell sentinel / brimstone fiend / tzitzimitl /\
-                ice fiend / executioner
+KMONS:      0% = mygdarth / ynoxinul / neqoxec w:6 / rypuiwel /\
+                 saelneytandi / sturnulos
+KMONS:      * = lorocyproca / reaper / cysgodol / poenydio / hellion /\
+                cenysus / gwyrdd / balrug / titivilus
+KMONS:      | = gwarchodwr / rhuddgoch / tzitzimitl /\
+                Vetrifl / oxarmordth
 :           set_random_mon_list(
-:               "smoke demon / ynoxinul / neqoxec / " ..
-:               "soul eater / sun demon / " ..
-:               "lorocyproca / reaper / shadow demon / tormentor / hellion")
+:               "mygdarth / ynoxinul / neqoxec / " ..
+:               "saelneytandi / sturnulos / " ..
+:               "lorocyproca / reaper / cysgodol / poenydio / hellion")
 :           else
 KMONS:      0% = place:Depths:1 zombie / guardian mummy w:4
 KMONS:      * = zombie / mummy priest w:6
@@ -1332,18 +1332,18 @@ KMONS:   3 = rakshasa spells:throw_dispersal.60.natural add_spells w:5 ; \
              spear ego:vorpal w:6 . robe
 KMONS:   04 = large abomination w:15 / small abomination w:15 / unseen horror w:5 / \
               thrashing horror w:30 / skeleton w:30 / freezing wraith w:5 /  \
-              hellwing / chaos elemental w:5 / orange demon / ice devil /  \
-              hell hound / red devil w:5 / lesser demon w:25 / mana viper w:5 / \
+              vlerk / chaos elemental w:5 / nychdod / rypuiwel /  \
+              hell hound / cythraul w:5 / lesser demon w:25 / mana viper w:5 / \
               worldbinder w:30 / fire elemental w:5 / air elemental w:5
-KMONS:   95 = ynoxinul / smoke demon / sixfirhy / sun demon w:5 / efreet w:5 / \
-              soul eater w:5 / hell knight w:5 / demonic crawler / raiju / \
+KMONS:   95 = ynoxinul / mygdarth / sixfirhy / sturnulos w:5 / efreet w:5 / \
+              saelneytandi w:5 / hell knight w:5 / demonic crawler / raiju / \
               ancient zyme w:20 / lurking horror / tentacled starspawn w:30 / \
               wind drake w:5 / earth elemental w:5 / water elemental / \
               ugly thing / base draconian / guardian serpent / \
               eidolon w:5 / shadow wraith / anaconda skeleton w:5 / \
               great orb of eyes w:5 / glowing orange brain
-KMONS:   6 = executioner w:5 / balrug w:5 / titivilus / shadow demon / hellion w:5 / \
-             tormentor w:5 / lorocyproca w:5 / blizzard demon / \
+KMONS:   6 = oxarmordth w:5 / balrug w:5 / titivilus / cysgodol / hellion w:5 / \
+             poenydio w:5 / lorocyproca w:5 / cenysus / \
              reaper / lich w:5 / angel / profane servitor w:5 / \
              death drake w:5 / tentacled monstrosity w:20 / olive draconian shifter w:20 / \
              starcursed mass w:30 / apocalypse crab w:20
@@ -1417,8 +1417,8 @@ set_random_mon_list([[rakshasa w:15 / deep elf mage w:15 / wizard w:15 / spatial
                     boggart / blink frog w:5 / shadow wraith w:5 / unseen horror /
                     raiju / ynoxinul / neqoxec / chaos elemental / glowing orange brain /
                     large abomination w:15 / small abomination w:15 / skeleton w:20 /
-                    hellwing w:5 / smoke demon w:5 / hell hound w:5 / ugly thing w:5 /
-                    golden eye w:5 / executioner w:3 / shadow demon w:4 / hellion w:3 /
+                    vlerk w:5 / mygdarth w:5 / hell hound w:5 / ugly thing w:5 /
+                    golden eye w:5 / oxarmordth w:3 / cysgodol w:4 / hellion w:3 /
                     thrashing horror w:25 / tentacled starspawn w:25 / ]])
 
 set_border_fill_type('permarock_wall')
@@ -1497,7 +1497,7 @@ TAGS:       no_rotate
 MONS:       air elemental w:20 / shock serpent w:5 / spark wasp w:5 \
             / wind drake w:5
 MONS:       ghost crab / death drake / apocalypse crab
-MONS:       spriggan air mage / blizzard demon
+MONS:       spriggan air mage / cenysus
 {{
 wizname = crawl.make_name()
 kmons ("    5 = patrolling Cloud Mage dbname:Cloud_Mage name:"
@@ -1537,7 +1537,7 @@ LFLOORTILE: floor_rough_lightblue
             set_border_fill_type('open_sea')
             set_random_mon_list("air elemental w:40 / shock serpent \
                 / spark wasp / wind drake / ghost crab / apocalypse crab \
-                / spriggan air mage / blizzard demon")
+                / spriggan air mage / cenysus")
             wizlab_setup(_G)
             set_feature_name("floor", "damp floor")
             set_feature_name("crystal_wall", "wall of white crystal")
@@ -1667,8 +1667,8 @@ MARKER:     h = lua:fog_machine { \
                 size_buildup_time = 25, cloud_type = "flame", \
                 excl_rad = 0 }
 KMONS:      1 = any common demon
-KMONS:      2 = balrug / blizzard demon / titivilus / green death \
-            / hell beast / hellion / lorocyproca / shadow demon / tormentor
+KMONS:      2 = balrug / cenysus / titivilus / gwyrdd \
+            / helvityr / hellion / lorocyproca / cysgodol / poenydio
 KMONS:      3 = blood saint / black sun
 {{
 wizname = crawl.make_name()
@@ -1689,9 +1689,9 @@ NSUBST:     d = e / d, ' = 4:1 / 3=12...., " = 4:1 / 3=12....
 NSUBST:     ` = 2:1 / 2:2 / 3=12...., ; = 2:1 / 2:2 / 3=12....
 NSUBST:     3 = 1:3 / 1, ~ = 2:1 / 3:2 / 4 / 9=12.... / ., f = 1:g / f
 {{
-set_random_mon_list("common demon w:200 / balrug / blizzard demon / \
-                     titivilus / green death / hell beast / hellion / \
-                     lorocyproca / shadow demon / tormentor \
+set_random_mon_list("common demon w:200 / balrug / cenysus / \
+                     titivilus / gwyrdd / helvityr / hellion / \
+                     lorocyproca / cysgodol / poenydio \
                      / blood saint w:5 / black sun w:5")
 wizlab_setup(_G)
 set_feature_name("stone_wall", "black wall")
@@ -1793,7 +1793,7 @@ MONS:       orange crystal statue name:lunar_statue n_rpl n_des \
               col:lightmagenta tile:mons_zot_statue
 {{
 mons("patrolling moon troll ; moon troll leather")
-set_random_mon_list ("rust devil w:20 / eye of devastation / stone giant " ..
+set_random_mon_list ("taeringu w:20 / eye of devastation / stone giant " ..
                      "/ tentacled starspawn / great orb of eyes " ..
                      "/ neqoxec w:5 / golden eye w:5 / very ugly thing w:5 " ..
                      "/ starcursed mass w:5 / titivilus w:5")

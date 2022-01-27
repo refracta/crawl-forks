@@ -665,7 +665,7 @@ ENDMAP
 NAME:    minmay_shadows
 ORIENT:  northwest
 DEPTH:   Crypt, Tar
-MONS:    shadow, soul eater, tzitzimitl
+MONS:    shadow, saelneytandi, tzitzimitl
 ITEM:    lantern of shadows
 SUBST:   A : x., B : x., C : x., E : x., F : x.
 : if you.in_branch("Tar") then
@@ -1062,7 +1062,7 @@ DEPTH:   Crypt
 # Yred nearly-all-melee set, Kiku necro-casters set, ghosts set, tomb set.
 MONS:    minotaur zombie / ettin zombie / skeletal warrior w:20
 MONS:    death knight, bone dragon w:14 / profane servitor
-MONS:    necromancer / vampire mage w:6 / soul eater w:2
+MONS:    necromancer / vampire mage w:6 / saelneytandi w:2
 MONS:    vampire mage / deep elf death mage, lich / reaper w:2
 MONS:    shadow wraith / phantasmal warrior / ghost crab w:4
 KMONS:   8 = eidolon / flayed ghost
@@ -1715,7 +1715,7 @@ KMONS:  S = shadow / wraith / freezing wraith / shadow wraith / wight
 KMONS:  t = fire giant skeleton / fire dragon skeleton
 KMONS:  X = w:1 curse skull / w:19 revenant
 : else
-KMONS:  t = w:20 hell knight / smoke demon / red devil
+KMONS:  t = w:20 hell knight / mygdarth / cythraul
 KMONS:  X = w:1 curse skull / w:19 hell knight
 : end
 ####### Randomisation of doors
@@ -1857,10 +1857,10 @@ KMONS:  F = patrolling bone dragon
 KFEAT:  _ = altar_kikubaaqudgha
 KMONS:  9 = patrolling ancient lich
 KMONS:  H = w:20 patrolling lich / patrolling ancient lich
-KMONS:  0 = patrolling reaper w:5 / patrolling soul eater
+KMONS:  0 = patrolling reaper w:5 / patrolling saelneytandi
 KMONS:  A = patrolling deep elf death mage
 KMONS:  B = necromancer
-KMONS:  C = hellwing
+KMONS:  C = vlerk
 KMONS:  E = skeleton w:13 / nothing
 KMONS:  F = patrolling reaper
 : end

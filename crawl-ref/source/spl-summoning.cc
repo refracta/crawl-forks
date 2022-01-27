@@ -526,8 +526,8 @@ void doom_howl(int time)
     for (int i = 0; i < howlcalled_count; ++i)
     {
         const monster_type howlcalled = random_choose(
-                MONS_BONE_DRAGON, MONS_SHADOW_DRAGON, MONS_SHADOW_DEMON,
-                MONS_REAPER, MONS_TORMENTOR, MONS_TZITZIMITL
+                MONS_BONE_DRAGON, MONS_SHADOW_DRAGON, MONS_CYSGODOL,
+                MONS_REAPER, MONS_POENYDIO, MONS_TZITZIMITL
         );
         vector<coord_def> spots;
         for (adjacent_iterator ai(target->pos()); ai; ++ai)
@@ -1146,25 +1146,25 @@ spret cast_summon_guardian_golem(int pow, god_type god, bool fail)
  */
 static monster_type _get_imp_type(int pow)
 {
-    // Proportion of white imps is independent of spellpower.
+    // Proportion of gwybwcas is independent of spellpower.
     if (x_chance_in_y(5, 18))
-        return MONS_WHITE_IMP;
+        return MONS_GWYBWCA;
 
     // 3/13 * 13/18 = 1/6 chance of one of these two at 0-46 spellpower,
     // increasing up to about 4/9 at max spellpower.
     if (random2(pow) >= 46 || x_chance_in_y(3, 13))
-        return one_chance_in(3) ? MONS_IRON_IMP : MONS_SHADOW_IMP;
+        return one_chance_in(3) ? MONS_HAEARBWCA : MONS_CYSGOBWCA;
 
     // 5/9 crimson at 0-46 spellpower, about half that at max power.
-    return MONS_CRIMSON_IMP;
+    return MONS_LLAIBWCA;
 }
 
 static map<monster_type, const char*> _imp_summon_messages = {
-    { MONS_WHITE_IMP,
+    { MONS_GWYBWCA,
         "A beastly little devil appears in a puff of frigid air." },
-    { MONS_IRON_IMP, "A metallic apparition takes form in the air." },
-    { MONS_SHADOW_IMP, "A shadowy apparition takes form in the air." },
-    { MONS_CRIMSON_IMP, "A beastly little devil appears in a puff of flame." },
+    { MONS_HAEARBWCA, "A metallic apparition takes form in the air." },
+    { MONS_CYSGOBWCA, "A shadowy apparition takes form in the air." },
+    { MONS_LLAIBWCA, "A beastly little devil appears in a puff of flame." },
 };
 
 /**
@@ -1224,8 +1224,8 @@ static bool _summon_demon_wrapper(int pow, god_type god, int spell,
         }
         else if (friendly)
         {
-            if (mon == MONS_CRIMSON_IMP || mon == MONS_WHITE_IMP
-                || mon == MONS_IRON_IMP || mon == MONS_SHADOW_IMP)
+            if (mon == MONS_LLAIBWCA || mon == MONS_GWYBWCA
+                || mon == MONS_HAEARBWCA || mon == MONS_CYSGOBWCA)
             {
                 _monster_greeting(demon, "_friendly_imp_greeting");
             }
@@ -1294,7 +1294,7 @@ bool summon_demon_type(monster_type mon, int pow, god_type god,
 
 spret cast_summon_demon(int pow, god_type god, bool fail)
 {
-    // Chaos spawn, orange demons and sixfirhies are not rPois
+    // Chaos spawn, nychdods and sixfirhies are not rPois
     if (otr_stop_summoning_prompt())
         return spret::abort;
 

@@ -259,8 +259,8 @@ function fiery_guardians (e, intelligent, village)
         elseif set_weight < 8 then
             -- "Demonic" monster pack.
             e.mons("hell hound / red ugly thing / " ..
-                   "red devil ; trident ego:molten ident:type")
-            e.mons("sun demon / smoke demon")
+                   "cythraul ; trident ego:molten ident:type")
+            e.mons("sturnulos / mygdarth")
             e.mons("orc sorcerer ; " .. magestuff .. " / " ..
                    "hell knight ; " .. goodgear .. " . chain mail " .. res)
         else

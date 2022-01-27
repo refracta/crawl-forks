@@ -711,7 +711,7 @@ COLOUR:   ? = lightgreen
 SUBST:    - = W..
 : sewer_setup(_G)
 MONS:     bullfrog / crocodile / slime creature / jelly
-MONS:     shadow imp / sewer rat / ooze
+MONS:     cysgobwca / sewer rat / ooze
 MONS:     Purgy, gnoll sergeant
 MONS:     Sigmund / Natasha / gnoll shaman, gnoll shaman
 #       possibly rather generous loot, if you get to the center
@@ -1015,7 +1015,7 @@ MARKER:  F = lua:fog_machine { cloud_type = "flame", pow_min = 100, \
                                walk_dist = 0, excl_rad = 0 }
 : sewer_setup(_G)
 # Placed monsters.
-MONS:    big kobold band / shadow imp / big kobold zombie /\
+MONS:    big kobold band / cysgobwca / big kobold zombie /\
          ufetubus
 # Randomly generated monsters.
 MONS:    adder / adder zombie / vampire bat / \
@@ -1026,7 +1026,7 @@ SUBST:   . = .:175 2
 KMONS:   3 = big kobold band
 # Bosses.
 KMONS:   4 = gnoll band
-KMONS:   5 = Grinder, shadow imp
+KMONS:   5 = Grinder, cysgobwca
 KMONS:   6 = Sigmund, quasit
 SHUFFLE: 456
 KITEM:   456 = star_item

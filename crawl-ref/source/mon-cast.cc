@@ -6668,10 +6668,10 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         duration  = min(2 + mons->spell_hd(spell_cast) / 5, 6);
         x = create_monster(
             mgen_data(random_choose_weighted(
-                        1, MONS_IRON_IMP,
-                        2, MONS_SHADOW_IMP,
-                        2, MONS_WHITE_IMP,
-                        4, MONS_CRIMSON_IMP),
+                        1, MONS_HAEARBWCA,
+                        2, MONS_CYSGOBWCA,
+                        2, MONS_GWYBWCA,
+                        4, MONS_LLAIBWCA),
                       SAME_ATTITUDE(mons), mons->pos(), mons->foe)
             .set_summoned(mons, duration, spell_cast, god));
         chaos_summon(spell_cast, x, mons);
@@ -6708,7 +6708,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
 
     case SPELL_SUMMON_HELL_BEAST:  // Geryon
         create_monster(
-            mgen_data(MONS_HELL_BEAST, SAME_ATTITUDE(mons), mons->pos(),
+            mgen_data(MONS_HELVITYR, SAME_ATTITUDE(mons), mons->pos(),
                       mons->foe).set_summoned(mons, 4, spell_cast, god));
         return;
 
@@ -7151,10 +7151,10 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         {
             const monster_type mon = random_choose_weighted(
                                        3, MONS_EFREET,
-                                       3, MONS_SUN_DEMON,
+                                       3, MONS_STURNULOS,
                                        3, MONS_BALRUG,
                                        2, MONS_HELLION,
-                                       1, MONS_BRIMSTONE_FIEND);
+                                       1, MONS_RHUDDGOCH);
 
             x = create_monster(
                 mgen_data(mon, SAME_ATTITUDE(mons), mons->pos(), mons->foe)
@@ -7568,7 +7568,7 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         duration = min(2 + mons->spell_hd(spell_cast) / 10, 6);
         for (int i = 0; i < num_exec; ++i)
         {
-            x = _summon(*mons, MONS_EXECUTIONER, duration, slot);
+            x = _summon(*mons, MONS_OXARMORDTH, duration, slot);
             chaos_summon(spell_cast, x, mons);
         }
         return;
@@ -7606,8 +7606,8 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
 
     case SPELL_GREATER_SERVANT_MAKHLEB:
     {
-        const monster_type servants[] = { MONS_EXECUTIONER, MONS_GREEN_DEATH,
-                                          MONS_BLIZZARD_DEMON, MONS_BALRUG,
+        const monster_type servants[] = { MONS_OXARMORDTH, MONS_GWYRDD,
+                                          MONS_CENYSUS, MONS_BALRUG,
                                           MONS_TITIVILUS };
         _summon(*mons, RANDOM_ELEMENT(servants), 5, slot);
         return;

@@ -1825,7 +1825,7 @@ void MiscastEffect::_necromancy(int severity)
             break;
 
         case 2:
-            if (_create_monster(MONS_SOUL_EATER, 4, true))
+            if (_create_monster(MONS_SAELNEYTANDI, 4, true))
             {
                 you_msg        = "Something reaches out for you...";
                 mon_msg_seen   = "Something reaches out for @the_monster@...";
@@ -3022,7 +3022,7 @@ void MiscastEffect::_zot()
         switch (random2(9))
         {
         case 0:
-            if (_create_monster(MONS_SOUL_EATER, 4, true))
+            if (_create_monster(MONS_SAELNEYTANDI, 4, true))
             {
                 you_msg        = "Something reaches out for you...";
                 mon_msg_seen   = "Something reaches out for @the_monster@...";

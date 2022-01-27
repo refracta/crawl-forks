@@ -1245,7 +1245,7 @@ bool monster::pickup_launcher(item_def &launch, bool msg, bool force)
 static bool _is_signature_weapon(const monster* mons, const item_def &weapon)
 {
     // Don't pick up items that would interfere with our special ability
-    if (mons->type == MONS_RED_DEVIL)
+    if (mons->type == MONS_CYTHRAUL)
         return item_attack_skill(weapon) == SK_POLEARMS;
 
     // Some other uniques have a signature weapon, usually because they

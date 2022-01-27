@@ -2451,7 +2451,7 @@ MONS:    fire dragon / ice dragon / lindwurm / hell hound
 MONS:    death yak / manticore / catoblepas / dire elephant
 MONS:    hydra / anaconda / hornet w:2 / redback w:3 / wolf spider w:5 / harpy
 MONS:    spriggan druid, spriggan rider
-MONS:    sphinx / hell beast w:5 / caustic shrike w:5
+MONS:    sphinx / helvityr w:5 / caustic shrike w:5
 ITEM:    ration / nothing w:80
 NSUBST:  ' : 1:2 / 1:3 / 1:4 / 2 = 233444. / *:.
 NSUBST:  " : 2:2 / 2:3 / 2:4 / 4 = 233444. / *:.
@@ -2503,10 +2503,10 @@ ORIENT: float
 DEPTH: Depths
 TAGS: no_monster_gen
 SHUFFLE: PFIEMONLSAKRVCTHD
-KMONS: P = green death / green draconian / nagaraja w:5 / swamp dragon / \
+KMONS: P = gwyrdd / green draconian / nagaraja w:5 / swamp dragon / \
            redback
-KMONS: F = fire giant w:5 / fire dragon / fire elemental / red draconian / sun demon
-KMONS: I = frost giant w:5 / ice dragon / blizzard demon / white draconian / \
+KMONS: F = fire giant w:5 / fire dragon / fire elemental / red draconian / sturnulos
+KMONS: I = frost giant w:5 / ice dragon / cenysus / white draconian / \
            ice dragon
 KMONS: E = titan w:5 / storm dragon / blue draconian / ball lightning
 KMONS: O = orc knight / orc sorcerer / orc warlord w:5 / orc high priest / \
@@ -2528,8 +2528,8 @@ KMONS: V = vault guard / stone giant w:5 / yaktaur captain / dancing weapon / \
            skeletal warrior
 KMONS: C = skeletal warrior / bone dragon / vampire / lich w:5
 KMONS: T = mummy priest w:5 / guardian mummy / sphinx / mummy / reaper
-KMONS: H = balrug w:5 / blizzard demon w:5 / shadow demon w:5 / \
-           hell beast w:5 / sun demon / ice devil / rust devil / soul eater / \
+KMONS: H = balrug w:5 / cenysus w:5 / cysgodol w:5 / \
+           helvityr w:5 / sturnulos / rypuiwel / taeringu / saelneytandi / \
            hell knight w:5
 KMONS: D = cinder newt / kobold / hobgoblin w:5 / goblin / adder
 MAP
@@ -2708,7 +2708,7 @@ NSUBST:  2 = 2:2 / 2:3 / 2:4 / * = 222334
 : elseif you.in_branch("Depths") then
 MONS:    deep troll
 : else
-# hell beast perm_ench:invis is too gimmicky.
+# helvityr perm_ench:invis is too gimmicky.
 # Fortunately, we have a permanently invisible 2 already.
 MONS:    lorocyproca
 : end
@@ -2941,14 +2941,14 @@ ORIENT: float
 : local brnd = crawl.random2(15)
 : if brnd >= 10 then
 MONS: mana viper / naga warrior / naga mage
-MONS: nagaraja / naga ritualist / w:8 green death
+MONS: nagaraja / naga ritualist / w:8 gwyrdd
 : elseif brnd >= 5 then
 MONS: jumping spider / wolf spider / tarantella
-MONS: emperor scorpion / w:8 green death / w:3 ghost moth
+MONS: emperor scorpion / w:8 gwyrdd / w:3 ghost moth
 : else
 MONS: skeletal warrior ; long sword ego:venom | broad axe ego:venom \
       | halberd ego:venom
-MONS: reaper ; scythe ego:venom / w:8 green death \
+MONS: reaper ; scythe ego:venom / w:8 gwyrdd \
       / ancient champion ; great mace ego:venom | battleaxe ego:venom \
       | glaive ego:venom
 : end
@@ -3118,7 +3118,7 @@ KMONS:  8 = tengu reaver ; battleaxe ego:molten | great sword ego:freezing | \
                            fire dragon scales | ice dragon scales
 KMONS:  9 = golden draconian / scintillating draconian / black draconian
 KMONS:  0 = golden draconian monk / scintillating draconian monk / black draconian monk
-KMONS:  ! = orb of fire / electric golem / ice fiend / iron giant
+KMONS:  ! = orb of fire / electric golem / Vetrifl / iron giant
 KMONS:  & = ancient lich
 KITEM:  $ = $ no_pickup
 KFEAT:  ~ = .
@@ -3194,7 +3194,7 @@ ORIENT:  float
 # The dances of angels and devils, of blessed birds and antagonist serpents...
 # and perhaps the stinger plunging into the poor toro de lidia?
 MONS:    dancing weapon ; scythe ego:antimagic
-MONS:    cherub, rakshasa, angel / daeva, balrug / blizzard demon
+MONS:    cherub, rakshasa, angel / daeva, balrug / cenysus
 MONS:    caustic shrike, shadow dragon
 KMONS:   8 = tengu reaver
 KMONS:   9 = bone dragon
@@ -3457,7 +3457,7 @@ NAME: cheibrodos_frozen_isle
 DEPTH: D:4-
 TAGS: no_item_gen no_monster_gen no_pool_fixup
 ORIENT: float
-MONS: ice statue, ice devil, ufetubus
+MONS: ice statue, rypuiwel, ufetubus
 KPROP: 1-' = no_tele_into
 NSUBST: ' = 5=*$ / *:%
 NSUBST: - = 4:2 / 4:3 / 4=23 / *:.
@@ -3487,7 +3487,7 @@ NAME: cheibrodos_iron_armory
 DEPTH: D:2-5
 TAGS: no_item_gen no_monster_gen
 ORIENT: float
-MONS: rust devil, orc warrior ; plate armour good_item . demon trident
+MONS: taeringu, orc warrior ; plate armour good_item . demon trident
 ITEM: scimitar good_item / scimitar not_cursed randart w:3, halberd good_item / halberd not_cursed randart w:3
 ITEM: war axe good_item / war axe not_cursed randart w:3, morningstar good_item / morningstar not_cursed randart w:3
 ITEM: plate armour good_item / plate armour not_cursed randart
@@ -3612,9 +3612,9 @@ NAME: cheibrodos_quadrivalence
 DEPTH: D:6-7, Depths, !Depths:$
 TAGS: no_item_gen no_monster_gen no_pool_fixup
 ORIENT: float
-MONS: smoke demon / sun demon, balrug
-MONS: ynoxinul , blizzard demon
-MONS: red devil ; trident ego:molten / red devil ; trident mundane, ice devil
+MONS: mygdarth / sturnulos, balrug
+MONS: ynoxinul , cenysus
+MONS: cythraul ; trident ego:molten / cythraul ; trident mundane, rypuiwel
 : if crawl.coinflip() then
 COLOUR: -c2+'.B56 = red
 FTILE: -2+'. = floor_rough_red
@@ -3647,14 +3647,14 @@ MAP
 """""""""""""""""""
 ENDMAP
 
-NAME: cheibrodos_tormentor_scu
+NAME: cheibrodos_poenydio_scu
 DEPTH: D:6-, Depths
 TAGS: no_item_gen no_monster_gen
 ORIENT: float
 : if you.branch() == "Depths" then
 MONS: tzitzimitl, hell knight / skeletal warrior / w:2 lich
 : else
-MONS: tormentor
+MONS: poenydio
 MONS: death knight / w:5 wraith / w:2 freezing wraith / w:4 skeletal warrior
 : end
 ITEM: demon whip ego:pain / demon whip ego:draining / demon blade ego:pain \
@@ -3725,7 +3725,7 @@ NAME: cheibrodos_grave_circle
 DEPTH: D:4-6
 TAGS: no_item_gen no_monster_gen
 ORIENT: float
-MONS: place:Depths:1 skeleton w:5 / place:Depths:1 zombie, shadow imp, hellwing
+MONS: place:Depths:1 skeleton w:5 / place:Depths:1 zombie, cysgobwca, vlerk
 NSUBST: . = 5:1 / 3=1. / 3:2 / 2=2., " = 1:*% / 4=$%.
 SUBST: . = .....--__tG
 KMONS: t = withered plant
@@ -4345,7 +4345,7 @@ ITEM:   wand of iceblast / wand of acid
 ITEM:   wand of random effects / wand of disintegration / \
         / wand of enslavement / wand of polymorph w:5
 ITEM:   wand of clouds / wand of scattershot
-MONS: shadow imp, orc priest, kobold demonologist
+MONS: cysgobwca, orc priest, kobold demonologist
 MONS: deep elf knight / fire crab / orc high priest / orc sorcerer
 KMONS:  p = plant
 KFEAT:  p = W
@@ -4588,7 +4588,7 @@ TAGS:   no_monster_gen no_item_gen
 DEPTH:  D:4-6
 ORIENT: float
 KMONS:  1 = kobold demonologist
-KMONS:  2 = shadow imp
+KMONS:  2 = cysgobwca
 KMONS:  k = kobold / big kobold w:3
 KMONS:  u = kobold skeleton / kobold zombie
 KITEM:  ?1 = kobold skeleton
@@ -4783,7 +4783,7 @@ KMONS:   3 = orc warrior
 : elseif rnd == 1 then
 KFEAT:   C = altar_lugonu
 KFEAT:   D = enter_abyss
-KMONS:   1 = ufetubus / iron imp
+KMONS:   1 = ufetubus / haearbwca
 KMONS:   2 = quasit
 KMONS:   3 = demonic crawler
 KFEAT:   t = shallow_water
@@ -5966,22 +5966,22 @@ SUBST:  ] = ]>
 : if you.in_branch("Crypt") then
 KMONS:  8 = bone dragon / lich / ancient lich / w:5 death cob / \
             w:5 curse toe / w:5 zombie / w:5 skeleton / eidolon / \
-            w:20 reaper / soul eater / w:30 place:Crypt
+            w:20 reaper / saelneytandi / w:30 place:Crypt
 : elseif you.in_branch("Dis") then
-KMONS:  8 = w:5 tzitzimitl / w:5 ice fiend / w:5 brimstone fiend / \
-            w:5 hell sentinel / iron dragon / tormentor / iron golem / \
+KMONS:  8 = w:5 tzitzimitl / w:5 Vetrifl / w:5 rhuddgoch / \
+            w:5 gwarchodwr / iron dragon / poenydio / iron golem / \
             place:Dis
 SUBST:  *% = .
 : elseif you.in_branch("Geh") then
-KMONS:  8 = brimstone fiend / w:5 hell sentinel / hellion / balrug / \
+KMONS:  8 = rhuddgoch / w:5 gwarchodwr / hellion / balrug / \
             fire giant / place:Geh
 SUBST:  *% = .
 : elseif you.in_branch("Tar") then
-KMONS:  8 = w:15 tzitzimitl / reaper / w:5 soul eater / shadow dragon / \
+KMONS:  8 = w:15 tzitzimitl / reaper / w:5 saelneytandi / shadow dragon / \
             lich / ancient lich / w:15 place:Tar
 SUBST:  *% = .
 : elseif you.in_branch("Coc") then
-KMONS:  8 = w:15 blizzard demon / frost giant / w:5 titan / w:15 ice fiend / \
+KMONS:  8 = w:15 cenysus / frost giant / w:5 titan / w:15 Vetrifl / \
             w:5 simulacrum / place:Coc
 SUBST:  *% = .
 : elseif you.in_branch("Zot") then
@@ -9140,8 +9140,8 @@ NSUBST: 8 = 2 / 8
 :   elseif you.in_branch("Pandemonium") then
 # 8 and 9 spawns aren't a thing in Pan, so replace these with scary things.
 KMONS: 2 = greater demon / nonbase demonspawn
-KMONS: 3 = executioner / brimstone fiend / ice fiend / tzitzimitl \
-           / hell sentinel
+KMONS: 3 = oxarmordth / rhuddgoch / Vetrifl / tzitzimitl \
+           / gwarchodwr
 SUBST: 8 = 39, 9 = 02, H = K
 :   elseif you.in_branch("Zot") then
 KMONS: 2 = ancient lich / orb of fire / curse toe

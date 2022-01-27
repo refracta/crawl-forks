@@ -191,7 +191,7 @@ ITEM:    gold q:40
 ITEM:    gold q:220
 MONS:    gnoll ; flail ego:none | morningstar ego:none | spear ego:none . \
          leather armour | ring mail
-MONS:    crimson imp
+MONS:    llaibwca
 MONS:    orc ; scimitar ego:none | battleaxe ego:none | trident ego:none . \
          ring mail | chain mail
 MARKER:  d = lua:tutorial3.msg("gold");

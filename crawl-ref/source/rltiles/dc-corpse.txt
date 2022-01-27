@@ -35,47 +35,47 @@ rakshasa CORPSE_RAKSHASA
 
 ## First Tier ('1')
 cacodemon CORPSE_CACODEMON
-brimstone_fiend CORPSE_BRIMSTONE_FIEND
-ice_fiend CORPSE_ICE_FIEND
+brimstone_fiend CORPSE_RHUDDGOCH
+ice_fiend CORPSE_VETRIFL
 tzitzimitl CORPSE_TZITZIMITL
-hell_sentinel CORPSE_HELL_SENTINEL
-executioner CORPSE_EXECUTIONER
+hell_sentinel CORPSE_GWARCHODWR
+executioner CORPSE_OXARMORDTH
 mon/unique/ignacio CORPSE_IGNACIO
 
 ## Second Tier ('2')
-shadow_demon CORPSE_SHADOW_DEMON
-green_death CORPSE_GREEN_DEATH
-blizzard_demon CORPSE_BLIZZARD_DEMON
+shadow_demon CORPSE_CYSGODOL
+green_death CORPSE_GWYRDD
+blizzard_demon CORPSE_CENYSUS
 balrug CORPSE_BALRUG
 titivilus CORPSE_TITIVILUS
-hell_beast CORPSE_HELL_BEAST
+hell_beast CORPSE_HELVITYR
 hellion CORPSE_HELLION
 reaper CORPSE_REAPER
 lorocyproca CORPSE_LOROCYPROCA
-tormentor CORPSE_TORMENTOR
+tormentor CORPSE_POENYDIO
 
 ## Third Tier ('3')
-sun_demon CORPSE_SUN_DEMON
-soul_eater CORPSE_SOUL_EATER
-smoke_demon CORPSE_SMOKE_DEMON
+sun_demon CORPSE_STURNULOS
+soul_eater CORPSE_SAELNEYTANDI
+smoke_demon CORPSE_MYGDARTH
 neqoxec CORPSE_NEQOXEC
 ynoxinul CORPSE_YNOXINUL
 sixfirhy CORPSE_SIXFIRHY
 
 ## Fourth Tier ('4')
-rust_devil CORPSE_RUST_DEVIL
-orange_demon CORPSE_ORANGE_DEMON
-red_devil CORPSE_RED_DEVIL
-hellwing CORPSE_HELLWING
-ice_devil CORPSE_ICE_DEVIL
+rust_devil CORPSE_TAERINGU
+orange_demon CORPSE_NYCHDOD
+red_devil CORPSE_CYTHRAUL
+hellwing CORPSE_VLERK
+ice_devil CORPSE_RYPUIWEL
 
 ## Fifth Tier ('5')
-crimson_imp CORPSE_CRIMSON_IMP
+crimson_imp CORPSE_LLAIBWCA
 quasit CORPSE_QUASIT
-white_imp CORPSE_WHITE_IMP
+white_imp CORPSE_GWYBWCA
 ufetubus CORPSE_UFETUBUS
-iron_imp CORPSE_IRON_IMP
-shadow_imp CORPSE_SHADOW_IMP
+iron_imp CORPSE_HAEARBWCA
+shadow_imp CORPSE_CYSGOBWA
 
 # Abominations ('X')
 %sdir mon/aberrations

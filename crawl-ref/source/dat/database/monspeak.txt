@@ -6418,7 +6418,7 @@ hell lord
 
 @_hell_lord_taunt_@
 %%%%
-crimson imp
+llaibwca
 
 w:1
 @_says_imp_taunt_@
@@ -6426,7 +6426,7 @@ w:1
 w:2
 @_hostile_imp_@
 %%%%
-iron imp
+haearbwca
 
 w:1
 @_says_imp_taunt_@
@@ -6434,7 +6434,7 @@ w:1
 w:2
 @_hostile_imp_@
 %%%%
-shadow imp
+cysgobwca
 
 w:1
 @_says_imp_taunt_@
@@ -6442,7 +6442,7 @@ w:1
 w:2
 @_hostile_imp_@
 %%%%
-white imp
+gwybwca
 
 w:1
 @_says_imp_taunt_@
@@ -6555,23 +6555,23 @@ VISUAL:@The_monster@ flickers into the darkness.
 
 VISUAL:@The_monster@ grins at you slowly.
 %%%%
-################## Tormentor ###############################
+################## POENYDIO ###############################
 # A cruel demon
-tormentor
+poenydio
 
 w:1
 @_demon_taunt_@
 
 w:9
-@_tormentor_@
+@_poenydio_@
 %%%%
-_tormentor_
+_poenydio_
 
-@_tormentor_common_@
+@_poenydio_common_@
 
-@_tormentor_rare_@
+@_poenydio_rare_@
 %%%%
-_tormentor_common_
+_poenydio_common_
 
 w:15
 @The_monster@ says @to_foe@, "I'll crush your bones, one by one."
@@ -6590,7 +6590,7 @@ VISUAL:@The_monster@ grins malevolently.
 
 @The_monster@ screams @at_foe@, "You will die horribly!"
 %%%%
-_tormentor_rare_
+_poenydio_rare_
 
 @The_monster@ laughs crazily.
 
@@ -6609,7 +6609,7 @@ _tormentor_rare_
 @The_monster@ shouts @at_foe@, "Prepare for my thousand needles of pain!"
 
 @The_monster@ shouts @at_foe@, "I'll tear you apart!"
-## END _tormentor_ ##
+## END _poenydio_ ##
 %%%%
 ################## Wizard ##################################
 wizard

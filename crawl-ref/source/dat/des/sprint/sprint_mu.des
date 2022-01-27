@@ -1190,10 +1190,10 @@ KMONS: y = generate_awake roxanne
 KMONS: z = oklob plant
 KFEAT: ! = gadget shop / armour shop / distillery shop / food shop
 KITEM: $ = any food / wand of disintegration w:2 / potion of curing / star_item
-KMONS: C = patrolling ice devil
-KMONS: D = patrolling hell beast
-KMONS: E = patrolling sun demon
-KMONS: F = patrolling soul eater
+KMONS: C = patrolling rypuiwel
+KMONS: D = patrolling helvityr
+KMONS: E = patrolling sturnulos
+KMONS: F = patrolling saelneytandi
 KMONS: G = iron troll simulacrum hd:20
 KMONS: I = patrolling vault guard / patrolling orc knight / patrolling draconian knight /\
  patrolling deep elf knight
@@ -1203,7 +1203,7 @@ KFEAT: J = deep_water
 SUBST: J = Jh
 KFEAT: h = deep_water
 KMONS: h = electric eel
-KMONS: K = executioner
+KMONS: K = oxarmordth
 KMONS: M = patrolling yaktaur spells:throw_dispersal.100.natural
 KMONS: N = patrolling nessos
 KFEAT: ^ = net trap
@@ -1274,7 +1274,7 @@ NAME: sprint_mu_dis_giant
 TAGS: sprint_mu_dis no_rotate no_hmirror no_vmirror
 MONS: patrolling iron elemental
 MONS: patrolling iron giant ; skullcrusher
-MONS: iron dragon, rust devil, patrolling hell sentinel, war gargoyle, iron golem
+MONS: iron dragon, taeringu, patrolling gwarchodwr, war gargoyle, iron golem
 KMONS: & = dispater
 KITEM: * = superb_item, superb_item, superb_item
 KITEM: ? = star_item, star_item, scroll of enchantment ident:all q:4
@@ -1313,7 +1313,7 @@ TAGS: sprint_mu_gehenna no_rotate no_hmirror no_vmirror
 KMONS: 1 = patrolling the serpent of hell
 KFEAT: 1 = lava
 KMONS: 2 = hellion
-KMONS: 3 = brimstone fiend
+KMONS: 3 = rhuddgoch
 NSUBST: l = 1:1 / *:l
 KITEM: % = obsidian rune of zot
 KITEM: $ = superb_item, any, any
@@ -1353,7 +1353,7 @@ ENDMAP
 NAME: sprint_mu_cocytus_islands
 TAGS: sprint_mu_cocytus no_rotate no_hmirror no_vmirror
 KMONS: 1 = patrolling Antaeus ; scutum ego:reflection
-KMONS: 2 = patrolling ice fiend
+KMONS: 2 = patrolling Vetrifl
 KMONS: 3 = kraken simulacrum
 KFEAT: 3 = deep_water
 NSUBST: w = 3:3 / *:w
@@ -1366,7 +1366,7 @@ NSUBST: f = 1:+ / *:c
 NSUBST: g = 1:+ / *:c
 KITEM: 1 = icy rune of zot
 KITEM: 2 = superb_item, star_item
-KMONS: ! = patrolling ice fiend
+KMONS: ! = patrolling Vetrifl
 KITEM: ! = potion of resistance ident:all q:3, \
            potion of agility ident:all q:3, potion of haste ident:all q:5
 COLOUR: #c = lightcyan

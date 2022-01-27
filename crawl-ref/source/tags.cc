@@ -900,7 +900,7 @@ static monster_type unmarshallMonType(reader &th)
     if (th.getMinorVersion() == TAG_MINOR_0_11)
     {
         AXED(MONS_KILLER_BEE); // killer bee larva
-        AXED(MONS_SHADOW_IMP); // midge
+        AXED(MONS_CYSGOBWCA); // midge
         AXED(MONS_AGNES);      // Jozef
     }
 #endif
@@ -920,7 +920,7 @@ static monster_type unmarshallMonType_Info(reader &th)
     if (th.getMinorVersion() == TAG_MINOR_0_11)
     {
         AXED(MONS_KILLER_BEE); // killer bee larva
-        AXED(MONS_SHADOW_IMP); // midge
+        AXED(MONS_CYSGOBWCA); // midge
         AXED(MONS_AGNES);      // Jozef
     }
 

@@ -109,7 +109,7 @@ end
 
 function species_mock(e)
   if you.class() == "Demonspawn" then
-    e.kmons("1 = hell beast")
+    e.kmons("1 = helvityr")
   elseif you.class() == "Mummy" then
     e.kmons("1 = mummy")
   elseif you.class() == "Demigod" then
@@ -337,7 +337,7 @@ NAME:  slow_altar_1
 DEPTH: D:2-5
 TAGS:  patrolling no_monster_gen no_item_gen transparent
 TAGS:  uniq_slow_altar temple_overflow_1 temple_overflow_cheibriados
-KMONS: _ = worm / mummy / iron imp
+KMONS: _ = worm / mummy / haearbwca
 KFEAT: _ = altar_cheibriados
 SUBST: x : xxxcccmnvb
 MAP
@@ -358,7 +358,7 @@ NAME:    slow_altar_2
 DEPTH:   D:2-5
 TAGS:    patrolling no_monster_gen no_item_gen
 TAGS:    uniq_slow_altar temple_overflow_1 temple_overflow_cheibriados
-KMONS:   _ = worm / mummy / iron imp
+KMONS:   _ = worm / mummy / haearbwca
 KFEAT:   _ = altar_cheibriados
 SUBST:   x : xxxcccvb
 MAP
@@ -379,7 +379,7 @@ TAGS:   uniq_slow_altar overflow_altar_cheibriados transparent no_monster_gen
 TAGS:   transparent
 DEPTH:  D:2-5
 WEIGHT: 5
-KMONS:  a = worm / mummy / iron imp
+KMONS:  a = worm / mummy / haearbwca
 NSUBST: ' = 1:a / *:.
 KFEAT:  _ = altar_cheibriados
 MAP
@@ -483,9 +483,9 @@ KFEAT: C = altar_dithmenos
      if imp_weight > 0 then
          local phantom_weight = 9 - imp_weight
          mons("phantom w:" .. phantom_weight ..
-              " / shadow imp w:" .. imp_weight)
+              " / cysgobwca w:" .. imp_weight)
      else
-         mons("shadow imp")
+         mons("cysgobwca")
      end
   end
 }}
@@ -1177,15 +1177,15 @@ DEPTH:   D:2-5, Orc, !Orc:$
 TAGS:    no_monster_gen patrolling temple_overflow_1 temple_overflow_makhleb transparent
 TAGS:    layout_rooms layout_city layout_open
 KFEAT:   _ = altar_makhleb
-# Either one type 3 or 4 demon (rust devil or smoke demon) or
-# three slow type 5 demons (iron imp).
+# Either one type 3 or 4 demon (taeringu or mygdarth) or
+# three slow type 5 demons (haearbwca).
 # The higher demons can only come up in D:4-5.
 : if you.absdepth() > 4 then
 SHUFFLE: 123
 NSUBST:  1 = 1:1 / *:.
 NSUBST:  2 = 1:2 / *:.
 : end
-MONS:    rust devil, smoke demon, iron imp
+MONS:    taeringu, mygdarth, haearbwca
 MAP
 xxxxxxxxxxxxxxx
 x.............x
@@ -1222,8 +1222,8 @@ DEPTH: D:2-
 KFEAT: _ = altar_makhleb
 KPROP: 12 = no_tele_into
 KMASK: 12 = no_trap_gen
-MONS:  executioner / balrug / green death / titivilus / blizzard demon
-MONS:  orange demon / ynoxinul / neqoxec / hellwing / smoke demon
+MONS:  oxarmordth / balrug / gwyrdd / titivilus / cenysus
+MONS:  nychdod / ynoxinul / neqoxec / vlerk / mygdarth
 : interest_check(_G)
 MAP
   qqq
@@ -1287,7 +1287,7 @@ ENDMAP
 NAME:   makhleb_grotto_becter
 TAGS:   no_monster_gen temple_overflow_1 temple_overflow_makhleb
 DEPTH:  D:2-5
-MONS:   iron imp w:1 / shadow imp w:1 / crimson imp
+MONS:   haearbwca w:1 / cysgobwca w:1 / llaibwca
 KFEAT:  _ = altar_makhleb
 TILE:   c = wall_hall
 FTILE:  A_'1 = floor_grey_dirt
@@ -2461,7 +2461,7 @@ TAGS:   temple_overflow_1 temple_overflow_xom uniq_altar_xom
 KFEAT:  _ = altar_xom
 KFEAT:  T = known teleport trap / congregation trap
 NSUBST: I = 1:1 / 3:2
-MONS: crimson imp ; dagger ego:chaos ident:type, crimson imp ; nothing
+MONS: llaibwca ; dagger ego:chaos ident:type, llaibwca ; nothing
 MAP
 xxxx+xxxx
 xIT...TIx
@@ -2908,9 +2908,9 @@ FTILE: +'_sz = floor_sandstone / none w:5
 KMONS: s = orc skeleton / kobold skeleton / goblin skeleton / hobgoblin zombie
 KMONS: z = orc zombie / kobold zombie / goblin zombie / hobgoblin zombie
 : if you.absdepth() <= 2 then
-KMONS: _ = crimson imp / white imp w:5
+KMONS: _ = llaibwca / gwybwca w:5
 : else
-KMONS: _ = crimson imp / white imp / shadow imp / iron imp / quasit
+KMONS: _ = llaibwca / gwybwca / cysgobwca / haearbwca / quasit
 : end
 KFEAT: _ = altar_the_shining_one
 MAP
@@ -2996,7 +2996,7 @@ NAME:  grunt_temple_overflow_champion_of_chaos
 DEPTH: D:3-9
 TAGS:  temple_overflow_2 temple_overflow_makhleb temple_overflow_xom
 TAGS:  no_monster_gen
-MONS:  crimson imp ; dagger ego:chaos ident:type
+MONS:  llaibwca ; dagger ego:chaos ident:type
 KFEAT: A = altar_makhleb
 KFEAT: B = altar_xom
 : if you.depth() < 4 then
@@ -3071,7 +3071,7 @@ TAGS:  temple_overflow_2 temple_overflow_makhleb temple_overflow_vehumet
 DEPTH: D:3-9
 KFEAT: A = altar_makhleb
 KFEAT: B = altar_vehumet
-MONS:  crimson imp ; wand of flame
+MONS:  llaibwca ; wand of flame
 : if you.depth() < 4 then
 SUBST: + : =
 : end
@@ -3115,7 +3115,7 @@ TAGS:   temple_overflow_2 temple_overflow_makhleb temple_overflow_zin
 TAGS:   transparent
 KFEAT:  A = altar_makhleb
 KFEAT:  B = altar_zin
-MONS:   executioner / balrug / green death / titivilus / blizzard demon
+MONS:   oxarmordth / balrug / gwyrdd / titivilus / cenysus
 MONS:   angel god:zin dbname:zin_angel
 SUBST:  ; = -_
 KPROP:  - = bloody / nothing
@@ -3412,11 +3412,11 @@ TAGS:   no_monster_gen no_trap_gen temple_overflow_2
 TAGS:   temple_overflow_kikubaaqudgha temple_overflow_yredelemnul
 : if you.depth() <= 2 then
 MONS: zombie / skeleton
-MONS: mummy / shadow imp / wight / necrophage / phantom / hungry ghost
+MONS: mummy / cysgobwca / wight / necrophage / phantom / hungry ghost
 KMONS: 3 = menkaure, necrophage / wight
 SUBST: 2 = 2---
 : elseif you.depth() <= 4 then
-MONS: zombie / skeleton / mummy / shadow imp / wight / necrophage / phantom \
+MONS: zombie / skeleton / mummy / cysgobwca / wight / necrophage / phantom \
       / hungry ghost
 MONS: wraith / vampire
 KMONS: 3 = menkaure, wraith / vampire
