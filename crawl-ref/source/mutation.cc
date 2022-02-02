@@ -3946,7 +3946,7 @@ void check_demonic_guardian()
                                MONS_SIXFIRHY);
             break;
         case 3:
-            mt = random_choose(MONS_OXARMORDTH, MONS_BALRUG, MONS_REAPER,
+            mt = random_choose(MONS_OXARMORDTH, MONS_BALRUG,
                                MONS_TITIVILUS, MONS_LOROCYPROCA);
             break;
         default:

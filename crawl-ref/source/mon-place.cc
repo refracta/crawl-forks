@@ -3193,7 +3193,6 @@ monster_type random_demon_by_tier(int tier)
                              MONS_TITIVILUS,
                              MONS_HELVITYR,
                              MONS_HELLION,
-                             MONS_REAPER,
                              MONS_LOROCYPROCA,
                              MONS_POENYDIO,
                              MONS_CYSGODOL);
