@@ -6205,6 +6205,10 @@ void bolt::affect_monster(monster* mon)
 
     if (mon->alive())
         monster_post_hit(mon, final);
+
+    if (final * 2 >= mon->max_hit_points)
+        mon->flags |= MF_EXPLODE_KILL;
+
     // The monster (e.g. a spectral weapon) might have self-destructed in its
     // behaviour_event called from mon->hurt() above. If that happened, it
     // will have been cleaned up already (and is therefore invalid now).

@@ -462,6 +462,9 @@ bool MiscastEffect::_ouch(int dam, beam_type flavour)
         mon_target->hurt(act_source, dam, BEAM_MISSILE, KILLED_BY_BEAM,
                          "", "", false);
 
+        if (dam * 2 >= mon_target->max_hit_points)
+            mon_target->flags |= MF_EXPLODE_KILL;
+
         if (!mon_target->alive())
             monster_die(*mon_target, kt, actor_to_death_source(act_source));
     }
