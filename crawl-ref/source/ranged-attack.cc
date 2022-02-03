@@ -166,7 +166,19 @@ bool ranged_attack::attack()
     }
 
     const int ev = defender->evasion(ev_ignore::none, attacker);
-    ev_margin = test_hit(to_hit, ev);
+    if (defender->is_monster() && defender->type == MONS_CEILING_CRAWLER &&
+        (the_path.target != defender->pos() || !the_path.aimed_at_spot) && !one_chance_in(4))
+    {
+        ev_margin = -1000; // Override for later use.
+    }
+    else if (the_path.target != defender->pos() && the_path.aimed_at_spot)
+    {
+        monster * pritarg = monster_at(the_path.target);
+        if (pritarg && pritarg->type == MONS_CEILING_CRAWLER && !one_chance_in(4))
+            ev_margin = -2000;
+    }
+    else
+        ev_margin = test_hit(to_hit, ev);
     bool shield_blocked = attack_shield_blocked(false);
 
     god_conduct_trigger conducts[3];
@@ -302,7 +314,7 @@ bool ranged_attack::handle_phase_end()
     }
 
     // XXX: this kind of hijacks the shield block check
-    if (!is_penetrating_attack(*attacker, weapon, *projectile) && attack_count <= 1)
+    if (!is_penetrating_attack(*attacker, weapon, *projectile) && did_hit && attack_count <= 1)
         range_used = BEAM_STOP;
 
     return attack::handle_phase_end();
@@ -363,6 +375,16 @@ bool ranged_attack::handle_phase_dodged()
     did_hit = false;
 
     const int orig_ev_margin = ev_margin;
+
+    if (ev_margin < -500) // Will never happen normally
+    {
+        mprf("%s passes %s %s!",
+            projectile->name(DESC_THE).c_str(),
+            ev_margin < -1500 ? "over" : "under",
+            defender->name(DESC_THE).c_str());
+
+        return true;
+    }
 
     if (defender->missile_deflection() && orig_ev_margin >= 0
         && (!blocker.compare("") || coinflip()))

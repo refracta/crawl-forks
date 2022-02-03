@@ -430,6 +430,10 @@ bool actor_slime_wall_immune(const actor *act)
  */
 bool actor::is_wall_clinging() const
 {
+    // Ceiling clinging, but functionally similar.
+    if (is_monster() && as_monster()->type == MONS_CEILING_CRAWLER)
+        return true;
+
     return props.exists(CLING_KEY) && props[CLING_KEY].get_bool();
 }
 

@@ -155,6 +155,7 @@ jumping_spider MONS_JUMPING_SPIDER
 wolf_spider MONS_WOLF_SPIDER
 redback MONS_REDBACK
 orb_spider MONS_ORB_SPIDER
+amblypygi MONS_CEILING_CRAWLER
 %sdir mon/demons
 demonic_crawler MONS_DEMONIC_CRAWLER
 %sdir mon/undead

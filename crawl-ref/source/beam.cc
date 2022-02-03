@@ -6031,6 +6031,8 @@ void bolt::affect_monster(monster* mon)
 
     // Make a copy of the to-hit before we modify it.
     int beam_hit = hit;
+    bool amblypygi_override = false;
+    bool target_amblypygi = false;
 
     if (beam_hit != AUTOMATIC_HIT)
     {
@@ -6044,6 +6046,26 @@ void bolt::affect_monster(monster* mon)
         // Umbra is harder to hit:
         if (!nightvision && mon->umbra())
             beam_hit -= 2 + random2(4);
+
+        if (mon->type == MONS_CEILING_CRAWLER && 
+            !(target == mon->pos() && aimed_at_spot))
+        {
+            amblypygi_override = true;
+        }
+
+        monster * targ = monster_at(target);
+
+        if (!amblypygi_override && mon->type != MONS_CEILING_CRAWLER && targ &&
+            targ->type == MONS_CEILING_CRAWLER && aimed_at_spot)
+        {
+            target_amblypygi = true;
+        }
+
+        if (one_chance_in(4))
+        {
+            amblypygi_override = false;
+            target_amblypygi = false;
+        }
     }
 
     // The monster may block the beam.
@@ -6057,28 +6079,43 @@ void bolt::affect_monster(monster* mon)
     // FIXME: We're randomising mon->evasion, which is further
     // randomised inside test_beam_hit. This is so we stay close to the
     // 4.0 to-hit system (which had very little love for monsters).
-    if (!engulfs && !_test_beam_hit(beam_hit, rand_ev, pierce, defl, r))
+    if (!engulfs && (!_test_beam_hit(beam_hit, rand_ev, pierce, defl, r) || amblypygi_override || target_amblypygi))
     {
-        const bool deflected = _test_beam_hit(beam_hit, rand_ev, pierce, 0, r);
-        // If the PLAYER cannot see the monster, don't tell them anything!
-        if (mon->observable() && name != "burst of metal fragments")
+        if (amblypygi_override)
         {
-            // if it would have hit otherwise...
-            if (_test_beam_hit(beam_hit, rand_ev, pierce, 0, r))
-            {
-                string deflects = (defl == 2) ? "deflects" : "repels";
-                msg::stream << mon->name(DESC_THE) << " "
-                            << deflects << " the " << name
-                            << '!' << endl;
-            }
-            else
-            {
-                msg::stream << "The " << name << " misses "
-                            << mon->name(DESC_THE) << '.' << endl;
-            }
+            msg::stream << "The " << name << " passes under "
+                << mon->name(DESC_THE) << '.' << endl;
         }
-        if (deflected)
-            mon->ablate_deflection();
+
+        else if (target_amblypygi)
+        {
+            msg::stream << "The " << name << " passes over "
+                << mon->name(DESC_THE) << '.' << endl;
+        }
+
+        else
+        {
+            const bool deflected = _test_beam_hit(beam_hit, rand_ev, pierce, 0, r);
+            // If the PLAYER cannot see the monster, don't tell them anything!
+            if (mon->observable() && name != "burst of metal fragments")
+            {
+                // if it would have hit otherwise...
+                if (_test_beam_hit(beam_hit, rand_ev, pierce, 0, r))
+                {
+                    string deflects = (defl == 2) ? "deflects" : "repels";
+                    msg::stream << mon->name(DESC_THE) << " "
+                        << deflects << " the " << name
+                        << '!' << endl;
+                }
+                else
+                {
+                    msg::stream << "The " << name << " misses "
+                        << mon->name(DESC_THE) << '.' << endl;
+                }
+            }
+            if (deflected)
+                mon->ablate_deflection();
+        }
         return;
     }
 

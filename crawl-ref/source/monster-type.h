@@ -939,7 +939,7 @@ enum monster_type                      // menv[].type
     MONS_THORN_LOTUS,
     MONS_SPECTRAL_WEAPON,
     MONS_ELEMENTAL_WELLSPRING,
-    MONS_POLYMOTH,
+    MONS_CEILING_CRAWLER,
 
     MONS_DEATHCAP,
     MONS_IGNIS,

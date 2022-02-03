@@ -599,8 +599,11 @@ move_again:
             return true;
         }
 
-        if (mons && (mons->type == MONS_BATTLESPHERE))
+        if (mons && ((mons->type == MONS_BATTLESPHERE) || (mons->type == MONS_CEILING_CRAWLER)))
         {
+            if (mons->type == MONS_CEILING_CRAWLER)
+                mprf("%s passes under %s", mon.name(DESC_THE).c_str(), mons->name(DESC_THE).c_str());
+
             // Try to swap with the battlesphere.
             if (mon.swap_with(mons))
             {

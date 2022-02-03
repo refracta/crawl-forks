@@ -68,6 +68,13 @@ Boris
 An ancient and powerful lich. Like all true liches, Boris is immortal, and will
 regenerate his desiccated skeletal remains even if completely disintegrated.
 %%%%
+ceiling crawler
+
+A gigantic relative of amblypygids a.k.a. tailless whip scorpions; ceiling crawlers 
+skulk around on the highest ceilings of the dungeon, so high up that many effects 
+will pass under them unless directly targeted. They reach down and grab prey with 
+astonishing speed to constrict and rip their victims apart. 
+%%%%
 Cerebov
 
 A violent and wrathful demon, Cerebov appears as a giant humanoid covered in
