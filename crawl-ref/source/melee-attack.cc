@@ -4432,6 +4432,34 @@ void melee_attack::riposte(int which_attack)
     if (defender->is_monster() && which_attack > 0 && !mons_wields_two_weapons(*defender->as_monster()))
         return;
 
+    // Chance to succeed beyond here scales with skill. Usually LBL, but can be any weapon skill with fencer's gloves.
+    int skill = 10;
+
+    if (defender->is_monster())
+    {
+        skill = defender->get_hit_dice();
+        if (defender->as_monster()->is_fighter())
+            skill *= 18;
+        else
+            skill *= 12;
+    }
+    else
+    {
+        item_def * local_wpn = you.weapon(which_attack);
+        skill_type sk = SK_UNARMED_COMBAT;
+
+        if (local_wpn)
+            sk = item_attack_skill(*local_wpn);
+
+        skill = you.skill(sk, 10);
+    }
+
+    if (!x_chance_in_y(skill, 200))
+    {
+        mprf("%s %s an attempted riposte.", defender->name(DESC_THE).c_str(),
+            conjugate_verb("fail", defender->is_monster()).c_str());
+    }
+
     if (you.see_cell(defender->pos()))
     {
         mprf("%s riposte%s.", defender->name(DESC_THE).c_str(),
