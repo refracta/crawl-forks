@@ -1780,7 +1780,7 @@ static void _pre_monster_move(monster& mons)
 
     _monster_add_energy(mons);
 
-    if (!mons.airborne() && !mons.is_wall_clinging())
+    if (!mons.airborne() && !mons.is_clinging())
         actor_apply_terrain(&mons, env.grid(mons.position));
 
     if ((mons_primary_habitat(mons) == HT_WATER || mons_primary_habitat(mons) == HT_LAVA)

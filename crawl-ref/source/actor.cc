@@ -50,7 +50,7 @@ level_id actor::shaft_dest() const
  */
 bool actor::ground_level() const
 {
-    return !airborne() && !is_wall_clinging() && !mounted();
+    return !airborne() && !is_clinging() && !mounted();
 }
 
 // Give hands required to wield weapon.
@@ -423,6 +423,14 @@ bool actor_slime_wall_immune(const actor *act)
         || act->is_monster() && mons_primary_habitat(*act->as_monster()) == HT_SLIME;
 }
 
+bool actor::is_clinging() const
+{
+    if (is_monster() && as_monster()->type == MONS_CEILING_CRAWLER)
+        return true;
+
+    return is_wall_clinging();
+}
+
 /**
  * Accessor method to the clinging member.
  *
@@ -430,10 +438,6 @@ bool actor_slime_wall_immune(const actor *act)
  */
 bool actor::is_wall_clinging() const
 {
-    // Ceiling clinging, but functionally similar.
-    if (is_monster() && as_monster()->type == MONS_CEILING_CRAWLER)
-        return true;
-
     return props.exists(CLING_KEY) && props[CLING_KEY].get_bool();
 }
 
@@ -463,6 +467,10 @@ bool actor::can_cling_to(const coord_def& p) const
  */
 bool actor::check_clinging(bool stepped, bool door)
 {
+    // Short-circuit ceiling crawlers.
+    if (is_clinging() && !is_wall_clinging())
+        return true;
+
     bool was_clinging = is_wall_clinging();
     bool clinging = can_cling_to_walls() && cell_is_clingable(pos())
                     && !airborne();
