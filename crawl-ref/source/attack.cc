@@ -204,11 +204,7 @@ bool attack::handle_phase_killed()
 {
     monster* mon = defender->as_monster();
     if (!invalid_monster(mon))
-    {
-        if (damage_done * 2 >= mon->max_hit_points)
-            mon->flags |= MF_EXPLODE_KILL;
         monster_die(*mon, attacker);
-    }
 
     return true;
 }
