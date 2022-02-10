@@ -1162,8 +1162,8 @@ static bool _actor_apply_cloud_side_effects(actor *act,
         if (mount)
             mprf("Your %s seems to rot from the inside!", you.mount_name().c_str());
 
-        if (!player && (!mount && bool(mons->holiness() & MH_NONLIVING) && mons->res_acid() < 3) || 
-                        (mount && bool(you.holiness(true, true) & MH_NONLIVING) && you.res_acid() < 3))
+        if (!player && (!mount && bool(mons->holiness() & (MH_ELEMENTAL | MH_CONSTRUCT)) && mons->res_acid() < 3) ||
+                        (mount && bool(you.holiness(true, true) & (MH_ELEMENTAL | MH_CONSTRUCT)) && you.res_acid() < 3))
         {
             if (one_chance_in(3))
                 act->corrode_equipment("foul blight", 1, mount);

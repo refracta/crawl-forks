@@ -7389,7 +7389,7 @@ mon_holy_type player::holiness(bool temp, bool mt) const
     if (undead_state(temp))
         holi = MH_UNDEAD;
     else if (species == SP_GARGOYLE || species == SP_MOLTEN_GARGOYLE)
-        holi = MH_NONLIVING;
+        holi = MH_CONSTRUCT;
     else if (species == SP_LIGNIFITE && (!temp || you.form == transformation::none))
         holi = MH_PLANT;
     else
@@ -7403,7 +7403,7 @@ mon_holy_type player::holiness(bool temp, bool mt) const
                  || form == transformation::wisp
                  || petrified()))
     {
-        holi = MH_NONLIVING;
+        holi = MH_CONSTRUCT;
     }
 
     if (is_good_god(religion))
@@ -7442,7 +7442,7 @@ bool player::is_holy(bool /*check_spells*/) const
 
 bool player::is_nonliving(bool temp) const
 {
-    return bool(holiness(temp) & MH_NONLIVING);
+    return bool(holiness(temp) & (MH_ELEMENTAL | MH_CONSTRUCT));
 }
 
 // This is a stub. Check is used only for silver damage. Worship of chaotic

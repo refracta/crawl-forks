@@ -697,12 +697,15 @@ special_missile_type ranged_attack::random_chaos_missile_brand()
             }
             // fall through
         case SPMSL_SLEEP:
+            if (defender->holiness() & (MH_UNDEAD | MH_ELEMENTAL | MH_CONSTRUCT))
+                susceptible = false;
+            break;
         case SPMSL_PETRIFICATION:
-            if (defender->holiness() & (MH_UNDEAD | MH_NONLIVING))
+            if (defender->holiness() & MH_CONSTRUCT)
                 susceptible = false;
             break;
         case SPMSL_FRENZY:
-            if (defender->holiness() & (MH_UNDEAD | MH_NONLIVING)
+            if (defender->holiness() & (MH_UNDEAD | MH_ELEMENTAL | MH_CONSTRUCT)
                 || defender->is_player()
                    && !you.can_go_berserk(false, false, false)
                 || defender->is_monster()
@@ -748,7 +751,7 @@ bool ranged_attack::blowgun_check(special_missile_type type)
     mon_holy_type holy = mount_defend ? mons_class_holiness(mount_mons())
                                       : defender->holiness();
 
-    if (holy & (MH_UNDEAD | MH_NONLIVING))
+    if (holy & (MH_UNDEAD | MH_ELEMENTAL | MH_CONSTRUCT))
     {
         if (needs_message)
         {

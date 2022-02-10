@@ -348,7 +348,7 @@ int get_mons_class_ev(monster_type mc)
 static resists_t _apply_holiness_resists(resists_t resists, mon_holy_type mh)
 {
     // Undead and non-living beings get full poison resistance.
-    if (mh & (MH_UNDEAD | MH_NONLIVING))
+    if (mh & (MH_UNDEAD | MH_ELEMENTAL | MH_CONSTRUCT))
         resists = (resists & ~(MR_RES_POISON * 7)) | (MR_RES_POISON * 3);
 
     // Everything but natural and demonic creatures have full rNeg. Set here for the
@@ -692,8 +692,10 @@ const char * holiness_name(mon_holy_type_flags which_holiness)
         return "undead";
     case MH_DEMONIC:
         return "demonic";
-    case MH_NONLIVING:
+    case MH_ELEMENTAL:
         return "nonliving";
+    case MH_CONSTRUCT:
+        return "construct";
     case MH_PLANT:
         return "plant";
     case MH_EVIL:
@@ -855,7 +857,7 @@ bool mons_has_flesh(const monster& mon)
     //    mainly muscle tissue and fat)
     // 3. pulp, flesh -- (a soft moist part of a fruit)
     // yet I exclude sense 3 anyway but include arthropods and molluscs.
-    return !(mon.holiness() & (MH_PLANT | MH_NONLIVING))
+    return !(mon.holiness() & (MH_PLANT | MH_ELEMENTAL | MH_CONSTRUCT))
            && mons_genus(mon.type) != MONS_FLOATING_EYE
            && mons_genus(mon.type) != MONS_GLOWING_ORANGE_BRAIN
            && mons_genus(mon.type) != MONS_JELLY
@@ -1711,7 +1713,7 @@ bool mons_can_be_dazzled(monster_type mc)
     // that's useful
 
     const mon_holy_type holiness = mons_class_holiness(mc);
-    return !(holiness & (MH_UNDEAD | MH_NONLIVING | MH_PLANT))
+    return !(holiness & (MH_UNDEAD | MH_ELEMENTAL | MH_PLANT | MH_CONSTRUCT))
         && mons_can_be_blinded(mc);
 }
 
@@ -4206,7 +4208,7 @@ bool mons_is_unbreathing(monster_type mc)
 {
     const mon_holy_type holi = mons_class_holiness(mc);
 
-    if (holi & (MH_UNDEAD | MH_NONLIVING | MH_PLANT))
+    if (holi & (MH_UNDEAD | MH_ELEMENTAL | MH_PLANT | MH_CONSTRUCT))
         return true;
 
     if (mons_class_is_slime(mc))
@@ -6257,7 +6259,7 @@ void print_wounds(const monster& mons)
 bool wounded_damaged(mon_holy_type holi)
 {
     // this schema needs to be abstracted into real categories {dlb}:
-    return bool(holi & (MH_UNDEAD | MH_NONLIVING | MH_PLANT));
+    return bool(holi & (MH_UNDEAD | MH_ELEMENTAL | MH_PLANT | MH_CONSTRUCT));
 }
 
 // Is this monster interesting enough to make notes about?

@@ -1274,7 +1274,7 @@ void behaviour_event(monster* mon, mon_event_type event, const actor *src,
         }
 
         // Neither do plants or nonliving beings.
-        if (mon->holiness() & (MH_PLANT | MH_NONLIVING))
+        if (mon->holiness() & (MH_PLANT | MH_ELEMENTAL | MH_CONSTRUCT))
         {
             mon->del_ench(ENCH_FEAR, true, true);
             break;

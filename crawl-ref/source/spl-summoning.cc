@@ -98,7 +98,7 @@ void chaos_summon(spell_type spell, monster * mon, actor * caster, bool summoned
 
     if (determine_chaos(caster, spell))
     {
-        if (one_chance_in(8) && !(mon->holiness() & (MH_UNDEAD | MH_NONLIVING)))
+        if (one_chance_in(8) && !(mon->holiness() & (MH_UNDEAD | MH_ELEMENTAL | MH_CONSTRUCT)))
             mon->add_ench(mon_enchant(coinflip() ? ENCH_GLOWING_SHAPESHIFTER 
                                                  : ENCH_SHAPESHIFTER, 0, caster, INFINITE_DURATION));
 

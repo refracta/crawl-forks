@@ -1019,7 +1019,7 @@ void cloud_strike(actor * caster, actor * foe, int damage)
 
     if (cloud == CLOUD_ROT)
     {
-        if (foe->holiness() & (MH_UNDEAD | MH_NONLIVING))
+        if (foe->holiness() & (MH_UNDEAD | MH_ELEMENTAL | MH_CONSTRUCT))
             cloud = CLOUD_ACID;
         else
             cloud = CLOUD_MIASMA;

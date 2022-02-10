@@ -39,12 +39,13 @@ enum conduct_type
     DID_ROT_CARRION,                      // Fedhas (a corpse rotted)
     DID_SOULED_FRIEND_DIED,               // Zin
     DID_ATTACK_IN_SANCTUARY,              // Zin
-    DID_KILL_NONLIVING,
+    DID_KILL_ELEMENTAL,
     DID_EXPLORATION,                      // Ashenzari, wrath timers
     DID_DESECRATE_HOLY_REMAINS,           // Zin/Ely/TSO/Yredelemnul
     DID_SEE_MONSTER,                      // TSO
     DID_SACRIFICE_LOVE,                   // Ru
     DID_CHANNEL,                          // Pakellas
     DID_HURT_FOE,                         // Uskayaw
+    DID_KILL_CONSTRUCT,
     NUM_CONDUCTS
 };

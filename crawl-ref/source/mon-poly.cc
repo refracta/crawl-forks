@@ -599,7 +599,7 @@ void slimify_monster(monster* mon)
         target = MONS_GIBBERING_MOUND;
     else if (mon->holiness() & MH_HOLY)
         target = MONS_HOLY_FLAN;
-    else if (mon->holiness() & MH_NONLIVING)
+    else if (mon->holiness() & (MH_ELEMENTAL | MH_CONSTRUCT))
         target = MONS_ANCIENT_ZYME;
     else if (mon->holiness() & MH_PLANT)
         target = MONS_VERDANT_MOULD;

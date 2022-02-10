@@ -1817,7 +1817,7 @@ static bool _bahamut_retribution()
                 {
                     if (you.see_cell_no_trans(mi->pos()) &&
                         (!target || (mi->get_experience_level() >= target->get_experience_level()))
-                        && !bool(mi->holiness() & (MH_NONLIVING | MH_UNDEAD)))
+                        && !bool(mi->holiness() & (MH_ELEMENTAL | MH_UNDEAD | MH_CONSTRUCT)))
                     {
                         target = *mi;
                     }

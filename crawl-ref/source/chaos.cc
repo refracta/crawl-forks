@@ -426,7 +426,7 @@ void chaotic_debuff(actor* act, int dur, actor * attacker)
             case 0:                             mprf(MSGCH_MONSTER_ENCHANT, "%s appears more vulnerable to fire.", act->name(DESC_THE).c_str()); break;
             case 1: vuln_type = ENCH_COLD_VULN; mprf(MSGCH_MONSTER_ENCHANT, "%s appears more vulnerable to cold.", act->name(DESC_THE).c_str()); break;
             case 2: vuln_type = ENCH_ELEC_VULN; mprf(MSGCH_MONSTER_ENCHANT, "%s appears more vulnerable to electrical shocks.", act->name(DESC_THE).c_str()); break;
-            case 3: if (act->as_monster()->holiness() & (MH_UNDEAD | MH_NONLIVING))
+            case 3: if (act->as_monster()->holiness() & (MH_UNDEAD | MH_ELEMENTAL | MH_CONSTRUCT))
             {
                 mprf(MSGCH_MONSTER_ENCHANT, "%s appears more vulnerable to fire.", act->name(DESC_THE).c_str());
             }

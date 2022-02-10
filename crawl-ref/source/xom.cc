@@ -932,7 +932,7 @@ static void _confuse_monster(monster* mons, int sever)
 {
     if (mons->check_clarity())
         return;
-    if (mons->holiness() & (MH_NONLIVING | MH_PLANT))
+    if (mons->holiness() & (MH_ELEMENTAL | MH_PLANT | MH_CONSTRUCT))
         return;
 
     const bool was_confused = mons->confused();

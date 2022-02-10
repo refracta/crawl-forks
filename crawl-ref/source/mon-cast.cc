@@ -5885,7 +5885,7 @@ static vector<const actor*> _find_nearby_constructs(const monster &caster,
     for (adjacent_iterator ai(pos); ai; ++ai)
     {
         const actor* act = actor_at(*ai);
-        if (act && act->holiness() & MH_NONLIVING && mons_aligned(&caster, act))
+        if (act && act->holiness() & MH_CONSTRUCT && mons_aligned(&caster, act))
             nearby_constructs.push_back(act);
     }
     return nearby_constructs;

@@ -1911,8 +1911,10 @@ static void _fire_kill_conducts(monster &mons, killer_type killer,
     }
     else if (holiness & MH_UNDEAD)
         did_kill_conduct(DID_KILL_UNDEAD, mons);
-    else if (holiness & MH_NONLIVING)
-        did_kill_conduct(DID_KILL_NONLIVING, mons);
+    else if (holiness & MH_ELEMENTAL)
+        did_kill_conduct(DID_KILL_ELEMENTAL, mons);
+    else if (holiness & MH_CONSTRUCT)
+        did_kill_conduct(DID_KILL_CONSTRUCT, mons);
 
     // Zin hates unclean and chaotic beings.
     if (mons.how_unclean())

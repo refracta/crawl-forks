@@ -820,8 +820,10 @@ static int kill_lualc_holiness(lua_State *ls)
             verdict = "undead";
         else if (holi & MH_DEMONIC)
             verdict = "demonic";
-        else if (holi & MH_NONLIVING)
+        else if (holi & MH_ELEMENTAL)
             verdict = "nonliving";
+        else if (holi & MH_CONSTRUCT)
+            verdict = "construct";
         else if (holi & MH_PLANT)
             verdict = "plant";
         if (ke->modifier != kill_monster_desc::M_NORMAL

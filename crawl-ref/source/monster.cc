@@ -3588,7 +3588,7 @@ bool monster::is_holy(bool /*check_spells*/) const
 
 bool monster::is_nonliving(bool /*temp*/) const
 {
-    return bool(holiness() & MH_NONLIVING);
+    return bool(holiness() & (MH_ELEMENTAL | MH_CONSTRUCT));
 }
 
 /** Is the monster considered unclean by Zin?
@@ -4113,7 +4113,7 @@ int monster::res_negative_energy(bool intrinsic_only, bool /*mount*/) const
 bool monster::res_torment(bool /*mount*/) const
 {
     const mon_holy_type holy = holiness();
-    return holy & (MH_UNDEAD | MH_DEMONIC | MH_PLANT | MH_NONLIVING)
+    return holy & (MH_UNDEAD | MH_DEMONIC | MH_PLANT | MH_ELEMENTAL | MH_CONSTRUCT)
            || get_mons_resist(*this, MR_RES_TORMENT) > 0;
 }
 
@@ -5435,7 +5435,7 @@ bool monster::can_mutate() const
 
     const mon_holy_type holi = holiness();
 
-    return !(holi & (MH_UNDEAD | MH_NONLIVING));
+    return !(holi & (MH_UNDEAD | MH_ELEMENTAL | MH_CONSTRUCT));
 }
 
 bool monster::can_safely_mutate(bool /*temp*/) const
@@ -5987,7 +5987,7 @@ bool monster::can_drink_potion(potion_type ptype) const
             return !mons_class_flag(type, M_INVIS);
         case POT_CURING:
         case POT_HEAL_WOUNDS:
-            return !(holiness() & (MH_NONLIVING | MH_PLANT));
+            return !(holiness() & (MH_ELEMENTAL | MH_PLANT | MH_CONSTRUCT));
         case POT_BLOOD:
             return mons_species() == MONS_VAMPIRE;
         case POT_BERSERK_RAGE:

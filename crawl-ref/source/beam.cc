@@ -1674,7 +1674,7 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
 
         bool success = false;
 
-        if (bool(mons->holiness() & MH_NONLIVING) && mons->res_acid() < 3)
+        if (bool(mons->holiness() & (MH_ELEMENTAL | MH_CONSTRUCT)) && mons->res_acid() < 3)
         {
             mprf("The vicious blight erodes %s", mons->name(DESC_THE).c_str());
             if (one_chance_in(3))
@@ -2742,7 +2742,7 @@ static void _malign_offering_effect(actor* victim, const actor* agent, int damag
     {
         if ((ai->is_player() && (agent->is_player() || agent->as_monster()->friendly()))
             || (mons_aligned(agent, *ai)
-            && !(ai->holiness() & MH_NONLIVING) && *ai != victim))
+            && !(ai->holiness() & MH_CONSTRUCT) && *ai != victim))
         {
             const int healz = max(1, roll_dice(3, damage) / 6);
             if (ai->heal(healz) && you.can_see(**ai))
@@ -4992,7 +4992,7 @@ void bolt::affect_player()
         }
     }
     else if (hits_you && origin_spell == SPELL_BLINDING_SPRAY
-             && !(you.holiness() & (MH_UNDEAD | MH_NONLIVING | MH_PLANT)))
+             && !(you.holiness() & (MH_UNDEAD | MH_ELEMENTAL | MH_PLANT | MH_CONSTRUCT)))
     {
         if (x_chance_in_y(85 - you.experience_level * 3 , 100))
             you.confuse(agent(), 5 + random2(3));

@@ -1106,7 +1106,7 @@ int main(int argc, char* argv[])
                         monsterflags, colour(BROWN, "undead"));
         mons_check_flag((bool)(me->holiness & MH_DEMONIC),
                         monsterflags, colour(RED, "demonic"));
-        mons_check_flag((bool)(me->holiness & MH_NONLIVING),
+        mons_check_flag((bool)(me->holiness & MH_ELEMENTAL),
                         monsterflags, colour(LIGHTCYAN, "non-living"));
         mons_check_flag(mons_is_plant(mon), monsterflags,
                         colour(GREEN, "plant"));

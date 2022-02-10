@@ -970,7 +970,7 @@ static const vector<chaos_attack_type> chaos_types = {
       nullptr },
     { AF_POISON,    SPWPN_VENOM,         10,
       [](const actor &d) {
-          return !(d.holiness() & (MH_UNDEAD | MH_NONLIVING)); } },
+          return !(d.holiness() & (MH_UNDEAD | MH_ELEMENTAL | MH_CONSTRUCT)); } },
     { AF_CHAOTIC,   SPWPN_CHAOS,         10,
       nullptr },
     { AF_DRAIN_XP,  SPWPN_DRAINING,      5,
@@ -984,7 +984,7 @@ static const vector<chaos_attack_type> chaos_types = {
       [](const actor &d) { return d.antimagic_susceptible(); } },
     { AF_CONFUSE,   SPWPN_CONFUSE,       2,
       [](const actor &d) {
-          return !(d.holiness() & (MH_NONLIVING | MH_PLANT)); } },
+          return !(d.holiness() & (MH_ELEMENTAL | MH_PLANT)); } },
     { AF_DISTORT,   SPWPN_DISTORTION,    2,
       nullptr },
 };
