@@ -1321,6 +1321,21 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
         upgrade_hepliaklqana_weapon(type, item);
         break;
 
+    case MONS_ORC_WARRIOR:
+    case MONS_OGRE:
+        if (!one_chance_in(3))
+            break;
+        // else fallthrough
+    case MONS_ORC:
+    case MONS_ORC_PRIEST:
+    case MONS_ORC_WIZARD:
+        if (you.where_are_you == BRANCH_ORC && coinflip())
+        {
+            item.base_type = OBJ_WEAPONS;
+            item.sub_type = WPN_PICKAXE;
+        }
+        break;
+
     default:
         break;
     }

@@ -132,7 +132,7 @@ static bool _is_boring_item(int type, int sub_type)
     return false;
 }
 
-static weapon_type _determine_weapon_subtype(int item_level)
+static weapon_type _determine_weapon_subtype(int item_level, branch_type place)
 {
     if (item_level > 6 && one_chance_in(30)
         && x_chance_in_y(10 + item_level, 100))
@@ -162,6 +162,8 @@ static weapon_type _determine_weapon_subtype(int item_level)
     }
     else if (x_chance_in_y(item_level, item_level+7))
     {
+        if (place == BRANCH_ORC && one_chance_in(4))
+            return WPN_PICKAXE;
         return random_choose(WPN_QUARTERSTAFF,
                              WPN_FALCHION,
                              WPN_LONG_SWORD,
@@ -172,6 +174,8 @@ static weapon_type _determine_weapon_subtype(int item_level)
     }
     else
     {
+        if (place == BRANCH_ORC)
+            return WPN_PICKAXE;
         return random_choose(WPN_HUNTING_SLING,
                              WPN_SPEAR,
                              WPN_HAND_AXE,
@@ -456,11 +460,11 @@ bool is_weapon_brand_ok(int type, int brand, bool /*strict*/)
     return true;
 }
 
-static void _roll_weapon_type(item_def& item, int item_level)
+static void _roll_weapon_type(item_def& item, int item_level, branch_type place)
 {
     for (int i = 0; i < 1000; ++i)
     {
-        item.sub_type = _determine_weapon_subtype(item_level);
+        item.sub_type = _determine_weapon_subtype(item_level, place);
         if (is_weapon_brand_ok(item.sub_type, item.brand, true))
             return;
     }
@@ -504,11 +508,13 @@ static void _generate_weapon_item(item_def& item, bool allow_uniques,
                                   int force_type, int item_level,
                                   int agent = NO_AGENT)
 {
+    branch_type place = (agent == NO_AGENT ? you.where_are_you : BRANCH_DUNGEON);
+
     // Determine weapon type.
     if (force_type != OBJ_RANDOM)
         item.sub_type = force_type;
     else
-        _roll_weapon_type(item, item_level);
+        _roll_weapon_type(item, item_level, place);
 
     // Forced randart.
     if (item_level == ISPEC_RANDART)
@@ -554,7 +560,7 @@ static void _generate_weapon_item(item_def& item, bool allow_uniques,
 
     // If it's forced to be a good item, reroll clubs.
     while (force_good && force_type == OBJ_RANDOM && item.sub_type == WPN_CLUB)
-        _roll_weapon_type(item, item_level);
+        _roll_weapon_type(item, item_level, place);
 
     item.plus = 0;
 

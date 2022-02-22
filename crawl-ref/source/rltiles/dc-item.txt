@@ -115,6 +115,9 @@ hammer3
 war_axe1 WPN_WAR_AXE
 war_axe2
 war_axe3
+pickaxe1 WPN_PICKAXE
+pickaxe2
+pickaxe3
 broad_axe1 WPN_BROAD_AXE
 broad_axe2
 broad_axe3

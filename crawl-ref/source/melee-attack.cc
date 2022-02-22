@@ -3212,7 +3212,8 @@ void melee_attack::player_stab_check()
 bool melee_attack::player_good_stab()
 {
     return wpn_skill == SK_SHORT_BLADES
-           || you.get_mutation_level(MUT_PAWS)
+           || weapon && weapon->is_type(OBJ_WEAPONS, WPN_PICKAXE)
+           || you.get_mutation_level(MUT_PAWS) && !weapon
            || player_equip_unrand(UNRAND_BOOTS_ASSASSIN)
               && (!weapon || is_melee_weapon(*weapon));
 }
@@ -4686,7 +4687,12 @@ int melee_attack::weapon_damage()
     if (!using_weapon())
         return 0;
 
-    return property(*weapon, PWPN_DAMAGE);
+    int damage = property(*weapon, PWPN_DAMAGE);
+
+    if (bool(defender->holiness() & MH_CONSTRUCT) && weapon->is_type(OBJ_WEAPONS, WPN_PICKAXE))
+        damage = div_rand_round(damage * 3, 2);
+
+    return damage;
 }
 
 int melee_attack::calc_mon_to_hit_base(bool random)

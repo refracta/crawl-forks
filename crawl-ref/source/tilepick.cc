@@ -2278,6 +2278,7 @@ static tileidx_t _tileidx_weapon_base(const item_def &item)
     case WPN_HAND_AXE:              return TILE_WPN_HAND_AXE;
     case WPN_HAMMER:                return TILE_WPN_HAMMER;
     case WPN_WAR_AXE:               return TILE_WPN_WAR_AXE;
+    case WPN_PICKAXE:               return TILE_WPN_PICKAXE;
     case WPN_BROAD_AXE:             return TILE_WPN_BROAD_AXE;
     case WPN_BATTLEAXE:             return TILE_WPN_BATTLEAXE;
     case WPN_EXECUTIONERS_AXE:      return TILE_WPN_EXECUTIONERS_AXE;

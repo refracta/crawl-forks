@@ -725,6 +725,8 @@ enum weapon_type
 
     WPN_CLEAVER,
 
+    WPN_PICKAXE,
+
     NUM_WEAPONS,
 
 // special cases

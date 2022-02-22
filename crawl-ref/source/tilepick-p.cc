@@ -225,6 +225,9 @@ tileidx_t tilep_equ_hand1(const item_def &item)
     case WPN_WAR_AXE:
         tile = TILEP_HAND1_WAR_AXE;
         break;
+    case WPN_PICKAXE:
+        tile = TILEP_HAND1_PICK_AXE;
+        break;
     case WPN_EXECUTIONERS_AXE:
         tile = TILEP_HAND1_EXECUTIONERS_AXE;
         break;
@@ -493,6 +496,9 @@ tileidx_t tilep_equ_hand2(const item_def &item)
         break;
     case WPN_WAR_AXE:
         tile = TILEP_HAND2_WAR_AXE;
+        break;
+    case WPN_PICKAXE:
+        tile = TILEP_HAND2_PICK_AXE;
         break;
     case WPN_EXECUTIONERS_AXE:
         tile = TILEP_HAND2_EXECUTIONERS_AXE;
@@ -771,6 +777,9 @@ tileidx_t tilep_equ_weapon(const item_def &item)
         break;
     case WPN_WAR_AXE:
         tile = TILEP_HAND1_WAR_AXE;
+        break;
+    case WPN_PICKAXE:
+        tile = TILEP_HAND1_PICK_AXE;
         break;
     case WPN_EXECUTIONERS_AXE:
         tile = TILEP_HAND1_EXECUTIONERS_AXE;

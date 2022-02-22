@@ -1986,29 +1986,29 @@ static string _describe_weapon(const item_def &item, bool verbose)
 
     if (verbose)
     {
-        switch (item_attack_skill(item))
-        {
-        case SK_POLEARMS:
+        const skill_type skill = item_attack_skill(item);
+        const bool scythe = item.is_type(OBJ_WEAPONS, WPN_SCYTHE);
+        const bool pick = item.is_type(OBJ_WEAPONS, WPN_PICKAXE);
+        if (skill == SK_POLEARMS)
             description += "\n\nIt can be evoked to extend its reach.";
-            break;
-        case SK_AXES_HAMMERS:
-            description += "\n\nIt hits all enemies adjacent to the wielder, "
-                           "dealing less damage to those not targeted.";
-            break;
-        case SK_LONG_BLADES:
+        if (skill == SK_AXES_HAMMERS || scythe)
+        { 
+            string adv = scythe ? "within two spaces of" : "adjacent to";
+            description += "\n\nIt hits all enemies " + adv + " the wielder, "
+                           "dealing less damage to those not directly targeted.";
+        }
+        if (skill == SK_LONG_BLADES)
+        {
             description += "\n\nIt can be used to riposte, swiftly "
                            "retaliating against a missed attack.";
-            break;
-        case SK_SHORT_BLADES:
-            {
-                string adj = item.is_type(OBJ_WEAPONS, WPN_KATAR) ? "extremely"
-                                                                  : "particularly";
-                description += "\n\nIt is " + adj + " good for stabbing"
-                               " unaware enemies.";
-            }
-            break;
-        default:
-            break;
+        }
+        if (skill == SK_SHORT_BLADES || pick)
+        {
+            string adj = item.is_type(OBJ_WEAPONS, WPN_KATAR) ? "extremely"
+                                                                : "particularly";
+            string picktxt = pick ? " and breaking apart constructs" : "";
+            description += "\n\nIt is " + adj + " good for stabbing"
+                            " unaware enemies" + picktxt + ".";
         }
     }
 
