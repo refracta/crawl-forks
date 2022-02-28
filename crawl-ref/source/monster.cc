@@ -2285,13 +2285,35 @@ string monster::full_name(description_level_type desc) const
     return mi.full_name(desc);
 }
 
+void monster::set_pronoun()
+{
+    // Preserve mainline behavior of these uniques having higher gender neutral odds.
+    if ((type == MONS_HELLBINDER || type == MONS_CLOUD_MAGE) && one_chance_in(4))
+        props[MON_GENDER_KEY] = GENDER_NEUTRAL;
+    else if (type == MONS_MNOLEG) // not creating a flag for one monster
+        props[MON_GENDER_KEY] = GENDER_UNKNOWN;
+    else if (type == MONS_PANDEMONIUM_LORD)
+        props[MON_GENDER_KEY] = random_choose(GENDER_MALE, GENDER_FEMALE, GENDER_NEUTRAL, GENDER_UNKNOWN);
+    else
+    {
+        props[MON_GENDER_KEY] = (one_chance_in(30) ? GENDER_NEUTRAL :
+                                        coinflip() ? GENDER_MALE
+                                                   : GENDER_FEMALE);
+    }
+}
+
 string monster::pronoun(pronoun_type pro, bool force_visible) const
 {
     const bool seen = force_visible || you.can_see(*this);
-    if (seen && props.exists(MON_GENDER_KEY))
+    if (seen)
     {
-        return decline_pronoun((gender_type)props[MON_GENDER_KEY].get_int(),
-                               pro);
+        if (props.exists(MON_GENDER_KEY))
+        {
+            return decline_pronoun((gender_type)props[MON_GENDER_KEY].get_int(),
+                pro);
+        }
+        if (mons_class_flag(type, M_GENDERED))
+            return "PRONOUN BUG";
     }
     return mons_pronoun(type, pro, seen);
 }

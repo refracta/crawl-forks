@@ -3695,6 +3695,9 @@ void define_monster(monster& mons)
         break;
     }
 
+    if (mons_class_flag(mons.type, M_GENDERED))
+        mons.set_pronoun();
+
     mons.calc_speed();
 
     // When all is said and done, this monster had better have some hit

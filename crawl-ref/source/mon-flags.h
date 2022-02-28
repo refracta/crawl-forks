@@ -19,7 +19,8 @@ enum monclass_flag_type : uint64_t
     /// monster is skilled fighter
     M_FIGHTER           = BIT(3),
 
-                     // = BIT(4), was M_NO_WAND
+    /// monster receives a randomized pronoun
+    M_GENDERED          = BIT(4),
 
                      // = BIT(5), was M_NO_HT_WAND
 

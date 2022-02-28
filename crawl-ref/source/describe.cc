@@ -4251,7 +4251,7 @@ static string _flavour_base_desc(attack_flavour flavour)
 {
     static const map<attack_flavour, string> base_descs = {
         { AF_ACID,              "deal extra acid damage"},
-        { AF_BLINK,             "blink itself" },
+        { AF_BLINK,             "blink $" },
         { AF_COLD,              "deal up to %d extra cold damage" },
         { AF_CONFUSE,           "cause confusion" },
         { AF_DRAIN_STR,         "drain strength" },
@@ -4288,7 +4288,7 @@ static string _flavour_base_desc(attack_flavour flavour)
         { AF_ANTIMAGIC,         "drain magic" },
         { AF_PAIN,              "cause pain to the living" },
         { AF_ENSNARE,           "ensnare with webbing" },
-        { AF_ENGULF,            "engulf inside itself" },
+        { AF_ENGULF,            "engulf inside $" },
         { AF_PURE_FIRE,         "" },
         { AF_DRAIN_SPEED,       "drain speed" },
         { AF_VULN,              "reduce resistance to hostile enchantments" },
@@ -4317,18 +4317,19 @@ static string _flavour_base_desc(attack_flavour flavour)
  * flavour, if any.
  *
  * @param flavour  E.g. AF_COLD, AF_PLAIN.
- * @param HD       The hit dice of the monster using the flavour.
+ * @param mi       The mon info of the monster using the flavour.
  * @return         "" if AF_PLAIN; else " <desc>", e.g.
  *                 " to deal up to 27 extra cold damage if any damage is dealt".
  */
-static string _flavour_effect(attack_flavour flavour, int HD)
+static string _flavour_effect(attack_flavour flavour, monster_info mi)
 {
     const string base_desc = _flavour_base_desc(flavour);
     if (base_desc.empty())
         return base_desc;
 
-    const int flavour_dam = flavour_damage(flavour, HD, false);
-    const string flavour_desc = make_stringf(base_desc.c_str(), flavour_dam);
+    const int flavour_dam = flavour_damage(flavour, mi.hd, false);
+    string flavour_desc = make_stringf(base_desc.c_str(), flavour_dam);
+    flavour_desc = replace_all(flavour_desc, "$", mi.pronoun(PRONOUN_REFLEXIVE));
 
     if (flavour == AF_PIERCE_AC)
         return flavour_desc;
@@ -4452,7 +4453,7 @@ static string _monster_attacks_description(const monster_info& mi)
                          _flavour_range_desc(attack.flavour),
                          _heads_desc(attack.type, mi.num_heads).c_str(),
                          damage_desc.c_str(),
-                         _flavour_effect(attack.flavour, mi.hd).c_str()));
+                         _flavour_effect(attack.flavour, mi).c_str()));
     }
 
 

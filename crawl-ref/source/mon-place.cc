@@ -1275,12 +1275,6 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
         mon->props[CUSTOM_SPELLS_KEY] = true;
     }
 
-    if (mon->type == MONS_HELLBINDER || mon->type == MONS_CLOUD_MAGE)
-    {
-        mon->props[MON_GENDER_KEY] = random_choose(GENDER_FEMALE, GENDER_MALE,
-                                                   GENDER_NEUTRAL);
-    }
-
     if (mon->has_spell(SPELL_OZOCUBUS_ARMOUR))
     {
         const int power = (mon->spell_hd(SPELL_OZOCUBUS_ARMOUR) * 15) / 10;
@@ -1502,10 +1496,6 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
         mon->set_ghost(ghost);
         mon->uglything_init();
     }
-#if TAG_MAJOR_VERSION == 34
-    else if (mon->type == MONS_LABORATORY_RAT)
-        mon->type = MONS_RAT;
-#endif
     else if (mons_class_is_animated_weapon(mon->type))
     {
         ghost_demon ghost;
@@ -1544,6 +1534,9 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
              mon->name(DESC_PLAIN, true).c_str());
     }
 #endif
+
+    if (mons_class_flag(mon->type, M_GENDERED))
+        mon->set_pronoun();
 
     if (crawl_state.game_is_arena())
         arena_placed_monster(mon);

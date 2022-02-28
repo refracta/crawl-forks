@@ -300,11 +300,12 @@ string conjugate_verb(const string &verb, bool plural)
 static const char * const _pronoun_declension[][NUM_PRONOUN_CASES] =
 {
     // subj  poss    refl        obj
-    { "it",  "its",  "itself",   "it"  }, // neuter
-    { "he",  "his",  "himself",  "him" }, // masculine
-    { "she", "her",  "herself",  "her" }, // feminine
-    { "you", "your", "yourself", "you" }, // 2nd person
-    { "they", "their", "themself", "them" }, // neutral
+    {    "it",   "its",    "itself",    "it"  }, // neuter
+    {    "he",   "his",   "himself",    "him" }, // masculine
+    {   "she",   "her",   "herself",    "her" }, // feminine
+    {   "you",  "your",  "yourself",    "you" }, // 2nd person
+    {  "they", "their",  "themself",   "them" }, // neutral
+    { "sklee", "skler", "sklerself",  "sklim" }, // weird, used by some panlords
 };
 
 const char *decline_pronoun(gender_type gender, pronoun_type variant)
