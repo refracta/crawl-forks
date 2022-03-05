@@ -203,7 +203,7 @@ public:
     virtual bool polymorph(int pow, bool allow_immobile = true) = 0;
     virtual bool drain_exp(actor *agent, bool quiet = false, int pow = 15) = 0;
     virtual bool rot(actor *agent, int amount, bool quiet = false,
-                     bool no_cleanup = false) = 0;
+                     bool no_cleanup = false, bool bypass_resistance = false) = 0;
     virtual int  hurt(const actor *attacker, int amount,
                       beam_type flavour = BEAM_MISSILE,
                       kill_method_type kill_type = KILLED_BY_MONSTER,

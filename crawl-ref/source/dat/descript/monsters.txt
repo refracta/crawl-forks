@@ -1930,6 +1930,11 @@ orc wizard
 An orc who has gained proficiency in the occult arts, using them for martial
 purposes.
 %%%%
+pain elemental
+
+A spirit drawn from the plain of pure suffering. Survives on this plane by 
+inhabiting a writhing mass of blood and bone. Just looking at it hurts.
+%%%%
 pale draconian
 
 A muscular humanoid with pale scales, a reptilian tail and small wings.
@@ -2110,6 +2115,12 @@ sewer rat
 
 A rodent with fur of a most peculiar green colour and a powerful bite. It takes 
 to like a fish the putrid waters of the sewers and forms large swarms with its kin.
+%%%%
+rot elemental
+
+A spirit from the plane of pure decay; survives by inhabiting recent rot and the 
+mushrooms that grow upon it. Its touch causes flesh, even undead and artificial 
+flesh to rapidly rot away; handle with caution.
 %%%%
 the Royal Jelly
 

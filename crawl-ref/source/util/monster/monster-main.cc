@@ -1014,7 +1014,11 @@ int main(int argc, char* argv[])
                     monsterattacks += colour(YELLOW, "(holy)");
                     break;
                 case AF_PAIN:
+                case AF_PURE_PAIN:
                     monsterattacks += colour(RED, "(pain)");
+                    break;
+                case AF_DECAY:
+                    monsterattacks += colour(RED, "(decay)");
                     break;
                 case AF_ANTIMAGIC:
                     monsterattacks += colour(LIGHTBLUE, "(antimagic)");

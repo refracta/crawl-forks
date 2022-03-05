@@ -8137,17 +8137,24 @@ void player::drain_stat(stat_type s, int amount)
     lose_stat(s, amount);
 }
 
-bool player::rot(actor */*who*/, int amount, bool quiet, bool /*no_cleanup*/)
+bool player::rot(actor */*who*/, int amount, bool quiet, bool /*no_cleanup*/, bool bypass_resistance)
 {
     ASSERT(!crawl_state.game_is_arena());
 
     if (amount <= 0)
         return false;
 
-    if (res_rotting() || duration[DUR_DEATHS_DOOR])
+    if ((res_rotting() && !bypass_resistance) || duration[DUR_DEATHS_DOOR])
     {
         mpr("You feel terrible.");
         return false;
+    }
+
+    if (you.is_fairy())
+    {
+        if (coinflip())
+            return false;
+        amount = 1;
     }
 
     if (duration[DUR_DIVINE_STAMINA] > 0)
@@ -8159,11 +8166,11 @@ bool player::rot(actor */*who*/, int amount, bool quiet, bool /*no_cleanup*/)
     rot_hp(amount);
 
     if (!quiet)
-        mprf(MSGCH_WARN, "You feel your flesh rotting away!");
+        mprf(MSGCH_WARN, "You feel your flesh rotting away%s", attack_strength_punctuation(amount).c_str());
 
     learned_something_new(HINT_YOU_ROTTING);
 
-    if (one_chance_in(4))
+    if (one_chance_in(4) && !res_rotting())
         sicken(50 + random2(100));
 
     return true;

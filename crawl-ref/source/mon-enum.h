@@ -124,6 +124,8 @@ enum attack_flavour
     AF_MIASMATA,
     AF_PURE_CHAOS,
 	AF_CONTAM,
+    AF_PURE_PAIN,
+    AF_DECAY,
 };
 
 // Non-spell "summoning" types to give to monster::mark_summoned(), or

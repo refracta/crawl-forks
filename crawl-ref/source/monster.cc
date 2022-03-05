@@ -4354,11 +4354,15 @@ bool monster::poison(actor *agent, int amount, bool force)
 
 int monster::skill(skill_type sk, int scale, bool /*real*/, bool /*drained*/, bool /*temp*/) const
 {
+    const int hd = scale * get_hit_dice();
+    // Short circuit for pain elementals.
+    if (mons_genus(type) == MONS_ELEMENTAL)
+        return hd;
+
     // Let spectral weapons have necromancy skill for pain brand.
     if (mons_intel(*this) < I_HUMAN && !mons_is_avatar(type))
         return 0;
 
-    const int hd = scale * get_hit_dice();
     int ret;
     switch (sk)
     {
@@ -4481,9 +4485,9 @@ bool monster::drain_exp(actor *agent, bool quiet, int /*pow*/)
     return true;
 }
 
-bool monster::rot(actor *agent, int amount, bool quiet, bool no_cleanup)
+bool monster::rot(actor *agent, int amount, bool quiet, bool no_cleanup, bool bypass_resistance)
 {
-    if (res_rotting() || amount <= 0)
+    if ((res_rotting() && !bypass_resistance) || amount <= 0)
         return false;
 
     if (!quiet && you.can_see(*this))

@@ -4175,6 +4175,9 @@ static bool _monster_move(monster* mons)
             place_cloud(CLOUD_FIRE, mons->pos(), 2 + random2(4), mons);
         }
 
+        if (mons->type == MONS_PAIN_ELEMENTAL)
+            place_cloud(CLOUD_NEGATIVE_ENERGY, mons->pos(), 2 + random2(4), mons);
+
         if (mons->type == MONS_CINDER_NEWT && feat_is_watery(grd(mons->pos())))
             place_cloud(CLOUD_STEAM, mons->pos(), 2 + random2(4), mons);
 
@@ -4184,7 +4187,7 @@ static bool _monster_move(monster* mons)
         if (mons->type == MONS_FOXFIRE)
             check_place_cloud(CLOUD_FLAME, mons->pos(), 2, mons);
 
-        if (mons->type == MONS_CURSE_TOE)
+        if (mons->type == MONS_CURSE_TOE || mons->type == MONS_ROT_ELEMENTAL)
             place_cloud(CLOUD_MIASMA, mons->pos(), 2 + random2(3), mons);
 
         if (mons->type == MONS_LAVA_GLOB)

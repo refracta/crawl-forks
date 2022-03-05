@@ -1835,14 +1835,50 @@ void MiscastEffect::_necromancy(int severity)
             break;
 
         case 3:
-            if (_create_monster(MONS_REAPER, 4, true))
+        {
+            monster_type type = MONS_REAPER;
+            if (target->is_player() && you.experience_level < 21
+                || one_chance_in(3))
             {
-                you_msg        = "Death has come for you...";
-                mon_msg_seen   = "Death has come for @the_monster@...";
-                mon_msg_unseen = "Death appears from thin air...";
+                if (coinflip() || you.undead_state())
+                    type = MONS_ROT_ELEMENTAL;
+                else
+                    type = MONS_PAIN_ELEMENTAL;
+            }
+
+            if (target->is_player() && you.experience_level < 12)
+                type = MONS_SHADOW;
+
+            if (_create_monster(type, 4, true))
+            {
+                switch (type)
+                {
+                default:
+                case MONS_REAPER:
+                    you_msg = "Death has come for you...";
+                    mon_msg_seen = "Death has come for @the_monster@...";
+                    mon_msg_unseen = "Death appears from thin air...";
+                    break;
+                case MONS_PAIN_ELEMENTAL:
+                    you_msg = "Intense pain comes for you...";
+                    mon_msg_seen = "Intense pain comes for @the_monster@...";
+                    mon_msg_unseen = "Pain screams into solid form...";
+                    break;
+                case MONS_ROT_ELEMENTAL:
+                    you_msg = "You feel yourself decay...";
+                    mon_msg_seen = "@the_monster@ begins to decay...";
+                    mon_msg_unseen = "Decay reaches out from the soul...";
+                    break;
+                case MONS_SHADOW:
+                    you_msg = "A shadow passes over your grave...";
+                    mon_msg_seen = "A shadow passes over @the_monster@...";
+                    mon_msg_unseen = "A shadow flickers into being...";
+                    break;
+                }
             }
             do_msg();
             break;
+        }
 
         case 4:
             you_msg      = "You are engulfed in negative energy!";

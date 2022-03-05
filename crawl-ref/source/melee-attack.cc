@@ -805,6 +805,7 @@ bool melee_attack::handle_phase_blocked()
         _handle_staff_shield(BEAM_POISON, str, defender->is_player(), defender->as_monster());
         break;
 
+    case AF_DECAY:
     case AF_ROT:
         _handle_staff_shield(BEAM_MIASMA, str, defender->is_player(), defender->as_monster());
         break;
@@ -3609,6 +3610,10 @@ void melee_attack::mons_apply_attack_flavour()
             mons_do_poison();
         break;
 
+    case AF_DECAY:
+        rot_defender(1 + random2(2));
+        break;
+
     case AF_ROT:
         if (one_chance_in(3))
             rot_defender(1);
@@ -3934,6 +3939,7 @@ void melee_attack::mons_apply_attack_flavour()
         }
         break;
 
+    case AF_PURE_PAIN:
     case AF_PAIN:
         pain_affects_defender();
         break;
@@ -3996,14 +4002,15 @@ void melee_attack::mons_apply_attack_flavour()
 
         special_damage = resist_adjust_damage(defender,
                                               BEAM_FIRE,
-                                              special_damage, mount_defend);
+                                              base_damage, mount_defend);
 
         if (needs_message && special_damage)
         {
-            mprf("%s %s %s!",
+            mprf("%s %s %s%s",
                     atk_name(DESC_THE).c_str(),
                     attacker->conj_verb("burn").c_str(),
-                    defender_name(true).c_str());
+                    defender_name(true).c_str(),
+                    attack_strength_punctuation(special_damage).c_str());
 
             _print_resist_messages(defender, special_damage, BEAM_FIRE, mount_defend);
         }

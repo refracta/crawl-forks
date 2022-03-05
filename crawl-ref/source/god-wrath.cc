@@ -1308,6 +1308,31 @@ static void _fedhas_elemental_miscast()
                   _god_wrath_name(god));
 }
 
+static bool _fedhas_summon_elemental()
+{
+    bool success = false;
+
+    mgen_data rot = _wrath_mon_data(MONS_ROT_ELEMENTAL, GOD_FEDHAS);
+
+    for (int x = 1 + random2(you.experience_level/9); x > 0; x--)
+    {
+        if (create_monster(rot, false))
+            success = true;
+    }
+
+    if (!success)
+        return true;
+
+    mgen_data cap = _wrath_mon_data(MONS_DEATHCAP, GOD_FEDHAS);
+
+    for (int x = 1 + random2(you.experience_level/3); x > 0; x--)
+        create_monster(cap, false);
+
+    simple_god_message(" wants you to rot away.", GOD_FEDHAS);
+
+    return false;
+}
+
 /**
  * Summon Fedhas's oklobs & mushrooms around the player.
  *
@@ -1409,7 +1434,7 @@ static bool _fedhas_retribution()
 
     // We have 3 forms of retribution, but players under penance will be
     // spared the 'you are now surrounded by oklob plants, please die' one.
-    const int retribution_options = you_worship(god) ? 2 : 3;
+    const int retribution_options = you_worship(god) ? 2 : 4;
 
     switch (random2(retribution_options))
     {
@@ -1428,6 +1453,9 @@ static bool _fedhas_retribution()
         return true;
 
     case 2:
+        return _fedhas_summon_elemental();
+
+    case 3:
         return _fedhas_summon_plants();
     }
 }

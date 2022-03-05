@@ -4287,6 +4287,8 @@ static string _flavour_base_desc(attack_flavour flavour)
         { AF_PIERCE_AC,         " partially ignoring the target's armour" },
         { AF_ANTIMAGIC,         "drain magic" },
         { AF_PAIN,              "cause pain to the living" },
+        { AF_PURE_PAIN,         "cause severe pain to the living" },
+        { AF_DECAY,             " ignoring the target's armour and causing rotting" },
         { AF_ENSNARE,           "ensnare with webbing" },
         { AF_ENGULF,            "engulf inside $" },
         { AF_PURE_FIRE,         "" },
@@ -4331,11 +4333,11 @@ static string _flavour_effect(attack_flavour flavour, monster_info mi)
     string flavour_desc = make_stringf(base_desc.c_str(), flavour_dam);
     flavour_desc = replace_all(flavour_desc, "$", mi.pronoun(PRONOUN_REFLEXIVE));
 
-    if (flavour == AF_PIERCE_AC)
+    if (flavour == AF_PIERCE_AC || flavour == AF_DECAY)
         return flavour_desc;
 
     if (!flavour_triggers_damageless(flavour)
-        && flavour != AF_KITE && flavour != AF_SWOOP)
+        && flavour != AF_KITE && flavour != AF_SWOOP && flavour != AF_DECAY)
     {
         return " to " + flavour_desc + " if any damage is dealt";
     }

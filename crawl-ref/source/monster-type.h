@@ -295,9 +295,9 @@ enum monster_type                      // menv[].type
     MONS_RAINBOW_TROUT,
 
     // Mimics:
+    MONS_ROT_ELEMENTAL,
+    MONS_PAIN_ELEMENTAL,
 #if TAG_MAJOR_VERSION == 34
-    MONS_INEPT_ITEM_MIMIC,
-    MONS_ITEM_MIMIC,
     MONS_RAVENOUS_ITEM_MIMIC,
 #endif
     MONS_GIANT_BLOWFLY,
@@ -543,9 +543,7 @@ enum monster_type                      // menv[].type
     MONS_JELLYFISH,
     MONS_WATER_ELEMENTAL,
     MONS_SWAMP_WORM,
-#if TAG_MAJOR_VERSION == 34
     MONS_SHARK,
-#endif
     MONS_KRAKEN,
     MONS_KRAKEN_TENTACLE,
     MONS_KRAKEN_TENTACLE_SEGMENT,

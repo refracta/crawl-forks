@@ -1642,6 +1642,8 @@ int attack::apply_defender_ac(int damage, int damage_max) const
         stab_bypass = you.skill(wpn_skill, 50) + you.skill(SK_STEALTH, 50);
         stab_bypass = random2(div_rand_round(stab_bypass, 100 * stab_bonus));
     }
+    if (attk_flavour == AF_DECAY)
+        local_ac = ac_type::none;
     if (damage_brand == SPWPN_MOLTEN)
         local_ac = ac_type::half;
     if (attk_flavour == AF_PIERCE_AC)

@@ -2411,6 +2411,7 @@ bool flavour_triggers_damageless(attack_flavour flavour)
     return flavour == AF_CRUSH
         || flavour == AF_ENGULF
         || flavour == AF_PURE_FIRE
+        || flavour == AF_PURE_PAIN
         || flavour == AF_PURE_CHAOS
         || flavour == AF_SHADOWSTAB
         || flavour == AF_DROWN
@@ -4746,7 +4747,7 @@ bool monster_shover(const monster& m)
     // clouds of flame. Curse toes are disqualified because they trail
     // clouds of miasma.
     if (mons_genus(m.type) == MONS_EFREET || m.type == MONS_FIRE_ELEMENTAL
-        || m.type == MONS_CURSE_TOE)
+        || m.type == MONS_CURSE_TOE || m.type == MONS_PAIN_ELEMENTAL)
     {
         return false;
     }

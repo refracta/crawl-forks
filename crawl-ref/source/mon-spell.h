@@ -407,6 +407,12 @@ static const mon_spellbook mspell_list[] =
       }
     },
 
+    {  MST_ROT_ELEMENTAL,
+      {
+        { SPELL_CORPSE_ROT, 80, MON_SPELL_NATURAL },
+      }
+    },
+
     {  MST_MERFOLK_AQUAMANCER,
       {
         { SPELL_PRIMAL_WAVE, 16, MON_SPELL_WIZARD },
