@@ -526,14 +526,12 @@ static const char* _vorpal_brand_name(const item_def &item, bool terse)
     // mapping the DVORP flags to array entries seems very fragile.
     switch (get_vorpal_type(item))
     {
-        case DVORP_CRUSHING: return terse ? "crush" :"crushing";
-        case DVORP_SLICING:  return terse ? "slice" : "slicing";
+        case DVORP_CRUSHING: return terse ? "crush"  : "crushing";
+        case DVORP_SLICING:  return terse ? "slice"  : "slicing";
         case DVORP_PIERCING: return terse ? "pierce" : "piercing";
-        case DVORP_CHOPPING: return terse ? "chop" : "chopping";
-        case DVORP_SLASHING: return terse ? "slash" :"slashing";
-        case DVORP_CLAWING:  return terse ? "tear" : "laceration";
-        case DVORP_DP:       return terse ? "penetrate" : "double penetration";
-        case DVORP_TP:       return terse ? "penetrate" : "triple penetration";
+        case DVORP_CHOPPING: return terse ? "chop"   : "chopping";
+        case DVORP_SLASHING: return terse ? "slash"  : "slashing";
+        case DVORP_CLAWING:  return terse ? "tear"   : "laceration";
         default:             return terse ? "buggy vorpal"
                                           : "buggy destruction";
     }
@@ -3497,11 +3495,11 @@ bool is_bad_item(const item_def &item, bool temp)
             return true;
 #if TAG_MAJOR_VERSION == 34
         case POT_DECAY:
-            return you.res_rotting(temp) <= 0;
+            return you.res_rotting() <= 0;
         case POT_STRONG_POISON:
         case POT_POISON:
             // Poison is not that bad if you're poison resistant.
-            return player_res_poison(false) <= 0;
+            return player_res_poison() <= 0;
 #endif
         default:
             return false;
@@ -3758,7 +3756,7 @@ bool is_useless_item(const item_def &item, bool temp)
             return you.species != SP_VAMPIRE;
 #if TAG_MAJOR_VERSION == 34
         case POT_DECAY:
-            return you.res_rotting(temp) > 0;
+            return you.res_rotting() > 0;
         case POT_STRONG_POISON:
         case POT_POISON:
             // If you're poison resistant, poison is only useless.

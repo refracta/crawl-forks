@@ -519,7 +519,7 @@ static const map<spell_type, mons_spell_logic> spell_to_logic = {
     } },
     { SPELL_DRAIN_MAGIC, _hex_logic(SPELL_DRAIN_MAGIC, nullptr, 6) },
     { SPELL_VIRULENCE, _hex_logic(SPELL_VIRULENCE, [](const monster &caster) {
-        return caster.get_foe()->res_poison(false) < 3;
+        return caster.get_foe()->res_poison() < 3;
     }, 6) },
     { SPELL_RING_OF_THUNDER, { _should_selfench(ENCH_RING_OF_THUNDER),
         [](monster &caster, mon_spell_slot, bolt&) {
@@ -8581,7 +8581,8 @@ static bool _ms_waste_of_time(monster* mon, mon_spell_slot slot)
                || !forest_near_enemy(mon);
 
     case SPELL_OZOCUBUS_ARMOUR:
-        return mon->has_ench(ENCH_OZOCUBUS_ARMOUR);
+        return mon->wearing_heavy_armour() 
+               || mon->has_ench(ENCH_OZOCUBUS_ARMOUR);
 
     case SPELL_BATTLESPHERE:
         return find_battlesphere(mon);

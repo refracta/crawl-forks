@@ -354,7 +354,7 @@ int mount_statuses()
 
 bool drain_mount(int strength)
 {
-    if (you.res_negative_energy(false, true) >= 3)
+    if (you.res_negative_energy(true) >= 3)
         return false;
 
     mprf("Your %s is drained.", you.mount_name(true).c_str());
@@ -374,7 +374,7 @@ void slow_mount(int duration)
 
 bool miasma_mount()
 {
-    if (you.res_rotting(true, true))
+    if (you.res_rotting(true))
         return false;
 
     bool success = poison_mount(5 + roll_dice(3, 12));
@@ -396,7 +396,7 @@ bool miasma_mount()
 
 void rot_mount(int amount, bool needs_message)
 {
-    if (you.res_rotting(true, true))
+    if (you.res_rotting(true))
         return;
 
     if (needs_message)

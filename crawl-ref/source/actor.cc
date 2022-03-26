@@ -192,6 +192,11 @@ void actor::shield_block_succeeded(actor *foe)
     }
 }
 
+int actor::res_physical(bool mt) const
+{
+    return ((res_bludgeon(mt) + res_pierce(mt) + res_slash(mt)) / 3);
+}
+
 int actor::inaccuracy() const
 {
     return wearing(EQ_AMULET, AMU_INACCURACY);
@@ -200,20 +205,6 @@ int actor::inaccuracy() const
 bool actor::gourmand(bool calc_unid, bool items) const
 {
     return items && wearing(EQ_AMULET, AMU_THE_GOURMAND, calc_unid);
-}
-
-int actor::res_acid(bool calc_unid, bool items, bool /*mount*/) const
-{
-    int ra = 0;
-
-    if (items)
-    {
-        ra += wearing(EQ_RINGS, RING_RESIST_CORROSION, calc_unid);
-        ra += wearing(EQ_BODY_ARMOUR, ARM_ACID_DRAGON_ARMOUR, calc_unid);
-        ra += scan_artefacts(ARTP_RCORR, calc_unid);
-    }
-
-    return min(3, ra);
 }
 
 bool actor::cloud_immune(bool calc_unid, bool items) const

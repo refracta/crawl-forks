@@ -444,6 +444,7 @@ bool ranged_attack::handle_phase_dodged()
 bool ranged_attack::handle_phase_hit()
 {
     did_hit = true;
+    damage_type = get_damage_type(*projectile);
 
     if (projectile->is_type(OBJ_MISSILES, MI_NEEDLE))
     {
@@ -511,7 +512,6 @@ bool ranged_attack::handle_phase_hit()
 
                 // Crude Hard code; but running low on time.
                 if (projectile->is_type(OBJ_MISSILES, MI_PIE) && defender->is_monster())
-
                 {
                     monster* mon = defender->as_monster();
                     const int bonus = attacker->is_monster() ? attacker->get_hit_dice() / 2
@@ -1030,39 +1030,24 @@ bool ranged_attack::player_good_stab()
     return false;
 }
 
-static bool _is_bolt_like(missile_type miss)
-{
-    switch (miss)
-    {
-    case MI_ARROW:
-    case MI_BOLT:
-    case MI_DOUBLE_BOLT:
-    case MI_TRIPLE_BOLT:
-    case MI_JAVELIN:
-        return true;
-    default:
-        return false;
-    }
-}
-
 void ranged_attack::set_attack_verb(int damage)
 {
-    missile_type miss = (missile_type)projectile->sub_type;
+    int dmgtyp = get_damage_type(*projectile);
     if (is_penetrating_attack(*attacker, weapon, *projectile))
     {
-        if (_is_bolt_like(miss))
+        if (dmgtyp == DAM_PIERCE)
         {
             attack_verb = (damage < 5)  ? "stabs through"
                         : (damage < 20) ? "pierces through"
                                         : "bores through";
         }
-        else if (miss == MI_TOMAHAWK)
+        else if (dmgtyp == DAM_SLICE)
         {
             attack_verb = (damage < 5)  ? "tumbles over"
                         : (damage < 20) ? "slices through"
-                                        : "divide";
+                                        : "divides";
         }
-        else
+        else // DAM_BLUDGEON
         {
             attack_verb = (damage < 5)  ? "tumbles over"
                         : (damage < 20) ? "rolls over"
@@ -1071,24 +1056,24 @@ void ranged_attack::set_attack_verb(int damage)
     }
     else
     {
-        if (_is_bolt_like(miss))
+        if (projectile->is_type(OBJ_MISSILES, MI_NEEDLE))
+            attack_verb = "jabs";
+        else if (projectile->is_type(OBJ_MISSILES, MI_THROWING_NET))
+            attack_verb = "ensnares";
+        else if (dmgtyp == DAM_PIERCE)
         {
             attack_verb = (damage < 5)  ? "pokes"
                         : (damage < 20) ? "punctures"
                                         : "impales";
         }
-        else if (miss == MI_DART || miss == MI_NEEDLE)
-            attack_verb = "jabs";
-        else if (miss == MI_THROWING_NET)
-            attack_verb = "ensnares";
-        else if (miss == MI_TOMAHAWK)
+        else if (dmgtyp == DAM_SLICE)
         {
             attack_verb = (damage < 5)  ? "chops"
                         : (damage < 20) ? "pummels"
                         : (damage < 50) ? "slices"
                                         : "mangles";
         }
-        else
+        else // DAM_BLUDGEON
         {
             attack_verb = (damage < 5)  ? "hits"
                         : (damage < 20) ? "strikes"
@@ -1103,9 +1088,10 @@ void ranged_attack::announce_hit()
     if (!needs_message)
         return;
 
-    mprf("%s %s %s%s",
+    mprf("%s %s %s%s%s",
          projectile->name(DESC_THE).c_str(),
          attack_verb.c_str(),
          defender_name(false).c_str(),
-         attack_strength_punctuation(damage_done).c_str());
+         attack_strength_punctuation(damage_done).c_str(), 
+         resist_message.c_str());
 }

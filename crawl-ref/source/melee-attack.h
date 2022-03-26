@@ -100,7 +100,7 @@ private:
 
     bool consider_decapitation(int damage_done);
     bool attack_chops_heads(int damage_done, int damage_type);
-    void decapitate(int dam_type);
+    void decapitate();
 
     /* Axe cleaving */
     void cleave_setup();

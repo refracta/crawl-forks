@@ -261,7 +261,7 @@ int check_your_resists(int hurted, beam_type flavour, string source,
             else
                 poison_player(pois, source, kaux);
 
-            if (you.res_poison(true, mount) > 0)
+            if (you.res_poison(mount) > 0)
                 _mount_resists(mount);
         }
         break;
@@ -350,7 +350,7 @@ int check_your_resists(int hurted, beam_type flavour, string source,
         break;
 
     case BEAM_MIASMA:
-        if (you.res_rotting(true, mount))
+        if (you.res_rotting(mount))
         {
             if (doEffects)
                 _mount_resists(mount);

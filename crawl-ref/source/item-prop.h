@@ -150,7 +150,6 @@ bool convert2bad(item_def &item);
 
 int get_vorpal_type(const item_def &item) PURE;
 int get_damage_type(const item_def &item) PURE;
-int single_damage_type(const item_def &item) PURE;
 
 bool is_blessable_item(const item_def &item);
 bool is_brandable_weapon(const item_def &wpn, bool allow_ranged, bool divine = false);
@@ -245,6 +244,7 @@ string food_type_name(int sub_type);
 const char *weapon_base_name(weapon_type subtype) IMMUTABLE;
 weapon_type name_nospace_to_weapon(string name_nospace);
 
+bool is_effectively_light_armour(const item_def *item);
 int weapon_damage(const item_def &item);
 int weapon_delay(const item_def &item);
 

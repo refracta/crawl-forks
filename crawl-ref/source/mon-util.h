@@ -215,11 +215,23 @@ enum mon_threat_level_type
 };
 
 void set_resist(resists_t &all, mon_resist_flags res, int lev);
+resists_t get_mons_current_resists(const monster& m);
 
 // In all cases this will be simplified to a bit field access, so let's let
 // the compiler inline it.
 static inline int get_resist(resists_t all, mon_resist_flags res)
 {
+    if (res > MR_VULNS)
+        return all & res ? -1 : 0;
+    if (res > MR_PHYSICALS)
+    {
+        if (all & res)
+            return 1;
+        uint32_t neg = (((uint32_t)res) << 4);
+        if (all & neg)
+            return -1;
+        return 0;
+    }
     if (res > MR_LAST_MULTI)
         return all & res ? 1 : 0;
     int v = (all / res) & 7;

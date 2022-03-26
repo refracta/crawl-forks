@@ -275,6 +275,7 @@ public:
     size_type   body_size(size_part_type psize = PSIZE_TORSO,
                           bool base = false) const override;
     brand_type  damage_brand(int which_attack = -1) override;
+    int         vorpal_type(int which_attack = -1) override;
     int         damage_type(int which_attack = -1) override;
     random_var  attack_delay(const item_def *projectile = nullptr,
                              bool rescale = true) const override;
@@ -381,7 +382,7 @@ public:
     int how_chaotic(bool check_spells_god = false) const override;
     bool is_unbreathing(bool /*mt*/ = false) const override;
     bool is_insubstantial() const override;
-    bool res_damnation() const override;
+    bool res_hellfire(bool /*mt*/ = false) const override;
     int strength_bonus() const;
     int intelligence_bonus() const;
     int dexterity_bonus() const;
@@ -389,22 +390,26 @@ public:
     int res_steam(bool /*mt*/ = false) const override;
     int res_cold(bool /*mt*/ = false) const override;
     int res_elec(bool /*mt*/ = false) const override;
-    int res_poison(bool temp = true, bool /*mt*/ = false) const override;
-    int res_rotting(bool /*temp*/ = true, bool /*mt*/ = false) const override;
+    bool wearing_heavy_armour() const override;
+    int res_slash(bool /*mt*/ = false) const override;
+    int res_pierce(bool /*mt*/ = false) const override;
+    int res_bludgeon(bool /*mt*/ = false) const override;
+    int res_poison(bool /*mt*/ = false) const override;
+    int res_rotting(bool /*mt*/ = false) const override;
     int res_water_drowning(bool /*mt*/ = false) const override;
-    bool res_sticky_flame() const override;
+    bool res_sticky_flame(bool /*mt*/ = false) const override;
     int res_holy_energy(bool /*mt*/ = false) const override;
-    int res_negative_energy(bool intrinsic_only = false, bool /*mt*/ = false) const override;
+    int res_negative_energy(bool /*mt*/ = false) const override;
     bool res_torment(bool /*mt*/ = false) const override;
-    int res_acid(bool calc_unid = true, bool items = true, bool /*mt*/ = false) const override;
+    int res_acid(bool /*mt*/ = false) const override;
     bool res_tornado(bool /*mt*/ = false) const override;
     bool res_wind(bool /*mt*/ = false) const override;
-    bool res_petrify(bool /*temp*/ = true, bool /*mt*/ = false) const override;
+    bool res_petrify(bool /*mt*/ = false) const override;
     int res_constrict(bool /*mt*/ = false) const override;
     int res_magic(bool calc_unid = true) const override;
     bool no_tele(bool calc_unid = true, bool permit_id = true,
                  bool blink = false) const override;
-    int res_corr(bool calc_unid = true, bool items = true, bool /*mt*/ = false) const override;
+    int res_corr(bool /*mt*/ = false) const override;
     bool antimagic_susceptible() const override;
 
     bool stasis() const override;
@@ -460,7 +465,6 @@ public:
     bool has_corpse_violating_spell() const;
 
     bool has_attack_flavour(int flavour) const;
-    bool has_damage_type(int dam_type);
     bool immune_to_flavour(beam_type flavour);
     int constriction_damage(bool direct) const override;
     bool constriction_does_damage(bool direct) const override;

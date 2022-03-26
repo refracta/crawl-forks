@@ -1273,6 +1273,24 @@ static bool _check_set_dual_skill(const item_def &item)
     return false;
 }
 
+static string _dmgtyp_to_str(int dmgtyp, bool terse)
+{
+    switch (dmgtyp)
+    {
+    case DAM_FORCE:
+        return "force";
+    default:
+    case DAM_BASH:
+    case DAM_BLUDGEON:
+        return terse ? "bludgeon" : "bludgeoning";
+    case DAM_SLICE:
+    case DAM_WHIP:
+        return terse ? "slash"    : "slashing";
+    case DAM_PIERCE:
+        return terse ? "pierce"   : "piercing";
+    }
+}
+
 static void _append_weapon_stats(string &description, const item_def &item)
 {
     const int base_dam = weapon_damage(item);
@@ -1297,14 +1315,19 @@ static void _append_weapon_stats(string &description, const item_def &item)
     if (current_acc != base_acc)
         acc_string = make_stringf("\nBase accuracy adjusted by strength: %+.2f", current_acc);
 
+    int dmgtyp = get_damage_type(item);
+    string dmgterse = _dmgtyp_to_str(dmgtyp, true);
+    string dmglong = _dmgtyp_to_str(dmgtyp, false);
+
     if (item.base_type == OBJ_SHIELDS)
     {
         description += make_stringf(
-            "\nBase accuracy: %+d  Base damage: %d  Base attack delay: %.1f"
+            "\nBase accuracy: %+d  Base damage: %d (%s) Base attack delay: %.1f"
             "%s"
             "\nThis weapon's minimum attack delay (%.1f) is reached at skill level %d.",
             property(item, PSHD_HIT),
             base_dam,
+            dmgterse.c_str(),
             (float)property(item, PSHD_SPEED) / 10,
             acc_string.c_str(),
             (float)weapon_min_delay(item, item_brand_known(item)) / 10,
@@ -1319,11 +1342,12 @@ static void _append_weapon_stats(string &description, const item_def &item)
         else
             damsubstring = make_stringf("%d", base_dam + ammo_dam);
         description += make_stringf(
-            "\nBase accuracy: %+d  Base damage: %s  Base attack delay: %.1f"
+            "\nBase accuracy: %+d  Base damage: %s (%s) Base attack delay: %.1f"
             "%s"
             "\nThis weapon's minimum attack delay (%.1f) is reached at skill level %d.",
             property(item, PWPN_HIT),
             damsubstring.c_str(),
+            dmgterse.c_str(),
             (float)property(item, PWPN_SPEED) / 10,
             acc_string.c_str(),
             (float)weapon_min_delay(item, item_brand_known(item)) / 10,
@@ -1415,6 +1439,8 @@ static void _append_weapon_stats(string &description, const item_def &item)
     }
     else if (could_set_target)
         _append_skill_target_desc(description, skill, mindelay_skill, false);
+
+    description += "\n\nThis weapon deals " + dmglong + " damage.";
 }
 
 static string _handedness_string(const item_def &item)
@@ -1445,6 +1471,9 @@ static string _armour_brand_desc(const item_def item)
 
     switch (ego)
     {
+    default:
+        description += "Buggy ego type.";
+        break;
     case SPARM_RUNNING:
         if (item.sub_type == ARM_NAGA_BARDING)
             description += "It allows its wearer to slither at a great speed.";
@@ -1514,11 +1543,7 @@ static string _armour_brand_desc(const item_def item)
         description += "It increases the strength god powers "
             "when invoked by the wearer.";
         break;
-#if TAG_MAJOR_VERSION == 34
-    case SPARM_PRESERVATION:
-        description += "It does nothing special.";
-        break;
-#endif
+
     case SPARM_REFLECTION:
         description += "It reflects blocked things back in the "
             "direction they came from.";
@@ -1533,7 +1558,6 @@ static string _armour_brand_desc(const item_def item)
         description += "It has no special ego (it is not resistant to "
             "fire, etc), but is still enchanted in some way - "
             "positive or negative.";
-
         break;
 
         // These are only for gloves.
@@ -1572,7 +1596,7 @@ static string _armour_brand_desc(const item_def item)
 
 static string _weapon_brand_desc(const item_def &item)
 {
-    const int damtype = get_vorpal_type(item);
+    const int damtype = get_damage_type(item);
     const bool subsume = you.get_mutation_level(MUT_CYTOPLASMIC_SUSPENSION);
 
     string description = "\n\n";
@@ -1584,9 +1608,7 @@ static string _weapon_brand_desc(const item_def &item)
             " that don't resist corrosion. Additionally may debuff the target's defensive"
             " and weapon capabilities by coating them in acid.";
 
-        if (!is_range_weapon(item) &&
-            (damtype == DVORP_SLICING || damtype == DVORP_CHOPPING
-                || damtype == DVORP_DP || damtype == DVORP_TP))
+        if (!is_range_weapon(item) && damtype == DAM_SLICE)
         {
             description += " Big, acidic blades are also staple "
                 "armaments of hydra-hunters.";
@@ -1611,9 +1633,7 @@ static string _weapon_brand_desc(const item_def &item)
             " partially ignore armour. Causes less base damage than a standard weapon; but partially"
             " ignores enemy's defense and burns causing additional damage to those that don't resist heat.";
 
-        if (!is_range_weapon(item) &&
-            (damtype == DVORP_SLICING || damtype == DVORP_CHOPPING
-                || damtype == DVORP_DP || damtype == DVORP_TP))
+        if (!is_range_weapon(item) && damtype == DAM_SLICE)
         {
             description += " Big, molten blades are also staple "
                 "armaments of hydra-hunters.";
@@ -4180,8 +4200,6 @@ static const char* _get_resist_name(mon_resist_flags res_type)
         return "poison";
     case MR_RES_FIRE:
         return "fire";
-    case MR_RES_STEAM:
-        return "steam";
     case MR_RES_COLD:
         return "cold";
     case MR_RES_ACID:
@@ -4190,10 +4208,20 @@ static const char* _get_resist_name(mon_resist_flags res_type)
         return "rotting";
     case MR_RES_NEG:
         return "negative energy";
-    case MR_RES_DAMNATION:
+    case MR_RES_HELLFIRE:
         return "hellfire";
     case MR_RES_WIND:
         return "winds";
+    case MR_RES_PHYSICAL:
+        return "physical attack";
+    case MR_RES_SLASHING:
+        return "slashing";
+    case MR_RES_BLUDGEONING:
+        return "bludgeoning";
+    case MR_RES_PIERCING:
+        return "piercing";
+    case MR_VUL_WATER:
+        return "water";
     default:
         return "buggy resistance";
     }
@@ -4684,16 +4712,30 @@ static string _monster_stat_description(const monster_info& mi)
 
     result << "\n";
 
-    resists_t resist = mi.resists();
+    bool physical = false;
+    const resists_t resist = mi.resists();
 
     const mon_resist_flags resists[] =
     {
-        MR_RES_ELEC,    MR_RES_POISON, MR_RES_FIRE,
-        MR_RES_STEAM,   MR_RES_COLD,   MR_RES_ACID,
-        MR_RES_ROTTING, MR_RES_NEG,    MR_RES_DAMNATION,
-        MR_RES_WIND,
+        MR_RES_PHYSICAL,
+        MR_RES_SLASHING, MR_RES_PIERCING, MR_RES_BLUDGEONING,
+        MR_RES_ELEC,     MR_RES_POISON,   MR_RES_FIRE,
+        MR_RES_COLD,     MR_RES_ACID,     MR_RES_ROTTING,  
+        MR_RES_NEG,      MR_RES_HELLFIRE, MR_RES_WIND,
+        MR_VUL_WATER
     };
 
+    if (get_resist(resist, MR_RES_SLASHING)
+        && get_resist(resist, MR_RES_PIERCING)
+        && get_resist(resist, MR_RES_BLUDGEONING)
+        || get_resist(resist, MR_VUL_SLASHING)
+        && get_resist(resist, MR_VUL_PIERCING)
+        && get_resist(resist, MR_VUL_BLUDGEONING))
+    {
+        physical = true;
+    }
+
+    vector<string> absorbs;
     vector<string> extreme_resists;
     vector<string> high_resists;
     vector<string> base_resists;
@@ -4701,15 +4743,21 @@ static string _monster_stat_description(const monster_info& mi)
 
     for (mon_resist_flags rflags : resists)
     {
+        if (physical && bool(rflags & MR_RES_PHYSICAL) && (rflags != MR_RES_PHYSICAL))
+            continue;
+
+        if (!physical && (rflags == MR_RES_PHYSICAL))
+            continue;
+
         int level = get_resist(resist, rflags);
 
         if (level != 0)
         {
             const char* attackname = _get_resist_name(rflags);
-            if (rflags == MR_RES_DAMNATION || rflags == MR_RES_WIND)
+            if (rflags == MR_RES_HELLFIRE || rflags == MR_RES_WIND || rflags == MR_RES_ROTTING)
                 level = 3; // one level is immunity
             level = max(level, -1);
-            level = min(level,  3);
+            level = min(level,  4);
             switch (level)
             {
                 case -1:
@@ -4724,14 +4772,27 @@ static string _monster_stat_description(const monster_info& mi)
                 case 3:
                     extreme_resists.emplace_back(attackname);
                     break;
+                case 4:
+                    absorbs.emplace_back(attackname);
+                    break;
             }
         }
     }
+
+    if (mi.base_type == MONS_STEAM_DRAGON || (get_resist(resist, MR_RES_FIRE) > 0))
+        extreme_resists.emplace_back("steam");
 
     if (mi.props.exists(CLOUD_IMMUNE_MB_KEY) && mi.props[CLOUD_IMMUNE_MB_KEY])
         extreme_resists.emplace_back("clouds of all kinds");
 
     vector<string> resist_descriptions;
+    if (!absorbs.empty())
+    {
+        const string tmp = "absorbs "
+            + comma_separated_line(extreme_resists.begin(),
+                extreme_resists.end());
+        resist_descriptions.push_back(tmp);
+    }
     if (!extreme_resists.empty())
     {
         const string tmp = "immune to "

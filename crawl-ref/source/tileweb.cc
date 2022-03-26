@@ -975,9 +975,9 @@ void TilesFramework::_send_player(bool force_full)
     {
         _update_int(force_full, c.res_fire, you.res_fire(false), "rf");
         _update_int(force_full, c.res_cold, you.res_cold(false), "rc");
-        _update_int(force_full, c.res_neg, you.res_negative_energy(false, false), "rn");
-        _update_int(force_full, c.res_acid, you.res_acid(true, true, false), "ra");
-        _update_int(force_full, c.res_pois, you.res_poison(true, false), "rp");
+        _update_int(force_full, c.res_neg, you.res_negative_energy(false), "rn");
+        _update_int(force_full, c.res_acid, you.res_acid(false), "ra");
+        _update_int(force_full, c.res_pois, you.res_poison(false), "rp");
         _update_int(force_full, c.res_elec, you.res_elec(false), "re");
         _update_int(force_full, c.mr, you.res_magic(), "mr");
     }

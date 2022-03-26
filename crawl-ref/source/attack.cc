@@ -519,6 +519,8 @@ void attack::init_attack(skill_type unarmed_skill, int attk_num)
     attacker_visible   = attacker->observable();
     defender_visible   = defender && defender->observable();
     needs_message      = (attacker_visible || defender_visible);
+    damage_type        = 0; // Set just before calculating damage.
+    resist_message     = "";
 
     if (attacker->is_monster())
     {
@@ -870,7 +872,7 @@ static const vector<chaos_effect> chaos_effects = {
     { "slowing", 10, _is_chaos_slowable, BEAM_SLOW },
     {
         "petrify", 10, [](const actor &defender, const bool md) {
-            return _is_chaos_slowable(defender, md) && !defender.res_petrify(true, md);
+            return _is_chaos_slowable(defender, md) && !defender.res_petrify(md);
         }, BEAM_PETRIFY,
     },
 };
@@ -1272,10 +1274,13 @@ string attack::atk_name(description_level_type desc)
  *
  * Helper method to easily access the defender's name
  */
-string attack::def_name(description_level_type desc)
+string attack::def_name(description_level_type desc, bool pronoun)
 {
     if (mount_defend && you.mounted())
         return make_stringf("your %s", you.mount_name().c_str());
+
+    if (pronoun)
+        return defender->pronoun(PRONOUN_SUBJECTIVE);
 
     return actor_name(defender, desc, defender_visible);
 }
@@ -1314,12 +1319,12 @@ string attack::wep_name(description_level_type desc, iflags_t ignre_flags)
  * below, in calc_elemental_brand_damage, which is called for both frost and
  * flame brands for both players and monsters.
  */
-string attack::defender_name(bool allow_reflexive)
+string attack::defender_name(bool allow_reflexive, bool pronoun)
 {
     if (allow_reflexive && attacker == defender)
         return actor_pronoun(attacker, PRONOUN_REFLEXIVE, attacker_visible);
     else
-        return def_name(DESC_THE);
+        return def_name(DESC_THE, pronoun);
 }
 
 int attack::player_stat_modify_damage(int damage)
@@ -1499,7 +1504,6 @@ int attack::calc_damage()
         if (using_weapon() || wpn_skill == SK_FIGHTING)
         {
             potential_damage = weapon_damage();
-            damage += random2avg(potential_damage + 1, 3); // if we're averaging player damage let's do enemies too.
 
             int wpn_damage_plus = 0;
             if (weapon) // can be 0 for throwing projectiles
@@ -1515,17 +1519,18 @@ int attack::calc_damage()
             wpn_damage_plus += attacker->scan_artefacts(ARTP_SLAYING);
 
             if (wpn_damage_plus >= 0)
-                damage += random2(wpn_damage_plus);
+                potential_damage += random2(wpn_damage_plus);
             else
-                damage -= random2(1 - wpn_damage_plus);
+                potential_damage -= random2(0 - wpn_damage_plus);
 
-            damage -= 1 + random2(3);
+            potential_damage -= 1 + random2(3);
         }
 
         potential_damage += attk_damage;
-        damage     += 1 + random2(attk_damage);
+        potential_damage = apply_damage_modifiers(potential_damage);
 
-        damage = apply_damage_modifiers(damage);
+        damage     += 1 + random2avg(potential_damage + 1 , 3);
+
         return apply_defender_ac(damage, potential_damage);
     }
     else if (mount_attack)
@@ -1562,6 +1567,8 @@ int attack::calc_damage()
         if (you.duration[DUR_MOUNT_WRETCHED])
             potential_damage = div_rand_round(4 * damage, 5);
 
+        potential_damage = apply_resists(potential_damage);
+
         damage = random2avg(potential_damage + 1, 3);
     }
     else
@@ -1573,6 +1580,7 @@ int attack::calc_damage()
         potential_damage = player_apply_fighting_skill(potential_damage, false);
         potential_damage = player_apply_misc_modifiers(potential_damage);
         potential_damage = player_apply_slaying_bonuses(potential_damage, false);
+        potential_damage = apply_resists(potential_damage);
 
         damage = random2avg(potential_damage + 1, 3); // wow variation die pls
 
@@ -1600,6 +1608,39 @@ int attack::calc_damage()
     return damage;
 }
 
+int attack::apply_resists(int damage)
+{
+    int preresist = damage;
+    switch (damage_type)
+    {
+    case DAM_FORCE:
+        break;
+    default:
+    case DAM_BASH:
+    case DAM_BLUDGEON:
+        damage = resist_adjust_damage(defender, BEAM_BLUDGEON, damage, mount_defend);
+        if (preresist < damage)
+            resist_message = make_stringf(" %s %s struck brutally!", uppercase_first(defender_name(false, true)).c_str(), defender->conj_verb("are").c_str());
+        break;
+    case DAM_SLICE:
+    case DAM_WHIP:
+        damage = resist_adjust_damage(defender, BEAM_SLASH, damage, mount_defend);
+        if (preresist < damage)
+            resist_message = make_stringf(" %s %s lacerated severely!", uppercase_first(defender_name(false, true)).c_str(), defender->conj_verb("are").c_str());
+        break;
+    case DAM_PIERCE:
+        damage = resist_adjust_damage(defender, BEAM_PIERCE, damage, mount_defend);
+        if (preresist < damage)
+            resist_message = make_stringf(" %s %s is perforated ruthlessly!", uppercase_first(defender_name(false, true)).c_str(), defender->conj_verb("are").c_str());
+        break;
+    }
+
+    if (preresist > damage)
+        resist_message = make_stringf(" %s %s.", uppercase_first(defender_name(false, true)).c_str(), defender->conj_verb("resist").c_str());
+
+    return damage;
+}
+
 // Only include universal monster modifiers here; melee and ranged go in their own classes.
 int attack::apply_damage_modifiers(int damage)
 {
@@ -1610,9 +1651,9 @@ int attack::apply_damage_modifiers(int damage)
         damage = div_rand_round(2 * damage, 3);
 
     if (damage_brand == SPWPN_MOLTEN)
-        damage = div_rand_round(damage * 3, 5);
+        damage = div_rand_round(damage * 3, 5);   
 
-    return damage;
+    return apply_resists(damage);
 }
 
 int attack::test_hit(int to_land, int ev)

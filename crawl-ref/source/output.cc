@@ -901,7 +901,7 @@ static void _print_resists(int y)
     int rF = you.res_fire();
     int rC = you.res_cold();
     int rN = you.res_negative_energy();
-    int rA = you.res_acid();
+    int rA = player_res_acid();
     int rP = you.res_poison();
     int rE = you.res_elec();
     int MR = you.res_magic();
@@ -2589,7 +2589,7 @@ static vector<formatted_string> _get_overview_resistances(
     const int rlife = player_prot_life(calc_unid);
     out += _resist_composer("rNeg", cwidth, rlife, 3) + "\n";
 
-    const int racid = you.res_acid(calc_unid);
+    const int racid = player_res_acid();
     out += _resist_composer("rCorr", cwidth, racid, 3) + "\n";
 
     const int rpois = player_res_poison(calc_unid);

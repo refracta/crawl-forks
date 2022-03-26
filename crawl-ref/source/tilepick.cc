@@ -1575,7 +1575,7 @@ tileidx_t tileidx_monster_base(int type, int mon_id, bool in_water, int colour,
                                  number - 1 : 4 + (number - 1)/5);
 
     // draconian ('d')
-    case MONS_TIAMAT:
+    case MONS_LIVARRA:
     {
         int offset = 0;
         switch (colour)
@@ -1595,7 +1595,7 @@ tileidx_t tileidx_monster_base(int type, int mon_id, bool in_water, int colour,
         case LIGHTCYAN:     offset = 11; break;
         }
 
-        return TILEP_MONS_TIAMAT + offset;
+        return TILEP_MONS_LIVARRA + offset;
     }
     }
 

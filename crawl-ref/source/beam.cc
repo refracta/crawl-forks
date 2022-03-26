@@ -1981,7 +1981,7 @@ int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
         break;
 
     case BEAM_DAMNATION:
-        if (mons->res_damnation())
+        if (mons->res_hellfire())
         {
             if (doFlavouredEffects)
                 simple_monster_message(*mons, " completely resists.");
@@ -2397,7 +2397,7 @@ static bool _curare_hits_player(actor* agent, int levels, string name,
 
     if (mount)
     {
-        if (you.res_poison(true, true) && !one_chance_in(3))
+        if (you.res_poison(true) && !one_chance_in(3))
             return false;
 
         poison_mount(roll_dice(levels, 12) + 1);
@@ -4295,7 +4295,7 @@ void bolt::affect_player_enchantment(bool resistible)
 
     case BEAM_VIRULENCE:
         // Those completely immune cannot be made more susceptible this way
-        if (you.res_poison(false) >= 3)
+        if (you.res_poison() >= 3)
         {
             canned_msg(MSG_YOU_UNAFFECTED);
             break;
@@ -5060,7 +5060,7 @@ void bolt::update_hurt_or_helped(monster* mon)
 void bolt::tracer_enchantment_affect_monster(monster* mon)
 {
     // Only count tracers as hitting creatures they could potentially affect
-    if (ench_flavour_affects_monster(flavour, mon, true)
+    if (ench_flavour_affects_monster(flavour, mon)
         && !(has_saving_throw() && mons_immune_magic(*mon)))
     {
         // Update friend or foe encountered.
@@ -6330,8 +6330,7 @@ bool bolt::has_saving_throw() const
     }
 }
 
-bool ench_flavour_affects_monster(beam_type flavour, const monster* mon,
-                                  bool intrinsic_only)
+bool ench_flavour_affects_monster(beam_type flavour, const monster* mon)
 {
     bool rc = true;
     switch (flavour)
@@ -6356,7 +6355,7 @@ bool ench_flavour_affects_monster(beam_type flavour, const monster* mon,
         break;
 
     case BEAM_PAIN:
-        rc = mon->res_negative_energy(intrinsic_only) < 3;
+        rc = mon->res_negative_energy() < 3;
         break;
 
     case BEAM_AGONY:
@@ -6364,7 +6363,7 @@ bool ench_flavour_affects_monster(beam_type flavour, const monster* mon,
         break;
 
     case BEAM_HIBERNATION:
-        rc = mon->can_hibernate(false, intrinsic_only);
+        rc = mon->can_hibernate(false);
         break;
 
     case BEAM_PORKALATOR:
@@ -6378,7 +6377,7 @@ bool ench_flavour_affects_monster(beam_type flavour, const monster* mon,
         break;
 
     case BEAM_MALIGN_OFFERING:
-        rc = (mon->res_negative_energy(intrinsic_only) < 3);
+        rc = (mon->res_negative_energy() < 3);
         break;
 
     case BEAM_VIRULENCE:
@@ -7847,6 +7846,9 @@ static string _beam_type_name(beam_type type)
     case BEAM_VILE_CLUTCH:           return "vile clutch";
     case BEAM_ROT:                   return "vicious blight";
     case BEAM_WAND_RANDOM:           return "random effects"; // Shouldn't ever show up...
+    case BEAM_BLUDGEON:              return "bludgeoning";
+    case BEAM_SLASH:                 return "slashing";
+    case BEAM_PIERCE:                return "piercing";
 
     case NUM_BEAMS:                  die("invalid beam type");
     }

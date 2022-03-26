@@ -695,12 +695,18 @@ static int _beam_to_resist(const actor* defender, beam_type flavour, bool mount)
 {
     switch (flavour)
     {
+        case BEAM_SLASH:
+            return defender->res_slash(mount);
+        case BEAM_BLUDGEON:
+            return defender->res_bludgeon(mount);
+        case BEAM_PIERCE:
+            return defender->res_pierce(mount);
         case BEAM_CRYSTAL_FIRE:
         case BEAM_FIRE:
         case BEAM_LAVA:
             return defender->res_fire(mount);
         case BEAM_DAMNATION:
-            return defender->res_damnation();
+            return defender->res_hellfire(mount);
         case BEAM_STEAM:
             return defender->res_steam(mount);
         case BEAM_COLD:
@@ -716,16 +722,29 @@ static int _beam_to_resist(const actor* defender, beam_type flavour, bool mount)
         case BEAM_NEG:
         case BEAM_PAIN:
         case BEAM_MALIGN_OFFERING:
-            return defender->res_negative_energy(false, mount);
+            return defender->res_negative_energy(mount);
         case BEAM_ACID:
-            return defender->res_acid(true, mount);
+            return defender->res_acid(mount);
         case BEAM_POISON:
         case BEAM_POISON_ARROW:
-            return defender->res_poison(true, mount);
+            return defender->res_poison(mount);
         case BEAM_HOLY:
             return defender->res_holy_energy(mount);
         default:
             return 0;
+    }
+}
+
+static bool _is_physical_resist(beam_type flavour)
+{
+    switch (flavour)
+    {
+    case BEAM_BLUDGEON:
+    case BEAM_SLASH:
+    case BEAM_PIERCE:
+        return true;
+    default:
+        return false;
     }
 }
 
@@ -747,6 +766,8 @@ static bool _dragonskin_affected (beam_type flavour)
     case BEAM_ACID:
     case BEAM_POISON:
     case BEAM_POISON_ARROW:
+    case BEAM_CRYSTAL_FIRE:
+    case BEAM_CRYSTAL_ICE:
         return true;
     default:
         return false;
@@ -845,7 +866,7 @@ int resist_adjust_damage(const actor* defender, beam_type flavour, int rawdamage
             const int bonus_res = (is_boolean_resist(flavour) ? 1 : 0);
 
             // Monster resistances are stronger than player versions.
-            if (is_mon)
+            if (is_mon && !_is_physical_resist(flavour))
                 resistible /= 1 + bonus_res + res * res;
             else if (flavour == BEAM_NEG
                      || flavour == BEAM_PAIN

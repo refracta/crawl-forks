@@ -482,7 +482,7 @@ static const weapon_def Weapon_prop[] =
         DAMV_CRUSHING, 8, 10, 35, M_AND_F_BRANDS },
     { WPN_MORNINGSTAR,       "morningstar",        13, -2, 15,
         SK_MACES_STAVES, SIZE_LITTLE, SIZE_LITTLE, SIZE_GIANT, MI_NONE,
-        DAMV_CRUSHING | DAM_PIERCE, 7, 10, 40, {
+        DAMV_CRUSHING, 7, 10, 40, {
             { SPWPN_PROTECTION,     30 },
             { SPWPN_NORMAL,         15 },
             { SPWPN_HOLY_WRATH,     15 },
@@ -505,10 +505,10 @@ static const weapon_def Weapon_prop[] =
         DAMV_SLASHING, 0, 0, 200, HOLY_BRANDS },
     { WPN_DIRE_FLAIL,        "dire flail",         19, -3, 13,
         SK_WHIPS_FLAILS, SIZE_MEDIUM, SIZE_BIG, SIZE_GIANT, MI_NONE,
-        DAMV_CRUSHING | DAM_PIERCE, 2, 10, 40, M_AND_F_BRANDS },
+        DAMV_CRUSHING, 2, 10, 40, M_AND_F_BRANDS },
     { WPN_EVENINGSTAR,       "eveningstar",        15, -1, 15,
         SK_MACES_STAVES, SIZE_LITTLE, SIZE_LITTLE, SIZE_GIANT, MI_NONE,
-        DAMV_CRUSHING | DAM_PIERCE, 0, 2, 150, {
+        DAMV_CRUSHING, 0, 2, 150, {
             { SPWPN_PROTECTION,     30 },
             { SPWPN_ACID,           17 },
             { SPWPN_HOLY_WRATH,     15 },
@@ -531,7 +531,7 @@ static const weapon_def Weapon_prop[] =
         DAMV_CRUSHING, 1, 10, 17, {} },
     { WPN_GIANT_SPIKED_CLUB, "giant spiked club",  34, -7, 18,
         SK_MACES_STAVES, SIZE_LARGE, SIZE_GIANT, SIZE_GIANT, MI_NONE,
-        DAMV_CRUSHING | DAM_PIERCE, 1, 10, 19, {} },
+        DAMV_CRUSHING, 1, 10, 19, {} },
 
     // Short Blades
     { WPN_DAGGER,            "dagger",              4,  6, 10,
@@ -627,10 +627,10 @@ static const weapon_def Weapon_prop[] =
         DAMV_CRUSHING, 6, 12, 40, M_AND_F_BRANDS },
     { WPN_WAR_AXE,           "war axe",            11,  0, 18,
         SK_AXES_HAMMERS,       SIZE_LITTLE, SIZE_LITTLE, SIZE_BIG, MI_NONE,
-        DAMV_PIERCING, 7, 10, 35, AXE_BRANDS },
+        DAMV_CHOPPING, 7, 10, 35, AXE_BRANDS },
     { WPN_PICKAXE,           "pickaxe",            12,  0, 20,
         SK_AXES_HAMMERS,       SIZE_LITTLE, SIZE_MEDIUM, SIZE_GIANT, MI_NONE,
-        DAMV_CHOPPING, 1, 1,  30, {
+        DAMV_PIERCING, 1, 1,  30, {
                                     { SPWPN_NORMAL,         33 },
                                     { SPWPN_MOLTEN,         10 },
                                     { SPWPN_ACID,           10 },
@@ -673,7 +673,7 @@ static const weapon_def Weapon_prop[] =
         DAMV_PIERCING, 6, 10, 35, POLEARM_BRANDS },
     { WPN_HALBERD,           "halberd",            19, -3, 15,
         SK_POLEARMS,     SIZE_MEDIUM, SIZE_BIG,  SIZE_GIANT, MI_NONE,
-        DAMV_CHOPPING | DAM_PIERCE, 5, 10, 40, POLEARM_BRANDS },
+        DAMV_CHOPPING, 5, 10, 40, POLEARM_BRANDS },
     { WPN_SCYTHE,            "scythe",             21, -4, 20,
         SK_POLEARMS,     SIZE_MEDIUM, SIZE_GIANT, SIZE_GIANT, MI_NONE,
         DAMV_SLICING, 2, 0, 30, POLEARM_BRANDS },
@@ -743,30 +743,30 @@ static const weapon_def Weapon_prop[] =
     // Range weapons
     { WPN_HUNTING_SLING,     "hunting sling",       9,  2, 12,
         SK_SLINGS,       SIZE_LITTLE, SIZE_LITTLE, SIZE_MEDIUM, MI_SLING_BULLET,
-        DAMV_NON_MELEE, 8, 10, 15, RANGED_BRANDS },
+        DVORP_NONE | DAM_BLUDGEON, 8, 10, 15, RANGED_BRANDS },
     { WPN_FUSTIBALUS,        "fustibalus",         12, -1, 14,
         SK_SLINGS,       SIZE_LITTLE, SIZE_LITTLE, SIZE_LARGE, MI_SLING_BULLET,
-        DAMV_NON_MELEE, 2, 2, 150, RANGED_BRANDS },
+        DVORP_NONE | DAM_BLUDGEON, 2, 2, 150, RANGED_BRANDS },
     { WPN_MANGONEL,        "mangonel",             22, -5, 19,
         SK_SLINGS,       SIZE_LARGE,   SIZE_GIANT, SIZE_GIANT, MI_LARGE_ROCK,
-        DAMV_NON_MELEE, 4, 10, 250, RANGED_BRANDS },
+        DVORP_NONE | DAM_BLUDGEON, 4, 10, 250, RANGED_BRANDS },
 
     { WPN_HAND_CROSSBOW,     "hand crossbow",      12,  5, 15,
         SK_CROSSBOWS,    SIZE_LITTLE, SIZE_LITTLE, SIZE_MEDIUM, MI_BOLT,
-        DAMV_NON_MELEE, 7, 10, 35, RANGED_BRANDS },
+        DVORP_NONE | DAM_PIERCE, 7, 10, 35, RANGED_BRANDS },
     { WPN_ARBALEST,          "arbalest",           18,  2, 19,
         SK_CROSSBOWS,    SIZE_LITTLE, SIZE_BIG, SIZE_GIANT, MI_BOLT,
-        DAMV_NON_MELEE, 5, 10, 45, RANGED_BRANDS },
+        DVORP_NONE | DAM_PIERCE, 5, 10, 45, RANGED_BRANDS },
     { WPN_TRIPLE_CROSSBOW,   "triple crossbow",     9, -1, 22,
         SK_CROSSBOWS,    SIZE_LITTLE, SIZE_GIANT, SIZE_GIANT, MI_TRIPLE_BOLT,
-        DAMV_NON_MELEE, 0, 2, 100, RANGED_BRANDS },
+        DVORP_NONE | DAM_PIERCE, 0, 2, 100, RANGED_BRANDS },
 
     { WPN_SHORTBOW,          "shortbow",           11,  2, 12,
         SK_BOWS,         SIZE_LITTLE, SIZE_GIANT, SIZE_MEDIUM, MI_ARROW,
-        DAMV_NON_MELEE, 8, 10, 30, RANGED_BRANDS },
+        DVORP_NONE | DAM_PIERCE, 8, 10, 30, RANGED_BRANDS },
     { WPN_LONGBOW,           "longbow",            17,  0, 15,
         SK_BOWS,         SIZE_MEDIUM, SIZE_BIG, SIZE_GIANT, MI_ARROW,
-        DAMV_NON_MELEE, 2, 10, 45, RANGED_BRANDS },
+        DVORP_NONE | DAM_PIERCE, 2, 10, 45, RANGED_BRANDS },
 };
 
 struct missile_def
@@ -775,38 +775,36 @@ struct missile_def
     const char *name;
     int         dam;
     bool        throwable;
+    int         dam_type;
 };
 
 static int Missile_index[NUM_MISSILES];
 static const missile_def Missile_prop[] =
 {
-#if TAG_MAJOR_VERSION == 34
-    { MI_DART,          "dart",          2, true  },
-#endif
-    { MI_NEEDLE,        "needle",        0, true  },
-    { MI_STONE,         "stone",         2, true  },
-    { MI_SNOWBALL,      "snowball",      2, true  },
-    { MI_BLADE,         "rusty metal",   2, true  },
-    { MI_SKULL,         "skull",         2, true  },
-    { MI_BONE,          "bone",          2, true  },
-    { MI_ROOT,          "gnarled root",  2, true  },
-    { MI_MUD,           "clump of mud",  2, true  },
-    { MI_SEASHELL,      "seashell",      2, true  },
-    { MI_ABYSS,         "chaotic dust",  2, true  },
-    { MI_PANDEMONIUM,   "weird clump",   2, true  },
-    { MI_OOZE,          "ball of ooze",  2, true  },
-    { MI_GOLD,          "gold ore",      2, true  },
-    { MI_BANDAGE,    "ball of bandages", 2, true  },
-    { MI_ARROW,         "arrow",         0, false },
-    { MI_BOLT,          "bolt",          0, false },
-    { MI_TRIPLE_BOLT,"triplet of bolts", 0, false },
-    { MI_DOUBLE_BOLT, "couple of bolts", 0, false },
-    { MI_LARGE_ROCK,    "boulder",       0, false },
-    { MI_SLING_BULLET,  "sling bullet",  0, false },
-    { MI_JAVELIN,       "javelin",      10, true  },
-    { MI_THROWING_NET,  "throwing net",  0, true  },
-    { MI_TOMAHAWK,      "tomahawk",      6, true  },
-    { MI_PIE,           "kream pie",     0, true  },
+    { MI_NEEDLE,        "needle",        0, true,   DAM_PIERCE   },
+    { MI_STONE,         "stone",         2, true,   DAM_BLUDGEON },
+    { MI_SNOWBALL,      "snowball",      2, true,   DAM_BLUDGEON },
+    { MI_BLADE,         "rusty metal",   2, true,   DAM_BLUDGEON },
+    { MI_SKULL,         "skull",         2, true,   DAM_BLUDGEON },
+    { MI_BONE,          "bone",          2, true,   DAM_BLUDGEON },
+    { MI_ROOT,          "gnarled root",  2, true,   DAM_BLUDGEON },
+    { MI_MUD,           "clump of mud",  2, true,   DAM_BLUDGEON },
+    { MI_SEASHELL,      "seashell",      2, true,   DAM_BLUDGEON },
+    { MI_ABYSS,         "chaotic dust",  2, true,   DAM_BLUDGEON },
+    { MI_PANDEMONIUM,   "weird clump",   2, true,   DAM_BLUDGEON },
+    { MI_OOZE,          "ball of ooze",  2, true,   DAM_BLUDGEON },
+    { MI_GOLD,          "gold ore",      2, true,   DAM_BLUDGEON },
+    { MI_BANDAGE,    "ball of bandages", 2, true,   DAM_BLUDGEON },
+    { MI_ARROW,         "arrow",         0, false,  DAM_PIERCE   },
+    { MI_BOLT,          "bolt",          0, false,  DAM_PIERCE   },
+    { MI_TRIPLE_BOLT,"triplet of bolts", 0, false,  DAM_PIERCE   },
+    { MI_DOUBLE_BOLT, "couple of bolts", 0, false,  DAM_PIERCE   },
+    { MI_LARGE_ROCK,    "boulder",       0, false,  DAM_PIERCE   },
+    { MI_SLING_BULLET,  "sling bullet",  0, false,  DAM_PIERCE   },
+    { MI_JAVELIN,       "javelin",      10, true,   DAM_PIERCE   },
+    { MI_THROWING_NET,  "throwing net",  0, true,   DAM_BASH     },
+    { MI_TOMAHAWK,      "tomahawk",      6, true,   DAM_SLICE    },
+    { MI_PIE,           "kream pie",     0, true,   DAM_BLUDGEON },
 };
 
 struct food_def
@@ -1866,6 +1864,9 @@ int get_vorpal_type(const item_def &item)
 
 int get_damage_type(const item_def &item)
 {
+    if (item.base_type == OBJ_MISSILES)
+        return Missile_prop[Missile_index[item.sub_type]].dam_type & DAM_MASK;
+
     if (item.base_type == OBJ_WEAPONS)
         return Weapon_prop[Weapon_index[item.sub_type]].dam_type & DAM_MASK;
 
@@ -1873,32 +1874,6 @@ int get_damage_type(const item_def &item)
         return Shield_prop[Shield_index[item.sub_type]].dam_type & DAM_MASK;
 
     return DAM_BASH;
-}
-
-static bool _does_damage_type(const item_def &item, int dam_type)
-{
-    return get_damage_type(item) & dam_type;
-}
-
-int single_damage_type(const item_def &item)
-{
-    int ret = get_damage_type(item);
-
-    if (ret > 0)
-    {
-        int count = 0;
-
-        for (int i = 1; i <= DAM_MAX_TYPE; i <<= 1)
-        {
-            if (!_does_damage_type(item, i))
-                continue;
-
-            if (one_chance_in(++count))
-                ret = i;
-        }
-    }
-
-    return ret;
 }
 
 // Give hands required to wield weapon for a torso of "size".
@@ -2809,6 +2784,13 @@ bool get_jewellery_improved_vision(const item_def &ring, bool check_artp)
         return artefact_property(ring, ARTP_IMPROVED_VISION);
 
     return false;
+}
+
+bool is_effectively_light_armour(const item_def *item)
+{
+    return !item || item->base_type != OBJ_ARMOURS 
+        || get_item_slot(*item) != EQ_BODY_ARMOUR
+        || (abs(property(*item, PARM_EVASION)) / 10 < 5);
 }
 
 int weapon_damage(const item_def &item)

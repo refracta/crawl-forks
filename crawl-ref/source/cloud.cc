@@ -924,24 +924,24 @@ bool actor_cloud_immune(const actor &act, cloud_type type, bool mount)
             }
             return false;
         case CLOUD_MEPHITIC:
-            return act.res_poison(true, mount) > 0 || act.is_unbreathing(mount);
+            return act.res_poison(mount) > 0 || act.is_unbreathing(mount);
         case CLOUD_POISON:
-            return act.res_poison(true, mount) > 0;
+            return act.res_poison(mount) > 0;
         case CLOUD_STEAM:
             return act.res_steam(mount) > 0;
         case CLOUD_MIASMA:
-            return act.res_rotting(true, mount) > 0;
+            return act.res_rotting(mount) > 0;
         case CLOUD_PETRIFY:
-            return act.res_petrify(true, mount) || !mount && act.stasis();
+            return act.res_petrify(mount) || !mount && act.stasis();
         case CLOUD_SPECTRAL:
             return bool(act.holiness(true, mount) & MH_UNDEAD);
         case CLOUD_ACID:
-            return act.res_acid(true, mount) > 1;
+            return act.res_acid(mount) > 1;
         case CLOUD_STORM:
             return act.res_elec(mount) >= 3;
         case CLOUD_BLOOD:
         case CLOUD_NEGATIVE_ENERGY:
-            return act.res_negative_energy(false, mount) >= 3;
+            return act.res_negative_energy(mount) >= 3;
         case CLOUD_TORNADO:
             return act.res_tornado(mount);
         case CLOUD_RAIN:

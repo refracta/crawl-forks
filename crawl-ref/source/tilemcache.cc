@@ -364,18 +364,18 @@ bool mcache_monster::get_weapon_offset(tileidx_t mon_tile,
         break;
     case TILEP_MONS_HOBGOBLIN:
     case TILEP_MONS_ROBIN:
-    case TILEP_MONS_TIAMAT:
-    case TILEP_MONS_TIAMAT_1:
-    case TILEP_MONS_TIAMAT_2:
-    case TILEP_MONS_TIAMAT_3:
-    case TILEP_MONS_TIAMAT_4:
-    case TILEP_MONS_TIAMAT_5:
-    case TILEP_MONS_TIAMAT_6:
-    case TILEP_MONS_TIAMAT_7:
-    case TILEP_MONS_TIAMAT_8:
-    case TILEP_MONS_TIAMAT_9:
-    case TILEP_MONS_TIAMAT_10:
-    case TILEP_MONS_TIAMAT_11:
+    case TILEP_MONS_LIVARRA:
+    case TILEP_MONS_LIVARRA_1:
+    case TILEP_MONS_LIVARRA_2:
+    case TILEP_MONS_LIVARRA_3:
+    case TILEP_MONS_LIVARRA_4:
+    case TILEP_MONS_LIVARRA_5:
+    case TILEP_MONS_LIVARRA_6:
+    case TILEP_MONS_LIVARRA_7:
+    case TILEP_MONS_LIVARRA_8:
+    case TILEP_MONS_LIVARRA_9:
+    case TILEP_MONS_LIVARRA_10:
+    case TILEP_MONS_LIVARRA_11:
     case TILEP_MONS_TENGU:
     case TILEP_MONS_TENGU_CONJURER:
     case TILEP_MONS_TENGU_WARRIOR:

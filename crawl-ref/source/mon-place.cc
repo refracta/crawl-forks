@@ -1275,7 +1275,7 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
         mon->props[CUSTOM_SPELLS_KEY] = true;
     }
 
-    if (mon->has_spell(SPELL_OZOCUBUS_ARMOUR))
+    if (mon->has_spell(SPELL_OZOCUBUS_ARMOUR) && !mon->wearing_heavy_armour())
     {
         const int power = (mon->spell_hd(SPELL_OZOCUBUS_ARMOUR) * 15) / 10;
         int rnd_power = random2(power);
@@ -1975,7 +1975,7 @@ static const map<monster_type, band_set> bands_by_leader = {
     { MONS_BALLOON_DOG,     { {1, 21}, {{ BAND_BALLOON, {1, 2}, true }}}},
 
     // yup, scary
-    { MONS_TIAMAT,          { {}, {{ BAND_DRACONIAN, {8, 15}, true }}}},
+    { MONS_LIVARRA,          { {}, {{ BAND_DRACONIAN, {8, 15}, true }}}},
     { MONS_ILSUIW,          { {}, {{ BAND_ILSUIW, {3, 6} }}}},
     { MONS_AZRAEL,          { {}, {{ BAND_AZRAEL, {4, 9}, true }}}},
     { MONS_DUVESSA,         { {}, {{ BAND_DUVESSA, {1, 2} }}}},

@@ -576,6 +576,8 @@ bool melee_attack::handle_phase_hit()
         }
     }
 
+    damage_type = attacker->damage_type(attack_number);
+
     // This does more than just calculate the damage, it also sets up
     // messages, etc. It also wakes nearby creatures on a failed stab,
     // meaning it could have made the attacked creature vanish. That
@@ -2075,7 +2077,17 @@ void melee_attack::set_attack_verb(int damage)
     // more than one damage type, randomly choose one damage type from
     // it.
     monster_type defender_genus = mons_genus(defender->type);
-    switch (weapon ? single_damage_type(*weapon) : -1)
+    int dmgtyp = -1;
+    
+    if (weapon)
+    {
+        if (is_range_weapon(*weapon))
+            dmgtyp = DAM_BASH;
+        else
+            dmgtyp = get_damage_type(*weapon);
+    }
+
+    switch (dmgtyp)
     {
     case DAM_PIERCE:
         if (damage < HIT_MED)
@@ -2158,29 +2170,6 @@ void melee_attack::set_attack_verb(int damage)
             const int choice = random2(ARRAYSZ(slice_desc));
             attack_verb = slice_desc[choice][0];
             verb_degree = slice_desc[choice][1];
-        }
-        break;
-
-    case DAM_PENETRATE:
-        if (damage < HIT_MED)
-            attack_verb = "bother";
-        else if (damage < HIT_STRONG)
-            attack_verb = "impale";
-        else
-        {
-            static const char * const pene_desc[][2] =
-            {
-                { "drill",   "" },
-                { "pillage", "like a pirate" },
-                { "ruin",    "like a freshman" },
-                { "impale",  "like its your first time" },
-                { "compromise",    "by force" },
-                { "make an entrance in", ""},
-                { "violate", ""}
-            };
-            const int choice = random2(ARRAYSZ(pene_desc));
-            attack_verb = pene_desc[choice][0];
-            verb_degree = pene_desc[choice][1];
         }
         break;
 
@@ -2280,7 +2269,7 @@ void melee_attack::set_attack_verb(int damage)
             break;
         }
 
-        if (you.damage_type() == DVORP_CLAWING)
+        if (you.vorpal_type() == DVORP_CLAWING)
         {
             if (damage < HIT_WEAK)
                 attack_verb = "scratch";
@@ -2291,7 +2280,7 @@ void melee_attack::set_attack_verb(int damage)
             else
                 attack_verb = "eviscerate";
         }
-        else if (you.damage_type() == DVORP_TENTACLE)
+        else if (you.vorpal_type() == DVORP_TENTACLE)
         {
             if (damage < HIT_WEAK)
                 attack_verb = "tentacle-slap";
@@ -2463,7 +2452,7 @@ bool melee_attack::consider_decapitation(int dam)
     if (!attack_chops_heads(dam, dam_type))
         return false;
 
-    decapitate(dam_type);
+    decapitate();
 
     if (!defender->alive())
         return true;
@@ -2554,11 +2543,8 @@ bool melee_attack::attack_chops_heads(int dam, int dam_type)
     }
 
     // Only cutting implements.
-    if (dam_type != DVORP_SLICING && dam_type != DVORP_CHOPPING
-        && dam_type != DVORP_DP && dam_type != DVORP_TP)
-    {
+    if (dam_type != DAM_SLICE)
         return false;
-    }
 
     // You need to have done at least some damage.
     if (dam <= 0 || dam < 4 && coinflip())
@@ -2573,12 +2559,14 @@ bool melee_attack::attack_chops_heads(int dam, int dam_type)
  *
  * @param dam_type      The vorpal_damage_type of the attack.
  */
-void melee_attack::decapitate(int dam_type)
+void melee_attack::decapitate()
 {
     // Player hydras don't gain or lose heads.
     ASSERT(defender->is_monster());
 
     const char *verb = nullptr;
+
+    const int dam_type = attacker->vorpal_type(attack_number);
 
     if (dam_type == DVORP_CLAWING)
     {
@@ -3331,20 +3319,22 @@ void melee_attack::announce_hit()
 
     if (attacker->is_monster())
     {
-        mprf("%s %s %s%s%s",
+        mprf("%s %s %s%s%s%s",
              atk_name(DESC_THE).c_str(),
              attacker->conj_verb(mons_attack_verb()).c_str(),
              defender_name(true).c_str(),
              mons_attack_desc().c_str(),
-             attack_strength_punctuation(damage_done).c_str());
+             attack_strength_punctuation(damage_done).c_str(),
+             resist_message.c_str());
     }
     else if (mount_attack)
     {
-        mprf("Your %s %s %s%s",
+        mprf("Your %s %s %s%s%s",
             you.mount_name(true).c_str(),
             attack_verb.c_str(),
             defender->name(DESC_THE).c_str(),
-            attack_strength_punctuation(damage_done).c_str());
+            attack_strength_punctuation(damage_done).c_str(),
+            resist_message.c_str());
     }
     else
     {
@@ -3354,11 +3344,12 @@ void melee_attack::announce_hit()
             verb_degree = " " + verb_degree;
         }
 
-        mprf("You %s %s%s%s",
+        mprf("You %s %s%s%s%s",
              attack_verb.c_str(),
              defender->name(DESC_THE).c_str(),
              verb_degree.c_str(),
-             attack_strength_punctuation(damage_done).c_str());
+             attack_strength_punctuation(damage_done).c_str(),
+             resist_message.c_str());
     }
 }
 
@@ -3813,7 +3804,7 @@ void melee_attack::mons_apply_attack_flavour()
             mpr("Your divine stamina protects you from poison!");
             break;
         }
-        else if (defender->res_poison(true, mount_defend) >= 3)
+        else if (defender->res_poison(mount_defend) >= 3)
             break;
 
         // Same frequency as AF_POISON and AF_POISON_STRONG.
@@ -3830,7 +3821,7 @@ void melee_attack::mons_apply_attack_flavour()
         // Try to apply petrification, with the normal 2/3
         // chance to resist with rPois.
         // Don't petrify things that are already petrified or petrifying. Since this is an on-melee effect it's too strong to allow it to extend durations.
-        if ((defender->res_poison(true, mount_defend) <= 0 || one_chance_in(3)) && 
+        if ((defender->res_poison(mount_defend) <= 0 || one_chance_in(3)) && 
             !(defender->petrifying(mount_defend) || defender->petrified(mount_defend)))
         {
             defender->petrify(attacker, false, mount_defend);

@@ -635,6 +635,7 @@ public:
     size_type   body_size(size_part_type psize = PSIZE_TORSO,
                           bool base = false) const override;
     brand_type  damage_brand(int which_attack = -1) override;
+    int         vorpal_type(int which_attack = -1) override;
     int         damage_type(int which_attack = -1) override;
     random_var  attack_delay(const item_def *projectile = nullptr,
                              bool rescale = true) const override;
@@ -780,22 +781,26 @@ public:
     int how_chaotic(bool check_spells_god) const override;
     bool is_unbreathing(bool mt = false) const override;
     bool is_insubstantial() const override;
-    int res_acid(bool calc_unid = true, bool items = true, bool mt = false) const override;
-    bool res_damnation() const override { return false; };
+    int res_acid(bool mt = false) const override;
+    bool res_hellfire(bool /*mt*/) const override { return false; };
     int res_fire(bool mt = false) const override;
     int res_steam(bool mt = false) const override;
     int res_cold(bool mt = false) const override;
     int res_elec(bool mt = false) const override;
-    int res_poison(bool temp = true, bool mt = false) const override;
-    int res_rotting(bool temp = true, bool mt = false) const override;
+    bool wearing_heavy_armour() const override;
+    int res_slash(bool mt = false) const override;
+    int res_pierce(bool mt = false) const override;
+    int res_bludgeon(bool mt = false) const override;
+    int res_poison(bool mt = false) const override;
+    int res_rotting(bool mt = false) const override;
     int res_water_drowning(bool mt = false) const override;
-    bool res_sticky_flame() const override;
+    bool res_sticky_flame(bool mt = false) const override;
     int res_holy_energy(bool mt = false) const override;
-    int res_negative_energy(bool intrinsic_only = false, bool mt = false) const override;
+    int res_negative_energy(bool mt = false) const override;
     bool res_torment(bool mt = false) const override;
     bool res_tornado(bool mt = false) const override;
     bool res_wind(bool mt = false) const override;
-    bool res_petrify(bool temp = true, bool mt = false) const override;
+    bool res_petrify(bool mt = false) const override;
     int res_constrict(bool mt = false) const override;
     int res_magic(bool /*calc_unid*/ = true) const override;
     bool no_tele(bool calc_unid = true, bool /*permit_id*/ = true,
@@ -805,7 +810,7 @@ public:
     bool antimagic_susceptible() const override;
 
     bool gourmand(bool calc_unid = true, bool items = true) const override;
-    int res_corr(bool calc_unid = true, bool items = true, bool mount = false) const override;
+    int res_corr(bool mount = false) const override;
     bool clarity(bool calc_unid = true, bool items = true) const override;
     bool stasis() const override;
     bool is_fairy() const override;
@@ -875,7 +880,6 @@ public:
     int armour_tohit_penalty(bool random_factor, int scale = 1) const override;
     int shield_tohit_penalty(bool random_factor, int scale = 1) const override;
 
-    bool wearing_light_armour(bool with_skill = false) const;
     int  skill(skill_type skill, int scale =1,
                bool real = false, bool drained = true,
                bool temp=true) const override;
@@ -993,7 +997,6 @@ bool player_is_shapechanged();
 
 void update_acrobat_status();
 
-bool is_effectively_light_armour(const item_def *item);
 bool player_effectively_in_light_armour();
 
 int player_energy();
@@ -1034,6 +1037,7 @@ bool player_likes_water(bool permanently = false);
 
 int player_res_electricity(bool calc_unid = true, bool temp = true,
                            bool items = true);
+int player_res_acid();
 
 int player_res_fire(bool calc_unid = true, bool temp = true,
                     bool items = true);

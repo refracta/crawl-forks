@@ -2001,7 +2001,7 @@ void handle_monster_move(monster* mons, int tries)
     if (!mons->alive())
         return;
 
-    if (mons->type == MONS_TIAMAT && one_chance_in(3))
+    if (mons->type == MONS_LIVARRA && one_chance_in(3))
         draconian_change_colour(mons);
 
     _monster_regenerate(mons);

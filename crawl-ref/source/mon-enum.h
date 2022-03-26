@@ -177,7 +177,7 @@ enum habitat_type
 typedef uint32_t resists_t;
 #define mrd(res, lev) (resists_t)((res) * ((lev) & 7))
 
-enum mon_resist_flags
+enum mon_resist_flags : uint32_t
 {
     MR_NO_FLAGS          = 0,
 
@@ -189,21 +189,32 @@ enum mon_resist_flags
     MR_RES_FIRE          = 1 << 6,
     MR_RES_COLD          = 1 << 9,
     MR_RES_NEG           = 1 << 12,
-    MR_RES_ROTTING       = 1 << 15,
-    MR_RES_ACID          = 1 << 18,
+    MR_RES_ACID          = 1 << 16,
 
     MR_LAST_MULTI, // must be >= any multi, < any boolean, exact value doesn't matter
 
-    MR_RES_TORMENT       = 1 << 22,
-    MR_RES_PETRIFY       = 1 << 23,
-    MR_RES_DAMNATION     = 1 << 24,
-    // unused 1 << 25,
-    MR_RES_STICKY_FLAME  = 1 << 26,
-    MR_RES_WIND       = 1 << 27,
-    MR_RES_STEAM         = 1 << 28,
+    MR_RES_TORMENT       = 1 << 19,
+    MR_RES_PETRIFY       = 1 << 20,
+    MR_RES_HELLFIRE      = 1 << 21,
+    MR_RES_STICKY_FLAME  = 1 << 22,
+    MR_RES_WIND          = 1 << 23,
+    MR_RES_ROTTING       = 1 << 24,
+
+    MR_PHYSICALS,
+
+    MR_RES_SLASHING      = 1 << 25,
+    MR_RES_PIERCING      = 1 << 26,
+    MR_RES_BLUDGEONING   = 1 << 27,
+    MR_RES_PHYSICAL      = (MR_RES_SLASHING | MR_RES_PIERCING | MR_RES_BLUDGEONING),
+
+    MR_VULNS,
 
     // vulnerabilities
-    MR_VUL_WATER         = 1 << 29,
+    MR_VUL_WATER         = 1 << 28,
+    MR_VUL_SLASHING      = 1 << 29,
+    MR_VUL_PIERCING      = 1 << 30,
+    MR_VUL_BLUDGEONING   = (uint32_t)(1 << 31),
+    MR_VUL_PHYSICAL      = (MR_VUL_SLASHING | MR_VUL_PIERCING | MR_VUL_BLUDGEONING),
     MR_VUL_ELEC          = mrd(MR_RES_ELEC, -1),
     MR_VUL_POISON        = mrd(MR_RES_POISON, -1),
     MR_VUL_FIRE          = mrd(MR_RES_FIRE, -1),

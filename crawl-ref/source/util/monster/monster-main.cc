@@ -1194,7 +1194,7 @@ int main(int argc, char* argv[])
         }
 
         const resists_t res(shapeshifter ? me->resists :
-                                           get_mons_resists(mon));
+                                           get_mons_base_resists(mon));
 #define res(c, x)                                                              \
     do                                                                         \
     {                                                                          \
@@ -1222,7 +1222,7 @@ int main(int argc, char* argv[])
 
         res2(LIGHTBLUE, drown, mon.res_water_drowning());
         res2(LIGHTRED, rot, mon.res_rotting());
-        res2(LIGHTMAGENTA, neg, mon.res_negative_energy(true));
+        res2(LIGHTMAGENTA, neg, mon.res_negative_energy());
         res2(YELLOW, holy, mon.res_holy_energy());
         res2(LIGHTMAGENTA, torm, mon.res_torment());
         res2(LIGHTBLUE, tornado, mon.res_tornado());

@@ -1180,7 +1180,7 @@ item_def trap_def::generate_trap_item()
     switch (type)
     {
 #if TAG_MAJOR_VERSION == 34
-    case TRAP_DART:   base = OBJ_MISSILES; sub = MI_DART;         break;
+    case TRAP_DART:   base = OBJ_MISSILES; sub = MI_BOLT;         break;
 #endif
     case TRAP_ARROW:  base = OBJ_MISSILES; sub = MI_ARROW;        break;
     case TRAP_BOLT:   base = OBJ_MISSILES; sub = MI_BOLT;         break;

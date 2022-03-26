@@ -1909,7 +1909,7 @@ int player_res_cold(bool calc_unid, bool temp, bool items)
     return _clamp(rc, -3, temp && you.duration[DUR_COLD_VULN] ? 2 : 3);
 }
 
-int player::res_corr(bool calc_unid, bool items, bool mt) const
+int player::res_corr(bool mt) const
 {
     if (mt)
     {
@@ -1924,7 +1924,7 @@ int player::res_corr(bool calc_unid, bool items, bool mt) const
         }
     }
 
-    return _clamp(res_acid(calc_unid, items), -1, 1);
+    return _clamp(res_acid(), -1, 1);
 }
 
 static int _relec_globals()
@@ -2591,12 +2591,6 @@ int player_speed()
     return ps;
 }
 
-bool is_effectively_light_armour(const item_def *item)
-{
-    return !item
-           || (abs(property(*item, PARM_EVASION)) / 10 < 5);
-}
-
 bool player_effectively_in_light_armour()
 {
     if (you.get_mutation_level(MUT_AMORPHOUS_BODY))
@@ -2613,6 +2607,11 @@ bool player_effectively_in_light_armour()
 
     const item_def *armour = you.slot_item(EQ_BODY_ARMOUR, false);
     return is_effectively_light_armour(armour);
+}
+
+bool player::wearing_heavy_armour() const
+{
+    return !player_effectively_in_light_armour();
 }
 
 // This function returns true if the player has a radically different
@@ -7489,7 +7488,56 @@ bool player::is_insubstantial() const
         return false;
 }
 
-int player::res_acid(bool calc_unid, bool items, bool mt) const
+// pure version for output.
+int player_res_acid() 
+{
+    const dungeon_feature_type grid = grd(you.pos());
+    const bool slimy = (grid == DNGN_SLIMY_WATER || grid == DNGN_DEEP_SLIMY_WATER);
+
+    if (you.get_mutation_level(MUT_SLIME) > 2 || you.get_mutation_level(MUT_OOZOMORPH))
+        return 3;
+
+    int ra = 0;
+
+    if (you.submerged() && !slimy)
+        ra++;
+
+    if (you.get_mutation_level(MUT_ACID_VULNERABILITY))
+        ra--;
+
+    if (you.get_mutation_level(MUT_ACID_RESISTANCE))
+        ra++;
+
+    if (get_form()->res_acid())
+        ra++;
+
+    if (you.duration[DUR_RESISTANCE])
+        ra++;
+
+    // Subsumption
+    const item_def * inside = you.slot_item(EQ_CYTOPLASM);
+
+    if (inside && get_weapon_brand(*inside) == SPWPN_ACID)
+        ra++;
+
+    if (you.get_mutation_level(MUT_YELLOW_SCALES))
+        ra++;
+
+    // draconian scales:
+    if (you.get_mutation_level(MUT_DRACONIAN_DEFENSE, true) && you.drac_colour == DR_LIME)
+        ra++;
+
+    ra += you.wearing(EQ_RINGS, RING_RESIST_CORROSION);
+    ra += you.wearing(EQ_BODY_ARMOUR, ARM_ACID_DRAGON_ARMOUR);
+    ra += you.scan_artefacts(ARTP_RCORR);
+    ra += you.get_mutation_level(MUT_SLIME, true);
+    ra += you.get_mutation_level(MUT_OOZOMORPH, true) * 3;
+
+    return _clamp(ra, -3, 2);
+}
+
+// includes randoms and mount option
+int player::res_acid(bool mt) const
 {
     const dungeon_feature_type grid = grd(pos());
     const bool slimy = (grid == DNGN_SLIMY_WATER || grid == DNGN_DEEP_SLIMY_WATER);
@@ -7508,61 +7556,22 @@ int player::res_acid(bool calc_unid, bool items, bool mt) const
         }
     }
 
-    if (get_mutation_level(MUT_SLIME) > 2 || get_mutation_level(MUT_OOZOMORPH))
-        return 3;
+    int ra = player_res_acid();
 
-    int ra = 0;
+    // amulet of chaos
+    if (wearing(EQ_AMULET, AMU_CHAOS))
+        ra += _chaos_roll();
 
-    if (submerged() && !slimy)
-        ra++;
-
-    if (get_mutation_level(MUT_ACID_VULNERABILITY))
-        ra--;
-
-    if (get_mutation_level(MUT_ACID_RESISTANCE))
-        ra++;
-
-    if (get_form()->res_acid())
-        ra++;
-
-    if (duration[DUR_RESISTANCE])
-        ra++;
-
-    if (items)
-    {
-        // Subsumption
-        const item_def * inside = you.slot_item(EQ_CYTOPLASM);
-
-        if (inside && get_weapon_brand(*inside) == SPWPN_ACID)
-            ra++;
-
-        if (calc_unid)
-        {
-            // amulet of chaos
-            if (wearing(EQ_AMULET, AMU_CHAOS))
-                ra += _chaos_roll();
-
-            // dragonskin cloak: 0.5 to draconic resistances
-            if (player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
-                ra++;
-        }
-    }
-
-    if (get_mutation_level(MUT_YELLOW_SCALES))
+    // dragonskin cloak: 0.5 to draconic resistances
+    if (player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
         ra++;
 
     // draconian scales:
-    if (get_mutation_level(MUT_DRACONIAN_DEFENSE, true))
+    if (get_mutation_level(MUT_DRACONIAN_DEFENSE, true)
+         && drac_colour == DR_SCINTILLATING && one_chance_in(3))
     {
-        if (drac_colour == DR_SCINTILLATING && one_chance_in(3) && calc_unid)
-            ra++;
-        if (drac_colour == DR_LIME)
-            ra++;
+        ra++;
     }
-
-    ra += actor::res_acid(calc_unid, items);
-    ra += get_mutation_level(MUT_SLIME, true);
-    ra += get_mutation_level(MUT_OOZOMORPH, true) * 3;
 
     return _clamp(ra, -3, 2);
 }
@@ -7624,6 +7633,58 @@ int player::res_elec(bool mt) const
     return player_res_electricity();
 }
 
+// No means of player getting physical resistances right now.
+int player::res_slash(bool mt) const
+{
+    if (mt)
+    {
+        switch (you.mount)
+        {
+        case mount_type::hydra:
+            return -1;
+        case mount_type::slime:
+            return 1;
+        default:
+            return 0;
+        }
+    }
+
+    return 0;
+}
+
+int player::res_pierce(bool mt) const
+{
+    if (mt)
+    {
+        switch (you.mount)
+        {
+        case mount_type::slime:
+        case mount_type::spider:
+            return 1;
+        default:
+            return 0;
+        }
+    }
+
+    return 0;
+}
+
+int player::res_bludgeon(bool mt) const
+{
+    if (mt)
+    {
+        switch (you.mount)
+        {
+        case mount_type::spider:
+            return -1;
+        default:
+            return 0;
+        }
+    }
+
+    return 0;
+}
+
 int player::res_water_drowning(bool mt) const
 {
     if (mt)
@@ -7646,7 +7707,7 @@ int player::res_water_drowning(bool mt) const
     return rw;
 }
 
-int player::res_poison(bool temp, bool mt) const
+int player::res_poison(bool mt) const
 {
     if (mt)
     {
@@ -7671,22 +7732,22 @@ int player::res_poison(bool temp, bool mt) const
         return _clamp(rp, -3, 3);
     }
 
-    return player_res_poison(true, temp);
+    return player_res_poison(true);
 }
 
-int player::res_rotting(bool temp, bool mt) const
+int player::res_rotting(bool mt) const
 {
     if (mt)
         return 0; // No mount resists rotting.
 
     if (get_mutation_level(MUT_ROT_IMMUNITY)
-        || is_nonliving(temp)
-        || temp && get_form()->res_rot())
+        || is_nonliving()
+        ||  get_form()->res_rot())
     {
         return 3;
     }
 
-    switch (undead_state(temp))
+    switch (undead_state())
     {
     default:
     case US_ALIVE:
@@ -7703,8 +7764,11 @@ int player::res_rotting(bool temp, bool mt) const
     }
 }
 
-bool player::res_sticky_flame() const
+bool player::res_sticky_flame(bool mt) const
 {
+    if (mt)
+        return true;
+
     return player_res_sticky_flame();
 }
 
@@ -7722,12 +7786,12 @@ int player::res_holy_energy(bool mt) const
     return 0;
 }
 
-int player::res_negative_energy(bool intrinsic_only, bool mt) const
+int player::res_negative_energy(bool mt) const
 {
     if (mt)
         return _clamp(_rn_globals(), -3, 3);
 
-    return player_prot_life(!intrinsic_only, true, !intrinsic_only);
+    return player_prot_life();
 }
 
 bool player::res_torment(bool mt) const
@@ -7755,7 +7819,7 @@ bool player::res_wind(bool mt) const
     return you.get_mutation_level(MUT_DRACONIAN_DEFENSE) && (you.drac_colour == DR_CYAN);
 }
 
-bool player::res_petrify(bool temp, bool mt) const
+bool player::res_petrify(bool mt) const
 {
     if (mt)
         return false;
@@ -7764,7 +7828,7 @@ bool player::res_petrify(bool temp, bool mt) const
         return true;
 
     return get_mutation_level(MUT_PETRIFICATION_RESISTANCE)
-           || temp && get_form()->res_petrify();
+           || get_form()->res_petrify();
 }
 
 int player::res_constrict(bool mt) const
@@ -8178,10 +8242,10 @@ bool player::rot(actor */*who*/, int amount, bool quiet, bool /*no_cleanup*/, bo
 
 bool player::corrode_equipment(const char* corrosion_source, int degree, bool mt)
 {
-    if (res_acid(true, mt) >= 3)
+    if (res_acid(mt) >= 3)
         return false;
 
-    int res = res_corr(true, true, mt);
+    int res = res_corr(mt);
     // rCorr protects against 50% of corrosion.
     if (res > 0)
     {
@@ -8346,7 +8410,7 @@ void player::petrify(actor *who, bool force, bool mt)
 {
     ASSERT(!crawl_state.game_is_arena());
 
-    if (res_petrify(true, mt) && !force)
+    if (res_petrify(mt) && !force)
     {
         canned_msg(MSG_YOU_UNAFFECTED);
         return;
@@ -8445,6 +8509,9 @@ int player::has_claws(bool allow_tran) const
     }
 
     if (you.wearing(EQ_GLOVES, ARM_CLAW, true, false))
+        return 1;
+
+    if (get_mutation_level(MUT_PAWS, allow_tran))
         return 1;
 
     return get_mutation_level(MUT_CLAWS, allow_tran);

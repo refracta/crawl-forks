@@ -97,7 +97,7 @@ void chaotic_buff(actor* act, int dur, actor * attacker)
         10, CB_BRILL,
         20, CB_INVIS,
         4, CB_SHAPESHIFT,
-        12, CB_ICE_ARMOUR,
+        act->wearing_heavy_armour() ? 0 : 12, CB_ICE_ARMOUR,
         10, CB_SWIFT,
         8, CB_REGEN,
         5, CB_BERSERK);

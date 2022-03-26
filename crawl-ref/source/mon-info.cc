@@ -271,7 +271,7 @@ monster_info::monster_info(monster_type p_type, monster_type p_base_type)
     type = p_type;
 
     // give 'job' monsters a default race.
-    const bool classy_drac = mons_is_draconian_job(type) || type == MONS_TIAMAT;
+    const bool classy_drac = mons_is_draconian_job(type) || type == MONS_LIVARRA;
     base_type = p_base_type != MONS_NO_MONSTER ? p_base_type
                 : classy_drac ? MONS_DRACONIAN
                 : mons_is_demonspawn_job(type) ? MONS_DEMONSPAWN
@@ -534,7 +534,7 @@ monster_info::monster_info(const monster* m, int milev)
     sh = max(0, m->shield_bonus(false));
     mr = m->res_magic(false);
     can_see_invis = m->can_see_invisible();
-    mresists = get_mons_resists(*m);
+    mresists = get_mons_current_resists(*m);
     mitemuse = mons_itemuse(*m);
     mbase_speed = mons_base_speed(*m, true);
     menergy = mons_energy(*m);

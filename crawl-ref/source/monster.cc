@@ -385,6 +385,48 @@ int monster::damage_type(int which_attack)
 
     if (!mweap)
     {
+        switch (mons_attack_spec(*this, which_attack, false).type)
+        {
+        default:
+        case AT_HIT:
+        case AT_HEADBUTT:
+        case AT_PUNCH:
+        case AT_KICK:
+        case AT_TENTACLE_SLAP:
+        case AT_TAIL_SLAP:
+        case AT_GORE:
+        case AT_TRAMPLE:
+        case AT_TRUNK_SLAP:
+        case AT_SLAP:
+        case AT_POUNCE:
+            return DAM_BLUDGEON;
+        case AT_BITE:
+        case AT_STING:
+        case AT_PECK:
+        case AT_PINCER:
+            return DAM_PIERCE;
+        case AT_CLAW:
+        case AT_SLASH:
+        case AT_RAKE:
+            return DAM_SLICE;
+        case AT_SPORE:
+        case AT_TOUCH:
+        case AT_ENGULF:
+        case AT_CONSTRICT:
+        case AT_CLAMP:
+            return DAM_FORCE;
+        }
+    }
+
+    return get_damage_type(*mweap);
+}
+
+int monster::vorpal_type(int which_attack)
+{
+    const item_def *mweap = weapon(which_attack);
+
+    if (!mweap)
+    {
         const mon_attack_def atk = mons_attack_spec(*this, which_attack);
         return (atk.type == AT_CLAW)          ? DVORP_CLAWING :
                (atk.type == AT_TENTACLE_SLAP) ? DVORP_TENTACLE
@@ -1730,6 +1772,9 @@ bool monster::pickup_armour(item_def &item, bool msg, bool force)
             return false;
     }
 
+    if (has_ench(ENCH_OZOCUBUS_ARMOUR) && !is_effectively_light_armour(&item))
+        lose_ench_duration(ENCH_OZOCUBUS_ARMOUR, INFINITE_DURATION);
+
     return pickup(item, mslot, msg);
 }
 
@@ -1774,7 +1819,7 @@ static int _get_monster_jewellery_value(const monster *mon,
         value += get_jewellery_improved_vision(item, true);
 
     // If we're not naturally corrosion-resistant.
-    if (item.sub_type == RING_RESIST_CORROSION && !mon->res_corr(false, false))
+    if (item.sub_type == RING_RESIST_CORROSION && !mon->res_corr())
         value++;
 
     return value;
@@ -2933,18 +2978,6 @@ bool monster::immune_to_flavour(beam_type flavour)
     return (resist_adjust_damage(this, flavour, 1000) == 0);
 }
 
-bool monster::has_damage_type(int dam_type)
-{
-    for (int i = 0; i < 4; ++i)
-    {
-        const int dmg_type = damage_type(i);
-        if (dmg_type == dam_type)
-            return true;
-    }
-
-    return false;
-}
-
 int monster::constriction_damage(bool /* direct */) const
 {
     for (int i = 0; i < 4; ++i)
@@ -3736,9 +3769,9 @@ bool monster::is_insubstantial() const
 }
 
 /// Is this monster completely immune to Hellfire?
-bool monster::res_damnation() const
+bool monster::res_hellfire(bool /*mount*/) const
 {
-    return get_mons_resist(*this, MR_RES_DAMNATION);
+    return get_mons_resist(*this, MR_RES_HELLFIRE);
 }
 
 // Returns the monster's strength bonus
@@ -3879,8 +3912,12 @@ int monster::res_fire(bool /*mount*/) const
 
 int monster::res_steam(bool /*mount*/) const
 {
-    int res = get_mons_resist(*this, MR_RES_STEAM);
+    int res = 0;
+
     if (wearing(EQ_BODY_ARMOUR, ARM_STEAM_DRAGON_ARMOUR))
+        res += 3;
+
+    if (mons_species(true) == MONS_STEAM_DRAGON)
         res += 3;
 
     res += (res_fire() + 1) / 2;
@@ -3980,28 +4017,59 @@ int monster::res_elec(bool /*mount*/) const
     return u;
 }
 
+bool monster::wearing_heavy_armour() const
+{
+    item_def * armour = mslot_item(MSLOT_ARMOUR);
+    if (armour && !is_effectively_light_armour(armour))
+        return true;
+    return false;
+}
+
+int monster::res_slash(bool /*mount*/) const
+{
+    int u = get_mons_resist(*this, MR_RES_SLASHING);
+
+    if (wearing_heavy_armour())
+        return 1;
+
+    return max(min(u, 1), -1);
+}
+
+int monster::res_pierce(bool /*mount*/) const
+{
+    int u = get_mons_resist(*this, MR_RES_PIERCING);
+
+    if (wearing_heavy_armour())
+        u--;
+
+    return max(u, -1);
+}
+
+int monster::res_bludgeon(bool /*mount*/) const
+{
+    return get_mons_resist(*this, MR_RES_BLUDGEONING);
+}
+
 int monster::res_water_drowning(bool /*mount*/) const
 {
-    int rw = 0;
+    if (get_mons_resist(*this, MR_VUL_WATER))
+        return -1;
 
     if (is_unbreathing())
-        rw++;
+        return 1;
 
     habitat_type hab = mons_habitat(*this);
     if (hab == HT_WATER || hab == HT_AMPHIBIOUS)
-        rw++;
+        return 1;
 
-    if (get_mons_resist(*this, MR_VUL_WATER))
-        rw--;
-
-    return sgn(rw);
+    return 0;
 }
 
-int monster::res_poison(bool temp, bool /*mount*/) const
+int monster::res_poison(bool /*mount*/) const
 {
     int u = get_mons_resist(*this, MR_RES_POISON);
 
-    if (temp && has_ench(ENCH_POISON_VULN))
+    if (has_ench(ENCH_POISON_VULN))
         u--;
 
     if (u > 0)
@@ -4042,12 +4110,12 @@ int monster::res_poison(bool temp, bool /*mount*/) const
     return u;
 }
 
-bool monster::res_sticky_flame() const
+bool monster::res_sticky_flame(bool /*mount*/) const
 {
     return is_insubstantial() || get_mons_resist(*this, MR_RES_STICKY_FLAME) > 0;
 }
 
-int monster::res_rotting(bool /*temp*/, bool /*mount*/) const
+int monster::res_rotting(bool /*mount*/) const
 {
     int res = 0;
     const mon_holy_type holi = holiness();
@@ -4093,15 +4161,15 @@ int monster::res_holy_energy(bool /*mount*/) const
     return 0;
 }
 
-int monster::res_negative_energy(bool intrinsic_only, bool /*mount*/) const
+int monster::res_negative_energy(bool /*mount*/) const
 {
-    // If you change this, also change get_mons_resists.
+    // If you change this, also change get_mons_base_resists.
     if (!(holiness() & MH_NATURAL) && !(holiness() & MH_DEMONIC))
         return 3;
 
     int u = get_mons_resist(*this, MR_RES_NEG);
 
-    if ((mons_itemuse(*this) & MU_WIELD_MASK) && !intrinsic_only)
+    if (mons_itemuse(*this) & MU_WIELD_MASK)
     {
         u += scan_artefacts(ARTP_NEGATIVE_ENERGY);
 
@@ -4152,7 +4220,7 @@ bool monster::res_wind(bool /*mount*/) const
     return get_mons_resist(*this, MR_RES_WIND) > 0;
 }
 
-bool monster::res_petrify(bool /*temp*/, bool /*mt*/) const
+bool monster::res_petrify(bool /*mt*/) const
 {
     const int armour = inv[MSLOT_ARMOUR];
 
@@ -4175,12 +4243,12 @@ int monster::res_constrict(bool /*mt*/) const
     return 0;
 }
 
-int monster::res_corr(bool calc_unid, bool items, bool /*mount*/) const
+int monster::res_corr(bool /*mount*/) const
 {
-    return max(min(res_acid(calc_unid, items), 1), -1);
+    return max(min(res_acid(), 1), -1);
 }
 
-int monster::res_acid(bool calc_unid, bool items, bool /*mount*/) const
+int monster::res_acid(bool /*mount*/) const
 {
     int u = get_mons_resist(*this, MR_RES_ACID);
 
@@ -4195,7 +4263,9 @@ int monster::res_acid(bool calc_unid, bool items, bool /*mount*/) const
     if (has_ench(ENCH_RESISTANCE) && u < 2)
         u++;
 
-    u += actor::res_acid(calc_unid, items);
+    u += wearing(EQ_RINGS, RING_RESIST_CORROSION);
+    u += wearing(EQ_BODY_ARMOUR, ARM_ACID_DRAGON_ARMOUR);
+    u += scan_artefacts(ARTP_RCORR);
 
     return max(min(u, 3), -3);
 }

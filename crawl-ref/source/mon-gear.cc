@@ -683,7 +683,7 @@ int make_mons_weapon(monster_type type, int level, bool melee_only)
             { { { WPN_CLEAVER,         12 },
                 { WPN_SCIMITAR,         5 },
         }, { 2, 1, 4 }, { { SPWPN_VENOM, 1 } } } },
-        { MONS_TIAMAT,
+        { MONS_LIVARRA,
             { { { WPN_BARDICHE,         1 },
                 { WPN_DEMON_TRIDENT,    1 },
                 { WPN_GLAIVE,           1 },
@@ -2040,7 +2040,7 @@ int make_mons_armour(monster_type type, int level)
         make_item_unrandart(item, UNRAND_FAERIE);
         break;
 
-    case MONS_TIAMAT:
+    case MONS_LIVARRA:
         force_item = true;
         make_item_unrandart(item, UNRAND_DRAGONSKIN);
         break;

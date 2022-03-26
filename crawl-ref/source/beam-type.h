@@ -104,7 +104,10 @@ enum beam_type                  // bolt::flavour
     BEAM_ROT,
     BEAM_WAND_HEALING,
     BEAM_ACID_WAVE,
-    BEAM_LAST_REAL = BEAM_ACID_WAVE,
+    BEAM_SLASH,
+    BEAM_PIERCE,
+    BEAM_BLUDGEON,
+    BEAM_LAST_REAL = BEAM_BLUDGEON,
     BEAM_WAND_RANDOM, // Used for Monster Setup only.
 
     // For getting the visual effect of a beam.

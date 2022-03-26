@@ -394,11 +394,51 @@ resists_t get_mons_class_resists(monster_type mc)
     return _apply_holiness_resists(resists, mons_class_holiness(mc));
 }
 
-resists_t get_mons_resists(const monster& m)
+// BCADNOTE: Update this if mon_resist_flags changes.
+resists_t get_mons_current_resists(const monster& m)
+{
+    resists_t retval = 0;
+
+    std::function<int(const monster&, bool)> resist_functions[] =
+    { 
+      &monster::res_elec, &monster::res_poison, &monster::res_fire,
+      &monster::res_cold, &monster::res_negative_energy, &monster::res_acid,
+      &monster::res_torment, &monster::res_petrify, &monster::res_hellfire,
+      &monster::res_sticky_flame, &monster::res_wind, &monster::res_rotting,
+      &monster::res_slash, &monster::res_pierce, &monster::res_bludgeon,
+      &monster::res_water_drowning,
+      &monster::res_slash, &monster::res_pierce, &monster::res_bludgeon,
+      // Repeat line is intentional, first time checks resist, second weakness.
+    };
+
+    resists_t resists[] =
+    {
+        MR_RES_ELEC, MR_RES_POISON, MR_RES_FIRE, MR_RES_COLD, MR_RES_NEG, MR_RES_ACID,
+        MR_RES_TORMENT, MR_RES_PETRIFY, MR_RES_HELLFIRE, MR_RES_STICKY_FLAME, 
+        MR_RES_WIND, MR_RES_ROTTING, MR_RES_SLASHING, MR_RES_PIERCING, MR_RES_BLUDGEONING, 
+        MR_VUL_WATER, MR_VUL_SLASHING, MR_VUL_PIERCING, MR_VUL_BLUDGEONING
+    };
+
+    const int size = 19;
+
+    for (int i = 0; i < size; i++)
+    {
+        if (resists[i] < MR_LAST_MULTI)
+            retval |= mrd(resists[i], resist_functions[i](m, false));
+        else if ((resists[i] < MR_VULNS) && (resist_functions[i](m, false) > 0))
+            retval |= resists[i];
+        else if ((resists[i] > MR_VULNS) && resist_functions[i](m, false) < 0)
+            retval |= resists[i];
+    }
+
+    return retval;
+}
+
+resists_t get_mons_base_resists(const monster& m)
 {
     const monster& mon = get_tentacle_head(m);
 
-    resists_t resists = get_mons_class_resists(mon.type);
+    resists_t resists = get_mons_class_resists(m.type);
 
     if (mons_is_ghost_demon(mon.type))
         resists |= mon.ghost->resists;
@@ -408,7 +448,7 @@ resists_t get_mons_resists(const monster& m)
 
     if (mons_genus(mon.type) == MONS_DRACONIAN
             && mon.type != MONS_DRACONIAN
-        || mon.type == MONS_TIAMAT
+        || mon.type == MONS_LIVARRA
         || mons_genus(mon.type) == MONS_DEMONSPAWN
             && mon.type != MONS_DEMONSPAWN)
     {
@@ -438,16 +478,14 @@ resists_t get_mons_resists(const monster& m)
             resists |= mrd(MR_RES_ACID, 2);
         if (mon.has_abom_facet(FAC_TRAMPLE))
             resists |= mrd(MR_RES_COLD, 2);
-    }
+    } 
 
-    // This is set from here in case they're undead due to the
-    // MF_FAKE_UNDEAD flag. See the comment in get_mons_class_resists.
-    return _apply_holiness_resists(resists, mon.holiness());
+    return resists;
 }
 
 int get_mons_resist(const monster& mon, mon_resist_flags res)
 {
-    return get_resist(get_mons_resists(mon), res);
+    return get_resist(get_mons_base_resists(mon), res);
 }
 
 // Returns true if the monster successfully resists this attempt to poison it.
@@ -3537,7 +3575,7 @@ void define_monster(monster& mons)
         mons.num_heads = 27;
         break;
 
-    case MONS_TIAMAT:
+    case MONS_LIVARRA:
         // Initialise to a random draconian type.
         draconian_change_colour(&mons);
         monbase = mons.base_monster;
@@ -6766,7 +6804,7 @@ bool is_chaotic_type(monster_type type)
         || type == MONS_ABOMINATION_LARGE
         || type == MONS_WRETCHED_STAR
         || type == MONS_KILLER_KLOWN      // For their random attacks.
-        || type == MONS_TIAMAT            // For her colour-changing.
+        || type == MONS_LIVARRA            // For her colour-changing.
         || type == MONS_BAI_SUZHEN
         || type == MONS_BAI_SUZHEN_DRAGON // For her transformation.
         || mons_is_demonspawn(type))      // Like player demonspawn.

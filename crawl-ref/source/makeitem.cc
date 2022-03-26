@@ -756,9 +756,6 @@ static special_missile_type _determine_missile_brand(const item_def& item,
 
     switch (item.sub_type)
     {
-#if TAG_MAJOR_VERSION == 34
-    case MI_DART:
-#endif
     case MI_STONE:
     case MI_THROWING_NET:
     case MI_LARGE_ROCK:

@@ -197,6 +197,55 @@ size_type player::body_size(size_part_type psize, bool base) const
 int player::damage_type(int attack_number)
 {
     if (const item_def* wp = weapon(attack_number))
+        return get_damage_type(*wp);
+
+    // Thrown items handled elsewhere this is just Unarmed.
+    switch (you.form)
+    {
+    case transformation::blade_hands:
+        return DAM_SLICE;
+    case transformation::fungus:
+    case transformation::wisp:
+        return DAM_FORCE;
+    case transformation::pig:
+        return DAM_PIERCE;
+    case transformation::scorpion:
+        if (attack_number > 1)
+            return DAM_PIERCE;
+        return DAM_SLICE;
+    default:
+        break; // Dragon form handled by the claws check rest are close to normal form for UC.
+    }
+
+    if (attack_number > 1)
+    {
+        switch (you.mount)
+        {
+        default:
+            return DAM_BLUDGEON;
+        case mount_type::drake:
+        case mount_type::hydra:
+        case mount_type::spider:
+            return DAM_PIERCE;
+        case mount_type::slime:
+            return DAM_BLUDGEON;
+        }
+    }
+
+    if (has_usable_claws())
+    {
+        if (get_mutation_level(MUT_PAWS))
+            return DAM_PIERCE;
+        if (has_claws() > 1)
+            return DAM_SLICE;
+    }
+
+    return DAM_BLUDGEON;
+}
+
+int player::vorpal_type(int attack_number)
+{
+    if (const item_def* wp = weapon(attack_number))
         return get_vorpal_type(*wp);
     else if (form == transformation::blade_hands)
         return DVORP_SLICING;

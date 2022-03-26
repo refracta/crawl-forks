@@ -96,6 +96,9 @@ public:
 
     bool      fake_chaos_attack;
 
+    int       damage_type;
+    string    resist_message;
+
     bool simu;
 
 // Public Methods
@@ -115,7 +118,7 @@ public:
     // TODO: Definitely want to get rid of this, which we can't really do
     // until we refactor the whole pronoun / desc usage from these lowly
     // classes all the way up to monster/player (and actor) classes.
-    string defender_name(bool allow_reflexive);
+    string defender_name(bool allow_reflexive, bool pronoun = false);
 
 // Private Properties
     string aux_source;
@@ -140,6 +143,7 @@ protected:
     virtual int get_weapon_plus();
     virtual int calc_base_unarmed_damage();
     virtual int calc_mon_to_hit_base(bool random) = 0;
+    virtual int apply_resists(int damage);
     virtual int apply_damage_modifiers(int damage);
     virtual int calc_damage();
     int test_hit(int to_hit, int ev);
@@ -183,7 +187,7 @@ protected:
     void stab_message();
 
     string atk_name(description_level_type desc);
-    string def_name(description_level_type desc);
+    string def_name(description_level_type desc, bool pronoun = false);
     string wep_name(description_level_type desc = DESC_YOUR,
                     iflags_t ignore_flags = ISFLAG_KNOW_CURSE
                                             | ISFLAG_KNOW_PLUSES);
