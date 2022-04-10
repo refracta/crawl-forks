@@ -49,6 +49,7 @@
 #include "ghost.h"
 #include "god-abil.h" // just for the Ru sac penalty key
 #include "god-companions.h"
+#include "god-passive.h"
 #include "item-name.h"
 #include "item-prop.h"
 #include "item-status-flag-type.h"
@@ -2488,34 +2489,21 @@ static void tag_read_you(reader &th)
     for (int i = count; i < NUM_EQUIP; ++i)
         you.melded.set(i, false);
 
+#if TAG_MAJOR_VERSION == 34
+    // BCADDO: Minor version this in the future. (Doesn't hurt anything just for efficiency).
+    if (you.equip[EQ_WEAPON0] == you.equip[EQ_WEAPON1] && you.equip[EQ_WEAPON0] != -1)
+    {
+        you.equip[EQ_WEAPON1] = -1;
+        you.melded.set(EQ_WEAPON1, false);
+        ash_check_bondage();
+    }
+#endif
+
     you.magic_points = unmarshallUByte(th);
     you.max_magic_points = unmarshallByte(th);
 
     for (int i = 0; i < NUM_STATS; ++i)
         you.base_stats[i] = unmarshallByte(th);
-#if TAG_MAJOR_VERSION == 34
-    // Gnolls previously had stats fixed at 7/7/7, so randomly award them stats
-    // based on the points they'd have gotten from XL/3 selection and XL/4
-    // random SID.
-    if (th.getMinorVersion() >= TAG_MINOR_STATLOCKED_GNOLLS
-        && th.getMinorVersion() < TAG_MINOR_GNOLLS_REDUX
-        && you.species == SP_GNOLL)
-    {
-        const species_def& sd = get_species_def(you.species);
-
-        // Give base stat points.
-        species_stat_init(you.species);
-
-        const set<stat_type> all_stats = { STAT_STR, STAT_INT, STAT_DEX };
-        int num_points = you.experience_level / 3;
-        for (int i = 0; i < num_points; ++i)
-            modify_stat(*random_iterator(all_stats), 1, false);
-
-        num_points = you.experience_level / sd.how_often;
-        for (int i = 0; i < num_points; ++i)
-            modify_stat(*random_iterator(sd.level_stats), 1, false);
-    }
-#endif
 
     for (int i = 0; i < NUM_STATS; ++i)
         you.stat_loss[i] = unmarshallByte(th);

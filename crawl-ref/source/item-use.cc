@@ -1186,6 +1186,46 @@ bool quick_swap()
         return false;
     }
 
+    if (you.equip[EQ_WEAPON0] == 0 && you.equip[EQ_WEAPON1] == 1
+        || you.equip[EQ_WEAPON1] == 0 && you.equip[EQ_WEAPON0] == 1)
+    {
+        if (is_range_weapon(you.inv[0]) || is_range_weapon(you.inv[1]))
+        {
+            mprf(MSGCH_ERROR, "Can't swap a ranged weapon into the left hand slot.");
+            return false;
+        }
+
+        if (!yesno("Switch to other hand?", true, false))
+        {
+            canned_msg(MSG_OK);
+            return false;
+        }
+
+        int w0 = you.equip[EQ_WEAPON0];
+        int w1 = you.equip[EQ_WEAPON1];
+
+        if (!unwield_item(true)) 
+            return false;
+
+        you.wield_change = true;
+
+        // Still unwielded something so still have to use time.
+        if (!unwield_item(false))
+        {
+            you.m_quiver.on_weapon_changed();
+            you.turn_is_over = true;
+            return true;
+        }
+
+        equip_item(EQ_WEAPON0, w1, true);
+        equip_item(EQ_WEAPON1, w0, true);
+
+        you.m_quiver.on_weapon_changed();
+        you.turn_is_over = true;
+
+        return true;
+    }
+
     if (!unwield_item(!swapto))
         return false;
 
