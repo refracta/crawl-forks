@@ -861,22 +861,21 @@ ENDMAP
 NAME:   minmay_ossuary_gauntlet
 ORIENT: east
 TAGS:   uniq_ossuary
-SUBST:  ' = '''''..
+SUBST:  ' = '''''aa
 CLEAR:  '
+KPROP:  a = no_tele_into
 NSUBST: 1 = 4:1 / *:2
 : ossuary_setup_features(_G)
 MAP
-    '''''
-  ''''''''''
-  '''ccccccccccccccccc   ccccc
+    ''''''ccccccccccccccccccc
+   ''ccccccccccccccccccccccccc
  ''''c1H1H1H1H1H1H1H1cccccHHHcc 
-'''J'@................$$$$$$$Gc
-'''''@...G...G...G...G$$$G$}$Gc
-'''J'@................$$$$$$$Gc
- ''''c1I1I1I1I1I1I1I1cccccIIIcc
-  '''ccccccccccccccccc   ccccc
-  '''''''''''
-    '''''
+'''J'.................$$$$$$$Gc
+'''''....G...G...G...G$$$G$}$Gc
+'''J'.................$$$$$$$Gc
+ '''.c1I1I1I1I1I1I1I1cccccIIIcc
+   '@ccccccccccccccccccccccccc
+    ''''''ccccccccccccccccccc
 ENDMAP
 
 NAME:    ossuary_the_hunt_dpeg
