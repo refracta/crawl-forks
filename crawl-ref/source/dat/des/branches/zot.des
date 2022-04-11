@@ -764,31 +764,33 @@ ENDMAP
 NAME:  lemuel_golem_globe
 DEPTH: Zot
 TAGS:  no_rotate no_exits
-KFEAT: T = permanent teleport trap / congregation trap
-KFEAT: m = iron_grate
-SUBST: 1 = 1.
+NSUBST: T = 2:T / *:}
+KFEAT:  T = permanent teleport trap / congregation trap
+KFEAT:  m = iron_grate
+NSUBST: 1 = 4:1 / 1:* / *:.
 MONS:  electric golem
 MAP
-  mmmm
- mm..mm
-mm.11.mm
-m.1TT1.m
-mm.11.mm
- mm..mm
-  mmmm
+  mmmmm
+ mm...mm
+mm.111.mm
+m.1TTT1.m
+mm.111.mm
+ mm...mm
+  mmmmm
 ENDMAP
 
 ###################################################################
 # Draconian Sentry Boxes
 # There is an 70% chance all three downstairs will be here.
 #
-NAME:   lemuel_draconian_sentries
+NAME:   lemuel_draconian_sentries_large
 DEPTH:  Zot, !Zot:$
 ORIENT: float
 TAGS:   no_rotate uniq_draconian_sentries
 MONS:   pearl draconian scorcher / bone draconian stormcaller / lime draconian stormcaller
 SUBST:  } = }:80 >, ) = ):80 > , ] = ]:80 >
 SUBST:  w:w., w=Ww
+KPROP:  1 = no_tele_into
 KFEAT:  m = iron_grate
 MAP
 ............................
@@ -815,6 +817,7 @@ TAGS:   no_rotate uniq_draconian_sentries
 MONS:   golden draconian scorcher / pearl draconian stormcaller / lime draconian stormcaller
 SUBST:  } = }:80 >, ) = ):80 > , ] = ]:80 >
 SUBST:  w:w., w=Ww
+KPROP:  1 = no_tele_into
 KFEAT:  m = iron_grate
 MAP
 ................
