@@ -934,6 +934,10 @@ static int _wielding_reduction(artefact_prop_type type)
  **/
 static void _maybe_corrode()
 {
+
+    if (player_res_acid() >= 3)
+        return;
+
     int corrosion_sources = you.scan_artefacts(ARTP_CORRODE);
     corrosion_sources += _wielding_reduction(ARTP_CORRODE);
     int degree = binomial(corrosion_sources, 3);

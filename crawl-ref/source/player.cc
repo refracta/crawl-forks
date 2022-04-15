@@ -7558,6 +7558,9 @@ int player::res_acid(bool mt) const
 
     int ra = player_res_acid();
 
+    if (ra == 3)
+        return 3;
+
     // amulet of chaos
     if (wearing(EQ_AMULET, AMU_CHAOS))
         ra += _chaos_roll();
