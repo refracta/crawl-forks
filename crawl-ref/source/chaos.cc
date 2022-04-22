@@ -21,7 +21,7 @@ beam_type eldritch_damage_type()
     return random_choose_weighted(
         1, BEAM_FIRE,
         1, BEAM_COLD,
-        3, BEAM_NEG,
+        3, BEAM_DRAIN,
         3, BEAM_ACID,
         4, BEAM_DAMNATION,
         3, BEAM_DEVASTATION,
@@ -33,12 +33,12 @@ beam_type chaos_damage_type(bool player)
     beam_type retval;
     retval = random_choose_weighted(4, BEAM_FIRE,
         4, BEAM_COLD,
-        4, BEAM_NEG,
+        4, BEAM_DRAIN,
         4, BEAM_ACID,
         1, BEAM_DAMNATION,
         6, BEAM_DEVASTATION,
         3, BEAM_ELECTRICITY);
-    if (player && is_good_god(you.religion) && (retval == BEAM_NEG || retval == BEAM_DAMNATION))
+    if (player && is_good_god(you.religion) && (retval == BEAM_DRAIN || retval == BEAM_DAMNATION))
         return BEAM_HOLY;
     return retval;
 }

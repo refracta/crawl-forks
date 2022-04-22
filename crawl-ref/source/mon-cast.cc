@@ -4972,7 +4972,7 @@ static void _mons_vampiric_drain(monster &mons, mon_spell_slot slot, bolt&)
 
     hp_cost = resist_adjust_damage(target, BEAM_NEG, hp_cost);
 
-    if (!hp_cost)
+    if (hp_cost <= 0)
     {
         simple_monster_message(mons,
                                " is infused with unholy energy, but nothing happens.",
@@ -5042,15 +5042,12 @@ static bool _mons_cast_freeze(monster* mons)
 
     const int base_damage = roll_dice(1, 3 + pow / 6);
     int damage = 0;
+    int mtdam = 0;
 
-    if (target->is_player())
-        damage = resist_adjust_damage(&you, flavour, base_damage);
-    else
-    {
-        bolt beam;
-        beam.flavour = flavour;
-        damage = mons_adjust_flavoured(target->as_monster(), beam, base_damage);
-    }
+    damage = resist_adjust_damage(target, flavour, base_damage);
+
+    if (target->is_player() && you.mounted())
+        mtdam = resist_adjust_damage(&you, flavour, base_damage, true);
 
     string dam_verb = "frozen";
 
@@ -5058,26 +5055,44 @@ static bool _mons_cast_freeze(monster* mons)
     {
         switch (flavour)
         {
-        case BEAM_FIRE: dam_verb = "burned"; break;
-        case BEAM_ELECTRICITY: dam_verb = "shocked"; break;
-        case BEAM_NEG: dam_verb = "drained"; break;
-        case BEAM_ACID: dam_verb = "dissolved"; break;
-        case BEAM_DAMNATION: dam_verb = "scorched"; break;
-        case BEAM_HOLY: dam_verb = "smitten"; break;
-        default:
-        case BEAM_DEVASTATION: dam_verb = "ruptured"; break;
+        case BEAM_FIRE:        dam_verb = "burned";    break;
+        case BEAM_ELECTRICITY: dam_verb = "shocked";   break;
+        case BEAM_NEG:         dam_verb = "drained";   break;
+        case BEAM_ACID:        dam_verb = "dissolved"; break;
+        case BEAM_DAMNATION:   dam_verb = "scorched";  break;
+        case BEAM_HOLY:        dam_verb = "smitten";   break;
+        default:                                       break;
+        case BEAM_DEVASTATION: dam_verb = "ruptured";  break;
         }
     }
 
+    if (!damage && !mtdam)
+        return true;
+
     if (you.can_see(*target))
     {
-        mprf("%s %s %s.", target->name(DESC_THE).c_str(),
-                          target->conj_verb("are").c_str(),
-                          dam_verb.c_str());
-    }
+        string mtstr = "";
+        if (mtdam)
+            mtstr = make_stringf(" and your %s", you.mount_name(true).c_str());
+        mprf("%s%s %s %s%s%s", target->name(DESC_THE).c_str(),
+                               mtstr.c_str(),
+                               mtdam ? "are" : target->conj_verb("are").c_str(),
+                               dam_verb.c_str(),
+                               attack_strength_punctuation(damage).c_str(),
+                               mtdam ? attack_strength_punctuation(mtdam).c_str() : "");
+    } 
 
-    target->hurt(mons, damage, flavour, KILLED_BY_BEAM, "", "by Freeze");
+    // For messages and any specials from damage type.
+    target->beam_effects(flavour, base_damage, damage);
 
+    if (target->is_player() && you.mounted())
+        target->beam_effects(flavour, base_damage, mtdam);
+
+    if (damage > 0)
+        target->hurt(mons, damage, flavour, KILLED_BY_BEAM, "", "by Freeze");
+
+    if (mtdam > 0)
+        damage_mount(mtdam);
 
     if (target->alive() && chaos)
         chaotic_status(target, damage, mons);
@@ -6369,16 +6384,30 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
         dice_def calc = waterstrike_damage(*mons);
         int damage_taken = calc.roll();
         int maximum_damage = calc.max();
-        damage_taken = foe->beam_resists(pbolt, damage_taken, false, "", mount_defend);
-        maximum_damage = foe->beam_resists(pbolt, maximum_damage, false, "", mount_defend);
-        damage_taken = foe->apply_ac(damage_taken, maximum_damage, ac_type::normal, 0, true, mount_defend);
+        damage_taken = resist_adjust_damage(foe, pbolt.flavour, damage_taken, mount_defend);
+        maximum_damage = resist_adjust_damage(foe, pbolt.flavour, maximum_damage, mount_defend);
+
+        if (damage_taken > 0)
+            damage_taken = foe->apply_ac(damage_taken, maximum_damage, ac_type::normal, 0, true, mount_defend);
+
+        const bool absorb = damage_taken < 0;
+
+        string substr = attack_strength_punctuation(damage_taken);
+
+        if (absorb)
+        {
+            substr = make_stringf(". %s %s the raging water%s",
+                                  uppercase_first(foe->pronoun(PRONOUN_SUBJECTIVE)).c_str(),
+                                  foe->conj_verb("absorb").c_str(),
+                                  attack_strength_punctuation(damage_taken).c_str());
+        }
 
         if (you.can_see(*foe))
         {
-                mprf("The water %s and strikes %s%s",
-                        foe->airborne() ? "rises up" : "swirls",
-                        mount_defend ? mount_name.c_str() : foe->name(DESC_THE).c_str(),
-                        attack_strength_punctuation(damage_taken).c_str());
+            mprf("The water %s and strikes %s%s",
+                 foe->airborne() ? "rises up" : "swirls",
+                 mount_defend ? mount_name.c_str() : foe->name(DESC_THE).c_str(),
+                 substr.c_str());
         }
 
         if (mount_defend)
@@ -6403,21 +6432,36 @@ void mons_cast(monster* mons, bolt pbolt, spell_type spell_cast,
             pbolt.flavour = eldritch_damage_type();
 
         int damage_taken = 10 + 2 * mons->spell_hd(spell_cast);
-        damage_taken = foe->beam_resists(pbolt, damage_taken, false);
+        damage_taken = resist_adjust_damage(foe, pbolt.flavour, damage_taken);
 
         // Previous method of damage calculation (in line with player
         // airstrike) had absurd variance.
         int dam = random2avg(damage_taken, 3);
-        damage_taken = foe->apply_ac(dam, damage_taken);
+        const bool absorb = dam < 0;
+
+        if (absorb)
+            damage_taken = dam;
+        else
+            damage_taken = foe->apply_ac(dam, damage_taken);
+
+        string substr = attack_strength_punctuation(damage_taken);
+
+        if (absorb)
+        {
+            substr = make_stringf(". %s %s the tulmultous air%s",
+                                  uppercase_first(foe->pronoun(PRONOUN_SUBJECTIVE)).c_str(),
+                                  foe->conj_verb("absorb").c_str(),
+                                  attack_strength_punctuation(damage_taken).c_str());
+        }
 
         if (you.can_see(*foe))
         {
-                mprf("The air %stwists around and %sstrikes %s%s%s",
-                        chaos ? "chaotically " : "",
-                        foe->airborne() ? "violently " : "",
-                        foe->name(DESC_THE).c_str(),
-                        foe->airborne() ? " in flight" : "",
-                        attack_strength_punctuation(damage_taken).c_str());
+            mprf("The air %stwists around and %sstrikes %s%s%s",
+                    chaos ? "chaotically " : "",
+                    foe->airborne() ? "violently " : "",
+                    foe->name(DESC_THE).c_str(),
+                    foe->airborne() ? " in flight" : "",
+                    substr.c_str());
         }
 
         foe->hurt(mons, damage_taken, pbolt.flavour, KILLED_BY_BEAM,

@@ -1303,7 +1303,7 @@ static void _append_weapon_stats(string &description, const item_def &item)
     const bool could_set_target = _could_set_training_target(item, true);
     bool could_set_dual_target = false;
 
-    const double base_acc = property(item, (item.base_type == OBJ_SHIELDS) ? PSHD_HIT : PWPN_HIT);
+    const double base_acc = property(item, (item.base_type == OBJ_SHIELDS) ? (int)PSHD_HIT : (int)PWPN_HIT);
     double current_acc = base_acc;
     if (current_acc < 0)
         current_acc = min(0.0, current_acc + you.strength() * 0.25);
@@ -4786,13 +4786,9 @@ static string _monster_stat_description(const monster_info& mi)
         extreme_resists.emplace_back("clouds of all kinds");
 
     vector<string> resist_descriptions;
+    string absorb_description = "";
     if (!absorbs.empty())
-    {
-        const string tmp = "absorbs "
-            + comma_separated_line(extreme_resists.begin(),
-                extreme_resists.end());
-        resist_descriptions.push_back(tmp);
-    }
+        absorb_description = comma_separated_line(absorbs.begin(), absorbs.end());
     if (!extreme_resists.empty())
     {
         const string tmp = "immune to "
@@ -4825,11 +4821,28 @@ static string _monster_stat_description(const monster_info& mi)
 
     if (mi.type == MONS_CHAOS_ELEMENTAL)
     {
-        result << "Its resistance to electricity, acid and extremes "
+        result << "Its resistances to electricity, acid and extremes "
                << "of temperature ever shift with its form. \n";
     }
 
-    if (!resist_descriptions.empty())
+    if (absorb_description.length())
+    {
+        result << uppercase_first(pronoun) << " "
+               << conjugate_verb("absorbs", plural) << " "
+               << absorb_description.c_str();
+
+        if (!resist_descriptions.empty())
+        {
+            string are = " " + conjugate_verb("are", plural) + " ";
+            result << ";" << are
+                   << comma_separated_line(resist_descriptions.begin(),
+                                           resist_descriptions.end(),
+                                           "; and" + are, ";" + are)
+                   << ".\n";
+        }
+    }
+
+    else if (!resist_descriptions.empty())
     {
         result << uppercase_first(pronoun) << " "
                << conjugate_verb("are", plural) << " "

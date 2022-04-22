@@ -237,7 +237,7 @@ static const cloud_data clouds[] = {
     { "spectral mist", nullptr,                 // terse, verbose name
       ETC_ELECTRICITY,                          // colour
       { TILE_CLOUD_SPECTRAL, CTVARY_DUR },      // tile
-      BEAM_NONE,                                // beam_effect
+      BEAM_MALIGN_OFFERING,                     // beam_effect
       { 3, 13 },                                // base, random damage
     },
     // CLOUD_ACID,
@@ -258,7 +258,7 @@ static const cloud_data clouds[] = {
     { "negative energy", nullptr,               // terse, verbose name
       ETC_INCARNADINE,                          // colour
       { TILE_CLOUD_NEG, CTVARY_DUR },           // tile
-      BEAM_NEG,                                 // beam_effect
+      BEAM_DRAIN,                                 // beam_effect
       NORMAL_CLOUD_DAM,                         // base, random damage
     },
     // CLOUD_FLUFFY,
@@ -547,6 +547,7 @@ static void _dissipate_cloud(cloud_struct& cloud)
         delete_cloud(cloud.pos);
 }
 
+// BCADDO: Fix this to be less . . . swamp themed monsters.
 static void _handle_spectral_cloud(const cloud_struct& cloud)
 {
     if (actor_at(cloud.pos) || !actor_by_mid(cloud.source))
@@ -886,23 +887,70 @@ static int _cloud_base_damage(cloud_type flavour,
     return _cloud_damage_calc(dam.random, trials, dam.base, maximum_damage);
 }
 
+bool actor_cloud_helpful(const actor &act, cloud_type type, bool mount)
+{
+    switch (type)
+    {
+    case CLOUD_FIRE:
+    case CLOUD_FOREST_FIRE:
+    case CLOUD_STEAM:
+        if (act.res_fire(mount) > 3)
+            return true;
+        return false;
+    case CLOUD_HOLY:
+        if (act.res_holy_energy(mount) > 3)
+            return true;
+        return false;
+    case CLOUD_COLD:
+        if (act.res_cold(mount) > 3)
+            return true;
+        return false;
+    case CLOUD_ACID:
+        if (act.res_acid(mount) > 3)
+            return true;
+        return false;
+    case CLOUD_STORM:
+        if (act.res_elec(mount) > 3)
+            return true;
+        return false;
+    case CLOUD_SPECTRAL:
+        if (act.holiness() & MH_UNDEAD)
+            return true;
+        // fallthrough
+    case CLOUD_BLOOD:
+    case CLOUD_NEGATIVE_ENERGY:
+        if (act.res_negative_energy(mount) > 3)
+            return true;
+        return false;
+    // BCADDO: Water absorbers absorb rain?
+    default:
+        return false;
+    }
+}
+
 /**
  * Is the given actor immune to cloud damage and other negative side effects
  * (other than opaque clouds + invis) from all clouds of the given type?
  */
 bool actor_cloud_immune(const actor &act, cloud_type type, bool mount)
 {
+    if (is_harmless_cloud(type)) 
+        return true;
+
+    if (actor_cloud_helpful(act, type, mount))
+        return false;
+
     // Qazlalites and scarfwearers get immunity to clouds.
     // and the Cloud Mage too!
     // Mounts inherit godly but not items cloud immunity
-    if (is_harmless_cloud(type) || act.cloud_immune(true, !mount))
+    if (act.cloud_immune(true, !mount))
         return true;
 
     switch (type)
     {
         case CLOUD_FIRE:
         case CLOUD_FOREST_FIRE:
-            if (act.res_fire(mount) >= 3)
+            if (act.res_fire(mount) == 3)
                 return true;
             if (act.is_player())
             {
@@ -913,9 +961,11 @@ bool actor_cloud_immune(const actor &act, cloud_type type, bool mount)
             }
             return false;
         case CLOUD_HOLY:
-            return act.res_holy_energy(mount) >= 3;
+            if (act.res_holy_energy(mount) >= 3)
+                return true;
+            return false;
         case CLOUD_COLD:
-            if (act.res_cold(mount) >= 3)
+            if (act.res_cold(mount) == 3)
                 return true;
             if (act.is_player())
             {
@@ -924,28 +974,47 @@ bool actor_cloud_immune(const actor &act, cloud_type type, bool mount)
             }
             return false;
         case CLOUD_MEPHITIC:
-            return act.res_poison(mount) > 0 || act.is_unbreathing(mount);
+            if (act.res_poison(mount) > 0 || act.is_unbreathing(mount))
+                return true;
+            return false;
         case CLOUD_POISON:
-            return act.res_poison(mount) > 0;
+            if (act.res_poison(mount) > 0)
+                return true;
+            return false;
         case CLOUD_STEAM:
-            return act.res_steam(mount) > 0;
+            if (act.res_steam(mount) > 0)
+                return true;
+            return false;
         case CLOUD_MIASMA:
-            return act.res_rotting(mount) > 0;
+            if (act.res_rotting(mount) > 0)
+                return true;
+            return false;
         case CLOUD_PETRIFY:
-            return act.res_petrify(mount) || !mount && act.stasis();
-        case CLOUD_SPECTRAL:
-            return bool(act.holiness(true, mount) & MH_UNDEAD);
+            if (act.res_petrify(mount) || !mount && act.stasis())
+                return true;
+            return false;
         case CLOUD_ACID:
-            return act.res_acid(mount) > 1;
+            if (act.res_acid(mount) > 1)
+                return true;
+            return false;
         case CLOUD_STORM:
-            return act.res_elec(mount) >= 3;
+            if (act.res_elec(mount) == 3)
+                return true;
+            return false;
+        case CLOUD_SPECTRAL:
         case CLOUD_BLOOD:
         case CLOUD_NEGATIVE_ENERGY:
-            return act.res_negative_energy(mount) >= 3;
+            if (act.res_negative_energy(mount) == 3)
+                return true;
+            return false;
         case CLOUD_TORNADO:
-            return act.res_tornado(mount);
+            if (act.res_tornado(mount))
+                return true;
+            return false;
         case CLOUD_RAIN:
-            return !act.is_fiery();
+            if (!act.is_fiery())
+                return true;
+            return false;
         default:
             return false;
     }
@@ -961,6 +1030,9 @@ bool actor_cloud_immune(const actor &act, const cloud_struct &cloud, bool mount)
 {
     if (actor_cloud_immune(act, cloud.type, mount))
         return true;
+
+    if (actor_cloud_helpful(act, cloud.type, mount))
+        return false;
 
     const bool player = act.is_player() && !mount;
 
@@ -991,32 +1063,47 @@ bool actor_cloud_immune(const actor &act, const cloud_struct &cloud, bool mount)
 // returns MAG_IMMUNE.
 static int _actor_cloud_resist(const actor *act, const cloud_struct &cloud, bool mount)
 {
-    if (actor_cloud_immune(*act, cloud, mount))
-        return MAG_IMMUNE;
+    int res = 0;
+
     switch (cloud.type)
     {
     case CLOUD_RAIN:
-        return act->is_fiery()? 0 : MAG_IMMUNE;
+        res = act->is_fiery()? 0 : MAG_IMMUNE;
+        break;
     case CLOUD_FIRE:
     case CLOUD_FOREST_FIRE:
-        return act->res_fire(mount);
+        res = act->res_fire(mount);
+        break;
     case CLOUD_HOLY:
-        return act->res_holy_energy(mount);
+        res = act->res_holy_energy(mount);
+        break;
     case CLOUD_COLD:
-        return act->res_cold(mount);
+        res = act->res_cold(mount);
+        break;
     case CLOUD_PETRIFY:
-        return act->res_petrify(mount) || !mount && act->stasis();
+        res = act->res_petrify(mount) || !mount && act->stasis();
+        break;
     case CLOUD_ACID:
-        return act->res_acid(mount);
+        res = act->res_acid(mount);
+        break;
     case CLOUD_STORM:
-        return act->res_elec(mount);
+        res = act->res_elec(mount);
+        break;
     case CLOUD_BLOOD:
     case CLOUD_NEGATIVE_ENERGY:
-        return act->res_negative_energy(mount);
-
+        res = act->res_negative_energy(mount);
+        break;
     default:
-        return 0;
+        break;
     }
+
+    if (res > 3)
+        return 4;
+
+    if (actor_cloud_immune(*act, cloud, mount))
+        return MAG_IMMUNE;
+
+    return res;
 }
 
 static bool _mephitic_cloud_roll(int hd)
@@ -1042,7 +1129,8 @@ static bool _actor_apply_cloud_side_effects(actor *act,
     case CLOUD_FIRE:
     case CLOUD_STEAM:
         if (player)
-            maybe_melt_player_enchantments(BEAM_FIRE, final_damage);
+            maybe_melt_player_enchantments(BEAM_FIRE, abs(final_damage));
+        break;
     case CLOUD_RAIN:
     case CLOUD_STORM:
         if (!mount && act->is_fiery() && final_damage > 0)
@@ -1257,6 +1345,8 @@ static bool _actor_apply_cloud_side_effects(actor *act,
 
     case CLOUD_ACID:
     {
+        if (final_damage < 0)
+            return false;
         const actor* agent = cloud.agent();
         act->splash_with_acid(agent, 5, true, nullptr, mount);
         return true;
@@ -1264,6 +1354,9 @@ static bool _actor_apply_cloud_side_effects(actor *act,
 
     case CLOUD_NEGATIVE_ENERGY:
     {
+        if (final_damage < 0)
+            return false;
+
         if (mount)
             return drain_mount(1);
         actor* agent = cloud.agent();
@@ -1298,18 +1391,6 @@ static int _actor_cloud_base_damage(const actor *act,
     return cloud_base_damage;
 }
 
-static int _cloud_damage_output(const actor *actor,
-                                beam_type flavour,
-                                int base_damage,
-                                bool maximum_damage = false,
-                                bool mount = false)
-{
-    if (maximum_damage)
-        return resist_adjust_damage(actor, flavour, base_damage, mount);
-
-    return max(0, resist_adjust_damage(actor, flavour, base_damage, mount));
-}
-
 /**
  * How much damage will this cloud do to the given actor?
  *
@@ -1340,10 +1421,8 @@ static int _actor_cloud_damage(const actor *act,
     case CLOUD_ACID:
     case CLOUD_NEGATIVE_ENERGY:
     case CLOUD_BLOOD:
-        final_damage =
-            _cloud_damage_output(act, _cloud2beam(cloud.type),
-                                 cloud_base_damage,
-                                 maximum_damage, mount);
+        final_damage = resist_adjust_damage(act, _cloud2beam(cloud.type), 
+                                               cloud_base_damage, mount);
         break;
     case CLOUD_STORM:
     {
@@ -1372,16 +1451,10 @@ static int _actor_cloud_damage(const actor *act,
             return rain_damage;
         }
 
-        const int lightning_dam = _cloud_damage_output(act,
-            _cloud2beam(cloud.type),
-            cloud_base_damage,
-            maximum_damage);
+        const int lightning_dam = resist_adjust_damage(act, _cloud2beam(cloud.type), cloud_base_damage);
 
-        const int secondary_dam = (act->is_player() && you.mounted()) ?
-            _cloud_damage_output(act,
-            _cloud2beam(cloud.type),
-            cloud_base_damage,
-            maximum_damage, true)
+        const int secondary_dam = (act->is_player() && you.mounted()) 
+            ? resist_adjust_damage(act, _cloud2beam(cloud.type), cloud_base_damage, true)
             : 0;
 
         if (maximum_damage)
@@ -1439,11 +1512,12 @@ int actor_apply_cloud(actor *act, bool mount)
     if (act->submerged(mount))
         return 0;
 
-    const cloud_struct* cl = cloud_at(act->pos());
+    cloud_struct* cl = cloud_at(act->pos());
+
     if (!cl)
         return 0;
 
-    const cloud_struct &cloud(*cl);
+    cloud_struct &cloud(*cl);
     const bool player = !mount && act->is_player();
     monster *mons = act->as_monster();
     const beam_type cloud_flavour = _cloud2beam(cloud.type);
@@ -1454,14 +1528,23 @@ int actor_apply_cloud(actor *act, bool mount)
     const int resist = _actor_cloud_resist(act, cloud, mount);
     const int cloud_max_base_damage =
         _actor_cloud_base_damage(act, cloud, resist, true, mount);
-    const int final_damage = _actor_cloud_damage(act, cloud, mount);
+    int final_damage = _actor_cloud_damage(act, cloud, mount);
 
-    if ((player || final_damage > 0
+    if (final_damage < 0)
+    {
+        if (!mount && (act->stat_hp() - final_damage > act->stat_maxhp()))
+            final_damage = act->stat_hp() - act->stat_maxhp();
+        if (mount && (you.mount_hp - final_damage > you.mount_hp_max))
+            final_damage = you.mount_hp - you.mount_hp_max;
+    }
+
+    if ((player || final_damage
          || _cloud_has_negative_side_effects(cloud.type))
         && cloud.type != CLOUD_STORM) // handled elsewhere
     {
         cloud.announce_actor_engulfed(act, final_damage, false, mount);
     }
+
     if (player && cloud_max_base_damage > 0 && resist > 0
         && (cloud.type != CLOUD_STORM || final_damage > 0))
     {
@@ -1477,7 +1560,7 @@ int actor_apply_cloud(actor *act, bool mount)
     if (!player && !mount && (side_effects || final_damage > 0))
         behaviour_event(mons, ME_DISTURB, 0, act->pos());
 
-    if (final_damage)
+    if (final_damage > 0)
     {
         actor *oppressor = cloud.agent();
 
@@ -1529,6 +1612,16 @@ int actor_apply_cloud(actor *act, bool mount)
         }
         else
             damage_mount(final_damage);
+    }
+
+    else if (final_damage)
+    {
+        if (mount)
+            heal_mount(final_damage);
+        else
+            act->heal(final_damage, true);
+
+        cloud.decay += final_damage; // Absorbing clouds shortens their duration.
     }
 
     return final_damage;
@@ -1600,6 +1693,9 @@ static bool _mons_avoids_cloud(const monster* mons, const cloud_struct& cloud,
     // clouds you're immune to are inherently safe.
     if (actor_cloud_immune(*mons, cloud))
         return false;
+
+    if (actor_cloud_helpful(*mons, cloud.type))
+        return true;
 
     // harmless clouds, likewise.
     if (is_harmless_cloud(cloud.type))
@@ -1847,7 +1943,15 @@ void cloud_struct::announce_actor_engulfed(const actor *act, int damage,
                                            bool mount) const
 {
     ASSERT(act); // XXX: change to const actor &act
+
     if (!you.can_see(*act))
+        return;
+
+    if (damage < 0)
+        beneficial = true;
+
+    // No spam when nothing happened.
+    if (damage == 0 && !_cloud_has_negative_side_effects(type))
         return;
 
     // Normal clouds. (Unmodified rain clouds have a different message.)

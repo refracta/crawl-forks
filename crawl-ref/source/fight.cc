@@ -674,6 +674,9 @@ static inline int get_resistible_fraction(beam_type flavour)
     case BEAM_ICE:
         return 40;
 
+    case BEAM_ICY_SHARDS:
+        return 70;
+
     case BEAM_ICY_DEVASTATION:
         return 30;
 
@@ -708,11 +711,12 @@ static int _beam_to_resist(const actor* defender, beam_type flavour, bool mount)
         case BEAM_DAMNATION:
             return defender->res_hellfire(mount);
         case BEAM_STEAM:
-            return defender->res_steam(mount);
+            return max(defender->res_steam(mount), defender->res_fire(mount));
         case BEAM_COLD:
         case BEAM_ICY_DEVASTATION:
         case BEAM_FREEZE:
         case BEAM_ICE:
+        case BEAM_ICY_SHARDS:
         case BEAM_CRYSTAL_ICE:
             return defender->res_cold(mount);
         case BEAM_WATER:
@@ -720,6 +724,7 @@ static int _beam_to_resist(const actor* defender, beam_type flavour, bool mount)
         case BEAM_ELECTRICITY:
             return defender->res_elec(mount);
         case BEAM_NEG:
+        case BEAM_DRAIN:
         case BEAM_PAIN:
         case BEAM_MALIGN_OFFERING:
             return defender->res_negative_energy(mount);
@@ -759,8 +764,10 @@ static bool _dragonskin_affected (beam_type flavour)
     case BEAM_ICY_DEVASTATION:
     case BEAM_FREEZE:
     case BEAM_ICE:
+    case BEAM_ICY_SHARDS:
     case BEAM_ELECTRICITY:
     case BEAM_NEG:
+    case BEAM_DRAIN:
     case BEAM_PAIN:
     case BEAM_MALIGN_OFFERING:
     case BEAM_ACID:
@@ -803,12 +810,12 @@ int resist_adjust_damage(const actor* defender, beam_type flavour, int rawdamage
     // her cloak since most monsters don't use armour for non-body slot; but it's good
     // to make the unique more unique and future-proofing should we start handing out
     // cloaks more often.
-    if (is_mon)
+    if (is_mon && res < 4)
     {
         item_def * cloak = defender->as_monster()->mslot_item(MSLOT_ARMOUR);
 
         if (cloak && is_unrandom_artefact(*cloak, UNRAND_DRAGONSKIN)
-            && coinflip() && _dragonskin_affected(flavour))
+            && coinflip() && _dragonskin_affected(flavour) && res < 3)
         {
             res++;
         }
@@ -825,7 +832,8 @@ int resist_adjust_damage(const actor* defender, beam_type flavour, int rawdamage
             case 0:
             case 1:
             case 2:
-                res++;
+                if (res < 3)
+                    res++;
                 break;
             case 3:
                 res--;
@@ -836,10 +844,42 @@ int resist_adjust_damage(const actor* defender, beam_type flavour, int rawdamage
         }
     }
 
-    is_mon |= mount; // Mounts act like monsters in this way.
+    // Special Cases
+    switch (flavour)
+    {
+    case BEAM_MALIGN_OFFERING:
+        // Part of a hack to make spectral clouds heal undead slightly
+        if (bool(defender->holiness(true, mount) & MH_UNDEAD))
+            res = 4;
+        break;
+    case BEAM_SPORE:
+        if (is_mon && defender->as_monster()->type == MONS_BALLISTOMYCETE)
+            return 0;
+        break;
+    case BEAM_AIR:
+        if (defender->airborne())
+            rawdamage += rawdamage / 2;
+        if (res > 0)
+            return 0;
+    case BEAM_DAMNATION:
+        if (!is_mon && !mount && you.drac_colour == DR_BLOOD)
+            rawdamage /= 2;
+        // fallthrough
+    case BEAM_MEPHITIC:
+        if (res > 0)
+            return 0;
+        break;
+    case BEAM_MAGIC_CANDLE:
+    case BEAM_BLOOD:
+    case BEAM_FOG:
+    case BEAM_BUTTERFLY:
+    case BEAM_ENSNARE:
+        return 0;
+    default:
+        break;
+    }
 
-    if (!res)
-        return rawdamage;
+    is_mon |= mount; // Mounts act like monsters in this way.
 
     const int resistible_fraction = get_resistible_fraction(flavour);
 
@@ -850,6 +890,7 @@ int resist_adjust_damage(const actor* defender, beam_type flavour, int rawdamage
     {
         const bool immune_at_3_res = is_mon
                                      || flavour == BEAM_NEG
+                                     || flavour == BEAM_DRAIN
                                      || flavour == BEAM_PAIN
                                      || flavour == BEAM_MALIGN_OFFERING
                                      || flavour == BEAM_HOLY
@@ -858,7 +899,17 @@ int resist_adjust_damage(const actor* defender, beam_type flavour, int rawdamage
                                      // just the resistible part
                                      || flavour == BEAM_POISON_ARROW;
 
-        if (immune_at_3_res && res >= 3 || res > 3)
+        if (res > 3)
+        {
+            if (resistible > roll_dice(3, 6))
+            {
+                resistible *= 2;
+                resistible /= 3;
+            }
+            resistible = 1 + random2avg(resistible, 3);
+            return irresistible - resistible;
+        }
+        else if (immune_at_3_res && (res == 3))
             resistible = 0;
         else
         {
@@ -869,6 +920,7 @@ int resist_adjust_damage(const actor* defender, beam_type flavour, int rawdamage
             if (is_mon && !_is_physical_resist(flavour))
                 resistible /= 1 + bonus_res + res * res;
             else if (flavour == BEAM_NEG
+                     || flavour == BEAM_DRAIN
                      || flavour == BEAM_PAIN
                      || flavour == BEAM_MALIGN_OFFERING)
             {
@@ -879,9 +931,22 @@ int resist_adjust_damage(const actor* defender, beam_type flavour, int rawdamage
         }
     }
     else if (res < 0)
-        resistible = resistible * 15 / 10;
+        resistible = resistible * 3 / 2;
 
-    return max(resistible + irresistible, 0);
+    int fdam = resistible + irresistible;
+
+    // More special cases, these need the damage calced first.
+    switch (flavour)
+    {
+    case BEAM_ICY_SHARDS:
+        if (fdam > 0 && defender->is_icy())
+            fdam = 0;
+        break;
+    default:
+        break;
+    }
+
+    return fdam;
 }
 
 // Reduce damage by AC.

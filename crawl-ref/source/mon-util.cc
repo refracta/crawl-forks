@@ -4501,11 +4501,11 @@ bool mons_should_fire(bolt &beam, bool ignore_good_idea)
     // friends when considering collateral damage.
 
     // Quick check - did we in fact get any foes?
-    if (beam.foe_info.count == 0)
+    if (beam.foe_info.count == 0 && beam.friend_info.helped == 0)
         return false;
 
     // If we hit no friends, fire away.
-    if (beam.friend_info.count == 0)
+    if (beam.friend_info.count == 0 && beam.foe_info.helped == 0)
         return true;
 
     // Only fire if they do acceptably low collateral damage.

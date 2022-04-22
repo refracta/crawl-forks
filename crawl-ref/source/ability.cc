@@ -17,6 +17,7 @@
 #include "abyss.h"
 #include "areas.h"
 #include "art-enum.h"
+#include "attack.h" // Attack Strength Punctuation
 #include "branch.h"
 #include "chardump.h"
 #include "cleansing-flame-source-type.h"
@@ -2305,10 +2306,24 @@ static spret _do_ability(const ability_def& abil, bool fail, bool empowered)
                 {
                     int dam = 2 + div_rand_round(power, 6);
                     dam = roll_dice(3, dam);
-                    dam = resist_adjust_damage(mons, BEAM_NEG, dam);
-                    mons->hurt(&you, dam, BEAM_NEG, KILLED_BY_DRAINING);
-                    if (mons->alive())
-                        mons->drain_exp(&you);
+
+                    if (mons->holiness() & MH_UNDEAD)
+                        dam = 0 - dam / 3;
+                    else
+                        dam = resist_adjust_damage(mons, BEAM_NEG, dam);
+
+                    if (dam < 0)
+                    {
+                        mons->heal(dam, true);
+                        mprf("%s is healed by the spectral mist%s", mons->name(DESC_THE).c_str(), attack_strength_punctuation(abs(dam)).c_str());
+                    }
+
+                    else
+                    {
+                        mons->hurt(&you, dam, BEAM_NEG, KILLED_BY_DRAINING);
+                        if (dam && mons->alive())
+                            mons->drain_exp(&you);
+                    }
                 }
             }
             place_cloud(cloud, entry.first,

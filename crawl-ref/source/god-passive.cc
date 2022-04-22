@@ -1253,6 +1253,7 @@ void qazlal_element_adapt(beam_type flavour, int strength)
         case BEAM_COLD:
         case BEAM_FREEZE:
         case BEAM_ICE:
+        case BEAM_ICY_SHARDS:
             what = BEAM_COLD;
             dur = DUR_QAZLAL_COLD_RES;
             descript = "cold";

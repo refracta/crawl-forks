@@ -301,9 +301,6 @@ public:
     void choose_ray();
 };
 
-int mons_adjust_flavoured(monster* mons, bolt &pbolt, int hurted,
-                          bool doFlavouredEffects = true);
-
 void impale_player_with_barbs(bool mt = false);
 void impale_monster_with_barbs(monster* mon, actor* agent, string what = "barbed spikes");
 

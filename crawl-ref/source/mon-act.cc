@@ -3206,7 +3206,10 @@ bool mon_avoids_terrain(const monster* mons, dungeon_feature_type terrain)
     }
 
     if (terrain == DNGN_TOXIC_BOG)
-        return ((resist_adjust_damage(mons, BEAM_POISON_ARROW, 80) < mons->stat_hp()) && you.can_see(*mons));
+    {
+        const int test = resist_adjust_damage(mons, BEAM_POISON_ARROW, 80);
+        return ((test < mons->stat_hp()) && you.can_see(*mons) || test < 0);
+    }
 
     if (terrain == DNGN_QUAGMIRE)
         return ((120 < mons->stat_hp()) && you.can_see(*mons));

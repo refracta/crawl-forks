@@ -1040,23 +1040,24 @@ static inline void _mons_cast_abil(monster* mons, bolt &pbolt,
     mons_cast(mons, pbolt, spell_cast, MON_SPELL_NATURAL);
 }
 
-static int _normal_chaos_resist()
+static int _chaos_resist()
 {
-    return random_choose_weighted( 4, -1,
-                                  10,  0,
-                                   2,  1,
-                                   2,  2,
-                                   1,  3);
+    return random_choose_weighted( 7, -1,
+                                  15,  0,
+                                   3,  1,
+                                   4,  2,
+                                   2,  3,
+                                   1,  4);
 }
 
 static void _set_chaos_resists(monster * mons)
 {
     resists_t resists;
 
-    resists  = mrd(MR_RES_ELEC, random_choose_weighted(1, -1, 3, 0, 1, 1));
-    resists |= mrd(MR_RES_ACID, _normal_chaos_resist());
-    resists |= mrd(MR_RES_COLD, _normal_chaos_resist());
-    resists |= mrd(MR_RES_FIRE, _normal_chaos_resist());
+    resists  = mrd(MR_RES_ELEC, _chaos_resist());
+    resists |= mrd(MR_RES_ACID, _chaos_resist());
+    resists |= mrd(MR_RES_COLD, _chaos_resist());
+    resists |= mrd(MR_RES_FIRE, _chaos_resist());
 
     mons->props[CHAOS_RESISTS_KEY] = (int)resists;
 }

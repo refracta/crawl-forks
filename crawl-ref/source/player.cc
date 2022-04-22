@@ -4710,8 +4710,10 @@ void inc_hp(int hp_gain)
 {
     ASSERT(!crawl_state.game_is_arena());
 
-    if (hp_gain < 1 || you.hp >= you.hp_max)
+    if (hp_gain == 0 || you.hp >= you.hp_max)
         return;
+
+    hp_gain = abs(hp_gain);
 
     you.hp += hp_gain;
 
@@ -5508,15 +5510,23 @@ void dec_napalm_player(int delay)
         return;
     }
 
-    mprf(MSGCH_WARN, "You are covered in liquid flames!");
-
     const int hurted = resist_adjust_damage(&you, BEAM_FIRE,
                                             random2avg(9, 2) + 1);
+    const int timescaled = hurted * delay / BASELINE_DELAY;
 
     you.expose_to_element(BEAM_STICKY_FLAME, 2);
-    maybe_melt_player_enchantments(BEAM_STICKY_FLAME, hurted * delay / BASELINE_DELAY);
+    maybe_melt_player_enchantments(BEAM_STICKY_FLAME, timescaled);
 
-    ouch(hurted * delay / BASELINE_DELAY, KILLED_BY_BURNING, 0U, nullptr, true, nullptr, true);
+    if (timescaled < 0)
+    {
+        mprf(MSGCH_RECOVERY, "You bask in liquid fire%s", attack_strength_punctuation(timescaled).c_str());
+        you.heal(timescaled, true);
+    }
+    else
+    {
+        mprf(MSGCH_WARN, "You are covered in liquid flames%s", attack_strength_punctuation(timescaled).c_str());
+        ouch(timescaled, KILLED_BY_BURNING, 0U, nullptr, true, nullptr, true);
+    }
 
     you.duration[DUR_LIQUID_FLAMES] -= delay;
     if (you.duration[DUR_LIQUID_FLAMES] <= 0)
@@ -7362,7 +7372,7 @@ int player::evasion(ev_ignore_type evit, const actor* act) const
     return base_evasion - constrict_penalty - invis_penalty;
 }
 
-bool player::heal(int amount)
+bool player::heal(int amount, bool /*force*/)
 {
     ::inc_hp(amount);
     return true; /* TODO Check whether the player was healed. */
@@ -7495,6 +7505,9 @@ int player_res_acid()
     const bool slimy = (grid == DNGN_SLIMY_WATER || grid == DNGN_DEEP_SLIMY_WATER);
 
     if (you.get_mutation_level(MUT_SLIME) > 2 || you.get_mutation_level(MUT_OOZOMORPH))
+        return 4;
+
+    if (you.get_mutation_level(MUT_SLIME) > 1)
         return 3;
 
     int ra = 0;
@@ -7530,8 +7543,7 @@ int player_res_acid()
     ra += you.wearing(EQ_RINGS, RING_RESIST_CORROSION);
     ra += you.wearing(EQ_BODY_ARMOUR, ARM_ACID_DRAGON_ARMOUR);
     ra += you.scan_artefacts(ARTP_RCORR);
-    ra += you.get_mutation_level(MUT_SLIME, true);
-    ra += you.get_mutation_level(MUT_OOZOMORPH, true) * 3;
+    ra += you.get_mutation_level(MUT_SLIME) * 2;
 
     return _clamp(ra, -3, 2);
 }
@@ -7548,7 +7560,7 @@ int player::res_acid(bool mt) const
         switch (mount)
         {
         case mount_type::slime:
-            return 3;
+            return 4;
         case mount_type::spider:
             return sub - 1;
         default:
@@ -7558,8 +7570,8 @@ int player::res_acid(bool mt) const
 
     int ra = player_res_acid();
 
-    if (ra == 3)
-        return 3;
+    if (ra >= 3)
+        return ra;
 
     // amulet of chaos
     if (wearing(EQ_AMULET, AMU_CHAOS))
@@ -9029,9 +9041,277 @@ void player::check_awaken(int disturbance)
     }
 }
 
-int player::beam_resists(bolt &beam, int hurted, bool doEffects, string source, bool mt)
+static void _mount_resists(bool mount, bool partially = false)
 {
-    return check_your_resists(hurted, beam.flavour, source, &beam, doEffects, mt);
+    if (mount)
+        mprf("Your %s %sresists.", you.mount_name(true).c_str(), partially ? "partially " : "");
+    else if (partially)
+        canned_msg(MSG_YOU_PARTIALLY_RESIST);
+    else
+        canned_msg(MSG_YOU_RESIST);
+}
+
+static void _absorb(const bool mount, const int amount, const string what)
+{
+    mprf("You%s%s absorb%s the %s%s",
+        mount ? "r " : "",
+        mount ? you.mount_name(true).c_str() : "",
+        mount ? "s" : "",
+        what.c_str(),
+        attack_strength_punctuation(amount).c_str());
+
+    if (mount)
+        heal_mount(amount);
+    else
+        you.heal(amount, true);
+}
+
+void player::beam_effects(beam_type flavour, int original, int hurted, bolt *beam, bool mt)
+{
+    string kaux = "";
+    string source = "";
+
+    if (beam)
+    {
+        source = beam->get_source_name();
+        kaux = beam->name;
+    }
+
+    if (flavour == BEAM_PARADOXICAL)
+    {
+        if (grid_distance(coord_def(1, 1), pos()) % 2)
+            flavour = BEAM_FIRE;
+        else
+            flavour = BEAM_COLD;
+    }
+
+    maybe_melt_player_enchantments(flavour, hurted);
+
+    switch (flavour)
+    {
+    case BEAM_WATER:
+        if (!hurted)
+            mprf("You%s%s shrug%s off the wave.", mt ? "r " : "", mt ? mount_name(true).c_str() : "", mt ? "s" : "");
+        if (hurted < 0)
+            _absorb(mt, hurted, "torrent");
+        break;
+
+    case BEAM_STEAM:
+        if (hurted < 0)
+            _absorb(mt, hurted, "scalding steam");
+        else if (hurted < original)
+            _mount_resists(mt);
+        else if (hurted > original)
+        {
+            mprf("The steam scalds you%s%s terribly!", mt ? "r " : "", mt ? mount_name(true).c_str() : "");
+            if (!mt)
+                xom_is_stimulated(200);
+        }
+        break;
+
+    case BEAM_SILVER:
+    case BEAM_SILVER_FRAG:
+    {
+        string msg;
+        silver_damages_victim(&you, hurted, msg, mt);
+        if (!msg.empty())
+            mpr(msg);
+    }
+        break;
+
+    case BEAM_FIRE:
+        if (hurted < 0)
+            _absorb(mt, hurted, "blazing fire");
+        else if (hurted < original)
+            _mount_resists(mt, true);
+        else if (hurted > original)
+        {
+            mprf("The fire burns you%s%s terribly!", mt ? "r " : "", mt ? mount_name(true).c_str() : "");
+            if (!mt)
+                xom_is_stimulated(200);
+        }
+        break;
+
+    case BEAM_DAMNATION:
+        if (!mt && drac_colour == DR_BLOOD)
+            mpr("Your gory crimson scales reflect some of the hellish flames.");
+        break;
+
+    case BEAM_MAGIC_CANDLE:
+        backlight();
+        break;
+
+    case BEAM_WAND_HEALING:
+        if (hurted && hp < hp_max)
+            mprf("Your wounds heal themselves%s", attack_strength_punctuation(original).c_str());
+        if (species == SP_FAIRY)
+            original = div_rand_round(original, 8);
+        heal(original);
+        break;
+
+    case BEAM_COLD:
+        if (hurted < 0)
+            _absorb(mt, hurted, "freezing cold");
+        else if (hurted < original)
+            _mount_resists(mt);
+        else if (hurted > original)
+        {
+            if (mt)
+                mprf("Your %s is chilled terribly!", mount_name(true).c_str());
+            else
+            {
+                mpr("You feel a terrible chill!");
+                xom_is_stimulated(200);
+            }
+        }
+        break;
+
+    case BEAM_ELECTRICITY:
+        if (hurted < 0)
+            _absorb(mt, hurted, "electric shock");
+        else if (hurted < original)
+            _mount_resists(mt);
+        else if (hurted > original)
+        {
+            if (mt)
+                mprf("Your %s is electrified terribly!", mount_name(true).c_str());
+            else
+            {
+                mpr("You feel an arresting jolt!");
+                xom_is_stimulated(200);
+            }
+        }
+        break;
+
+    case BEAM_IRRADIATE:
+        if (hurted && !mt)
+            contaminate_player(2500 + random2(2500), true);
+        break;
+
+    case BEAM_POISON:
+
+        if (hurted < 0)
+            _absorb(mt, hurted, "poison");
+        else
+        {
+            int pois = beam ? div_rand_round(beam->damage.max(), 3) : original;
+            pois = 3 + random_range(pois * 2 / 3, pois * 4 / 3);
+
+            if (mt)
+                poison_mount(pois);
+            else
+                poison_player(pois, source, kaux);
+
+            if (res_poison(mt) > 0)
+                _mount_resists(mt);
+        }
+        break;
+
+    case BEAM_POISON_ARROW:
+        if (hurted < original)
+            _mount_resists(mt, true);
+
+        if (hurted < 0)
+            _absorb(mt, hurted, "poison");
+
+        else
+        {
+            int pois = beam ? div_rand_round(beam->damage.max(), 3) : original;
+            pois = 3 + random_range(pois * 2 / 3, pois * 4 / 3);
+
+            if (res_poison(mt))
+                pois /= 2;
+
+            if (mt)
+                poison_mount(pois, true);
+            else
+                poison_player(pois, source, kaux, true);
+        }
+        break;
+
+    case BEAM_NEG:
+    case BEAM_DRAIN:
+        if (hurted < 0)
+            _absorb(mt, hurted, "necrotic energy");
+        // drain_player handles the messaging here
+        else if (mt)
+            drain_mount(max(1, original / 10));
+        else
+            drain_player(min(75, 35 + original * 2 / 3), true);
+        break;
+
+    case BEAM_ICY_SHARDS:
+    case BEAM_ICE:
+    case BEAM_FREEZE:
+        if (hurted < 0)
+            _absorb(mt, hurted, "freezing chill");
+        else if (hurted < original)
+            _mount_resists(mt, true);
+        else if (hurted > original)
+        {
+            if (mt)
+                mprf("Your %s is chilled terribly!", mount_name(true).c_str());
+            else
+            {
+                mpr("You feel a painful chill!");
+                xom_is_stimulated(200);
+            }
+        }
+        break;
+
+    case BEAM_LAVA:
+        if (hurted < 0)
+            _absorb(mt, hurted, "molten lava");
+        else if (hurted < original)
+            canned_msg(MSG_YOU_PARTIALLY_RESIST);
+        else if (hurted > original)
+        {
+            mpr("The lava burns you terribly!");
+            xom_is_stimulated(200);
+        }
+        break;
+
+    case BEAM_ENSNARE:
+        ensnare(&you, original);
+        break;
+
+    case BEAM_ACID:
+        if (hurted < 0)
+            _absorb(mt, hurted, "caustic acid");
+        else if (hurted < original)
+            _mount_resists(mt);
+        else if (hurted > original)
+        {
+            mpr("Your flesh is eroded terribly!");
+            xom_is_stimulated(200);
+        }
+        break;
+
+    case BEAM_MIASMA:
+        if (res_rotting(mt))
+            _mount_resists(mt);
+        break;
+
+    case BEAM_HOLY:
+        if (hurted < original)
+            _mount_resists(mt);
+        else if (hurted > original)
+        {
+            if (mt)
+                mprf("Your %s convulses!", mount_name(true).c_str());
+            else
+            {
+                mpr("You writhe in agony!");
+                xom_is_stimulated(200);
+            }
+        }
+        break;
+
+    default:
+        break;
+    }
+
+    return;
 }
 
 // Used for falling into traps and other bad effects, but is a slightly

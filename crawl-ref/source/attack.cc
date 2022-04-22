@@ -332,7 +332,7 @@ float weapon_bonus(float mhit, int HD, int extra_slay, const item_def * weapon, 
 
     if (weapon)
     {
-        int wpn_base = property(*weapon, (weapon->base_type == OBJ_SHIELDS) ? PSHD_HIT : PWPN_HIT);
+        int wpn_base = property(*weapon, (weapon->base_type == OBJ_SHIELDS) ? (int)PSHD_HIT : (int)PWPN_HIT);
         int strength = (HD < 1) ? you.strength() : HD;
         if (weapon->base_type != OBJ_STAVES)
             slay += weapon->plus;
@@ -716,18 +716,21 @@ void attack::pain_affects_defender()
         special_damage += resist_adjust_damage(defender, BEAM_NEG,
                               random2(1 + user->skill_rdiv(SK_NECROMANCY)), mount_defend);
 
-        if (special_damage && defender->is_fairy() && x_chance_in_y(30 - special_damage, 30))
+        const bool absorb = special_damage < 0;
+
+        if ((special_damage > 0) && defender->is_fairy() && x_chance_in_y(30 - special_damage, 30))
             special_damage = 0;
 
         if (special_damage && defender_visible)
         {
             special_damage_message =
-                make_stringf("%s%s %s in agony%s",
+                make_stringf("%s%s %s %s%s",
                              mount_defend ? "Your " : "",
                              mount_defend ? you.mount_name(true).c_str()
                                           : defender->name(DESC_THE).c_str(),
-                             mount_defend ? "writhes"
-                                          : defender->conj_verb("writhe").c_str(),
+                             mount_defend ? (absorb ? "absorbs" : "writhes")
+                                          : defender->conj_verb(absorb ? "absorb" : "writhe").c_str(),
+                                   absorb ? "the agonizing power" : "in agony",
                            attack_strength_punctuation(special_damage).c_str());
         }
     }
@@ -1106,6 +1109,27 @@ void attack::drain_defender()
     special_damage = resist_adjust_damage(defender, BEAM_NEG,
                                           (1 + random2(damage_done)) / 2, mount_defend);
 
+    if (special_damage < 0)
+    {
+        const int healz = min(abs(special_damage), 35);
+
+        if (mount_defend)
+            obvious_effect = heal_mount(healz);
+
+        else if (defender->heal(healz, true))
+            obvious_effect = true;
+
+        if (obvious_effect)
+        {
+            special_damage_message =
+                make_stringf(
+                    "%s %s the negative energy%s",
+                    uppercase_first(defender_name(true)).c_str(),
+                    mount_defend ? "absorbs" : defender->conj_verb("absorb").c_str(),
+                    attack_strength_punctuation(special_damage).c_str());
+        }
+    }
+
     if (mount_defend)
         obvious_effect = drain_mount(10 + min(special_damage, 35));
 
@@ -1122,6 +1146,7 @@ void attack::drain_defender()
                     attacker->conj_verb("drain").c_str(),
                     defender_name(true).c_str(),
                     attack_strength_punctuation(special_damage).c_str());
+            obvious_effect = true;
         }
     }
 }
@@ -1182,6 +1207,12 @@ int attack::inflict_damage(int dam, beam_type flavour, bool clean)
  */
 string attack_strength_punctuation(int dmg)
 {
+    // For some healing uses.
+    dmg = abs(dmg);
+
+    if (dmg == 0)
+        return ".";
+
     string exclams = "";
     if (dmg < HIT_WEAK)
         exclams = ".";
@@ -1886,27 +1917,40 @@ bool attack::apply_damage_brand(const char *what)
     {
         int original = roll_dice(2, 4);
         special_damage = resist_adjust_damage(defender, BEAM_ELECTRICITY,
-                                                original);
+                                                original, mount_defend);
+        const bool absorb = (special_damage < 0);
+        string absstr = "";
         if (special_damage)
         {
             if (special_damage == 1 && coinflip())
                 special_damage = 0;
             else
             {
-                const string punctuation =
-                    attack_strength_punctuation(special_damage);
+                const string punctuation = attack_strength_punctuation(special_damage);
+
+                if (absorb)
+                {
+                    absstr = make_stringf(" %s %s the electricity%s",
+                        mount_defend ? "It" : uppercase_first(defender->pronoun(PRONOUN_SUBJECTIVE)).c_str(),
+                        mount_defend ? "absorbs" : defender->conj_verb("absorb").c_str(),
+                        punctuation.c_str());
+                }
+
                 special_damage_message =
                     defender->is_player() && !mount_defend
-                    ? make_stringf("You are %s%s", special_damage < original ? "lightly shocked" :
+                    ? make_stringf("You are %s%s%s", special_damage < original ? "lightly shocked" :
                                                    special_damage > original ? "electrocuted"
-                                                                             : "shocked", punctuation.c_str())
-                    : make_stringf("Lightning %scourses through %s%s%s",
-                        special_damage < original ? "weakly " :
-                        special_damage > original ? "violently "
-                        : "",
+                                                                             : "shocked", 
+                                                                absorb ? "." : punctuation.c_str(),
+                                                                              absstr.c_str())
+                    : make_stringf("Lightning %scourses through %s%s%s%s",
+                        (special_damage < original && !absorb) ? "weakly " :
+                                     special_damage > original ? "violently "
+                                                               : "",
                         mount_defend ? "your " : "",
                         mount_defend ? you.mount_name(true).c_str() : defender->name(DESC_THE).c_str(),
-                        punctuation.c_str());
+                        absorb ? "." : punctuation.c_str(),
+                        absstr.c_str());
                 special_damage_flavour = BEAM_ELECTRICITY;
                 defender->expose_to_element(BEAM_ELECTRICITY, 1);
             }
@@ -2105,6 +2149,14 @@ bool attack::apply_damage_brand(const char *what)
     if (!obvious_effect)
         obvious_effect = !special_damage_message.empty();
 
+    if (special_damage < 0)
+    {
+        if (defender->alive())
+            defender->heal(special_damage, true);
+        else
+            special_damage_message.clear();
+    }
+
     if (needs_message && !special_damage_message.empty())
     {
         mpr(special_damage_message);
@@ -2153,7 +2205,15 @@ void attack::calc_elemental_brand_damage(beam_type flavour,
 
     special_damage = resist_adjust_damage(defender, flavour, special_damage, mount_defend);
 
-    if (needs_message && special_damage > 0 && verb)
+    if (special_damage < 0 && needs_message)
+    {
+        special_damage_message = make_stringf(
+            "%s absorbs %s%s",
+            defender_name(false).c_str(),
+            flavour == BEAM_FIRE ? "the burning heat" : "the freezing cold",
+            attack_strength_punctuation(abs(special_damage)).c_str());
+    }
+    else if (needs_message && special_damage > 0 && verb)
     {
         // XXX: assumes "what" is singular
         special_damage_message = make_stringf(

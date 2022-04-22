@@ -12,6 +12,7 @@
 #include "abyss.h" // Sacred Order
 #include "act-iter.h"
 #include "areas.h"
+#include "attack.h" // Attack Strength Punctuation
 #include "attitude-change.h"
 #include "bloodspatter.h"
 #include "cloud.h"
@@ -1593,14 +1594,22 @@ void monster::apply_enchantment(const mon_enchant &me)
             del_ench(ENCH_STICKY_FLAME);
             break;
         }
+
         const int dam = resist_adjust_damage(this, BEAM_FIRE,
                                              roll_dice(2, 4) - 1);
 
-        if (dam > 0)
+        const bool absorb = (dam < 0);
+
+        if (dam)
         {
-            simple_monster_message(*this, " burns!");
-            dprf("sticky flame damage: %d", dam);
-            hurt(me.agent(), dam, BEAM_STICKY_FLAME);
+            mprf("%s %s%s", name(DESC_THE).c_str(), 
+                            absorb ? "draws strength from the flames" : "burns", 
+                            attack_strength_punctuation(dam).c_str());
+
+            if (absorb)
+                heal(dam, true);
+            else
+                hurt(me.agent(), dam, BEAM_STICKY_FLAME);
         }
 
         decay_enchantment(en, true);

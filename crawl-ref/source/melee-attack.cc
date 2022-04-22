@@ -754,36 +754,56 @@ static void _handle_staff_shield(beam_type flavour, int str, bool player, monste
 
 bool melee_attack::handle_phase_blocked()
 {
+    const mon_spell_slot slot = mon_spell_slot(SPELL_RING_OF_FLAMES, 1, MON_SPELL_WIZARD);
+
     if (defender->is_player() && player_staff_shielding() && you.staff() && you.staff()->sub_type == STAFF_FIRE
             && x_chance_in_y(you.skill(SK_FIRE_MAGIC), 18))
     {
-        int orig = 1 + random2(you.skill(SK_FIRE_MAGIC));
-        int dam = resist_adjust_damage(attacker, BEAM_FIRE, orig);
+        const int orig = 1 + random2(you.skill(SK_FIRE_MAGIC));
+        const int dam = resist_adjust_damage(attacker, BEAM_FIRE, orig);
+        const bool absorb = (dam < 0);
+    
         mprf("A bit of lava splashes out of your protective magma ball and hits %s%s",
-            attacker->name(DESC_THE).c_str(), attack_strength_punctuation(dam).c_str());
-        if (dam > orig)
-            mprf("The lava burns %s terribly.", attacker->pronoun(PRONOUN_OBJECTIVE).c_str());
-        else if (!dam)
-            mprf("%s completely resists.", attacker->pronoun(PRONOUN_SUBJECTIVE).c_str());
-        else if (orig > dam)
-            mprf("%s resists.", attacker->pronoun(PRONOUN_SUBJECTIVE).c_str());
-        attacker->hurt(&you, dam);
-    }
+            attacker->name(DESC_THE).c_str(), absorb ? "." : attack_strength_punctuation(dam).c_str());
 
-    else if (defender->is_monster() && defender->staff() && defender->staff()->sub_type == STAFF_FIRE
-        && defender->staff()->brand == SPSTF_SHIELD && x_chance_in_y(defender->as_monster()->spell_hd(mon_spell_slot(SPELL_RING_OF_FLAMES, 1, MON_SPELL_WIZARD)), 18))
-    {
-        int orig = 1 + random2(defender->as_monster()->spell_hd());
-        int dam = resist_adjust_damage(attacker, BEAM_FIRE, orig);
-        mprf("A bit of lava splashes out of %s protective magma ball and hits %s%s",
-            defender->name(DESC_ITS).c_str(), attacker->name(DESC_THE).c_str(), attack_strength_punctuation(dam).c_str());
         if (dam > orig)
             mprf("The lava burns %s terribly.", attacker->pronoun(PRONOUN_OBJECTIVE).c_str());
+        else if (absorb)
+            mprf("%s absorbs the lava%s", attacker->pronoun(PRONOUN_SUBJECTIVE).c_str(), attack_strength_punctuation(dam).c_str());
         else if (!dam)
             mprf("%s completely resists.", attacker->pronoun(PRONOUN_SUBJECTIVE).c_str());
         else if (orig > dam)
             mprf("%s resists.", attacker->pronoun(PRONOUN_SUBJECTIVE).c_str());
-        attacker->hurt(defender, dam);
+
+        if (absorb)
+            attacker->heal(dam, true);
+        else
+            attacker->hurt(&you, dam);
+    }
+    
+    else if (defender->is_monster() && defender->staff() && defender->staff()->sub_type == STAFF_FIRE
+        && defender->staff()->brand == SPSTF_SHIELD && x_chance_in_y(defender->as_monster()->spell_hd(slot), 18))
+    {
+        const int orig = 1 + random2(defender->as_monster()->spell_hd(slot));
+        const int dam = resist_adjust_damage(attacker, BEAM_FIRE, orig);
+        const bool absorb = (dam < 0);
+
+        mprf("A bit of lava splashes out of %s protective magma ball and hits %s%s",
+            defender->name(DESC_ITS).c_str(), attacker->name(DESC_THE).c_str(), absorb ? "." : attack_strength_punctuation(dam).c_str());
+
+        if (dam > orig)
+            mprf("The lava burns %s terribly.", attacker->pronoun(PRONOUN_OBJECTIVE).c_str());
+        else if (absorb)
+            mprf("%s absorbs the lava%s", attacker->pronoun(PRONOUN_SUBJECTIVE).c_str(), attack_strength_punctuation(dam).c_str());
+        else if (!dam)
+            mprf("%s completely resists.", attacker->pronoun(PRONOUN_SUBJECTIVE).c_str());
+        else if (orig > dam)
+            mprf("%s resists.", attacker->pronoun(PRONOUN_SUBJECTIVE).c_str());
+
+        if (absorb)
+            attacker->heal(dam, true);
+        else
+            attacker->hurt(defender, dam);
     }
 
     int str = 1;
@@ -902,9 +922,9 @@ bool melee_attack::handle_phase_blocked()
 
         if (heal && attacker->stat_hp() < attacker->stat_maxhp())
         {
-            int healed = resist_adjust_damage(defender, BEAM_NEG,
-                1 + random2(18));
-            if (healed)
+            const int healed = resist_adjust_damage(defender, BEAM_NEG, 1 + random2(18));
+
+            if (healed > 0)
             {
                 attacker->heal(healed);
                 mprf("%s %s strength from %s tendrils!",
@@ -1292,7 +1312,7 @@ bool melee_attack::check_unrand_effects()
 {
     if (unrand_entry && unrand_entry->melee_effects && weapon)
     {
-        const bool died = !defender->alive();
+        const bool died = !defender->alive() || mount_defend && !you.mounted();
 
         // Don't trigger the Wyrmbane death effect yet; that is done in
         // handle_phase_killed().
@@ -2621,6 +2641,7 @@ void melee_attack::decapitate()
 void melee_attack::attacker_sustain_passive_damage()
 {
     // If the defender has been cleaned up, it's too late for anything.
+    // BCADDO: Final acid splash on death?
     if (!defender->alive())
         return;
 
@@ -2643,8 +2664,7 @@ void melee_attack::attacker_sustain_passive_damage()
 
     // Spectral weapons can't be corroded (but can take acid damage).
     // Mounts can't be corroded either (at least for now).
-    const bool avatar = (attacker->is_monster()
-                        && mons_is_avatar(attacker->as_monster()->type));
+    const bool avatar = (attacker->is_monster() && mons_is_avatar(attacker->as_monster()->type));
 
     if (!avatar)
     {
@@ -2731,29 +2751,28 @@ bool melee_attack::apply_staff_damage()
 
     switch (weapon->sub_type)
     {
+
     case STAFF_AIR:
+    {
         special_damage =
             resist_adjust_damage(defender,
                                  BEAM_ELECTRICITY,
                                  staff_damage(SK_AIR_MAGIC), mount_defend);
 
+        const bool absorb = (special_damage < 0);
+
+        if (absorb)
+            flay_resist = false; // if immune flay wouldn't do anything anyways.
+
         if (special_damage)
         {
-            if (mount_defend)
-            {
-                special_damage_message =
-                    make_stringf("Your %s is electrocuted%s",
-                        you.mount_name(true).c_str(),
-                        attack_strength_punctuation(special_damage).c_str());
-            }
-            else
-            {
-                special_damage_message =
-                    make_stringf("%s %s electrocuted%s",
-                        defender->name(DESC_THE).c_str(),
-                        defender->conj_verb("are").c_str(),
-                        attack_strength_punctuation(special_damage).c_str());
-            }
+            special_damage_message =
+                make_stringf("%s%s %s %s%s",
+                    mount_defend ? "Your " : "",
+                    mount_defend ? you.mount_name(true).c_str() : defender->name(DESC_THE).c_str(),
+                    mount_defend ? (absorb ? "absorbs" : "is") : defender->conj_verb(absorb ? "absorb" : "are").c_str(),
+                    absorb ? "the shock" : "electrocuted",
+                    attack_strength_punctuation(special_damage).c_str());
             special_damage_flavour = BEAM_ELECTRICITY;
         }
 
@@ -2777,24 +2796,29 @@ bool melee_attack::apply_staff_damage()
                     (flay_dur) * BASELINE_DELAY));
             }
         }
-
+    }
         break;
 
     case STAFF_COLD:
+    {
         special_damage =
             resist_adjust_damage(defender,
-                                 BEAM_COLD,
-                                 staff_damage(SK_ICE_MAGIC), mount_defend);
+                BEAM_COLD,
+                staff_damage(SK_ICE_MAGIC), mount_defend);
+
+        const bool absorb = (special_damage < 0);
+
+        if (absorb)
+            flay_resist = false; // if immune flay wouldn't do anything anyways.
 
         if (special_damage)
         {
             special_damage_message =
-                make_stringf(
-                    "%s freeze%s %s%s%s",
-                    attacker->name(DESC_THE).c_str(),
-                    attacker->is_player() ? "" : "s",
-                    mount_defend ? "your " : "",
+                make_stringf("%s%s %s %s%s",
+                    mount_defend ? "Your " : "",
                     mount_defend ? you.mount_name(true).c_str() : defender->name(DESC_THE).c_str(),
+                    mount_defend ? (absorb ? "absorbs" : "is") : defender->conj_verb(absorb ? "absorb" : "are").c_str(),
+                    absorb ? "the wintry chill" : "frozen",
                     attack_strength_punctuation(special_damage).c_str());
             special_damage_flavour = BEAM_COLD;
         }
@@ -2820,7 +2844,7 @@ bool melee_attack::apply_staff_damage()
                     (flay_dur)* BASELINE_DELAY));
             }
         }
-
+    }
         break;
 
     case STAFF_EARTH:
@@ -2869,23 +2893,29 @@ bool melee_attack::apply_staff_damage()
         break;
 
     case STAFF_FIRE:
+    {
         special_damage =
             resist_adjust_damage(defender,
-                                 BEAM_FIRE,
-                                 staff_damage(SK_FIRE_MAGIC), mount_defend);
+                BEAM_FIRE,
+                staff_damage(SK_FIRE_MAGIC), mount_defend);
+
+        const bool absorb = (special_damage < 0);
+
+        if (absorb)
+            flay_resist = false; // if immune flay wouldn't do anything anyways.
 
         if (special_damage)
         {
             special_damage_message =
-                make_stringf(
-                    "%s burn%s %s%s%s",
-                    attacker->name(DESC_THE).c_str(),
-                    attacker->is_player() ? "" : "s",
-                    mount_defend ? "your " : "",
+                make_stringf("%s%s %s %s%s",
+                    mount_defend ? "Your " : "",
                     mount_defend ? you.mount_name(true).c_str() : defender->name(DESC_THE).c_str(),
+                    mount_defend ? (absorb ? "absorbs" : "is") : defender->conj_verb(absorb ? "absorb" : "are").c_str(),
+                    absorb ? "the blazing heat" : "scorched",
                     attack_strength_punctuation(special_damage).c_str());
             special_damage_flavour = BEAM_FIRE;
 
+            // BCADDO: check if this is duplicated in expose to element.
             if (defender->is_player() && !mount_defend)
                 maybe_melt_player_enchantments(BEAM_FIRE, special_damage);
         }
@@ -2910,7 +2940,7 @@ bool melee_attack::apply_staff_damage()
                     (flay_dur)* BASELINE_DELAY));
             }
         }
-
+    }
         break;
 
     case STAFF_POISON:
@@ -3068,24 +3098,31 @@ bool melee_attack::apply_staff_damage()
 
             if (special_damage)
             {
+                const bool absorb = (special_damage < 0);
+
                 special_damage_message =
-                    make_stringf(
-                        "%s %s %s%s ",
-                        attacker->name(DESC_THE).c_str(),
-                        attacker->conj_verb("drain").c_str(),
-                        defender->name(DESC_THE).c_str(),
+                    make_stringf("%s%s %s %s%s",
+                        mount_defend ? "Your " : "",
+                        mount_defend ? you.mount_name(true).c_str() : defender->name(DESC_THE).c_str(),
+                        mount_defend ? (absorb ? "absorbs" : "is") : defender->conj_verb(absorb ? "absorb" : "are").c_str(),
+                        absorb ? "the necrotic energy" : "drained",
                         attack_strength_punctuation(special_damage).c_str());
-                special_damage_message +=
+
+                if (!absorb)
+                {
+                    special_damage_message +=
                         make_stringf("%s %s strength from %s injuries%s",
-                        attacker->name(DESC_THE).c_str(),
-                        attacker->conj_verb("draw").c_str(),
-                        defender->pronoun(PRONOUN_POSSESSIVE).c_str(),
-                        attack_strength_punctuation(special_damage/3).c_str());
+                            attacker->name(DESC_THE).c_str(),
+                            attacker->conj_verb("draw").c_str(),
+                            defender->pronoun(PRONOUN_POSSESSIVE).c_str(),
+                            attack_strength_punctuation(special_damage / 3).c_str());
 
-                attacker->heal(special_damage / 3);
-                defender->drain_exp(attacker, true);
+                    attacker->heal(special_damage / 3);
+                    defender->drain_exp(attacker, true);
+                    attacker->god_conduct(DID_EVIL, 4);
+                }
 
-                attacker->god_conduct(DID_EVIL, 4);
+                special_damage_flavour = BEAM_NEG;
             }
         }
         else if (is_unrandom_artefact(*weapon, UNRAND_ELEMENTAL_STAFF))
@@ -3098,25 +3135,30 @@ bool melee_attack::apply_staff_damage()
             if (x_chance_in_y(attacker->skill(SK_EVOCATIONS, 200) + skill, 3000))
             {
                  special_damage = random2((skill + attacker->skill(SK_EVOCATIONS, 50)) / 80);
-                 beam_type dam_type = random_choose(BEAM_FIRE, BEAM_COLD, BEAM_NONE, BEAM_ELECTRICITY);
-                 special_damage = resist_adjust_damage(defender, dam_type, special_damage, mount_defend);
-                 string verb = "burn";
-                 switch (dam_type)
+                 special_damage_flavour = random_choose(BEAM_FIRE, BEAM_COLD, BEAM_BLUDGEON, BEAM_ELECTRICITY);
+                 special_damage = resist_adjust_damage(defender, special_damage_flavour, special_damage, mount_defend);
+                 string verb = "scorched";
+                 string noun = "the blazing heat";
+                 switch (special_damage_flavour)
                  {
-                 case BEAM_COLD:        verb = "freeze";
-                 case BEAM_NONE:        verb = "crush";
-                 case BEAM_ELECTRICITY: verb = "electrocute";
-                 default: break; // It's already burn and there are no other cases.
+                 case BEAM_COLD:        verb = "frozen";        noun = "the wintry chill";      break;
+                 case BEAM_BLUDGEON:    verb = "crushed";       noun = "the crushing force";    break; // Shouldn't ever be absorbed but w/e.
+                 case BEAM_ELECTRICITY: verb = "electrocuted";  noun = "the electric shock";    break;
+                 default: break; // It's already scorched and there are no other cases.
                  }
 
+                 const bool absorb = (special_damage < 0);
+
                  if (special_damage)
+                 {
                      special_damage_message =
-                     make_stringf(
-                         "%s %s %s%s ",
-                         attacker->name(DESC_THE).c_str(),
-                         attacker->conj_verb(verb).c_str(),
-                         defender->name(DESC_THE).c_str(),
-                         attack_strength_punctuation(special_damage).c_str());
+                         make_stringf("%s%s %s %s%s",
+                             mount_defend ? "Your " : "",
+                             mount_defend ? you.mount_name(true).c_str() : defender->name(DESC_THE).c_str(),
+                             mount_defend ? (absorb ? "absorbs" : "is") : defender->conj_verb(absorb ? "absorb" : "are").c_str(),
+                             absorb ? noun.c_str() : verb.c_str(),
+                             attack_strength_punctuation(special_damage).c_str());
+                 }
             }
         }
         else if (is_unrandom_artefact(*weapon, UNRAND_WUCAD_MU))
@@ -3163,8 +3205,12 @@ bool melee_attack::apply_staff_damage()
         if (needs_message && !special_damage_message.empty())
             mpr(special_damage_message);
 
-        inflict_damage(special_damage, special_damage_flavour);
-        if (special_damage > 0)
+        if (special_damage < 0)
+            defender->heal(special_damage, true);
+        else
+            inflict_damage(special_damage, special_damage_flavour);
+
+        if (special_damage != 0)
             defender->expose_to_element(special_damage_flavour, 2);
     }
 
@@ -3403,10 +3449,9 @@ void melee_attack::mons_do_napalm()
     {
         if (needs_message)
         {
-            mprf("%s %s covered in liquid flames%s",
+            mprf("%s %s covered in liquid flames!",
                  defender_name(false).c_str(),
-                 defender->conj_verb("are").c_str(),
-                 attack_strength_punctuation(special_damage).c_str());
+                 defender->conj_verb("are").c_str());
         }
 
         if (defender->is_player())
@@ -3418,29 +3463,6 @@ void melee_attack::mons_do_napalm()
                 attacker,
                 min(4, 1 + random2(attacker->get_hit_dice())/2));
         }
-    }
-}
-
-static void _print_resist_messages(actor* defender, int base_damage,
-                                   beam_type flavour, bool mount_defend)
-{
-    // check_your_resists is used for the player case to get additional
-    // effects such as Xom amusement, melting of icy effects, etc.
-    // mons_adjust_flavoured is used for the monster case to get all of the
-    // special message handling ("The ice beast melts!") correct.
-    // XXX: there must be a nicer way to do this, especially because we're
-    // basically calculating the damage twice in the case where messages
-    // are needed.
-    if (defender->is_player())
-        (void)check_your_resists(base_damage, flavour, "", 0, true, mount_defend);
-    else
-    {
-        bolt beam;
-        beam.flavour = flavour;
-        (void)mons_adjust_flavoured(defender->as_monster(),
-                                    beam,
-                                    base_damage,
-                                    true);
     }
 }
 
@@ -3611,31 +3633,31 @@ void melee_attack::mons_apply_attack_flavour()
         break;
 
     case AF_FIRE:
+        special_damage_flavour = BEAM_FIRE;
         special_damage =
             resist_adjust_damage(defender,
-                                 BEAM_FIRE,
+                                 special_damage_flavour,
                                  base_damage, mount_defend);
-        special_damage_flavour = BEAM_FIRE;
 
         if (needs_message && base_damage)
         {
             mprf("%s %s engulfed in flames%s",
                  defender_name(false).c_str(),
                  mount_defend ? "is" : defender->conj_verb("are").c_str(),
-                 attack_strength_punctuation(special_damage).c_str());
+                 special_damage < 0 ? "." : attack_strength_punctuation(special_damage).c_str());
 
-            _print_resist_messages(defender, base_damage, BEAM_FIRE, mount_defend);
+            defender->beam_effects(special_damage_flavour, base_damage, special_damage, nullptr, mount_defend);
         }
 
-        defender->expose_to_element(BEAM_FIRE, 2);
+        defender->expose_to_element(special_damage_flavour, 2);
         break;
 
     case AF_COLD:
+        special_damage_flavour = BEAM_COLD;
         special_damage =
             resist_adjust_damage(defender,
-                                 BEAM_COLD,
+                                 special_damage_flavour,
                                  base_damage, mount_defend);
-        special_damage_flavour = BEAM_COLD;
 
         if (needs_message && base_damage)
         {
@@ -3643,20 +3665,21 @@ void melee_attack::mons_apply_attack_flavour()
                  atk_name(DESC_THE).c_str(),
                  attacker->conj_verb("freeze").c_str(),
                  defender_name(true).c_str(),
-                 attack_strength_punctuation(special_damage).c_str());
+                 special_damage < 0 ? "." : attack_strength_punctuation(special_damage).c_str());
 
-            _print_resist_messages(defender, base_damage, BEAM_COLD, mount_defend);
+            defender->beam_effects(special_damage_flavour, base_damage, special_damage, nullptr, mount_defend);
         }
 
-        defender->expose_to_element(BEAM_COLD, 2);
+        defender->expose_to_element(special_damage_flavour, 2);
         break;
 
     case AF_ELEC:
+        special_damage_flavour = BEAM_ELECTRICITY;
+
         special_damage =
             resist_adjust_damage(defender,
-                                 BEAM_ELECTRICITY,
+                special_damage_flavour,
                                  base_damage, mount_defend);
-        special_damage_flavour = BEAM_ELECTRICITY;
 
         if (needs_message && base_damage)
         {
@@ -3664,13 +3687,13 @@ void melee_attack::mons_apply_attack_flavour()
                  atk_name(DESC_THE).c_str(),
                  attacker->conj_verb("shock").c_str(),
                  defender_name(true).c_str(),
-                 attack_strength_punctuation(special_damage).c_str());
+                 special_damage < 0 ? "." : attack_strength_punctuation(special_damage).c_str());
 
-            _print_resist_messages(defender, base_damage, BEAM_ELECTRICITY, mount_defend);
+            defender->beam_effects(special_damage_flavour, base_damage, special_damage, nullptr, mount_defend);
         }
 
         dprf(DIAG_COMBAT, "Shock damage: %d", special_damage);
-        defender->expose_to_element(BEAM_ELECTRICITY, 2);
+        defender->expose_to_element(special_damage_flavour, 2);
         break;
 
     case AF_MIASMATA:
@@ -3691,14 +3714,14 @@ void melee_attack::mons_apply_attack_flavour()
     case AF_VAMPIRIC:
         if (!actor_is_susceptible_to_vampirism(*defender))
             break;
-        if (mount_defend)
+        if (mount_defend) // BCADDO: Not all mounts are immune to vampires?
             break;
 
         if (defender->stat_hp() < defender->stat_maxhp())
         {
             int healed = resist_adjust_damage(defender, BEAM_NEG,
                                               1 + random2(damage_done));
-            if (healed)
+            if (healed > 0)
             {
                 attacker->heal(healed);
                 if (needs_message)
@@ -3991,8 +4014,9 @@ void melee_attack::mons_apply_attack_flavour()
         if (attacker->type == MONS_FIRE_VORTEX)
             attacker->as_monster()->suicide(-10);
 
+        special_damage_flavour = BEAM_FIRE;
         special_damage = resist_adjust_damage(defender,
-                                              BEAM_FIRE,
+                                              special_damage_flavour,
                                               base_damage, mount_defend);
 
         if (needs_message && special_damage)
@@ -4001,12 +4025,12 @@ void melee_attack::mons_apply_attack_flavour()
                     atk_name(DESC_THE).c_str(),
                     attacker->conj_verb("burn").c_str(),
                     defender_name(true).c_str(),
-                    attack_strength_punctuation(special_damage).c_str());
+                    special_damage < 0 ? "." : attack_strength_punctuation(special_damage).c_str());
 
-            _print_resist_messages(defender, special_damage, BEAM_FIRE, mount_defend);
+            defender->beam_effects(special_damage_flavour, base_damage, special_damage, nullptr, mount_defend);
         }
 
-        defender->expose_to_element(BEAM_FIRE, 2);
+        defender->expose_to_element(special_damage_flavour, 2);
         break;
 
     case AF_DRAIN_SPEED:
@@ -4130,26 +4154,31 @@ void melee_attack::do_passive_freeze()
         beam.flavour = BEAM_COLD;
         beam.thrower = KILL_YOU;
 
-        monster* mon = attacker->as_monster();
-
         const int orig_hurted = random2(11);
-        int hurted = mons_adjust_flavoured(mon, beam, orig_hurted);
+        const int hurted = resist_adjust_damage(attacker, BEAM_COLD, orig_hurted);
+        const bool absorb = hurted < 0;
 
         if (!hurted)
             return;
 
-        simple_monster_message(*mon, " is very cold.");
+        mprf("%s %s %s cold%s", attacker->name(DESC_THE).c_str(), 
+                                attacker->conj_verb(absorb ? "absorb" : "is").c_str(),
+                                absorb ? "the freezing" : "very",
+                                attack_strength_punctuation(hurted).c_str());
 
 #ifndef USE_TILE_LOCAL
-        flash_monster_colour(mon, LIGHTBLUE, 200);
+        flash_monster_colour(attacker->as_monster(), LIGHTBLUE, 200);
 #endif
 
-        mon->hurt(&you, hurted);
+        if (absorb)
+            attacker->heal(hurted, true);
+        else
+            attacker->hurt(&you, hurted);
 
-        if (mon->alive())
+        if (attacker->alive())
         {
-            mon->expose_to_element(BEAM_COLD, orig_hurted);
-            print_wounds(*mon);
+            attacker->expose_to_element(BEAM_COLD, orig_hurted);
+            print_wounds(*attacker->as_monster());
         }
     }
 }
@@ -4256,13 +4285,24 @@ void melee_attack::do_spines()
                 const int ice_dmg   = roll_dice(you.get_mutation_level(MUT_FROST_BURST), dice_size);
                 const int ice_hurt  = resist_adjust_damage(attacker, BEAM_COLD, ice_dmg);
 
-                if (ice_hurt <= 0)
+                if (ice_hurt == 0)
                     return;
+                else if (ice_hurt > 0)
+                {
+                    mprf("%s %s frozen%s", attacker->name(DESC_THE).c_str(),
+                                           attacker->conj_verb("is").c_str(), 
+                                           attack_strength_punctuation(hurt).c_str());
 
-                simple_monster_message(*attacker->as_monster(),
-                                       make_stringf(" is frozen%s", attack_strength_punctuation(hurt).c_str()).c_str());
+                    attacker->hurt(&you, ice_hurt);
+                }
+                else
+                {
+                    mprf("%s %s some cold from your spines%s", attacker->name(DESC_THE).c_str(),
+                                           attacker->conj_verb("leech").c_str(), 
+                                           attack_strength_punctuation(hurt).c_str());
 
-                attacker->hurt(&you, ice_hurt);
+                    attacker->heal(ice_hurt, true);
+                }
             }
         }
     }
@@ -4304,22 +4344,39 @@ void melee_attack::do_spines()
             beam_type damtype = BEAM_MISSILE;
 
             if (defender->type == MONS_SPINY_FROG)
-            {
                 damtype = BEAM_POISON_ARROW;
-
-                int pois = random_range(defender->get_hit_dice(), defender->get_hit_dice() * 5 / 3);
-
-                const int resist = attacker->res_poison();
-                if (attacker->is_player())
-                    poison_player((resist ? pois / 2 : pois), defender->name(DESC_A), "venomous spines", true);
-                else
-                    poison_monster(attacker->as_monster(), defender, (resist ? pois / 2 : pois), true, true);
-            }
 
             if (mount_attack)
                 damage_mount(hurt);
             else
                 attacker->hurt(defender, hurt, damtype, KILLED_BY_SPINES);
+
+            if (defender->type == MONS_SPINY_FROG && attacker->alive())
+            {
+                const int resist = attacker->res_poison();
+
+                if (resist < 3) // Don't bother if immune or absorb.
+                {
+                    const int pois = random_range(defender->get_hit_dice(), defender->get_hit_dice() * 5 / 3);
+
+                    if (attacker->is_player())
+                        poison_player((resist ? pois / 2 : pois), defender->name(DESC_A), "venomous spines", true);
+                    else
+                        poison_monster(attacker->as_monster(), defender, (resist ? pois / 2 : pois), true, true);
+                }
+                else if (resist > 3) // Absorb a bit back.
+                {
+                    const int regen = div_rand_round(hurt * 5, 6);
+                    if (defender->heal(regen, true))
+                    {
+                        mprf("%s %s %s's venom%s",
+                            mount_attack ? "It" : attacker->pronoun(PRONOUN_SUBJECTIVE).c_str(),
+                            mount_attack ? "absorbs" : attacker->conj_verb("absorb").c_str(),
+                            defender->name(DESC_THE).c_str(),
+                            attack_strength_punctuation(regen).c_str());
+                    }
+                }
+            }
         }
     }
 }

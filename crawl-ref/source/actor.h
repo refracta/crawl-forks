@@ -212,7 +212,7 @@ public:
                       string aux = "",
                       bool cleanup_dead = true,
                       bool attacker_effects = true) = 0;
-    virtual bool heal(int amount) = 0;
+    virtual bool heal(int amount, bool force = false) = 0;
     virtual void banish(const actor *agent, const string &who = "",
                         const int power = 0, bool force = false) = 0;
     virtual void blink(coord_def disp_center = coord_def(0,0) ) = 0;
@@ -242,8 +242,8 @@ public:
                                bool intrinsic_only = false) const;
     virtual bool can_sleep(bool holi_only = false) const;
     virtual void check_awaken(int disturbance) = 0;
-    virtual int beam_resists(bolt &beam, int hurted, bool doEffects,
-                             string source = "", bool mt = false) = 0;
+    virtual void beam_effects(beam_type flavour, int base, int post_res, 
+                              bolt *beam = nullptr, bool mt = false) = 0;
 
     virtual int  skill(skill_type sk, int scale = 1,
                        bool real = false, bool drained = true,

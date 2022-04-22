@@ -917,7 +917,7 @@ static const mutation_def mut_data[] =
 { MUT_OOZOMORPH, 0, 3, mutflag::good, true,
   "gelatinous body",
 
-  {"Your gelatinous form is immune to acid, constriction and sticky flames. (rCorr+, Slime)", "", ""},
+  {"Your gelatinous form absorbs acid and is immune to constriction and sticky flames. (rCorr(absorb), Slime)", "", ""},
   {"", "", ""},
   {"", "", ""},
 },
@@ -926,10 +926,10 @@ static const mutation_def mut_data[] =
 { MUT_SLIME, 0, 3, mutflag::good | mutflag::jiyva, true,
   "slime",
 
-  {"Your slimy body is resistant to acid. (rCorr)",
-   "Your oozing form is resistant to acid. (rCorr)\n"
+  {"Your slimy body is resistant to acid. (rCorr+)",
+   "Your oozing form is immune to acid. (rCorr+++)\n"
    "You regenerate health quickly. (Regen)",
-   "Your gelatinous form is immune to acid, constriction and sticky flames. (rCorr+, Slime)\n"
+   "Your gelatinous form absorbs acid and is immune to constriction and sticky flames. (rCorr(absorb), Slime)\n"
    "You regenerate health and magic quickly. (Regen, MPRegen)"},
 
   {"You feel more slimy.",

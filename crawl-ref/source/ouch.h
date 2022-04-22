@@ -71,8 +71,6 @@ enum kill_method_type
 };
 
 void maybe_melt_player_enchantments(beam_type flavour, int damage);
-int check_your_resists(int hurted, beam_type flavour, string source,
-                       bolt *beam = 0, bool doEffects = true, bool mount = false);
 
 class actor;
 int actor_to_death_source(const actor* agent);

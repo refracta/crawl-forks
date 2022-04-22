@@ -56,6 +56,7 @@
 #include "religion.h"
 #include "rot.h"
 #include "shout.h"
+#include "spl-goditem.h"    // try_to_pacify
 #include "spl-monench.h"
 #include "spl-summoning.h"
 #include "spl-util.h"
@@ -3553,15 +3554,15 @@ int monster::evasion(ev_ignore_type evit, const actor* /*act*/) const
     return max(ev, 0);
 }
 
-bool monster::heal(int amount)
+bool monster::heal(int amount, bool force)
 {
-    if (mons_is_statue(type))
+    if (mons_is_statue(type) && !force)
         return false;
 
-    if (amount < 1)
+    if (amount == 0 || hit_points == max_hit_points)
         return false;
-    else if (hit_points == max_hit_points)
-        return false;
+
+    amount = abs(amount);
 
     hit_points += amount;
 
@@ -3868,6 +3869,9 @@ int monster::res_fire(bool /*mount*/) const
 {
     int u = get_mons_resist(*this, MR_RES_FIRE);
 
+    if (u > 3)
+        return 4;
+
     if (mons_itemuse(*this) & MU_WIELD_MASK)
     {
         u += scan_artefacts(ARTP_FIRE);
@@ -3932,6 +3936,9 @@ int monster::res_cold(bool /*mount*/) const
 {
     int u = get_mons_resist(*this, MR_RES_COLD);
 
+    if (u > 3)
+        return 4;
+
     if (mons_itemuse(*this) & MU_WIELD_MASK)
     {
         u += scan_artefacts(ARTP_COLD);
@@ -3977,9 +3984,10 @@ int monster::res_cold(bool /*mount*/) const
 int monster::res_elec(bool /*mount*/) const
 {
     // This is a variable, not a player_xx() function, so can be above 1.
-    int u = 0;
+    int u = get_mons_resist(*this, MR_RES_ELEC);
 
-    u += get_mons_resist(*this, MR_RES_ELEC);
+    if (u > 3)
+        return 4;
 
     // Don't bother checking equipment if the monster can't use it.
     if (mons_itemuse(*this) & MU_WIELD_MASK)
@@ -4054,6 +4062,9 @@ int monster::res_water_drowning(bool /*mount*/) const
 {
     if (get_mons_resist(*this, MR_VUL_WATER))
         return -1;
+
+    if (mons_class_flag(mons_base_type(*this), M_ABSORB_WATER))
+        return 4;
 
     if (is_unbreathing())
         return 1;
@@ -4163,11 +4174,14 @@ int monster::res_holy_energy(bool /*mount*/) const
 
 int monster::res_negative_energy(bool /*mount*/) const
 {
+    int u = get_mons_resist(*this, MR_RES_NEG);
+
+    if (u > 3)
+        return 4;
+
     // If you change this, also change get_mons_base_resists.
     if (!(holiness() & MH_NATURAL) && !(holiness() & MH_DEMONIC))
         return 3;
-
-    int u = get_mons_resist(*this, MR_RES_NEG);
 
     if (mons_itemuse(*this) & MU_WIELD_MASK)
     {
@@ -4251,6 +4265,9 @@ int monster::res_corr(bool /*mount*/) const
 int monster::res_acid(bool /*mount*/) const
 {
     int u = get_mons_resist(*this, MR_RES_ACID);
+
+    if (u > 3)
+        return 4;
 
     const dungeon_feature_type feat = grd(pos());
 
@@ -4534,7 +4551,7 @@ bool monster::drain_exp(actor *agent, bool quiet, int /*pow*/)
     int dmg = 2 + random2(3);
 
     // If quiet, don't clean up the monster in order to credit properly.
-    hurt(agent, dmg, BEAM_NEG, KILLED_BY_DRAINING, "", "", !quiet);
+    hurt(agent, dmg, BEAM_DRAIN, KILLED_BY_DRAINING, "", "", !quiet);
 
     if (!quiet && you.can_see(*this))
         mprf("%s is drained%s", name(DESC_THE).c_str(), attack_strength_punctuation(dmg).c_str());
@@ -4632,13 +4649,22 @@ void monster::splash_with_acid(const actor* evildoer, int acid_strength,
     const int dam = roll_dice(acid_strength, 4);
     const int post_res_dam = resist_adjust_damage(this, BEAM_ACID, dam);
 
-    if (this->observable() && post_res_dam > 0)
+    if (post_res_dam < 0)
     {
-        mprf("%s %s%s", this->name(DESC_THE).c_str(), hurt_msg ? hurt_msg : "is splashed with acid",
-             attack_strength_punctuation(post_res_dam).c_str());
+        mprf("%s %s in the acid%s", this->name(DESC_THE).c_str(), this->conj_verb("splashes").c_str(),
+            attack_strength_punctuation(post_res_dam).c_str());
+
+        heal(post_res_dam, true);
+        return;
     }
 
-    if (x_chance_in_y(acid_strength,4))
+    if (this->observable() && post_res_dam > 0)
+    {
+        string substr = hurt_msg ? hurt_msg : make_stringf("%s splashed with acid", this->conj_verb("is").c_str());
+        mprf("%s %s%s", this->name(DESC_THE).c_str(), substr.c_str(), attack_strength_punctuation(post_res_dam).c_str());
+    }
+
+    if (x_chance_in_y(acid_strength, 4))
         corrode_equipment();
 
     if (post_res_dam > 0)
@@ -4708,9 +4734,10 @@ int monster::hurt(const actor *agent, int amount, beam_type flavour,
             && flavour != BEAM_TORMENT_DAMAGE)
         {
             amount *= 4;
-            if (amount > hit_points + 50)
-                flags |= MF_EXPLODE_KILL;
         }
+
+        if (amount > hit_points + 50)
+            flags |= MF_EXPLODE_KILL;
 
         if (is_fairy())
             amount = 1;
@@ -5944,9 +5971,422 @@ void monster::check_awaken(int)
     // XXX
 }
 
-int monster::beam_resists(bolt &beam, int hurted, bool doEffects, string /*source*/, bool /*mt*/)
+void monster::beam_effects(beam_type flavour, int original, int hurted, bolt *pbolt, bool /*mt*/)
 {
-    return mons_adjust_flavoured(this, beam, hurted, doEffects);
+    if (flavour == BEAM_PARADOXICAL)
+    {
+        if (grid_distance(coord_def(1, 1), you.pos()) % 2)
+            flavour = BEAM_FIRE;
+        else
+            flavour = BEAM_COLD;
+    }
+
+    actor *blame = pbolt ? pbolt->agent() : nullptr;
+    const bool blame_player = pbolt ? YOU_KILL(pbolt->thrower) : false;
+    const bool god_cares = pbolt ? pbolt->god_cares() : false;
+
+    switch (flavour)
+    {
+    case BEAM_ROT:
+    {
+        if (is_insubstantial() && bool(holiness() & MH_UNDEAD))
+            return;
+
+        bool success = false;
+
+        if (bool(holiness() & (MH_ELEMENTAL | MH_CONSTRUCT)) && res_acid() < 3)
+        {
+            mprf("The vicious blight erodes %s", name(DESC_THE).c_str());
+            if (one_chance_in(3))
+                corrode_equipment("foul blight", 1);
+        }
+        else
+        {
+            if (miasma_monster(this, blame))
+                success = true;
+
+            simple_monster_message(*this, " seems to rot from the inside!");
+
+            if (!success)
+            {
+                if (poison_monster(this, blame, 1 + random2(3), true, false))
+                    success = true;
+            }
+            if (!success || one_chance_in(4))
+            {
+                if (!one_chance_in(3))
+                {
+                    if (can_mutate())
+                        malmutate("foul blight");
+                    else
+                        weaken(blame, 8);
+                }
+                else
+                    corrode_equipment("foul blight", 1);
+            }
+        }
+
+        if (blame_player)
+            did_god_conduct(DID_UNCLEAN, 2, god_cares);
+    }
+    case BEAM_FIRE:
+    case BEAM_STEAM:
+        if (hurted < 0)
+        {
+            if (heal(hurted, true))
+            {
+                mprf("%s absorbs the %s%s", name(DESC_THE).c_str(),
+                    (flavour == BEAM_STEAM) ? "heat" : "fire",
+                    attack_strength_punctuation(hurted).c_str());
+            }
+            return;
+        }
+        else if (!hurted)
+        {
+            if (original > 0)
+                simple_monster_message(*this, " completely resists.");
+        }
+        else if (original > hurted)
+            simple_monster_message(*this, " resists.");
+        else if (original < hurted)
+        {
+            if (is_icy())
+                simple_monster_message(*this, " melts!");
+            else if (mons_species(type) == MONS_BUSH && res_fire() < 0)
+                simple_monster_message(*this, " is on fire!");
+            else if (flavour == BEAM_STEAM)
+                simple_monster_message(*this, " is scalded terribly!");
+            else
+                simple_monster_message(*this, " is burned terribly!");
+        }
+        break;
+
+    case BEAM_WATER:
+        if (hurted < 0)
+        {
+            if (heal(hurted, true))
+            {
+                mprf("%s absorbs the water%s", name(DESC_THE).c_str(),
+                    attack_strength_punctuation(hurted).c_str());
+            }
+            return;
+        }
+        else if (hurted > original)
+            simple_monster_message(*this, " is doused terribly!");
+        break;
+
+    case BEAM_COLD:
+        if (hurted < 0)
+        {
+            if (heal(hurted, true))
+            {
+                mprf("%s absorbs the cold%s", name(DESC_THE).c_str(),
+                    attack_strength_punctuation(hurted).c_str());
+            }
+            return;
+        }
+        else if (!hurted)
+        {
+            if (original > 0)
+                simple_monster_message(*this, " completely resists.");
+        }
+        else if (original > hurted)
+            simple_monster_message(*this, " resists.");
+        else if (original < hurted)
+            simple_monster_message(*this, " is frozen!");
+        break;
+
+    case BEAM_SILVER:
+    case BEAM_SILVER_FRAG:
+    {
+        string msg;
+        silver_damages_victim(this, hurted, msg);
+        if (!msg.empty())
+            mpr(msg);
+        break;
+    }
+
+    case BEAM_ELECTRICITY:
+        if (hurted < 0)
+        {
+            if (heal(hurted, true))
+            {
+                mprf("%s absorbs the electricity%s", name(DESC_THE).c_str(),
+                    attack_strength_punctuation(hurted).c_str());
+            }
+            return;
+        }
+        else if (!hurted)
+        {
+            if (original > 0)
+                simple_monster_message(*this, " completely resists.");
+        }
+        else if (original > hurted)
+            simple_monster_message(*this, " resists.");
+        else if (original < hurted)
+            simple_monster_message(*this, " is electrocuted!");
+        break;
+
+    case BEAM_ACID_WAVE:
+    case BEAM_ACID:
+    {
+        if (hurted < 0)
+        {
+            if (heal(hurted, true))
+            {
+                mprf("%s absorbs the acid%s", name(DESC_THE).c_str(),
+                    attack_strength_punctuation(-hurted).c_str());
+            }
+            return;
+        }
+        else if (!hurted)
+        {
+            if (original > 0)
+                simple_monster_message(*this, " completely resists.");
+        }
+        else if (original > hurted)
+            simple_monster_message(*this, " resists.");
+        else if (original < hurted)
+            simple_monster_message(*this, " is burned terribly!");
+
+        if ((hurted > 0) && res_acid() <= 2)
+            splash_with_acid(blame, div_round_up(hurted, 10));
+        break;
+    }
+
+    case BEAM_POISON:
+    {
+        if (hurted < 0)
+        {
+            if (heal(hurted, true))
+            {
+                mprf("%s absorbs the poison%s", name(DESC_THE).c_str(),
+                    attack_strength_punctuation(-hurted).c_str());
+            }
+            return;
+        }
+        else if (!hurted)
+            simple_monster_message(*this,
+            (original > 0) ? " completely resists." : " appears unharmed.");
+        else if (hurted < original)
+            simple_monster_message(*this, " partially resists.");
+        else
+            poison_monster(this, blame);
+        break;
+    }
+
+    case BEAM_IRRADIATE:
+        if (hurted > 0)
+            malmutate("mutagenic radiation");
+        break;
+
+    case BEAM_POISON_ARROW:
+        if (hurted < 0)
+        {
+            if (heal(hurted, true))
+            {
+                mprf("%s absorbs the poison%s", name(DESC_THE).c_str(),
+                    attack_strength_punctuation(-hurted).c_str());
+            }
+        }
+        else if (hurted < original)
+        {
+            simple_monster_message(*this, " partially resists.");
+            poison_monster(this, blame, 2, true);
+        }
+        else
+            poison_monster(this, blame, 4, true);
+        break;
+
+    case BEAM_DRAIN:
+    case BEAM_NEG:
+        if (res_negative_energy() == 3)
+            simple_monster_message(*this, " completely resists.");
+        else
+        {
+            if (hurted < 0)
+            {
+                if (heal(hurted, true))
+                {
+                    mprf("%s absorbs the necrotic energy%s", name(DESC_THE).c_str(),
+                        attack_strength_punctuation(-hurted).c_str());
+                }
+                return;
+            }
+
+            if (original > hurted)
+                simple_monster_message(*this, " resists.");
+            else if (original < hurted)
+                simple_monster_message(*this, " is drained terribly!");
+
+            if (observable() && pbolt)
+                pbolt->obvious_effect = true;
+
+            if (flavour == BEAM_DRAIN)
+                drain_exp(blame);
+
+            if (blame_player)
+                did_god_conduct(DID_EVIL, 2, god_cares);
+        }
+        break;
+
+    case BEAM_MIASMA:
+        if (res_rotting())
+            simple_monster_message(*this, " completely resists.");
+        else
+        {
+            miasma_monster(this, blame);
+
+            if (blame_player)
+                did_god_conduct(DID_UNCLEAN, 2, god_cares);
+        }
+        break;
+
+    case BEAM_HOLY:
+    {
+        if (original > 0 && (!hurted || hurted != original))
+        {
+            simple_monster_message(*this, hurted == 0 ? " completely resists." :
+                hurted < original ? " resists." :
+                " writhes in agony!");
+        }
+        break;
+    }
+
+    case BEAM_ICY_SHARDS:
+    case BEAM_CRYSTAL_ICE:
+    case BEAM_FREEZE:
+    case BEAM_ICE:
+        // ice - 40% of damage is cold, other 60% is impact and
+        // can't be resisted (except by AC, of course)
+        if (hurted < 0)
+        {
+            if (heal(hurted, true))
+            {
+                mprf("%s absorbs the ice%s", this->name(DESC_THE).c_str(),
+                    attack_strength_punctuation(-hurted).c_str());
+            }
+            return;
+        }
+
+        // Weird special case; but decided to put it in for practical purposes
+        else if (is_icy() && flavour == BEAM_ICY_SHARDS)
+            simple_monster_message(*this, " is unaffected.");
+        else if (hurted < original)
+            simple_monster_message(*this, " partially resists.");
+        else if (hurted > original)
+            simple_monster_message(*this, " is frozen!");
+        break;
+
+    case BEAM_CRYSTAL_FIRE:
+    case BEAM_LAVA:
+        if (hurted < 0)
+        {
+            if (heal(hurted, true))
+            {
+                mprf("%s absorbs the magma%s", name(DESC_THE).c_str(),
+                    attack_strength_punctuation(hurted).c_str());
+            }
+            return;
+        }
+        else if (hurted < original)
+            simple_monster_message(*this, " partially resists.");
+        else if (hurted > original)
+        {
+            if (is_icy())
+                simple_monster_message(*this, " melts!");
+            else
+                simple_monster_message(*this, " is burned terribly!");
+        }
+        break;
+
+    case BEAM_DAMNATION:
+        if (res_hellfire())
+            simple_monster_message(*this, " completely resists.");
+        break;
+
+    case BEAM_MEPHITIC:
+        if (res_poison() > 0 && original > 0)
+            simple_monster_message(*this, " completely resists.");
+        break;
+
+    case BEAM_MAGIC_CANDLE:
+        backlight_monster(this);
+        break;
+
+    case BEAM_BUTTERFLY:
+        if (is_summoned() && pbolt)
+        {
+            mon_enchant abj = get_ench(ENCH_ABJ);
+
+            if (blame->is_player())
+            {
+                if (wont_attack())
+                {
+                    abj.duration += original * BASELINE_DELAY;
+                    mprf("You extend %s time in this world.", name(DESC_ITS).c_str());
+                }
+                else
+                {
+                    abj.duration = max(abj.duration - original * BASELINE_DELAY, 1);
+                    simple_monster_message(*this, " shudders.");
+                }
+            }
+            else
+            {
+                if (mons_aligned(blame, this))
+                {
+                    abj.duration += original * BASELINE_DELAY;
+                    mprf("%s extend %s time in this world.", blame->name(DESC_THE).c_str(), name(DESC_ITS).c_str());
+                }
+                else
+                {
+                    abj.duration = max(abj.duration - original * BASELINE_DELAY, 1);
+                    simple_monster_message(*this, " shudders%s.");
+                }
+            }
+            update_ench(abj);
+        }
+        break;
+
+    case BEAM_WAND_HEALING:
+        if (blame->is_player())
+        {
+            if (!wont_attack() && !neutral() && you.religion == GOD_ELYVILON)
+                try_to_pacify(*this, hurted, hurted * 2);
+            else
+                heal_monster(*this, hurted);
+        }
+        else
+        {
+            if (you.can_see(*this) && hit_points < max_hit_points)
+                simple_monster_message(*this, " wounds heal themselves!");
+            heal(hurted);
+        }
+        break;
+
+    case BEAM_AIR:
+        if (original < hurted)
+            simple_monster_message(*this, " gets badly buffeted.");
+        break;
+
+    case BEAM_ENSNARE:
+        ensnare(this, original);
+        break;
+
+    default:
+        break;
+    }
+
+    if (alive())
+    {
+        const int burn_power = (pbolt && pbolt->is_explosion) ? 5 :
+            (pbolt && pbolt->pierce) ? 3
+            : 2;
+        expose_to_element(flavour, burn_power, false);
+    }
+
+    return;
 }
 
 const monsterentry *monster::find_monsterentry() const

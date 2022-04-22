@@ -16,6 +16,7 @@
 #include "directn.h"
 #include "english.h"
 #include "env.h"
+#include "fight.h"
 #include "food.h"
 #include "god-passive.h"
 #include "item-use.h"
@@ -451,28 +452,34 @@ bool MiscastEffect::_ouch(int dam, beam_type flavour)
     // Delay do_msg() until after avoid_lethal().
     if (target->is_monster())
     {
-        monster* mon_target = target->as_monster();
-
         do_msg(true);
 
-        bolt beem;
+        const int postres = resist_adjust_damage(target, flavour, dam);
+        target->beam_effects(flavour, dam, postres);
 
-        beem.flavour = flavour;
-        dam = mons_adjust_flavoured(mon_target, beem, dam, true);
-        mon_target->hurt(act_source, dam, BEAM_MISSILE, KILLED_BY_BEAM,
+        if (postres > 0 && target->alive())
+        {
+            target->hurt(act_source, postres, BEAM_MISSILE, KILLED_BY_BEAM,
                          "", "", false);
+        }
 
-        if (!mon_target->alive())
-            monster_die(*mon_target, kt, actor_to_death_source(act_source));
+        if (!target->alive())
+            monster_die(*target->as_monster(), kt, actor_to_death_source(act_source));
     }
     else
     {
-        dam = check_your_resists(dam, flavour, cause);
+        const int orig = dam;
+        dam = resist_adjust_damage(&you, flavour, dam);
 
         if (avoid_lethal(dam))
             return false;
 
         do_msg(true);
+
+        you.beam_effects(flavour, orig, dam);
+
+        if (dam <= 0)
+            return true;
 
         kill_method_type method;
 
@@ -516,7 +523,7 @@ bool MiscastEffect::_explosion()
         beam.thrower = KILL_YOU;
 
     int max_dam = beam.damage.max();
-    max_dam = check_your_resists(max_dam, beam.flavour, cause);
+    max_dam = resist_adjust_damage(&you, beam.flavour, max_dam);
     if (avoid_lethal(max_dam))
         return false;
 
@@ -600,7 +607,7 @@ bool MiscastEffect::_malign_gateway(bool hostile)
 
 bool MiscastEffect::avoid_lethal(int dam)
 {
-    if (lethality_margin <= 0 || (you.hp - dam) > lethality_margin)
+    if (dam < 0 || lethality_margin <= 0 || (you.hp - dam) > lethality_margin)
         return false;
 
     if (recursion_depth == MAX_RECURSE)

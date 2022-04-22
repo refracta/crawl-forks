@@ -66,7 +66,8 @@ enum monclass_flag_type : uint64_t
     /// monster digs through rock
     M_BURROWS           = BIT(19),
     
-                     // = BIT(20), // was M_SUBMERGES
+    // monster recovers HP when it takes water damage.
+    M_ABSORB_WATER      = BIT(20),
 
     /// monster is a unique
     M_UNIQUE            = BIT(21),

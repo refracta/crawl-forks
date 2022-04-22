@@ -595,6 +595,7 @@ static void _eat_chunk(item_def& food)
         break;
     }
 
+    case CE_DIVINE:
     case CE_NOXIOUS:
     case CE_NOCORPSE:
         mprf(MSGCH_ERROR, "This flesh (%d) tastes buggy!", chunk_effect);

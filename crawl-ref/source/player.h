@@ -749,7 +749,7 @@ public:
     void slow_down(actor *, int str, bool do_msg = true) override;
     void confuse(actor *, int strength) override;
     void weaken(actor *attacker, int pow) override;
-    bool heal(int amount) override;
+    bool heal(int amount, bool force = false) override;
     bool drain_exp(actor *, bool quiet = false, int pow = 3) override;
     bool rot(actor *, int amount, bool quiet = false, bool no_cleanup = false, bool bypass_resistance = false)
         override;
@@ -848,8 +848,8 @@ public:
     void put_to_sleep(actor *, int power = 0, bool hibernate = false) override;
     void awaken();
     void check_awaken(int disturbance) override;
-    int beam_resists(bolt &beam, int hurted, bool doEffects, string source, bool mt = false)
-        override;
+    void beam_effects(beam_type flavour, int base, int post_res,
+                      bolt *beam = nullptr, bool mt = false) override;
 
     bool can_smell() const;
     bool can_sleep(bool holi_only = false) const override;

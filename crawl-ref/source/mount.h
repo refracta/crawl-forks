@@ -16,6 +16,7 @@ enum class mount_type
 bool mount_likes_water();
 void damage_mount(int amount);
 void dismount();
+int heal_mount(int amount);
 void cure_mount_debuffs();
 bool mount_hit();
 int apply_mount_ac(int amount, int max_dmg = 0, ac_type type = ac_type::normal);

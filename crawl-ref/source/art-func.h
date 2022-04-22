@@ -1279,7 +1279,22 @@ static void _THERMIC_ENGINE_melee_effects(item_def* weapon, actor* attacker,
     // the molten brand has already been applied at this point
     const int bonus_dam = resist_adjust_damage(defender, BEAM_COLD,
                                                random2(dam) / 2 + 1);
-    if (bonus_dam > 0)
+    if (bonus_dam < 0)
+    {
+        mprf("%s%s absorbs the freezing cold%s",
+            hits_mount ? "Your " : "",
+            hits_mount ? defender->as_player()->mount_name(true).c_str()
+                       : defender->name(DESC_THE).c_str(),
+            attack_strength_punctuation(bonus_dam).c_str());
+
+        if (hits_mount)
+            heal_mount(bonus_dam);
+        else
+            defender->heal(bonus_dam, true);
+
+        defender->expose_to_element(BEAM_COLD, 2);
+    }
+    else if (bonus_dam > 0)
     {
         mprf("%s %s %s%s%s",
             attacker->name(DESC_THE).c_str(),

@@ -904,13 +904,28 @@ void slime_wall_damage(actor* act, int delay)
 
         const int dam = resist_adjust_damage(mon, BEAM_ACID,
                                              roll_dice(2, strength));
-        if (dam > 0 && you.can_see(*mon))
+        if (dam > 0)
         {
-            mprf((walls > 1) ? "The walls burn %s%s" : "The wall burns %s%s",
-                  mon->name(DESC_THE).c_str(),
-                  attack_strength_punctuation(dam).c_str());
+            if (you.can_see(*mon))
+            { 
+                mprf((walls > 1) ? "The walls burn %s%s" : "The wall burns %s%s",
+                      mon->name(DESC_THE).c_str(),
+                      attack_strength_punctuation(dam).c_str());
+            }
+            mon->hurt(nullptr, dam, BEAM_ACID);
         }
-        mon->hurt(nullptr, dam, BEAM_ACID);
+        else if (dam < 0 && act->stat_hp() < act->stat_maxhp())
+        {
+            const int healz = timescale_damage(act, max(1, div_rand_round(walls, 2))); // Since terrain is constant, turn to weak regen.
+            if (you.can_see(*mon))
+            {
+                mprf("%s draws strength from the acidic wall%s%s",
+                    mon->name(DESC_THE).c_str(),
+                    walls > 1 ? "s" : "",
+                    attack_strength_punctuation(healz).c_str());
+            }
+            mon->heal(healz, true);
+        }
     }
 }
 
@@ -1733,16 +1748,31 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
             hurted = resist_adjust_damage(act, BEAM_FIRE, original, mount);
             actual = timescale_damage(act, hurted);
 
+            if (you.species == SP_MOLTEN_GARGOYLE) // special case to absorb JUST ground lava.
+                actual = -1;
+
+            const int healz = timescale_damage(act, 1 + random2(4)); // Only weak regen since lava is constant.
+
             if (mount)
             {
-                mprf("The lava burns your %s%s%s%s",
-                    you.mount_name(true).c_str(),
-                    hurted > original ? " terribly" : "",
-                    attack_strength_punctuation(actual).c_str(),
-                    hurted < original ? " It resists." : "");
-                damage_mount(actual);
+                if (actual > 0)
+                {
+                    mprf("The lava burns your %s%s%s%s",
+                        you.mount_name(true).c_str(),
+                        hurted > original ? " terribly" : "",
+                        attack_strength_punctuation(actual).c_str(),
+                        hurted < original ? " It resists." : "");
+                    damage_mount(actual);
+                }
+                else if (actual < 0)
+                {
+                    mprf("Your %s absorbs some lava%s",
+                        you.mount_name(true).c_str(),
+                        attack_strength_punctuation(healz).c_str());
+                    heal_mount(healz);
+                }
             }
-            else if (you.species != SP_MOLTEN_GARGOYLE)
+            else if (actual > 0)
             {
                 if (hurted > original)
                     mprf("The lava burns you terribly%s", attack_strength_punctuation(actual).c_str());
@@ -1752,19 +1782,43 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
                     canned_msg(MSG_YOU_RESIST);
                 ouch(actual, KILLED_BY_LAVA, source, aux_source.c_str());
             }
+            else if (actual < 0 && you.hp < you.hp_max)
+            {
+                if (you.species == SP_MOLTEN_GARGOYLE)
+                    mprf("Your molten form reforms in the lava%s", attack_strength_punctuation(healz).c_str());
+                else
+                    mprf("You absorb the scorching heat from the lava%s", attack_strength_punctuation(healz).c_str());
+                you.heal(healz, true);
+            }
             you.expose_to_element(BEAM_FIRE, 4);
         }
         else
         {
             original = (8 + roll_dice(3, 14));
             hurted = resist_adjust_damage(act, BEAM_FIRE, original);
-            if (mons_primary_habitat(*mon) == HT_LAVA || mons_primary_habitat(*mon) == HT_AMPHIBIOUS_LAVA)
-                hurted = 0;
             actual = timescale_damage(act, hurted);
-            if (you.can_see(*act) && hurted > 0)
-                mpr(make_stringf("The lava burns %s%s%s%s", act->name(DESC_THE).c_str(), hurted > original ? " terribly" : "", 
-                    attack_strength_punctuation(actual).c_str(), hurted < original ? " It resists." : ""));
-            act->hurt(actor_by_mid(source), actual, BEAM_FIRE, KILLED_BY_LAVA, "", aux_source.c_str(), true, true);
+            if (mons_primary_habitat(*mon) == HT_LAVA || mons_primary_habitat(*mon) == HT_AMPHIBIOUS_LAVA)
+                actual = -1;
+            if (actual > 0)
+            {
+                if (you.can_see(*act))
+                {
+                    mprf("The lava burns %s%s%s%s", act->name(DESC_THE).c_str(), hurted > original ? " terribly" : "",
+                        attack_strength_punctuation(actual).c_str(), hurted < original ? " It resists." : "");
+                }
+                act->hurt(actor_by_mid(source), actual, BEAM_FIRE, KILLED_BY_LAVA, "", aux_source.c_str(), true, true);
+            }
+            else if (actual < 0 && act->stat_hp() < act->stat_maxhp())
+            {
+                const int healz = timescale_damage(act, 1 + random2(4)); // Only weak regen since lava is constant.
+
+                if (mons_primary_habitat(*mon) == HT_LAVA || mons_primary_habitat(*mon) == HT_AMPHIBIOUS_LAVA)
+                    mprf("%s regenerates from its natural habitat%s", act->name(DESC_THE).c_str(), attack_strength_punctuation(healz).c_str());
+                else
+                    mprf("%s reforms from the lava%s", act->name(DESC_THE).c_str(), attack_strength_punctuation(healz).c_str());
+
+                act->heal(healz, true);
+            }
         }
     }
     else if (terrain == DNGN_DEEP_WATER || terrain == DNGN_DEEP_SLIMY_WATER)
@@ -1779,6 +1833,8 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
 
         if (act->is_player())
         {
+            // BCADDO: Mild regen for water elementals, when adding Djinn. :)
+
             if (you.drowning())
             {
                 if (mount) // Should only happen to spider mount most the time (drake will have it happen if forced down by roots, etc.)
@@ -1838,6 +1894,13 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
                 act->hurt(actor_by_mid(source), actual, BEAM_WATER, KILLED_BY_WATER, "", aux_source.c_str(), true, true);
             }
         }
+        else if (act->res_water_drowning() > 4)
+        {
+            const int healz = timescale_damage(act, 3);
+            
+            mprf("%s reforms from the water around it%s", act->name(DESC_THE).c_str(), attack_strength_punctuation(healz).c_str());
+            act->heal(healz, true);
+        }
     }
 
     if (terrain == DNGN_SLIMY_WATER || terrain == DNGN_DEEP_SLIMY_WATER)
@@ -1848,41 +1911,73 @@ void actor_apply_terrain(actor* act, dungeon_feature_type terrain)
         original = (1 + roll_dice(2, 4));
         hurted = resist_adjust_damage(act, BEAM_ACID, original, mount);
         actual = timescale_damage(act, hurted);
+        const int healz = timescale_damage(act, 2 + random2(4));
 
         if (!actual)
             return;
 
-        if (act->is_player() && !you_worship(GOD_JIYVA))
+        if (act->is_player())
         {
-            if (mount)
+            if (actual > 0)
             {
-                mprf("The acidic ooze burns your %s%s%s%s",
-                    you.mount_name(true).c_str(),
-                    hurted > original ? " terribly" : "",
-                    attack_strength_punctuation(actual).c_str(),
-                    hurted < original ? " It resists." : "");
-                damage_mount(actual);
+                if (you_worship(GOD_JIYVA))
+                    return;
+
+                if (mount)
+                {
+                    mprf("The acidic ooze burns your %s%s%s%s",
+                        you.mount_name(true).c_str(),
+                        hurted > original ? " terribly" : "",
+                        attack_strength_punctuation(actual).c_str(),
+                        hurted < original ? " It resists." : "");
+                    damage_mount(actual);
+                }
+                else
+                {
+                    if (hurted > original)
+                        mprf("The acidic ooze burns you terribly%s", attack_strength_punctuation(actual).c_str());
+                    else
+                        mprf("The acidic ooze burns%s", attack_strength_punctuation(actual).c_str());
+                    if (hurted < original)
+                        canned_msg(MSG_YOU_RESIST);
+                    ouch(actual, KILLED_BY_ACID, source, aux_source.c_str());
+                }
             }
             else
             {
-                if (hurted > original)
-                    mprf("The acidic ooze burns you terribly%s", attack_strength_punctuation(actual).c_str());
+                if (mount)
+                {
+                    mprf("Your %s reforms in the acidic ooze%s", you.mount_name(true).c_str(), 
+                            attack_strength_punctuation(healz).c_str());
+                    heal_mount(healz);
+                }
                 else
-                    mprf("The acidic ooze burns%s", attack_strength_punctuation(actual).c_str());
-                if (hurted < original)
-                    canned_msg(MSG_YOU_RESIST);
-                ouch(actual, KILLED_BY_ACID, source, aux_source.c_str());
+                {
+                    mprf("Your gelatinous form absorbs some acidic slime%s", attack_strength_punctuation(healz).c_str());
+                    you.heal(healz, true);
+                }
             }
         }
 
-        else if (act->is_monster() && !(mons_primary_habitat(*mon) == HT_SLIME) && !(mon->res_acid() > 2))
+        else if (act->is_monster())
         {
-            if (you.can_see(*act) && hurted > 0)
+            if (mon->res_acid() > 3)
             {
-                mprf("The acidic ooze burns %s%s%s%s", act->name(DESC_THE).c_str(), original > hurted ? " terribly" : "",
-                    attack_strength_punctuation(actual).c_str(), original < hurted ? " It resists." : "");
+                mprf("%s reforms in the acidic ooze%s", uppercase_first(act->name(DESC_THE)).c_str(),
+                    attack_strength_punctuation(healz).c_str());
+                act->heal(healz);
             }
-            act->hurt(actor_by_mid(source), actual, BEAM_ACID, KILLED_BY_ACID, "", aux_source.c_str(), true, true);
+            else if (mons_primary_habitat(*mon) == HT_SLIME)
+                return;
+            else if (hurted > 0)
+            {
+                if (you.can_see(*act))
+                {
+                    mprf("The acidic ooze burns %s%s%s%s", act->name(DESC_THE).c_str(), original > hurted ? " terribly" : "",
+                        attack_strength_punctuation(actual).c_str(), original < hurted ? " It resists." : "");
+                }
+                act->hurt(actor_by_mid(source), actual, BEAM_ACID, KILLED_BY_ACID, "", aux_source.c_str(), true, true);
+            }
         }
 
         else

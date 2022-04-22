@@ -165,6 +165,21 @@ void dismount()
     merfolk_check_swimming();
 }
 
+int heal_mount(int amount)
+{
+    amount = abs(amount);
+
+    if (you.mount_hp + amount < you.mount_hp_max)
+    {
+        amount = you.mount_hp_max - you.mount_hp;
+        you.mount_hp = you.mount_hp_max;
+    }
+    else
+        you.mount_hp += amount;
+
+    return amount;
+}
+
 // Ends all mount debuffs when a mount is dismissed or resummoned.
 void cure_mount_debuffs()
 {

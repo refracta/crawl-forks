@@ -395,32 +395,39 @@ void tornado_damage(actor *caster, int dur, bool is_vortex)
                             cflav = chaos_damage_type(caster->is_player());
                         }
                         const int maxdmg = div_round_up(9 * (rpow + cfac), 15);
-                        int dmg = victim->apply_ac(
-                                    div_rand_round(roll_dice(9, rpow + cfac), 15),
-                                    maxdmg, ac_type::proportional);
-                        int mntdmg = domnt ? victim->apply_ac(
-                                    div_rand_round(roll_dice(9, rpow + cfac), 15),
-                                    maxdmg, ac_type::proportional, 0, true, true) : 0;
-                        if (chaos)
-                        {
-                            bolt beam;
-                            beam.flavour = cflav;
-                            dmg = victim->beam_resists(beam, dmg, true, "typhonic chaos");
-                            if (domnt)
-                                mntdmg = victim->beam_resists(beam, mntdmg, true, "typhonic chaos", true);
-                        }
+                        int pre_res = victim->apply_ac(
+                                      div_rand_round(roll_dice(9, rpow + cfac), 15),
+                                      maxdmg, ac_type::proportional);
+                        int mnt_rpres = domnt ? victim->apply_ac(
+                                        div_rand_round(roll_dice(9, rpow + cfac), 15),
+                                        maxdmg, ac_type::proportional, 0, true, true) : 0;
+                        const int dmg = resist_adjust_damage(victim, cflav, pre_res);
+                        const int mntdmg = domnt ? resist_adjust_damage(victim, cflav, mnt_rpres, true) : 0;
+
+                        victim->beam_effects(cflav, pre_res, dmg);
+
+                        if (domnt)
+                            victim->beam_effects(cflav, mnt_rpres, mntdmg);
+
+                        if (!you.mounted())
+                            domnt = false;
+
                         dprf("damage done: %d", dmg);
-                        victim->hurt(caster, dmg, BEAM_AIR, KILLED_BY_BEAM,
-                                     "", "tornado");
+
+                        if (dmg > 0 && victim->alive())
+                        {
+                            victim->hurt(caster, dmg, cflav, KILLED_BY_BEAM,
+                                "", "tornado");
+                        }
+
+                        if (domnt && mntdmg > 0)
+                            damage_mount(mntdmg);
 
                         if (victim->alive() && chaos)
                         {
                             victim->expose_to_element(cflav, dmg);
                             chaotic_status(victim, dmg, caster);
                         }
-
-                        if (domnt)
-                            damage_mount(mntdmg);
 
                         if (caster->is_player()
                             && (is_sanctuary(you.pos())

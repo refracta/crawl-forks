@@ -11,7 +11,8 @@ enum beam_type                  // bolt::flavour
     BEAM_MAGIC,
     BEAM_ELECTRICITY,
     BEAM_POISON,
-    BEAM_NEG,
+    BEAM_NEG,                   // Negative energy w/o drain XP.
+    BEAM_DRAIN,                 // Negative energy with drain XP.
     BEAM_ACID,
     BEAM_MIASMA,
     BEAM_WATER,
@@ -29,6 +30,7 @@ enum beam_type                  // bolt::flavour
     BEAM_LAVA,
     BEAM_ICE,
     BEAM_FREEZE,                  // Identical to ice except it causes water to freeze.
+    BEAM_ICY_SHARDS,              // Identical to ice except icy mons are immune.
     BEAM_DEVASTATION,
     BEAM_RANDOM,                  // currently translates into FIRE..ACID
     BEAM_CHAOS,

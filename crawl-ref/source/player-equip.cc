@@ -825,8 +825,8 @@ static void _unequip_weapon_effect(item_def& real_item, bool showMsgs,
                     if (have_passive(passive_t::safe_distortion))
                     {
                         simple_god_message(" absorbs the residual spatial "
-                                           "distortion as you unwield your "
-                                           "weapon.");
+                            "distortion as you unwield your "
+                            "weapon.");
                         break;
                     }
                     if (you.wearing_ego(EQ_GLOVES, SPARM_WIELDING))

@@ -215,6 +215,7 @@ enum mon_threat_level_type
 };
 
 void set_resist(resists_t &all, mon_resist_flags res, int lev);
+resists_t get_mons_base_resists(const monster& m);
 resists_t get_mons_current_resists(const monster& m);
 
 // In all cases this will be simplified to a bit field access, so let's let

@@ -8,12 +8,14 @@
 
 #include "fineff.h"
 
+#include "attack.h"     // attack_strength_punctuation
 #include "bloodspatter.h"
 #include "coordit.h"
 #include "dactions.h"
 #include "directn.h"
 #include "english.h"
 #include "env.h"
+#include "fight.h"      // resist_adjust_damage
 #include "god-abil.h"
 #include "god-passive.h"
 #include "libutil.h"
@@ -453,29 +455,37 @@ void shock_serpent_discharge_fineff::fire()
         return;
 
     const monster* serpent = defender() ? defender()->as_monster() : nullptr;
+
+    const int base = roll_dice(3, 4 + power * 3 / 2);
+    const int max = 3 * div_round_up(4 + power * 3, 2);
+    const int post_ac = oppressor.apply_ac(base, max, ac_type::half);
+    const int post_res = resist_adjust_damage(&oppressor, BEAM_ELECTRICITY, post_ac);
+
     if (serpent && you.can_see(*serpent))
     {
-        mprf("%s electric aura discharges%s, shocking %s!",
+        mprf("%s electric aura discharges%s, shocking %s%s",
              serpent->name(DESC_ITS).c_str(),
              power < 4 ? "" : " violently",
-             oppressor.name(DESC_THE).c_str());
+             oppressor.name(DESC_THE).c_str(),
+             attack_strength_punctuation(post_ac).c_str());
     }
     else if (you.can_see(oppressor))
     {
-        mprf("The air sparks with electricity, shocking %s!",
-             oppressor.name(DESC_THE).c_str());
+        mprf("The air sparks with electricity, shocking %s%s",
+             oppressor.name(DESC_THE).c_str(),
+             attack_strength_punctuation(post_ac).c_str());
     }
-    bolt beam;
-    beam.flavour = BEAM_ELECTRICITY;
 
-    int amount = roll_dice(3, 4 + power * 3 / 2);
-    const int max = 3 * div_round_up(4 + power * 3, 2);
-    amount = oppressor.apply_ac(oppressor.beam_resists(beam, amount, true),
-                                max, ac_type::half);
-    oppressor.hurt(serpent, amount, beam.flavour, KILLED_BY_BEAM,
-                                        "a shock serpent", "electric aura");
-    if (amount)
-        oppressor.expose_to_element(beam.flavour, amount);
+    if (post_res > 0)
+    {
+        oppressor.hurt(serpent, post_res, BEAM_ELECTRICITY, KILLED_BY_BEAM,
+            "a shock serpent", "electric aura");
+    }
+
+    oppressor.beam_effects(BEAM_ELECTRICITY, post_ac, post_res);
+
+    if (post_res)
+        oppressor.expose_to_element(BEAM_ELECTRICITY, abs(post_res));
 }
 
 void delayed_action_fineff::fire()

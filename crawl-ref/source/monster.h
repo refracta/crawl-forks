@@ -502,7 +502,7 @@ public:
              string aux = "",
              bool cleanup_dead = true,
              bool attacker_effects = true) override;
-    bool heal(int amount) override;
+    bool heal(int amount, bool force = false) override;
     void blame_damage(const actor *attacker, int amount);
     void blink(coord_def disp_center = coord_def(0, 0)) override;
     void teleport(bool right_now = false,
@@ -514,8 +514,8 @@ public:
         override;
     void weaken(actor *attacker, int pow) override;
     void check_awaken(int disturbance) override;
-    int beam_resists(bolt &beam, int hurted, bool doEffects, string source = "", bool /*mt*/ = false)
-        override;
+    void beam_effects(beam_type flavour, int base, int post_res,
+                      bolt *beam = nullptr, bool /*mt*/ = false) override;
 
     int stat_hp() const override    { return hit_points; }
     int stat_maxhp() const override { return max_hit_points; }
