@@ -306,15 +306,14 @@ void set_resist(resists_t &all, mon_resist_flags res, int lev)
 {
     if (res > MR_LAST_MULTI)
     {
-        ASSERT_RANGE(lev, 0, 2);
-        if (lev)
+        if (lev > 0)
             all |= res;
         else
             all &= ~res;
         return;
     }
 
-    ASSERT_RANGE(lev, -3, 5);
+    lev = max(min(lev, 5), -3);
     all = (all & ~(res * 7)) | (res * (lev & 7));
 }
 

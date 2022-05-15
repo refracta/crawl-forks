@@ -7757,7 +7757,7 @@ int player::res_rotting(bool mt) const
 
     if (get_mutation_level(MUT_ROT_IMMUNITY)
         || is_nonliving()
-        ||  get_form()->res_rot())
+        || get_form()->res_rot())
     {
         return 3;
     }
