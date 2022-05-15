@@ -1093,16 +1093,15 @@ static void _fixup_hell_stairs()
     }
 }
 
-static void _fixup_sewer_stairs()
+static void _place_sewer_stair_vault()
 {
-    if (!(you.where_are_you == BRANCH_DUNGEON && you.depth == 1))
-        return;
-
     int stair_num = 0;
     int target_stair = -1;
 
-    if (one_chance_in(3))
+    if (coinflip())
         target_stair = 1 + random2(3);
+    else
+        return;
 
     for (rectangle_iterator ri(1); ri; ++ri)
     {
@@ -1110,57 +1109,61 @@ static void _fixup_sewer_stairs()
         {
             stair_num++;
 
-            bool c = true;
             if (stair_num == target_stair)
             {
                 if (dgn_vault_at(*ri))
                     target_stair++;
                 else
                 {
-                    target_stair = -1;
                     _set_grd(*ri, DNGN_FLOOR);
                     if (!dgn_place_map(random_map_for_tag("sewer_entrance"), false, false, *ri))
                         _set_grd(*ri, DNGN_STONE_STAIRS_DOWN_I);
-                    c = false;
                 }
             }
+        }
+    }
+}
 
-            if (c)
+static void _fixup_sewer_stairs()
+{
+    for (rectangle_iterator ri(1); ri; ++ri)
+    {
+        if (feat_is_stone_stair_down(grd(*ri)) &&
+            env.tile_flv(*ri).feat != TILE_DNGN_PORTAL_SEWER)
+        {
+            env.tile_flv(*ri).feat_idx =
+                store_tilename_get_index("dngn_portal_sewer");
+            env.tile_flv(*ri).feat = TILE_DNGN_PORTAL_SEWER;
+            env.tile_flv(*ri).floor_idx =
+                store_tilename_get_index("floor_iron");
+            env.tile_flv(*ri).floor = TILE_FLOOR_IRON;
+            env.grid_colours(*ri) = GREEN;
+            for (adjacent_iterator ai(*ri); ai; ++ai)
             {
-                env.tile_flv(*ri).feat_idx =
-                    store_tilename_get_index("dngn_portal_sewer");
-                env.tile_flv(*ri).feat = TILE_DNGN_PORTAL_SEWER;
-                env.tile_flv(*ri).floor_idx =
-                    store_tilename_get_index("floor_iron");
-                env.tile_flv(*ri).floor = TILE_FLOOR_IRON;
-                env.grid_colours(*ri) = GREEN;
-                for (adjacent_iterator ai(*ri); ai; ++ai)
+                if (feat_is_wall(grd(*ai)) && feat_is_opaque(grd(*ai)) || feat_is_tree(grd(*ai)))
                 {
-                    if (feat_is_wall(grd(*ai)) && feat_is_opaque(grd(*ai)) || feat_is_tree(grd(*ai)))
-                    {
-                        _set_grd(*ai, DNGN_METAL_WALL);
-                        env.grid_colours(*ai) = GREEN;
-                        env.tile_flv(*ai).feat_idx =
-                            store_tilename_get_index("dngn_metal_wall_green");
-                        env.tile_flv(*ai).feat = TILE_DNGN_METAL_WALL_GREEN;
-                    }
-                    else if (grd(*ai) == DNGN_FLOOR)
-                    {
-                        if (x_chance_in_y(2, 3))
-                            _set_grd(*ai, DNGN_SHALLOW_WATER);
-                    }
+                    _set_grd(*ai, DNGN_METAL_WALL);
+                    env.grid_colours(*ai) = GREEN;
+                    env.tile_flv(*ai).feat_idx =
+                        store_tilename_get_index("dngn_metal_wall_green");
+                    env.tile_flv(*ai).feat = TILE_DNGN_METAL_WALL_GREEN;
+                }
+                else if (grd(*ai) == DNGN_FLOOR)
+                {
+                    if (x_chance_in_y(2, 3))
+                        _set_grd(*ai, DNGN_SHALLOW_WATER);
+                }
 
-                    if ((grd(*ai) == DNGN_DEEP_WATER))
-                    {
-                        env.tile_flv(*ai).feat = TILE_DNGN_SHALLOW_WATER_MURKY;
-                        env.grid_colours(*ai) = LIGHTGREEN;
-                    }
+                if ((grd(*ai) == DNGN_DEEP_WATER))
+                {
+                    env.tile_flv(*ai).feat = TILE_DNGN_SHALLOW_WATER_MURKY;
+                    env.grid_colours(*ai) = LIGHTGREEN;
+                }
 
-                    if ((grd(*ai) == DNGN_SHALLOW_WATER))
-                    {
-                        env.tile_flv(*ai).feat = TILE_DNGN_SHALLOW_WATER_MURKY;
-                        env.grid_colours(*ai) = LIGHTGREEN;
-                    }
+                if ((grd(*ai) == DNGN_SHALLOW_WATER))
+                {
+                    env.tile_flv(*ai).feat = TILE_DNGN_SHALLOW_WATER_MURKY;
+                    env.grid_colours(*ai) = LIGHTGREEN;
                 }
             }
         }
@@ -2216,9 +2219,9 @@ static bool _fixup_stone_stairs(bool preserve_vault_stairs)
     // level connectivity). Fewer than three stone stairs will result in
     // random placement of new stairs.
     const bool upstairs_fixed = _fixup_stone_stairs(preserve_vault_stairs,
-                                                    true);
+        true);
     const bool downstairs_fixed = _fixup_stone_stairs(preserve_vault_stairs,
-                                                      false);
+        false);
     return upstairs_fixed && downstairs_fixed;
 }
 
@@ -2867,8 +2870,14 @@ static void _build_dungeon_level()
             _place_chance_vaults();
         }
 
+        if (you.where_are_you == BRANCH_DUNGEON && you.depth == 1)
+            _place_sewer_stair_vault();
+
         // Ruination and plant clumps.
         _post_vault_build();
+
+        if (you.where_are_you == BRANCH_DUNGEON && you.depth == 1)
+            _fixup_sewer_stairs();
 
         // XXX: Moved this here from builder_monsters so that
         //      connectivity can be ensured
@@ -2878,8 +2887,6 @@ static void _build_dungeon_level()
             _place_feature_mimics();
 
         _place_traps();
-
-        _fixup_sewer_stairs();
 
         // Any vault-placement activity must happen before this check.
         _dgn_verify_connectivity(nvaults);
