@@ -8308,6 +8308,9 @@ bool player::corrode_equipment(const char* corrosion_source, int degree, bool mt
 void player::splash_with_acid(const actor* evildoer, int acid_strength,
                               bool allow_corrosion, const char* hurt_msg, bool mt)
 {
+    if (you.res_acid(mt) >= 3)
+        return;
+
     if (!allow_corrosion && !mt && is_fairy())
         return;
 
