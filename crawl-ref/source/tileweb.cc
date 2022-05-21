@@ -282,6 +282,7 @@ wint_t TilesFramework::_receive_control_message()
     char buf[4096]; // Should be enough for client->server messages
     sockaddr_un srcaddr;
     socklen_t srcaddr_len;
+    memset(&srcaddr, 0, sizeof(struct sockaddr_un));
 
     srcaddr_len = sizeof(srcaddr);
 
