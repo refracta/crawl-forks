@@ -815,6 +815,11 @@ void CLua::init_lua()
     lua_pushnil(_state);
     lua_setglobal(_state, "load");
 
+    lua_pushcfunction(_state, lua_loadstring);
+    lua_setglobal(_state, "loadstring");
+    lua_pushnil(_state);
+    lua_setglobal(_state, "load");
+
     // Open Crawl bindings
     cluaopen_kills(_state);
     cluaopen_you(_state);
