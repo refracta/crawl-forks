@@ -7,6 +7,10 @@ import os
 import sys
 import traceback
 import collections
+if sys.version_info.major == 3 and sys.version_info.minor >= 10:
+    from collections.abc import MutableMapping
+else:
+    from collections import MutableMapping
 import re
 
 import yaml  # pip install pyyaml
@@ -17,7 +21,7 @@ def quote_or_nullptr(key, d):
     else:
         return 'nullptr'
 
-class Species(collections.abc.MutableMapping):
+class Species(MutableMapping):
     """Parser for YAML definition files.
 
     If any YAML content is invalid, the relevant parser function below should
