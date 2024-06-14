@@ -1,5 +1,5 @@
 enum: SP_HIGH_ELF
-monster: MONS_EF
+monster: MONS_ELF
 name: High Elf
 short_name: HE
 adjective: "Elven"
